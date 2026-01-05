@@ -1,8 +1,7 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
-
 // Create Axios instance with default config
 const api: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api', // Fallback to local
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5500/api/v1', // Fallback to local
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
