@@ -1,3 +1,4 @@
+'use client';
 import { Box, Modal, Typography } from "@mui/material";
 import { Warning } from "@mui/icons-material";
 interface Props {

@@ -20,8 +20,8 @@ export default function LoginView() {
       const Role = role!.toString().toUpperCase();
       await authService.login({ ...data, role: Role });
     } catch (error: any) {
+      setError(error.response?.data?.message || "Login failed");
       console.log(error);
-      setError(error.response.data.message);
     } finally {
       setLoading(false);
     }

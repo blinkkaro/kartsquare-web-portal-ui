@@ -1,9 +1,9 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
-
+import { english } from "./en";
 // Define available languages
-export type Locale = "en" | "es" | "hi";
+// export type Locale = "en" | "es" | "hi";
 
 // Define translation keys (example)
 export type TranslationKey =
@@ -25,82 +25,69 @@ export type TranslationKey =
   | "emailRequired"
   | "passwordMin"
   | "passwordComplexity"
-  | "passwordRequired";
+  | "passwordRequired"
+  | "email_verification"
+  | "email_verification_subtitle"
+  | "email_verification_success"
+  | "email_verification_success_description";
 
 // Sample dictionaries
-const dictionaries: Record<Locale, Record<TranslationKey, string>> = {
-  en: {
-    welcome_back: "Welcome back!",
-    email_address: "Email Address",
-    password: "Password",
-    forgot_password: "Forgot Password?",
-    login: "Login",
-    continue_with_google: "Continue with Google",
-    no_account: "You don't have an account?",
-    sign_up: "Sign up",
-    brand_tagline: "Your 8 Handed Partner",
-    continue_as: "Continue as",
-    customer: "Customer",
-    service_provider: "Service Provider",
-    supplier: "Supplier",
-    login_subtitle: "Enter your email & password to login.",
-    emailInvalid: "Invalid email",
-    emailRequired: "Email is required",
-    passwordMin: "Password must be at least 8 characters",
-    passwordComplexity:
-      "Password must contain uppercase, lowercase, number and special char",
-    passwordRequired: "Password is required",
-  },
-  es: {
-    welcome_back: "¡Bienvenido de nuevo!",
-    email_address: "Correo electrónico",
-    password: "Contraseña",
-    forgot_password: "¿Olvidaste tu contraseña?",
-    login: "Iniciar sesión",
-    continue_with_google: "Continuar con Google",
-    no_account: "¿No tienes una cuenta?",
-    sign_up: "Regístrate",
-    brand_tagline: "Tu socio de 8 manos",
-    continue_as: "Continuar como",
-    customer: "Cliente",
-    service_provider: "Proveedor de servicios",
-    supplier: "Proveedor",
-    login_subtitle:
-      "Ingrese su correo electrónico y contraseña para iniciar sesión.",
-    emailInvalid: "Correo electrónico no válido",
-    emailRequired: "El correo electrónico es obligatorio",
-    passwordMin: "La contraseña debe tener al menos 8 caracteres",
-    passwordComplexity:
-      "La contraseña debe contener mayúsculas, minúsculas, números y caracteres especiales",
-    passwordRequired: "Se requiere contraseña",
-  },
-  hi: {
-    welcome_back: "वापसी पर स्वागत है!",
-    email_address: "ईमेल पता",
-    password: "पासवर्ड",
-    forgot_password: "पासवर्ड भूल गए?",
-    login: "लॉग इन करें",
-    continue_with_google: "Google के साथ जारी रखें",
-    no_account: "क्या आपके पास खाता नहीं है?",
-    sign_up: "साइन अप करें",
-    brand_tagline: "आपका 8 हाथों वाला साथी",
-    continue_as: "के रूप में जारी रखें",
-    customer: "ग्राहक",
-    service_provider: "सेवा प्रदाता",
-    supplier: "आपूर्तिकर्ता",
-    login_subtitle: "लॉगिन करने के लिए अपना ईमेल और पासवर्ड दर्ज करें।",
-    emailInvalid: "अमान्य ईमेल",
-    emailRequired: "ईमेल आवश्यक है",
-    passwordMin: "पासवर्ड कम से कम 8 वर्ण का होना चाहिए",
-    passwordComplexity:
-      "पासवर्ड में अपरकेस, लोअरकेस, नंबर और विशेष वर्ण होने चाहिए",
-    passwordRequired: "पासवर्ड आवश्यक है",
-  },
+const dictionaries: Record<"en", Record<TranslationKey, string>> = {
+  en: english,
+  // es: {
+  //   welcome_back: "¡Bienvenido de nuevo!",
+  //   email_address: "Correo electrónico",
+  //   password: "Contraseña",
+  //   forgot_password: "¿Olvidaste tu contraseña?",
+  //   login: "Iniciar sesión",
+  //   continue_with_google: "Continuar con Google",
+  //   no_account: "¿No tienes una cuenta?",
+  //   sign_up: "Regístrate",
+  //   brand_tagline: "Tu socio de 8 manos",
+  //   continue_as: "Continuar como",
+  //   customer: "Cliente",
+  //   service_provider: "Proveedor de servicios",
+  //   supplier: "Proveedor",
+  //   login_subtitle:
+  //     "Ingrese su correo electrónico y contraseña para iniciar sesión.",
+  //   emailInvalid: "Correo electrónico no válido",
+  //   emailRequired: "El correo electrónico es obligatorio",
+  //   passwordMin: "La contraseña debe tener al menos 8 caracteres",
+  //   passwordComplexity:
+  //     "La contraseña debe contener mayúsculas, minúsculas, números y caracteres especiales",
+  //   passwordRequired: "Se requiere contraseña",
+  //   email_verification: "Verificar tu dirección de correo electrónico",
+  //   email_verification_subtitle: "Por favor, ingresa el código de verificación enviado a tu correo electrónico registrado para verificar tu identidad.",
+  // },
+  // hi: {
+  //   welcome_back: "वापसी पर स्वागत है!",
+  //   email_address: "ईमेल पता",
+  //   password: "पासवर्ड",
+  //   forgot_password: "पासवर्ड भूल गए?",
+  //   login: "लॉग इन करें",
+  //   continue_with_google: "Google के साथ जारी रखें",
+  //   no_account: "क्या आपके पास खाता नहीं है?",
+  //   sign_up: "साइन अप करें",
+  //   brand_tagline: "आपका 8 हाथों वाला साथी",
+  //   continue_as: "के रूप में जारी रखें",
+  //   customer: "ग्राहक",
+  //   service_provider: "सेवा प्रदाता",
+  //   supplier: "आपूर्तिकर्ता",
+  //   login_subtitle: "लॉगिन करने के लिए अपना ईमेल और पासवर्ड दर्ज करें।",
+  //   emailInvalid: "अमान्य ईमेल",
+  //   emailRequired: "ईमेल आवश्यक है",
+  //   passwordMin: "पासवर्ड कम से कम 8 वर्ण का होना चाहिए",
+  //   passwordComplexity:
+  //     "पासवर्ड में अपरकेस, लोअरकेस, नंबर और विशेष वर्ण होने चाहिए",
+  //   passwordRequired: "पासवर्ड आवश्यक है",
+  //   email_verification: "अपने ईमेल पते की पुष्टि करें",
+  //   email_verification_subtitle: "कृपया अपनी पहचान सत्यापित करने के लिए अपने पंजीकृत ईमेल पते पर भेजा गया वन-टाइम पासवर्ड (OTP) दर्ज करें।",
+  // },
 };
 
 interface TranslationContextType {
-  locale: Locale;
-  setLocale: (locale: Locale) => void;
+  locale: "en";
+  setLocale: (locale: "en") => void;
   t: (key: TranslationKey) => string;
 }
 
@@ -109,7 +96,7 @@ const TranslationContext = createContext<TranslationContextType | undefined>(
 );
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocale] = useState<Locale>("en");
+  const [locale, setLocale] = useState<"en">("en");
 
   const t = (key: TranslationKey): string => {
     return dictionaries[locale][key] || key;

@@ -1,0 +1,86 @@
+'use client';
+import React from "react";
+import {
+  Button as MuiButton,
+  CircularProgress,
+  ButtonProps as MuiButtonProps,
+  styled,
+} from "@mui/material";
+import { COLORS } from "../../constants/colors";
+
+interface ButtonProps extends MuiButtonProps {
+  isLoading?: boolean;
+  variant?: "contained" | "outlined" | "text";
+}
+
+const StyledButton = styled(MuiButton)<ButtonProps>(
+  ({ theme, variant, fullWidth }) => ({
+    borderRadius: "30px", // Rounded shape as per design
+    textTransform: "none",
+    fontWeight: 600,
+    fontSize: "1rem",
+    padding: "10px 24px",
+    transition: "all 0.2s ease-in-out",
+    ...(fullWidth && { width: "100%" }),
+    boxShadow:
+      variant === "contained" ? "0px 4px 12px rgba(94, 24, 233, 0.2)" : "none",
+
+    ...(variant === "contained" && {
+      backgroundColor: COLORS.PRIMARY_PURPLE,
+      color: COLORS.WHITE,
+      "&:hover": {
+        backgroundColor: COLORS.PRIMARY_PURPLE, // Slightly darker shade
+        boxShadow: "0px 6px 16px rgba(94, 24, 233, 0.3)",
+      },
+      "&:disabled": {
+        backgroundColor: COLORS.BORDER.DEFAULT,
+        color: COLORS.TEXT_GRAY,
+        opacity: 0.7,
+      },
+    }),
+
+    ...(variant === "outlined" && {
+      borderColor: COLORS.PRIMARY_PURPLE,
+      color: COLORS.PRIMARY_PURPLE,
+      "&:hover": {
+        backgroundColor: "rgba(94, 24, 233, 0.04)",
+        borderColor: "#4b12bb",
+      },
+    }),
+
+    ...(variant === "text" && {
+      color: COLORS.PRIMARY_PURPLE,
+      "&:hover": {
+        backgroundColor: "rgba(94, 24, 233, 0.04)",
+      },
+    }),
+  })
+);
+
+
+
+const Button: React.FC<ButtonProps> = ({
+  children,
+  isLoading,
+  disabled,
+  variant = "contained",
+  ...props
+}) => {
+  return (
+    <StyledButton variant={variant} disabled={disabled || isLoading} {...props}>
+      {isLoading ? (
+        <CircularProgress
+          size={24}
+          color="inherit"
+          sx={{
+            color: variant === "contained" ? "white" : COLORS.PRIMARY_PURPLE,
+          }}
+        />
+      ) : (
+        children
+      )}
+    </StyledButton>
+  );
+};
+
+export default Button;

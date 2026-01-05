@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import {
   Box,
   TextField,
-  Button,
   Typography,
   InputAdornment,
   IconButton,
@@ -27,6 +26,9 @@ import { COLORS } from "@/constants/colors";
 import { LoginSchema } from "../loginSchema";
 import { LoginFormData } from "../loginSchema";
 import ErrorMessage from "@/components/common/ErrorMessage";
+import Title from "@/components/auth/title";
+import Button from "@/components/common/Button";
+import Input from "@/components/common/Input";
 
 export default function LoginForm({
   role,
@@ -74,46 +76,19 @@ export default function LoginForm({
       onSubmit={handleSubmit(onSubmit)}
       sx={{ width: "100%" }}
     >
-      <Box sx={{ mb: 3 }}>
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
-          sx={{ fontWeight: 700, color: "text.primary" }}
-        >
-          {t("welcome_back")}
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-          {t("login_subtitle")}
-        </Typography>
-      </Box>
+      <Title title={t("welcome_back")} subtitle={t("login_subtitle")} />
       <ErrorMessage isVisible={!!error} error={error!} />
       <Stack spacing={3}>
         <Box>
           <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
             {t("email_address")}
           </Typography>
-          <Controller
+          <Input
             name="email"
             control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                placeholder="masruqjaunhaik@mail.in"
-                variant="outlined"
-                error={!!errors.email}
-                helperText={errors.email?.message}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <EmailOutlined color="action" />
-                    </InputAdornment>
-                  ),
-                  sx: inputSx,
-                }}
-              />
-            )}
+            fullWidth
+            placeholder="masruqjaunhaik@mail.in"
+            startIcon={<EmailOutlined color="action" />}
           />
         </Box>
 
@@ -121,39 +96,22 @@ export default function LoginForm({
           <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
             {t("password")}
           </Typography>
-          <Controller
+          <Input
             name="password"
             control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                type={showPassword ? "text" : "password"}
-                placeholder="********"
-                variant="outlined"
-                error={!!errors.password}
-                helperText={errors.password?.message}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <LockOutlined color="action" />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                  sx: inputSx,
-                }}
-              />
-            )}
+            fullWidth
+            type={showPassword ? "text" : "password"}
+            placeholder="********"
+            startIcon={<LockOutlined color="action" />}
+            endIcon={
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            }
           />
         </Box>
 
@@ -168,40 +126,18 @@ export default function LoginForm({
           </Link>
         </Box>
 
-        <Button
-          fullWidth
-          type="submit"
-          variant="contained"
-          size="large"
-          sx={{
-            py: 1.5,
-            borderRadius: "25px",
-            background: COLORS.PRIMARY_PURPLE,
-            textTransform: "none",
-            fontSize: "1rem",
-            fontWeight: 700,
-          }}
-          disabled={loading}
-        >
-          {loading ? "Loading..." : t("login")}
-        </Button>
+        <Button isLoading={loading} onClick={handleSubmit(onSubmit)}>{t("login")}</Button>
 
         <Button
-          fullWidth
           variant="outlined"
-          size="large"
           startIcon={<GoogleIcon />}
           sx={{
-            py: 1.5,
-            borderRadius: "25px",
             borderColor:
               theme.palette.mode === "light"
                 ? COLORS.BORDER.DEFAULT
                 : COLORS.BORDER.HOVER,
             color: "text.primary",
             textTransform: "none",
-            fontSize: "1rem",
-            fontWeight: 600,
             bgcolor: "background.paper",
             "&:hover": {
               bgcolor: "action.hover",

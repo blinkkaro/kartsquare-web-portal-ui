@@ -1,0 +1,9 @@
+
+export enum UserRegisterSteps {
+  REGISTERED = 1,
+  EMAIL_VERIFIED = 2,
+  DOCUMENT_VERIFIED = 3,
+  BANK_DETAILS_ADDED = 4,
+  PREFERENCES_ADDED = 5,
+  COMPLETED = 6,
+}
