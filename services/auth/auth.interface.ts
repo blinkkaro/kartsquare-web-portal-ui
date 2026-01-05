@@ -18,6 +18,7 @@ export interface User {
 }
 
 export interface AuthResponse {
+  message: string;
   tokens: {
     access_token: string;
     refresh_token: string;

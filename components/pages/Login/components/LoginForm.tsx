@@ -122,19 +122,16 @@ export default function LoginForm({
         </Button>
 
         <Button
-          variant="outlined"
+          variant="contained"
           startIcon={<GoogleIcon />}
           sx={{
-            borderColor:
-              theme.palette.mode === "light"
-                ? COLORS.BORDER.DEFAULT
-                : COLORS.BORDER.HOVER,
-            color: "text.primary",
+            bgcolor: COLORS.DARK,
+            color: "white",
             textTransform: "none",
-            bgcolor: "background.paper",
+            borderRadius: "50px",
+            padding: "10px 30px",
             "&:hover": {
-              bgcolor: "action.hover",
-              borderColor: "text.secondary",
+              bgcolor: COLORS.DARK,
             },
           }}
         >
@@ -146,7 +143,7 @@ export default function LoginForm({
         <Typography variant="body2" color="text.secondary">
           {t("no_account")}
           <Link
-            href="#"
+            href={`/signUp?role=${role}`}
             sx={{ ml: 1, fontWeight: 700, color: "text.primary" }}
             underline="hover"
           >

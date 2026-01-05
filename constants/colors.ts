@@ -13,4 +13,5 @@ export const COLORS = {
   TEXT_DARK: "#1f2937",
   PRIMARY_PURPLE: "#5e18e9",
   WHITE: "white",
+  DARK: "#30263e",
 };

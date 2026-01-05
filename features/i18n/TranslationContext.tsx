@@ -30,7 +30,36 @@ export type TranslationKey =
   | "email_verification"
   | "email_verification_subtitle"
   | "email_verification_success"
-  | "email_verification_success_description";
+  | "email_verification_success_description"
+  | "signUp"
+  | "signUpSubtitle"
+  | "firstNameRequired"
+  | "firstNameMin"
+  | "lastNameRequired"
+  | "lastNameMin"
+  | "phoneNumberRequired"
+  | "countryCodeRequired"
+  | "countryRequired"
+  | "birthDateRequired"
+  | "genderRequired"
+  | "genderRequired"
+  | "genderRequired"
+  | "genderRequired"
+  // New keys for UI labels and placeholders
+  | "first_name"
+  | "last_name"
+  | "email_address"
+  | "password"
+  | "phone_number"
+  | "country"
+  | "birth_date"
+  | "gender"
+  | "select_gender"
+  | "male"
+  | "female"
+  | "other"
+  | "prefer_not_to_say"
+  | "signup";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
@@ -96,7 +125,6 @@ const TranslationContext = createContext<TranslationContextType | undefined>(
   undefined
 );
 
-
 export function TranslationProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<"en">("en");
 
@@ -104,11 +132,6 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
     return dictionaries[locale][key] || key;
   };
 
-  return (
-    <TranslationContext.Provider value={{ locale, setLocale, t }}>
-      {children}
-    </TranslationContext.Provider>
-  );
   return (
     <TranslationContext.Provider value={{ locale, setLocale, t }}>
       {children}
