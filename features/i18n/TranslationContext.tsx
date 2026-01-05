@@ -95,16 +95,11 @@ interface TranslationContextType {
 const TranslationContext = createContext<TranslationContextType | undefined>(
   undefined
 );
-const TranslationContext = createContext<TranslationContextType | undefined>(
-  undefined
-);
+
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<"en">("en");
 
-  const t = (key: TranslationKey): string => {
-    return dictionaries[locale][key] || key;
-  };
   const t = (key: TranslationKey): string => {
     return dictionaries[locale][key] || key;
   };
@@ -122,13 +117,6 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
 }
 
 export function useTranslationContext() {
-  const context = useContext(TranslationContext);
-  if (context === undefined) {
-    throw new Error(
-      "useTranslationContext must be used within a TranslationProvider"
-    );
-  }
-  return context;
   const context = useContext(TranslationContext);
   if (context === undefined) {
     throw new Error(
