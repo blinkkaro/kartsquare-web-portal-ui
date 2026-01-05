@@ -1,5 +1,7 @@
 "use client";
+"use client";
 
+import React, { useState } from "react";
 import React, { useState } from "react";
 import {
   Box,
@@ -56,7 +58,44 @@ export default function LoginForm({
       password: "",
     },
   });
+export default function LoginForm({
+  role,
+  onSubmit,
+  loading,
+  error,
+}: {
+  role: string;
+  onSubmit: (data: LoginFormData) => void;
+  loading: boolean;
+  error: string | null;
+}) {
+  const { t } = useTranslate();
+  const theme = useTheme();
+  const [showPassword, setShowPassword] = useState(false);
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(LoginSchema(t)),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const inputSx = {
+    borderRadius: "12px",
+    bgcolor: "background.paper",
+    "& input:-webkit-autofill": {
+      WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset`,
+      WebkitTextFillColor: theme.palette.text.primary,
+      caretColor: theme.palette.text.primary,
+    },
+  };
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const inputSx = {
@@ -125,6 +164,16 @@ export default function LoginForm({
             {t("forgot_password")}
           </Link>
         </Box>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Link
+            href={`/forgot-password?role=${role}`}
+            variant="body2"
+            underline="hover"
+            sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 600 }}
+          >
+            {t("forgot_password")}
+          </Link>
+        </Box>
 
         <Button isLoading={loading} onClick={handleSubmit(onSubmit)}>{t("login")}</Button>
 
@@ -149,6 +198,20 @@ export default function LoginForm({
         </Button>
       </Stack>
 
+      <Box sx={{ mt: 4, textAlign: "center" }}>
+        <Typography variant="body2" color="text.secondary">
+          {t("no_account")}
+          <Link
+            href="#"
+            sx={{ ml: 1, fontWeight: 700, color: "text.primary" }}
+            underline="hover"
+          >
+            {t("sign_up")}
+          </Link>
+        </Typography>
+      </Box>
+    </Box>
+  );
       <Box sx={{ mt: 4, textAlign: "center" }}>
         <Typography variant="body2" color="text.secondary">
           {t("no_account")}
