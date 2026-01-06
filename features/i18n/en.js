@@ -35,7 +35,8 @@ export const english = {
   countryRequired: "Country is required",
   birthDateRequired: "Birth date is required",
   genderRequired: "Gender is required",
-  // UI Labels
+  by_signup_to_accept: "By signup to Accept",
+  privacy_policy: "Privacy Policy",
   first_name: "First Name",
   last_name: "Last Name",
   email_address: "Email Address",
@@ -49,4 +50,13 @@ export const english = {
   other: "Other",
   prefer_not_to_say: "Prefer not to say",
   signup: "Signup",
+  skip: "SKIP",
+  forgetPassword: "Forget Password?",
+  forgetPasswordSubtitle: "Please enter your register email address, we'll send you reset password link to your email.",
+  resetPassword: "Reset Password",
+  resetPasswordSubtitle: "Please enter your new password. Your new password must be different from your old password.",
+  codeRequired: "Code is required",
+  codeMin: "Code must be at least 6 characters",
+  passwordMatch: "Passwords must match",
+  confirmPasswordRequired: "Confirm Password is required",
 };

@@ -33,6 +33,9 @@ function SignUpView() {
   };
   return (
     <AuthWrapper>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 1 }}>
+        <Link href="/" style={{ textDecoration: "none", color: "inherit", fontWeight: 700, borderBottom: "1px solid" }}>{t("skip")}</Link>
+      </Box>
       <Title title={t("signUp")} subtitle={t("signUpSubtitle")} />
       <Error isVisible={!!error} error={error} />
       <RegistrationForm onSubmit={OnSubmit} loading={loading} />

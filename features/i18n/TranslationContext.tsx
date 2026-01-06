@@ -45,7 +45,8 @@ export type TranslationKey =
   | "genderRequired"
   | "genderRequired"
   | "genderRequired"
-  // New keys for UI labels and placeholders
+  | "by_signup_to_accept"
+  | "privacy_policy"
   | "first_name"
   | "last_name"
   | "email_address"
@@ -59,7 +60,16 @@ export type TranslationKey =
   | "female"
   | "other"
   | "prefer_not_to_say"
-  | "signup";
+  | "signup"
+  | "skip"
+  | "forgetPassword"
+  | "forgetPasswordSubtitle"
+  | "codeRequired"
+  | "codeMin"
+  | "resetPassword"
+  | "resetPasswordSubtitle"
+  | "passwordMatch"
+  | "confirmPasswordRequired";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

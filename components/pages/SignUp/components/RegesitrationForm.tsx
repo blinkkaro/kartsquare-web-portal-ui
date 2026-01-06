@@ -261,9 +261,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         color="textSecondary"
         sx={{ mt: 1, display: "block", textAlign: "center" }}
       >
-        by signup to Accept{" "}
+        {t("by_signup_to_accept")}{" "}
         <span style={{ textDecoration: "underline", fontWeight: 600 }}>
-          privacy policy
+          {t("privacy_policy")}
         </span>{" "}
         and{" "}
         <span style={{ textDecoration: "underline", fontWeight: 600 }}>
@@ -296,7 +296,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             },
           }}
         >
-          Continue with Google
+          {t("continue_with_google")}
         </Button>
       </Box>
     </Box>
