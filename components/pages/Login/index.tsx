@@ -17,11 +17,20 @@ export default function LoginView() {
     try {
       setLoading(true);
       setError(null);
-      const Role = role!.toString().toUpperCase();
+      if (!role) {
+        setError("Role is missing. Please try again.");
+        setLoading(false);
+        return;
+      }
+      const Role = role.toString().toUpperCase();
       await authService.login({ ...data, role: Role });
     } catch (error: any) {
       console.log(error);
-      setError(error.response.data.message);
+      setError(
+        error?.response?.data?.message ||
+          error?.message ||
+          "An unexpected error occurred"
+      );
     } finally {
       setLoading(false);
     }
@@ -30,7 +39,7 @@ export default function LoginView() {
   return (
     <AuthWrapper>
       <LoginForm
-        role={role!}
+        role={role || ""}
         onSubmit={OnSubmit}
         loading={loading}
         error={error}

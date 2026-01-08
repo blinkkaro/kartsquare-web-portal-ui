@@ -8,11 +8,13 @@ import Error from "@/components/common/ErrorMessage";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import * as yup from "yup";
 import { TranslationKey } from "@/features/i18n/TranslationContext";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { changePassService } from "@/services/auth/changePassword.service";
+import BackButton from "@/components/common/BackButton";
+import { Box } from "@mui/material";
 
 const getForgetPasswordSchema = (t: (key: TranslationKey) => string) =>
   yup.object({
@@ -27,6 +29,7 @@ export default function ForgetPasswordView() {
   const { t } = useTranslate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+  const router = useRouter();
 
   const searchParams = useSearchParams();
   const role = searchParams.get("role");
@@ -44,7 +47,8 @@ export default function ForgetPasswordView() {
     setLoading(true);
     setError("");
     try {
-        await changePassService.forgotPassword(data.email);
+      await changePassService.forgotPassword(data.email);
+      router.push("/resetPassword?role=" + role + "&email=" + data.email);
     } catch (e: any) {
       setError(e.message || "An error occurred");
     } finally {
@@ -54,10 +58,14 @@ export default function ForgetPasswordView() {
 
   return (
     <AuthWrapper>
+      <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 10 }}>
+        <BackButton />
+      </Box>
       <Title
         title={t("forgetPassword")}
         subtitle={t("forgetPasswordSubtitle")}
       />
+
       <Error isVisible={!!error} error={error} />
       <form
         onSubmit={handleSubmit(handleForgetPassword)}
@@ -69,7 +77,13 @@ export default function ForgetPasswordView() {
           name="email"
           control={control}
         />
-        <Button type="submit" loading={loading} disabled={loading} sx={{ mt: 3 }} fullWidth>
+        <Button
+          type="submit"
+          loading={loading}
+          disabled={loading}
+          sx={{ mt: 3 }}
+          fullWidth
+        >
           {t("forgetPassword")}
         </Button>
       </form>

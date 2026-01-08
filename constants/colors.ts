@@ -7,6 +7,7 @@ export const COLORS = {
   SHADOW: {
     DEFAULT: "rgb(79 70 229 / 0.15)",
     HOVER: "rgb(79 70 229 / 0.1)",
+    BLUE: "rgba(99, 102, 241, 0.2)",
   },
   PURPLECYAN: "linear-gradient(135deg, #c2edff 0%, #eedaff 100%)",
   TEXT_GRAY: "#6b7280",
@@ -14,4 +15,8 @@ export const COLORS = {
   PRIMARY_PURPLE: "#5e18e9",
   WHITE: "white",
   DARK: "#30263e",
+  BACKGROUND: {
+    PRIMARY: "#ffffff",
+    SECONDARY: "#f8fafc",
+  },
 };

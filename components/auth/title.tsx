@@ -2,7 +2,7 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 
-function Title({ title, subtitle }: { title: string; subtitle: string }) {
+function Title({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <Box sx={{ mb: 3 }}>
       <Typography
@@ -13,9 +13,11 @@ function Title({ title, subtitle }: { title: string; subtitle: string }) {
       >
         {title}
       </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-        {subtitle}
-      </Typography>
+      {subtitle && (
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+          {subtitle}
+        </Typography>
+      )}
     </Box>
   );
 }

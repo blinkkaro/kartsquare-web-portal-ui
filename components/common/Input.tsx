@@ -1,11 +1,13 @@
-'use client';
-import React, { ReactNode } from "react";
+"use client";
+import React, { ReactNode, useState } from "react";
 import {
   TextField,
   InputAdornment,
   TextFieldProps,
   useTheme,
+  IconButton,
 } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Controller, Control } from "react-hook-form";
 
 interface InputProps extends Omit<TextFieldProps, "name"> {
@@ -26,6 +28,22 @@ const Input: React.FC<InputProps> = ({
   ...props
 }) => {
   const theme = useTheme();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
+
+  const isPassword = props.type === "password";
+  const inputType = isPassword
+    ? showPassword
+      ? "text"
+      : "password"
+    : props.type;
 
   const defaultInputSx = {
     borderRadius: "12px",
@@ -45,6 +63,7 @@ const Input: React.FC<InputProps> = ({
         <TextField
           {...field}
           {...props}
+          type={inputType}
           fullWidth
           variant="outlined"
           error={!!error}
@@ -54,7 +73,18 @@ const Input: React.FC<InputProps> = ({
             startAdornment: startIcon ? (
               <InputAdornment position="start">{startIcon}</InputAdornment>
             ) : null,
-            endAdornment: endIcon ? (
+            endAdornment: isPassword ? (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ) : endIcon ? (
               <InputAdornment position="end">{endIcon}</InputAdornment>
             ) : null,
             sx: {

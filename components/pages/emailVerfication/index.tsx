@@ -12,6 +12,7 @@ import { Box, Typography } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import { formatTime } from "@/helper/helper";
 import SuccessModel from "@/components/common/SuccessModel";
+import BackButton from "@/components/common/BackButton";
 
 function EmailVerificationView() {
   const { t } = useTranslate();
@@ -97,6 +98,9 @@ function EmailVerificationView() {
 
   return (
     <AuthWrapper>
+      <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 10 }}>
+        <BackButton />
+      </Box>
       <Title
         title={t("email_verification")}
         subtitle={t("email_verification_subtitle")}

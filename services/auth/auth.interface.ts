@@ -1,4 +1,8 @@
-export type AppUserType = "CUSTOMER" | "SERVICE_PROVIDER" | "SUPPLIER" | "INFLUENCER";
+export type AppUserType =
+  | "CUSTOMER"
+  | "SERVICE_PROVIDER"
+  | "SUPPLIER"
+  | "INFLUENCER";
 export type Gender = "MALE" | "FEMALE" | "OTHER" | "PREFER_NOT_TO_SAY";
 
 export interface User {
@@ -43,4 +47,29 @@ export interface RegisterData {
   country: string;
   role: AppUserType;
   birth_date: string;
+}
+export interface preferences {
+  icon: string;
+  id: string;
+  preference_name: string;
+  is_active: boolean;
+}
+
+export interface Doc {
+  aadharNumber: string;
+  frontImageUrl: string;
+  backImageUrl: string;
+  profilePicUrl: string;
+  policeVerificationUrl: string;
+}
+
+export interface ImageUploadApiResponse {
+  urls: string[];
+}
+
+export interface IWorkingHour {
+  weekday: number;
+  start_time: string;
+  end_time: string;
+  is_active: boolean;
 }

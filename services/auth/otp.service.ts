@@ -14,7 +14,7 @@ class OtpService {
         { otp },
       );
 
-      if (response.status === 200) {
+      if (response.status === "success") {
         return true;
       } else {
         throw new Error(response.data.message || 'Invalid OTP');
@@ -28,7 +28,7 @@ class OtpService {
       const response = await api.post<OTPResponse>(
         API_ENDPOINTS.RESEND_OTP,
       );
-      if (response.status === 200) {
+      if (response.status === "success") {
         return true;
       } else {
         throw new Error(response.data.message || 'Failed to send otp');

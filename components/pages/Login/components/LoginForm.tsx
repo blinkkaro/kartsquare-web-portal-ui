@@ -108,7 +108,7 @@ export default function LoginForm({
 
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Link
-            href={`/forgot-password?role=${role}`}
+            href={`/forgotPassword?role=${role}`}
             variant="body2"
             underline="hover"
             sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 600 }}

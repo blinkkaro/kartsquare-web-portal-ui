@@ -5,7 +5,7 @@ class ChangePassService {
   async forgotPassword(email: string): Promise<boolean> {
     try {
       const res = await api.post(API_ENDPOINTS.FORGOT_PASSWORD, { email });
-      if (res.status !== 200) {
+      if (res.status !== "success") {
         throw new Error(res.data.message || "Failed to send reset password email.");
       }
       return true;
@@ -29,7 +29,7 @@ class ChangePassService {
         new_password,
         otp,
       });
-      if (res.status !== 200) {
+      if (res.status !== "success") {
         throw new Error(res.data.message || "Failed to reset password.");
       }
       return true;
@@ -45,7 +45,7 @@ class ChangePassService {
   async resendOTP(email: string): Promise<void> {
     try {
       const res = await api.post(API_ENDPOINTS.RESEND_OTP, { email });
-      if (res.status !== 200) {
+      if (res.status !== "success") {
         throw new Error(res.data.message || "Failed to resend OTP.");
       }
     } catch (error: any) {
@@ -63,7 +63,7 @@ class ChangePassService {
         current_password,
         new_password,
       });
-      if (res.status !== 200) {
+      if (res.status !== "success") {
         throw new Error(res.data.message || "Failed to change password.");
       }
       return true;

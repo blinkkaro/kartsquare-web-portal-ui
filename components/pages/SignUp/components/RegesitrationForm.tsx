@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Grid, MenuItem, InputAdornment, Typography, Box } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -11,8 +11,13 @@ import { countries } from "./data";
 import { AppUserType } from "@/services/auth/auth.interface";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import PersonIcon from "@mui/icons-material/PersonOutline";
+import EmailIcon from "@mui/icons-material/EmailOutlined";
+import LockIcon from "@mui/icons-material/LockOutlined";
+import CalendarIcon from "@mui/icons-material/CalendarTodayOutlined";
+import FemaleIcon from "@mui/icons-material/WomanOutlined";
+import MaleIcon from "@mui/icons-material/ManOutlined";
 import IconButton from "@mui/material/IconButton";
-import Link from "next/link";
 import { COLORS } from "@/constants/colors";
 import GoogleIcon from "@mui/icons-material/Google";
 
@@ -27,6 +32,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 }) => {
   const { t } = useTranslate();
   const [showPassword, setShowPassword] = useState(false);
+  const birthDateRef = useRef<HTMLInputElement>(null);
 
   // Calculate max date (13 years ago)
   const today = new Date();
@@ -53,10 +59,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       country_code: "+91", // Default to India code
       gender: undefined,
       country: "India",
+      birth_date: maxDate,
     },
   });
 
   const selectedCountryCode = watch("country_code");
+  const gender = watch("gender");
   const selectedCountry = countries.find(
     (c) => c.phone_code === selectedCountryCode
   );
@@ -78,7 +86,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             name="first_name"
             control={control}
             placeholder="Masruq Jaun"
-            startIcon={<i className="ri-user-line" />} // Using remixicon or similar if available, else standard icon
+            startIcon={<PersonIcon />}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
@@ -89,7 +97,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             name="last_name"
             control={control}
             placeholder="Haik"
-            startIcon={<i className="ri-user-line" />}
+            startIcon={<PersonIcon />}
           />
         </Grid>
 
@@ -102,7 +110,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             name="email"
             control={control}
             placeholder="masruqjaunhaik@mail.in"
-            startIcon={<i className="ri-mail-line" />}
+            startIcon={<EmailIcon />}
           />
         </Grid>
 
@@ -153,7 +161,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             control={control}
             type={showPassword ? "text" : "password"}
             placeholder="********"
-            startIcon={<i className="ri-lock-line" />}
+            startIcon={<LockIcon />}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -210,10 +218,16 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             name="birth_date"
             control={control}
             type="date"
+            inputRef={birthDateRef}
             InputProps={{
               inputProps: { max: maxDate },
             }}
-            startIcon={<i className="ri-calendar-line" />}
+            startIcon={
+              <CalendarIcon
+                sx={{ cursor: "pointer" }}
+                onClick={() => birthDateRef.current?.showPicker()}
+              />
+            }
           />
         </Grid>
 
@@ -245,7 +259,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 return genderOptions[selected] || selected;
               },
             }}
-            startIcon={<i className="ri-women-line" />}
+            startIcon={gender === "MALE" ? <MaleIcon /> : <FemaleIcon />}
           >
             <MenuItem value="MALE">{t("male")}</MenuItem>
             <MenuItem value="FEMALE">{t("female")}</MenuItem>
