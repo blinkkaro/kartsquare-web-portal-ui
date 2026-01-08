@@ -3,7 +3,7 @@ import AuthWrapper from "@/components/auth/authWrapper";
 import Title from "@/components/auth/title";
 import { useTranslate } from "@/hooks/useTranslate";
 import React, { useState } from "react";
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { usePreference } from "@/hooks/usePreference";
 import PreferenceCard from "./components/PreferenceCard";
 import {
@@ -18,6 +18,8 @@ import {
 import { prefranceService } from "@/services/auth/preference.service";
 import { useRouter } from "next/navigation";
 import ErrorMessage from "@/components/common/ErrorMessage";
+import { UserRegisterSteps } from "@/types/resgistrationFlow";
+import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
 
 function PreferencesView() {
   const [selectedPreferenceIds, setSelectedPreferenceIds] = useState<
@@ -28,6 +30,7 @@ function PreferencesView() {
 
   const { user } = useAppSelector((state) => state.auth);
   const { t } = useTranslate();
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
   const headerTitle =
@@ -56,8 +59,11 @@ function PreferencesView() {
       await prefranceService.addPreferenceForTheUser(
         Array.from(selectedPreferenceIds)
       );
-      // Navigate to home or dashboard after success
-      router.push("/");
+      handleRegistrationStepNavigation(
+        dispatch,
+        router,
+        UserRegisterSteps.COMPLETED
+      );
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to save preferences");
     } finally {

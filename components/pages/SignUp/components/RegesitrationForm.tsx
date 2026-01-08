@@ -301,12 +301,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           startIcon={<GoogleIcon />}
           sx={{
             bgcolor: COLORS.DARK,
-            color: "white",
+            color: COLORS.WHITE,
             textTransform: "none",
             borderRadius: "50px",
             padding: "10px 30px",
             "&:hover": {
               bgcolor: COLORS.DARK,
+              opacity: 0.9,
             },
           }}
         >

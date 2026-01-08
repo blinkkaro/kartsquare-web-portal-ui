@@ -18,6 +18,10 @@ import Button from "@/components/common/Button";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import ImageUpload from "./component/ImageUpload";
 import VerifyDocumentService from "@/services/auth/verifyDocument.service";
+import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
+import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { UserRegisterSteps } from "@/types/resgistrationFlow";
 
 interface VerifyDocumentFormInputs {
   documentNumber: string;
@@ -29,6 +33,9 @@ interface VerifyDocumentFormInputs {
 
 function VerifyDocumentsView() {
   const { t } = useTranslate();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
   const verifyDocumentService = new VerifyDocumentService();
@@ -67,7 +74,11 @@ function VerifyDocumentsView() {
           data.profilePic,
           data.policeVerification || undefined
         );
-        // Handle success
+        handleRegistrationStepNavigation(
+          dispatch,
+          router,
+          UserRegisterSteps.DOCUMENT_VERIFIED
+        );
       }
     } catch (error: any) {
       setApiError(error.message);

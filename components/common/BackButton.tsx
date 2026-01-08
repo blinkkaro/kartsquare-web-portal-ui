@@ -31,13 +31,13 @@ const BackButton: React.FC<BackButtonProps> = ({ onClick, sx }) => {
       <IconButton
         onClick={handleClick}
         sx={{
-          backgroundColor: COLORS.WHITE,
-          boxShadow: "0px 4px 12px " + COLORS.BORDER.DEFAULT, // Soft shadow
+          backgroundColor: "background.paper",
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Soft shadow
           width: "48px",
           height: "48px",
           borderRadius: "50%",
           "&:hover": {
-            backgroundColor: COLORS.WHITE + " / 50%",
+            backgroundColor: "action.hover",
           },
         }}
         aria-label="back"

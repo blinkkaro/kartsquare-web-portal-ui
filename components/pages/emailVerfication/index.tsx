@@ -13,6 +13,11 @@ import { COLORS } from "@/constants/colors";
 import { formatTime } from "@/helper/helper";
 import SuccessModel from "@/components/common/SuccessModel";
 import BackButton from "@/components/common/BackButton";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { logout, updateUser } from "@/features/ui/authSlice";
+import { useRouter } from "next/navigation";
+import { UserRegisterSteps } from "@/types/resgistrationFlow";
+import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
 
 function EmailVerificationView() {
   const { t } = useTranslate();
@@ -23,6 +28,10 @@ function EmailVerificationView() {
   const OTP_EXPIRY_KEY = "otp_expiry_timestamp";
   const [timeLeft, setTimeLeft] = useState<number>(59);
   const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
+
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const { user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     const now = Date.now();
@@ -74,8 +83,12 @@ function EmailVerificationView() {
       localStorage.setItem(OTP_EXPIRY_KEY, expiryTime.toString());
       setTimeLeft(59);
     } catch (error: any) {
-      console.log(error);
-      setError(error.response?.data?.message || "Failed to resend OTP");
+      // console.log(error);
+      setError(
+        error?.response?.data?.message ||
+          error?.message ||
+          "An unexpected error occurred"
+      );
     } finally {
       setResending(false);
     }
@@ -89,17 +102,35 @@ function EmailVerificationView() {
       localStorage.removeItem(OTP_EXPIRY_KEY);
       setOpenSuccessModal(true);
     } catch (error: any) {
-      console.log(error);
-      setError(error.response?.data?.message || "Verification failed");
+      setError(
+        error?.response?.data?.message ||
+          error?.message ||
+          "An unexpected error occurred"
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  const handleBack = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    dispatch(logout());
+    router.back();
+  };
+
+  const handleContinue = () => {
+    handleRegistrationStepNavigation(
+      dispatch,
+      router,
+      UserRegisterSteps.EMAIL_VERIFIED
+    );
+  };
+
   return (
     <AuthWrapper>
       <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 10 }}>
-        <BackButton />
+        <BackButton onClick={handleBack} />
       </Box>
       <Title
         title={t("email_verification")}
@@ -126,7 +157,7 @@ function EmailVerificationView() {
             variant="body1"
             sx={{
               fontWeight: 600,
-              color: COLORS.TEXT_DARK,
+              color: "text.primary",
             }}
           >
             {formatTime(timeLeft)}
@@ -146,7 +177,13 @@ function EmailVerificationView() {
           </Button>
         )}
       </Box>
-      <SuccessModel open={openSuccessModal} onClose={() => setOpenSuccessModal(false)} title={t("email_verification_success")} description={t("email_verification_success_description")}/>
+      <SuccessModel
+        open={openSuccessModal}
+        onClose={() => setOpenSuccessModal(false)}
+        onAction={handleContinue}
+        title={t("email_verification_success")}
+        description={t("email_verification_success_description")}
+      />
     </AuthWrapper>
   );
 }

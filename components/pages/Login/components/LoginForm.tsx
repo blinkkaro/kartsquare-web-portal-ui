@@ -2,16 +2,8 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Box,
-  TextField,
-  Typography,
-  InputAdornment,
-  IconButton,
-  Link,
-  Stack,
-  useTheme,
-} from "@mui/material";
+import { Box, Typography, IconButton, Stack, useTheme } from "@mui/material";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
   Visibility,
@@ -107,13 +99,20 @@ export default function LoginForm({
         </Box>
 
         <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <Link
-            href={`/forgotPassword?role=${role}`}
-            variant="body2"
-            underline="hover"
-            sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 600 }}
-          >
-            {t("forgot_password")}
+          <Link href={`/forgotPassword?role=${role}`}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "primary.main",
+                fontWeight: 600,
+                textDecoration: "none",
+                "&:hover": {
+                  textDecoration: "underline",
+                },
+              }}
+            >
+              {t("forgot_password")}
+            </Typography>
           </Link>
         </Box>
 
@@ -125,13 +124,14 @@ export default function LoginForm({
           variant="contained"
           startIcon={<GoogleIcon />}
           sx={{
-            bgcolor: COLORS.DARK,
-            color: "white",
+            bgcolor: theme.palette.mode === "light" ? COLORS.DARK : "grey.800",
+            color: "common.white",
             textTransform: "none",
             borderRadius: "50px",
             padding: "10px 30px",
             "&:hover": {
-              bgcolor: COLORS.DARK,
+              bgcolor:
+                theme.palette.mode === "light" ? COLORS.DARK : "grey.900",
             },
           }}
         >
@@ -142,12 +142,21 @@ export default function LoginForm({
       <Box sx={{ mt: 4, textAlign: "center" }}>
         <Typography variant="body2" color="text.secondary">
           {t("no_account")}
-          <Link
-            href={`/signUp?role=${role}`}
-            sx={{ ml: 1, fontWeight: 700, color: "text.primary" }}
-            underline="hover"
-          >
-            {t("sign_up")}
+          <Link href={`/signUp?role=${role}`}>
+            <Typography
+              component="span"
+              sx={{
+                ml: 1,
+                fontWeight: 700,
+                color: "text.primary",
+                textDecoration: "none",
+                "&:hover": {
+                  textDecoration: "underline",
+                },
+              }}
+            >
+              {t("sign_up")}
+            </Typography>
           </Link>
         </Typography>
       </Box>

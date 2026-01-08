@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import React from "react";
 import {
   Button as MuiButton,
@@ -33,8 +33,8 @@ const StyledButton = styled(MuiButton)<ButtonProps>(
         boxShadow: "0px 6px 16px rgba(94, 24, 233, 0.3)",
       },
       "&:disabled": {
-        backgroundColor: COLORS.BORDER.DEFAULT,
-        color: COLORS.TEXT_GRAY,
+        backgroundColor: theme.palette.action.disabledBackground,
+        color: theme.palette.text.disabled,
         opacity: 0.7,
       },
     }),
@@ -43,21 +43,19 @@ const StyledButton = styled(MuiButton)<ButtonProps>(
       borderColor: COLORS.PRIMARY_PURPLE,
       color: COLORS.PRIMARY_PURPLE,
       "&:hover": {
-        backgroundColor: "rgba(94, 24, 233, 0.04)",
-        borderColor: "#4b12bb",
+        backgroundColor: COLORS.PURPLE_ALPHA_04,
+        borderColor: theme.palette.primary.dark,
       },
     }),
 
     ...(variant === "text" && {
       color: COLORS.PRIMARY_PURPLE,
       "&:hover": {
-        backgroundColor: "rgba(94, 24, 233, 0.04)",
+        backgroundColor: COLORS.PURPLE_ALPHA_04,
       },
     }),
   })
 );
-
-
 
 const Button: React.FC<ButtonProps> = ({
   children,

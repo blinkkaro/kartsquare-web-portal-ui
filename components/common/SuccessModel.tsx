@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import React, { ReactNode } from "react";
 import {
   Dialog,
@@ -94,17 +94,17 @@ const SuccessModel: React.FC<SuccessModelProps> = ({
             alignItems: "center",
           }}
         >
-            <Typography
-              variant="h4"
-              sx={{
-                fontWeight: 700,
-                color: COLORS.TEXT_DARK,
-                lineHeight: 1.3,
-                fontSize: "1.8rem",
-              }}
-            >
-              {title}
-            </Typography>
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 700,
+              color: "text.primary",
+              lineHeight: 1.3,
+              fontSize: "1.8rem",
+            }}
+          >
+            {title}
+          </Typography>
           {/* Decorative Underline - Visible by default for aesthetic accent */}
           {showUnderline && (
             <Box
@@ -127,7 +127,7 @@ const SuccessModel: React.FC<SuccessModelProps> = ({
               <Typography
                 variant="body1"
                 sx={{
-                  color: COLORS.TEXT_GRAY,
+                  color: "text.secondary",
                   lineHeight: 1.5,
                   maxWidth: "90%",
                   mx: "auto",

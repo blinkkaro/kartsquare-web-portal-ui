@@ -34,22 +34,51 @@ export const authSlice = createSlice({
       state.token = token;
       state.isAuthenticated = true;
       state.register_step = register_step;
+
+      // Persist registration step and role to localStorage
+      if (typeof window !== "undefined") {
+        localStorage.setItem("register_step", register_step.toString());
+        localStorage.setItem("role", user.role);
+      }
     },
     logout: (state) => {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
       state.register_step = null;
+
+      // Clear localStorage
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("register_step");
+        localStorage.removeItem("role");
+      }
     },
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       if (state.user) {
         state.user = { ...state.user, ...action.payload };
       }
     },
+    hydrateAuth: (state) => {
+      // Restore auth state from localStorage
+      if (typeof window !== "undefined") {
+        const token = localStorage.getItem("token");
+        const registerStep = localStorage.getItem("register_step");
+        const role = localStorage.getItem("role");
+
+        if (token && registerStep && role) {
+          state.token = token;
+          state.isAuthenticated = true;
+          state.register_step = parseInt(registerStep, 10);
+          // Note: We don't restore full user object, only essential fields
+          // The user object will be fetched from API if needed
+        }
+      }
+    },
   },
 });
 
-export const { setCredentials, logout, updateUser } = authSlice.actions;
+export const { setCredentials, logout, updateUser, hydrateAuth } =
+  authSlice.actions;
 
 export const selectCurrentUser = (state: RootState) => state.auth.user;
 export const selectCurrentToken = (state: RootState) => state.auth.token;

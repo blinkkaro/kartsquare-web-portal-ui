@@ -3,7 +3,7 @@ import React from "react";
 import { Box, Typography, Switch, styled, Stack } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 
-const TimeInput = styled("input")({
+const TimeInput = styled("input")(({ theme }) => ({
   border: "1px solid transparent", // Add transparent border to maintain box model
   outline: "none",
   fontSize: "14px",
@@ -16,7 +16,7 @@ const TimeInput = styled("input")({
   background: "transparent",
   cursor: "text",
   "&:hover": {
-    border: `1px solid ${COLORS.BORDER.DEFAULT}`, // Visual feedback
+    border: `1px solid ${theme.palette.divider}`, // Visual feedback
   },
   "&:focus": {
     border: `1px solid ${COLORS.PRIMARY_PURPLE}`,
@@ -28,7 +28,7 @@ const TimeInput = styled("input")({
   "&::-webkit-calendar-picker-indicator": {
     cursor: "pointer",
   },
-});
+}));
 
 interface DayRowProps {
   day: string;
@@ -60,7 +60,8 @@ const DayRow: React.FC<DayRowProps> = ({
         alignItems: "center",
         justifyContent: "space-between",
         py: 2,
-        borderBottom: `1px solid ${COLORS.BORDER.DEFAULT}`,
+        borderBottom: "1px solid",
+        borderColor: "divider",
         "&:last-child": {
           borderBottom: "none",
         },
@@ -70,7 +71,7 @@ const DayRow: React.FC<DayRowProps> = ({
         variant="body1"
         sx={{
           fontWeight: 500,
-          color: COLORS.TEXT_GRAY,
+          color: "text.secondary",
           width: "100px",
         }}
       >
@@ -86,7 +87,7 @@ const DayRow: React.FC<DayRowProps> = ({
               onChange={(e) => onStartTimeChange(e.target.value)}
               disabled={disabled}
             />
-            <Typography variant="body2" sx={{ color: COLORS.TEXT_GRAY }}>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
               -
             </Typography>
             <TimeInput
@@ -100,7 +101,7 @@ const DayRow: React.FC<DayRowProps> = ({
           <Typography
             variant="body1"
             sx={{
-              color: COLORS.TEXT_GRAY,
+              color: "text.secondary",
               fontWeight: 500,
             }}
           >

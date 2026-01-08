@@ -120,7 +120,7 @@ const PreferenceCards: React.FC<PreferenceCardProps> = ({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "white",
+              color: "common.white",
               fontSize: "14px",
             }}
           >

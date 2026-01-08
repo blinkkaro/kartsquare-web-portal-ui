@@ -22,15 +22,19 @@ function Roles({ rolesData }: { rolesData: RolesData }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        border: `1px solid ${COLORS.BORDER.DEFAULT}`,
+        border: `1px solid`,
+        borderColor: "divider",
         borderRadius: "16px",
-        bgcolor: COLORS.WHITE,
+        bgcolor: "background.paper",
         cursor: "pointer",
         transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         height: "auto",
         minHeight: { xs: "auto", lg: "auto" },
         "&:hover": {
-          borderColor: COLORS.BORDER.HOVER,
+          borderColor:
+            theme.palette.mode === "light"
+              ? COLORS.BORDER.HOVER_LIGHT
+              : COLORS.BORDER.HOVER_DARK,
           boxShadow: `0 10px 25px -5px ${COLORS.SHADOW.HOVER}, 0 8px 10px -6px ${COLORS.SHADOW.DEFAULT}`,
           transform: "translateY(-2px)",
         },
@@ -81,7 +85,7 @@ function Roles({ rolesData }: { rolesData: RolesData }) {
             variant={isMobile ? "body2" : "h6"}
             component="span"
             sx={{
-              color: COLORS.TEXT_GRAY,
+              color: "text.secondary",
               fontWeight: 400,
               whiteSpace: "nowrap",
             }}
@@ -93,7 +97,7 @@ function Roles({ rolesData }: { rolesData: RolesData }) {
             component="span"
             sx={{
               fontWeight: 600,
-              color: COLORS.TEXT_DARK,
+              color: "text.primary",
               lineHeight: { xs: 1.2, sm: 1.6 },
             }}
           >
@@ -106,8 +110,8 @@ function Roles({ rolesData }: { rolesData: RolesData }) {
       <Box sx={{ pl: 1 }}>
         <Box
           sx={{
-            bgcolor: COLORS.PRIMARY_PURPLE,
-            color: COLORS.WHITE,
+            bgcolor: "primary.main",
+            color: "common.white",
             borderRadius: "50%",
             width: { xs: "32px", sm: "40px" },
             height: { xs: "32px", sm: "40px" },

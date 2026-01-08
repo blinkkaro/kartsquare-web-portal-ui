@@ -1,14 +1,19 @@
 "use client";
 
 import LoginForm from "./components/LoginForm";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import AuthWrapper from "@/components/auth/authWrapper";
 import { LoginFormData } from "./loginSchema";
 import { authService } from "@/services/auth/auth.service";
 import { useState } from "react";
+import { UserRegisterSteps } from "@/types/resgistrationFlow";
+import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
+import { useAppDispatch } from "@/store/hooks";
 
 export default function LoginView() {
+  const router = useRouter();
   const searchParams = useSearchParams();
+  const dispatch = useAppDispatch();
   const role = searchParams.get("role");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +28,28 @@ export default function LoginView() {
         return;
       }
       const Role = role.toString().toUpperCase();
-      await authService.login({ ...data, role: Role });
+      const response = await authService.login({ ...data, role: Role });
+
+      if (response && response.status === "success") {
+        const user = response.data.user;
+        const registerStep = user.register_step;
+
+        // If registration is complete, go to home
+        if (
+          registerStep === UserRegisterSteps.COMPLETED ||
+          registerStep === UserRegisterSteps.PREFERENCES_ADDED
+        ) {
+          router.replace("/");
+          return;
+        }
+
+        // Otherwise, redirect to the required registration step
+        handleRegistrationStepNavigation(
+          dispatch,
+          router,
+          registerStep as UserRegisterSteps
+        );
+      }
     } catch (error: any) {
       console.log(error);
       setError(

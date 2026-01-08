@@ -62,6 +62,7 @@ const Input: React.FC<InputProps> = ({
       render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}
+          value={field.value ?? ""}
           {...props}
           type={inputType}
           fullWidth

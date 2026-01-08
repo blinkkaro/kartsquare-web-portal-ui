@@ -10,10 +10,28 @@ import {
   MenuItem,
 } from "@mui/material";
 import { COLORS } from "@/constants/colors";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useRouter } from "next/navigation";
+import { UserRegisterSteps } from "@/types/resgistrationFlow";
+import { useEffect, useState } from "react";
 import { useTranslate } from "@/hooks/useTranslate";
+import { useTheme } from "@mui/material/styles";
 
 function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { t, locale, changeLanguage } = useTranslate();
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const router = useRouter();
+  const theme = useTheme();
+
+  useEffect(() => {
+    if (
+      isAuthenticated &&
+      user?.register_step === UserRegisterSteps.COMPLETED
+    ) {
+      router.replace("/");
+    }
+  }, [isAuthenticated, user, router]);
+
   const handleLanguageChange = useCallback(
     (event: SelectChangeEvent<string>) => {
       changeLanguage(event.target.value as any);
@@ -26,13 +44,18 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
       <Grid
         size={{ xs: 12, lg: 6 }}
         sx={{
-          background: COLORS.PURPLECYAN,
+          background:
+            theme.palette.mode === "light"
+              ? COLORS.PURPLECYAN
+              : COLORS.DARK_GRADIENT,
           display: { xs: "none", lg: "flex" },
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
           minHeight: "100vh",
           p: 4,
+          position: "relative",
+          transition: "background 0.3s ease-in-out",
         }}
       >
         <Box
@@ -40,13 +63,18 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: 2,
+            gap: 3,
           }}
         >
           <Image src="/logo.svg" alt="auth" width={200} height={200} priority />
           <Typography
             variant="h2"
-            sx={{ fontWeight: "bold", color: COLORS.TEXT_DARK }} // gray-800 equivalent
+            sx={{
+              fontWeight: "bold",
+              color:
+                theme.palette.mode === "light" ? "text.primary" : "#ffffff",
+              letterSpacing: "-0.02em",
+            }}
           >
             KartSquare
           </Typography>
@@ -72,7 +100,10 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
         <Box
           sx={{
             background: {
-              xs: COLORS.PURPLECYAN,
+              xs:
+                theme.palette.mode === "light"
+                  ? COLORS.PURPLECYAN
+                  : COLORS.DARK_GRADIENT,
               lg: "none",
             },
             display: "flex",
@@ -82,6 +113,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
             minHeight: "100vh",
             px: { xs: 4, lg: "10rem" },
             py: { xs: 4, lg: 2 },
+            transition: "background 0.3s ease-in-out",
           }}
         >
           {children}

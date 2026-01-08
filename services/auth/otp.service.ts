@@ -13,14 +13,15 @@ class OtpService {
         API_ENDPOINTS.VERIFY_OTP,
         { otp },
       );
-
+      console.log(response);
       if (response.status === "success") {
         return true;
       } else {
-        throw new Error(response.data.message || 'Invalid OTP');
+        throw new Error(response.message || 'Invalid OTP');
       }
     } catch (error: any) {
-      throw new Error(error.response.data.message || 'Invalid OTP');
+      console.log(error);
+      throw error;
     }
   }
   async resendOTP(): Promise<boolean> {
@@ -31,10 +32,11 @@ class OtpService {
       if (response.status === "success") {
         return true;
       } else {
-        throw new Error(response.data.message || 'Failed to send otp');
+        throw new Error(response.message || 'Failed to send otp');
       }
     } catch (error: any) {
-      throw new Error(error.response.data.message || 'Failed to send otp OTP');
+      console.log(error);
+      throw error;
     }
   }
 }

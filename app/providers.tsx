@@ -10,9 +10,15 @@ import { useMemo, useState } from "react";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { TranslationProvider } from "@/features/i18n/TranslationContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import RegistrationGuard from "@/helper/RegistrationGuard";
+
+import { useHydrateStore } from "@/hooks/useHydrateStore";
 
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
   const mode = useAppSelector((state) => state.ui.mode);
+
+  // Hydrate store from localStorage on mount
+  useHydrateStore();
 
   const theme = useMemo(() => createCustomTheme(mode), [mode]);
 
@@ -32,7 +38,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <AppRouterCacheProvider>
           <TranslationProvider>
-            <ThemeWrapper>{children}</ThemeWrapper>
+            <ThemeWrapper>
+              <RegistrationGuard>{children}</RegistrationGuard>
+            </ThemeWrapper>
           </TranslationProvider>
         </AppRouterCacheProvider>
       </QueryClientProvider>

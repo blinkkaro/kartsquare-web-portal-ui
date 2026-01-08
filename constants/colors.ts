@@ -1,22 +1,61 @@
 export const COLORS = {
+  // Primary Colors
+  PRIMARY_PURPLE: "#5e18e9",
+  PURPLE_HOVER: "#4b12bb",
+  PURPLE_ALPHA_04: "rgba(94, 24, 233, 0.04)",
+  PURPLE_ALPHA_10: "rgba(94, 24, 233, 0.1)",
+  PURPLE_ALPHA_20: "rgba(94, 24, 233, 0.2)",
+  PURPLE_ALPHA_30: "rgba(94, 24, 233, 0.3)",
+
+  // Gradient
+  PURPLECYAN: "linear-gradient(135deg, #c2edff 0%, #eedaff 100%)",
+  DARK_GRADIENT:
+    "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+
+  // Text Colors
+  TEXT: {
+    PRIMARY_LIGHT: "#1f2937",
+    PRIMARY_DARK: "#ffffff",
+    SECONDARY_LIGHT: "#6b7280",
+    SECONDARY_DARK: "#9ca3af",
+  },
+
+  // Background Colors
+  BACKGROUND: {
+    PRIMARY_LIGHT: "#ffffff",
+    PRIMARY_DARK: "#172023",
+    SECONDARY_LIGHT: "#f8fafc",
+    SECONDARY_DARK: "#1e2930",
+    PAPER_LIGHT: "#ffffff",
+    PAPER_DARK: "#1e2930",
+  },
+
+  // Border Colors
   BORDER: {
-    DEFAULT: "#e5e7eb",
-    HOVER: "#cfcfcfff",
+    DEFAULT_LIGHT: "#e5e7eb",
+    DEFAULT_DARK: "#374151",
+    HOVER_LIGHT: "#cfcfcfff",
+    HOVER_DARK: "#4b5563",
     BLUE: "#818cf8",
   },
+
+  // Shadow Colors
   SHADOW: {
     DEFAULT: "rgb(79 70 229 / 0.15)",
     HOVER: "rgb(79 70 229 / 0.1)",
     BLUE: "rgba(99, 102, 241, 0.2)",
+    LIGHT: "rgba(0, 0, 0, 0.05)",
   },
-  PURPLECYAN: "linear-gradient(135deg, #c2edff 0%, #eedaff 100%)",
-  TEXT_GRAY: "#6b7280",
-  TEXT_DARK: "#1f2937",
-  PRIMARY_PURPLE: "#5e18e9",
-  WHITE: "white",
+
+  // Utility Colors
+  WHITE: "#ffffff",
+  BLACK: "#000000",
   DARK: "#30263e",
-  BACKGROUND: {
-    PRIMARY: "#ffffff",
-    SECONDARY: "#f8fafc",
+  SUCCESS_GREEN: "#33cf4d",
+
+  // Switch Colors
+  SWITCH: {
+    TRACK_LIGHT: "#E9E9EA",
+    TRACK_DARK: "#39393D",
   },
 };

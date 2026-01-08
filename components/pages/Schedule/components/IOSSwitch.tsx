@@ -14,7 +14,7 @@ export const IOSSwitch = styled((props: any) => (
     transitionDuration: "300ms",
     "&.Mui-checked": {
       transform: "translateX(16px)",
-      color: "#fff",
+      color: COLORS.WHITE,
       "& + .MuiSwitch-track": {
         backgroundColor: COLORS.PRIMARY_PURPLE,
         opacity: 1,
@@ -25,8 +25,8 @@ export const IOSSwitch = styled((props: any) => (
       },
     },
     "&.Mui-focusVisible .MuiSwitch-thumb": {
-      color: "#33cf4d",
-      border: "6px solid #fff",
+      color: COLORS.SUCCESS_GREEN,
+      border: `6px solid ${COLORS.WHITE}`,
     },
     "&.Mui-disabled .MuiSwitch-thumb": {
       color:
@@ -45,7 +45,10 @@ export const IOSSwitch = styled((props: any) => (
   },
   "& .MuiSwitch-track": {
     borderRadius: 26 / 2,
-    backgroundColor: theme.palette.mode === "light" ? "#E9E9EA" : "#39393D",
+    backgroundColor:
+      theme.palette.mode === "light"
+        ? COLORS.SWITCH.TRACK_LIGHT
+        : COLORS.SWITCH.TRACK_DARK,
     opacity: 1,
     transition: theme.transitions.create(["background-color"], {
       duration: 500,

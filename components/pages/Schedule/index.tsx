@@ -10,6 +10,10 @@ import { COLORS } from "@/constants/colors";
 import DayRow from "./components/DayRow";
 import { IOSSwitch } from "./components/IOSSwitch";
 import AuthWrapper from "@/components/auth/authWrapper";
+import { useRouter } from "next/navigation";
+import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
+import { UserRegisterSteps } from "@/types/resgistrationFlow";
+import { useAppDispatch } from "@/store/hooks";
 
 const DAYS = [
   { name: "Sunday", value: 0 },
@@ -34,6 +38,8 @@ const ScheduleView = () => {
   const [isSameTime, setIsSameTime] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const handleToggle24By7 = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
@@ -113,6 +119,11 @@ const ScheduleView = () => {
     setError("");
     try {
       await workingHoursService.addBulkWorkingHours(schedule);
+      handleRegistrationStepNavigation(
+        dispatch,
+        router,
+        UserRegisterSteps.SCHEDULE_ADDED
+      );
     } catch (err: any) {
       setError(err.message || "Failed to save schedule");
     } finally {
@@ -129,11 +140,11 @@ const ScheduleView = () => {
 
       <Typography
         variant="h4"
-        sx={{ fontWeight: 700, color: COLORS.TEXT_DARK, mb: 1 }}
+        sx={{ fontWeight: 700, color: "text.primary", mb: 1 }}
       >
         Set Your Schedule
       </Typography>
-      <Typography variant="body1" sx={{ color: COLORS.TEXT_GRAY, mb: 4 }}>
+      <Typography variant="body1" sx={{ color: "text.secondary", mb: 4 }}>
         Define your availability for customers.
       </Typography>
 
@@ -142,11 +153,11 @@ const ScheduleView = () => {
       {/* Global Settings */}
       <Box
         sx={{
-          bgcolor: COLORS.WHITE,
+          bgcolor: "background.paper",
           borderRadius: 2,
           p: 2,
           mb: 2,
-          boxShadow: "0px 4px 20px rgba(0,0,0,0.05)",
+          boxShadow: COLORS.SHADOW.LIGHT,
         }}
       >
         <Stack spacing={2}>
@@ -157,11 +168,7 @@ const ScheduleView = () => {
               alignItems: "center",
             }}
           >
-            <Typography
-              variant="body1"
-              fontWeight={600}
-              color={COLORS.TEXT_DARK}
-            >
+            <Typography variant="body1" fontWeight={600} color="text.primary">
               Available 24/7
             </Typography>
             <IOSSwitch checked={is24By7} onChange={handleToggle24By7} />
@@ -173,11 +180,7 @@ const ScheduleView = () => {
               alignItems: "center",
             }}
           >
-            <Typography
-              variant="body1"
-              fontWeight={600}
-              color={COLORS.TEXT_DARK}
-            >
+            <Typography variant="body1" fontWeight={600} color="text.primary">
               Same time for all days
             </Typography>
             <IOSSwitch checked={isSameTime} onChange={handleToggleSameTime} />
@@ -188,7 +191,7 @@ const ScheduleView = () => {
       {/* Days List */}
       <Box
         sx={{
-          bgcolor: COLORS.WHITE,
+          bgcolor: "background.paper",
           borderRadius: 2,
           px: 2,
           pt: 1,

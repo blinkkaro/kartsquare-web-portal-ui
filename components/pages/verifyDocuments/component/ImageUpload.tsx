@@ -25,11 +25,13 @@ const UploadCard = styled(Box, {
   shouldForwardProp: (prop) => prop !== "isDragActive",
 })<{ isDragActive?: boolean }>(({ theme, isDragActive }) => ({
   border: `1px solid ${
-    isDragActive ? COLORS.PRIMARY_PURPLE : COLORS.BORDER.DEFAULT
+    isDragActive ? COLORS.PRIMARY_PURPLE : theme.palette.divider
   }`,
   borderRadius: "16px",
   padding: theme.spacing(3),
-  backgroundColor: isDragActive ? "rgba(94, 24, 233, 0.04)" : COLORS.WHITE,
+  backgroundColor: isDragActive
+    ? COLORS.PURPLE_ALPHA_04
+    : theme.palette.background.paper,
   display: "flex",
   flexDirection: "column", // Changed to column
   alignItems: "center", // Center items
@@ -50,7 +52,7 @@ const IconContainer = styled(Box)(({ theme }) => ({
   width: "56px",
   height: "56px",
   borderRadius: "50%", // Circle look
-  backgroundColor: "rgba(94, 24, 233, 0.1)",
+  backgroundColor: COLORS.PURPLE_ALPHA_10,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -227,8 +229,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               color="primary"
               onClick={startCamera}
               sx={{
-                bgcolor: "rgba(94, 24, 233, 0.1)",
-                "&:hover": { bgcolor: "rgba(94, 24, 233, 0.2)" },
+                bgcolor: COLORS.PURPLE_ALPHA_10,
+                "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_20 },
               }}
             >
               <CameraIcon />
@@ -241,7 +243,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             position: "relative",
             width: "100%",
             textAlign: "center",
-            border: `1px solid ${COLORS.BORDER.DEFAULT}`,
+            border: `1px solid`,
+            borderColor: "divider",
             borderRadius: "16px",
             p: 2,
           }}
@@ -287,7 +290,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             transform: "translate(-50%, -50%)",
             width: "100%",
             maxWidth: 600,
-            bgcolor: "black",
+            bgcolor: COLORS.BLACK,
             boxShadow: 24,
             p: 0,
             height: { xs: "100%", sm: "auto" },
@@ -320,18 +323,21 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              bgcolor: "black",
+              bgcolor: COLORS.BLACK,
             }}
           >
-            <IconButton onClick={stopCamera} sx={{ color: "white" }}>
+            <IconButton onClick={stopCamera} sx={{ color: COLORS.WHITE }}>
               <CloseIcon />
             </IconButton>
 
-            <IconButton onClick={capturePhoto} sx={{ color: "white", p: 0 }}>
+            <IconButton
+              onClick={capturePhoto}
+              sx={{ color: COLORS.WHITE, p: 0 }}
+            >
               <RadioButtonChecked sx={{ fontSize: 64, color: COLORS.WHITE }} />
             </IconButton>
 
-            <IconButton onClick={toggleCamera} sx={{ color: "white" }}>
+            <IconButton onClick={toggleCamera} sx={{ color: COLORS.WHITE }}>
               <FlipCameraIcon />
             </IconButton>
           </Box>

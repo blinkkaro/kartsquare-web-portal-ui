@@ -9,15 +9,15 @@ const StyledInput = styled("input")(({ theme }) => ({
   width: "5rem",
   height: "4rem",
   borderRadius: "45%",
-  border: `1px solid ${COLORS.BORDER.DEFAULT}`,
+  border: `1px solid ${theme.palette.divider}`,
   textAlign: "center",
   fontSize: "1.25rem",
   fontWeight: 600,
-  color: COLORS.TEXT_DARK,
-  backgroundColor: COLORS.WHITE,
+  color: theme.palette.text.primary,
+  backgroundColor: theme.palette.background.paper,
   outline: "none",
   transition: "all 0.2s ease-in-out",
-  boxShadow:`0px 4px 8px ${COLORS.SHADOW.DEFAULT}`,
+  boxShadow: `0px 4px 8px ${COLORS.SHADOW.DEFAULT}`,
   "&:focus": {
     borderColor: COLORS.BORDER.BLUE,
     boxShadow: `0px 4px 8px ${COLORS.SHADOW.DEFAULT}`,
@@ -25,11 +25,11 @@ const StyledInput = styled("input")(({ theme }) => ({
   },
   // Hide number spinners
   "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-    "-webkit-appearance": "none",
+    WebkitAppearance: "none",
     margin: 0,
   },
   "&[type=number]": {
-    "-moz-appearance": "textfield",
+    MozAppearance: "textfield",
   },
 }));
 
@@ -38,10 +38,7 @@ interface OtpInputProps {
   onChange: (otp: string) => void;
 }
 
-function OtpInput({
-  length = OTP_LENGTH,
-  onChange,
-}: OtpInputProps) {
+function OtpInput({ length = OTP_LENGTH, onChange }: OtpInputProps) {
   const [otp, setOtp] = useState<string[]>(new Array(length).fill(""));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 

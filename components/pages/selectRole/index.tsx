@@ -21,7 +21,10 @@ function SelectRole() {
         }}
       >
         <Image src="/logo.svg" alt="auth" width={150} height={150} priority />
-        <Typography variant="h4" sx={{ fontWeight: 500, color: COLORS.TEXT_DARK }}>
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: 500, color: "text.primary" }}
+        >
           KartSquare
         </Typography>
       </Box>
