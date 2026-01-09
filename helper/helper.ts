@@ -14,3 +14,17 @@ export const formatTo12Hour = (time24: string): string => {
   const hours12 = hours % 12 || 12;
   return `${hours12}:${minutes.toString().padStart(2, "0")} ${period}`;
 };
+
+export const formatDateToString = (date: Date) => {
+  const time = date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+  const dateValue = date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+  return `${dateValue}, ${time}`;
+};

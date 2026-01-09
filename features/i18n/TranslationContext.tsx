@@ -99,7 +99,11 @@ export type TranslationKey =
   | "scheduleSubtitle"
   | "alreadyHaveAnAccount"
   | "resend_otp"
-  | "verify";
+  | "verify"
+  | "privacyPolicytitle"
+  | "termsConditionsTitle"
+  | "lastUpdatedAt"
+  | "something_went_wrong";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

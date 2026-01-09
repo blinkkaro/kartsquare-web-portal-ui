@@ -91,4 +91,8 @@ export const english = {
   alreadyHaveAnAccount: "Already have an account?",
   resend_otp: "Resend OTP",
   verify: "Verify",
+  privacyPolicytitle: "Privacy Policy",
+  termsConditionsTitle: "Terms & Conditions",
+  lastUpdatedAt: "Last Updated At",
+  something_went_wrong: "Something went wrong",
 };
