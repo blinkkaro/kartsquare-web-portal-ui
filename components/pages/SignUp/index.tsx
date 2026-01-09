@@ -43,6 +43,7 @@ function SignUpView() {
           justifyContent: "flex-end",
           alignItems: "center",
           gap: 1,
+          mb: { xs: 2, sm: 3 },
         }}
       >
         <Link
@@ -54,6 +55,9 @@ function SignUpView() {
             fontWeight: 700,
             borderBottom: "1px solid",
           }}
+          sx={{
+            fontSize: { xs: "0.875rem", sm: "1rem" },
+          }}
         >
           {t("skip")}
         </Link>
@@ -63,15 +67,22 @@ function SignUpView() {
       <RegistrationForm onSubmit={OnSubmit} loading={loading} />
       <Box
         sx={{
-          mt: 2,
+          mt: { xs: 3, sm: 4 },
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           gap: 1,
+          flexWrap: "wrap",
         }}
       >
-        <Typography variant="body2" color="textSecondary">
-          Already have an account?
+        <Typography
+          variant="body2"
+          color="textSecondary"
+          sx={{
+            fontSize: { lg: "0.875rem", xl: "1rem" },
+          }}
+        >
+          {t("alreadyHaveAnAccount")}
         </Typography>
         <Link
           component={NextLink}
@@ -82,8 +93,11 @@ function SignUpView() {
             fontWeight: 700,
             borderBottom: "1px solid",
           }}
+          sx={{
+            fontSize: { lg: "0.875rem", xl: "1rem" },
+          }}
         >
-          Login
+          {t("login")}
         </Link>
       </Box>
     </AuthWrapper>

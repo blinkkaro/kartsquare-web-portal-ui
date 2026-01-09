@@ -88,4 +88,5 @@ export const english = {
   profile_pic_required: "Profile picture is required",
   schedule: "Set your Schedule",
   scheduleSubtitle: "Define your availability for customers.",
+  alreadyHaveAnAccount: "Already have an account?",
 };

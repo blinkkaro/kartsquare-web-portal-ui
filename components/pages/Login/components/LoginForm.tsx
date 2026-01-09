@@ -59,11 +59,23 @@ export default function LoginForm({
       onSubmit={handleSubmit(onSubmit)}
       sx={{ width: "100%" }}
     >
-      <Title title={t("welcome_back")} subtitle={t("login_subtitle")} />
+      <Box sx={{ mb: { xs: 2, sm: 3, md: 4, lg: 5, xl: 10 } }}>
+        <Title title={t("welcome_back")} subtitle={t("login_subtitle")} />
+      </Box>
       <ErrorMessage isVisible={!!error} error={error!} />
-      <Stack spacing={3}>
+      <Stack spacing={{ xs: 2, sm: 3, lg: 2, xl: 5 }}>
         <Box>
-          <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              mb: 1,
+              fontWeight: 600,
+              fontSize: {
+                lg: "0.875rem",
+                xl: "1rem",
+              },
+            }}
+          >
             {t("email_address")}
           </Typography>
           <Input
@@ -76,7 +88,17 @@ export default function LoginForm({
         </Box>
 
         <Box>
-          <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              mb: 1,
+              fontWeight: 600,
+              fontSize: {
+                lg: "0.875rem",
+                xl: "1rem",
+              },
+            }}
+          >
             {t("password")}
           </Typography>
           <Input
@@ -106,6 +128,7 @@ export default function LoginForm({
                 color: "primary.main",
                 fontWeight: 600,
                 textDecoration: "none",
+                fontSize: { lg: "0.875rem", xl: "1rem" },
                 "&:hover": {
                   textDecoration: "underline",
                 },
@@ -128,7 +151,6 @@ export default function LoginForm({
             color: "common.white",
             textTransform: "none",
             borderRadius: "50px",
-            padding: "10px 30px",
             "&:hover": {
               bgcolor:
                 theme.palette.mode === "light" ? COLORS.DARK : "grey.900",
@@ -139,8 +161,12 @@ export default function LoginForm({
         </Button>
       </Stack>
 
-      <Box sx={{ mt: 4, textAlign: "center" }}>
-        <Typography variant="body2" color="text.secondary">
+      <Box sx={{ mt: { xs: 3, sm: 4 }, textAlign: "center" }}>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ fontSize: { lg: "0.875rem", xl: "1rem" } }}
+        >
           {t("no_account")}
           <Link href={`/signUp?role=${role}`}>
             <Typography
@@ -150,6 +176,7 @@ export default function LoginForm({
                 fontWeight: 700,
                 color: "text.primary",
                 textDecoration: "none",
+                fontSize: { lg: "0.875rem", xl: "1rem" },
                 "&:hover": {
                   textDecoration: "underline",
                 },

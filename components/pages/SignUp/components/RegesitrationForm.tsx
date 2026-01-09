@@ -74,12 +74,19 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       component="form"
       onSubmit={handleSubmit(onSubmit)}
       noValidate
-      sx={{ mt: 1 }}
+      sx={{ mt: { xs: 2, sm: 3 } }}
     >
       <Grid container spacing={2}>
         {/* First Name & Last Name */}
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              mb: 1,
+              fontWeight: 500,
+              fontSize: { lg: "0.875rem", xl: "1rem" },
+            }}
+          >
             {t("first_name")}*
           </Typography>
           <Input
@@ -90,7 +97,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              mb: 1,
+              fontWeight: 500,
+              fontSize: { lg: "0.875rem", xl: "1rem" },
+            }}
+          >
             {t("last_name")}*
           </Typography>
           <Input
@@ -103,7 +117,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
         {/* Email */}
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              mb: 1,
+              fontWeight: 500,
+              fontSize: { lg: "0.875rem", xl: "1rem" },
+            }}
+          >
             {t("email_address")}*
           </Typography>
           <Input
@@ -116,12 +137,23 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
         {/* Phone Number */}
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              mb: 1,
+              fontWeight: 500,
+              fontSize: { lg: "0.875rem", xl: "1rem" },
+            }}
+          >
             {t("phone_number")}*
           </Typography>
           <Box sx={{ display: "flex", gap: 1 }}>
             {/* Country Code Selector */}
-            <Box sx={{ minWidth: 100 }}>
+            <Box
+              sx={{
+                width: { sm: "60px", lg: "75px", md: "85px" },
+              }}
+            >
               <Input
                 name="country_code"
                 control={control}
@@ -141,7 +173,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 ))}
               </Input>
             </Box>
-            <Box sx={{ flexGrow: 1 }}>
+            <Box sx={{ flex: 1 }}>
               <Input
                 name="phone_number"
                 control={control}
@@ -153,7 +185,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
         {/* Password */}
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              mb: 1,
+              fontWeight: 500,
+              fontSize: { lg: "0.875rem", xl: "1rem" },
+            }}
+          >
             {t("password")}*
           </Typography>
           <Input
@@ -180,7 +219,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
         {/* Country */}
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              mb: 1,
+              fontWeight: 500,
+              fontSize: { lg: "0.875rem", xl: "1rem" },
+            }}
+          >
             {t("country")}*
           </Typography>
           <Input
@@ -211,8 +257,15 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
         {/* Birth Date */}
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-            {t("birth_date")}
+          <Typography
+            variant="body2"
+            sx={{
+              mb: 1,
+              fontWeight: 500,
+              fontSize: { lg: "0.875rem", xl: "1rem" },
+            }}
+          >
+            {t("birth_date")}*
           </Typography>
           <Input
             name="birth_date"
@@ -233,20 +286,27 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
         {/* Gender */}
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              mb: 1,
+              fontWeight: 500,
+              fontSize: { lg: "0.875rem", xl: "1rem" },
+            }}
+          >
             {t("gender")}
           </Typography>
           <Input
             name="gender"
             control={control}
-            select // Keep select prop
+            select 
             SelectProps={{
               displayEmpty: true,
               renderValue: (selected: any) => {
                 if (!selected) {
                   return (
                     <Typography color="textSecondary">
-                      {t("select_gender")}
+                      {t("select_gender")}*
                     </Typography>
                   );
                 }
@@ -273,7 +333,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       <Typography
         variant="body1"
         color="textSecondary"
-        sx={{ mt: 1, display: "block", textAlign: "center" }}
+        sx={{
+          mt: { xs: 2, sm: 3 },
+          display: "block",
+          textAlign: "center",
+          fontSize: { lg: "0.75rem", xl: "0.875rem" },
+        }}
       >
         {t("by_signup_to_accept")}{" "}
         <span style={{ textDecoration: "underline", fontWeight: 600 }}>
@@ -285,14 +350,23 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         </span>
       </Typography>
 
-      <Box sx={{ mt: 4, display: "flex", gap: 2, flexDirection: "column" }}>
+      <Box
+        sx={{
+          mt: { xs: 3, sm: 4 },
+          display: "flex",
+          gap: 2,
+          flexDirection: "column",
+        }}
+      >
         <Button
           fullWidth
           size="large"
           type="submit"
           isLoading={loading}
           variant="contained"
-          sx={{ borderRadius: "50px", height: "50px" }}
+          sx={{
+            borderRadius: "50px",
+          }}
         >
           {t("signup")}
         </Button>
@@ -304,7 +378,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             color: COLORS.WHITE,
             textTransform: "none",
             borderRadius: "50px",
-            padding: "10px 30px",
             "&:hover": {
               bgcolor: COLORS.DARK,
               opacity: 0.9,

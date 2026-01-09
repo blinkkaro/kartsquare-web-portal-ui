@@ -17,19 +17,20 @@ function Roles({ rolesData }: { rolesData: RolesData }) {
   return (
     <Box
       sx={{
-        width: "100%",
-        padding: { xs: "1rem", sm: "1.5rem" },
+        padding: { xs: "0.875rem", sm: "1.25rem", md: "1.5rem" },
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         border: `1px solid`,
         borderColor: "divider",
-        borderRadius: "16px",
+        borderRadius: { xs: "12px", sm: "14px", md: "16px" },
         bgcolor: "background.paper",
         cursor: "pointer",
         transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         height: "auto",
         minHeight: { xs: "auto", lg: "auto" },
+        minWidth: { xs: "auto", lg: "30rem" },
+        width: "100%",
         "&:hover": {
           borderColor:
             theme.palette.mode === "light"
@@ -44,7 +45,7 @@ function Roles({ rolesData }: { rolesData: RolesData }) {
         sx={{
           display: "flex",
           alignItems: "center",
-          gap: { xs: "0.75rem", sm: "1.25rem" },
+          gap: { xs: "0.75rem", sm: "1rem", md: "1.25rem" },
         }}
       >
         {/* Icon Container */}
@@ -55,9 +56,9 @@ function Roles({ rolesData }: { rolesData: RolesData }) {
             justifyContent: "center",
             background: COLORS.PURPLECYAN,
             borderRadius: "50%",
-            width: { xs: "48px", sm: "56px" },
-            height: { xs: "48px", sm: "56px" },
-            padding: "12px",
+            width: { xs: "44px", sm: "52px", md: "56px" },
+            height: { xs: "44px", sm: "52px", md: "56px" },
+            padding: { xs: "10px", sm: "11px", md: "12px" },
             boxShadow: `inset 0 2px 4px 0 ${COLORS.SHADOW.DEFAULT}`,
             flexShrink: 0,
           }}
@@ -65,9 +66,13 @@ function Roles({ rolesData }: { rolesData: RolesData }) {
           <Image
             src={`/icons/${rolesData.icon}.svg`}
             alt={rolesData.name}
-            width={32}
-            height={32}
-            style={{ width: "100%", height: "auto" }}
+            width={56}
+            height={56}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+            }}
           />
         </Box>
 
@@ -76,7 +81,7 @@ function Roles({ rolesData }: { rolesData: RolesData }) {
           sx={{
             display: "flex",
             flexDirection: { xs: "column", sm: "row" },
-            gap: { xs: "0", sm: "0.3rem" },
+            gap: { xs: "0.1rem", sm: "0.3rem", md: "0.4rem" },
             alignItems: { xs: "flex-start", sm: "center" },
             justifyContent: "center",
           }}
@@ -87,6 +92,7 @@ function Roles({ rolesData }: { rolesData: RolesData }) {
             sx={{
               color: "text.secondary",
               fontWeight: 400,
+              fontSize: { xs: "0.813rem", sm: "0.938rem", md: "1.063rem" },
               whiteSpace: "nowrap",
             }}
           >
@@ -98,7 +104,9 @@ function Roles({ rolesData }: { rolesData: RolesData }) {
             sx={{
               fontWeight: 600,
               color: "text.primary",
-              lineHeight: { xs: 1.2, sm: 1.6 },
+              fontSize: { xs: "0.938rem", sm: "1.063rem", md: "1.188rem" },
+              lineHeight: { xs: 1.2, sm: 1.4, md: 1.6 },
+              whiteSpace: "nowrap",
             }}
           >
             {t(rolesData.name as TranslationKey)}
@@ -107,21 +115,27 @@ function Roles({ rolesData }: { rolesData: RolesData }) {
       </Box>
 
       {/* Arrow Button */}
-      <Box sx={{ pl: 1 }}>
+      <Box sx={{ pl: { xs: "0.5rem", sm: "0.75rem", md: "1rem" } }}>
         <Box
           sx={{
             bgcolor: "primary.main",
             color: "common.white",
             borderRadius: "50%",
-            width: { xs: "32px", sm: "40px" },
-            height: { xs: "32px", sm: "40px" },
+            width: { xs: "30px", sm: "36px", md: "40px" },
+            height: { xs: "30px", sm: "36px", md: "40px" },
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             transition: "all 0.3s ease",
+            flexShrink: 0,
           }}
         >
-          <ChevronRightIcon sx={{ fontSize: { xs: "1.2rem", sm: "1.5rem" } }} />
+          <ChevronRightIcon
+            sx={{
+              fontSize: { xs: "1.125rem", sm: "1.375rem", md: "1.5rem" },
+              transition: "transform 0.3s ease",
+            }}
+          />
         </Box>
       </Box>
     </Box>

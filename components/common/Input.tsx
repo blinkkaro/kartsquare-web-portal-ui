@@ -53,6 +53,15 @@ const Input: React.FC<InputProps> = ({
       WebkitTextFillColor: theme.palette.text.primary,
       caretColor: theme.palette.text.primary,
     },
+    "& .MuiInputBase-input": {
+      padding: "10px 14px",
+      [theme.breakpoints.up("lg")]: {
+        fontSize: "0.875rem",
+      },
+      [theme.breakpoints.up("xl")]: {
+        fontSize: "1rem",
+      },
+    },
   };
 
   return (
@@ -72,7 +81,9 @@ const Input: React.FC<InputProps> = ({
           InputProps={{
             ...InputProps,
             startAdornment: startIcon ? (
-              <InputAdornment position="start">{startIcon}</InputAdornment>
+              <InputAdornment position="start" sx={{ mr: -0.5 }}>
+                {startIcon}
+              </InputAdornment>
             ) : null,
             endAdornment: isPassword ? (
               <InputAdornment position="end">

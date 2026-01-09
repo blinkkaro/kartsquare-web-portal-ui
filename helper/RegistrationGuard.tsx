@@ -10,6 +10,15 @@ import {
 } from "@/types/resgistrationFlow";
 import { AppUserType } from "@/services/auth/auth.interface";
 
+// 1. Move static constants outside the component to avoid recreation on re-renders
+const RESTRICTED_AUTH_PATHS = [
+  "/login",
+  "/signUp",
+  "/selectRole",
+  "/forgotPassword",
+  "/resetPassword",
+];
+
 export default function RegistrationGuard({
   children,
 }: {
@@ -17,125 +26,92 @@ export default function RegistrationGuard({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+
+  // 2. State to handle "checking" status to prevent content flash
+  const [isChecking, setIsChecking] = useState(true);
+
   const { user, isAuthenticated: isAuthRedux } = useAppSelector(
     (state) => state.auth
   );
 
-  // Safely access localStorage
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
-  const isAuthenticated: boolean = !!token || isAuthRedux;
-
-  // Get registration step and role from localStorage as fallback
-  const registerStepFromStorage =
-    typeof window !== "undefined"
-      ? localStorage.getItem("register_step")
-      : null;
-  const roleFromStorage =
-    typeof window !== "undefined" ? localStorage.getItem("role") : null;
-
   useEffect(() => {
-    // List of paths restricted for authenticated users
-    const restrictedPaths = [
-      "/login",
-      "/signUp",
-      "/selectRole",
-      "/forgotPassword",
-      "/resetPassword",
-    ];
+    // 3. All logic and localStorage access happens safely inside useEffect
+    const checkAccess = () => {
+      // Safely access storage here (guaranteed client-side)
+      const token = localStorage.getItem("token");
+      const isAuthenticated = !!token || isAuthRedux;
 
-    const isRestrictedPath = restrictedPaths.some((path) =>
-      pathname.startsWith(path)
-    );
+      const isRestrictedPath = RESTRICTED_AUTH_PATHS.some((path) =>
+        pathname.startsWith(path)
+      );
 
-    // PRIORITY 1: Block ALL authenticated users from restricted auth pages
-    // This ensures fully registered users cannot access login/signup even by manual URL change
-    if (isAuthenticated && isRestrictedPath) {
-      router.replace("/");
-      return;
-    }
+      // --- SCENARIO 1: Authenticated user trying to access Auth pages ---
+      if (isAuthenticated && isRestrictedPath) {
+        router.replace("/");
+        return;
+      }
 
-    // If not authenticated, allow normal access
-    if (!isAuthenticated) {
-      return;
-    }
+      // --- SCENARIO 2: Unauthenticated user ---
+      if (!isAuthenticated) {
+        // If they are on a public page (or auth page), let them stay.
+        // If you have protected routes that REQUIRE login, add that logic here.
+        setIsChecking(false);
+        return;
+      }
 
-    // Get registration step and role (from user object or localStorage)
-    const currentRegisterStep =
-      user?.register_step ??
-      (registerStepFromStorage ? parseInt(registerStepFromStorage, 10) : null);
-    const currentRole = (user?.role ?? roleFromStorage) as AppUserType | null;
+      // --- SCENARIO 3: Authenticated but Incomplete Registration ---
 
-    // If we don't have registration step or role, allow access (will be handled by API)
-    if (!currentRegisterStep || !currentRole) {
-      return;
-    }
+      // Get data with fallbacks
+      const registerStepFromStorage = localStorage.getItem("register_step");
+      const roleFromStorage = localStorage.getItem("role");
 
-    // PRIORITY 2: If registration is complete, allow free navigation (except restricted paths handled above)
-    if (
-      currentRegisterStep === UserRegisterSteps.COMPLETED ||
-      currentRegisterStep === UserRegisterSteps.PREFERENCES_ADDED
-    ) {
-      return;
-    }
+      const currentRegisterStep =
+        user?.register_step ??
+        (registerStepFromStorage
+          ? parseInt(registerStepFromStorage, 10)
+          : null);
 
-    // PRIORITY 3: Block home page access for users with incomplete registration
-    // This prevents URL manipulation to bypass registration flow
-    if (pathname === "/") {
+      const currentRole = (user?.role ?? roleFromStorage) as AppUserType | null;
+
+      // If data is missing, we assume API/Auth slice is still loading or valid, let them pass
+      if (!currentRegisterStep || !currentRole) {
+        setIsChecking(false);
+        return;
+      }
+
+      // If registration is fully complete, allow access
+      if (
+        currentRegisterStep === UserRegisterSteps.COMPLETED ||
+        currentRegisterStep === UserRegisterSteps.PREFERENCES_ADDED
+      ) {
+        setIsChecking(false);
+        return;
+      }
+
+      // Determine where they SHOULD be
       const roleMap = registrationStepMap[currentRole];
-
       if (roleMap) {
         const requiredScreen =
           roleMap[currentRegisterStep as UserRegisterSteps];
         const requiredPath = getPathForScreen(requiredScreen);
 
-        if (requiredPath) {
+        // If a required path exists and we aren't there, redirect
+        if (requiredPath && pathname !== requiredPath) {
           router.replace(requiredPath);
           return;
         }
       }
-    }
 
-    // PRIORITY 4: Handle incomplete registration - redirect to required step
-    const roleMap = registrationStepMap[currentRole];
+      // If we made it here, the user is allowed to see the current page
+      setIsChecking(false);
+    };
 
-    if (!roleMap) {
-      return;
-    }
+    checkAccess();
+  }, [isAuthRedux, pathname, router, user]);
 
-    const requiredScreen = roleMap[currentRegisterStep as UserRegisterSteps];
-
-    if (requiredScreen) {
-      const requiredPath = getPathForScreen(requiredScreen);
-
-      // Prevent infinite redirect if we are already on the required path
-      if (requiredPath && pathname !== requiredPath) {
-        router.replace(requiredPath);
-      }
-    }
-  }, [
-    isAuthenticated,
-    user,
-    pathname,
-    router,
-    registerStepFromStorage,
-    roleFromStorage,
-  ]);
-
-  // Prevent flashing of protected content
-  const restrictedPaths = [
-    "/login",
-    "/signUp",
-    "/selectRole",
-    "/forgotPassword",
-    "/resetPassword",
-  ];
-  const isRestrictedPath = restrictedPaths.some((path) =>
-    pathname.startsWith(path)
-  );
-
-  if (isAuthenticated && isRestrictedPath) {
-    return null;
+  // 4. Show nothing (or a spinner) while we are verifying where the user belongs
+  if (isChecking) {
+    return null; // Or return <LoadingSpinner />
   }
 
   return <>{children}</>;

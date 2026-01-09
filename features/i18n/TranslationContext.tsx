@@ -96,7 +96,8 @@ export type TranslationKey =
   | "back_image_required"
   | "profile_pic_required"
   | "schedule"
-  | "scheduleSubtitle";
+  | "scheduleSubtitle"
+  | "alreadyHaveAnAccount";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
