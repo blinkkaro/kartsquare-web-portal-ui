@@ -28,20 +28,30 @@ const UploadCard = styled(Box, {
     isDragActive ? COLORS.PRIMARY_PURPLE : theme.palette.divider
   }`,
   borderRadius: "16px",
-  padding: theme.spacing(3),
+  padding: theme.spacing(1.5), // Reduced padding
+  [theme.breakpoints.up("sm")]: {
+    padding: theme.spacing(3),
+  },
   backgroundColor: isDragActive
     ? COLORS.PURPLE_ALPHA_04
     : theme.palette.background.paper,
   display: "flex",
-  flexDirection: "column", // Changed to column
-  alignItems: "center", // Center items
+  flexDirection: "column",
+  alignItems: "center",
   justifyContent: "center",
-  gap: theme.spacing(2),
+  gap: theme.spacing(1), // Reduced gap
+  [theme.breakpoints.up("sm")]: {
+    gap: theme.spacing(2),
+  },
   transition: "all 0.2s",
   cursor: "pointer",
-  height: "100%", // Full height
-  minHeight: "220px", // Ensure minimum height
-  textAlign: "center", // Center text
+  height: "auto", // Changed from 100%
+  flexGrow: 1, // Let it fill available space
+  minHeight: "150px", // Reduced min height
+  [theme.breakpoints.up("sm")]: {
+    minHeight: "220px",
+  },
+  textAlign: "center",
   "&:hover": {
     borderColor: COLORS.PRIMARY_PURPLE,
     boxShadow: COLORS.SHADOW.DEFAULT,
@@ -49,15 +59,28 @@ const UploadCard = styled(Box, {
 }));
 
 const IconContainer = styled(Box)(({ theme }) => ({
-  width: "56px",
-  height: "56px",
-  borderRadius: "50%", // Circle look
+  width: "40px", // Smaller icon container
+  height: "40px",
+  [theme.breakpoints.up("sm")]: {
+    width: "56px",
+    height: "56px",
+  },
+  borderRadius: "50%",
   backgroundColor: COLORS.PURPLE_ALPHA_10,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   color: COLORS.PRIMARY_PURPLE,
-  marginBottom: theme.spacing(1),
+  marginBottom: theme.spacing(0.5),
+  [theme.breakpoints.up("sm")]: {
+    marginBottom: theme.spacing(1),
+  },
+  "& svg": {
+    fontSize: "20px",
+    [theme.breakpoints.up("sm")]: {
+      fontSize: "24px",
+    },
+  },
 }));
 
 const PreviewImage = styled("img")({
@@ -181,7 +204,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   };
 
   return (
-    <Box sx={{ mb: 0, height: "100%" }}>
+    <Box
+      sx={{ mb: 0, height: "100%", display: "flex", flexDirection: "column" }}
+    >
       {!previewUrl ? (
         <UploadCard
           isDragActive={isDragActive}
@@ -200,20 +225,34 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
           <IconContainer>{icon || <CloudUploadIcon />}</IconContainer>
 
-          <Box sx={{ mb: 1 }}>
-            <Typography variant="subtitle1" fontWeight={600}>
-              Drag & drop / {label}
+          <Box sx={{ mb: 0.5 }}>
+            <Typography
+              variant="subtitle2"
+              fontWeight={600}
+              sx={{
+                fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                lineHeight: 1.2,
+              }}
+            >
+              {label}
             </Typography>
             <Typography
               variant="caption"
               color="text.secondary"
-              display="block"
+              sx={{ display: { xs: "none", sm: "block" } }}
             >
               {description}
             </Typography>
           </Box>
 
-          <Box sx={{ display: "flex", gap: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              flexDirection: { xs: "column", sm: "row" },
+              width: "100%",
+            }}
+          >
             <Button
               variant="contained"
               size="small"
@@ -221,19 +260,27 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 e.stopPropagation();
                 fileInputRef.current?.click();
               }}
-              sx={{ minWidth: "100px" }}
+              sx={{
+                fontSize: { xs: "0.65rem", sm: "0.8125rem" },
+                minWidth: { xs: "auto", sm: "100px" },
+                width: "100%",
+                padding: { xs: "4px 8px", sm: "6px 16px" },
+              }}
             >
               Upload
             </Button>
             <IconButton
               color="primary"
+              size="small"
               onClick={startCamera}
               sx={{
                 bgcolor: COLORS.PURPLE_ALPHA_10,
                 "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_20 },
+                width: { xs: "100%", sm: "auto" },
+                borderRadius: { xs: "4px", sm: "50%" },
               }}
             >
-              <CameraIcon />
+              <CameraIcon fontSize="small" />
             </IconButton>
           </Box>
         </UploadCard>
@@ -247,6 +294,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             borderColor: "divider",
             borderRadius: "16px",
             p: 2,
+            flexGrow: 1, // Let preview fill available space
           }}
         >
           <Box

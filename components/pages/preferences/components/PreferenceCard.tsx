@@ -90,7 +90,7 @@ const PreferenceCards: React.FC<PreferenceCardProps> = ({
     >
       <Box
         sx={{
-          fontSize: "40px",
+          fontSize: { xs: "2rem", lg: "3rem" },
           mb: 2,
           transition: "transform 0.3s ease",
           transform: isSelected ? "scale(1.1)" : "scale(1)",
@@ -99,11 +99,11 @@ const PreferenceCards: React.FC<PreferenceCardProps> = ({
         {iconMap[iconName]?.icon || iconMap["default"].icon}
       </Box>
       <Typography
-        variant="subtitle1"
         sx={{
           fontWeight: 600,
           textAlign: "center",
           color: isSelected ? "text.primary" : "text.secondary",
+          fontSize: { xl: "1rem", lg: "0.875rem" },
         }}
       >
         {title}

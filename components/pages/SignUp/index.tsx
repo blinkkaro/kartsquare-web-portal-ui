@@ -29,8 +29,7 @@ function SignUpView() {
       // Redirect to email verification immediately after successful signup
       router.replace("/emailVerfication");
     } catch (error: any) {
-      console.log(error);
-      setError(error.response.data.message);
+      setError(error?.response?.data?.message || error?.message);
     } finally {
       setLoading(false);
     }
@@ -44,6 +43,7 @@ function SignUpView() {
           alignItems: "center",
           gap: 1,
           mb: { xs: 2, sm: 3 },
+          mt: { xs: 6, lg: 8 },
         }}
       >
         <Link

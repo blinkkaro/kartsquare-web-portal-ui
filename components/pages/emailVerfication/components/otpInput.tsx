@@ -6,18 +6,26 @@ import { COLORS } from "@/constants/colors";
 const OTP_LENGTH = 6;
 
 const StyledInput = styled("input")(({ theme }) => ({
-  width: "5rem",
-  height: "4rem",
+  width: "3rem",
+  height: "3rem",
   borderRadius: "45%",
   border: `1px solid ${theme.palette.divider}`,
   textAlign: "center",
-  fontSize: "1.25rem",
+  fontSize: "1rem",
   fontWeight: 600,
   color: theme.palette.text.primary,
   backgroundColor: theme.palette.background.paper,
   outline: "none",
   transition: "all 0.2s ease-in-out",
   boxShadow: `0px 4px 8px ${COLORS.SHADOW.DEFAULT}`,
+  [theme.breakpoints.up("lg")]: {
+    width: "4rem",
+  },
+  [theme.breakpoints.up("xl")]: {
+    width: "5rem",
+    height: "4rem",
+    fontSize: "1.25rem",
+  },
   "&:focus": {
     borderColor: COLORS.BORDER.BLUE,
     boxShadow: `0px 4px 8px ${COLORS.SHADOW.DEFAULT}`,
@@ -100,7 +108,7 @@ function OtpInput({ length = OTP_LENGTH, onChange }: OtpInputProps) {
   };
 
   return (
-    <Box sx={{ display: "flex", gap: 2, justifyContent: "center", py: 2 }}>
+    <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
       {otp.map((digit, index) => (
         <StyledInput
           key={index}

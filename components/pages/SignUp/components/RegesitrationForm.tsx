@@ -74,7 +74,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       component="form"
       onSubmit={handleSubmit(onSubmit)}
       noValidate
-      sx={{ mt: { xs: 2, sm: 3 } }}
+      sx={{
+        width: {xl: "100%"},
+      }}
     >
       <Grid container spacing={2}>
         {/* First Name & Last Name */}
@@ -299,7 +301,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           <Input
             name="gender"
             control={control}
-            select 
+            select
             SelectProps={{
               displayEmpty: true,
               renderValue: (selected: any) => {

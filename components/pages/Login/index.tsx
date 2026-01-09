@@ -9,6 +9,8 @@ import { useState } from "react";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
 import { useAppDispatch } from "@/store/hooks";
+import { Box } from "@mui/material";
+import BackButton from "@/components/common/BackButton";
 
 export default function LoginView() {
   const router = useRouter();
@@ -64,6 +66,9 @@ export default function LoginView() {
 
   return (
     <AuthWrapper>
+      <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 10 }}>
+        <BackButton />
+      </Box>
       <LoginForm
         role={role || ""}
         onSubmit={OnSubmit}

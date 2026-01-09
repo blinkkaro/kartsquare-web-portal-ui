@@ -59,11 +59,11 @@ export default function LoginForm({
       onSubmit={handleSubmit(onSubmit)}
       sx={{ width: "100%" }}
     >
-      <Box sx={{ mb: { xs: 2, sm: 3, md: 4, lg: 5, xl: 10 } }}>
+      <Box sx={{ mb: { xs: 2, sm: 3, md: 4, lg: 5, xl: 6 } }}>
         <Title title={t("welcome_back")} subtitle={t("login_subtitle")} />
       </Box>
       <ErrorMessage isVisible={!!error} error={error!} />
-      <Stack spacing={{ xs: 2, sm: 3, lg: 2, xl: 5 }}>
+      <Stack spacing={{ xs: 2, sm: 3, lg: 2, xl: 3}}>
         <Box>
           <Typography
             variant="subtitle2"

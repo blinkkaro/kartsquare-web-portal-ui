@@ -115,6 +115,7 @@ function EmailVerificationView() {
   const handleBack = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
+
     dispatch(logout());
     router.back();
   };
@@ -148,7 +149,7 @@ function EmailVerificationView() {
         isLoading={loading}
         disabled={otp.length !== 6}
       >
-        Verify
+        {t("verify")}
       </Button>
 
       <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
@@ -173,7 +174,7 @@ function EmailVerificationView() {
               color: COLORS.PRIMARY_PURPLE,
             }}
           >
-            Resend OTP
+            {t("resend_otp")}
           </Button>
         )}
       </Box>

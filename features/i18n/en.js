@@ -89,4 +89,6 @@ export const english = {
   schedule: "Set your Schedule",
   scheduleSubtitle: "Define your availability for customers.",
   alreadyHaveAnAccount: "Already have an account?",
+  resend_otp: "Resend OTP",
+  verify: "Verify",
 };

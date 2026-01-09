@@ -16,12 +16,14 @@ import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { useEffect, useState } from "react";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useTheme } from "@mui/material/styles";
+import { useMediaQuery } from "@mui/material";
 
 function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { t, locale, changeLanguage } = useTranslate();
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const router = useRouter();
   const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("xl"));
 
   useEffect(() => {
     if (
@@ -66,14 +68,14 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
             gap: 3,
           }}
         >
-          <Image src="/logo.svg" alt="auth" width={200} height={200} priority />
+          <Image src="/logo.svg" alt="auth" width={isLargeScreen ? 200 : 150} height={isLargeScreen ? 200 : 150} priority />
           <Typography
-            variant="h2"
             sx={{
               fontWeight: "bold",
               color:
                 theme.palette.mode === "light" ? "text.primary" : "#ffffff",
               letterSpacing: "-0.02em",
+              fontSize: isLargeScreen ? "4rem" : "3rem",
             }}
           >
             KartSquare
@@ -111,7 +113,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
             margin: "auto",
             justifyContent: "center",
             minHeight: "100vh",
-            px: { xs: 4, lg: "10rem" },
+            px: { xs: 4, lg: 10 },
             py: { xs: 4, lg: 2 },
             transition: "background 0.3s ease-in-out",
           }}

@@ -81,7 +81,7 @@ const Input: React.FC<InputProps> = ({
           InputProps={{
             ...InputProps,
             startAdornment: startIcon ? (
-              <InputAdornment position="start" sx={{ mr: -0.5 }}>
+              <InputAdornment position="start" sx={{ mr: 0.5 }}>
                 {startIcon}
               </InputAdornment>
             ) : null,
@@ -105,6 +105,12 @@ const Input: React.FC<InputProps> = ({
             },
           }}
           sx={{
+            "& .MuiInputLabel-root": {
+              transform: "translate(14px, 10px) scale(1)",
+              "&.Mui-focused, &.MuiFormLabel-filled": {
+                transform: "translate(14px, -9px) scale(0.75)",
+              },
+            },
             ...sx,
           }}
         />

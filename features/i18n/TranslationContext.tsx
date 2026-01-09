@@ -97,7 +97,9 @@ export type TranslationKey =
   | "profile_pic_required"
   | "schedule"
   | "scheduleSubtitle"
-  | "alreadyHaveAnAccount";
+  | "alreadyHaveAnAccount"
+  | "resend_otp"
+  | "verify";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

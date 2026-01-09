@@ -22,6 +22,7 @@ import { handleRegistrationStepNavigation } from "@/helper/registrationNavigatio
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
+import { logout } from "@/features/ui/authSlice";
 
 interface VerifyDocumentFormInputs {
   documentNumber: string;
@@ -87,6 +88,14 @@ function VerifyDocumentsView() {
     }
   };
 
+  const handleBack = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+
+    dispatch(logout());
+    router.back();
+  };
+
   const handleImageSelect = (field: string, file: File) => {
     setValue(field as any, file, { shouldValidate: true });
   };
@@ -94,7 +103,7 @@ function VerifyDocumentsView() {
   return (
     <AuthWrapper>
       <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 2 }}>
-        <BackButton />
+        <BackButton onClick={handleBack} />
       </Box>
       <Title title={t("verify_documents")} />
 
@@ -109,8 +118,10 @@ function VerifyDocumentsView() {
             placeholder={t("aadhar_number")}
           />
 
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
-            <Box sx={{ width: { xs: "100%", sm: "calc(50% - 12px)" } }}>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+            <Box
+              sx={{ width: { xs: "calc(50% - 8px)", sm: "calc(50% - 12px)" } }}
+            >
               <Controller
                 name="frontImage"
                 control={control}
@@ -129,7 +140,9 @@ function VerifyDocumentsView() {
                 )}
               />
             </Box>
-            <Box sx={{ width: { xs: "100%", sm: "calc(50% - 12px)" } }}>
+            <Box
+              sx={{ width: { xs: "calc(50% - 8px)", sm: "calc(50% - 12px)" } }}
+            >
               <Controller
                 name="backImage"
                 control={control}
@@ -148,7 +161,9 @@ function VerifyDocumentsView() {
                 )}
               />
             </Box>
-            <Box sx={{ width: { xs: "100%", sm: "calc(50% - 12px)" } }}>
+            <Box
+              sx={{ width: { xs: "calc(50% - 8px)", sm: "calc(50% - 12px)" } }}
+            >
               <Controller
                 name="profilePic"
                 control={control}
@@ -167,7 +182,9 @@ function VerifyDocumentsView() {
                 )}
               />
             </Box>
-            <Box sx={{ width: { xs: "100%", sm: "calc(50% - 12px)" } }}>
+            <Box
+              sx={{ width: { xs: "calc(50% - 8px)", sm: "calc(50% - 12px)" } }}
+            >
               <Controller
                 name="policeVerification"
                 control={control}
