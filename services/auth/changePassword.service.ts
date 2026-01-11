@@ -1,10 +1,15 @@
-import api from "../api";
+import { POST } from "../api";
 import { API_ENDPOINTS } from "./apiEndPoint";
 
 class ChangePassService {
   async forgotPassword(email: string): Promise<boolean> {
     try {
-      const res = await api.post(API_ENDPOINTS.FORGOT_PASSWORD, { email });
+      const res = await POST<any>(
+        API_ENDPOINTS.FORGOT_PASSWORD,
+        { email },
+        {},
+        false
+      );
       if (res.status !== "success") {
         throw new Error(res.data.message || "Failed to send reset password email.");
       }
@@ -24,11 +29,16 @@ class ChangePassService {
     otp: string
   ): Promise<boolean> {
     try {
-      const res = await api.post(API_ENDPOINTS.RESET_PASSWORD, {
-        email,
-        new_password,
-        otp,
-      });
+      const res = await POST<any>(
+        API_ENDPOINTS.RESET_PASSWORD,
+        {
+          email,
+          new_password,
+          otp,
+        },
+        {},
+        false
+      );
       if (res.status !== "success") {
         throw new Error(res.data.message || "Failed to reset password.");
       }
@@ -44,7 +54,12 @@ class ChangePassService {
 
   async resendOTP(email: string): Promise<void> {
     try {
-      const res = await api.post(API_ENDPOINTS.RESEND_OTP, { email });
+      const res = await POST<any>(
+        API_ENDPOINTS.RESEND_OTP,
+        { email },
+        {},
+        false
+      );
       if (res.status !== "success") {
         throw new Error(res.data.message || "Failed to resend OTP.");
       }
@@ -59,10 +74,13 @@ class ChangePassService {
 
   async changePassword(current_password: string, new_password: string): Promise<boolean> {
     try {
-      const res = await api.post(API_ENDPOINTS.CHANGE_PASSWORD, {
-        current_password,
-        new_password,
-      });
+      const res = await POST<any>(
+        API_ENDPOINTS.CHANGE_PASSWORD,
+        {
+          current_password,
+          new_password,
+        }
+      );
       if (res.status !== "success") {
         throw new Error(res.data.message || "Failed to change password.");
       }

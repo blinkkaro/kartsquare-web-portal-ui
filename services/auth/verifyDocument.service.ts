@@ -1,4 +1,4 @@
-import api from "../api";
+import { POST } from "../api";
 import { API_ENDPOINTS } from "./apiEndPoint";
 import { Doc, ImageUploadApiResponse } from "./auth.interface";
 
@@ -10,14 +10,9 @@ class VerifyDocumentService {
         formData.append("documents", file);
       });
 
-      const response = await api.post<ImageUploadApiResponse>(
+      const response = await POST<ImageUploadApiResponse>(
         API_ENDPOINTS.UPLOAD,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        formData
       );
 
       if (response.data && response.data.urls) {
@@ -63,7 +58,7 @@ class VerifyDocumentService {
         policeVerificationUrl: policeVerificationFile ? uploadedUrls[3] : "",
       };
 
-      const response = await api.post(
+      const response = await POST(
         API_ENDPOINTS.VERIFY_DOC,
         verificationPayload
       );

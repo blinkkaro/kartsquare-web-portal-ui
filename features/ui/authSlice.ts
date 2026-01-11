@@ -1,13 +1,16 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import type { RootState } from "@/store/store";
-import { User } from "@/services/auth/auth.interface";
+import { User, LoginCredentials, RegisterData } from "@/services/auth/auth.interface";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
+import { authService } from "@/services/auth/auth.service";
 
 interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
   register_step: UserRegisterSteps | null;
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: AuthState = {
@@ -15,7 +18,33 @@ const initialState: AuthState = {
   token: null,
   isAuthenticated: false,
   register_step: null,
+  loading: false,
+  error: null,
 };
+
+export const loginUser = createAsyncThunk(
+  "auth/login",
+  async (credentials: LoginCredentials, { rejectWithValue }) => {
+    try {
+      const response = await authService.login(credentials);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Login failed");
+    }
+  }
+);
+
+export const registerUser = createAsyncThunk(
+  "auth/register",
+  async (data: RegisterData, { rejectWithValue }) => {
+    try {
+      const response = await authService.signUp(data);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Registration failed");
+    }
+  }
+);
 
 export const authSlice = createSlice({
   name: "auth",
@@ -74,6 +103,53 @@ export const authSlice = createSlice({
         }
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Login
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.token = action.payload.tokens.access_token;
+        state.register_step = action.payload.user.register_step;
+
+        // Local Storage
+        localStorage.setItem("token", action.payload.tokens.access_token);
+        localStorage.setItem("refreshToken", action.payload.tokens.refresh_token);
+        localStorage.setItem("register_step", action.payload.user.register_step.toString());
+        localStorage.setItem("role", action.payload.user.role);
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      // Register
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.token = action.payload.tokens.access_token;
+        state.register_step = action.payload.user.register_step;
+
+        // Local Storage
+        localStorage.setItem("token", action.payload.tokens.access_token);
+        localStorage.setItem("refreshToken", action.payload.tokens.refresh_token);
+        localStorage.setItem("register_step", action.payload.user.register_step.toString());
+        localStorage.setItem("role", action.payload.user.role);
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 

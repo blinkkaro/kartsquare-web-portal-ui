@@ -5,17 +5,20 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { SignUpFormData } from "./signUpSchema";
-import { authService } from "@/services/auth/auth.service";
+import { registerUser } from "@/features/ui/authSlice";
 import { AppUserType } from "@/services/auth/auth.interface";
 import Error from "@/components/common/ErrorMessage";
 import RegistrationForm from "./components/RegesitrationForm";
 import { Box, Link, Typography } from "@mui/material";
 import NextLink from "next/link";
 
+import { useAppDispatch } from "@/store/hooks";
+
 function SignUpView() {
   const { t } = useTranslate();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const role = searchParams.get("role");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
@@ -25,12 +28,12 @@ function SignUpView() {
       setLoading(true);
       setError("");
       const Role = role!.toString().toUpperCase();
-      await authService.signUp({ ...data, role: Role as AppUserType });
+      await dispatch(registerUser({ ...data, role: Role as AppUserType })).unwrap();
       // Redirect to email verification immediately after successful signup
       router.replace("/emailVerfication");
     } catch (error: any) {
       console.log(error);
-      setError(error.response.data.message);
+      setError(error || "Registration failed");
     } finally {
       setLoading(false);
     }

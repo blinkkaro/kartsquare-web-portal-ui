@@ -4,11 +4,11 @@ import LoginForm from "./components/LoginForm";
 import { useRouter, useSearchParams } from "next/navigation";
 import AuthWrapper from "@/components/auth/authWrapper";
 import { LoginFormData } from "./loginSchema";
-import { authService } from "@/services/auth/auth.service";
 import { useState } from "react";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
 import { useAppDispatch } from "@/store/hooks";
+import { loginUser } from "@/features/ui/authSlice";
 
 export default function LoginView() {
   const router = useRouter();
@@ -28,10 +28,12 @@ export default function LoginView() {
         return;
       }
       const Role = role.toString().toUpperCase();
-      const response = await authService.login({ ...data, role: Role });
 
-      if (response && response.status === "success") {
-        const user = response.data.user;
+      // Dispatch loginUser thunk
+      const result = await dispatch(loginUser({ ...data, role: Role })).unwrap();
+
+      if (result) {
+        const user = result.user;
         const registerStep = user.register_step;
 
         // If registration is complete, go to home
@@ -53,9 +55,8 @@ export default function LoginView() {
     } catch (error: any) {
       console.log(error);
       setError(
-        error?.response?.data?.message ||
-          error?.message ||
-          "An unexpected error occurred"
+        error ||
+        "An unexpected error occurred"
       );
     } finally {
       setLoading(false);
