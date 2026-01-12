@@ -1,42 +1,62 @@
-import { createTheme, ThemeOptions } from '@mui/material/styles';
+import { createTheme, ThemeOptions } from "@mui/material/styles";
+import { COLORS } from "@/constants/colors";
 
-const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
+const getDesignTokens = (mode: "light" | "dark"): ThemeOptions => ({
   palette: {
     mode,
     primary: {
-      main: '#8800FF', // --color-primary
+      main: COLORS.PRIMARY_PURPLE,
+      dark: COLORS.PURPLE_HOVER,
     },
     secondary: {
-      main: '#00B2FF', // --color-secondary
+      main: "#00B2FF", // --color-secondary
     },
     background: {
-      default: mode === 'light' ? '#FFFFFF' : '#172023', // --color-dark for dark mode
-      paper: mode === 'light' ? '#FFFFFF' : '#1e2930',
+      default:
+        mode === "light"
+          ? COLORS.BACKGROUND.PRIMARY_LIGHT
+          : COLORS.BACKGROUND.PRIMARY_DARK,
+      paper:
+        mode === "light"
+          ? COLORS.BACKGROUND.PAPER_LIGHT
+          : COLORS.BACKGROUND.PAPER_DARK,
     },
     text: {
-      primary: mode === 'light' ? '#172023' : '#FFFFFF',
+      primary:
+        mode === "light" ? COLORS.TEXT.PRIMARY_LIGHT : COLORS.TEXT.PRIMARY_DARK,
+      secondary:
+        mode === "light"
+          ? COLORS.TEXT.SECONDARY_LIGHT
+          : COLORS.TEXT.SECONDARY_DARK,
+    },
+    divider:
+      mode === "light"
+        ? COLORS.BORDER.DEFAULT_LIGHT
+        : COLORS.BORDER.DEFAULT_DARK,
+    success: {
+      main: COLORS.SUCCESS_GREEN,
     },
   },
   typography: {
     fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
+      "-apple-system",
+      "BlinkMacSystemFont",
       '"Segoe UI"',
-      'Roboto',
+      "Roboto",
       '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
+      "Arial",
+      "sans-serif",
       '"Apple Color Emoji"',
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"',
-    ].join(','),
+    ].join(","),
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: '8px',
-          textTransform: 'none',
+          borderRadius: "8px",
+          textTransform: "none",
           fontWeight: 600,
         },
       },
@@ -44,4 +64,5 @@ const getDesignTokens = (mode: 'light' | 'dark'): ThemeOptions => ({
   },
 });
 
-export const createCustomTheme = (mode: 'light' | 'dark') => createTheme(getDesignTokens(mode));
+export const createCustomTheme = (mode: "light" | "dark") =>
+  createTheme(getDesignTokens(mode));

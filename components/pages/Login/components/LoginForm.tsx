@@ -1,148 +1,192 @@
-'use client';
+"use client";
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { Box, Typography, IconButton, Stack, useTheme } from "@mui/material";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
-    Box,
-    TextField,
-    Button,
-    Typography,
-    InputAdornment,
-    IconButton,
-    Link,
-    Stack,
-    useTheme
-} from '@mui/material';
-import {
-    Visibility,
-    VisibilityOff,
-    EmailOutlined,
-    LockOutlined,
-    Google as GoogleIcon
-} from '@mui/icons-material';
-import { useTranslate } from '@/hooks/useTranslate';
+  Visibility,
+  VisibilityOff,
+  EmailOutlined,
+  LockOutlined,
+  Google as GoogleIcon,
+} from "@mui/icons-material";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useTranslate } from "@/hooks/useTranslate";
+import { COLORS } from "@/constants/colors";
+import { LoginSchema } from "../loginSchema";
+import { LoginFormData } from "../loginSchema";
+import ErrorMessage from "@/components/common/ErrorMessage";
+import Title from "@/components/auth/title";
+import Button from "@/components/common/Button";
+import Input from "@/components/common/Input";
 
-export default function LoginForm() {
-    const { t } = useTranslate();
-    const theme = useTheme();
-    const [showPassword, setShowPassword] = useState(false);
+export default function LoginForm({
+  role,
+  onSubmit,
+  loading,
+  error,
+}: {
+  role: string;
+  onSubmit: (data: LoginFormData) => void;
+  loading: boolean;
+  error: string | null;
+}) {
+  const { t } = useTranslate();
+  const theme = useTheme();
+  const [showPassword, setShowPassword] = useState(false);
 
-    const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(LoginSchema(t)),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-    return (
-        <Box component="form" noValidate sx={{ width: '100%', maxWidth: 400 }}>
-            <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 700, color: 'text.primary' }}>
-                {t('welcome_back')}
-            </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-                Enter your email & password to login.
-            </Typography>
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-            <Stack spacing={3}>
-                <Box>
-                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-                        {t('email_address')}
-                    </Typography>
-                    <TextField
-                        fullWidth
-                        placeholder="masruqjaunhaik@mail.in"
-                        variant="outlined"
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <EmailOutlined color="action" />
-                                </InputAdornment>
-                            ),
-                            sx: { borderRadius: '12px', bgcolor: 'background.paper' }
-                        }}
-                    />
-                </Box>
-
-                <Box>
-                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-                        {t('password')}
-                    </Typography>
-                    <TextField
-                        fullWidth
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="********"
-                        variant="outlined"
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <LockOutlined color="action" />
-                                </InputAdornment>
-                            ),
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShowPassword}
-                                        edge="end"
-                                    >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                            sx: { borderRadius: '12px', bgcolor: 'background.paper' }
-                        }}
-                    />
-                </Box>
-
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Link href="#" variant="body2" underline="hover" sx={{ color: 'text.secondary', fontWeight: 600 }}>
-                        {t('forgot_password')}
-                    </Link>
-                </Box>
-
-                <Button
-                    fullWidth
-                    variant="contained"
-                    size="large"
-                    sx={{
-                        py: 1.5,
-                        borderRadius: '25px',
-                        background: 'linear-gradient(90deg, #536dfe 0%, #7c4dff 100%)', // Fallback/Custom gradient
-                        textTransform: 'none',
-                        fontSize: '1rem',
-                        fontWeight: 700,
-                        boxShadow: '0 4px 14px 0 rgba(124, 77, 255, 0.39)',
-                    }}
-                >
-                    {t('login')}
-                </Button>
-
-                <Button
-                    fullWidth
-                    variant="outlined"
-                    size="large"
-                    startIcon={<GoogleIcon />}
-                    sx={{
-                        py: 1.5,
-                        borderRadius: '25px',
-                        borderColor: theme.palette.mode === 'light' ? '#E0E0E0' : '#424242',
-                        color: 'text.primary',
-                        textTransform: 'none',
-                        fontSize: '1rem',
-                        fontWeight: 600,
-                        bgcolor: 'background.paper',
-                        '&:hover': {
-                            bgcolor: 'action.hover',
-                            borderColor: 'text.secondary',
-                        },
-                    }}
-                >
-                    {t('continue_with_google')}
-                </Button>
-            </Stack>
-
-            <Box sx={{ mt: 4, textAlign: 'center' }}>
-                <Typography variant="body2" color="text.secondary">
-                    {t('no_account')}
-                    <Link href="#" sx={{ ml: 1, fontWeight: 700, color: 'text.primary' }} underline="hover">
-                        {t('sign_up')}
-                    </Link>
-                </Typography>
-            </Box>
+  return (
+    <Box
+      component="form"
+      noValidate
+      onSubmit={handleSubmit(onSubmit)}
+      sx={{ width: "100%" }}
+    >
+      <Box sx={{ mb: { xs: 2, sm: 3, md: 4, lg: 5, xl: 6 } }}>
+        <Title title={t("welcome_back")} subtitle={t("login_subtitle")} />
+      </Box>
+      <ErrorMessage isVisible={!!error} error={error!} />
+      <Stack spacing={{ xs: 2, sm: 3, lg: 2, xl: 3}}>
+        <Box>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              mb: 1,
+              fontWeight: 600,
+              fontSize: {
+                lg: "0.875rem",
+                xl: "1rem",
+              },
+            }}
+          >
+            {t("email_address")}
+          </Typography>
+          <Input
+            name="email"
+            control={control}
+            fullWidth
+            placeholder="masruqjaunhaik@mail.in"
+            startIcon={<EmailOutlined color="action" />}
+          />
         </Box>
-    );
+
+        <Box>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              mb: 1,
+              fontWeight: 600,
+              fontSize: {
+                lg: "0.875rem",
+                xl: "1rem",
+              },
+            }}
+          >
+            {t("password")}
+          </Typography>
+          <Input
+            name="password"
+            control={control}
+            fullWidth
+            type={showPassword ? "text" : "password"}
+            placeholder="********"
+            startIcon={<LockOutlined color="action" />}
+            endIcon={
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            }
+          />
+        </Box>
+
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Link href={`/forgotPassword?role=${role}`}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "primary.main",
+                fontWeight: 600,
+                textDecoration: "none",
+                fontSize: { lg: "0.875rem", xl: "1rem" },
+                "&:hover": {
+                  textDecoration: "underline",
+                },
+              }}
+            >
+              {t("forgot_password")}
+            </Typography>
+          </Link>
+        </Box>
+
+        <Button isLoading={loading} onClick={handleSubmit(onSubmit)}>
+          {t("login")}
+        </Button>
+
+        <Button
+          variant="contained"
+          startIcon={<GoogleIcon />}
+          sx={{
+            bgcolor: theme.palette.mode === "light" ? COLORS.DARK : "grey.800",
+            color: "common.white",
+            textTransform: "none",
+            borderRadius: "50px",
+            "&:hover": {
+              bgcolor:
+                theme.palette.mode === "light" ? COLORS.DARK : "grey.900",
+            },
+          }}
+        >
+          {t("continue_with_google")}
+        </Button>
+      </Stack>
+
+      <Box sx={{ mt: { xs: 3, sm: 4 }, textAlign: "center" }}>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ fontSize: { lg: "0.875rem", xl: "1rem" } }}
+        >
+          {t("no_account")}
+          <Link href={`/signUp?role=${role}`}>
+            <Typography
+              component="span"
+              sx={{
+                ml: 1,
+                fontWeight: 700,
+                color: "text.primary",
+                textDecoration: "none",
+                fontSize: { lg: "0.875rem", xl: "1rem" },
+                "&:hover": {
+                  textDecoration: "underline",
+                },
+              }}
+            >
+              {t("sign_up")}
+            </Typography>
+          </Link>
+        </Typography>
+      </Box>
+    </Box>
+  );
 }
