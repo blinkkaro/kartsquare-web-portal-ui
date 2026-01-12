@@ -103,7 +103,16 @@ export type TranslationKey =
   | "privacyPolicytitle"
   | "termsConditionsTitle"
   | "lastUpdatedAt"
-  | "something_went_wrong";
+  | "something_went_wrong"
+  | "home"
+  | "dashboard"
+  | "store"
+  | "services"
+  | "events"
+  | "bookings"
+  | "search"
+  | "orders"
+  | "chat";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

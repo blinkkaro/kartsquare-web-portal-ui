@@ -95,4 +95,13 @@ export const english = {
   termsConditionsTitle: "Terms & Conditions",
   lastUpdatedAt: "Last Updated At",
   something_went_wrong: "Something went wrong",
+  home: "Home",
+  dashboard: "Dashboard",
+  store: "Store",
+  services: "Services",
+  events: "Events",
+  bookings: "Bookings",
+  search: "Search",
+  orders: "Orders",
+  chat: "Chat",
 };

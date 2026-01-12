@@ -1,3 +1,5 @@
+import { Light } from "@mui/icons-material";
+
 export const COLORS = {
   // Primary Colors
   PRIMARY_PURPLE: "#5e18e9",
@@ -11,10 +13,20 @@ export const COLORS = {
   PURPLECYAN: "linear-gradient(135deg, #c2edff 0%, #eedaff 100%)",
   DARK_GRADIENT:
     "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+  ICON_GRADIENT: {
+    Light:{
+      START: "#7027ff",
+      END: "#00bcff",
+    },
+    Dark:{
+      START: "#4b12bb",
+      END: "#3b4b5eff",
+    }
+  },
 
   // Text Colors
   TEXT: {
-    PRIMARY_LIGHT: "#1f2937",
+    PRIMARY_LIGHT: "#30263E",
     PRIMARY_DARK: "#ffffff",
     SECONDARY_LIGHT: "#6b7280",
     SECONDARY_DARK: "#9ca3af",
@@ -26,7 +38,7 @@ export const COLORS = {
     PRIMARY_DARK: "#172023",
     SECONDARY_LIGHT: "#f8fafc",
     SECONDARY_DARK: "#1e2930",
-    PAPER_LIGHT: "#ffffff",
+    PAPER_LIGHT: "#f5f4fa",
     PAPER_DARK: "#1e2930",
   },
 

@@ -1,7 +1,7 @@
 import { AuthResponse, LoginCredentials, RegisterData } from "./auth.interface";
 import { API_ENDPOINTS } from "./apiEndPoint";
 import api from "../api";
-import { setCredentials } from "@/features/ui/authSlice";
+import { logout, setCredentials } from "@/features/ui/authSlice";
 import { store } from "@/store/store";
 
 class AuthService {
@@ -57,6 +57,14 @@ class AuthService {
       throw new Error(response.data.message || "Something went wrong");
     } catch (error) {
       throw error;
+    }
+  }
+  async logout(): Promise<void> {
+    try {
+      await api.post(API_ENDPOINTS.LOGOUT);
+    } catch (error) {
+    } finally {
+      store.dispatch(logout());
     }
   }
 }
