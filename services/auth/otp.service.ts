@@ -1,4 +1,4 @@
-import api from '../api';
+import { POST } from '../api';
 import { API_ENDPOINTS } from './apiEndPoint';
 
 interface OTPResponse {
@@ -9,9 +9,11 @@ interface OTPResponse {
 class OtpService {
   async verifyOtp(otp: string): Promise<boolean> {
     try {
-      const response = await api.post<OTPResponse>(
+      const response = await POST<OTPResponse>(
         API_ENDPOINTS.VERIFY_OTP,
         { otp },
+        {},
+        true
       );
       console.log(response);
       if (response.status === "success") {
@@ -26,8 +28,11 @@ class OtpService {
   }
   async resendOTP(): Promise<boolean> {
     try {
-      const response = await api.post<OTPResponse>(
+      const response = await POST<OTPResponse>(
         API_ENDPOINTS.RESEND_OTP,
+        {},
+        {},
+        false
       );
       if (response.status === "success") {
         return true;

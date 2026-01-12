@@ -1,11 +1,11 @@
 import { IWorkingHour } from "./auth.interface";
-import api from "../api";
+import { PUT } from "../api";
 import { API_ENDPOINTS } from "./apiEndPoint";
 
 class ScheduleService {
   async addBulkWorkingHours(data: IWorkingHour[]): Promise<void> {
     try {
-      const response = await api.put(
+      const response = await PUT(
         API_ENDPOINTS.ADD_BULK_WORKING_HOURS,
         {
           working_hours: data,
