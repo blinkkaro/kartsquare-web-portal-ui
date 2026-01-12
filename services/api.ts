@@ -42,7 +42,8 @@ export interface CustomAxiosInstance extends AxiosInstance {
 }
 
 const api: CustomAxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1", // Fallback to local
+  baseURL:
+    process.env.NEXT_PUBLIC_API_URL || "https://api.kartsquare.com/api/v1", // Fallback to local
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -98,8 +99,12 @@ api.interceptors.response.use(
           );
 
           // Update header
-          api.defaults.headers.common["Authorization"] = `Bearer ${response.data.tokens.access_token}`;
-          originalRequest.headers["Authorization"] = `Bearer ${response.data.tokens.access_token}`;
+          api.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${response.data.tokens.access_token}`;
+          originalRequest.headers[
+            "Authorization"
+          ] = `Bearer ${response.data.tokens.access_token}`;
 
           return api(originalRequest);
         }
@@ -120,7 +125,10 @@ export const GET = async <T>(
   params: object = {},
   requiresAuth: boolean = true
 ) => {
-  return await api.get<T>(endpoint, { params, requiresAuth } as AxiosRequestConfig);
+  return await api.get<T>(endpoint, {
+    params,
+    requiresAuth,
+  } as AxiosRequestConfig);
 };
 
 export const POST = async <T>(
