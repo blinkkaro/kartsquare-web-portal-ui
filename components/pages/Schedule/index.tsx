@@ -14,6 +14,8 @@ import { useRouter } from "next/navigation";
 import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { useAppDispatch } from "@/store/hooks";
+import { useTranslate } from "@/hooks/useTranslate";
+import Title from "@/components/auth/title";
 
 const DAYS = [
   { name: "Sunday", value: 0 },
@@ -40,6 +42,7 @@ const ScheduleView = () => {
   const [error, setError] = useState("");
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { t } = useTranslate();
 
   const handleToggle24By7 = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
@@ -138,15 +141,7 @@ const ScheduleView = () => {
         <BackButton />
       </Box>
 
-      <Typography
-        variant="h4"
-        sx={{ fontWeight: 700, color: "text.primary", mb: 1 }}
-      >
-        Set Your Schedule
-      </Typography>
-      <Typography variant="body1" sx={{ color: "text.secondary", mb: 4 }}>
-        Define your availability for customers.
-      </Typography>
+      <Title title={t("setYourSchedule")} subtitle={t("defineYourAvailability")} />
 
       <ErrorMessage isVisible={!!error} error={error} />
 
@@ -169,7 +164,7 @@ const ScheduleView = () => {
             }}
           >
             <Typography variant="body1" fontWeight={600} color="text.primary">
-              Available 24/7
+              {t("available24By7")}
             </Typography>
             <IOSSwitch checked={is24By7} onChange={handleToggle24By7} />
           </Box>
@@ -181,7 +176,7 @@ const ScheduleView = () => {
             }}
           >
             <Typography variant="body1" fontWeight={600} color="text.primary">
-              Same time for all days
+              {t("sameTimeForAllDays")}
             </Typography>
             <IOSSwitch checked={isSameTime} onChange={handleToggleSameTime} />
           </Box>
@@ -220,7 +215,7 @@ const ScheduleView = () => {
       {/* Footer Button */}
 
       <Button fullWidth onClick={onSave} isLoading={loading}>
-        Save and Continue
+        {t("saveAndContinue")}
       </Button>
     </AuthWrapper>
   );

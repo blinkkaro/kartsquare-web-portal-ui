@@ -108,4 +108,12 @@ export const english = {
   more: "more",
   readmore: "Read More",
   seeall: "See All",
+  saveAndContinue: "Save and Continue",
+  available24By7: "Available 24/7",
+  sameTimeForAllDays: "Same time for all days",
+  setYourSchedule: "Set Your Schedule",
+  defineYourAvailability: "Define your availability for customers.",
+  startConversation: "Start Conversation",
+  noComments: "No comments yet",
+  commentPlaceholder: "Write a comment...",
 };

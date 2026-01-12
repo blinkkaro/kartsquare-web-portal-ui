@@ -31,7 +31,6 @@ function EmailVerificationView() {
 
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     const now = Date.now();

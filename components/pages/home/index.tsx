@@ -80,7 +80,7 @@ function HomeView() {
             sx={{
               order: { xs: 2, md: 1 },
               display: { xs: "none", lg: "block" }, // Hide on md, show on lg
-              maxHeight: "calc(100vh - 4.8rem)",
+              maxHeight: "calc(100vh - 5rem)",
               overflowY: "auto",
               scrollbarWidth: "none",
             }}
@@ -98,7 +98,7 @@ function HomeView() {
           sx={{
             order: { xs: 1, md: 2 },
             overflowY: "auto",
-            maxHeight: "calc(100vh - 4.8rem)",
+            maxHeight: "calc(100vh - 5rem)",
             scrollbarWidth: "none",
           }}
         >
@@ -130,7 +130,7 @@ function HomeView() {
             sx={{
               order: { xs: 3, md: 3 },
               overflowY: "auto",
-              maxHeight: "calc(100vh - 4.8rem)",
+              maxHeight: "calc(100vh - 5rem)",
               scrollbarWidth: "none",
             }}
           >

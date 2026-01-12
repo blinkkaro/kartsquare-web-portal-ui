@@ -116,8 +116,15 @@ export type TranslationKey =
   | "less"
   | "more"
   | "readmore"
-  | "seeall";
-
+  | "seeall"
+  | "startConversation"
+  | "noComments"
+  | "commentPlaceholder"
+  | "sameTimeForAllDays"
+  | "setYourSchedule"
+  | "defineYourAvailability"
+  | "available24By7"
+  | "saveAndContinue"
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
