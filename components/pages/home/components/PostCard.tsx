@@ -12,13 +12,29 @@ import {
   BookmarkBorder,
   Close,
   FavoriteBorderOutlined,
+  Favorite,
 } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import Image from "next/image";
+import { useTranslate } from "@/hooks/useTranslate";
+import { useLikePost } from "@/hooks/usePosts";
+import PostComment from "./PostComment";
 
 const PostCard = ({ post }: { post: Posts }) => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const { t } = useTranslate();
+
+  const likeMutation = useLikePost(post.id);
+
+  const handleLike = () => {
+    likeMutation.mutate();
+  };
+
+  const handleOpenComments = () => {
+    setIsCommentModalOpen(true);
+  };
 
   return (
     <Card sx={{ boxShadow: "none", background: "transparent" }}>
@@ -27,6 +43,7 @@ const PostCard = ({ post }: { post: Posts }) => {
           display: { xs: "block", md: "flex" },
           gap: { md: 2 },
           position: "relative",
+          flexDirection: "column"
         }}
       >
         <Box
@@ -46,7 +63,7 @@ const PostCard = ({ post }: { post: Posts }) => {
             sx={{
               objectFit: "cover",
               width: "100%",
-              height: { xs: "50vh", md: "70vh" },
+              height: { xs: "50vh", md: "70vh", lg: "80vh" },
             }}
           />
 
@@ -108,12 +125,13 @@ const PostCard = ({ post }: { post: Posts }) => {
               position: "absolute",
               bottom: 16,
               right: 16,
-              gap: 1.5,
+              gap: 2,
               flexDirection: "column",
               alignItems: "center",
             }}
           >
             <Box
+              onClick={handleLike}
               sx={{
                 backgroundColor: "rgba(0, 0, 0, 0.5)",
                 borderRadius: "50%",
@@ -123,16 +141,44 @@ const PostCard = ({ post }: { post: Posts }) => {
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
+                position: "relative",
               }}
             >
-              <FavoriteBorderOutlined
-                sx={{
-                  fontSize: 24,
-                  color: COLORS.TEXT.PRIMARY_DARK,
-                }}
-              />
+              {post.is_liked ? (
+                <Favorite
+                  sx={{
+                    fontSize: 24,
+                    color: "#ff0042",
+                  }}
+                />
+              ) : (
+                <FavoriteBorderOutlined
+                  sx={{
+                    fontSize: 24,
+                    color: COLORS.TEXT.PRIMARY_DARK,
+                  }}
+                />
+              )}
+              {post.likes_count > 0 && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    position: "absolute",
+                    bottom: -18,
+                    fontSize: "0.7rem",
+                    color: COLORS.TEXT.PRIMARY_DARK,
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    px: 0.5,
+                    borderRadius: 1,
+                    fontWeight: 600,
+                  }}
+                >
+                  {post.likes_count}
+                </Typography>
+              )}
             </Box>
             <Box
+              onClick={handleOpenComments}
               sx={{
                 backgroundColor: "rgba(0, 0, 0, 0.5)",
                 borderRadius: "50%",
@@ -142,6 +188,7 @@ const PostCard = ({ post }: { post: Posts }) => {
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
+                position: "relative",
               }}
             >
               <Image
@@ -150,6 +197,23 @@ const PostCard = ({ post }: { post: Posts }) => {
                 width={20}
                 height={20}
               />
+              {post.comments_count > 0 && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    position: "absolute",
+                    bottom: -18,
+                    fontSize: "0.7rem",
+                    color: COLORS.TEXT.PRIMARY_DARK,
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    px: 0.5,
+                    borderRadius: 1,
+                    fontWeight: 600,
+                  }}
+                >
+                  {post.comments_count}
+                </Typography>
+              )}
             </Box>
             <Box
               sx={{
@@ -253,24 +317,59 @@ const PostCard = ({ post }: { post: Posts }) => {
           <Box
             sx={{
               display: "flex",
-              gap: 1,
+              gap: 3,
               flexDirection: "column",
               alignItems: "center",
             }}
           >
-            <Box sx={{ cursor: "pointer" }}>
-              <FavoriteBorderOutlined
-                sx={{
-                  cursor: "pointer",
-                  fontSize: 30,
-                  color:
-                    theme.palette.mode === "dark"
-                      ? COLORS.TEXT.PRIMARY_DARK
-                      : COLORS.TEXT.PRIMARY_LIGHT,
-                }}
-              />
+            <Box
+              onClick={handleLike}
+              sx={{ cursor: "pointer", position: "relative" }}
+            >
+              {post.is_liked ? (
+                <Favorite
+                  sx={{
+                    cursor: "pointer",
+                    fontSize: 30,
+                    color: "#ff0042",
+                  }}
+                />
+              ) : (
+                <FavoriteBorderOutlined
+                  sx={{
+                    cursor: "pointer",
+                    fontSize: 30,
+                    color:
+                      theme.palette.mode === "dark"
+                        ? COLORS.TEXT.PRIMARY_DARK
+                        : COLORS.TEXT.PRIMARY_LIGHT,
+                  }}
+                />
+              )}
+              {post.likes_count > 0 && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    position: "absolute",
+                    bottom: -20,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    fontSize: "0.75rem",
+                    color:
+                      theme.palette.mode === "dark"
+                        ? COLORS.TEXT.PRIMARY_DARK
+                        : COLORS.TEXT.PRIMARY_LIGHT,
+                    fontWeight: 600,
+                  }}
+                >
+                  {post.likes_count}
+                </Typography>
+              )}
             </Box>
-            <Box sx={{ cursor: "pointer" }}>
+            <Box
+              onClick={handleOpenComments}
+              sx={{ cursor: "pointer", position: "relative" }}
+            >
               <Image
                 src={
                   theme.palette.mode === "dark"
@@ -281,6 +380,25 @@ const PostCard = ({ post }: { post: Posts }) => {
                 width={25}
                 height={25}
               />
+              {post.comments_count > 0 && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    position: "absolute",
+                    bottom: -20,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    fontSize: "0.75rem",
+                    color:
+                      theme.palette.mode === "dark"
+                        ? COLORS.TEXT.PRIMARY_DARK
+                        : COLORS.TEXT.PRIMARY_LIGHT,
+                    fontWeight: 600,
+                  }}
+                >
+                  {post.comments_count}
+                </Typography>
+              )}
             </Box>
             <Box sx={{ cursor: "pointer" }}>
               <Image
@@ -369,11 +487,18 @@ const PostCard = ({ post }: { post: Posts }) => {
                 },
               }}
             >
-              {isExpanded ? " less" : " more"}
+              {isExpanded ? t("less") : t("more")}
             </Typography>
           )}
         </Box>
       )}
+
+      {/* Comment Modal */}
+      <PostComment
+        open={isCommentModalOpen}
+        onClose={() => setIsCommentModalOpen(false)}
+        post={post}
+      />
     </Card>
   );
 };

@@ -112,7 +112,12 @@ export type TranslationKey =
   | "bookings"
   | "search"
   | "orders"
-  | "chat";
+  | "chat"
+  | "less"
+  | "more"
+  | "readmore"
+  | "seeall";
+
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

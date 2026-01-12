@@ -19,7 +19,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         // Responsive padding
         px: { xs: 0, sm: 1.5, md: 3, lg: 4, xl: 5 },
         pt: { xs: 0, md: 0 },
-        pb: { xs: 4, md: 6 },
+        // pb: { xs: 4, md: 6 },
         backgroundColor:
           theme.palette.mode === "dark"
             ? COLORS.BACKGROUND.PAPER_DARK
@@ -37,8 +37,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
           maxWidth: { lg: "1400px", xl: "1600px" },
           mx: "auto",
           width: "100%",
-          px: { xs: 2, sm: 3 },
-          mt: { xs: 9, sm: 7, md: 5, lg: 7 },
+          px: { xs: 2},
+          mt: { xs: 9, sm: 10, md: 9, lg: 10 },
           backgroundColor:
             theme.palette.mode === "dark"
               ? COLORS.BACKGROUND.PAPER_DARK

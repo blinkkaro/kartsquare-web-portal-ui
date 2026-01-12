@@ -41,7 +41,23 @@ export const registerUser = createAsyncThunk(
       const response = await authService.signUp(data);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Registration failed");
+      return rejectWithValue(
+        error.response?.data?.message || "Registration failed"
+      );
+    }
+  }
+);
+
+export const logoutUser = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      await authService.logout();
+    } catch (error: any) {
+      // Continue with logout even if API call fails
+      return rejectWithValue(
+        error.response?.data?.message || "Logout API call failed"
+      );
     }
   }
 );

@@ -28,3 +28,40 @@ export const formatDateToString = (date: Date) => {
   });
   return `${dateValue}, ${time}`;
 };
+
+export const formatTimestamp = (dateString: string | Date): string => {
+  let date: Date;
+
+  if (typeof dateString === "string") {
+    // Parse the date string directly - JavaScript handles ISO 8601 formats correctly
+    date = new Date(dateString);
+  } else {
+    date = dateString;
+  }
+
+  if (isNaN(date.getTime())) {
+    return "Invalid date";
+  }
+
+  const now = new Date();
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  if (seconds < 0) return "Just now";
+
+  let interval = seconds / 31536000;
+  if (interval > 1) return `${Math.floor(interval)} years ago`;
+
+  interval = seconds / 2592000;
+  if (interval > 1) return `${Math.floor(interval)} months ago`;
+
+  interval = seconds / 86400;
+  if (interval > 1) return `${Math.floor(interval)} days ago`;
+
+  interval = seconds / 3600;
+  if (interval > 1) return `${Math.floor(interval)} hours ago`;
+
+  interval = seconds / 60;
+  if (interval > 1) return `${Math.floor(interval)} minutes ago`;
+
+  return `Just now`;
+};

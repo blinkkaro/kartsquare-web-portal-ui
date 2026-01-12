@@ -7,12 +7,14 @@ import {
   CardContent,
   useTheme,
   Grid,
+  useMediaQuery,
 } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import StoriesSection from "./components/StoriesSection";
 import PostCard from "./components/PostCard";
-import { useProfile } from "@/hooks/useProfile";
 import { useGetPosts } from "@/hooks/usePosts";
+import Blogs from "./components/Blogs";
+import TopSuggestions from "./components/TopSuggestions";
 
 interface EmptyCardProps {
   name: string;
@@ -66,23 +68,52 @@ function HomeView() {
     limit: 10,
     visibility: "public",
   });
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
   return (
-    <Box sx={{ flexGrow: 1, p: { xs: 2, md: 3 } }}>
+    <Box sx={{ position: "relative", maxHeight: "100vh" }}>
       <Grid container spacing={3}>
-        {/* Left Sidebar - Blogs */}
-        <Grid size={{ xs: 12, md: 3 }} sx={{ order: { xs: 2, md: 1 } }}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            <EmptyCard name="Latest Blogs" />
-            <EmptyCard name="Events" />
-          </Box>
-        </Grid>
+        {!isMobile && (
+          /* Left Sidebar - Blogs (Hidden on MD, Visible on LG) */
+          <Grid
+            size={{ xs: 12, lg: 3 }}
+            sx={{
+              order: { xs: 2, md: 1 },
+              display: { xs: "none", lg: "block" }, // Hide on md, show on lg
+              maxHeight: "calc(100vh - 4.8rem)",
+              overflowY: "auto",
+              scrollbarWidth: "none",
+            }}
+          >
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+              <EmptyCard name="Map" />
+              <Blogs />
+            </Box>
+          </Grid>
+        )}
 
         {/* Middle Section - Stories & Feed */}
-        <Grid size={{ xs: 12, md: 6 }} sx={{ order: { xs: 1, md: 2 } }}>
+        <Grid
+          size={{ xs: 12, md: 8, lg: 6 }}
+          sx={{
+            order: { xs: 1, md: 2 },
+            overflowY: "auto",
+            maxHeight: "calc(100vh - 4.8rem)",
+            scrollbarWidth: "none",
+          }}
+        >
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             {/* Stories Section */}
             <StoriesSection />
+            <Box
+              sx={{
+                flexDirection: "column",
+                gap: 3,
+                display: { lg: "none", md: "block" },
+              }}
+            >
+              <EmptyCard name="Map" />
+            </Box>
 
             {/* Posts Feed */}
             {posts &&
@@ -92,14 +123,22 @@ function HomeView() {
           </Box>
         </Grid>
 
-        {/* Right Sidebar - Suggestions */}
-        <Grid size={{ xs: 12, md: 3 }} sx={{ order: { xs: 3, md: 3 } }}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            <EmptyCard name="Top Octopus" />
-            <EmptyCard name="Top Suppliers" />
-            <EmptyCard name="Top Brands" />
-          </Box>
-        </Grid>
+        {!isMobile && (
+          /* Right Sidebar - Suggestions */
+          <Grid
+            size={{ xs: 12, md: 4, lg: 3 }}
+            sx={{
+              order: { xs: 3, md: 3 },
+              overflowY: "auto",
+              maxHeight: "calc(100vh - 4.8rem)",
+              scrollbarWidth: "none",
+            }}
+          >
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+              <TopSuggestions />
+            </Box>
+          </Grid>
+        )}
       </Grid>
     </Box>
   );

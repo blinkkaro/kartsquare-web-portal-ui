@@ -1,10 +1,7 @@
 import { AuthResponse, LoginCredentials, RegisterData } from "./auth.interface";
 import { API_ENDPOINTS } from "./apiEndPoint";
 import api from "../api";
-import { logout, setCredentials } from "@/features/ui/authSlice";
-import { store } from "@/store/store";
 import { POST } from "../api";
-
 
 class AuthService {
   async login(data: LoginCredentials) {
@@ -54,8 +51,7 @@ class AuthService {
     try {
       await api.post(API_ENDPOINTS.LOGOUT);
     } catch (error) {
-    } finally {
-      store.dispatch(logout());
+      // Swallow error - logout should proceed regardless
     }
   }
 }

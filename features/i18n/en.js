@@ -104,4 +104,8 @@ export const english = {
   search: "Search",
   orders: "Orders",
   chat: "Chat",
+  less: "less",
+  more: "more",
+  readmore: "Read More",
+  seeall: "See All",
 };
