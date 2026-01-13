@@ -125,6 +125,18 @@ export type TranslationKey =
   | "defineYourAvailability"
   | "available24By7"
   | "saveAndContinue"
+  | "addPhoto"
+  | "addVideo"
+  | "addToStory"
+  | "yourStory"
+  | "deleteStory"
+  | "deleteStoryConfirm"
+  | "cancel"
+  | "delete"
+  | "share"
+  | "addCaption"
+  | "preview"
+  | "invalidFileType";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

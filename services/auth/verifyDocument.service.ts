@@ -1,4 +1,4 @@
-import { POST } from "../api";
+import api from "../api";
 import { API_ENDPOINTS } from "./apiEndPoint";
 import { Doc, ImageUploadApiResponse } from "./auth.interface";
 
@@ -10,9 +10,14 @@ class VerifyDocumentService {
         formData.append("documents", file);
       });
 
-      const response = await POST<ImageUploadApiResponse>(
+      const response = await api.post<ImageUploadApiResponse>(
         API_ENDPOINTS.UPLOAD,
-        formData
+        formData,
+        {
+          headers: {
+            "Content-Type": undefined,
+          },
+        }
       );
 
       if (response.data && response.data.urls) {
@@ -58,12 +63,12 @@ class VerifyDocumentService {
         policeVerificationUrl: policeVerificationFile ? uploadedUrls[3] : "",
       };
 
-      const response = await POST(
+      const response = await api.post(
         API_ENDPOINTS.VERIFY_DOC,
         verificationPayload
       );
       if (response.status !== "success") {
-        throw new Error(response.data.message || "Failed to verify document");
+        throw new Error(response.message || "Failed to verify document");
       }
 
       return response;
@@ -77,4 +82,4 @@ class VerifyDocumentService {
   }
 }
 
-export default VerifyDocumentService;
+export const verifyDocumentService = new VerifyDocumentService();

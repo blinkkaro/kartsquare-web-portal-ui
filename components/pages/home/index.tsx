@@ -15,6 +15,7 @@ import PostCard from "./components/PostCard";
 import { useGetPosts } from "@/hooks/usePosts";
 import Blogs from "./components/Blogs";
 import TopSuggestions from "./components/TopSuggestions";
+import { useGetStories } from "@/hooks/useStories";
 
 interface EmptyCardProps {
   name: string;
@@ -68,6 +69,10 @@ function HomeView() {
     limit: 10,
     visibility: "public",
   });
+  const { data: stories, isLoading: storiesLoading } = useGetStories({
+    page: 1,
+    limit: 10,
+  });
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
   return (
@@ -104,7 +109,7 @@ function HomeView() {
         >
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             {/* Stories Section */}
-            <StoriesSection />
+            <StoriesSection data={stories} isLoading={storiesLoading} />
             <Box
               sx={{
                 flexDirection: "column",

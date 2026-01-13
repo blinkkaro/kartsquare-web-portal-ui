@@ -14,7 +14,7 @@ class ScheduleService {
       console.log(response);
       if (response.status === "success") {
       } else {
-        throw new Error(response.data.message || "Failed to add working hours.");
+        throw new Error(response.message || "Failed to add working hours.");
       }
     } catch (error: any) {
       const errorMessage =
