@@ -1,5 +1,4 @@
 import { Posts } from '../post/postInterfaces';
-import { Service } from '../serviceList/listInteraface';
 
 export interface profileInterface {
   id: string;
@@ -30,10 +29,10 @@ export interface providerPostsInterface {
   pagination: pagination;
 }
 
-export interface providerServicesInterface {
-  services: Service[];
-  pagination: pagination;
-}
+// export interface providerServicesInterface {
+//   services: Service[];
+//   pagination: pagination;
+// }
 
 export interface providerProfileInterface {
   id: string;

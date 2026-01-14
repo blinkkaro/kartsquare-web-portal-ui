@@ -90,10 +90,8 @@ const Nav = () => {
   }, []);
 
   // Handlers
-  const handleLogout = () => {
-    dispatch(logout());
-    localStorage.clear();
-    setIsAuthenticated(false);
+  const handleProfileClick = () => {
+    router.push("/myAccount");
   };
 
   const handleLogin = () => {
@@ -144,7 +142,7 @@ const Nav = () => {
               mode={mode}
               onThemeToggle={handleThemeToggle}
               onSearchToggle={toggleMobileSearch}
-              onLogout={handleLogout}
+              profileClick={handleProfileClick}
               onLogin={handleLogin}
               loginText={t("login")}
             />

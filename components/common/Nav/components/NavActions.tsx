@@ -54,7 +54,7 @@ interface NavActionsProps {
   mode: "light" | "dark";
   onThemeToggle: () => void;
   onSearchToggle: () => void;
-  onLogout: () => void;
+  profileClick: () => void;
   onLogin: () => void;
   loginText: string;
 }
@@ -66,7 +66,7 @@ const NavActions: React.FC<NavActionsProps> = ({
   mode,
   onThemeToggle,
   onSearchToggle,
-  onLogout,
+  profileClick,
   onLogin,
   loginText,
 }) => {
@@ -143,7 +143,7 @@ const NavActions: React.FC<NavActionsProps> = ({
           }}
           alt="User Avatar"
           src={profile?.profile_pic}
-          onClick={onLogout}
+          onClick={profileClick}
         />
       </ActionsContainer>
     );

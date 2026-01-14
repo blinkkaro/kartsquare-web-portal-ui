@@ -29,6 +29,20 @@ export const formatDateToString = (date: Date) => {
   return `${dateValue}, ${time}`;
 };
 
+export const formatDate = (dateString: string | Date): string => {
+  if (!dateString) return "";
+  const date =
+    typeof dateString === "string" ? new Date(dateString) : dateString;
+
+  if (isNaN(date.getTime())) return "";
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
 export const formatTimestamp = (dateString: string | Date): string => {
   let date: Date;
 

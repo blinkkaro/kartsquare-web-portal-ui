@@ -65,11 +65,16 @@ export const COLORS = {
   WHITE: "#ffffff",
   BLACK: "#000000",
   DARK: "#30263e",
+  LIGHT_GRAY:"#f9f8fc",
   SUCCESS_GREEN: "#33cf4d",
+  
 
   // Switch Colors
   SWITCH: {
     TRACK_LIGHT: "#E9E9EA",
     TRACK_DARK: "#39393D",
   },
+
+  // profile
+  PROFILE_GRADIENT: "linear-gradient(135deg, #eddaff 25%, #e2e9ff 50%)",
 };

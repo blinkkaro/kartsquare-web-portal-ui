@@ -12,6 +12,7 @@ import {
 import { useProfile } from "./useProfile";
 
 export const useGetStories = (params: { page: number; limit: number }) => {
+  const token = localStorage.getItem("token");
   return useInfiniteQuery({
     queryKey: ["stories", params.page ?? 1, params.limit ?? 10],
     queryFn: ({ pageParam }) =>
@@ -29,6 +30,7 @@ export const useGetStories = (params: { page: number; limit: number }) => {
       }
       return undefined;
     },
+    enabled: !!token,
   });
 };
 

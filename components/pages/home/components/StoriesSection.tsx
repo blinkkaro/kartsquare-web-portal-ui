@@ -273,6 +273,14 @@ const StoriesSection = ({
                               : COLORS.ICON_GRADIENT.Light.END
                           } 100%)`
                         : "transparent",
+                      border:
+                        !unseen
+                          ? `2px solid ${
+                              theme.palette.mode === "dark"
+                                ? COLORS.BORDER.DEFAULT_DARK
+                                : COLORS.BORDER.HOVER_LIGHT
+                            }`
+                          : "none",
                     }}
                   >
                     <Avatar
