@@ -35,9 +35,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [bio, setBio] = useState("");
-  const [profilePicFile, setProfilePicFile] = useState<File | undefined>(
-    undefined
-  );
+  const [profilePicFile, setProfilePicFile] = useState<File | string>("");
   const [previewUrl, setPreviewUrl] = useState<string>("");
 
   // Initialize form with profile data when modal opens
@@ -46,8 +44,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       setFirstName(profileData.first_name || "");
       setLastName(profileData.last_name || "");
       setBio(profileData.bio || "");
-      setProfilePicFile(undefined); // Reset file on open
-      setPreviewUrl(profileData.profile_pic || "");
+      setProfilePicFile(profileData.profile_pic || "");
     }
   }, [open, profileData]);
 
@@ -70,7 +67,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         first_name: firstName,
         last_name: lastName,
         bio: bio,
-        profile_pic: profilePicFile,
+        profile_pic: profilePicFile || undefined,
       },
       {
         onSuccess: () => {
@@ -99,8 +96,10 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       }}
     >
       <ErrorMessage
-        error={error?.response?.data?.message}
-        isVisible={!!error?.response?.data?.message}
+        error={
+          error?.response?.data?.message || error?.message || "Network error"
+        }
+        isVisible={!!error}
       />
       {/* Header */}
       <Box
@@ -137,7 +136,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       >
         <Box sx={{ position: "relative" }}>
           <Avatar
-            src={previewUrl}
+            src={profilePicFile instanceof File ? undefined : profilePicFile}
             sx={{
               width: 100,
               height: 100,

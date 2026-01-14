@@ -24,12 +24,15 @@ class ProfileService {
     first_name: string,
     last_name: string,
     bio?: string,
-    profile_pic?: File
+    profile_pic?: File | string
   ): Promise<profileInterface> {
     try {
+      console.log(profile_pic);
       let pic = "";
-      if (profile_pic) {
+      if (profile_pic && !profile_pic.toString().startsWith("https://") && profile_pic instanceof File) {
         pic = (await verifyDocumentService.uploadImages([profile_pic]))[0];
+      } else if (profile_pic && profile_pic.toString().startsWith("https://")) {
+        pic = profile_pic.toString();
       }
       const response = await api.put<profileInterface>(
         APIENDPOINTS.UPDATE_USER_PROFILE,

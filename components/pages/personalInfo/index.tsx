@@ -102,6 +102,7 @@ function PersonalInfoView() {
                 borderLeft: { sm: "1px solid #E0E0E0", xs: "none" },
                 height: "50%",
                 p: { xs: "0", sm: "1rem" },
+                mt: { xs: "0", sm: "1rem" },
                 alignItems: "center",
               }}
             >
@@ -127,6 +128,7 @@ function PersonalInfoView() {
                 borderLeft: { sm: "1px solid #E0E0E0", xs: "none" },
                 height: "50%",
                 p: { xs: "0", sm: "1rem" },
+                mt: { xs: "0", sm: "1rem" },
                 alignItems: "center",
               }}
             >
