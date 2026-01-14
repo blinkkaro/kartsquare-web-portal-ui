@@ -46,7 +46,7 @@ const Labels = ({ label, description, verified }: LabelsProps) => {
             alignItems: "center",
             gap: "4px",
             bgcolor: "#E8EAF6", // Light indigo/blue background like screenshot
-            color: "#3F51B5", // Text color to match Verified
+            color: COLORS.PRIMARY_PURPLE, // Text color to match Verified
             px: 1,
             py: 0.2,
             borderRadius: "12px",

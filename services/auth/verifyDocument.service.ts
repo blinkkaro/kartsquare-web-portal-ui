@@ -5,6 +5,7 @@ import { Doc, ImageUploadApiResponse } from "./auth.interface";
 class VerifyDocumentService {
   async uploadImages(files: File[]): Promise<string[]> {
     try {
+      console.log(files);
       const formData = new FormData();
       files.forEach((file) => {
         formData.append("documents", file);

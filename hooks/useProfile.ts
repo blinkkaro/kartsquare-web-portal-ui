@@ -17,7 +17,7 @@ export const useUpdateProfile = () => {
       first_name: string;
       last_name: string;
       bio?: string;
-      profile_pic?: string;
+      profile_pic?: File;
     }) =>
       profileService.updateUserProfile(
         data.first_name,

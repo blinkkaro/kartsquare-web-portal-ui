@@ -1,11 +1,11 @@
 import api from "../api";
 import { authService } from "../auth/auth.service";
+import { verifyDocumentService } from "../auth/verifyDocument.service";
 import { APIENDPOINTS } from "./apiEndPoints";
 import {
   profileInterface,
   providerPostsInterface,
   providerProfileInterface,
-  providerServicesInterface,
 } from "./profileInterface";
 
 class ProfileService {
@@ -24,16 +24,20 @@ class ProfileService {
     first_name: string,
     last_name: string,
     bio?: string,
-    profile_pic?: string
+    profile_pic?: File
   ): Promise<profileInterface> {
     try {
+      let pic = "";
+      if (profile_pic) {
+        pic = (await verifyDocumentService.uploadImages([profile_pic]))[0];
+      }
       const response = await api.put<profileInterface>(
         APIENDPOINTS.UPDATE_USER_PROFILE,
         {
           first_name,
           last_name,
           bio,
-          profile_pic,
+          profile_pic: pic,
         }
       );
       return response.data;
@@ -70,31 +74,31 @@ class ProfileService {
     }
   }
 
-  async getProviderServices(
-    id: string,
-    page?: number,
-    limit?: number
-  ): Promise<providerServicesInterface> {
-    try {
-      const response = await api.get<providerServicesInterface>(
-        APIENDPOINTS.GET_PROVIDER_SERVICES(id, page, limit || 10)
-      );
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  }
+  //   async getProviderServices(
+  //     id: string,
+  //     page?: number,
+  //     limit?: number
+  //   ): Promise<providerServicesInterface> {
+  //     try {
+  //       const response = await api.get<providerServicesInterface>(
+  //         APIENDPOINTS.GET_PROVIDER_SERVICES(id, page, limit || 10)
+  //       );
+  //       return response.data;
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   }
 
-  async getProviderProfile(id: string): Promise<providerProfileInterface> {
-    try {
-      const response = await api.get<providerProfileInterface>(
-        APIENDPOINTS.GET_PROVIDER_PROFILE(id)
-      );
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  }
+  //   async getProviderProfile(id: string): Promise<providerProfileInterface> {
+  //     try {
+  //       const response = await api.get<providerProfileInterface>(
+  //         APIENDPOINTS.GET_PROVIDER_PROFILE(id)
+  //       );
+  //       return response.data;
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   }
 }
 
 export const profileService = new ProfileService();

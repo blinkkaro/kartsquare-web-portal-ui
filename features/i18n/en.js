@@ -165,4 +165,7 @@ export const english = {
   name: "Name",
   email: "Email",
   bio: "Bio",
+  editPersonalInfo: "Edit Personal Information",
+  bioPlaceholder: "Tell us about yourself...",
+  save: "Save",
 };

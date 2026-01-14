@@ -174,7 +174,10 @@ export type TranslationKey =
   | "name"
   | "email"
   | "bio"
-  | "deleteAccount";
+  | "deleteAccount"
+  | "editPersonalInfo"
+  | "bioPlaceholder"
+  | "save";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

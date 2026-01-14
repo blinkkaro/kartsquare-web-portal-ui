@@ -1,7 +1,7 @@
 import BackButton from "@/components/common/BackButton";
 import ProfileWrapper from "@/components/common/profileWrapper";
 import { Box, Grid, Typography } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -10,11 +10,13 @@ import { useProfile } from "@/hooks/useProfile";
 import Labels from "./components/labels";
 import Button from "@/components/common/Button";
 import { formatDate } from "@/helper/helper";
+import EditProfileModal from "./components/EditProfileModal";
 
 function PersonalInfoView() {
   const theme = useTheme();
   const { t } = useTranslate();
   const { data: profileData } = useProfile();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const isDark = theme.palette.mode === "dark";
 
@@ -42,6 +44,7 @@ function PersonalInfoView() {
           {t("personalInfoTitle")}
         </Typography>
         <Box
+          onClick={() => setIsEditModalOpen(true)}
           sx={{
             cursor: "pointer",
             bgcolor: isDark
@@ -85,33 +88,53 @@ function PersonalInfoView() {
         />
 
         <Grid container spacing={4}>
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <Labels
               label={t("email")}
               description={profileData?.email || ""}
               verified={true}
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Labels
-              label={t("phone_number")}
-              description={profileData?.phone_number || ""}
-              verified={true}
-            />
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Box
+              sx={{
+                display: "flex",
+                borderLeft: { sm: "1px solid #E0E0E0", xs: "none" },
+                height: "50%",
+                p: { xs: "0", sm: "1rem" },
+                alignItems: "center",
+              }}
+            >
+              <Labels
+                label={t("phone_number")}
+                description={profileData?.phone_number || ""}
+                verified={true}
+              />
+            </Box>
           </Grid>
         </Grid>
         <Grid container spacing={4}>
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <Labels
               label={t("country")}
               description={profileData?.country || ""}
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Labels
-              label={t("gender")}
-              description={profileData?.gender || ""}
-            />
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Box
+              sx={{
+                display: "flex",
+                borderLeft: { sm: "1px solid #E0E0E0", xs: "none" },
+                height: "50%",
+                p: { xs: "0", sm: "1rem" },
+                alignItems: "center",
+              }}
+            >
+              <Labels
+                label={t("gender")}
+                description={profileData?.gender || ""}
+              />
+            </Box>
           </Grid>
         </Grid>
         <Labels
@@ -123,16 +146,25 @@ function PersonalInfoView() {
 
         <Box sx={{ mt: 4 }}>
           <Button
-            variant="text"
+            variant="contained"
             sx={{
-              color: "#FF3B30", // Danger Red
+              color: "error.main",
               fontWeight: 500,
-              padding: 0,
+              padding: "0.5rem 1rem",
               textTransform: "none",
               fontSize: "1rem",
+              boxShadow: `0px 2px 8px ${COLORS.SHADOW.DEFAULT}`,
+              bgcolor:
+                theme.palette.mode === "dark"
+                  ? COLORS.BACKGROUND.PRIMARY_DARK
+                  : COLORS.BACKGROUND.PRIMARY_LIGHT,
               "&:hover": {
-                bgcolor: "transparent",
+                bgcolor:
+                  theme.palette.mode === "dark"
+                    ? COLORS.BACKGROUND.PRIMARY_DARK
+                    : COLORS.BACKGROUND.PRIMARY_LIGHT,
                 textDecoration: "underline",
+                boxShadow: `0px 2px 8px ${COLORS.SHADOW.DEFAULT}`,
               },
             }}
           >
@@ -140,6 +172,12 @@ function PersonalInfoView() {
           </Button>
         </Box>
       </Box>
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal
+        open={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+      />
     </ProfileWrapper>
   );
 }
