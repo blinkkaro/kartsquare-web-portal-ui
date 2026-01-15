@@ -67,7 +67,7 @@ export const myAccountNav = (
       },
       {
         label: t("myDocuments"),
-        href: "#",
+        href: "myAccount/myDocuments",
         icon: <FolderSharedIcon />,
       },
       {
@@ -131,7 +131,7 @@ export const myAccountSettingNav = (
     },
     {
       label: t("faqs"),
-      href: "#",
+      href: "myAccount/FAQ",
       icon: <ListIcon />,
     },
     {

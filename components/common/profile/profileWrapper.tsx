@@ -7,7 +7,7 @@ interface ProfileWrapperProps {
   children: React.ReactNode;
 }
 
-const ProfileWrapper = ({ children }: ProfileWrapperProps) => {
+const  ProfileWrapper = ({ children }: ProfileWrapperProps) => {
   const { data: profile, isLoading } = useProfile();
   return (
     <Box sx={{ px: { xs: 2, sm: 3, md: 5, lg: 5, xl: 10 }, py: 5 }}>

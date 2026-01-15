@@ -197,7 +197,10 @@ export type TranslationKey =
   | "serviceProviders"
   | "suppliers"
   | "brands"
-  | "noItemsSaved";
+  | "noItemsSaved"
+  | "nationalIdCopy"
+  | "frontSide"
+  | "backSide";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

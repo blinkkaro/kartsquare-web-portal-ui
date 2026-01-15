@@ -190,4 +190,7 @@ export const english = {
   suppliers: "Suppliers",
   brands: "Brands",
   noItemsSaved: "No items saved in",
+  nationalIdCopy: "National ID copy",
+  frontSide: "Front side",
+  backSide: "Back side",
 };
