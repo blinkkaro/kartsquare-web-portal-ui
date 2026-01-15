@@ -24,7 +24,7 @@ export const getDesktopNavItems = (
       { label: t("home"), href: "/" },
       // { label: t("dashboard"), href: "/dashboard" },
       // { label: t("store"), href: "/store" },
-      { label: t("services"), href: "/services" },
+      { label: t("services"), href: "/spr/servicesList" },
       // { label: t("events"), href: "/events" },
       { label: t("bookings"), href: "/bookings" },
     ];
@@ -34,7 +34,7 @@ export const getDesktopNavItems = (
     return [
       { label: t("home"), href: "/" },
       // { label: t("store"), href: "/store" },
-      { label: t("services"), href: "/services" },
+      { label: t("services"), href: "/cus/servicesList" },
       // { label: t("events"), href: "/events" },
       { label: t("bookings"), href: "/bookings" },
     ];
@@ -43,7 +43,7 @@ export const getDesktopNavItems = (
   return [
     { label: t("home"), href: "/" },
     { label: t("store"), href: "/store" },
-    { label: t("services"), href: "/services" },
+    { label: t("services"), href: "/cus/servicesList" },
     { label: t("events"), href: "/events" },
   ];
 };
@@ -57,14 +57,14 @@ export const getMobileNavItems = (
   if (!isAuthenticated) {
     items.push(
       { label: t("home"), href: "/", icon: <HomeFilled /> },
-      { label: t("services"), href: "/services", icon: <ArticleRounded /> },
+      { label: t("services"), href: "/cus/servicesList", icon: <ArticleRounded /> },
       // { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
       // { label: t("events"), href: "/events", icon: <Event /> }
     );
   } else {
     items.push(
       { label: t("home"), href: "/", icon: <HomeFilled /> },
-      { label: t("services"), href: "/services", icon: <ArticleRounded /> },
+      { label: t("services"), href: "/cus/servicesList", icon: <ArticleRounded /> },
       // { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
       // { label: t("events"), href: "/events", icon: <Event /> },
       { label: t("bookings"), href: "/bookings", icon: <ShoppingBag /> },
