@@ -1,7 +1,7 @@
 import { authService } from "@/services/auth/auth.service";
 import { profileService } from "@/services/profile/pofileService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useLogout } from "@/hooks/useLogout";
 
 export const useProfile = () => {
   const token = localStorage.getItem("token");
@@ -37,18 +37,11 @@ export const useUpdateProfile = () => {
 };
 
 export const useDeleteProfile = () => {
-  const queryClient = useQueryClient();
-  const router = useRouter();
+  const { handleLogout } = useLogout();
   return useMutation({
     mutationFn: () => profileService.deleteUserProfile(),
     onSuccess: () => {
-      // Clear all local storage
-      localStorage.clear();
-      // Clear query cache
-      queryClient.clear();
-      // Redirect to home page
-      authService.logout();
-      router.push("/");
+      handleLogout();
     },
     onError: (error: any) => {
       throw error;

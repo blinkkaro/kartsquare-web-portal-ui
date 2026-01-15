@@ -146,12 +146,12 @@ export const myAccountSettingNav = (
     // },
     {
       label: t("privacySecurity"),
-      href: "#",
+      href: "privacyPolicy",
       icon: <SecurityIcon />,
     },
     {
       label: t("termsConditions"),
-      href: "#",
+      href: "termsConditions",
       icon: <DescriptionIcon />,
     },
   ];

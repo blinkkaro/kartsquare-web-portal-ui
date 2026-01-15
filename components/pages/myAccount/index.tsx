@@ -11,8 +11,7 @@ import { AppUserType } from "@/services/auth/auth.interface";
 import ProfileWrapper from "@/components/common/profile/profileWrapper";
 import WarningModel from "@/components/common/WarningModel";
 import Button from "@/components/common/Button";
-import { useRouter } from "next/navigation";
-import { authService } from "@/services/auth/auth.service";
+import { useLogout } from "@/hooks/useLogout";
 
 function MyAccountView() {
   const theme = useTheme();
@@ -20,7 +19,7 @@ function MyAccountView() {
   const role = localStorage.getItem("role");
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
-  const router = useRouter();
+  const { handleLogout } = useLogout();
 
   const isDark = theme.palette.mode === "dark";
 
@@ -30,9 +29,8 @@ function MyAccountView() {
   );
   const Settings = useMemo(() => myAccountSettingNav(t), [role, t]);
 
-  const handleLogout = async () => {
-    await authService.logout();
-    router.push("/");
+  const onLogoutClick = async () => {
+    await handleLogout();
   };
 
   return (
@@ -162,7 +160,7 @@ function MyAccountView() {
             </Button>
             <Button
               variant="contained"
-              onClick={handleLogout}
+              onClick={onLogoutClick}
               sx={{
                 flex: 1,
                 bgcolor: "error.main",

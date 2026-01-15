@@ -49,7 +49,11 @@ class AuthService {
   }
   async logout(): Promise<void> {
     try {
-      await api.post(API_ENDPOINTS.LOGOUT);
+      await POST(API_ENDPOINTS.LOGOUT, {}, {}, true);
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("role");
+      localStorage.removeItem("register_step");
     } catch (error) {
       // Swallow error - logout should proceed regardless
     }

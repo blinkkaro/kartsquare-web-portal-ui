@@ -1,5 +1,4 @@
 import { DELETE, GET, PUT } from "../api";
-import { authService } from "../auth/auth.service";
 import { verifyDocumentService } from "../auth/verifyDocument.service";
 import { APIENDPOINTS } from "./apiEndPoints";
 import {
@@ -55,9 +54,7 @@ class ProfileService {
   async deleteUserProfile(): Promise<void> {
     try {
       const res = await DELETE(APIENDPOINTS.DELETE_USER_PROFILE);
-      if ((res.status = "success")) {
-        authService.logout();
-      }
+      // Logic for logout is handled in the hook
     } catch (error) {
       throw error;
     }

@@ -21,6 +21,7 @@ import {
 } from "@/hooks/useFollow";
 import Button from "@/components/common/Button";
 import { IFollow } from "@/services/follow/followInterface";
+import { formatCount } from "@/helper/helper";
 
 interface FollowListDrawerProps {
   open: boolean;
@@ -101,7 +102,9 @@ const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleFollowToggle = (user: IFollow) => {
-    if (user.is_following) {
+    if (isServiceProvider && user.is_following) {
+      unfollowUser(user.id);
+    } else if (!isServiceProvider) {
       unfollowUser(user.id);
     } else {
       followUser(user.id);
@@ -109,14 +112,14 @@ const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
   };
 
   const getButtonLabel = (user: IFollow) => {
-    if (user.is_following) {
+    console.log(user);
+    if (isServiceProvider && user.is_following) {
       return t("unfollow");
     }
-    // For followers list, if they're not following you, show "Follow Back"
     if (isServiceProvider && !user.is_following) {
       return t("followBack");
     }
-    
+    return t("unfollow");
   };
 
   const title = isServiceProvider ? t("followers") : t("following");
@@ -134,7 +137,7 @@ const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
       onClose={onClose}
       PaperProps={{
         sx: {
-          width: { xs: "100%", sm: 400 },
+          width: { xs: "100%", sm: 500 },
           bgcolor: isDark
             ? COLORS.BACKGROUND.PRIMARY_DARK
             : COLORS.BACKGROUND.PRIMARY_LIGHT,
@@ -163,10 +166,7 @@ const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
                 : COLORS.TEXT.PRIMARY_LIGHT,
             }}
           >
-            {title}{" "}
-            {count
-              ? `(${count > 999 ? `${(count / 1000).toFixed(1)}k` : count})`
-              : ""}
+            {title} {count ? formatCount(count) : "0"}
           </Typography>
           <IconButton onClick={onClose} size="small">
             <CloseIcon
@@ -265,7 +265,13 @@ const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
                     </Typography>
                   </Box>
                   <Button
-                    variant={user.is_following ? "outlined" : "contained"}
+                    variant={
+                      isServiceProvider
+                        ? user.is_following
+                          ? "outlined"
+                          : "contained"
+                        : "outlined"
+                    }
                     onClick={() => handleFollowToggle(user)}
                     disabled={isFollowing || isUnfollowing}
                     sx={{

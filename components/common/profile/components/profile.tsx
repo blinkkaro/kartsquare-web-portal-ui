@@ -12,6 +12,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Button from "@/components/common/Button";
 import { useTranslate } from "@/hooks/useTranslate";
+import { formatCount } from "@/helper/helper";
 import FollowListDrawer from "./followListDreawer";
 
 function Profile({ profile }: { profile: profileInterface }) {
@@ -26,7 +27,6 @@ function Profile({ profile }: { profile: profileInterface }) {
   const handleDrawerClick = () => {
     setDrawerOpen((prev) => !prev);
   };
-
 
   return (
     <Paper
@@ -120,7 +120,9 @@ function Profile({ profile }: { profile: profileInterface }) {
             </Typography>
           )}
           <Button variant="contained" onClick={handleDrawerClick}>
-            {profile?.following_count ? profile.following_count : "0"}{" "}
+            {role === "SERVICE_PROVIDER"
+              ? formatCount(profile?.followers_count)
+              : formatCount(profile?.following_count)}{" "}
             {role === "SERVICE_PROVIDER" ? t("followers") : t("following")}
           </Button>
 
@@ -152,7 +154,7 @@ function Profile({ profile }: { profile: profileInterface }) {
         onClose={handleDrawerClick}
         userId={profile?.id || ""}
         userRole={role as "SERVICE_PROVIDER" | "CUSTOMER"}
-        count={profile?.following_count}
+        count={role === "SERVICE_PROVIDER" ? profile?.followers_count : profile?.following_count}
       />
     </Paper>
   );

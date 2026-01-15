@@ -79,3 +79,12 @@ export const formatTimestamp = (dateString: string | Date): string => {
 
   return `Just now`;
 };
+
+export const formatCount = (count: number): string => {
+  if (!count) return "0";
+  if (count < 1000) return count.toString();
+  if (count < 1000000) {
+    return (count / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+  }
+  return (count / 1000000).toFixed(1).replace(/\.0$/, "") + "m";
+};

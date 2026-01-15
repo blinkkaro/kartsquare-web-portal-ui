@@ -1,7 +1,7 @@
 
 import { API_ENDPOINT } from './apiEndPoint';
 import { IFollow, IFollowResponse } from './followInterface';
-import { GET, POST } from '../api';
+import { DELETE, GET, POST } from '../api';
 
 class FollowService {
   async followUser(id: string): Promise<boolean> {
@@ -16,9 +16,8 @@ class FollowService {
 
   async unfollowUser(id: string): Promise<boolean> {
     try {
-      const response = await POST(
+      const response = await DELETE(
         `${API_ENDPOINT.UNFOLLOW_USER(id)}`,
-        {},
         {},
         true
       );
