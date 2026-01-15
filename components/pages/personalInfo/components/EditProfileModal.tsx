@@ -96,9 +96,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       }}
     >
       <ErrorMessage
-        error={
-          error?.response?.data?.message || error?.message || "Network error"
-        }
+        error={error?.response?.data?.message || error?.message}
         isVisible={!!error}
       />
       {/* Header */}

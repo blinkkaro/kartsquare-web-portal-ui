@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { Box, Grid, Typography } from "@mui/material";
 import { useTranslate } from "@/hooks/useTranslate";
 import { COLORS } from "@/constants/colors";
@@ -8,17 +8,33 @@ import { useTheme } from "@mui/material";
 import CustomBox from "./components/CustomBox";
 import { myAccountNav, myAccountSettingNav } from "@/constants/myAccount";
 import { AppUserType } from "@/services/auth/auth.interface";
-import ProfileWrapper from "@/components/common/profileWrapper";
+import ProfileWrapper from "@/components/common/profile/profileWrapper";
+import WarningModel from "@/components/common/WarningModel";
+import Button from "@/components/common/Button";
+import { useRouter } from "next/navigation";
+import { authService } from "@/services/auth/auth.service";
+
 function MyAccountView() {
   const theme = useTheme();
   const { t } = useTranslate();
   const role = localStorage.getItem("role");
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
+  const router = useRouter();
+
+  const isDark = theme.palette.mode === "dark";
 
   const MyAccount = useMemo(
     () => myAccountNav(role as AppUserType, t),
     [role, t]
   );
   const Settings = useMemo(() => myAccountSettingNav(t), [role, t]);
+
+  const handleLogout = async () => {
+    await authService.logout();
+    router.push("/");
+  };
+
   return (
     <ProfileWrapper>
       <Box>
@@ -62,7 +78,14 @@ function MyAccountView() {
                 flexGrow: 0,
               }}
             >
-              <CustomBox icon={item.icon} label={item.label} path={item.href} />
+              <CustomBox
+                icon={item.icon}
+                label={item.label}
+                path={item.href}
+                onClick={
+                  item.isLogout ? () => setIsLogoutModalOpen(true) : undefined
+                }
+              />
             </Box>
           ))}
         </Box>
@@ -113,6 +136,47 @@ function MyAccountView() {
           ))}
         </Box>
       </Box>
+
+      {/* Logout Warning Modal */}
+      <WarningModel
+        open={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        title={t("logoutTitle")}
+        description={t("logoutDescription")}
+        ActionsButtons={
+          <Box sx={{ display: "flex", gap: 2, width: "100%" }}>
+            <Button
+              variant="outlined"
+              onClick={() => setIsLogoutModalOpen(false)}
+              sx={{
+                flex: 1,
+                borderColor: isDark
+                  ? COLORS.BORDER.DEFAULT_DARK
+                  : COLORS.BORDER.DEFAULT_LIGHT,
+                color: isDark
+                  ? COLORS.TEXT.PRIMARY_DARK
+                  : COLORS.TEXT.PRIMARY_LIGHT,
+              }}
+            >
+              {t("logoutCancel")}
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleLogout}
+              sx={{
+                flex: 1,
+                bgcolor: "error.main",
+                color: "white",
+                "&:hover": {
+                  bgcolor: "error.dark",
+                },
+              }}
+            >
+              {t("logoutConfirm")}
+            </Button>
+          </Box>
+        }
+      />
     </ProfileWrapper>
   );
 }

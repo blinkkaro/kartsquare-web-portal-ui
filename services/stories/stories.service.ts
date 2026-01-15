@@ -7,18 +7,17 @@ import {
 } from "./stories.interface";
 import { APIENDPOINT } from "./apiEndPoint";
 import { verifyDocumentService } from "../auth/verifyDocument.service";
-import api from "../api";
+import { DELETE, GET, POST, PUT } from "../api";
 
 class StoriesService {
   async createStory(story: CreateStory): Promise<Story> {
     try {
       const media_url = await verifyDocumentService.uploadImages([story.media]);
 
-      const response = await api.post<Story>(APIENDPOINT.CREATE_STORY, {
+      const response = await POST<Story>(APIENDPOINT.CREATE_STORY, {
         ...story,
         media_url: media_url[0],
       });
-      console.log("Create Story Response:", response);
       if (response.status !== "success") {
         throw new Error(response.message);
       }
@@ -31,7 +30,7 @@ class StoriesService {
 
   async getStories(page: number, limit: number): Promise<StoriesListResponse> {
     try {
-      const response = await api.get<StoriesListResponse>(
+      const response = await GET<StoriesListResponse>(
         APIENDPOINT.GET_STORIES(page, limit)
       );
       console.log("Get Stories Response:", response);
@@ -47,7 +46,7 @@ class StoriesService {
 
   async deleteStory(id: string): Promise<Story> {
     try {
-      const response = await api.delete<Story>(APIENDPOINT.DELETE_STORY(id));
+      const response = await DELETE<Story>(APIENDPOINT.DELETE_STORY(id));
       if (response.status !== "success") {
         throw new Error(response.message);
       }
@@ -59,10 +58,7 @@ class StoriesService {
 
   static async updateStory(id: string, story: UpdateStory): Promise<Story> {
     try {
-      const response = await api.put<Story>(
-        APIENDPOINT.UPDATE_STORY(id),
-        story
-      );
+      const response = await PUT<Story>(APIENDPOINT.UPDATE_STORY(id), story);
       if (response.status !== "success") {
         throw new Error(response.message);
       }
@@ -75,7 +71,7 @@ class StoriesService {
   async viewStory(id: string): Promise<boolean> {
     try {
       console.log("View Story ID:", id);
-      const response = await api.post(APIENDPOINT.VIEW_STORY(id));
+      const response = await POST(APIENDPOINT.VIEW_STORY(id), {}, {}, true);
       console.log("View Story Response:", response);
       if (response.status !== "success") {
         throw new Error(response.message);
@@ -88,7 +84,7 @@ class StoriesService {
 
   async getViewerList(id: string): Promise<ViewerResponse> {
     try {
-      const response = await api.get<ViewerResponse>(
+      const response = await GET<ViewerResponse>(
         APIENDPOINT.GET_VIEWER_LIST(id)
       );
       if (response.status !== "success") {

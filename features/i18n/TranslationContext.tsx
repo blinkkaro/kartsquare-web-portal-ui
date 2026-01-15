@@ -177,7 +177,22 @@ export type TranslationKey =
   | "deleteAccount"
   | "editPersonalInfo"
   | "bioPlaceholder"
-  | "save";
+  | "save"
+  | "deleteAccountTitle"
+  | "deleteAccountDescription"
+  | "deleteAccountConfirm"
+  | "deleteAccountCancel"
+  | "logoutTitle"
+  | "logoutDescription"
+  | "logoutConfirm"
+  | "logoutCancel"
+  | "followBack"
+  | "unfollow"
+  | "follow"
+  | "noFollowersYet"
+  | "noFollowingYet"
+  | "loadingFollowers"
+  | "loadingFollowing";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

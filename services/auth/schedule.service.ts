@@ -9,7 +9,9 @@ class ScheduleService {
         API_ENDPOINTS.ADD_BULK_WORKING_HOURS,
         {
           working_hours: data,
-        }
+        },
+        {},
+        true
       );
       console.log(response);
       if (response.status === "success") {

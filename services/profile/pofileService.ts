@@ -1,4 +1,4 @@
-import api from "../api";
+import { DELETE, GET, PUT } from "../api";
 import { authService } from "../auth/auth.service";
 import { verifyDocumentService } from "../auth/verifyDocument.service";
 import { APIENDPOINTS } from "./apiEndPoints";
@@ -11,7 +11,7 @@ import {
 class ProfileService {
   async getUserProfile(): Promise<profileInterface> {
     try {
-      const response = await api.get<profileInterface>(
+      const response = await GET<profileInterface>(
         APIENDPOINTS.GET_USER_PROFILE
       );
       return response.data;
@@ -27,14 +27,17 @@ class ProfileService {
     profile_pic?: File | string
   ): Promise<profileInterface> {
     try {
-      console.log(profile_pic);
       let pic = "";
-      if (profile_pic && !profile_pic.toString().startsWith("https://") && profile_pic instanceof File) {
+      if (
+        profile_pic &&
+        !profile_pic.toString().startsWith("https://") &&
+        profile_pic instanceof File
+      ) {
         pic = (await verifyDocumentService.uploadImages([profile_pic]))[0];
       } else if (profile_pic && profile_pic.toString().startsWith("https://")) {
         pic = profile_pic.toString();
       }
-      const response = await api.put<profileInterface>(
+      const response = await PUT<profileInterface>(
         APIENDPOINTS.UPDATE_USER_PROFILE,
         {
           first_name,
@@ -51,7 +54,7 @@ class ProfileService {
 
   async deleteUserProfile(): Promise<void> {
     try {
-      const res = await api.delete(APIENDPOINTS.DELETE_USER_PROFILE);
+      const res = await DELETE(APIENDPOINTS.DELETE_USER_PROFILE);
       if ((res.status = "success")) {
         authService.logout();
       }
@@ -66,7 +69,7 @@ class ProfileService {
     limit?: number
   ): Promise<providerPostsInterface> {
     try {
-      const response = await api.get<providerPostsInterface>(
+      const response = await GET<providerPostsInterface>(
         APIENDPOINTS.GET_PROVIDER_POSTS(id, page, limit || 10)
       );
       console.log(response.data);

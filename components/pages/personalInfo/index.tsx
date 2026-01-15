@@ -1,24 +1,31 @@
 import BackButton from "@/components/common/BackButton";
-import ProfileWrapper from "@/components/common/profileWrapper";
+import ProfileWrapper from "@/components/common/profile/profileWrapper";
 import { Box, Grid, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { EditOutlined } from "@mui/icons-material";
-import { useProfile } from "@/hooks/useProfile";
+import { useProfile, useDeleteProfile } from "@/hooks/useProfile";
 import Labels from "./components/labels";
 import Button from "@/components/common/Button";
 import { formatDate } from "@/helper/helper";
 import EditProfileModal from "./components/EditProfileModal";
+import WarningModel from "@/components/common/WarningModel";
 
 function PersonalInfoView() {
   const theme = useTheme();
   const { t } = useTranslate();
   const { data: profileData } = useProfile();
+  const { mutate: deleteProfile, isPending: isDeleting } = useDeleteProfile();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const isDark = theme.palette.mode === "dark";
+
+  const handleDeleteAccount = () => {
+    deleteProfile();
+  };
 
   return (
     <ProfileWrapper>
@@ -149,6 +156,7 @@ function PersonalInfoView() {
         <Box sx={{ mt: 4 }}>
           <Button
             variant="contained"
+            onClick={() => setIsDeleteModalOpen(true)}
             sx={{
               color: "error.main",
               fontWeight: 500,
@@ -179,6 +187,48 @@ function PersonalInfoView() {
       <EditProfileModal
         open={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
+      />
+
+      {/* Delete Account Warning Modal */}
+      <WarningModel
+        open={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        title={t("deleteAccountTitle")}
+        description={t("deleteAccountDescription")}
+        ActionsButtons={
+          <Box sx={{ display: "flex", gap: 2, width: "100%" }}>
+            <Button
+              variant="outlined"
+              onClick={() => setIsDeleteModalOpen(false)}
+              sx={{
+                flex: 1,
+                borderColor: isDark
+                  ? COLORS.BORDER.DEFAULT_DARK
+                  : COLORS.BORDER.DEFAULT_LIGHT,
+                color: isDark
+                  ? COLORS.TEXT.PRIMARY_DARK
+                  : COLORS.TEXT.PRIMARY_LIGHT,
+              }}
+            >
+              {t("deleteAccountCancel")}
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleDeleteAccount}
+              disabled={isDeleting}
+              sx={{
+                flex: 1,
+                bgcolor: "error.main",
+                color: "white",
+                "&:hover": {
+                  bgcolor: "error.dark",
+                },
+              }}
+            >
+              {isDeleting ? "..." : t("deleteAccountConfirm")}
+            </Button>
+          </Box>
+        }
       />
     </ProfileWrapper>
   );

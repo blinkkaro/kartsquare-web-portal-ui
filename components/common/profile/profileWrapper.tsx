@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Grid } from "@mui/material";
 import { useProfile } from "@/hooks/useProfile";
-import Profile from "../pages/myAccount/components/profile";
+import Profile from "./components/profile";
 
 interface ProfileWrapperProps {
   children: React.ReactNode;

@@ -168,4 +168,21 @@ export const english = {
   editPersonalInfo: "Edit Personal Information",
   bioPlaceholder: "Tell us about yourself...",
   save: "Save",
+  deleteAccountTitle: "Delete Account",
+  deleteAccountDescription:
+    "Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.",
+  deleteAccountConfirm: "Yes, Delete",
+  deleteAccountCancel: "Cancel",
+  logoutTitle: "Logout",
+  logoutDescription:
+    "Are you sure you want to logout? You will need to login again to access your account.",
+  logoutConfirm: "Yes, Logout",
+  logoutCancel: "Cancel",
+  followBack: "Follow Back",
+  unfollow: "Unfollow",
+  follow: "Follow",
+  noFollowersYet: "No followers yet",
+  noFollowingYet: "Not following anyone yet",
+  loadingFollowers: "Loading followers...",
+  loadingFollowing: "Loading following...",
 };

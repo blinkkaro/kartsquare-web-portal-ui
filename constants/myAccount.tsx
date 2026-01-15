@@ -31,6 +31,7 @@ export interface myAccountNavInterface {
   label: string;
   href: string;
   icon: React.ReactElement;
+  isLogout?: boolean;
 }
 
 export const myAccountNav = (
@@ -78,6 +79,7 @@ export const myAccountNav = (
         label: t("logout"),
         href: "#",
         icon: <PowerSettingsNewIcon />,
+        isLogout: true,
       },
     ];
   } else {
@@ -105,8 +107,9 @@ export const myAccountNav = (
       },
       {
         label: t("logout"),
-        href: "/logout",
+        href: "#",
         icon: <PowerSettingsNewIcon />,
+        isLogout: true,
       },
     ];
   }
@@ -136,11 +139,11 @@ export const myAccountSettingNav = (
       href: "#",
       icon: <HelpIcon />,
     },
-    {
-      label: t("rcPolicy"),
-      href: "#",
-      icon: <PolicyIcon />,
-    },
+    // {
+    //   label: t("rcPolicy"),
+    //   href: "#",
+    //   icon: <PolicyIcon />,
+    // },
     {
       label: t("privacySecurity"),
       href: "#",

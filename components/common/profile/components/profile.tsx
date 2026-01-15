@@ -8,18 +8,26 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Button from "@/components/common/Button";
 import { useTranslate } from "@/hooks/useTranslate";
+import FollowListDrawer from "./followListDreawer";
 
 function Profile({ profile }: { profile: profileInterface }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const [open, setOpen] = React.useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const { t } = useTranslate();
   const handleOpen = () => setOpen((prev) => !prev);
   const role = localStorage.getItem("role");
+
+  const handleDrawerClick = () => {
+    setDrawerOpen((prev) => !prev);
+  };
+
+
   return (
     <Paper
       elevation={0}
@@ -111,7 +119,7 @@ function Profile({ profile }: { profile: profileInterface }) {
               {t("continueReading")}
             </Typography>
           )}
-          <Button variant="contained">
+          <Button variant="contained" onClick={handleDrawerClick}>
             {profile?.following_count ? profile.following_count : "0"}{" "}
             {role === "SERVICE_PROVIDER" ? t("followers") : t("following")}
           </Button>
@@ -137,6 +145,15 @@ function Profile({ profile }: { profile: profileInterface }) {
           </Box>
         </Box>
       </Box>
+
+      {/* Follow List Drawer */}
+      <FollowListDrawer
+        open={drawerOpen}
+        onClose={handleDrawerClick}
+        userId={profile?.id || ""}
+        userRole={role as "SERVICE_PROVIDER" | "CUSTOMER"}
+        count={profile?.following_count}
+      />
     </Paper>
   );
 }
