@@ -32,6 +32,7 @@ export interface myAccountNavInterface {
   href: string;
   icon: React.ReactElement;
   isLogout?: boolean;
+  isChangePassword?: boolean;
 }
 
 export const myAccountNav = (
@@ -123,6 +124,7 @@ export const myAccountSettingNav = (
       label: t("changePassword"),
       href: "#",
       icon: <LockIcon />,
+      isChangePassword: true,
     },
     {
       label: t("addresses"),
@@ -136,7 +138,7 @@ export const myAccountSettingNav = (
     },
     {
       label: t("helpSupport"),
-      href: "#",
+      href: "myAccount/helpSupport",
       icon: <HelpIcon />,
     },
     // {

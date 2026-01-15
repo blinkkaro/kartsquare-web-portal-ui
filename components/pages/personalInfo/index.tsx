@@ -1,4 +1,3 @@
-import BackButton from "@/components/common/BackButton";
 import ProfileWrapper from "@/components/common/profile/profileWrapper";
 import { Box, Grid, Typography } from "@mui/material";
 import React, { useState } from "react";
@@ -28,8 +27,7 @@ function PersonalInfoView() {
   };
 
   return (
-    <ProfileWrapper>
-      <BackButton />
+    <ProfileWrapper showBackButton>
       <Box
         sx={{
           my: "2rem",

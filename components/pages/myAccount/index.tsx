@@ -12,12 +12,16 @@ import ProfileWrapper from "@/components/common/profile/profileWrapper";
 import WarningModel from "@/components/common/WarningModel";
 import Button from "@/components/common/Button";
 import { useLogout } from "@/hooks/useLogout";
+import ChangePassword from "./components/changePassword";
+import RightDrawer from "@/components/common/RightDrawer";
 
 function MyAccountView() {
   const theme = useTheme();
   const { t } = useTranslate();
   const role = localStorage.getItem("role");
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] =
+    useState(false);
 
   const { handleLogout } = useLogout();
 
@@ -81,7 +85,9 @@ function MyAccountView() {
                 label={item.label}
                 path={item.href}
                 onClick={
-                  item.isLogout ? () => setIsLogoutModalOpen(true) : undefined
+                  item.isLogout
+                    ? () => setIsLogoutModalOpen(true)
+                    : undefined
                 }
               />
             </Box>
@@ -129,7 +135,11 @@ function MyAccountView() {
                 flexGrow: 0,
               }}
             >
-              <CustomBox icon={item.icon} label={item.label} path={item.href} />
+              <CustomBox icon={item.icon} label={item.label} path={item.href} onClick={
+                  item.isChangePassword
+                    ? () => setIsChangePasswordModalOpen(true)
+                    : undefined
+                }/>
             </Box>
           ))}
         </Box>
@@ -175,6 +185,16 @@ function MyAccountView() {
           </Box>
         }
       />
+
+      {/* Change Password Modal */}
+      <RightDrawer
+        open={isChangePasswordModalOpen}
+        onClose={() => setIsChangePasswordModalOpen(false)}
+        title={t("changePassword")}
+        width={800}
+      >
+        <ChangePassword  onClose={() => setIsChangePasswordModalOpen(false)}/>
+      </RightDrawer>
     </ProfileWrapper>
   );
 }

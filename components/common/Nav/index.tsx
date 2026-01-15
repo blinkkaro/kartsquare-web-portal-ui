@@ -26,6 +26,8 @@ import DesktopNavLinks from "./components/DesktopNavLinks";
 import NavActions from "./components/NavActions";
 import MobileBottomNav from "./components/MobileBottomNav";
 import MobileSearchDrawer from "./components/MobileSearchDrawer";
+import NotificationList from "./components/NotificationList";
+import RightDrawer from "../RightDrawer";
 
 // Styled Components
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -67,6 +69,7 @@ const Nav = () => {
   const { t } = useTranslate();
   const mode = useAppSelector((state) => state.ui.mode);
   const dispatch = useAppDispatch();
+  const [showNotificationDrawer, setShowNotificationDrawer] = useState(false);
 
   // Local state
   const [role, setRole] = useState<string | null>(null);
@@ -110,6 +113,10 @@ const Nav = () => {
     setMobileSearchOpen((prev) => !prev);
   };
 
+  const toggleNotificationDrawer = () => {
+    setShowNotificationDrawer((prev) => !prev);
+  };
+
   return (
     <>
       <StyledAppBar position="fixed" elevation={0}>
@@ -145,6 +152,7 @@ const Nav = () => {
               profileClick={handleProfileClick}
               onLogin={handleLogin}
               loginText={t("login")}
+              onNotificationToggle={toggleNotificationDrawer}
             />
           </Box>
 
@@ -165,6 +173,16 @@ const Nav = () => {
           placeholder={t("search")}
         />
       )}
+
+      {/* Notification Drawer */}
+      <RightDrawer
+        open={showNotificationDrawer}
+        onClose={() => setShowNotificationDrawer(false)}
+        title={t("notifications")}
+        width={500}
+      >
+        <NotificationList onClose={() => setShowNotificationDrawer(false)} />
+      </RightDrawer>
     </>
   );
 };

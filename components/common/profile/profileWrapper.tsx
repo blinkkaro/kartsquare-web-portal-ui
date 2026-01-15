@@ -2,21 +2,38 @@ import React from "react";
 import { Box, Grid } from "@mui/material";
 import { useProfile } from "@/hooks/useProfile";
 import Profile from "./components/profile";
+import BackButton from "../BackButton";
 
 interface ProfileWrapperProps {
   children: React.ReactNode;
+  showBackButton?: boolean;
 }
 
-const  ProfileWrapper = ({ children }: ProfileWrapperProps) => {
+const ProfileWrapper = ({
+  children,
+  showBackButton = false,
+}: ProfileWrapperProps) => {
   const { data: profile, isLoading } = useProfile();
   return (
     <Box sx={{ px: { xs: 2, sm: 3, md: 5, lg: 5, xl: 10 }, py: 5 }}>
+      {showBackButton && (
+        <Box sx={{ display: { xs: "block", lg: "none" }, mb: 2 }}>
+          <BackButton />
+        </Box>
+      )}
       <Grid
         container
         spacing={4}
         direction={{ xs: "column-reverse", lg: "row" }}
       >
-        <Grid size={{ xs: 12, lg: 8 }}>{children}</Grid>
+        <Grid  size={{ xs: 12, lg: 8 }}>
+          {showBackButton && (
+            <Box sx={{ display: { xs: "none", lg: "block" }, mb: 2 }}>
+              <BackButton />
+            </Box>
+          )}
+          {children}
+        </Grid>
         <Grid size={{ xs: 12, lg: 4 }}>
           <Profile profile={profile!} />
         </Grid>

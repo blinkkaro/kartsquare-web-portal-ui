@@ -22,6 +22,7 @@ import {
 import Button from "@/components/common/Button";
 import { IFollow } from "@/services/follow/followInterface";
 import { formatCount } from "@/helper/helper";
+import RightDrawer from "../../RightDrawer";
 
 interface FollowListDrawerProps {
   open: boolean;
@@ -131,54 +132,8 @@ const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
     : t("loadingFollowing");
 
   return (
-    <Drawer
-      anchor="right"
-      open={open}
-      onClose={onClose}
-      PaperProps={{
-        sx: {
-          width: { xs: "100%", sm: 500 },
-          bgcolor: isDark
-            ? COLORS.BACKGROUND.PRIMARY_DARK
-            : COLORS.BACKGROUND.PRIMARY_LIGHT,
-        },
-      }}
-    >
+    <RightDrawer open={open} onClose={onClose} title={title} width={500}>
       <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-        {/* Header */}
-        <Box
-          sx={{
-            p: 2,
-            borderBottom: `1px solid ${
-              isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
-            }`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 600,
-              color: isDark
-                ? COLORS.TEXT.PRIMARY_DARK
-                : COLORS.TEXT.PRIMARY_LIGHT,
-            }}
-          >
-            {title} {count ? formatCount(count) : "0"}
-          </Typography>
-          <IconButton onClick={onClose} size="small">
-            <CloseIcon
-              sx={{
-                color: isDark
-                  ? COLORS.TEXT.PRIMARY_DARK
-                  : COLORS.TEXT.PRIMARY_LIGHT,
-              }}
-            />
-          </IconButton>
-        </Box>
-
         {/* Content */}
         <Box sx={{ flex: 1, overflowY: "auto", p: 2 }}>
           {isLoading ? (
@@ -306,7 +261,7 @@ const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
           )}
         </Box>
       </Box>
-    </Drawer>
+    </RightDrawer>
   );
 };
 

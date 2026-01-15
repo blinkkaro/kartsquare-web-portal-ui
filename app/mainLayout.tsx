@@ -25,6 +25,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             ? COLORS.BACKGROUND.PAPER_DARK
             : COLORS.BACKGROUND.PAPER_LIGHT,
         // more breathing room at bottom on mobile
+        pb: { xs: "5rem", md: "0" },
       }}
     >
       <Nav />

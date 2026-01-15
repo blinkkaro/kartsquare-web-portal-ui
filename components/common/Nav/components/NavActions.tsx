@@ -57,6 +57,7 @@ interface NavActionsProps {
   profileClick: () => void;
   onLogin: () => void;
   loginText: string;
+  onNotificationToggle: () => void;
 }
 
 const NavActions: React.FC<NavActionsProps> = ({
@@ -69,6 +70,7 @@ const NavActions: React.FC<NavActionsProps> = ({
   profileClick,
   onLogin,
   loginText,
+  onNotificationToggle,
 }) => {
   const { data: profile } = useProfile();
   if (isAuthenticated) {
@@ -104,7 +106,7 @@ const NavActions: React.FC<NavActionsProps> = ({
         </StyledIconButton>
 
         {/* Notifications */}
-        <StyledIconButton size="small" aria-label="notifications">
+        <StyledIconButton size="small" aria-label="notifications" onClick={onNotificationToggle}>
           <Badge badgeContent={0} color="error">
             <Image
               src={
