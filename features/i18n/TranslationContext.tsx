@@ -192,7 +192,12 @@ export type TranslationKey =
   | "noFollowersYet"
   | "noFollowingYet"
   | "loadingFollowers"
-  | "loadingFollowing";
+  | "loadingFollowing"
+  | "products"
+  | "serviceProviders"
+  | "suppliers"
+  | "brands"
+  | "noItemsSaved";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

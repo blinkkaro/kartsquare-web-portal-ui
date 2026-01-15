@@ -52,12 +52,12 @@ export const myAccountNav = (
       },
       {
         label: t("saved"),
-        href: "#",
+        href: "myAccount/saved",
         icon: <BookmarkBorderIcon />,
       },
       {
         label: t("blogs"),
-        href: "#",
+        href: "myAccount/blog",
         icon: <ArticleOutlinedIcon />,
       },
       {
@@ -92,12 +92,12 @@ export const myAccountNav = (
       },
       {
         label: t("saved"),
-        href: "#",
+        href: "myAccount/saved",
         icon: <BookmarkBorderIcon />,
       },
       {
         label: t("blogs"),
-        href: "#",
+        href: "myAccount/blog",
         icon: <ArticleOutlinedIcon />,
       },
       {

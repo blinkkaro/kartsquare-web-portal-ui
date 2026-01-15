@@ -185,4 +185,9 @@ export const english = {
   noFollowingYet: "Not following anyone yet",
   loadingFollowers: "Loading followers...",
   loadingFollowing: "Loading following...",
+  products: "Products",
+  serviceProviders: "Service Provider's",
+  suppliers: "Suppliers",
+  brands: "Brands",
+  noItemsSaved: "No items saved in",
 };
