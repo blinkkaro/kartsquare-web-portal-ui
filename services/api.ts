@@ -80,8 +80,9 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem("refreshToken");
         if (!refreshToken) {
-          // No refresh token, logout or redirect
-          throw new Error("No refresh token available");
+          // No refresh token, but don't redirect - just throw the error
+          // Let individual components handle authentication requirements
+          throw error;
         }
 
         // Import dynamically to avoid circular dependency
@@ -104,9 +105,22 @@ api.interceptors.response.use(
           return api(originalRequest);
         }
       } catch (refreshError) {
-        // Refresh failed, logout
-        localStorage.clear();
-        window.location.href = "/login";
+        // Refresh failed - only clear storage, don't redirect
+        // Let the app handle navigation based on context
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("user");
+
+        // Only redirect to login if we're on a protected route
+        // For public pages like service details, just throw the error
+        const currentPath = window.location.pathname;
+        const publicPaths = ['/services/', '/cus/servicesList', '/'];
+        const isPublicPath = publicPaths.some(path => currentPath.includes(path) || currentPath === path);
+
+        if (!isPublicPath) {
+          window.location.href = "/login";
+        }
+
         return Promise.reject(refreshError);
       }
     }

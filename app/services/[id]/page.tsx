@@ -9,7 +9,6 @@ import {
     CircularProgress,
     useTheme,
     IconButton,
-    Pagination,
     Breadcrumbs,
     Link,
 } from "@mui/material";
@@ -18,8 +17,8 @@ import { useParams, useRouter } from "next/navigation";
 import Nav from "../../../components/common/Nav";
 import ServiceImageCarousel from "../../../components/ServiceImageCarousel";
 import ProviderInfoCard from "../../../components/ProviderInfoCard";
-import RelatedServices from "../../../components/RelatedServices";
 import ReviewCard from "../../../components/ReviewCard";
+import ServiceCard from "../../../components/ServiceCard";
 import { serviceDetailsService } from "../../../services/serviceDetails/serviceDetailsService";
 import { reviewService } from "../../../services/reviews/reviewService";
 import { ServiceDetails } from "../../../services/serviceDetails/serviceDetailsInterface";
@@ -41,7 +40,6 @@ const ServiceDetailsPage = () => {
     const [loading, setLoading] = useState(true);
     const [reviewsLoading, setReviewsLoading] = useState(true);
     const [reviewPage, setReviewPage] = useState(1);
-    const [totalReviewPages, setTotalReviewPages] = useState(1);
     const [totalReviews, setTotalReviews] = useState(0);
     const reviewsPerPage = 5;
 
@@ -82,11 +80,10 @@ const ServiceDetailsPage = () => {
                 const data = await reviewService.getReviews(
                     "SERVICE",
                     serviceId,
-                    reviewPage,
-                    reviewsPerPage
+                    1, // Always fetch from page 1
+                    reviewPage * reviewsPerPage // Increase limit as we load more
                 );
                 setReviews(data.reviews);
-                setTotalReviewPages(data.meta.total_pages);
                 setTotalReviews(data.meta.total);
             } catch (error) {
                 console.error("Failed to fetch reviews:", error);
@@ -101,10 +98,8 @@ const ServiceDetailsPage = () => {
         }
     }, [serviceId, reviewPage]);
 
-    const handleReviewPageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
-        setReviewPage(value);
-        // Scroll to reviews section
-        document.getElementById("reviews-section")?.scrollIntoView({ behavior: "smooth" });
+    const handleLoadMore = () => {
+        setReviewPage((prev) => prev + 1);
     };
 
     if (loading) {
@@ -227,14 +222,15 @@ const ServiceDetailsPage = () => {
                             display: "grid",
                             gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
                             gap: 4,
+                            alignItems: "start",
                         }}
                     >
-                        {/* Left Column - Images */}
-                        <Box>
+                        {/* Left Column - Images Only */}
+                        <Box sx={{ position: "sticky", top: 80 }}>
                             <ServiceImageCarousel images={images} serviceName={service.service_name} />
                         </Box>
 
-                        {/* Right Column - Service Info */}
+                        {/* Right Column - All Content */}
                         <Box>
                             {/* Price and Category */}
                             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
@@ -342,6 +338,7 @@ const ServiceDetailsPage = () => {
                                 </Button>
                                 <Button
                                     variant="contained"
+                                    onClick={() => router.push(`/services/${serviceId}/book`)}
                                     sx={{
                                         bgcolor: COLORS.PRIMARY_PURPLE,
                                         color: "white",
@@ -446,7 +443,7 @@ const ServiceDetailsPage = () => {
                             </Box>
 
                             {/* Service Location */}
-                            <Box>
+                            <Box sx={{ mb: 3 }}>
                                 <Typography
                                     variant="subtitle2"
                                     sx={{
@@ -466,106 +463,153 @@ const ServiceDetailsPage = () => {
                                     {service.service_provider_address || "123 Main Street, Al Satwa Dubai, United Arab Emirates"}
                                 </Typography>
                             </Box>
-                        </Box>
-                    </Box>
 
-                    {/* Provider Info */}
-                    <ProviderInfoCard
-                        providerId={service.provider_id}
-                        providerName={service.provider_name}
-                        providerImageUrl={service.provider_image_url}
-                        isHotSeller={true}
-                    />
+                            {/* Provider Info */}
+                            <ProviderInfoCard
+                                providerId={service.provider_id}
+                                providerName={service.provider_name}
+                                providerImageUrl={service.provider_image_url}
+                                isHotSeller={true}
+                            />
 
-                    {/* Related Services */}
-                    {relatedServices.length > 0 && (
-                        <RelatedServices
-                            services={relatedServices}
-                            title={`${service.provider_name}'s Services`}
-                        />
-                    )}
-
-                    {/* Reviews Section */}
-                    <Box id="reviews-section" sx={{ mt: 4 }}>
-                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-                            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                                <Typography
-                                    variant="h6"
-                                    sx={{
-                                        fontWeight: 700,
-                                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                                    }}
-                                >
-                                    {totalReviews} Reviews
-                                </Typography>
-                                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                                    <Star sx={{ color: "#FFC107", fontSize: 20 }} />
+                            {/* Related Services */}
+                            {relatedServices.length > 0 && (
+                                <Box sx={{ mt: 4 }}>
                                     <Typography
-                                        variant="body1"
+                                        variant="h6"
                                         sx={{
-                                            fontWeight: 600,
+                                            fontWeight: 700,
+                                            mb: 2,
                                             color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                                         }}
                                     >
-                                        {service.avg_service_rating ? Number(service.avg_service_rating).toFixed(1) : "0.0"}
+                                        {service.provider_name}'s Services
                                     </Typography>
-                                </Box>
-                            </Box>
-                            <Button
-                                sx={{
-                                    textTransform: "none",
-                                    color: COLORS.PRIMARY_PURPLE,
-                                    fontWeight: 600,
-                                }}
-                            >
-                                SEE ALL
-                            </Button>
-                        </Box>
-
-                        {/* Reviews List */}
-                        {reviewsLoading ? (
-                            <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-                                <CircularProgress />
-                            </Box>
-                        ) : reviews.length === 0 ? (
-                            <Typography
-                                variant="body1"
-                                sx={{
-                                    textAlign: "center",
-                                    py: 4,
-                                    color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                                }}
-                            >
-                                No reviews yet
-                            </Typography>
-                        ) : (
-                            <>
-                                {reviews.map((review) => (
-                                    <ReviewCard key={review.review_question_id} review={review} />
-                                ))}
-
-                                {/* Pagination */}
-                                {totalReviewPages > 1 && (
-                                    <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-                                        <Pagination
-                                            count={totalReviewPages}
-                                            page={reviewPage}
-                                            onChange={handleReviewPageChange}
-                                            color="primary"
-                                            sx={{
-                                                "& .MuiPaginationItem-root": {
-                                                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            gap: 2,
+                                            overflowX: "auto",
+                                            pb: 2,
+                                            "&::-webkit-scrollbar": {
+                                                height: "8px",
+                                            },
+                                            "&::-webkit-scrollbar-track": {
+                                                bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                                                borderRadius: "4px",
+                                            },
+                                            "&::-webkit-scrollbar-thumb": {
+                                                bgcolor: isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT,
+                                                borderRadius: "4px",
+                                                "&:hover": {
+                                                    bgcolor: COLORS.PRIMARY_PURPLE,
                                                 },
-                                                "& .Mui-selected": {
-                                                    bgcolor: `${COLORS.PRIMARY_PURPLE} !important`,
-                                                    color: "white",
-                                                },
-                                            }}
-                                        />
+                                            },
+                                        }}
+                                    >
+                                        {relatedServices.map((relatedService) => (
+                                            <Box
+                                                key={relatedService.service_id}
+                                                sx={{
+                                                    minWidth: "280px",
+                                                    maxWidth: "280px",
+                                                    flexShrink: 0,
+                                                }}
+                                            >
+                                                <ServiceCard service={relatedService} />
+                                            </Box>
+                                        ))}
                                     </Box>
+                                </Box>
+                            )}
+
+                            {/* Reviews Section */}
+                            <Box id="reviews-section" sx={{ mt: 4 }}>
+                                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+                                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                                        <Typography
+                                            variant="h6"
+                                            sx={{
+                                                fontWeight: 700,
+                                                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                                            }}
+                                        >
+                                            {totalReviews} Reviews
+                                        </Typography>
+                                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                                            <Star sx={{ color: "#FFC107", fontSize: 20 }} />
+                                            <Typography
+                                                variant="body1"
+                                                sx={{
+                                                    fontWeight: 600,
+                                                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                                                }}
+                                            >
+                                                {service.avg_service_rating ? Number(service.avg_service_rating).toFixed(1) : "0.0"}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <Button
+                                        sx={{
+                                            textTransform: "none",
+                                            color: COLORS.PRIMARY_PURPLE,
+                                            fontWeight: 600,
+                                        }}
+                                    >
+                                        SEE ALL
+                                    </Button>
+                                </Box>
+
+                                {/* Reviews List */}
+                                {reviewsLoading ? (
+                                    <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+                                        <CircularProgress />
+                                    </Box>
+                                ) : reviews.length === 0 ? (
+                                    <Typography
+                                        variant="body1"
+                                        sx={{
+                                            textAlign: "center",
+                                            py: 4,
+                                            color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                                        }}
+                                    >
+                                        No reviews yet
+                                    </Typography>
+                                ) : (
+                                    <>
+                                        {reviews.map((review) => (
+                                            <ReviewCard key={review.review_question_id} review={review} />
+                                        ))}
+
+                                        {/* Load More Button */}
+                                        {reviews.length < totalReviews && (
+                                            <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+                                                <Button
+                                                    variant="outlined"
+                                                    onClick={handleLoadMore}
+                                                    disabled={reviewsLoading}
+                                                    sx={{
+                                                        borderRadius: "8px",
+                                                        px: 4,
+                                                        py: 1,
+                                                        textTransform: "none",
+                                                        borderColor: isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT,
+                                                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                                                        "&:hover": {
+                                                            borderColor: COLORS.PRIMARY_PURPLE,
+                                                            bgcolor: "transparent",
+                                                        },
+                                                    }}
+                                                >
+                                                    {reviewsLoading ? "Loading..." : "Load More Reviews"}
+                                                </Button>
+                                            </Box>
+                                        )}
+                                    </>
                                 )}
-                            </>
-                        )}
+                            </Box>
+                        </Box>
                     </Box>
                 </Container>
             </Box>
