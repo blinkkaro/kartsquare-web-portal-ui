@@ -1,10 +1,8 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import Nav from "@/components/common/Nav";
 import { Box, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { hydrateAuth, selectIsAuthenticated } from "@/features/ui/authSlice";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -12,13 +10,7 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const theme = useTheme();
-  const dispatch = useAppDispatch();
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
-  // Restore session
-  useEffect(() => {
-    dispatch(hydrateAuth());
-  }, [dispatch]);
   return (
     <Box
       sx={{

@@ -5,6 +5,7 @@ import {
   profileInterface,
   providerPostsInterface,
   providerProfileInterface,
+  providerServicesInterface,
 } from "./profileInterface";
 
 class ProfileService {
@@ -77,31 +78,31 @@ class ProfileService {
     }
   }
 
-  //   async getProviderServices(
-  //     id: string,
-  //     page?: number,
-  //     limit?: number
-  //   ): Promise<providerServicesInterface> {
-  //     try {
-  //       const response = await api.get<providerServicesInterface>(
-  //         APIENDPOINTS.GET_PROVIDER_SERVICES(id, page, limit || 10)
-  //       );
-  //       return response.data;
-  //     } catch (error) {
-  //       throw error;
-  //     }
-  //   }
+  async getProviderServices(
+    id: string,
+    page?: number,
+    limit?: number
+  ): Promise<providerServicesInterface> {
+    try {
+      const response = await GET<providerServicesInterface>(
+        APIENDPOINTS.GET_PROVIDER_SERVICES(id, page, limit || 10)
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 
-  //   async getProviderProfile(id: string): Promise<providerProfileInterface> {
-  //     try {
-  //       const response = await api.get<providerProfileInterface>(
-  //         APIENDPOINTS.GET_PROVIDER_PROFILE(id)
-  //       );
-  //       return response.data;
-  //     } catch (error) {
-  //       throw error;
-  //     }
-  //   }
+  async getProviderProfile(id: string): Promise<providerProfileInterface> {
+    try {
+      const response = await GET<providerProfileInterface>(
+        APIENDPOINTS.GET_PROVIDER_PROFILE(id)
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export const profileService = new ProfileService();

@@ -10,8 +10,6 @@ import {
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import Image from "next/image";
-import Button from "./Button";
-import { COLORS } from "../../constants/colors";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {

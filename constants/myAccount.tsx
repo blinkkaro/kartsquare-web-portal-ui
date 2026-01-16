@@ -128,7 +128,7 @@ export const myAccountSettingNav = (
     },
     {
       label: t("addresses"),
-      href: "#",
+      href: "myAccount/address",
       icon: <LocationOnIcon />,
     },
     {
