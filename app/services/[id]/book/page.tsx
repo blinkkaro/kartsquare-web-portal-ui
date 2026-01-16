@@ -29,6 +29,8 @@ import { appointmentService } from "../../../../services/appointment/appointment
 import { ServiceDetails } from "../../../../services/serviceDetails/serviceDetailsInterface";
 import { TimeSlot } from "../../../../services/appointment/appointmentInterface";
 import { COLORS } from "../../../../constants/colors";
+import { userAddressService } from "../../../../services/userAddress/userAddressService";
+import { UserAddress } from "../../../../services/userAddress/userAddressInterface";
 
 const BookServicePage = () => {
     const params = useParams();
@@ -52,6 +54,9 @@ const BookServicePage = () => {
     const [slotsLoading, setSlotsLoading] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [bookingResponse, setBookingResponse] = useState<any>(null);
+    const [userAddresses, setUserAddresses] = useState<UserAddress[]>([]);
+    const [selectedAddressId, setSelectedAddressId] = useState<string>("");
+    const [addressLoading, setAddressLoading] = useState(false);
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     // Fetch service details
@@ -108,6 +113,25 @@ const BookServicePage = () => {
         fetchSlots();
     }, [serviceId, service, selectedDate, userTimezone]);
 
+    // Fetch user addresses
+    useEffect(() => {
+        const fetchAddresses = async () => {
+            try {
+                setAddressLoading(true);
+                const addresses = await userAddressService.getUserAddresses();
+                setUserAddresses(addresses || []);
+            } catch (error) {
+                console.error("Failed to fetch addresses:", error);
+            } finally {
+                setAddressLoading(false);
+            }
+        };
+
+        if (location === "at_customer") {
+            fetchAddresses();
+        }
+    }, [location]);
+
     const handleSubmit = async () => {
         try {
             setError(null);
@@ -125,8 +149,8 @@ const BookServicePage = () => {
             }
 
             // If location is at_customer, require address
-            if (location === "at_customer" && !customerAddress.trim()) {
-                setError("Please enter your address");
+            if (location === "at_customer" && !selectedAddressId && !customerAddress.trim()) {
+                setError("Please select or enter your address");
                 return;
             }
 
@@ -145,7 +169,7 @@ const BookServicePage = () => {
                 service_location: location,
                 customer_notes: notes.trim() || undefined,
                 schedule_at: scheduleAt,
-                // address_id would come from user's saved addresses in a real implementation
+                address_id: selectedAddressId || undefined,
             };
 
             const response = await bookingService.createBooking(bookingData);
@@ -514,15 +538,59 @@ const BookServicePage = () => {
                                             }
                                         />
                                         {location === "at_customer" && (
-                                            <TextField
-                                                fullWidth
-                                                multiline
-                                                rows={2}
-                                                placeholder="Enter your address"
-                                                value={customerAddress}
-                                                onChange={(e) => setCustomerAddress(e.target.value)}
-                                                sx={{ ml: 4, mt: 1, mb: 2 }}
-                                            />
+                                            <Box sx={{ ml: 4, mt: 1, mb: 2 }}>
+                                                {addressLoading ? (
+                                                    <CircularProgress size={20} />
+                                                ) : userAddresses.length > 0 ? (
+                                                    <RadioGroup
+                                                        value={selectedAddressId}
+                                                        onChange={(e) => {
+                                                            setSelectedAddressId(e.target.value);
+                                                            setCustomerAddress(""); // Clear manual input if selection is made
+                                                        }}
+                                                    >
+                                                        {userAddresses.map((addr) => (
+                                                            <FormControlLabel
+                                                                key={addr.address_id}
+                                                                value={addr.address_id}
+                                                                control={<Radio size="small" sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+                                                                label={
+                                                                    <Typography variant="body2">
+                                                                        {addr.label ? <strong>{addr.label}: </strong> : null}
+                                                                        {addr.address_line1}, {addr.city}
+                                                                    </Typography>
+                                                                }
+                                                                sx={{ mb: 0.5 }}
+                                                            />
+                                                        ))}
+                                                        {/* Option to enter manually */}
+                                                        <FormControlLabel
+                                                            value=""
+                                                            control={<Radio size="small" sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+                                                            label={<Typography variant="body2">Enter a new address</Typography>}
+                                                        />
+                                                    </RadioGroup>
+                                                ) : (
+                                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                                        No saved addresses found. Please enter below.
+                                                    </Typography>
+                                                )}
+
+                                                {(!selectedAddressId || userAddresses.length === 0) && (
+                                                    <TextField
+                                                        fullWidth
+                                                        multiline
+                                                        rows={2}
+                                                        placeholder="Enter your address"
+                                                        value={customerAddress}
+                                                        onChange={(e) => {
+                                                            setCustomerAddress(e.target.value)
+                                                            setSelectedAddressId("") // Clear selection if typing manually
+                                                        }}
+                                                        sx={{ mt: 1 }}
+                                                    />
+                                                )}
+                                            </Box>
                                         )}
                                         <FormControlLabel
                                             value="at_provider"
@@ -576,161 +644,8 @@ const BookServicePage = () => {
                                 />
                             </Box>
 
-                            {/* Payment Details */}
-                            <Box
-                                sx={{
-                                    bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
-                                    borderRadius: "16px",
-                                    p: 3,
-                                    mb: 3,
-                                }}
-                            >
-                                <Typography
-                                    variant="h6"
-                                    sx={{
-                                        fontWeight: 700,
-                                        mb: 2,
-                                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                                    }}
-                                >
-                                    Subtotal
-                                </Typography>
 
-                                {/* Price Breakdown */}
-                                <Box sx={{ mb: 2 }}>
-                                    {/* Location Fee */}
-                                    {location === "at_customer" && (
-                                        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                                            <Typography
-                                                variant="body2"
-                                                sx={{
-                                                    color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                                                }}
-                                            >
-                                                Your location fee
-                                            </Typography>
-                                            <Typography
-                                                variant="body2"
-                                                sx={{
-                                                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                                                }}
-                                            >
-                                                {service.currency} 10.00
-                                            </Typography>
-                                        </Box>
-                                    )}
 
-                                    {/* Coupon Discount */}
-                                    <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                                        <Typography
-                                            variant="body2"
-                                            sx={{
-                                                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                                            }}
-                                        >
-                                            Coupon discount
-                                        </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            sx={{
-                                                color: "#10B981",
-                                            }}
-                                        >
-                                            - {service.currency} 14.00
-                                        </Typography>
-                                    </Box>
-
-                                    {/* Service Fee */}
-                                    <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-                                        <Typography
-                                            variant="body2"
-                                            sx={{
-                                                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                                            }}
-                                        >
-                                            Service fee
-                                        </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            sx={{
-                                                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                                            }}
-                                        >
-                                            {service.currency} 2.00
-                                        </Typography>
-                                    </Box>
-                                </Box>
-
-                                {/* Total Pay */}
-                                <Box
-                                    sx={{
-                                        borderTop: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
-                                        pt: 2,
-                                        mb: 2,
-                                    }}
-                                >
-                                    <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-                                        <Typography
-                                            variant="h6"
-                                            sx={{
-                                                fontWeight: 700,
-                                                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                                            }}
-                                        >
-                                            Total Pay
-                                        </Typography>
-                                        <Typography
-                                            variant="h6"
-                                            sx={{
-                                                fontWeight: 700,
-                                                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                                            }}
-                                        >
-                                            {service.currency} {(
-                                                (service.price || 0) +
-                                                (location === "at_customer" ? 10 : 0) -
-                                                14 +
-                                                2
-                                            ).toFixed(2)}
-                                        </Typography>
-                                    </Box>
-
-                                    <Typography
-                                        variant="caption"
-                                        sx={{
-                                            color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                                            display: "block",
-                                            mb: 2,
-                                        }}
-                                    >
-                                        Continue to accept our{" "}
-                                        <Typography
-                                            component="span"
-                                            variant="caption"
-                                            sx={{
-                                                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                                                textDecoration: "underline",
-                                                cursor: "pointer",
-                                            }}
-                                        >
-                                            privacy policy
-                                        </Typography>{" "}
-                                        and{" "}
-                                        <Typography
-                                            component="span"
-                                            variant="caption"
-                                            sx={{
-                                                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                                                textDecoration: "underline",
-                                                cursor: "pointer",
-                                            }}
-                                        >
-                                            terms & conditions
-                                        </Typography>
-                                        .
-                                    </Typography>
-                                </Box>
-                            </Box>
 
                             {/* Submit Button */}
                             <Button
@@ -755,12 +670,7 @@ const BookServicePage = () => {
                                     },
                                 }}
                             >
-                                {submitting ? "Creating Booking..." : `Pay ${service.currency} ${(
-                                    (service.price || 0) +
-                                    (location === "at_customer" ? 10 : 0) -
-                                    14 +
-                                    2
-                                ).toFixed(2)}`}
+                                Confirm Booking
                             </Button>
                         </Box>
                     </Box>

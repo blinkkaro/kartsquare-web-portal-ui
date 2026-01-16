@@ -143,10 +143,17 @@ export const POST = async <T>(
   params: object = {},
   requiresAuth: boolean = true
 ) => {
-  return await api.post<T>(endpoint, data, {
+  const config = {
     params,
     requiresAuth,
-  } as AxiosRequestConfig);
+    headers: {},
+  } as AxiosRequestConfig;
+
+  if (data instanceof FormData) {
+    config.headers = { ...config.headers, "Content-Type": "multipart/form-data" };
+  }
+
+  return await api.post<T>(endpoint, data, config);
 };
 
 export const PUT = async <T>(
@@ -155,10 +162,17 @@ export const PUT = async <T>(
   params: object = {},
   requiresAuth: boolean = true
 ) => {
-  return await api.put<T>(endpoint, data, {
+  const config = {
     params,
     requiresAuth,
-  } as AxiosRequestConfig);
+    headers: {},
+  } as AxiosRequestConfig;
+
+  if (data instanceof FormData) {
+    config.headers = { ...config.headers, "Content-Type": "multipart/form-data" };
+  }
+
+  return await api.put<T>(endpoint, data, config);
 };
 
 export const PATCH = async <T>(
@@ -167,10 +181,17 @@ export const PATCH = async <T>(
   params: object = {},
   requiresAuth: boolean = true
 ) => {
-  return await api.patch<T>(endpoint, data, {
+  const config = {
     params,
     requiresAuth,
-  } as AxiosRequestConfig);
+    headers: {},
+  } as AxiosRequestConfig;
+
+  if (data instanceof FormData) {
+    config.headers = { ...config.headers, "Content-Type": "multipart/form-data" };
+  }
+
+  return await api.patch<T>(endpoint, data, config);
 };
 
 export const DELETE = async <T>(
