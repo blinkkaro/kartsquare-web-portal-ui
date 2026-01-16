@@ -1,10 +1,11 @@
-"use client"
-import SignUpView from '@/components/pages/SignUp'
+import SignUpView from "@/components/pages/SignUp";
+import type { Metadata } from "next";
 
-function SignUp() {
-  return (
-    <SignUpView />
-  )
+export const metadata: Metadata = {
+  title: "Sign Up | KartSquare Portal",
+  description: "Create your KartSquare account",
+};
+
+export default function SignUp() {
+  return <SignUpView />;
 }
-
-export default SignUp

@@ -1,13 +1,16 @@
 import MainLayout from "@/app/mainLayout";
 import SavedView from "@/components/pages/saved";
-import React from "react";
+import type { Metadata } from "next";
 
-function Save() {
+export const metadata: Metadata = {
+  title: "Saved | KartSquare Portal",
+  description: "View your saved items",
+};
+
+export default function Saved() {
   return (
     <MainLayout>
       <SavedView />
     </MainLayout>
   );
 }
-
-export default Save;

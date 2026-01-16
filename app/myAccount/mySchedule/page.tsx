@@ -1,14 +1,16 @@
-"use client"
-import MainLayout from '@/app/mainLayout'
-import MyScheduleView from '@/components/pages/mySchedule'
-import React from 'react'
+import MainLayout from "@/app/mainLayout";
+import MyScheduleView from "@/components/pages/mySchedule";
+import type { Metadata } from "next";
 
-function MySchedule() {
+export const metadata: Metadata = {
+  title: "My Schedule | KartSquare Portal",
+  description: "Manage your working hours and schedule",
+};
+
+export default function MySchedule() {
   return (
     <MainLayout>
-        <MyScheduleView />
+      <MyScheduleView />
     </MainLayout>
-  )
+  );
 }
-
-export default MySchedule

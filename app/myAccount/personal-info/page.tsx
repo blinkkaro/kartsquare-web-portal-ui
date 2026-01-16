@@ -1,14 +1,16 @@
-"use client";
 import MainLayout from "@/app/mainLayout";
-import React from "react";
 import PersonalInfoView from "@/components/pages/personalInfo";
+import type { Metadata } from "next";
 
-const PersonalInfo = () => {
+export const metadata: Metadata = {
+  title: "Personal Info | KartSquare Portal",
+  description: "View and edit your personal information",
+};
+
+export default function PersonalInfo() {
   return (
     <MainLayout>
       <PersonalInfoView />
     </MainLayout>
   );
-};
-
-export default PersonalInfo;
+}

@@ -1,15 +1,16 @@
-"use client";
+import MainLayout from "@/app/mainLayout";
+import BlogView from "@/components/pages/blog";
+import type { Metadata } from "next";
 
-import MainLayout from '@/app/mainLayout'
-import BlogView from '@/components/pages/blog'
-import React from 'react'
+export const metadata: Metadata = {
+  title: "Blog | KartSquare Portal",
+  description: "Read the latest blog posts",
+};
 
-function Blog() {
+export default function Blog() {
   return (
     <MainLayout>
       <BlogView />
     </MainLayout>
-  )
+  );
 }
-
-export default Blog

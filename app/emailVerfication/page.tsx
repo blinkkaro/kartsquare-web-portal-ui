@@ -1,11 +1,11 @@
-'use client'
-import React from 'react'
-import EmailVerificationView from '@/components/pages/emailVerfication'
+import EmailVerificationView from "@/components/pages/emailVerfication";
+import type { Metadata } from "next";
 
-function EmailVerification() {
-  return (
-    <EmailVerificationView />
-  )
+export const metadata: Metadata = {
+  title: "Email Verification | KartSquare Portal",
+  description: "Verify your email address",
+};
+
+export default function EmailVerification() {
+  return <EmailVerificationView />;
 }
-
-export default EmailVerification
