@@ -35,6 +35,9 @@ function HelpSupportView() {
     { value: "other", label: t("other") },
   ];
 
+  const number = "8005673985"
+  const email = "contact@kartsquare.com"
+
   return (
     <ProfileWrapper showBackButton>
         <Box sx={{ mb: 4 }}>
@@ -48,14 +51,14 @@ function HelpSupportView() {
           <Grid size={{ xs: 12, md: 6 }}>
             <ContactCard
               icon={LocalPhoneIcon}
-              title="800-123-4567"
+              title={number}
               subtitle={t("customerService")}
             />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <ContactCard
               icon={EmailIcon}
-              title="support@octopus.in" // Using generic or placeholder based on design, or could be from constants
+              title={email}
               subtitle={t("writeUsAt")}
             />
           </Grid>
