@@ -1,13 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import uiReducer from "@/features/ui/uiSlice";
 import authReducer from "@/features/ui/authSlice";
-import profileReducer from "@/features/ui/profileSlice";
 
 export const store = configureStore({
   reducer: {
     ui: uiReducer,
     auth: authReducer,
-    profile: profileReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
 });

@@ -2,23 +2,19 @@ import { authService } from "@/services/auth/auth.service";
 import { profileService } from "@/services/profile/pofileService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLogout } from "@/hooks/useLogout";
-import { useAppDispatch } from "@/store/hooks";
-import {
-  setProfile,
-  updateProfile as updateProfileRedux,
-  clearProfile,
-} from "@/features/ui/profileSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { updateUser } from "@/features/ui/authSlice";
+import { secureStorage } from "@/helper/SecureStorage";
 
 export const useProfile = () => {
-  const token = localStorage.getItem("token");
+  const token = secureStorage.getItem("token");
   const dispatch = useAppDispatch();
 
   return useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
       const profile = await profileService.getUserProfile();
-      // Update Redux state when profile is fetched
-      dispatch(setProfile(profile));
+      dispatch(updateUser(profile as any));
       return profile;
     },
     enabled: !!token,
@@ -47,7 +43,7 @@ export const useUpdateProfile = () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
 
       // Update Redux state with the updated profile
-      dispatch(setProfile(updatedProfile));
+      dispatch(updateUser(updatedProfile as any));
     },
     onError: (error: any) => {
       throw error;
@@ -57,13 +53,10 @@ export const useUpdateProfile = () => {
 
 export const useDeleteProfile = () => {
   const { handleLogout } = useLogout();
-  const dispatch = useAppDispatch();
 
   return useMutation({
     mutationFn: () => profileService.deleteUserProfile(),
     onSuccess: () => {
-      // Clear Redux profile state
-      dispatch(clearProfile());
       handleLogout();
     },
     onError: (error: any) => {

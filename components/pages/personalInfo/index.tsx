@@ -6,19 +6,17 @@ import { useTheme } from "@mui/material/styles";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { EditOutlined } from "@mui/icons-material";
-import { useDeleteProfile } from "@/hooks/useProfile";
+import { useDeleteProfile, useProfile } from "@/hooks/useProfile";
 import Labels from "./components/labels";
 import Button from "@/components/common/Button";
 import { formatDate } from "@/helper/helper";
 import EditProfileModal from "./components/EditProfileModal";
 import WarningModel from "@/components/common/WarningModel";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
 
 function PersonalInfoView() {
   const theme = useTheme();
   const { t } = useTranslate();
-  const profile = useSelector((state: RootState) => state.profile.profile);
+  const { data: profile } = useProfile();
   const { mutate: deleteProfile, isPending: isDeleting } = useDeleteProfile();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);

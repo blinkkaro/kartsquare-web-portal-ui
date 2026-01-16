@@ -1,3 +1,5 @@
+import { secureStorage } from "@/helper/SecureStorage";
+
 export interface RegisterResponse {
   status: string;
   message: string;
@@ -47,25 +49,25 @@ export interface RegisterResponse {
 }
 
 export const storeTokens = (response: RegisterResponse): void => {
-  if (typeof window !== 'undefined' && response.data?.tokens) {
-    localStorage.setItem('token', response.data.tokens.access_token);
-    localStorage.setItem('refreshToken', response.data.tokens.refresh_token);
+  if (typeof window !== "undefined" && response.data?.tokens) {
+    secureStorage.setItem("token", response.data.tokens.access_token);
+    secureStorage.setItem("refreshToken", response.data.tokens.refresh_token);
   }
 };
 
 export const getTokens = () => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     return {
-      accessToken: localStorage.getItem('token'),
-      refreshToken: localStorage.getItem('refreshToken'),
+      accessToken: secureStorage.getItem("token"),
+      refreshToken: secureStorage.getItem("refreshToken"),
     };
   }
   return { accessToken: null, refreshToken: null };
 };
 
 export const clearTokens = (): void => {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
+  if (typeof window !== "undefined") {
+    secureStorage.removeItem("token");
+    secureStorage.removeItem("refreshToken");
   }
 };

@@ -1,19 +1,18 @@
+import { secureStorage } from "@/helper/SecureStorage";
 import {
   CreateStory,
   StoriesListResponse,
 } from "@/services/stories/stories.interface";
 import { storiesService } from "@/services/stories/stories.service";
-import { RootState } from "@/store/store";
 import {
   InfiniteData,
   useInfiniteQuery,
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useSelector } from "react-redux";
 
 export const useGetStories = (params: { page: number; limit: number }) => {
-  const token = localStorage.getItem("token");
+  const token = secureStorage.getItem("token");
   return useInfiniteQuery({
     queryKey: ["stories", params.page ?? 1, params.limit ?? 10],
     queryFn: ({ pageParam }) =>
@@ -37,7 +36,7 @@ export const useGetStories = (params: { page: number; limit: number }) => {
 
 export const useAddStory = () => {
   const queryClient = useQueryClient();
-  const profile = useSelector((state: RootState) => state.profile.profile);
+  const profile = secureStorage.getItem("user_details");
   return useMutation({
     mutationFn: (story: CreateStory) => storiesService.createStory(story),
 

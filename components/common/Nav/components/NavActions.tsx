@@ -16,8 +16,7 @@ import {
 } from "@mui/icons-material";
 import Image from "next/image";
 import { COLORS } from "../../../../constants/colors";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
+import { secureStorage } from "@/helper/SecureStorage";
 
 const ActionsContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -71,7 +70,7 @@ const NavActions: React.FC<NavActionsProps> = ({
   loginText,
   onNotificationToggle,
 }) => {
-  const profile = useSelector((state: RootState) => state.profile.profile);
+  const profile = secureStorage.getItem("user_details");
   if (isAuthenticated) {
     return (
       <ActionsContainer>

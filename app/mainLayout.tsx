@@ -4,8 +4,7 @@ import Nav from "@/components/common/Nav";
 import { Box, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchUserProfile } from "@/features/ui/profileSlice";
-import { selectIsAuthenticated } from "@/features/ui/authSlice";
+import { hydrateAuth, selectIsAuthenticated } from "@/features/ui/authSlice";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -16,12 +15,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
-  // Fetch user profile on mount if authenticated
+  // Restore session
   useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(fetchUserProfile());
-    }
-  }, [isAuthenticated, dispatch]);
+    dispatch(hydrateAuth());
+  }, [dispatch]);
   return (
     <Box
       sx={{

@@ -28,6 +28,7 @@ import MobileBottomNav from "./components/MobileBottomNav";
 import MobileSearchDrawer from "./components/MobileSearchDrawer";
 import NotificationList from "./components/NotificationList";
 import RightDrawer from "../RightDrawer";
+import { secureStorage } from "@/helper/SecureStorage";
 
 // Styled Components
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -86,8 +87,8 @@ const Nav = () => {
 
   // Initialize auth state
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userRole = localStorage.getItem("role");
+    const token = secureStorage.getItem("token");
+    const userRole = secureStorage.getItem("role");
     setIsAuthenticated(!!token);
     setRole(userRole);
   }, []);

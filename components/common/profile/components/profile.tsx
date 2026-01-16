@@ -14,6 +14,7 @@ import Button from "@/components/common/Button";
 import { useTranslate } from "@/hooks/useTranslate";
 import { formatCount } from "@/helper/helper";
 import FollowListDrawer from "./followListDreawer";
+import { secureStorage } from "@/helper/SecureStorage";
 
 function Profile({ profile }: { profile: profileInterface }) {
   const theme = useTheme();
@@ -22,7 +23,7 @@ function Profile({ profile }: { profile: profileInterface }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { t } = useTranslate();
   const handleOpen = () => setOpen((prev) => !prev);
-  const role = localStorage.getItem("role");
+  const role = secureStorage.getItem("role");
 
   const handleDrawerClick = () => {
     setDrawerOpen((prev) => !prev);

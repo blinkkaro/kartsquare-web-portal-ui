@@ -2,6 +2,7 @@ import { AuthResponse, LoginCredentials, RegisterData } from "./auth.interface";
 import { API_ENDPOINTS } from "./apiEndPoint";
 import api from "../api";
 import { POST } from "../api";
+import { secureStorage } from "@/helper/SecureStorage";
 
 class AuthService {
   async login(data: LoginCredentials) {
@@ -50,10 +51,11 @@ class AuthService {
   async logout(): Promise<void> {
     try {
       await POST(API_ENDPOINTS.LOGOUT, {}, {}, true);
-      localStorage.removeItem("token");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("role");
-      localStorage.removeItem("register_step");
+      secureStorage.removeItem("token");
+      secureStorage.removeItem("refreshToken");
+      secureStorage.removeItem("role");
+      secureStorage.removeItem("register_step");
+      secureStorage.removeItem("user_details");
     } catch (error) {
       // Swallow error - logout should proceed regardless
     }

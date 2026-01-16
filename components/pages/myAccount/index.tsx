@@ -14,11 +14,12 @@ import Button from "@/components/common/Button";
 import { useLogout } from "@/hooks/useLogout";
 import ChangePassword from "./components/changePassword";
 import RightDrawer from "@/components/common/RightDrawer";
+import { secureStorage } from "@/helper/SecureStorage";
 
 function MyAccountView() {
   const theme = useTheme();
   const { t } = useTranslate();
-  const role = localStorage.getItem("role");
+  const role = secureStorage.getItem("role");
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] =
     useState(false);

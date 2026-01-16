@@ -24,6 +24,7 @@ import { MediaType } from "@/services/stories/stories.interface";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { secureStorage } from "@/helper/SecureStorage";
 
 const StoriesSection = ({
   data,
@@ -33,7 +34,7 @@ const StoriesSection = ({
   isLoading: boolean;
 }) => {
   const theme = useTheme();
-  const profile = useSelector((state: RootState) => state.profile.profile);
+  const profile = secureStorage.getItem("user_details");
   const { t } = useTranslationContext();
 
   const [viewerOpen, setViewerOpen] = useState(false);

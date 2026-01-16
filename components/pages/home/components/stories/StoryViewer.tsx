@@ -22,6 +22,7 @@ import { useViewStory, useDeleteStory } from "@/hooks/useStories";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
+import { secureStorage } from "@/helper/SecureStorage";
 
 interface StoryViewerProps {
   storiesList: StoriesList[];
@@ -43,7 +44,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
 
   const { mutate: viewStory } = useViewStory();
   const { mutate: deleteStory } = useDeleteStory();
-  const profile = useSelector((state: RootState) => state.profile.profile);
+  const profile = secureStorage.getItem("user_details");
   const { t } = useTranslationContext();
 
   const currentUser = storiesList[currentUserIndex];

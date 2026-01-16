@@ -3,6 +3,7 @@ import type { RootState } from "@/store/store";
 import { User, LoginCredentials, RegisterData } from "@/services/auth/auth.interface";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { authService } from "@/services/auth/auth.service";
+import { secureStorage } from "@/helper/SecureStorage";
 
 interface AuthState {
   user: User | null;
@@ -80,10 +81,11 @@ export const authSlice = createSlice({
       state.isAuthenticated = true;
       state.register_step = register_step;
 
-      // Persist registration step and role to localStorage
+      // Persist to secureStorage
       if (typeof window !== "undefined") {
-        localStorage.setItem("register_step", register_step.toString());
-        localStorage.setItem("role", user.role);
+        secureStorage.setItem("user_details", user);
+        secureStorage.setItem("register_step", register_step);
+        secureStorage.setItem("role", user.role);
       }
     },
     logout: (state) => {
@@ -92,30 +94,34 @@ export const authSlice = createSlice({
       state.isAuthenticated = false;
       state.register_step = null;
 
-      // Clear localStorage
+      // Clear secureStorage
       if (typeof window !== "undefined") {
-        localStorage.removeItem("register_step");
-        localStorage.removeItem("role");
+        secureStorage.removeItem("user_details");
+        secureStorage.removeItem("token");
+        secureStorage.removeItem("refreshToken");
+        secureStorage.removeItem("register_step");
+        secureStorage.removeItem("role");
       }
     },
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       if (state.user) {
         state.user = { ...state.user, ...action.payload };
+        // Update secure storage
+        secureStorage.setItem("user_details", state.user);
       }
     },
     hydrateAuth: (state) => {
-      // Restore auth state from localStorage
+      // Restore auth state from secureStorage
       if (typeof window !== "undefined") {
-        const token = localStorage.getItem("token");
-        const registerStep = localStorage.getItem("register_step");
-        const role = localStorage.getItem("role");
+        const token = secureStorage.getItem("token");
+        const user = secureStorage.getItem("user_details");
+        const registerStep = secureStorage.getItem("register_step");
 
-        if (token && registerStep && role) {
+        if (token && user) {
           state.token = token;
           state.isAuthenticated = true;
-          state.register_step = parseInt(registerStep, 10);
-          // Note: We don't restore full user object, only essential fields
-          // The user object will be fetched from API if needed
+          state.user = user;
+          state.register_step = registerStep || user.register_step;
         }
       }
     },
@@ -134,11 +140,18 @@ export const authSlice = createSlice({
         state.token = action.payload.tokens.access_token;
         state.register_step = action.payload.user.register_step;
 
-        // Local Storage
-        localStorage.setItem("token", action.payload.tokens.access_token);
-        localStorage.setItem("refreshToken", action.payload.tokens.refresh_token);
-        localStorage.setItem("register_step", action.payload.user.register_step.toString());
-        localStorage.setItem("role", action.payload.user.role);
+        // Secure Storage
+        secureStorage.setItem("user_details", action.payload.user);
+        secureStorage.setItem("token", action.payload.tokens.access_token);
+        secureStorage.setItem(
+          "refreshToken",
+          action.payload.tokens.refresh_token
+        );
+        secureStorage.setItem(
+          "register_step",
+          action.payload.user.register_step
+        );
+        secureStorage.setItem("role", action.payload.user.role);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -156,11 +169,18 @@ export const authSlice = createSlice({
         state.token = action.payload.tokens.access_token;
         state.register_step = action.payload.user.register_step;
 
-        // Local Storage
-        localStorage.setItem("token", action.payload.tokens.access_token);
-        localStorage.setItem("refreshToken", action.payload.tokens.refresh_token);
-        localStorage.setItem("register_step", action.payload.user.register_step.toString());
-        localStorage.setItem("role", action.payload.user.role);
+        // Secure Storage
+        secureStorage.setItem("user_details", action.payload.user);
+        secureStorage.setItem("token", action.payload.tokens.access_token);
+        secureStorage.setItem(
+          "refreshToken",
+          action.payload.tokens.refresh_token
+        );
+        secureStorage.setItem(
+          "register_step",
+          action.payload.user.register_step
+        );
+        secureStorage.setItem("role", action.payload.user.role);
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
