@@ -42,7 +42,7 @@ class ProviderWorkingHours {
       throw new Error(errorMessage);
     }
   }
-  async updateWorkingHours(data: IUpdateWorkingHour): Promise<void> {
+  async bulkUpdateWorkingHours(data: IWorkingHour[]): Promise<void> {
     try {
       console.log(data);
       const response = await PUT(API_ENDPOINTS.UPDATE_WORKING_HOURS, {

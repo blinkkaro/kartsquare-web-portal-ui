@@ -237,7 +237,23 @@ export type TranslationKey =
   | "hoursAgo"
   | "daysAgo"
   | "weeksAgo"
-  | "monthsAgo";
+  | "monthsAgo"
+  | "starting"
+  | "ending"
+  | "breakStarting"
+  | "breakEnding"
+  | "addBreak"
+  | "removeBreak"
+  | "update"
+  | "monday"
+  | "tuesday"
+  | "wednesday"
+  | "thursday"
+  | "friday"
+  | "saturday"
+  | "sunday"
+  | "scheduleUpdatedSuccessfully"
+  | "ok";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

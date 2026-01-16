@@ -73,7 +73,7 @@ export const myAccountNav = (
       },
       {
         label: t("mySchedule"),
-        href: "#",
+        href: "myAccount/mySchedule",
         icon: <CalendarMonthIcon />,
       },
       {

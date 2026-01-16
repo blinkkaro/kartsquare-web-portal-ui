@@ -88,3 +88,21 @@ export const formatCount = (count: number): string => {
   }
   return (count / 1000000).toFixed(1).replace(/\.0$/, "") + "m";
 };
+
+export const convert12To24 = (time12: string): string => {
+  if (!time12) return "";
+  const [time, period] = time12.split(" ");
+  if (!time || !period) return time12;
+  let [hours, minutes] = time.split(":").map(Number);
+  if (isNaN(hours) || isNaN(minutes)) return "";
+
+  if (period.toUpperCase() === "PM" && hours !== 12) {
+    hours += 12;
+  } else if (period.toUpperCase() === "AM" && hours === 12) {
+    hours = 0;
+  }
+
+  return `${hours.toString().padStart(2, "0")}:${minutes
+    .toString()
+    .padStart(2, "0")}`;
+};
