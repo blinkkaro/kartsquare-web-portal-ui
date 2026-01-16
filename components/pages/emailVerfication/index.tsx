@@ -18,6 +18,7 @@ import { logout, updateUser } from "@/features/ui/authSlice";
 import { useRouter } from "next/navigation";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
+import { secureStorage } from "@/helper/SecureStorage";
 
 function EmailVerificationView() {
   const { t } = useTranslate();
@@ -31,7 +32,6 @@ function EmailVerificationView() {
 
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     const now = Date.now();
@@ -113,8 +113,8 @@ function EmailVerificationView() {
   };
 
   const handleBack = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
+    secureStorage.removeItem("token");
+    secureStorage.removeItem("refreshToken");
 
     dispatch(logout());
     router.back();

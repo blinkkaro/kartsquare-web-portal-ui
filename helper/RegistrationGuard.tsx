@@ -9,6 +9,7 @@ import {
   getPathForScreen,
 } from "@/types/resgistrationFlow";
 import { AppUserType } from "@/services/auth/auth.interface";
+import { secureStorage } from "./SecureStorage";
 
 // 1. Move static constants outside the component to avoid recreation on re-renders
 const RESTRICTED_AUTH_PATHS = [
@@ -38,7 +39,7 @@ export default function RegistrationGuard({
     // 3. All logic and localStorage access happens safely inside useEffect
     const checkAccess = () => {
       // Safely access storage here (guaranteed client-side)
-      const token = localStorage.getItem("token");
+      const token = secureStorage.getItem("token");
       const isAuthenticated = !!token || isAuthRedux;
 
       const isRestrictedPath = RESTRICTED_AUTH_PATHS.some((path) =>
@@ -62,8 +63,8 @@ export default function RegistrationGuard({
       // --- SCENARIO 3: Authenticated but Incomplete Registration ---
 
       // Get data with fallbacks
-      const registerStepFromStorage = localStorage.getItem("register_step");
-      const roleFromStorage = localStorage.getItem("role");
+      const registerStepFromStorage = secureStorage.getItem("register_step");
+      const roleFromStorage = secureStorage.getItem("role");
 
       const currentRegisterStep =
         user?.register_step ??

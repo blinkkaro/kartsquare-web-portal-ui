@@ -16,9 +16,7 @@ import {
 } from "@mui/icons-material";
 import Image from "next/image";
 import { COLORS } from "../../../../constants/colors";
-import { useAppSelector } from "@/store/hooks";
-import { selectCurrentUser } from "@/features/ui/authSlice";
-import { useProfile } from "@/hooks/useProfile";
+import { secureStorage } from "@/helper/SecureStorage";
 
 const ActionsContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -54,9 +52,10 @@ interface NavActionsProps {
   mode: "light" | "dark";
   onThemeToggle: () => void;
   onSearchToggle: () => void;
-  onLogout: () => void;
+  profileClick: () => void;
   onLogin: () => void;
   loginText: string;
+  onNotificationToggle: () => void;
 }
 
 const NavActions: React.FC<NavActionsProps> = ({
@@ -66,11 +65,12 @@ const NavActions: React.FC<NavActionsProps> = ({
   mode,
   onThemeToggle,
   onSearchToggle,
-  onLogout,
+  profileClick,
   onLogin,
   loginText,
+  onNotificationToggle,
 }) => {
-  const { data: profile } = useProfile();
+  const profile = secureStorage.getItem("user_details");
   if (isAuthenticated) {
     return (
       <ActionsContainer>
@@ -104,7 +104,7 @@ const NavActions: React.FC<NavActionsProps> = ({
         </StyledIconButton>
 
         {/* Notifications */}
-        <StyledIconButton size="small" aria-label="notifications">
+        <StyledIconButton size="small" aria-label="notifications" onClick={onNotificationToggle}>
           <Badge badgeContent={0} color="error">
             <Image
               src={
@@ -143,7 +143,7 @@ const NavActions: React.FC<NavActionsProps> = ({
           }}
           alt="User Avatar"
           src={profile?.profile_pic}
-          onClick={onLogout}
+          onClick={profileClick}
         />
       </ActionsContainer>
     );

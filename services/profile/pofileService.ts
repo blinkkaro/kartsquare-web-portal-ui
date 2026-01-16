@@ -1,5 +1,5 @@
-import api from "../api";
-import { authService } from "../auth/auth.service";
+import { DELETE, GET, PUT } from "../api";
+import { verifyDocumentService } from "../auth/verifyDocument.service";
 import { APIENDPOINTS } from "./apiEndPoints";
 import {
   profileInterface,
@@ -11,7 +11,7 @@ import {
 class ProfileService {
   async getUserProfile(): Promise<profileInterface> {
     try {
-      const response = await api.get<profileInterface>(
+      const response = await GET<profileInterface>(
         APIENDPOINTS.GET_USER_PROFILE
       );
       return response.data;
@@ -24,16 +24,26 @@ class ProfileService {
     first_name: string,
     last_name: string,
     bio?: string,
-    profile_pic?: string
+    profile_pic?: File | string
   ): Promise<profileInterface> {
     try {
-      const response = await api.put<profileInterface>(
+      let pic = "";
+      if (
+        profile_pic &&
+        !profile_pic.toString().startsWith("https://") &&
+        profile_pic instanceof File
+      ) {
+        pic = (await verifyDocumentService.uploadImages([profile_pic]))[0];
+      } else if (profile_pic && profile_pic.toString().startsWith("https://")) {
+        pic = profile_pic.toString();
+      }
+      const response = await PUT<profileInterface>(
         APIENDPOINTS.UPDATE_USER_PROFILE,
         {
           first_name,
           last_name,
           bio,
-          profile_pic,
+          profile_pic: pic,
         }
       );
       return response.data;
@@ -44,10 +54,8 @@ class ProfileService {
 
   async deleteUserProfile(): Promise<void> {
     try {
-      const res = await api.delete(APIENDPOINTS.DELETE_USER_PROFILE);
-      if ((res.status = "success")) {
-        authService.logout();
-      }
+      const res = await DELETE(APIENDPOINTS.DELETE_USER_PROFILE);
+      // Logic for logout is handled in the hook
     } catch (error) {
       throw error;
     }
@@ -59,7 +67,7 @@ class ProfileService {
     limit?: number
   ): Promise<providerPostsInterface> {
     try {
-      const response = await api.get<providerPostsInterface>(
+      const response = await GET<providerPostsInterface>(
         APIENDPOINTS.GET_PROVIDER_POSTS(id, page, limit || 10)
       );
       console.log(response.data);
@@ -76,7 +84,7 @@ class ProfileService {
     limit?: number
   ): Promise<providerServicesInterface> {
     try {
-      const response = await api.get<providerServicesInterface>(
+      const response = await GET<providerServicesInterface>(
         APIENDPOINTS.GET_PROVIDER_SERVICES(id, page, limit || 10)
       );
       return response.data;
@@ -87,7 +95,7 @@ class ProfileService {
 
   async getProviderProfile(id: string): Promise<providerProfileInterface> {
     try {
-      const response = await api.get<providerProfileInterface>(
+      const response = await GET<providerProfileInterface>(
         APIENDPOINTS.GET_PROVIDER_PROFILE(id)
       );
       return response.data;

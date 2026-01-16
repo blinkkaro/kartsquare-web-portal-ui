@@ -1,4 +1,4 @@
-import api from "../api";
+import api, { GET, POST } from "../api";
 import { API_ENDPOINTS } from "./apiEndpoints";
 import {
   GetPostsParams,
@@ -12,8 +12,10 @@ class PostServices {
     visibility,
   }: GetPostsParams): Promise<GetPostsResponse> {
     try {
-      const response = await api.get<GetPostsResponse>(
-        `${API_ENDPOINTS.GET_POST}?limit=${limit}&visibility=${visibility}`
+      const response = await GET<GetPostsResponse>(
+        `${API_ENDPOINTS.GET_POST}?limit=${limit}&visibility=${visibility}`,
+        {},
+        false
       );
       if (response.status !== "success") {
         throw new Error(response.message || "Failed to fetch posts");
@@ -27,7 +29,7 @@ class PostServices {
   async likePost(postId: string): Promise<any> {
     try {
       console.log("postId", postId);
-      const response = await api.post(`${API_ENDPOINTS.LIKE_POST(postId)}`);
+      const response = await POST(`${API_ENDPOINTS.LIKE_POST(postId)}`, {},);
       console.log("response", response);
       if (response.status !== "success") {
         throw new Error(response.message || "Failed to like post");
@@ -42,8 +44,10 @@ class PostServices {
   async getPostComments(postId: string): Promise<GetPostComments> {
     try {
       console.log("postId", postId);
-      const response = await api.get<GetPostComments>(
-        `${API_ENDPOINTS.GET_POST_COMMENT(postId)}`
+      const response = await GET<GetPostComments>(
+        `${API_ENDPOINTS.GET_POST_COMMENT(postId)}`,
+        {},
+        false
       );
       console.log("response", response);
       if (response.status !== "success") {
@@ -60,9 +64,11 @@ class PostServices {
     comment: string
   ): Promise<{ commentId: string }> {
     try {
-      const response = await api.post<{ commentId: string }>(
+      const response = await POST<{ commentId: string }>(
         `${API_ENDPOINTS.ADD_COMMENT(postId)}`,
-        { comment }
+        { comment },
+        {},
+        true
       );
       console.log("response", response);
       if (response.status !== "success") {

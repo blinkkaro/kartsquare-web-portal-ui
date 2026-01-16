@@ -1,12 +1,14 @@
-import api from "../api";
 import { APIENDPOINT } from "./apiEndPoints";
 import { AppConfigResponse } from "./appConfigInterface";
+import { GET } from "../api";
 
 class AppConfigServices {
   async getAppTermsAndConditions(): Promise<AppConfigResponse> {
     try {
-      const response = await api.get<AppConfigResponse>(
-        APIENDPOINT.GET_TERMS_AND_CONDITIONS
+      const response = await GET<AppConfigResponse>(
+        APIENDPOINT.GET_TERMS_AND_CONDITIONS,
+        {},
+        false
       );
 
       return response.data;
@@ -18,8 +20,10 @@ class AppConfigServices {
 
   async getAppPrivacyPolicy(): Promise<AppConfigResponse> {
     try {
-      const response = await api.get<AppConfigResponse>(
-        APIENDPOINT.GET_PRIVACY_POLICY
+      const response = await GET<AppConfigResponse>(
+        APIENDPOINT.GET_PRIVACY_POLICY,
+        {},
+        false
       );
       return response.data;
     } catch (error) {

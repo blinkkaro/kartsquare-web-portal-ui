@@ -1,9 +1,11 @@
-'use client';
-import VerifyDocumentsView from '@/components/pages/verifyDocuments';
-import React from 'react'
+import VerifyDocumentsView from "@/components/pages/verifyDocuments";
+import type { Metadata } from "next";
 
-function VerifyDocuments() {
-  return <VerifyDocumentsView/>
+export const metadata: Metadata = {
+  title: "Verify Documents | KartSquare Portal",
+  description: "Upload and verify your documents",
+};
+
+export default function VerifyDocuments() {
+  return <VerifyDocumentsView />;
 }
-
-export default VerifyDocuments

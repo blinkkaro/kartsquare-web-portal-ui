@@ -10,6 +10,7 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const theme = useTheme();
+
   return (
     <Box
       sx={{
@@ -25,6 +26,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             ? COLORS.BACKGROUND.PAPER_DARK
             : COLORS.BACKGROUND.PAPER_LIGHT,
         // more breathing room at bottom on mobile
+        pb: { xs: "5rem", md: "0" },
       }}
     >
       <Nav />
@@ -37,7 +39,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           maxWidth: { lg: "1400px", xl: "1600px" },
           mx: "auto",
           width: "100%",
-          px: { xs: 2},
+          px: { xs: 2 },
           mt: { xs: 9, sm: 10, md: 9, lg: 10 },
           backgroundColor:
             theme.palette.mode === "dark"
