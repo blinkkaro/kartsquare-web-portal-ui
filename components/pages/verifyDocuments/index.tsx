@@ -17,12 +17,13 @@ import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import ImageUpload from "./component/ImageUpload";
-import VerifyDocumentService from "@/services/auth/verifyDocument.service";
 import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { logout } from "@/features/ui/authSlice";
+import { secureStorage } from "@/helper/SecureStorage";
+import { verifyDocumentService } from "@/services/auth/verifyDocument.service";
 
 interface VerifyDocumentFormInputs {
   documentNumber: string;
@@ -39,7 +40,6 @@ function VerifyDocumentsView() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
-  const verifyDocumentService = new VerifyDocumentService();
 
   const {
     control,
@@ -89,8 +89,8 @@ function VerifyDocumentsView() {
   };
 
   const handleBack = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
+    secureStorage.removeItem("token");
+    secureStorage.removeItem("refreshToken");
 
     dispatch(logout());
     router.back();

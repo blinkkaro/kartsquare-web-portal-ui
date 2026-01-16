@@ -12,7 +12,12 @@ class VerifyDocumentService {
 
       const response = await POST<ImageUploadApiResponse>(
         API_ENDPOINTS.UPLOAD,
-        formData
+        formData,
+        {
+          headers: {
+            "Content-Type": undefined,
+          },
+        }
       );
 
       if (response.data && response.data.urls) {
@@ -60,10 +65,12 @@ class VerifyDocumentService {
 
       const response = await POST(
         API_ENDPOINTS.VERIFY_DOC,
-        verificationPayload
+        verificationPayload,
+        {},
+        true
       );
       if (response.status !== "success") {
-        throw new Error(response.data.message || "Failed to verify document");
+        throw new Error(response.message || "Failed to verify document");
       }
 
       return response;
@@ -77,4 +84,4 @@ class VerifyDocumentService {
   }
 }
 
-export default VerifyDocumentService;
+export const verifyDocumentService = new VerifyDocumentService();

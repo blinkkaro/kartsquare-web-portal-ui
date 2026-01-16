@@ -26,6 +26,9 @@ import DesktopNavLinks from "./components/DesktopNavLinks";
 import NavActions from "./components/NavActions";
 import MobileBottomNav from "./components/MobileBottomNav";
 import MobileSearchDrawer from "./components/MobileSearchDrawer";
+import NotificationList from "./components/NotificationList";
+import RightDrawer from "../RightDrawer";
+import { secureStorage } from "@/helper/SecureStorage";
 
 // Styled Components
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -67,6 +70,7 @@ const Nav = () => {
   const { t } = useTranslate();
   const mode = useAppSelector((state) => state.ui.mode);
   const dispatch = useAppDispatch();
+  const [showNotificationDrawer, setShowNotificationDrawer] = useState(false);
 
   // Local state
   const [role, setRole] = useState<string | null>(null);
@@ -83,17 +87,15 @@ const Nav = () => {
 
   // Initialize auth state
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userRole = localStorage.getItem("role");
+    const token = secureStorage.getItem("token");
+    const userRole = secureStorage.getItem("role");
     setIsAuthenticated(!!token);
     setRole(userRole);
   }, []);
 
   // Handlers
-  const handleLogout = () => {
-    dispatch(logout());
-    localStorage.clear();
-    setIsAuthenticated(false);
+  const handleProfileClick = () => {
+    router.push("/myAccount");
   };
 
   const handleLogin = () => {
@@ -110,6 +112,10 @@ const Nav = () => {
 
   const toggleMobileSearch = () => {
     setMobileSearchOpen((prev) => !prev);
+  };
+
+  const toggleNotificationDrawer = () => {
+    setShowNotificationDrawer((prev) => !prev);
   };
 
   return (
@@ -144,9 +150,10 @@ const Nav = () => {
               mode={mode}
               onThemeToggle={handleThemeToggle}
               onSearchToggle={toggleMobileSearch}
-              onLogout={handleLogout}
+              profileClick={handleProfileClick}
               onLogin={handleLogin}
               loginText={t("login")}
+              onNotificationToggle={toggleNotificationDrawer}
             />
           </Box>
 
@@ -167,6 +174,16 @@ const Nav = () => {
           placeholder={t("search")}
         />
       )}
+
+      {/* Notification Drawer */}
+      <RightDrawer
+        open={showNotificationDrawer}
+        onClose={() => setShowNotificationDrawer(false)}
+        title={t("notifications")}
+        width={500}
+      >
+        <NotificationList onClose={() => setShowNotificationDrawer(false)} />
+      </RightDrawer>
     </>
   );
 };

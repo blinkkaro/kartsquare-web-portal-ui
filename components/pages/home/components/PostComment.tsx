@@ -15,6 +15,7 @@ import { Posts, Comment } from "@/services/post/postInterfaces";
 import { useGetPostComments, useAddPostComment } from "@/hooks/usePosts";
 import { COLORS } from "@/constants/colors";
 import { formatTimestamp } from "@/helper/helper";
+import { useTranslate } from "@/hooks/useTranslate";
 
 interface PostCommentProps {
   open: boolean;
@@ -25,7 +26,7 @@ interface PostCommentProps {
 const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const { t } = useTranslate();
 
   const [commentText, setCommentText] = useState("");
 
@@ -252,7 +253,7 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
                     fontWeight: 600,
                   }}
                 >
-                  No comments yet
+                  {t("noComments")}
                 </Typography>
                 <Typography
                   variant="body2"
@@ -263,7 +264,7 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
                         : COLORS.TEXT.SECONDARY_LIGHT,
                   }}
                 >
-                  Start the conversation
+                  {t("startConversation")}
                 </Typography>
               </Box>
             ) : (
@@ -323,7 +324,7 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
             <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
               <TextField
                 fullWidth
-                placeholder="Add a comment..."
+                placeholder={t("commentPlaceholder")}
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
                 onKeyPress={handleKeyPress}

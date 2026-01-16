@@ -1,11 +1,11 @@
-'use client'
-import React from 'react'
-import PreferencesView from '@/components/pages/preferences'
+import PreferencesView from "@/components/pages/preferences";
+import type { Metadata } from "next";
 
-function Preferences() {
-  return (
-    <PreferencesView/>
-  )
+export const metadata: Metadata = {
+  title: "Preferences | KartSquare Portal",
+  description: "Set your account preferences",
+};
+
+export default function Preferences() {
+  return <PreferencesView />;
 }
-
-export default Preferences

@@ -15,6 +15,7 @@ import PostCard from "./components/PostCard";
 import { useGetPosts } from "@/hooks/usePosts";
 import Blogs from "./components/Blogs";
 import TopSuggestions from "./components/TopSuggestions";
+import { useGetStories } from "@/hooks/useStories";
 
 interface EmptyCardProps {
   name: string;
@@ -68,6 +69,10 @@ function HomeView() {
     limit: 10,
     visibility: "public",
   });
+  const { data: stories, isLoading: storiesLoading } = useGetStories({
+    page: 1,
+    limit: 10,
+  });
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
   return (
@@ -80,7 +85,7 @@ function HomeView() {
             sx={{
               order: { xs: 2, md: 1 },
               display: { xs: "none", lg: "block" }, // Hide on md, show on lg
-              maxHeight: "calc(100vh - 4.8rem)",
+              maxHeight: "calc(100vh - 5rem)",
               overflowY: "auto",
               scrollbarWidth: "none",
             }}
@@ -98,13 +103,13 @@ function HomeView() {
           sx={{
             order: { xs: 1, md: 2 },
             overflowY: "auto",
-            maxHeight: "calc(100vh - 4.8rem)",
+            maxHeight: "calc(100vh - 5rem)",
             scrollbarWidth: "none",
           }}
         >
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             {/* Stories Section */}
-            <StoriesSection />
+            <StoriesSection data={stories} isLoading={storiesLoading} />
             <Box
               sx={{
                 flexDirection: "column",
@@ -130,7 +135,7 @@ function HomeView() {
             sx={{
               order: { xs: 3, md: 3 },
               overflowY: "auto",
-              maxHeight: "calc(100vh - 4.8rem)",
+              maxHeight: "calc(100vh - 5rem)",
               scrollbarWidth: "none",
             }}
           >

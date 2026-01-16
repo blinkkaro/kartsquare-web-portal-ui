@@ -1,8 +1,11 @@
-'use client'
-import PrivacyPolicyView from '@/components/pages/privacyPolicy'
+import PrivacyPolicyView from "@/components/pages/privacyPolicy";
+import type { Metadata } from "next";
 
-function PrivacyPolicy() {
-  return <PrivacyPolicyView />
+export const metadata: Metadata = {
+  title: "Privacy Policy | KartSquare Portal",
+  description: "KartSquare privacy policy and data handling practices",
+};
+
+export default function PrivacyPolicy() {
+  return <PrivacyPolicyView />;
 }
-
-export default PrivacyPolicy
