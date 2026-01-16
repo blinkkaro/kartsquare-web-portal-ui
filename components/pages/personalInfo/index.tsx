@@ -1,3 +1,4 @@
+"use client";
 import ProfileWrapper from "@/components/common/profile/profileWrapper";
 import { Box, Grid, Typography } from "@mui/material";
 import React, { useState } from "react";
@@ -5,17 +6,19 @@ import { useTheme } from "@mui/material/styles";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { EditOutlined } from "@mui/icons-material";
-import { useProfile, useDeleteProfile } from "@/hooks/useProfile";
+import { useDeleteProfile } from "@/hooks/useProfile";
 import Labels from "./components/labels";
 import Button from "@/components/common/Button";
 import { formatDate } from "@/helper/helper";
 import EditProfileModal from "./components/EditProfileModal";
 import WarningModel from "@/components/common/WarningModel";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 function PersonalInfoView() {
   const theme = useTheme();
   const { t } = useTranslate();
-  const { data: profileData } = useProfile();
+  const profile = useSelector((state: RootState) => state.profile.profile);
   const { mutate: deleteProfile, isPending: isDeleting } = useDeleteProfile();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -82,21 +85,21 @@ function PersonalInfoView() {
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         <Labels
           label={t("name")}
-          description={`${profileData?.first_name || ""} ${
-            profileData?.last_name || ""
+          description={`${profile?.first_name || ""} ${
+            profile?.last_name || ""
           }`}
         />
 
         <Labels
           label={t("bio")}
-          description={profileData?.bio || t("noBioAvailable")}
+          description={profile?.bio || t("noBioAvailable")}
         />
 
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, sm: 6 }}>
             <Labels
               label={t("email")}
-              description={profileData?.email || ""}
+              description={profile?.email || ""}
               verified={true}
             />
           </Grid>
@@ -113,7 +116,7 @@ function PersonalInfoView() {
             >
               <Labels
                 label={t("phone_number")}
-                description={profileData?.phone_number || ""}
+                description={profile?.phone_number || ""}
                 verified={true}
               />
             </Box>
@@ -121,10 +124,7 @@ function PersonalInfoView() {
         </Grid>
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <Labels
-              label={t("country")}
-              description={profileData?.country || ""}
-            />
+            <Labels label={t("country")} description={profile?.country || ""} />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
             <Box
@@ -137,17 +137,14 @@ function PersonalInfoView() {
                 alignItems: "center",
               }}
             >
-              <Labels
-                label={t("gender")}
-                description={profileData?.gender || ""}
-              />
+              <Labels label={t("gender")} description={profile?.gender || ""} />
             </Box>
           </Grid>
         </Grid>
         <Labels
           label={t("birth_date")}
           description={
-            profileData?.birth_date ? formatDate(profileData.birth_date) : "-"
+            profile?.birth_date ? formatDate(profile.birth_date) : "-"
           }
         />
 

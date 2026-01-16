@@ -19,8 +19,9 @@ import StoryProgressBar from "./StoryProgressBar";
 import StoryMedia from "./StoryMedia";
 import { Close, HeatPumpRounded, MoreVert, Send } from "@mui/icons-material";
 import { useViewStory, useDeleteStory } from "@/hooks/useStories";
-import { useProfile } from "@/hooks/useProfile";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
+import { RootState } from "@/store/store";
+import { useSelector } from "react-redux";
 
 interface StoryViewerProps {
   storiesList: StoriesList[];
@@ -42,13 +43,13 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
 
   const { mutate: viewStory } = useViewStory();
   const { mutate: deleteStory } = useDeleteStory();
-  const { data: userProfile } = useProfile();
+  const profile = useSelector((state: RootState) => state.profile.profile);
   const { t } = useTranslationContext();
 
   const currentUser = storiesList[currentUserIndex];
   const currentStory = currentUser?.stories[currentStoryIndex];
 
-  const isOwnStory = userProfile?.id === currentUser?.user_id;
+  const isOwnStory = profile?.id === currentUser?.user_id;
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setIsPaused(true);

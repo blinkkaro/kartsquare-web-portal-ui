@@ -19,10 +19,11 @@ import {
   StoriesListResponse,
   StoryItem,
 } from "@/services/stories/stories.interface";
-import { useProfile } from "@/hooks/useProfile";
 import { useAddStory } from "@/hooks/useStories";
 import { MediaType } from "@/services/stories/stories.interface";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const StoriesSection = ({
   data,
@@ -32,7 +33,7 @@ const StoriesSection = ({
   isLoading: boolean;
 }) => {
   const theme = useTheme();
-  const { data: user } = useProfile();
+  const profile = useSelector((state: RootState) => state.profile.profile);
   const { t } = useTranslationContext();
 
   const [viewerOpen, setViewerOpen] = useState(false);
@@ -101,9 +102,9 @@ const StoriesSection = ({
   };
 
   // Sort stories: User story first, then unseen other stories, then seen other stories
-  const userStory = storiesList.find((story) => story.user_id === user?.id);
+  const userStory = storiesList.find((story) => story.user_id === profile?.id);
   const otherStories = storiesList.filter(
-    (story) => story.user_id !== user?.id
+    (story) => story.user_id !== profile?.id
   );
 
   const unseenOtherStories = otherStories.filter((s) =>
@@ -159,7 +160,7 @@ const StoriesSection = ({
         {!isLoading && (
           <>
             {/* Current User Item */}
-            {user && (
+            {profile && (
               <Stack
                 alignItems="center"
                 spacing={1}
@@ -220,7 +221,7 @@ const StoriesSection = ({
                     }}
                   >
                     <Avatar
-                      src={user.profile_pic}
+                      src={profile.profile_pic}
                       alt={t("yourStory")}
                       sx={{
                         width: 56,
@@ -273,14 +274,13 @@ const StoriesSection = ({
                               : COLORS.ICON_GRADIENT.Light.END
                           } 100%)`
                         : "transparent",
-                      border:
-                        !unseen
-                          ? `2px solid ${
-                              theme.palette.mode === "dark"
-                                ? COLORS.BORDER.DEFAULT_DARK
-                                : COLORS.BORDER.HOVER_LIGHT
-                            }`
-                          : "none",
+                      border: !unseen
+                        ? `2px solid ${
+                            theme.palette.mode === "dark"
+                              ? COLORS.BORDER.DEFAULT_DARK
+                              : COLORS.BORDER.HOVER_LIGHT
+                          }`
+                        : "none",
                     }}
                   >
                     <Avatar

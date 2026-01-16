@@ -16,9 +16,8 @@ import {
 } from "@mui/icons-material";
 import Image from "next/image";
 import { COLORS } from "../../../../constants/colors";
-import { useAppSelector } from "@/store/hooks";
-import { selectCurrentUser } from "@/features/ui/authSlice";
-import { useProfile } from "@/hooks/useProfile";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const ActionsContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -72,7 +71,7 @@ const NavActions: React.FC<NavActionsProps> = ({
   loginText,
   onNotificationToggle,
 }) => {
-  const { data: profile } = useProfile();
+  const profile = useSelector((state: RootState) => state.profile.profile);
   if (isAuthenticated) {
     return (
       <ActionsContainer>

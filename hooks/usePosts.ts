@@ -1,7 +1,8 @@
 import { GetPostsParams } from "@/services/post/postInterfaces";
 import { postServices } from "@/services/post/postServices";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useProfile } from "./useProfile";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 export const useGetPosts = (params: GetPostsParams) => {
   return useQuery({
@@ -20,7 +21,7 @@ export const useGetPostComments = (postId: string, enabled: boolean = true) => {
 
 export const useAddPostComment = (postId: string) => {
   const queryClient = useQueryClient();
-  const { data: profile } = useProfile();
+  const profile = useSelector((state: RootState) => state.profile.profile);
 
   return useMutation({
     mutationFn: (comment: string) =>

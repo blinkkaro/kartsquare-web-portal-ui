@@ -1,8 +1,11 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Nav from "@/components/common/Nav";
 import { Box, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchUserProfile } from "@/features/ui/profileSlice";
+import { selectIsAuthenticated } from "@/features/ui/authSlice";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -10,6 +13,15 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const theme = useTheme();
+  const dispatch = useAppDispatch();
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+
+  // Fetch user profile on mount if authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchUserProfile());
+    }
+  }, [isAuthenticated, dispatch]);
   return (
     <Box
       sx={{
@@ -38,7 +50,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           maxWidth: { lg: "1400px", xl: "1600px" },
           mx: "auto",
           width: "100%",
-          px: { xs: 2},
+          px: { xs: 2 },
           mt: { xs: 9, sm: 10, md: 9, lg: 10 },
           backgroundColor:
             theme.palette.mode === "dark"

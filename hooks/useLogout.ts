@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { authService } from "@/services/auth/auth.service";
 import { logout } from "@/features/ui/authSlice";
+import { clearProfile } from "@/features/ui/profileSlice";
 
 export const useLogout = () => {
   const dispatch = useDispatch();
@@ -16,6 +17,8 @@ export const useLogout = () => {
     } catch (error) {
       console.error("Logout API failed", error);
     } finally {
+      // clear profile
+      dispatch(clearProfile());
       // 2. Clear Redux Store (handles some localStorage)
       dispatch(logout());
 

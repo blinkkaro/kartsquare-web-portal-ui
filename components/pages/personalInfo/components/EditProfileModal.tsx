@@ -15,8 +15,10 @@ import { Close, CameraAlt } from "@mui/icons-material";
 import Button from "@/components/common/Button";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
-import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
 import ErrorMessage from "@/components/common/ErrorMessage";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { useUpdateProfile } from "@/hooks/useProfile";
 
 export interface EditProfileModalProps {
   open: boolean;
@@ -29,7 +31,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 }) => {
   const theme = useTheme();
   const { t } = useTranslate();
-  const { data: profileData } = useProfile();
+  const profile = useSelector((state: RootState) => state.profile.profile);
   const { mutate: updateProfile, isPending, error } = useUpdateProfile();
 
   const [firstName, setFirstName] = useState("");
@@ -40,13 +42,13 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
   // Initialize form with profile data when modal opens
   useEffect(() => {
-    if (open && profileData) {
-      setFirstName(profileData.first_name || "");
-      setLastName(profileData.last_name || "");
-      setBio(profileData.bio || "");
-      setProfilePicFile(profileData.profile_pic || "");
+    if (open && profile) {
+      setFirstName(profile.first_name || "");
+      setLastName(profile.last_name || "");
+      setBio(profile.bio || "");
+      setProfilePicFile(profile.profile_pic || "");
     }
-  }, [open, profileData]);
+  }, [open, profile]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

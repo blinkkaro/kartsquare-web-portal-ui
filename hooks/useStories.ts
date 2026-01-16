@@ -3,13 +3,14 @@ import {
   StoriesListResponse,
 } from "@/services/stories/stories.interface";
 import { storiesService } from "@/services/stories/stories.service";
+import { RootState } from "@/store/store";
 import {
   InfiniteData,
   useInfiniteQuery,
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useProfile } from "./useProfile";
+import { useSelector } from "react-redux";
 
 export const useGetStories = (params: { page: number; limit: number }) => {
   const token = localStorage.getItem("token");
@@ -36,7 +37,7 @@ export const useGetStories = (params: { page: number; limit: number }) => {
 
 export const useAddStory = () => {
   const queryClient = useQueryClient();
-  const profile = useProfile();
+  const profile = useSelector((state: RootState) => state.profile.profile);
   return useMutation({
     mutationFn: (story: CreateStory) => storiesService.createStory(story),
 
@@ -51,9 +52,9 @@ export const useAddStory = () => {
       const optimisticStory = {
         ...newStory,
         story_id: Date.now().toString(),
-        user_id: profile.data?.id ?? "",
-        user_name: profile.data?.first_name ?? "",
-        user_profile_image: profile.data?.profile_pic ?? "",
+        user_id: profile?.id ?? "",
+        user_name: profile?.first_name ?? "",
+        user_profile_image: profile?.profile_pic ?? "",
         media_url: newStory.media,
         created_at: new Date(),
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -70,7 +71,7 @@ export const useAddStory = () => {
             pages: oldData.pages.map((page, index) => {
               if (index === 0) {
                 const pageStories = page.stories || [];
-                const userId = profile.data?.id ?? "";
+                const userId = profile?.id ?? "";
                 const optimisticStoryAny = optimisticStory as any;
                 const userIndex = pageStories.findIndex(
                   (s) => s.user_id === userId
@@ -89,8 +90,8 @@ export const useAddStory = () => {
                 } else {
                   const newEntry = {
                     user_id: userId,
-                    user_name: profile.data?.first_name ?? "",
-                    user_profile_image: profile.data?.profile_pic ?? "",
+                    user_name: profile?.first_name ?? "",
+                    user_profile_image: profile?.profile_pic ?? "",
                     stories: [optimisticStoryAny],
                   };
                   newStoriesList = [newEntry, ...pageStories];
