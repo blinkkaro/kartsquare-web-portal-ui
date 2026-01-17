@@ -31,7 +31,7 @@ function PersonalInfoView() {
     <ProfileWrapper showBackButton>
       <Box
         sx={{
-          my: "2rem",
+          my: "1.5rem",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -80,7 +80,7 @@ function PersonalInfoView() {
         </Box>
       </Box>
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
         <Labels
           label={t("name")}
           description={`${profile?.first_name || ""} ${
@@ -93,7 +93,7 @@ function PersonalInfoView() {
           description={profile?.bio || t("noBioAvailable")}
         />
 
-        <Grid container spacing={4}>
+        <Grid container spacing={2}>
           <Grid size={{ xs: 12, sm: 6 }}>
             <Labels
               label={t("email")}
@@ -120,7 +120,7 @@ function PersonalInfoView() {
             </Box>
           </Grid>
         </Grid>
-        <Grid container spacing={4}>
+        <Grid container spacing={2}>
           <Grid size={{ xs: 12, sm: 6 }}>
             <Labels label={t("country")} description={profile?.country || ""} />
           </Grid>
@@ -146,7 +146,7 @@ function PersonalInfoView() {
           }
         />
 
-        <Box sx={{ mt: 4 }}>
+        <Box sx={{ mt: 2 }}>
           <Button
             variant="contained"
             onClick={() => setIsDeleteModalOpen(true)}
