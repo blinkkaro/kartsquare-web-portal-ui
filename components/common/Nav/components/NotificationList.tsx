@@ -198,7 +198,7 @@ function NotificationList({ onClose }: { onClose: () => void }) {
             startIcon={<DoneAll />}
             sx={{
               textTransform: "none",
-              color: COLORS.PRIMARY_PURPLE,
+              color: isDark ? COLORS.WHITE : COLORS.PRIMARY_PURPLE,
               fontSize: "0.75rem",
               fontWeight: 600,
               "&:hover": {

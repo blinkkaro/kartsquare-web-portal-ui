@@ -30,6 +30,7 @@ import {
 import { createAddressSchema, AddressFormData } from "./AddressSchema";
 import { useAddAddress, useUpdateAddress } from "@/hooks/useAddress";
 import ErrorMessage from "../ErrorMessage";
+import { useGeolocation } from "@/hooks/useGeolocation";
 
 interface AddressDrawerProps {
   open: boolean;
@@ -56,6 +57,12 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
   const addAddressMutation = useAddAddress();
   const updateAddressMutation = useUpdateAddress();
   const [error, setError] = useState<string>("");
+  const {
+    coordinates,
+    isLoading,
+    error: locationError,
+    getCoordinates,
+  } = useGeolocation();
 
   const {
     control,
@@ -67,10 +74,10 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
     resolver: yupResolver(createAddressSchema(t)),
     defaultValues: {
       address_name: "",
-      building_no: undefined,
-      floor: undefined,
+      building_no: "",
+      floor: "",
       address: "",
-      landmark: undefined,
+      landmark: "",
       pincode: "",
       city_town: DEFAULT_CITY,
       state: DEFAULT_STATE,
@@ -116,9 +123,15 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
         state: DEFAULT_STATE,
         country: DEFAULT_COUNTRY,
         is_default: false,
+        latitude: coordinates?.latitude,
+        longitude: coordinates?.longitude,
       });
     }
-  }, [initialData, mode, reset, open]);
+  }, [initialData, mode, reset, open, coordinates]);
+
+  useEffect(() => {
+    getCoordinates();
+  }, [open]);
 
   const handleStateChange = (newState: string) => {
     setSelectedState(newState);
@@ -191,7 +204,12 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
       title={mode === "add" ? t("addNewAddress") : t("editAddress")}
       width={500}
     >
-      <ErrorMessage error={error} isVisible={!!error} />
+      <Box sx={{ px: 3, pb: 3 }}>
+        <ErrorMessage
+          error={error || locationError || ""}
+          isVisible={!!error || !!locationError}
+        />
+      </Box>
       <Box sx={{ px: 3, pb: 3 }}>
         <form onSubmit={handleSubmit(handleFormSubmit)}>
           {/* Map Placeholder Section */}
