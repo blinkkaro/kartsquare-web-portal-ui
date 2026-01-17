@@ -53,7 +53,18 @@ const PostFeedList: React.FC<PostFeedListProps> = ({
   }, [initialIndex]);
 
   return (
-    <Box ref={listRef} sx={{ p: 2 , display: "flex", flexDirection: "column", gap: 2}}>
+    <Box
+      ref={listRef}
+      sx={{
+        p: 2,
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        "&::-webkit-scrollbar": { display: "none" },
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+      }}
+    >
       {posts.map((post, index) => {
         const isLastPost = index === posts.length - 1;
         return (

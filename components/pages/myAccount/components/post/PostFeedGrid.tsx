@@ -54,7 +54,14 @@ const PostFeedGrid: React.FC<PostFeedGridProps> = ({
 
   if (isLoading) {
     return (
-      <Box sx={{ p: 3 }}>
+      <Box
+        sx={{
+          p: 3,
+          "&::-webkit-scrollbar": { display: "none" },
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+      >
         <Grid container spacing={1}>
           {[...Array(9)].map((_, index) => (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
@@ -83,6 +90,9 @@ const PostFeedGrid: React.FC<PostFeedGridProps> = ({
           justifyContent: "center",
           minHeight: "400px",
           p: 3,
+          "&::-webkit-scrollbar": { display: "none" },
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
         }}
       >
         <Image
@@ -120,7 +130,14 @@ const PostFeedGrid: React.FC<PostFeedGridProps> = ({
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box
+      sx={{
+        p: 3,
+        "&::-webkit-scrollbar": { display: "none" },
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+      }}
+    >
       <Grid container spacing={1}>
         {posts.map((post, index) => {
           const isLastPost = index === posts.length - 1;

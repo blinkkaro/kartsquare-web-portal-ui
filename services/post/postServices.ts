@@ -14,10 +14,8 @@ class PostServices {
     visibility,
   }: GetPostsParams): Promise<GetPostsResponse> {
     try {
-      const response = await GET<GetPostsResponse>(
+      const response = await api.get<GetPostsResponse>(
         `${API_ENDPOINTS.GET_POST}?limit=${limit}&visibility=${visibility}`,
-        {},
-        false,
       );
       if (response.status !== "success") {
         throw new Error(response.message || "Failed to fetch posts");

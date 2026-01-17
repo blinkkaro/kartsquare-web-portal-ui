@@ -44,7 +44,15 @@ export default function PostModel({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <Box sx={{ position: "relative", minHeight: "400px" }}>
+    <Box
+      sx={{
+        position: "relative",
+        minHeight: "400px",
+        "&::-webkit-scrollbar": { display: "none" },
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+      }}
+    >
       {/* Back Button for List View */}
       {viewMode === "list" && (
         <Box

@@ -26,5 +26,18 @@ class PrefranceService {
       throw new Error(errorMessage);
     }
   }
+  async updatePreferenceForTheUser(preferences: preferences[]): Promise<void> {
+    try {
+      await POST<preferences[]>(API_ENDPOINTS.UPDATE_PREFERENCES, {
+        preferences,
+      });
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to update Prefreances User";
+      throw new Error(errorMessage);
+    }
+  }
 }
 export const prefranceService = new PrefranceService();

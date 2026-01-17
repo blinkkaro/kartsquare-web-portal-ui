@@ -54,7 +54,7 @@ export const myAccountNav = (
       },
       {
         label: t("preferences"),
-        href: "#",
+        href: "myAccount/myPreferences",
         icon: <TuneIcon />,
       },
       {
@@ -94,7 +94,7 @@ export const myAccountNav = (
       },
       {
         label: t("preferences"),
-        href: "#",
+        href: "myAccount/myPreferences",
         icon: <TuneIcon />,
       },
       {

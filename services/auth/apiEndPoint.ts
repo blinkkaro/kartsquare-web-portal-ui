@@ -28,4 +28,5 @@ export const API_ENDPOINTS = {
   PREFERENCES: "/auth/preferences",
   ADD_ACCOUNT: "/auth//upload-acc-details",
   ADD_BULK_WORKING_HOURS: "/sp_schedule/providers/working-hours/bulk",
+  UPDATE_PREFERENCES: "/auth/update-preferences",
 };
