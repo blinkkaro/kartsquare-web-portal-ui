@@ -308,7 +308,12 @@ export type TranslationKey =
   | "enterPincode"
   | "selectState"
   | "selectCityTown"
-  | "enterAddress";
+  | "enterAddress"
+  | "geolocationNotSupported"
+  | "failedToGetLocation"
+  | "locationPermissionDenied"
+  | "locationInformationUnavailable"
+  | "locationRequestTimedOut";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

@@ -305,4 +305,9 @@ export const english = {
   selectState: "Select state",
   selectCityTown: "Select city/town",
   enterAddress: "Enter address",
+  geolocationNotSupported: "Geolocation is not supported by your browser",
+  failedToGetLocation: "Failed to get location",
+  locationPermissionDenied: "Location permission denied",
+  locationInformationUnavailable: "Location information unavailable",
+  locationRequestTimedOut: "Location request timed out",
 };
