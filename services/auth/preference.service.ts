@@ -26,9 +26,9 @@ class PrefranceService {
       throw new Error(errorMessage);
     }
   }
-  async updatePreferenceForTheUser(preferences: preferences[]): Promise<void> {
+  async updatePreferenceForTheUser(preferences: string[]): Promise<void> {
     try {
-      await POST<preferences[]>(API_ENDPOINTS.UPDATE_PREFERENCES, {
+      await POST<string[]>(API_ENDPOINTS.UPDATE_PREFERENCES, {
         preferences,
       });
     } catch (error: any) {
@@ -36,6 +36,21 @@ class PrefranceService {
         error.response?.data?.message ||
         error.message ||
         "Failed to update Prefreances User";
+      throw new Error(errorMessage);
+    }
+  }
+  async getUserPreferenceForTheUser(): Promise<preferences[]> {
+    try {
+      const response = await GET<preferences[]>(
+        API_ENDPOINTS.GET_USER_PREFERENCES,
+      );
+      console.log("response.data", response.data);
+      return response.data;
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to get User Prefreances";
       throw new Error(errorMessage);
     }
   }

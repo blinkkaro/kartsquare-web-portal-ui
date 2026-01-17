@@ -3,14 +3,17 @@ import ProfileWrapper from "@/components/common/profile/profileWrapper";
 import React, { useEffect, useState } from "react";
 import { Box, Typography, CircularProgress } from "@mui/material";
 import PreferenceCards from "@/components/pages/preferences/components/PreferenceCard";
-import { usePreference, useUpdatePreference } from "@/hooks/usePreference";
+import {
+  useGetUserPreference,
+  usePreference,
+  useUpdatePreference,
+} from "@/hooks/usePreference";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import { secureStorage } from "@/helper/SecureStorage";
-import { preferences } from "@/services/auth/auth.interface";
 
 function MyPreferencesView() {
   const { t } = useTranslationContext();
-  const { data: preferencesData, isLoading, refetch } = usePreference();
+  const { data: preferencesData, isLoading, refetch } = useGetUserPreference();
   const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
   const [userRole, setUserRole] = useState<string>("");
 
@@ -26,18 +29,13 @@ function MyPreferencesView() {
   useEffect(() => {
     if (preferencesData) {
       const activePreferences = preferencesData
-        .filter((pref) => pref.id)
+        .filter((pref) => pref.is_selected)
         .map((pref) => pref.id);
       setSelectedPreferences(activePreferences);
     }
   }, [preferencesData]);
 
-  const updatePreferenceMutation = useUpdatePreference(
-    preferencesData?.map((pref) => ({
-      ...pref,
-      is_active: selectedPreferences.includes(pref.id),
-    })) || [],
-  );
+  const updatePreferenceMutation = useUpdatePreference();
 
   const handlePreferenceToggle = async (id: string) => {
     const newSelectedPreferences = selectedPreferences.includes(id)
@@ -48,13 +46,12 @@ function MyPreferencesView() {
 
     // Update preferences on the server
     if (preferencesData) {
-      const updatedPreferences = preferencesData.map((pref) => ({
-        ...pref,
-        is_active: newSelectedPreferences.includes(pref.id),
-      }));
+      const updatedPreferences = preferencesData
+        .filter((pref) => newSelectedPreferences.includes(pref.id))
+        .map((pref) => pref.id);
 
       try {
-        await updatePreferenceMutation.mutateAsync();
+        await updatePreferenceMutation.mutateAsync(updatedPreferences);
         refetch();
       } catch (error) {
         console.error("Failed to update preferences:", error);

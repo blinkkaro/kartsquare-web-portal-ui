@@ -1,5 +1,5 @@
 import { prefranceService } from "@/services/auth/preference.service";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { preferences } from "@/services/auth/auth.interface";
 
 export const usePreference = () => {
@@ -9,10 +9,20 @@ export const usePreference = () => {
   });
 };
 
-export const useUpdatePreference = (preferences: preferences[]) => {
-  return useMutation({
-    mutationFn: () =>
-      prefranceService.updatePreferenceForTheUser(preferences),
+export const useGetUserPreference = () => {
+  return useQuery({
+    queryKey: ["user-preference"],
+    queryFn: () => prefranceService.getUserPreferenceForTheUser(),
   });
 };
 
+export const useUpdatePreference = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (preferences: string[]) =>
+      prefranceService.updatePreferenceForTheUser(preferences),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-preference"] });
+    },
+  });
+};
