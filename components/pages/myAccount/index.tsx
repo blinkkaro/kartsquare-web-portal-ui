@@ -15,7 +15,7 @@ import { useLogout } from "@/hooks/useLogout";
 import ChangePassword from "./components/changePassword";
 import RightDrawer from "@/components/common/RightDrawer";
 import { secureStorage } from "@/helper/SecureStorage";
-import PostModel from "./components/postModel";
+import PostModel from "./components/post/postModel";
 
 function MyAccountView() {
   const theme = useTheme();

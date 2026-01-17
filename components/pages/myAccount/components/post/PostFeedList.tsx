@@ -5,7 +5,7 @@ import { Box, CircularProgress, Typography } from "@mui/material";
 import { Posts } from "@/services/post/postInterfaces";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
-import PostCard from "../../home/components/PostCard";
+import PostCard from "@/components/pages/home/components/PostCard";
 
 interface PostFeedListProps {
   posts: Posts[];
@@ -53,7 +53,7 @@ const PostFeedList: React.FC<PostFeedListProps> = ({
   }, [initialIndex]);
 
   return (
-    <Box ref={listRef} sx={{ p: 2 }}>
+    <Box ref={listRef} sx={{ p: 2 , display: "flex", flexDirection: "column", gap: 2}}>
       {posts.map((post, index) => {
         const isLastPost = index === posts.length - 1;
         return (

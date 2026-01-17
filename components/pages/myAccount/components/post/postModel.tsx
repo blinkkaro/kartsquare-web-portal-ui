@@ -12,12 +12,12 @@ import {
 } from "@mui/material";
 import { Add, ArrowBack } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
-import PostFeedGrid from "./PostFeedGrid";
-import AddPostDrawer from "./AddPostDrawer";
 import RightDrawer from "@/components/common/RightDrawer";
 import { Posts } from "@/services/post/postInterfaces";
 import { usePosts } from "@/hooks/useProfile";
+import PostFeedGrid from "./PostFeedGrid";
 import PostFeedList from "./PostFeedList";
+import AddPostDrawer from "./AddPostDrawer";
 
 export default function PostModel({ onClose }: { onClose: () => void }) {
   const { t } = useTranslate();
