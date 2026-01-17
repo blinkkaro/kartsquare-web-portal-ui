@@ -106,3 +106,13 @@ export const convert12To24 = (time12: string): string => {
     .toString()
     .padStart(2, "0")}`;
 };
+
+export const sanitizeData = (data: any): any => {
+  const sanitized = { ...data };
+  Object.keys(sanitized).forEach((key) => {
+    if (sanitized[key] === null || sanitized[key] === undefined) {
+      sanitized[key] = "";
+    }
+  });
+  return sanitized;
+};

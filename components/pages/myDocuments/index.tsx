@@ -27,9 +27,8 @@ function MyDocumentsView() {
   const { t } = useTranslationContext();
 
   return (
-    <ProfileWrapper>
+    <ProfileWrapper showBackButton>
       <Box sx={{ mb: 4 }}>
-        <BackButton sx={{ mb: 2 }} />
         <Typography
           variant="h4"
           component="h1"

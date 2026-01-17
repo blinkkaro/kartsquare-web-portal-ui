@@ -5,25 +5,14 @@ import PersonIcon from "@mui/icons-material/Person";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import TuneIcon from "@mui/icons-material/Tune";
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-import CreditCardIcon from "@mui/icons-material/CreditCard";
-import LocalActivityIcon from "@mui/icons-material/LocalActivity";
-import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import PostAddIcon from "@mui/icons-material/PostAdd";
-import Inventory2Icon from "@mui/icons-material/Inventory2";
-import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import FolderSharedIcon from "@mui/icons-material/FolderShared";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import TagIcon from "@mui/icons-material/Tag";
 import LockIcon from "@mui/icons-material/Lock";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import BlockIcon from "@mui/icons-material/Block";
 import ListIcon from "@mui/icons-material/List";
 import HelpIcon from "@mui/icons-material/Help";
-import PolicyIcon from "@mui/icons-material/Policy";
 import SecurityIcon from "@mui/icons-material/Security";
 import DescriptionIcon from "@mui/icons-material/Description";
 
@@ -33,6 +22,7 @@ export interface myAccountNavInterface {
   icon: React.ReactElement;
   isLogout?: boolean;
   isChangePassword?: boolean;
+  isPosts?: boolean;
 }
 
 export const myAccountNav = (
@@ -45,6 +35,7 @@ export const myAccountNav = (
         label: t("myPosts"),
         href: "#",
         icon: <PostAddIcon />,
+        isPosts: true,
       },
       {
         label: t("personalInfo"),

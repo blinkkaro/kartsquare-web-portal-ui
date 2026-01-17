@@ -153,9 +153,9 @@ function PersonalInfoView() {
             sx={{
               color: "error.main",
               fontWeight: 500,
-              padding: "0.5rem 1rem",
+              padding: { xs: "0.4rem 0.8rem", sm: "0.5rem 1rem" },
               textTransform: "none",
-              fontSize: "1rem",
+              fontSize: { xs: "0.875rem", sm: "1rem" },
               boxShadow: `0px 2px 8px ${COLORS.SHADOW.DEFAULT}`,
               bgcolor:
                 theme.palette.mode === "dark"

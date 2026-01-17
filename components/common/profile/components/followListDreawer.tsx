@@ -29,7 +29,6 @@ interface FollowListDrawerProps {
   onClose: () => void;
   userId: string;
   userRole: "SERVICE_PROVIDER" | "CUSTOMER";
-  count?: number;
 }
 
 const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
@@ -37,7 +36,6 @@ const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
   onClose,
   userId,
   userRole,
-  count,
 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -81,7 +79,7 @@ const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
   // Flatten all pages of data
   const users: IFollow[] =
     data?.pages?.flatMap((page) =>
-      isServiceProvider ? page.followers || [] : page.following || []
+      isServiceProvider ? page.followers || [] : page.following || [],
     ) || [];
 
   // Infinite scroll observer
@@ -94,7 +92,7 @@ const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
           fetchNextPage();
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     );
 
     observer.observe(observerTarget.current);
@@ -113,7 +111,7 @@ const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
   };
 
   const getButtonLabel = (user: IFollow) => {
-    console.log(user);
+    // console.log(user);
     if (isServiceProvider && user.is_following) {
       return t("unfollow");
     }
