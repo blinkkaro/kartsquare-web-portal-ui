@@ -11,6 +11,10 @@ import {
     IconButton,
     Breadcrumbs,
     Link,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
 } from "@mui/material";
 import { Bookmark, Share, ShoppingCart, Star, NavigateNext } from "@mui/icons-material";
 import { useParams, useRouter } from "next/navigation";
@@ -42,6 +46,7 @@ const ServiceDetailsPage = () => {
     const [reviewPage, setReviewPage] = useState(1);
     const [totalReviews, setTotalReviews] = useState(0);
     const reviewsPerPage = 5;
+    const [descriptionDrawerOpen, setDescriptionDrawerOpen] = useState(false);
 
     // Fetch service details
     useEffect(() => {
@@ -292,29 +297,37 @@ const ServiceDetailsPage = () => {
                             <Typography
                                 variant="body1"
                                 sx={{
-                                    mb: 3,
+                                    mb: 1,
                                     lineHeight: 1.6,
                                     color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                                    display: "-webkit-box",
+                                    WebkitLineClamp: 10,
+                                    WebkitBoxOrient: "vertical",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
                                 }}
                             >
                                 {service.service_desc || "No description available"}
                             </Typography>
 
                             {/* Continue Reading Link */}
-                            <Button
-                                sx={{
-                                    textTransform: "none",
-                                    color: COLORS.PRIMARY_PURPLE,
-                                    p: 0,
-                                    mb: 3,
-                                    "&:hover": {
-                                        bgcolor: "transparent",
-                                        textDecoration: "underline",
-                                    },
-                                }}
-                            >
-                                Continue Reading
-                            </Button>
+                            {service.service_desc && service.service_desc.split('\n').length > 10 && (
+                                <Button
+                                    onClick={() => setDescriptionDrawerOpen(true)}
+                                    sx={{
+                                        textTransform: "none",
+                                        color: COLORS.PRIMARY_PURPLE,
+                                        p: 0,
+                                        mb: 3,
+                                        "&:hover": {
+                                            bgcolor: "transparent",
+                                            textDecoration: "underline",
+                                        },
+                                    }}
+                                >
+                                    Continue Reading
+                                </Button>
+                            )}
 
                             {/* Action Buttons */}
                             <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
@@ -613,6 +626,61 @@ const ServiceDetailsPage = () => {
                     </Box>
                 </Container>
             </Box>
+
+            {/* Description Drawer */}
+            <Dialog
+                open={descriptionDrawerOpen}
+                onClose={() => setDescriptionDrawerOpen(false)}
+                maxWidth="md"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: "16px",
+                        bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
+                    },
+                }}
+            >
+                <DialogTitle
+                    sx={{
+                        fontWeight: 700,
+                        fontSize: "1.5rem",
+                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                        borderBottom: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+                    }}
+                >
+                    Service Description
+                </DialogTitle>
+                <DialogContent sx={{ mt: 2 }}>
+                    <Typography
+                        variant="body1"
+                        sx={{
+                            lineHeight: 1.8,
+                            color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                            whiteSpace: "pre-wrap",
+                        }}
+                    >
+                        {service?.service_desc || "No description available"}
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ p: 3, pt: 2 }}>
+                    <Button
+                        onClick={() => setDescriptionDrawerOpen(false)}
+                        variant="contained"
+                        sx={{
+                            bgcolor: COLORS.PRIMARY_PURPLE,
+                            color: "white",
+                            borderRadius: "8px",
+                            px: 4,
+                            textTransform: "none",
+                            "&:hover": {
+                                bgcolor: COLORS.PURPLE_HOVER,
+                            },
+                        }}
+                    >
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 };

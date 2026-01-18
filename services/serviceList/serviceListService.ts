@@ -1,10 +1,11 @@
-import { GET } from "../api";
+import { GET, POST, PUT, DELETE } from "../api";
 import { SERVICE_API_ENDPOINTS } from "./apiEndPoints";
 import {
     ServiceListResponse,
     ServiceFilters,
     Service,
     Category,
+    ServiceCreateRequest,
 } from "./listInteraface";
 
 class ServiceListService {
@@ -85,6 +86,88 @@ class ServiceListService {
             return response.data;
         } catch (error) {
             console.error("Error fetching category:", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Get provider services
+     */
+    async getProviderServices(filters?: { search?: string }): Promise<ServiceListResponse> {
+        try {
+            const params: Record<string, any> = {};
+            if (filters?.search) params.search = filters.search;
+
+            const response = await GET<Service[]>(
+                SERVICE_API_ENDPOINTS.GET_PROVIDER_SERVICES,
+                params,
+                true // requiresAuth = true
+            );
+
+            // Mock pagination response structure since backend returns array
+            return {
+                services: response.data,
+                pagination: {
+                    total: response.data.length,
+                    page: 1,
+                    limit: response.data.length,
+                    total_pages: 1
+                }
+            };
+        } catch (error) {
+            console.error("Error fetching provider services:", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Create a new service
+     */
+    async createService(data: ServiceCreateRequest): Promise<Service> {
+        try {
+            const response = await POST<Service>(
+                SERVICE_API_ENDPOINTS.CREATE_SERVICE,
+                data,
+                {},
+                true // requiresAuth = true
+            );
+            return response.data;
+        } catch (error) {
+            console.error("Error creating service:", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Update an existing service
+     */
+    async updateService(serviceId: string, data: ServiceCreateRequest): Promise<Service> {
+        try {
+            const response = await PUT<Service>(
+                `/services/${serviceId}`,
+                data,
+                {},
+                true // requiresAuth = true
+            );
+            return response.data;
+        } catch (error) {
+            console.error("Error updating service:", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Delete a service
+     */
+    async deleteService(serviceId: string): Promise<void> {
+        try {
+            await DELETE(
+                `/services/${serviceId}`,
+                {},
+                true // requiresAuth = true
+            );
+        } catch (error) {
+            console.error("Error deleting service:", error);
             throw error;
         }
     }

@@ -7,14 +7,15 @@ import {
 } from "@/types/resgistrationFlow";
 import { updateUser } from "@/features/ui/authSlice";
 import { Dispatch } from "@reduxjs/toolkit";
+import { secureStorage } from "./SecureStorage";
 
 export const handleRegistrationStepNavigation = (
   dispatch: Dispatch,
   router: AppRouterInstance,
   newStep: UserRegisterSteps
 ) => {
-  const role = localStorage.getItem("role");
-  const register_step = localStorage.getItem("register_step");
+  const role = secureStorage.getItem("role");
+  const register_step = secureStorage.getItem("register_step");
 
   if (!register_step || !role) {
     router.replace("/");
@@ -22,7 +23,7 @@ export const handleRegistrationStepNavigation = (
   }
 
   // 1. Update LocalStorage
-  localStorage.setItem("register_step", newStep.toString());
+  secureStorage.setItem("register_step", newStep.toString());
 
   // 2. Update Redux State (Critical for RegistrationGuard)
   dispatch(updateUser({ register_step: newStep }));

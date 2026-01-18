@@ -75,7 +75,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       onSubmit={handleSubmit(onSubmit)}
       noValidate
       sx={{
-        width: {xl: "100%"},
+        width: { xl: "100%" },
       }}
     >
       <Grid container spacing={2}>
@@ -348,7 +348,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         </span>{" "}
         and{" "}
         <span style={{ textDecoration: "underline", fontWeight: 600 }}>
-          terms & conditions
+          {t("termsConditionsTitle")}
         </span>
       </Typography>
 

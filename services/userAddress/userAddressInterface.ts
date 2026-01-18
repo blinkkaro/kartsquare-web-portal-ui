@@ -1,11 +1,20 @@
 export interface UserAddress {
-    address_id: string;
-    address_line1: string;
-    address_line2?: string;
-    city: string;
+    id: string;
+    user_id: string;
+    address_name: string;
+    building_no: string;
+    floor: string;
+    address: string;
+    landmark: string;
+    pincode: string;
+    city_town: string;
     state: string;
     country: string;
-    postal_code: string;
     is_default: boolean;
-    label?: string;
+    deleted_at: string | null;
+    created_at: string;
+    updated_at: string;
+    is_deleted: boolean;
+    latitude: number;
+    longitude: number;
 }

@@ -8,20 +8,22 @@ export const COLORS = {
   PURPLE_ALPHA_10: "rgba(94, 24, 233, 0.1)",
   PURPLE_ALPHA_20: "rgba(94, 24, 233, 0.2)",
   PURPLE_ALPHA_30: "rgba(94, 24, 233, 0.3)",
+  SECONDARY_ORANGE: "#f97316",
+  PRIMARY_BLUE: "#3b82f6",
 
   // Gradient
   PURPLECYAN: "linear-gradient(135deg, #c2edff 0%, #eedaff 100%)",
   DARK_GRADIENT:
     "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
   ICON_GRADIENT: {
-    Light:{
+    Light: {
       START: "#7027ff",
       END: "#00bcff",
     },
-    Dark:{
+    Dark: {
       START: "#4b12bb",
       END: "#3b4b5eff",
-    }
+    },
   },
 
   // Text Colors
@@ -63,11 +65,16 @@ export const COLORS = {
   WHITE: "#ffffff",
   BLACK: "#000000",
   DARK: "#30263e",
+  LIGHT_GRAY:"#f9f8fc",
   SUCCESS_GREEN: "#33cf4d",
+  
 
   // Switch Colors
   SWITCH: {
     TRACK_LIGHT: "#E9E9EA",
     TRACK_DARK: "#39393D",
   },
+
+  // profile
+  PROFILE_GRADIENT: "linear-gradient(135deg, #eddaff 25%, #e2e9ff 50%)",
 };

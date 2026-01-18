@@ -1,3 +1,4 @@
+import { secureStorage } from "@/helper/SecureStorage";
 import axios, {
   AxiosInstance,
   AxiosError,
@@ -53,7 +54,7 @@ const api: CustomAxiosInstance = axios.create({
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig & { requiresAuth?: boolean }) => {
     // You can add auth tokens here
-    const token = localStorage.getItem("token");
+    const token = secureStorage.getItem("token");
     if (token && config.requiresAuth !== false) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -78,7 +79,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = localStorage.getItem("refreshToken");
+        const refreshToken = secureStorage.getItem("refreshToken");
         if (!refreshToken) {
           // No refresh token, but don't redirect - just throw the error
           // Let individual components handle authentication requirements
@@ -92,8 +93,8 @@ api.interceptors.response.use(
         const response = await authService.refreshToken(refreshToken);
 
         if (response.data && response.data.tokens) {
-          localStorage.setItem("token", response.data.tokens.access_token);
-          localStorage.setItem(
+          secureStorage.setItem("token", response.data.tokens.access_token);
+          secureStorage.setItem(
             "refreshToken",
             response.data.tokens.refresh_token
           );
@@ -118,7 +119,7 @@ api.interceptors.response.use(
         const isPublicPath = publicPaths.some(path => currentPath.includes(path) || currentPath === path);
 
         if (!isPublicPath) {
-          window.location.href = "/login";
+          window.location.href = "/selectRole";
         }
 
         return Promise.reject(refreshError);

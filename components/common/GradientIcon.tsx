@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { SvgIcon, SvgIconProps, useTheme } from "@mui/material";
+import { SvgIconProps, useTheme } from "@mui/material";
 import { COLORS } from "../../constants/colors";
 
 interface GradientIconProps extends Omit<SvgIconProps, "children"> {
@@ -34,8 +34,22 @@ const GradientIcon: React.FC<GradientIconProps> = ({
       >
         <defs>
           <linearGradient id={uniqueId} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={theme.palette.mode === "dark" ? COLORS.ICON_GRADIENT.Dark.START : COLORS.ICON_GRADIENT.Light.START} />
-            <stop offset="100%" stopColor={theme.palette.mode === "dark" ? COLORS.ICON_GRADIENT.Dark.END : COLORS.ICON_GRADIENT.Light.END} />
+            <stop
+              offset="0%"
+              stopColor={
+                theme.palette.mode === "dark"
+                  ? COLORS.ICON_GRADIENT.Dark.START
+                  : COLORS.ICON_GRADIENT.Light.START
+              }
+            />
+            <stop
+              offset="100%"
+              stopColor={
+                theme.palette.mode === "dark"
+                  ? COLORS.ICON_GRADIENT.Dark.END
+                  : COLORS.ICON_GRADIENT.Light.END
+              }
+            />
           </linearGradient>
         </defs>
       </svg>

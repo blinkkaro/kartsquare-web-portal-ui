@@ -80,3 +80,23 @@ export interface Category {
 export interface CategoryListResponse {
   categories: Category[];
 }
+
+export interface ServiceCreateRequest {
+  provider_id: string;
+  category_id: string;
+  sub_category_id?: string;
+  service_name: string;
+  service_desc: string;
+  image_urls: string[];
+  is_price_required: boolean;
+  price?: number;
+  currency: string;
+  service_at_location: "USER_LOCATION" | "PROVIDER_LOCATION" | "BOTH";
+  visiting_charge?: number;
+  service_provider_address_id: string;
+  service_radius: number;
+  has_service_duration: boolean;
+  service_duration?: number;
+  have_slots: boolean;
+  status?: ServiceStatus;
+}

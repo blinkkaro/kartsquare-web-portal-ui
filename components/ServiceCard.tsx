@@ -18,6 +18,7 @@ import {
 import { COLORS } from "../constants/colors";
 import { Service } from "../services/serviceList/listInteraface";
 import { useRouter } from "next/navigation";
+import { getUserRole, getUserId, UserRole } from "../utils/auth";
 
 interface ServiceCardProps {
   service: Service;
@@ -46,7 +47,16 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
   };
 
   const handleCardClick = () => {
-    router.push(`/services/${service.service_id}`);
+    const userRole = getUserRole();
+    const userId = getUserId();
+
+    // If service provider viewing their own service, go to provider details page
+    if (userRole === UserRole.SERVICE_PROVIDER && service.provider_id === userId) {
+      router.push(`/spr/services/${service.service_id}`);
+    } else {
+      // Otherwise (customer or provider viewing other services), go to customer details page
+      router.push(`/services/${service.service_id}`);
+    }
   };
 
   return (

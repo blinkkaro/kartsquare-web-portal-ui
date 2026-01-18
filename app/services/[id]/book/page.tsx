@@ -31,6 +31,7 @@ import { TimeSlot } from "../../../../services/appointment/appointmentInterface"
 import { COLORS } from "../../../../constants/colors";
 import { userAddressService } from "../../../../services/userAddress/userAddressService";
 import { UserAddress } from "../../../../services/userAddress/userAddressInterface";
+import ImageUpload from "../../../../components/ImageUpload";
 
 const BookServicePage = () => {
     const params = useParams();
@@ -58,6 +59,7 @@ const BookServicePage = () => {
     const [selectedAddressId, setSelectedAddressId] = useState<string>("");
     const [addressLoading, setAddressLoading] = useState(false);
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const [photoUrls, setPhotoUrls] = useState<string[]>([]);
 
     // Fetch service details
     useEffect(() => {
@@ -154,23 +156,32 @@ const BookServicePage = () => {
                 return;
             }
 
-            // Prepare schedule_at datetime
+            // Prepare schedule_at datetime in ISO 8601 UTC format
             let scheduleAt: string;
             if (service?.have_slots && selectedTime) {
-                // selectedTime is already in ISO format from the API
-                scheduleAt = selectedTime;
+                // Convert selectedTime to UTC format (remove timezone, convert to Z)
+                scheduleAt = dayjs(selectedTime).toISOString();
             } else {
-                // If no slots, use selected date at 9 AM
-                scheduleAt = selectedDate.hour(9).minute(0).second(0).toISOString();
+                // If no slots, use selected date at 9 AM in UTC ISO format
+                // toISOString() returns: 2025-10-29T03:30:00.000Z (UTC)
+                scheduleAt = selectedDate.hour(9).minute(0).second(0).millisecond(0).toISOString();
             }
 
-            const bookingData = {
+            const bookingData: any = {
                 service_id: serviceId,
                 service_location: location,
                 customer_notes: notes.trim() || undefined,
                 schedule_at: scheduleAt,
-                address_id: selectedAddressId || undefined,
+                address_id: location === "at_customer" ? selectedAddressId || undefined : undefined,
+                service_provider_address_id: location === "at_provider" && service?.service_provider_address_id
+                    ? service.service_provider_address_id
+                    : undefined,
+                photo_url: photoUrls.length > 0 ? photoUrls : undefined,
+                distance_km: 10, // Number value as required by backend
+                service_radius: 10, // Static number value
             };
+
+            console.log("Booking payload:", bookingData);
 
             const response = await bookingService.createBooking(bookingData);
             setBookingResponse(response);
@@ -538,57 +549,77 @@ const BookServicePage = () => {
                                             }
                                         />
                                         {location === "at_customer" && (
-                                            <Box sx={{ ml: 4, mt: 1, mb: 2 }}>
+                                            <Box sx={{ ml: 4, mt: 2, mb: 2 }}>
                                                 {addressLoading ? (
                                                     <CircularProgress size={20} />
                                                 ) : userAddresses.length > 0 ? (
-                                                    <RadioGroup
-                                                        value={selectedAddressId}
-                                                        onChange={(e) => {
-                                                            setSelectedAddressId(e.target.value);
-                                                            setCustomerAddress(""); // Clear manual input if selection is made
-                                                        }}
-                                                    >
+                                                    <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                                                         {userAddresses.map((addr) => (
-                                                            <FormControlLabel
-                                                                key={addr.address_id}
-                                                                value={addr.address_id}
-                                                                control={<Radio size="small" sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-                                                                label={
-                                                                    <Typography variant="body2">
-                                                                        {addr.label ? <strong>{addr.label}: </strong> : null}
-                                                                        {addr.address_line1}, {addr.city}
+                                                            <Box
+                                                                key={addr.id}
+                                                                onClick={() => setSelectedAddressId(addr.id)}
+                                                                sx={{
+                                                                    p: 2,
+                                                                    border: `2px solid ${selectedAddressId === addr.id
+                                                                        ? COLORS.PRIMARY_PURPLE
+                                                                        : isDark
+                                                                            ? COLORS.BORDER.DEFAULT_DARK
+                                                                            : COLORS.BORDER.DEFAULT_LIGHT
+                                                                        }`,
+                                                                    borderRadius: "12px",
+                                                                    cursor: "pointer",
+                                                                    bgcolor: selectedAddressId === addr.id
+                                                                        ? "rgba(94, 24, 233, 0.04)"
+                                                                        : isDark
+                                                                            ? COLORS.BACKGROUND.PAPER_DARK
+                                                                            : COLORS.BACKGROUND.PRIMARY_LIGHT,
+                                                                    transition: "all 0.2s",
+                                                                    "&:hover": {
+                                                                        borderColor: COLORS.PRIMARY_PURPLE,
+                                                                        bgcolor: "rgba(94, 24, 233, 0.04)",
+                                                                    },
+                                                                }}
+                                                            >
+                                                                {addr.address_name && (
+                                                                    <Typography
+                                                                        variant="subtitle2"
+                                                                        sx={{
+                                                                            fontWeight: 600,
+                                                                            color: COLORS.PRIMARY_PURPLE,
+                                                                            mb: 0.5,
+                                                                        }}
+                                                                    >
+                                                                        {addr.address_name}
+                                                                        {addr.is_default && (
+                                                                            <span style={{ marginLeft: "8px", fontSize: "0.75rem" }}>
+                                                                                (Default)
+                                                                            </span>
+                                                                        )}
                                                                     </Typography>
-                                                                }
-                                                                sx={{ mb: 0.5 }}
-                                                            />
+                                                                )}
+                                                                <Typography variant="body2" sx={{ mb: 0.5 }}>
+                                                                    {addr.building_no && `${addr.building_no}, `}
+                                                                    {addr.floor && `Floor ${addr.floor}, `}
+                                                                    {addr.address}
+                                                                </Typography>
+                                                                {addr.landmark && (
+                                                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                                                                        Near: {addr.landmark}
+                                                                    </Typography>
+                                                                )}
+                                                                <Typography variant="body2" color="text.secondary">
+                                                                    {addr.city_town}, {addr.state} - {addr.pincode}
+                                                                </Typography>
+                                                                <Typography variant="caption" color="text.secondary">
+                                                                    {addr.country}
+                                                                </Typography>
+                                                            </Box>
                                                         ))}
-                                                        {/* Option to enter manually */}
-                                                        <FormControlLabel
-                                                            value=""
-                                                            control={<Radio size="small" sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-                                                            label={<Typography variant="body2">Enter a new address</Typography>}
-                                                        />
-                                                    </RadioGroup>
+                                                    </Box>
                                                 ) : (
                                                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                                                        No saved addresses found. Please enter below.
+                                                        No saved addresses found.
                                                     </Typography>
-                                                )}
-
-                                                {(!selectedAddressId || userAddresses.length === 0) && (
-                                                    <TextField
-                                                        fullWidth
-                                                        multiline
-                                                        rows={2}
-                                                        placeholder="Enter your address"
-                                                        value={customerAddress}
-                                                        onChange={(e) => {
-                                                            setCustomerAddress(e.target.value)
-                                                            setSelectedAddressId("") // Clear selection if typing manually
-                                                        }}
-                                                        sx={{ mt: 1 }}
-                                                    />
                                                 )}
                                             </Box>
                                         )}
@@ -641,6 +672,23 @@ const BookServicePage = () => {
                                             borderRadius: "12px",
                                         },
                                     }}
+                                />
+                            </Box>
+
+                            {/* Photo Upload */}
+                            <Box
+                                sx={{
+                                    bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
+                                    borderRadius: "16px",
+                                    p: 3,
+                                    mb: 3,
+                                }}
+                            >
+                                <ImageUpload
+                                    onUploadComplete={(urls) => setPhotoUrls(urls)}
+                                    maxImages={6}
+                                    label="Upload Photos (Optional)"
+                                    description="Upload photos related to your service request"
                                 />
                             </Box>
 
