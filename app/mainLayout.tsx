@@ -3,6 +3,7 @@ import React from "react";
 import Nav from "@/components/common/Nav";
 import { Box, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
+import ProfileDrawer from "@/components/common/ProfileDrawer";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -49,6 +50,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       >
         {children}
       </Box>
+      <ProfileDrawer />
     </Box>
   );
 }

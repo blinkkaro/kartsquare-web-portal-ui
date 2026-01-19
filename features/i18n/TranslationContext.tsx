@@ -342,12 +342,13 @@ export type TranslationKey =
   | "maxImagesReached"
   | "invalidImageFormat"
   | "uploadingPost"
-  | "removeImage";
+  | "removeImage"
   | "errorLoadingMap"
   | "loadingMap"
   | "failedToSelectLocation"
   | "noLocationsFound"
-  | "googleMapsApiKeyNotConfigured";
+  | "googleMapsApiKeyNotConfigured"
+  | "sendMessage";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

@@ -351,4 +351,7 @@ export const english = {
   failedToSelectLocation: "Failed to select location",
   noLocationsFound: "No locations found in this area",
   googleMapsApiKeyNotConfigured: "Google Maps API key not configured",
+
+  // Stories
+  sendMessage: "Send a message...",
 };

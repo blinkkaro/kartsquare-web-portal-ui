@@ -115,6 +115,7 @@ export const sanitizeData = (data: any): any => {
     }
   });
   return sanitized;
+};
 // Helper function to calculate distance between two coordinates (Haversine formula)
 export const calculateDistance = (
   lat1: number,
