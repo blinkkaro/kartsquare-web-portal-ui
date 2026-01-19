@@ -48,6 +48,16 @@ export interface RegisterResponse {
   };
 }
 
+// User roles from backend
+export enum UserRole {
+  ADMIN = "ADMIN",
+  CUSTOMER = "CUSTOMER",
+  SERVICE_PROVIDER = "SERVICE_PROVIDER",
+  SUPPLIER = "SUPPLIER",
+  MANAGER = "MANAGER",
+  SUPPORT = "SUPPORT",
+}
+
 export const storeTokens = (response: RegisterResponse): void => {
   if (typeof window !== "undefined" && response.data?.tokens) {
     secureStorage.setItem("token", response.data.tokens.access_token);
@@ -70,4 +80,20 @@ export const clearTokens = (): void => {
     secureStorage.removeItem("token");
     secureStorage.removeItem("refreshToken");
   }
+};
+
+export const getUserRole = (): string | null => {
+  if (typeof window !== "undefined") {
+    const userDetails = secureStorage.getItem("user_details");
+    return userDetails?.role || null;
+  }
+  return null;
+};
+
+export const getUserId = (): string | null => {
+  if (typeof window !== "undefined") {
+    const userDetails = secureStorage.getItem("user_details");
+    return userDetails?.id || null;
+  }
+  return null;
 };

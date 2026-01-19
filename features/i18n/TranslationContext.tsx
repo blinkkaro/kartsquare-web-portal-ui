@@ -342,12 +342,17 @@ export type TranslationKey =
   | "maxImagesReached"
   | "invalidImageFormat"
   | "uploadingPost"
-  | "removeImage";
+  | "removeImage"
   | "errorLoadingMap"
   | "loadingMap"
   | "failedToSelectLocation"
   | "noLocationsFound"
-  | "googleMapsApiKeyNotConfigured";
+  | "googleMapsApiKeyNotConfigured"
+  | "services_for_you"
+  | "all_categories"
+  | "search_services_placeholder"
+  | "no_services_found"
+  | "try_different_search";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
@@ -410,7 +415,7 @@ interface TranslationContextType {
 }
 
 const TranslationContext = createContext<TranslationContextType | undefined>(
-  undefined,
+  undefined
 );
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
@@ -431,7 +436,7 @@ export function useTranslationContext() {
   const context = useContext(TranslationContext);
   if (context === undefined) {
     throw new Error(
-      "useTranslationContext must be used within a TranslationProvider",
+      "useTranslationContext must be used within a TranslationProvider"
     );
   }
   return context;

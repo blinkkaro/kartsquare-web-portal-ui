@@ -40,11 +40,10 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     theme.palette.mode === "dark"
       ? "0 1px 3px rgba(0, 0, 0, 0.3)"
       : "0 1px 3px rgba(0, 0, 0, 0.1)",
-  borderBottom: `1px solid ${
-    theme.palette.mode === "dark"
+  borderBottom: `1px solid ${theme.palette.mode === "dark"
       ? COLORS.BORDER.DEFAULT_DARK
       : COLORS.BORDER.DEFAULT_LIGHT
-  }`,
+    }`,
   zIndex: 1200,
 }));
 
@@ -81,8 +80,8 @@ const Nav = () => {
   // Get navigation items
   const desktopNavItems = useMemo(() => getDesktopNavItems(role, t), [role, t]);
   const mobileNavItems = useMemo(
-    () => getMobileNavItems(isAuthenticated, t),
-    [isAuthenticated, t]
+    () => getMobileNavItems(isAuthenticated, t, role),
+    [isAuthenticated, t, role]
   );
 
   // Initialize auth state
