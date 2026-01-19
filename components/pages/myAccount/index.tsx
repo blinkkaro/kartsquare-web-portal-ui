@@ -15,6 +15,7 @@ import { useLogout } from "@/hooks/useLogout";
 import ChangePassword from "./components/changePassword";
 import RightDrawer from "@/components/common/RightDrawer";
 import { secureStorage } from "@/helper/SecureStorage";
+import PostModel from "./components/post/postModel";
 
 function MyAccountView() {
   const theme = useTheme();
@@ -23,6 +24,7 @@ function MyAccountView() {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] =
     useState(false);
+  const [isPostsModalOpen, setIsPostsModalOpen] = useState(false);
 
   const { handleLogout } = useLogout();
 
@@ -30,7 +32,7 @@ function MyAccountView() {
 
   const MyAccount = useMemo(
     () => myAccountNav(role as AppUserType, t),
-    [role, t]
+    [role, t],
   );
   const Settings = useMemo(() => myAccountSettingNav(t), [role, t]);
 
@@ -88,7 +90,9 @@ function MyAccountView() {
                 onClick={
                   item.isLogout
                     ? () => setIsLogoutModalOpen(true)
-                    : undefined
+                    : item.isPosts
+                      ? () => setIsPostsModalOpen(true)
+                      : undefined
                 }
               />
             </Box>
@@ -136,11 +140,16 @@ function MyAccountView() {
                 flexGrow: 0,
               }}
             >
-              <CustomBox icon={item.icon} label={item.label} path={item.href} onClick={
+              <CustomBox
+                icon={item.icon}
+                label={item.label}
+                path={item.href}
+                onClick={
                   item.isChangePassword
                     ? () => setIsChangePasswordModalOpen(true)
                     : undefined
-                }/>
+                }
+              />
             </Box>
           ))}
         </Box>
@@ -194,7 +203,15 @@ function MyAccountView() {
         title={t("changePassword")}
         width={800}
       >
-        <ChangePassword  onClose={() => setIsChangePasswordModalOpen(false)}/>
+        <ChangePassword onClose={() => setIsChangePasswordModalOpen(false)} />
+      </RightDrawer>
+      <RightDrawer
+        open={isPostsModalOpen}
+        onClose={() => setIsPostsModalOpen(false)}
+        title={t("myPosts")}
+        width={800}
+      >
+        <PostModel onClose={() => setIsPostsModalOpen(false)} />
       </RightDrawer>
     </ProfileWrapper>
   );

@@ -305,4 +305,57 @@ export const english = {
   selectState: "Select state",
   selectCityTown: "Select city/town",
   enterAddress: "Enter address",
+  geolocationNotSupported: "Geolocation is not supported by your browser",
+  failedToGetLocation: "Failed to get location",
+  locationPermissionDenied: "Location permission denied",
+  locationInformationUnavailable: "Location information unavailable",
+  locationRequestTimedOut: "Location request timed out",
+  myPosts: "My Posts",
+
+  // Post Feed
+  noPosts: "No posts yet",
+  noPostsDescription: "Start sharing your moments by creating your first post",
+  loadingPosts: "Loading posts...",
+  postsCount: "posts",
+
+  // Post Detail Viewer
+  closeViewer: "Close",
+  viewComments: "View all comments",
+  hideComments: "Hide comments",
+  previousPost: "Previous",
+  nextPost: "Next",
+
+  // Add Post
+  addPost: "Add Post",
+  createPost: "Create Post",
+  selectImage: "Select Image",
+  selectImages: "Select Images",
+  dragDropImage: "Drag and drop images here, or click to select",
+  captionPlaceholder: "Write a caption...",
+  selectVisibility: "Select Visibility",
+  public: "Public",
+  friends: "Friends",
+  private: "Private",
+  postCreated: "Post Created",
+  postCreatedDescription: "Your post has been created successfully",
+  postCreationFailed: "Post Creation Failed",
+  imageRequired: "At least one image is required",
+  captionMaxLength: "Caption must be at most 2200 characters",
+  maxImagesReached: "Maximum 10 images allowed",
+  invalidImageFormat:
+    "Invalid image format. Only JPG, PNG, and GIF are allowed",
+  uploadingPost: "Uploading post...",
+  removeImage: "Remove image",
+  errorLoadingMap: "Error loading map",
+  loadingMap: "Loading map...",
+  failedToSelectLocation: "Failed to select location",
+  noLocationsFound: "No locations found in this area",
+  googleMapsApiKeyNotConfigured: "Google Maps API key not configured",
+  
+  // Services List
+  services_for_you: "Services for you",
+  all_categories: "All",
+  search_services_placeholder: "Search services...",
+  no_services_found: "No services found",
+  try_different_search: "Try adjusting your search or filters",
 };

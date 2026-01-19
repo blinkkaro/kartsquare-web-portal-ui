@@ -1,4 +1,14 @@
-export type Visibility = 'public' | 'friends' | 'private';
+export enum Visibility {
+  PUBLIC = "public",
+  FRIENDS = "friends",
+  PRIVATE = "private",
+}
+export enum PostType {
+  IMAGE = "image",
+  VIDEO = "video",
+  TEXT = "text",
+  MIXED = "mixed",
+}
 
 export interface GetPostsParams {
   limit: number;
@@ -11,8 +21,8 @@ export interface Posts {
   caption: string | null;
   media_urls: string;
   attachments: any[] | null;
-  post_type: 'image' | 'video' | 'text';
-  visibility: 'public' | 'private' | 'friends';
+  post_type: "image" | "video" | "text";
+  visibility: "public" | "private" | "friends";
   has_mentions: boolean | null;
   location_name: string | null;
   latitude: number | null;
@@ -61,4 +71,15 @@ export interface Comment {
 
 export interface GetPostComments {
   comments: Comment[];
+}
+
+export interface CreatePostParams {
+  caption: string;
+  media_urls: File[];
+  post_type: PostType;
+  visibility: Visibility;
+  location_name: string;
+  latitude: number;
+  longitude: number;
+  mentions: Mention[];
 }

@@ -12,6 +12,7 @@ import {
   Stack,
   Card,
   CardContent,
+  useTheme,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Input from "@/components/common/Input";
@@ -30,6 +31,7 @@ const ChangePassword = ({ onClose }: { onClose: () => void }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [successModelOpen, setSuccessModelOpen] = useState(false);
+  const theme = useTheme();
 
   const {
     control,
@@ -52,7 +54,7 @@ const ChangePassword = ({ onClose }: { onClose: () => void }) => {
     try {
       await changePassService.changePassword(
         data.currentPassword,
-        data.password
+        data.password,
       );
       setSuccessModelOpen(true);
     } catch (error: any) {
@@ -81,7 +83,12 @@ const ChangePassword = ({ onClose }: { onClose: () => void }) => {
               variant="subtitle2"
               fontWeight={600}
               mb={1}
-              sx={{ color: COLORS.TEXT.PRIMARY_LIGHT }}
+              sx={{
+                color:
+                  theme.palette.mode === "dark"
+                    ? COLORS.TEXT.PRIMARY_DARK
+                    : COLORS.TEXT.PRIMARY_LIGHT,
+              }}
             >
               {t("oldPassword")}
             </Typography>
@@ -102,9 +109,14 @@ const ChangePassword = ({ onClose }: { onClose: () => void }) => {
               variant="h6"
               fontWeight="bold"
               mb={2}
-              sx={{ color: COLORS.TEXT.PRIMARY_LIGHT }}
+              sx={{
+                color:
+                  theme.palette.mode === "dark"
+                    ? COLORS.TEXT.PRIMARY_DARK
+                    : COLORS.TEXT.PRIMARY_LIGHT,
+              }}
             >
-              {t("newPassword") || "New Password"}
+              {t("newPassword")}
             </Typography>
 
             <Stack spacing={2}>
@@ -113,7 +125,12 @@ const ChangePassword = ({ onClose }: { onClose: () => void }) => {
                   variant="subtitle2"
                   fontWeight={600}
                   mb={1}
-                  sx={{ color: COLORS.TEXT.PRIMARY_LIGHT }}
+                  sx={{
+                    color:
+                      theme.palette.mode === "dark"
+                        ? COLORS.TEXT.PRIMARY_DARK
+                        : COLORS.TEXT.PRIMARY_LIGHT,
+                  }}
                 >
                   {t("newPassword")}
                 </Typography>
@@ -132,7 +149,12 @@ const ChangePassword = ({ onClose }: { onClose: () => void }) => {
                   variant="subtitle2"
                   fontWeight={600}
                   mb={1}
-                  sx={{ color: COLORS.TEXT.PRIMARY_LIGHT }}
+                  sx={{
+                    color:
+                      theme.palette.mode === "dark"
+                        ? COLORS.TEXT.PRIMARY_DARK
+                        : COLORS.TEXT.PRIMARY_LIGHT,
+                  }}
                 >
                   {t("confirmNewPassword")}
                 </Typography>

@@ -193,27 +193,27 @@ const AddStoryModal: React.FC<AddStoryModalProps> = ({
                 minHeight: 300,
               }}
             >
-              {mediaType === MediaType.VIDEO ? (
-                <video
-                  src={previewUrl || ""}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                  }}
-                  controls
-                />
-              ) : (
-                <Image
-                  src={previewUrl || ""}
-                  alt="Preview"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-              )}
+              {previewUrl &&
+                (mediaType === MediaType.VIDEO ? (
+                  <video
+                    src={previewUrl}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                    }}
+                    controls
+                  />
+                ) : (
+                  <Image
+                    src={previewUrl}
+                    alt="Preview"
+                    fill
+                    style={{
+                      objectFit: "contain",
+                    }}
+                  />
+                ))}
             </Box>
 
             {/* Caption Area */}

@@ -16,6 +16,7 @@ import { useGetPosts } from "@/hooks/usePosts";
 import Blogs from "./components/Blogs";
 import TopSuggestions from "./components/TopSuggestions";
 import { useGetStories } from "@/hooks/useStories";
+import CompactMapView from "./components/CompactMapView";
 
 interface EmptyCardProps {
   name: string;
@@ -79,7 +80,7 @@ function HomeView() {
     <Box sx={{ position: "relative", maxHeight: "100vh" }}>
       <Grid container spacing={3}>
         {!isMobile && (
-          /* Left Sidebar - Blogs (Hidden on MD, Visible on LG) */
+          /* Left Sidebar - Map & Blogs (Hidden on MD, Visible on LG) */
           <Grid
             size={{ xs: 12, lg: 3 }}
             sx={{
@@ -91,7 +92,8 @@ function HomeView() {
             }}
           >
             <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              <EmptyCard name="Map" />
+              {/* Compact Map View */}
+              <CompactMapView height="300px" />
               <Blogs />
             </Box>
           </Grid>
@@ -110,14 +112,14 @@ function HomeView() {
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             {/* Stories Section */}
             <StoriesSection data={stories} isLoading={storiesLoading} />
+
+            {/* Compact Map - Mobile/Tablet View */}
             <Box
               sx={{
-                flexDirection: "column",
-                gap: 3,
                 display: { lg: "none", md: "block" },
               }}
             >
-              <EmptyCard name="Map" />
+              <CompactMapView height="300px" />
             </Box>
 
             {/* Posts Feed */}

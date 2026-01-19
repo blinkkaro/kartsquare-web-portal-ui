@@ -43,7 +43,7 @@ export const getDesktopNavItems = (
   return [
     { label: t("home"), href: "/" },
     { label: t("store"), href: "/store" },
-    { label: t("services"), href: "/cus/servicesList" },
+    { label: t("services"), href: "/services" },
     { label: t("events"), href: "/events" },
   ];
 };
@@ -58,15 +58,24 @@ export const getMobileNavItems = (
   if (!isAuthenticated) {
     items.push(
       { label: t("home"), href: "/", icon: <HomeFilled /> },
-      { label: t("services"), href: "/cus/servicesList", icon: <ArticleRounded /> },
+      {
+        label: t("services"),
+        href: "/cus/servicesList",
+        icon: <ArticleRounded />,
+      }
       // { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
       // { label: t("events"), href: "/events", icon: <Event /> }
     );
   } else {
-    const bookingsHref = role === "SERVICE_PROVIDER" ? "/spr/bookings" : "/cus/bookings";
+    const bookingsHref =
+      role === "SERVICE_PROVIDER" ? "/spr/bookings" : "/cus/bookings";
     items.push(
       { label: t("home"), href: "/", icon: <HomeFilled /> },
-      { label: t("services"), href: "/cus/servicesList", icon: <ArticleRounded /> },
+      {
+        label: t("services"),
+        href: "/cus/servicesList",
+        icon: <ArticleRounded />,
+      },
       // { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
       // { label: t("events"), href: "/events", icon: <Event /> },
       { label: t("bookings"), href: bookingsHref, icon: <ShoppingBag /> },
