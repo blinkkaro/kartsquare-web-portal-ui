@@ -346,4 +346,9 @@ export const english = {
     "Invalid image format. Only JPG, PNG, and GIF are allowed",
   uploadingPost: "Uploading post...",
   removeImage: "Remove image",
+  errorLoadingMap: "Error loading map",
+  loadingMap: "Loading map...",
+  failedToSelectLocation: "Failed to select location",
+  noLocationsFound: "No locations found in this area",
+  googleMapsApiKeyNotConfigured: "Google Maps API key not configured",
 };

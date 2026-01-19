@@ -343,6 +343,11 @@ export type TranslationKey =
   | "invalidImageFormat"
   | "uploadingPost"
   | "removeImage";
+  | "errorLoadingMap"
+  | "loadingMap"
+  | "failedToSelectLocation"
+  | "noLocationsFound"
+  | "googleMapsApiKeyNotConfigured";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
