@@ -310,4 +310,9 @@ export const english = {
   locationPermissionDenied: "Location permission denied",
   locationInformationUnavailable: "Location information unavailable",
   locationRequestTimedOut: "Location request timed out",
+  errorLoadingMap: "Error loading map",
+  loadingMap: "Loading map...",
+  failedToSelectLocation: "Failed to select location",
+  noLocationsFound: "No locations found in this area",
+  googleMapsApiKeyNotConfigured: "Google Maps API key not configured",
 };

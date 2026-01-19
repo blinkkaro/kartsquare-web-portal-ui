@@ -313,7 +313,12 @@ export type TranslationKey =
   | "failedToGetLocation"
   | "locationPermissionDenied"
   | "locationInformationUnavailable"
-  | "locationRequestTimedOut";
+  | "locationRequestTimedOut"
+  | "errorLoadingMap"
+  | "loadingMap"
+  | "failedToSelectLocation"
+  | "noLocationsFound"
+  | "googleMapsApiKeyNotConfigured";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
