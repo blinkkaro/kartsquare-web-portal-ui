@@ -2,13 +2,13 @@ import {
   useInfiniteQuery,
   useMutation,
   useQueryClient,
-} from '@tanstack/react-query';
-import followService from '../services/follow/followService';
-import { IFollowResponse } from '../services/follow/followInterface';
+} from "@tanstack/react-query";
+import followService from "../services/follow/followService";
+import { IFollowResponse } from "../services/follow/followInterface";
 
 export const useFollowList = (userId: string, limit: number = 10) => {
   return useInfiniteQuery({
-    queryKey: ['following', userId],
+    queryKey: ["following", userId],
     queryFn: async ({ pageParam = 1 }) =>
       await followService.getFollowing(userId, pageParam as number, limit),
     initialPageParam: 1,
@@ -22,7 +22,7 @@ export const useFollowList = (userId: string, limit: number = 10) => {
 };
 export const useFollowersList = (userId: string, limit: number = 10) => {
   return useInfiniteQuery({
-    queryKey: ['followers', userId],
+    queryKey: ["followers", userId],
     queryFn: async ({ pageParam = 1 }) =>
       await followService.getFollowers(userId, pageParam as number, limit),
     initialPageParam: 1,
@@ -42,7 +42,7 @@ export const useFollowUser = () => {
       return followService.followUser(userId);
     },
     onSuccess: (_, userId) => {
-      queryClient.invalidateQueries({ queryKey: ['following', userId] });
+      queryClient.invalidateQueries({ queryKey: ["following", userId] });
     },
     onError: (error: any) => {
       throw error;
@@ -59,11 +59,11 @@ export const useUnfollowUser = (currentUserId: string) => {
     },
     onSuccess: (_, targetUserId) => {
       queryClient.invalidateQueries({
-        queryKey: ['following', currentUserId],
+        queryKey: ["following", currentUserId],
       });
       queryClient.invalidateQueries({
-        queryKey: ['profile'],
-        refetchType: 'all',
+        queryKey: ["profile"],
+        refetchType: "all",
       });
     },
     onError: (error: any) => {
@@ -79,10 +79,10 @@ export const useFollow = () => {
       return followService.followUser(userId);
     },
     onSuccess: (_, userId) => {
-      queryClient.invalidateQueries({ queryKey: ['followers', userId] });
+      queryClient.invalidateQueries({ queryKey: ["followers", userId] });
     },
     onError: (error: any) => {
-      console.error('Follow error', error);
+      console.error("Follow error", error);
       throw error;
     },
   });

@@ -107,6 +107,14 @@ export const convert12To24 = (time12: string): string => {
     .padStart(2, "0")}`;
 };
 
+export const sanitizeData = (data: any): any => {
+  const sanitized = { ...data };
+  Object.keys(sanitized).forEach((key) => {
+    if (sanitized[key] === null || sanitized[key] === undefined) {
+      sanitized[key] = "";
+    }
+  });
+  return sanitized;
 // Helper function to calculate distance between two coordinates (Haversine formula)
 export const calculateDistance = (
   lat1: number,

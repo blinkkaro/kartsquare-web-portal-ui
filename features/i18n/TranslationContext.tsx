@@ -314,6 +314,35 @@ export type TranslationKey =
   | "locationPermissionDenied"
   | "locationInformationUnavailable"
   | "locationRequestTimedOut"
+  | "myPosts"
+  | "noPosts"
+  | "noPostsDescription"
+  | "loadingPosts"
+  | "postsCount"
+  | "closeViewer"
+  | "viewComments"
+  | "hideComments"
+  | "previousPost"
+  | "nextPost"
+  | "addPost"
+  | "createPost"
+  | "selectImage"
+  | "selectImages"
+  | "dragDropImage"
+  | "captionPlaceholder"
+  | "selectVisibility"
+  | "public"
+  | "friends"
+  | "private"
+  | "postCreated"
+  | "postCreatedDescription"
+  | "postCreationFailed"
+  | "imageRequired"
+  | "captionMaxLength"
+  | "maxImagesReached"
+  | "invalidImageFormat"
+  | "uploadingPost"
+  | "removeImage";
   | "errorLoadingMap"
   | "loadingMap"
   | "failedToSelectLocation"
@@ -381,7 +410,7 @@ interface TranslationContextType {
 }
 
 const TranslationContext = createContext<TranslationContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
@@ -402,7 +431,7 @@ export function useTranslationContext() {
   const context = useContext(TranslationContext);
   if (context === undefined) {
     throw new Error(
-      "useTranslationContext must be used within a TranslationProvider"
+      "useTranslationContext must be used within a TranslationProvider",
     );
   }
   return context;

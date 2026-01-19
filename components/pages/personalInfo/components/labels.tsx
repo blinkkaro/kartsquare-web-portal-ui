@@ -25,6 +25,7 @@ const Labels = ({ label, description, verified }: LabelsProps) => {
             ? COLORS.TEXT.SECONDARY_DARK
             : COLORS.TEXT.SECONDARY_LIGHT,
           mb: 0.5,
+          fontSize: { xs: "0.75rem", sm: "0.875rem" },
         }}
       >
         {label}
@@ -35,6 +36,7 @@ const Labels = ({ label, description, verified }: LabelsProps) => {
           fontWeight: 500,
           color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
           wordBreak: "break-word",
+          fontSize: { xs: "1rem", sm: "1.125rem", md: "1.25rem" },
         }}
       >
         {description || "-"}
@@ -58,7 +60,7 @@ const Labels = ({ label, description, verified }: LabelsProps) => {
             variant="caption"
             sx={{
               fontWeight: 700,
-              fontSize: "0.65rem",
+              fontSize: { xs: "0.6rem", sm: "0.65rem" },
               letterSpacing: "0.5px",
             }}
           >

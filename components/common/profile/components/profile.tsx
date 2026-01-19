@@ -16,6 +16,7 @@ import { formatCount } from "@/helper/helper";
 import FollowListDrawer from "./followListDreawer";
 import { secureStorage } from "@/helper/SecureStorage";
 
+
 function Profile({ profile }: { profile: profileInterface }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -155,7 +156,6 @@ function Profile({ profile }: { profile: profileInterface }) {
         onClose={handleDrawerClick}
         userId={profile?.id || ""}
         userRole={role as "SERVICE_PROVIDER" | "CUSTOMER"}
-        count={role === "SERVICE_PROVIDER" ? profile?.followers_count : profile?.following_count}
       />
     </Paper>
   );

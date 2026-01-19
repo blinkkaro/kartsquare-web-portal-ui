@@ -53,6 +53,7 @@ export interface preferences {
   id: string;
   preference_name: string;
   is_active: boolean;
+  is_selected?: boolean;
 }
 
 export interface Doc {
