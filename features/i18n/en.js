@@ -351,11 +351,23 @@ export const english = {
   failedToSelectLocation: "Failed to select location",
   noLocationsFound: "No locations found in this area",
   googleMapsApiKeyNotConfigured: "Google Maps API key not configured",
-  
+
   // Services List
   services_for_you: "Services for you",
   all_categories: "All",
   search_services_placeholder: "Search services...",
   no_services_found: "No services found",
   try_different_search: "Try adjusting your search or filters",
+
+  discoverServices: "Discover the perfect service for you",
+  plumber: "Plumber",
+  electrician: "Electrician",
+  carpenter: "Carpenter",
+  painter: "Painter",
+  cleaner: "Cleaner",
+  gardener: "Gardener",
+  findYourServices: "Find Your Services",
+  findYourServicesDescription:
+    "Let AI help you discover the perfect service tailored to your needs",
+  ask_anything_placeholder: "Ask anything about services...",
 };

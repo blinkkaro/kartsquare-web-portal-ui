@@ -31,6 +31,7 @@ import { Review } from "../../../../services/reviews/reviewInterface";
 import { COLORS } from "../../../../constants/colors";
 import AddServiceDrawer from "../../servicesList/AddServiceDrawer";
 import { serviceListService } from "../../../../services/serviceList/serviceListService";
+import MainLayout from "@/app/mainLayout";
 
 const ServiceDetailsPage = () => {
     const params = useParams();
@@ -192,8 +193,7 @@ const ServiceDetailsPage = () => {
             ];
 
     return (
-        <>
-            <Nav />
+        <MainLayout>
             <Box
                 sx={{
                     bgcolor: isDark
@@ -771,7 +771,7 @@ const ServiceDetailsPage = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </>
+        </MainLayout>
     );
 };
 
