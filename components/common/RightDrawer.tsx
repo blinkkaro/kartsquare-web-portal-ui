@@ -32,6 +32,9 @@ const RightDrawer = ({
             theme.palette.mode === "dark"
               ? COLORS.BACKGROUND.PAPER_DARK
               : COLORS.BACKGROUND.PAPER_LIGHT,
+          "&::-webkit-scrollbar": { display: "none" },
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
         },
       }}
     >

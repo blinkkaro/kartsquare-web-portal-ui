@@ -1,8 +1,10 @@
+import { sanitizeData } from "@/helper/helper";
 import { DELETE, GET, POST, PUT } from "../api";
 import { Address } from "./addressInterface";
 import { APIENDPOINTS } from "./apiEndPoints";
 
 class AddressServices {
+
   async getAddress(): Promise<Address[]> {
     try {
       const response = await GET(APIENDPOINTS.GET_ADDRESS);
@@ -15,7 +17,8 @@ class AddressServices {
 
   async addAddress(addressData: any) {
     try {
-      const response = await POST(APIENDPOINTS.ADD_ADDRESS, addressData);
+      const sanitizedData = sanitizeData(addressData);
+      const response = await POST(APIENDPOINTS.ADD_ADDRESS, sanitizedData);
 
       return response.data;
     } catch (error) {
@@ -25,8 +28,11 @@ class AddressServices {
 
   async updateAddress(id: string, addressData: Address) {
     try {
-      console.log("addressData", addressData);
-      const response = await PUT(APIENDPOINTS.UPDATE_ADDRESS(id), addressData);
+      const sanitizedData = sanitizeData(addressData);
+      const response = await PUT(
+        APIENDPOINTS.UPDATE_ADDRESS(id),
+        sanitizedData
+      );
       return response.data;
     } catch (error) {
       console.log("error", error);

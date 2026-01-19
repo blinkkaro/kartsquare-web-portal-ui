@@ -34,7 +34,7 @@ const CustomBox: React.FC<CustomBoxProps> = ({
         border: `1px solid ${
           isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
         }`,
-        minWidth: { xs: "auto", sm: 160 }, // Minimum width to look good
+        minWidth: 160,
         transition: "all 0.3s ease",
         cursor: "pointer",
         "&:hover": {
@@ -55,7 +55,7 @@ const CustomBox: React.FC<CustomBoxProps> = ({
             width: "100%",
             height: { xs: "2rem", sm: "2.5rem" },
             background: isDark
-              ? COLORS.SWITCH.TRACK_DARK
+              ? `linear-gradient(to right, transparent 20%, ${COLORS.BACKGROUND.PAPER_DARK} 80%)`
               : `linear-gradient(to right, ${COLORS.WHITE} 20%, ${COLORS.LIGHT_GRAY} 80%)`,
             borderRadius: 50,
           }}
@@ -75,7 +75,7 @@ const CustomBox: React.FC<CustomBoxProps> = ({
               boxShadow: COLORS.SHADOW.DEFAULT,
             }}
           >
-            <GradientIcon sx={{ fontSize: { xs: 14, sm: 16 } }}>
+            <GradientIcon sx={{ fontSize: { xs: 18, sm: 16 } }}>
               {icon}
             </GradientIcon>
           </Box>
@@ -101,7 +101,7 @@ const CustomBox: React.FC<CustomBoxProps> = ({
           variant="body2"
           sx={{
             fontWeight: 500,
-            fontSize: { xs: "0.75rem", sm: "0.875rem" },
+            fontSize: { xs: "0.875rem", sm: "1rem" },
             color: isDark
               ? COLORS.TEXT.PRIMARY_DARK
               : COLORS.TEXT.PRIMARY_LIGHT,
