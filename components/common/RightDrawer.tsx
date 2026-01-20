@@ -14,6 +14,7 @@ const RightDrawer = ({
   children,
   width = 1000,
   titleStyle,
+  headerStyle,
 }: {
   open: boolean;
   onClose: () => void;
@@ -21,6 +22,7 @@ const RightDrawer = ({
   children: React.ReactNode;
   width?: number;
   titleStyle?: SxProps<Theme>;
+  headerStyle?: SxProps<Theme>;
 }) => {
   const theme = useTheme();
   return (
@@ -47,7 +49,8 @@ const RightDrawer = ({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          mt: { xs: 0, md: 3 },
+          pt: { xs: 0, md: 3 },
+          ...headerStyle,
         }}
       >
         <Typography

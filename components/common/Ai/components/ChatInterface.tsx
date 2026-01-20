@@ -134,7 +134,7 @@ export default function ChatInterface() {
               width: "100%",
             }}
           >
-            {/* Message Bubble - White box for all messages */}
+            {/* Message Bubble - Purple for user, white for assistant */}
             <Box
               sx={{
                 maxWidth: "85%",
@@ -142,8 +142,12 @@ export default function ChatInterface() {
                 borderRadius: "20px",
                 borderTopRightRadius: msg.role === "user" ? "4px" : "20px",
                 borderTopLeftRadius: msg.role === "user" ? "20px" : "4px",
-                backgroundColor: COLORS.WHITE,
-                color: COLORS.TEXT.PRIMARY_LIGHT,
+                backgroundColor:
+                  msg.role === "user" ? COLORS.PRIMARY_PURPLE : COLORS.WHITE,
+                color:
+                  msg.role === "user"
+                    ? COLORS.WHITE
+                    : COLORS.TEXT.PRIMARY_LIGHT,
                 boxShadow: COLORS.SHADOW.LIGHT,
                 alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
               }}

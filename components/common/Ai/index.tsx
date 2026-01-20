@@ -13,7 +13,10 @@ function Ai({ open, onClose }: { open: boolean; onClose: () => void }) {
       title={t("kartAi")}
       width={600}
       titleStyle={{
-        color: COLORS.PRIMARY_PURPLE,
+        color: COLORS.WHITE,
+      }}
+      headerStyle={{
+        backgroundColor: COLORS.PRIMARY_PURPLE,
       }}
     >
       <ChatInterface />
