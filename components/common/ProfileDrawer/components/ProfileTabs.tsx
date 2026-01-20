@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Box, Tabs, Tab } from "@mui/material";
+import { Box, Tabs, Tab, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
+import { useTranslate } from "@/hooks/useTranslate";
 
 interface ProfileTabsProps {
   onTabChange: (tab: string) => void;
@@ -8,6 +9,8 @@ interface ProfileTabsProps {
 
 const ProfileTabs: React.FC<ProfileTabsProps> = ({ onTabChange }) => {
   const [value, setValue] = useState(0);
+  const { t } = useTranslate();
+  const theme = useTheme();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -16,7 +19,25 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ onTabChange }) => {
   };
 
   return (
-    <Box sx={{ width: "100%", mt: 2 }}>
+    <Box
+      sx={{
+        width: "100%",
+        pt: 2,
+        p: 2,
+        pb: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 2,
+        position: "sticky",
+        top: 0,
+        zIndex: 10,
+        backgroundColor:
+          theme.palette.mode === "dark"
+            ? COLORS.BACKGROUND.PRIMARY_DARK
+            : COLORS.BACKGROUND.PRIMARY_LIGHT,
+      }}
+    >
       <Tabs
         value={value}
         onChange={handleChange}
@@ -27,22 +48,22 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ onTabChange }) => {
           "& .MuiTab-root": {
             textTransform: "none",
             fontWeight: 600,
-            color: COLORS.TEXT.SECONDARY_LIGHT,
+            color: theme.palette.text.secondary,
             fontSize: "1rem",
             "&.Mui-selected": {
-              color: COLORS.PRIMARY_PURPLE,
+              color: theme.palette.primary.main,
             },
           },
           "& .MuiTabs-indicator": {
-            backgroundColor: COLORS.PRIMARY_PURPLE,
+            backgroundColor: theme.palette.primary.main,
             height: "3px",
             borderRadius: "3px 3px 0 0",
           },
         }}
       >
-        <Tab label="Posts" />
-        <Tab label="Services" />
-        <Tab label="Stores" />
+        <Tab label={t("posts")} />
+        <Tab label={t("services")} />
+        {/* <Tab label="Stores" /> */}
       </Tabs>
     </Box>
   );

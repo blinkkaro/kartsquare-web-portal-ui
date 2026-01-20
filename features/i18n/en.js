@@ -357,4 +357,18 @@ export const english = {
   no_services_found: "No services found",
   try_different_search: "Try adjusting your search or filters",
   sendMessage: "Send a message...",
+  posts: "Posts",
+
+  // Custom Header Drawer
+  chatTooltip: "Start Chat",
+  locationTooltip: "View Location",
+  bookmarkTooltip: "Save",
+  closeDrawer: "Close",
+
+  failedToLoadProfile: "Failed to load profile",
+  failedToLoadPosts: "Failed to load posts",
+  failedToLoadServices: "Failed to load services",
+  noPostsFound: "No posts found",
+  noServicesFound: "No services found",
+  newServiceProvider: "New Service Provider",
 };

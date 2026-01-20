@@ -12,6 +12,7 @@ export enum ServiceLocationType {
 }
 
 export interface Service {
+  review_count: number;
   service_id: string;
   provider_id: string;
   category_id: string;
@@ -43,6 +44,8 @@ export interface Service {
   service_provider_address: string | null;
   provider_image_url: string | null;
   is_following?: boolean;
+  service_provider_latitude?: number;
+  service_provider_longitude?: number;
 }
 
 export interface ServiceListResponse {

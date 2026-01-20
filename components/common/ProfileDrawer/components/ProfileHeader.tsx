@@ -2,6 +2,7 @@ import React from "react";
 import { Avatar, Box, Typography, Button } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import { providerProfileInterface } from "@/services/profile/profileInterface";
+import ProfileStats from "./ProfileStats";
 
 interface ProfileHeaderProps {
   profile: providerProfileInterface;
@@ -16,6 +17,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
         alignItems: "center",
         gap: 2,
         mb: 3,
+        flexWrap: "wrap",
       }}
     >
       <Avatar
@@ -44,27 +46,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
           sx={{ color: COLORS.TEXT.SECONDARY_LIGHT, mb: 1 }}
         >
           {/* Fallback for job title as it's not in the interface */}
-          {profile.role || "Service Provider"}
+          {profile.role.toString().replaceAll("_", " ")}
         </Typography>
-
-        {/* Placeholder for "Open for Collaboration" - ideally this comes from backend */}
-        <Box
-          sx={{
-            display: "inline-block",
-            padding: "4px 12px",
-            borderRadius: "20px",
-            backgroundColor: COLORS.BACKGROUND.PAPER_LIGHT,
-            border: `1px solid ${COLORS.BORDER.DEFAULT_LIGHT}`,
-          }}
-        >
-          <Typography
-            variant="caption"
-            sx={{ color: COLORS.TEXT.PRIMARY_LIGHT, fontWeight: 500 }}
-          >
-            Open for Collaboration
-          </Typography>
-        </Box>
       </Box>
+
+      <ProfileStats profile={profile} />
     </Box>
   );
 };

@@ -353,7 +353,18 @@ export type TranslationKey =
   | "search_services_placeholder"
   | "no_services_found"
   | "try_different_search"
-  | "sendMessage";;
+  | "sendMessage"
+  | "posts"
+  | "failedToLoadProfile"
+  | "chatTooltip"
+  | "locationTooltip"
+  | "bookmarkTooltip"
+  | "closeDrawer"
+  | "failedToLoadPosts"
+  | "failedToLoadServices"
+  | "noPostsFound"
+  | "noServicesFound"
+  | "newServiceProvider";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
@@ -416,7 +427,7 @@ interface TranslationContextType {
 }
 
 const TranslationContext = createContext<TranslationContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
@@ -437,7 +448,7 @@ export function useTranslationContext() {
   const context = useContext(TranslationContext);
   if (context === undefined) {
     throw new Error(
-      "useTranslationContext must be used within a TranslationProvider"
+      "useTranslationContext must be used within a TranslationProvider",
     );
   }
   return context;
