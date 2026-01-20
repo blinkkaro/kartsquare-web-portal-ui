@@ -14,24 +14,26 @@ import { AIMessage } from "@/services/ai/aiInterface";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import ServiceCard from "@/components/ServiceCard";
+import { useAISearch } from "@/hooks/useAISearch";
 
-interface ChatInterfaceProps {
-  chatHistory: AIMessage[];
-  onSearch: (query: string) => void;
-  isLoading: boolean;
-  onSuggestionClick?: (suggestion: string) => void;
-}
-
-export default function ChatInterface({
-  chatHistory,
-  onSearch,
-  isLoading,
-  onSuggestionClick,
-}: ChatInterfaceProps) {
+export default function ChatInterface() {
   const theme = useTheme();
   const { t } = useTranslate();
   const [searchValue, setSearchValue] = useState("");
+  const [chatHistory, setChatHistory] = useState<AIMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { search, isLoading } = useAISearch();
+
+  // Add default greeting message on mount
+  useEffect(() => {
+    const greetingMessage: AIMessage = {
+      id: "greeting",
+      role: "assistant",
+      content: t("kartAiGreeting" as any),
+      timestamp: new Date(),
+    };
+    setChatHistory([greetingMessage]);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -47,32 +49,64 @@ export default function ChatInterface({
     }
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (!searchValue.trim()) return;
-    onSearch(searchValue);
+
+    // Add user message
+    const userMessage: AIMessage = {
+      id: Date.now().toString(),
+      role: "user",
+      content: searchValue,
+      timestamp: new Date(),
+    };
+    setChatHistory((prev) => [...prev, userMessage]);
+    const query = searchValue;
     setSearchValue("");
+
+    try {
+      // Call AI search service
+      const response = await search(query);
+
+      if (!response) return;
+
+      // Add assistant response to chat
+      const assistantMessage: AIMessage = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: response.message || "Here are the services I found for you:",
+        timestamp: new Date(),
+        services: "services" in response ? response.services : undefined,
+        suggestedCategories:
+          "suggestedCategories" in response
+            ? response.suggestedCategories
+            : undefined,
+      };
+      setChatHistory((prev) => [...prev, assistantMessage]);
+    } catch (error) {
+      // Add error message to chat
+      const errorMessage: AIMessage = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Sorry, I encountered an error. Please try again.",
+        timestamp: new Date(),
+      };
+      setChatHistory((prev) => [...prev, errorMessage]);
+    }
   };
 
   const handleSuggestion = (suggestion: string) => {
     setSearchValue(suggestion);
-    if (onSuggestionClick) {
-      onSuggestionClick(suggestion);
-    } else {
-      onSearch(suggestion);
-    }
-    // If we don't clear search value here, it might persist.
-    // Actually usually suggestion click implies sending immediately.
-    // So let's clear it if the parent handles it immediately.
-    // But for now, let's assume we want to match the previous behavior.
+    // Automatically send the suggestion
+    setTimeout(() => handleSearch(), 100);
   };
 
   const suggestionChips = [
-    t("plumber"),
-    t("electrician"),
-    t("cleaner"),
-    t("gardener"),
-    t("carpenter"),
-    t("painter"),
+    `${t("find")} ${t("plumber")} ${t("neatMyArea")}`,
+    `${t("find")} ${t("electrician")} ${t("neatMyArea")}`,
+    `${t("find")} ${t("cleaner")} ${t("neatMyArea")}`,
+    `${t("find")} ${t("gardener")} ${t("neatMyArea")}`,
+    `${t("find")} ${t("carpenter")} ${t("neatMyArea")}`,
+    `${t("find")} ${t("painter")} ${t("neatMyArea")}`,
   ];
 
   return (
@@ -100,40 +134,22 @@ export default function ChatInterface({
               width: "100%",
             }}
           >
-            {/* Message Bubble - Only styled for USER */}
-            {msg.role === "user" ? (
-              <Box
-                sx={{
-                  maxWidth: "85%",
-                  p: 2,
-                  borderRadius: "20px",
-                  borderTopRightRadius: "4px",
-                  borderTopLeftRadius: "20px",
-                  backgroundColor: COLORS.PRIMARY_PURPLE,
-                  color: COLORS.WHITE,
-                  boxShadow: COLORS.SHADOW.LIGHT,
-                  alignSelf: "flex-end",
-                }}
-              >
-                <Typography variant="body1">{msg.content}</Typography>
-              </Box>
-            ) : (
-              // Assistant Message - Plain Text
-              <Box sx={{ width: "100%", mb: 1 }}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontWeight: 600,
-                    color:
-                      theme.palette.mode === "dark"
-                        ? COLORS.TEXT.PRIMARY_DARK
-                        : COLORS.TEXT.PRIMARY_LIGHT,
-                  }}
-                >
-                  {msg.content}
-                </Typography>
-              </Box>
-            )}
+            {/* Message Bubble - White box for all messages */}
+            <Box
+              sx={{
+                maxWidth: "85%",
+                p: 2,
+                borderRadius: "20px",
+                borderTopRightRadius: msg.role === "user" ? "4px" : "20px",
+                borderTopLeftRadius: msg.role === "user" ? "20px" : "4px",
+                backgroundColor: COLORS.WHITE,
+                color: COLORS.TEXT.PRIMARY_LIGHT,
+                boxShadow: COLORS.SHADOW.LIGHT,
+                alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
+              }}
+            >
+              <Typography variant="body1">{msg.content}</Typography>
+            </Box>
 
             {/* Render Services if available */}
             {msg.services && msg.services.length > 0 && (
@@ -154,7 +170,8 @@ export default function ChatInterface({
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: "column",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
                     gap: 2,
                   }}
                 >
@@ -173,6 +190,8 @@ export default function ChatInterface({
                             ? COLORS.BORDER.DEFAULT_DARK
                             : COLORS.BORDER.DEFAULT_LIGHT
                         }`,
+                        flex: "1 1 auto",
+                        minWidth: "200px",
                       }}
                     >
                       <Typography

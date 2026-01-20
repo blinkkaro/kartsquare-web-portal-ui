@@ -370,4 +370,9 @@ export const english = {
   findYourServicesDescription:
     "Let AI help you discover the perfect service tailored to your needs",
   ask_anything_placeholder: "Ask anything about services...",
+  kartAi: "Kart AI",
+  kartAiGreeting:
+    "Hi there! I’m Kart AI, your personal AI assistant. Let’s get you the perfect service.",
+  find: "Find a",
+  neatMyArea: "neat my area",
 };

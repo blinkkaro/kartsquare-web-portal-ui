@@ -362,7 +362,11 @@ export type TranslationKey =
   | "gardener"
   | "findYourServices"
   | "findYourServicesDescription"
-  | "ask_anything_placeholder";
+  | "ask_anything_placeholder"
+  | "kartAi"
+  | "kartAiGreeting"
+  | "find"
+  | "neatMyArea";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

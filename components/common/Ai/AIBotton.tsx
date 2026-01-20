@@ -8,6 +8,7 @@ import { secureStorage } from "@/helper/SecureStorage";
 import { AppUserType } from "@/services/auth/auth.interface";
 import { shouldShowAIBot } from "@/constants/aiBot";
 import { useAppAIServiceConfig } from "@/hooks/useAppConfig";
+import Image from "next/image";
 
 function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
   const [currentServiceIndex, setCurrentServiceIndex] = useState(0);
@@ -61,7 +62,7 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
           alignItems: "center",
           gap: 1.5,
           px: 3,
-          py: 1.5,
+          // py: 1.5,
           borderRadius: "50px",
           background: COLORS.PURPLECYAN,
           color: COLORS.DARK,
@@ -112,7 +113,7 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
           },
         }}
       >
-        ✨
+        <Image src="/Chatbot.svg" alt="Chatbot" width={50} height={50} />
         <Box sx={{ display: "flex", flexDirection: "column", gap: 0.3 }}>
           <Typography
             variant="caption"

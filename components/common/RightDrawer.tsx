@@ -5,6 +5,7 @@ import { Drawer, IconButton, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import { Box, Typography } from "@mui/material";
 import { Close } from "@mui/icons-material";
+import { SxProps, Theme } from "@mui/material/styles";
 
 const RightDrawer = ({
   open,
@@ -12,12 +13,14 @@ const RightDrawer = ({
   title,
   children,
   width = 1000,
+  titleStyle,
 }: {
   open: boolean;
   onClose: () => void;
   title: string;
   children: React.ReactNode;
   width?: number;
+  titleStyle?: SxProps<Theme>;
 }) => {
   const theme = useTheme();
   return (
@@ -55,6 +58,7 @@ const RightDrawer = ({
               theme.palette.mode === "dark"
                 ? COLORS.TEXT.PRIMARY_DARK
                 : COLORS.TEXT.PRIMARY_LIGHT,
+            ...titleStyle,
           }}
         >
           {title}
