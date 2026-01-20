@@ -49,7 +49,7 @@ const RightDrawer = ({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          pt: { xs: 0, md: 3 },
+          pt: { xs: 2, md: 3 },
           ...headerStyle,
         }}
       >

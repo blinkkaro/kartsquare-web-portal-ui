@@ -79,7 +79,7 @@ export const getMobileNavItems = (
       // { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
       // { label: t("events"), href: "/events", icon: <Event /> },
       { label: t("bookings"), href: bookingsHref, icon: <ShoppingBag /> },
-      { label: t("chat"), href: "/chat", icon: <Chat /> }
+      // { label: t("chat"), href: "/chat", icon: <Chat /> }
     );
   }
 
