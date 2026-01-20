@@ -86,7 +86,7 @@ const NavActions: React.FC<NavActionsProps> = ({
         )}
 
         {/* Chat - Hide on mobile */}
-        <StyledIconButton
+        {/* <StyledIconButton
           size="small"
           aria-label="chat"
           sx={{ display: { xs: "none", md: "inline-flex" } }}
@@ -101,7 +101,7 @@ const NavActions: React.FC<NavActionsProps> = ({
               height={20}
             />
           </Badge>
-        </StyledIconButton>
+        </StyledIconButton> */}
 
         {/* Notifications */}
         <StyledIconButton size="small" aria-label="notifications" onClick={onNotificationToggle}>

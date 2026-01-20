@@ -20,6 +20,7 @@ import { Service, Category } from "../../../services/serviceList/listInteraface"
 import { COLORS } from "../../../constants/colors";
 import { getUserRole, getUserId, UserRole } from "../../../utils/auth";
 import AddServiceDrawer from "./AddServiceDrawer";
+import MainLayout from "@/app/mainLayout";
 
 // Category icons mapping (you can expand this based on actual categories)
 const getCategoryIcon = (categoryName: string) => {
@@ -147,8 +148,7 @@ const ServiceProviderServicesList = () => {
         : "Services for you";
 
     return (
-        <>
-            <Nav />
+        <MainLayout>
             <Box
                 sx={{
                     bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
@@ -409,7 +409,7 @@ const ServiceProviderServicesList = () => {
                 onClose={() => setAddServiceDrawerOpen(false)}
                 onSuccess={handleServiceAdded}
             />
-        </>
+        </MainLayout>
     );
 };
 

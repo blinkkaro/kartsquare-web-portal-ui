@@ -1,5 +1,5 @@
 import { APIENDPOINT } from "./apiEndPoints";
-import { AppConfigResponse } from "./appConfigInterface";
+import { AIServiceConfigResponse, AppConfigResponse } from "./appConfigInterface";
 import { GET } from "../api";
 
 class AppConfigServices {
@@ -8,7 +8,7 @@ class AppConfigServices {
       const response = await GET<AppConfigResponse>(
         APIENDPOINT.GET_TERMS_AND_CONDITIONS,
         {},
-        false
+        false,
       );
 
       return response.data;
@@ -23,7 +23,18 @@ class AppConfigServices {
       const response = await GET<AppConfigResponse>(
         APIENDPOINT.GET_PRIVACY_POLICY,
         {},
-        false
+        false,
+      );
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+  async getAppAIServiceConfig(): Promise<AIServiceConfigResponse> {
+    try {
+      const response = await GET<AIServiceConfigResponse>(
+        APIENDPOINT.GET_AI_SERVICE_CONFIG,
       );
       return response.data;
     } catch (error) {
