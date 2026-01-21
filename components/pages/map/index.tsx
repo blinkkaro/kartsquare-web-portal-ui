@@ -38,7 +38,6 @@ const MapView: React.FC = () => {
   const [mapZoom, setMapZoom] = useState(12);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslate();
-  const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch services
   const {
@@ -46,8 +45,7 @@ const MapView: React.FC = () => {
     isLoading: isServicesLoading,
     error: servicesError,
   } = useServicesList({
-    search: searchQuery,
-    limit: 50, // Fetch more for map view
+    limit: 10, // Fetch more for map view
   });
 
   const services = servicesData?.services || [];
@@ -157,10 +155,6 @@ const MapView: React.FC = () => {
     }
   }, []);
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-  };
-
   if (!apiKey) {
     return (
       <Box
@@ -213,39 +207,6 @@ const MapView: React.FC = () => {
         height: "calc(100vh - 10rem)",
       }}
     >
-      {/* Search Bar Overlay */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: 16,
-          left: 16,
-          zIndex: 10,
-          width: "300px",
-          bgcolor: COLORS.BACKGROUND.PAPER_LIGHT,
-          borderRadius: "8px",
-          boxShadow: `0 2px 8px ${COLORS.SHADOW.DEFAULT}`,
-        }}
-      >
-        <TextField
-          fullWidth
-          placeholder="Search services..."
-          value={searchQuery}
-          onChange={handleSearchChange}
-          size="small"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Search sx={{ color: "text.secondary" }} />
-              </InputAdornment>
-            ),
-            sx: {
-              borderRadius: "8px",
-              "& fieldset": { border: "none" },
-            },
-          }}
-        />
-      </Box>
-
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={
