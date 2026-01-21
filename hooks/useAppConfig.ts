@@ -14,3 +14,10 @@ export const usePrivacyPolicy = () => {
         queryFn: () => appConfigService.getAppPrivacyPolicy(),
     });
 };
+
+export const useAppAIServiceConfig = () => {
+    return useQuery({
+        queryKey: ['appAIServiceConfig'],
+        queryFn: () => appConfigService.getAppAIServiceConfig(),
+    });
+};

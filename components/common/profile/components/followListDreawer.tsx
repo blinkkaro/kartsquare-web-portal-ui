@@ -61,7 +61,7 @@ const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
     isLoading: isLoadingFollowing,
   } = useFollowList(userId, 10);
 
-  const { mutate: followUser, isPending: isFollowing } = useFollowUser();
+  const { mutate: followUser, isPending: isFollowing } = useFollowUser(userId);
   const { mutate: unfollowUser, isPending: isUnfollowing } =
     useUnfollowUser(userId);
 

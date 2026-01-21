@@ -342,12 +342,31 @@ export type TranslationKey =
   | "maxImagesReached"
   | "invalidImageFormat"
   | "uploadingPost"
-  | "removeImage";
+  | "removeImage"
   | "errorLoadingMap"
   | "loadingMap"
   | "failedToSelectLocation"
   | "noLocationsFound"
-  | "googleMapsApiKeyNotConfigured";
+  | "googleMapsApiKeyNotConfigured"
+  | "services_for_you"
+  | "all_categories"
+  | "search_services_placeholder"
+  | "no_services_found"
+  | "try_different_search"
+  | "discoverServices"
+  | "plumber"
+  | "electrician"
+  | "carpenter"
+  | "painter"
+  | "cleaner"
+  | "gardener"
+  | "findYourServices"
+  | "findYourServicesDescription"
+  | "ask_anything_placeholder"
+  | "kartAi"
+  | "kartAiGreeting"
+  | "find"
+  | "neatMyArea";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

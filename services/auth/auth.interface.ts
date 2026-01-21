@@ -1,9 +1,16 @@
-export type AppUserType =
-  | "CUSTOMER"
-  | "SERVICE_PROVIDER"
-  | "SUPPLIER"
-  | "INFLUENCER";
-export type Gender = "MALE" | "FEMALE" | "OTHER" | "PREFER_NOT_TO_SAY";
+export enum AppUserType {
+  CUSTOMER = "CUSTOMER",
+  SERVICE_PROVIDER = "SERVICE_PROVIDER",
+  SUPPLIER = "SUPPLIER",
+  INFLUENCER = "INFLUENCER",
+}
+
+export enum Gender {
+  MALE = "MALE",
+  FEMALE = "FEMALE",
+  OTHER = "OTHER",
+  PREFER_NOT_TO_SAY = "PREFER_NOT_TO_SAY",
+}
 
 export interface User {
   id: string;

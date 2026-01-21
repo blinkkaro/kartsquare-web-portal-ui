@@ -3,15 +3,17 @@ import MyPreferencesView from "@/components/pages/myPreferences";
 import React from "react";
 import { Metadata } from "next";
 
-const metadata: Metadata = {
-    title: "My Preferences| KartSquare Portal",
-    description: "Update and manage your preferences",
-}
+export const metadata: Metadata = {
+  title: "My Preferences| KartSquare Portal",
+  description: "Update and manage your preferences",
+};
 
 const Preferences = () => {
-    return <MainLayout>
-        <MyPreferencesView />
+  return (
+    <MainLayout>
+      <MyPreferencesView />
     </MainLayout>
+  );
 };
 
 export default Preferences;

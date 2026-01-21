@@ -82,8 +82,9 @@ api.interceptors.response.use(
       try {
         const refreshToken = secureStorage.getItem("refreshToken");
         if (!refreshToken) {
-          // No refresh token, logout or redirect
-          throw new Error("No refresh token available");
+          // No refresh token, but don't redirect - just throw the error
+          // Let individual components handle authentication requirements
+          throw error;
         }
 
         // Import dynamically to avoid circular dependency
@@ -110,9 +111,22 @@ api.interceptors.response.use(
           return api(originalRequest);
         }
       } catch (refreshError) {
-        // Refresh failed, logout
-        secureStorage.clear();
-        window.location.href = "/login";
+        // Refresh failed - only clear storage, don't redirect
+        // Let the app handle navigation based on context
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("user");
+
+        // Only redirect to login if we're on a protected route
+        // For public pages like service details, just throw the error
+        const currentPath = window.location.pathname;
+        const publicPaths = ['/services/', '/cus/servicesList', '/'];
+        const isPublicPath = publicPaths.some(path => currentPath.includes(path) || currentPath === path);
+
+        if (!isPublicPath) {
+          window.location.href = "/selectRole";
+        }
+
         return Promise.reject(refreshError);
       }
     }
@@ -138,10 +152,17 @@ export const POST = async <T>(
   params: object = {},
   requiresAuth: boolean = true
 ) => {
-  return await api.post<T>(endpoint, data, {
+  const config = {
     params,
     requiresAuth,
-  } as AxiosRequestConfig);
+    headers: {},
+  } as AxiosRequestConfig;
+
+  if (data instanceof FormData) {
+    config.headers = { ...config.headers, "Content-Type": "multipart/form-data" };
+  }
+
+  return await api.post<T>(endpoint, data, config);
 };
 
 export const PUT = async <T>(
@@ -150,10 +171,17 @@ export const PUT = async <T>(
   params: object = {},
   requiresAuth: boolean = true
 ) => {
-  return await api.put<T>(endpoint, data, {
+  const config = {
     params,
     requiresAuth,
-  } as AxiosRequestConfig);
+    headers: {},
+  } as AxiosRequestConfig;
+
+  if (data instanceof FormData) {
+    config.headers = { ...config.headers, "Content-Type": "multipart/form-data" };
+  }
+
+  return await api.put<T>(endpoint, data, config);
 };
 
 export const PATCH = async <T>(
@@ -162,10 +190,17 @@ export const PATCH = async <T>(
   params: object = {},
   requiresAuth: boolean = true
 ) => {
-  return await api.patch<T>(endpoint, data, {
+  const config = {
     params,
     requiresAuth,
-  } as AxiosRequestConfig);
+    headers: {},
+  } as AxiosRequestConfig;
+
+  if (data instanceof FormData) {
+    config.headers = { ...config.headers, "Content-Type": "multipart/form-data" };
+  }
+
+  return await api.patch<T>(endpoint, data, config);
 };
 
 export const DELETE = async <T>(
