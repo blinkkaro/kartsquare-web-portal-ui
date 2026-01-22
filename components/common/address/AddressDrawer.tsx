@@ -10,8 +10,7 @@ import {
   FormControlLabel,
   MenuItem,
 } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { Controller } from "react-hook-form";
 import { Search } from "@mui/icons-material";
 import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
@@ -19,17 +18,14 @@ import RightDrawer from "@/components/common/RightDrawer";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import { Address } from "@/services/address/addressInterface";
 import { COLORS } from "@/constants/colors";
-import {
-  COUNTRIES,
-  getAllStates,
-  getCitiesByState,
-  DEFAULT_COUNTRY,
-  DEFAULT_STATE,
-  DEFAULT_CITY,
-} from "@/constants/locations";
-import { createAddressSchema, AddressFormData } from "./AddressSchema";
-import { useAddAddress, useUpdateAddress } from "@/hooks/useAddress";
+import { AddressFormData } from "./AddressSchema";
+import { useAddressForm } from "@/hooks/useAddressForm";
+import { useAddressMap } from "@/hooks/useAddressMap";
+import { useAddressSubmit } from "@/hooks/useAddressSubmit";
 import ErrorMessage from "../ErrorMessage";
+import { useGeolocation } from "@/hooks/useGeolocation";
+import MapView from "./components/mapView";
+import MapSearchSuggestions from "./components/MapSearchSuggestions";
 
 interface AddressDrawerProps {
   open: boolean;
@@ -47,15 +43,20 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
 }) => {
   const { t } = useTranslationContext();
   const theme = useTheme();
-  const [selectedCountry, setSelectedCountry] =
-    useState<string>(DEFAULT_COUNTRY);
-  const [selectedState, setSelectedState] = useState<string>(DEFAULT_STATE);
-  const [availableCities, setAvailableCities] = useState(
-    getCitiesByState(DEFAULT_STATE)
-  );
-  const addAddressMutation = useAddAddress();
-  const updateAddressMutation = useUpdateAddress();
   const [error, setError] = useState<string>("");
+
+  const {
+    coordinates,
+    isLoading: isLocationLoading, // Rename to avoid conflict if needed, or simply use isLoading
+    error: locationError,
+    getCoordinates,
+  } = useGeolocation();
+
+  useEffect(() => {
+    if (open) {
+      getCoordinates();
+    }
+  }, [open]);
 
   const {
     control,
@@ -63,121 +64,31 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
     reset,
     setValue,
     formState: { errors },
-  } = useForm<AddressFormData>({
-    resolver: yupResolver(createAddressSchema(t)),
-    defaultValues: {
-      address_name: "",
-      building_no: undefined,
-      floor: undefined,
-      address: "",
-      landmark: undefined,
-      pincode: "",
-      city_town: DEFAULT_CITY,
-      state: DEFAULT_STATE,
-      country: DEFAULT_COUNTRY,
-      is_default: false,
-    },
+  } = useAddressForm({
+    initialData,
+    mode,
+    open,
+    coordinates,
   });
 
-  useEffect(() => {
-    if (initialData && mode === "edit") {
-      const state = initialData.state || DEFAULT_STATE;
-      const country = initialData.country || DEFAULT_COUNTRY;
-
-      setSelectedCountry(country);
-      setSelectedState(state);
-      setAvailableCities(getCitiesByState(state));
-
-      reset({
-        address_name: initialData.address_name || "",
-        building_no: initialData.building_no || "",
-        floor: initialData.floor || "",
-        address: initialData.address || "",
-        landmark: initialData.landmark || "",
-        pincode: initialData.pincode || "",
-        city_town: initialData.city_town || DEFAULT_CITY,
-        state: state,
-        country: country,
-        is_default: initialData.is_default || false,
-      });
-    } else if (mode === "add") {
-      setSelectedCountry(DEFAULT_COUNTRY);
-      setSelectedState(DEFAULT_STATE);
-      setAvailableCities(getCitiesByState(DEFAULT_STATE));
-
-      reset({
-        address_name: "",
-        building_no: "",
-        floor: "",
-        address: "",
-        landmark: "",
-        pincode: "",
-        city_town: DEFAULT_CITY,
-        state: DEFAULT_STATE,
-        country: DEFAULT_COUNTRY,
-        is_default: false,
-      });
-    }
-  }, [initialData, mode, reset, open]);
-
-  const handleStateChange = (newState: string) => {
-    setSelectedState(newState);
-    const cities = getCitiesByState(newState);
-    setAvailableCities(cities);
-    // Reset city when state changes
-    if (cities.length > 0) {
-      setValue("city_town", cities[0].value);
-    } else {
-      setValue("city_town", "");
-    }
-  };
-
-  const handleFormSubmit = (data: AddressFormData) => {
-    setError("");
-    if (mode === "add") {
-      handleAddAddress(data);
-    } else {
-      handleUpdateAddress(data);
-    }
-  };
-
-  const handleAddAddress = (data: any) => {
-    addAddressMutation.mutate(data, {
-      onSuccess: () => {
-        closeDrawer();
-      },
-      onError: (error: any) => {
-        setError(
-          error.response?.data?.message ||
-            error.message ||
-            "Something went wrong"
-        );
-      },
+  const { mapCoordinates, handleMapLocationChange, handleLocationSelect } =
+    useAddressMap({
+      initialData,
+      setValue,
+      coordinates,
     });
-  };
 
-  const handleUpdateAddress = (data: any) => {
-    if (!initialData?.id) {
-      setError("Address ID is missing");
-      return;
-    }
+  const { handleFormSubmit, isPending } = useAddressSubmit({
+    mode,
+    initialData,
+    onSuccess: () => {
+      onClose();
+      reset();
+    },
+    onError: (msg) => setError(msg),
+  });
 
-    updateAddressMutation.mutate(
-      { id: initialData.id, data },
-      {
-        onSuccess: () => {
-          closeDrawer();
-        },
-        onError: (error: any) => {
-          setError(
-            error.response?.data?.message ||
-              error.message ||
-              "Something went wrong"
-          );
-        },
-      }
-    );
-  };
+  // handleFormSubmit from hook handles the mutation logic
 
   const closeDrawer = () => {
     onClose();
@@ -189,70 +100,48 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
       open={open}
       onClose={onClose}
       title={mode === "add" ? t("addNewAddress") : t("editAddress")}
-      width={500}
+      width={800}
     >
-      <ErrorMessage error={error} isVisible={!!error} />
+      <Box sx={{ px: 3, pb: 3 }}>
+        <ErrorMessage
+          error={error || locationError || ""}
+          isVisible={!!error || !!locationError}
+        />
+      </Box>
       <Box sx={{ px: 3, pb: 3 }}>
         <form onSubmit={handleSubmit(handleFormSubmit)}>
-          {/* Map Placeholder Section */}
+          {/* Map Section with Search Overlay */}
           <Box
             sx={{
+              position: "relative",
               width: "100%",
-              height: "200px",
-              bgcolor:
-                theme.palette.mode === "dark"
-                  ? COLORS.BACKGROUND.PRIMARY_DARK
-                  : COLORS.LIGHT_GRAY,
               borderRadius: "12px",
               mb: 3,
-              position: "relative",
               overflow: "hidden",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
             }}
           >
-            {/* Search Bar Overlay */}
+            <MapView
+              latitude={mapCoordinates.lat}
+              longitude={mapCoordinates.lng}
+              onLocationChange={handleMapLocationChange}
+              height="25rem"
+            />
+
+            {/* Search Section - Positioned on top of map */}
             <Box
               sx={{
                 position: "absolute",
                 top: 16,
                 left: 16,
                 right: 16,
-                zIndex: 1,
+                zIndex: 1000,
               }}
             >
-              <Input
-                name="mapSearch"
-                control={control}
-                placeholder={t("search") || "Search..."}
-                size="small"
-                startIcon={<Search fontSize="small" />}
-                InputProps={{
-                  sx: {
-                    bgcolor: COLORS.WHITE,
-                    borderRadius: "8px",
-                    "& fieldset": {
-                      border: "none",
-                    },
-                  },
-                }}
+              <MapSearchSuggestions
+                currentLocation={mapCoordinates}
+                onLocationSelect={handleLocationSelect}
               />
             </Box>
-
-            {/* Map Placeholder Content */}
-            <Typography
-              variant="body2"
-              sx={{
-                color:
-                  theme.palette.mode === "dark"
-                    ? COLORS.TEXT.SECONDARY_DARK
-                    : COLORS.TEXT.SECONDARY_LIGHT,
-                fontStyle: "italic",
-              }}
-            >
-              {/* Map will be integrated here */}
-            </Typography>
           </Box>
 
           {/* Form Fields */}
@@ -416,16 +305,10 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
               <Input
                 name="city_town"
                 control={control}
-                select
                 placeholder={t("selectCityTown")}
                 size="small"
-              >
-                {availableCities.map((city) => (
-                  <MenuItem key={city.value} value={city.value}>
-                    {city.label}
-                  </MenuItem>
-                ))}
-              </Input>
+                disabled
+              />
             </Grid>
 
             {/* State & Country */}
@@ -447,20 +330,10 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
               <Input
                 name="state"
                 control={control}
-                select
                 placeholder={t("selectState")}
                 size="small"
-                onChange={(e) => {
-                  setValue("state", e.target.value);
-                  handleStateChange(e.target.value);
-                }}
-              >
-                {getAllStates().map((state) => (
-                  <MenuItem key={state.value} value={state.value}>
-                    {state.label}
-                  </MenuItem>
-                ))}
-              </Input>
+                disabled
+              />
             </Grid>
 
             <Grid size={{ xs: 6 }}>
@@ -481,20 +354,10 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
               <Input
                 name="country"
                 control={control}
-                select
                 placeholder={t("selectCountry")}
                 size="small"
-                onChange={(e) => {
-                  setValue("country", e.target.value);
-                  setSelectedCountry(e.target.value);
-                }}
-              >
-                {COUNTRIES.map((country) => (
-                  <MenuItem key={country.value} value={country.value}>
-                    {country.label}
-                  </MenuItem>
-                ))}
-              </Input>
+                disabled
+              />
             </Grid>
 
             {/* Save as Default Checkbox */}
@@ -543,11 +406,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                 type="submit"
                 variant="contained"
                 fullWidth
-                isLoading={
-                  mode === "add"
-                    ? addAddressMutation.isPending
-                    : updateAddressMutation.isPending
-                }
+                isLoading={isPending}
                 sx={{
                   py: 1.5,
                   borderRadius: "12px",

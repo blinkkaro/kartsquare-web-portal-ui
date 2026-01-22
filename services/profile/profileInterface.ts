@@ -1,15 +1,15 @@
-import { Posts } from '../post/postInterfaces';
+import { Posts } from "../post/postInterfaces";
 
 export enum service_location_type {
-  USER_LOCATION = 'USER_LOCATION',
-  PROVIDER_LOCATION = 'PROVIDER_LOCATION',
+  USER_LOCATION = "USER_LOCATION",
+  PROVIDER_LOCATION = "PROVIDER_LOCATION",
 }
 
 export enum service_status_type {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
 }
 export interface Service {
   id: any;
@@ -45,6 +45,8 @@ export interface Service {
   service_provider_address: string | null;
   provider_image_url: string | null;
   is_following: boolean;
+  service_provider_latitude: number;
+  service_provider_longitude: number;
 }
 
 export interface profileInterface {

@@ -46,6 +46,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       setLastName(profile?.data?.last_name || "");
       setBio(profile?.data?.bio || "");
       setProfilePicFile(profile?.data?.profile_pic || "");
+      setPreviewUrl(profile?.data?.profile_pic || "");
     }
   }, [open]);
 
@@ -74,7 +75,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         onSuccess: () => {
           onClose();
         },
-      }
+      },
     );
   };
 
@@ -135,7 +136,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       >
         <Box sx={{ position: "relative" }}>
           <Avatar
-            src={profilePicFile instanceof File ? undefined : profilePicFile}
+            src={previewUrl}
             sx={{
               width: 100,
               height: 100,
