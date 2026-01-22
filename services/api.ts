@@ -92,19 +92,19 @@ api.interceptors.response.use(
         // Call refresh token API
         const response = await authService.refreshToken(refreshToken);
 
-        if (response.data && response.data.tokens) {
-          secureStorage.setItem("token", response.data.tokens.access_token);
-          secureStorage.setItem(
-            "refreshToken",
-            response.data.tokens.refresh_token
-          );
+        // if (response.data && response.data.tokens) {
+        //   secureStorage.setItem("token", response.data.tokens.access_token);
+        //   secureStorage.setItem(
+        //     "refreshToken",
+        //     response.data.tokens.refresh_token
+        //   );
 
-          // Update header
-          api.defaults.headers.common["Authorization"] = `Bearer ${response.data.tokens.access_token}`;
-          originalRequest.headers["Authorization"] = `Bearer ${response.data.tokens.access_token}`;
+        //   // Update header
+        //   api.defaults.headers.common["Authorization"] = `Bearer ${response.data.tokens.access_token}`;
+        //   originalRequest.headers["Authorization"] = `Bearer ${response.data.tokens.access_token}`;
 
-          return api(originalRequest);
-        }
+        //   return api(originalRequest);
+        // }
       } catch (refreshError) {
         // Refresh failed - only clear storage, don't redirect
         // Let the app handle navigation based on context
