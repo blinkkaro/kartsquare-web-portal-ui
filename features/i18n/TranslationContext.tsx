@@ -366,7 +366,14 @@ export type TranslationKey =
   | "kartAi"
   | "kartAiGreeting"
   | "find"
-  | "neatMyArea";
+  | "neatMyArea"
+  | "general"
+  | "cleaning"
+  | "repairs"
+  | "education"
+  | "wellness"
+  | "all"
+  | "noBlogsFound";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
