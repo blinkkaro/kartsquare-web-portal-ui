@@ -24,7 +24,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile }) => {
   return (
     <Box
       sx={{
-        p: 3,
+        mx: { xs: 1, md: 2 },
+        p: { xs: 1.5, md: 2 },
         borderRadius: "24px",
         background: COLORS.PRIMARY_PURPLE + "10",
         boxShadow: "0px 10px 40px rgba(0, 0, 0, 0.05)",
@@ -64,9 +65,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile }) => {
       </Typography>
 
       {/* Actions Row */}
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <Button fullWidth>
-          {profile.is_following ? "Following" : "Follow"}
+      <Box sx={{ display: "flex", alignItems: "center", justifyContent: {xs: "center", md: "left"} }}>
+        <Button onClick={handleFollow} sx={{ width: "30%" }}>
+          {profile.is_following ? t("following") : t("follow")}
         </Button>
       </Box>
     </Box>

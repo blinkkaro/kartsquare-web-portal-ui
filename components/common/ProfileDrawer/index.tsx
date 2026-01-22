@@ -33,12 +33,20 @@ function ProfileDrawer() {
     <ProfileDrawerWrapper
       open={isOpen}
       onClose={() => dispatch(closeDrawer())}
-      onChatClick={() => {}}
+      // onChatClick={() => {}}
       onLocationClick={() => {}}
       onBookmarkClick={() => {}}
       width={700}
     >
-      <Box sx={{height: "100%", overflowY: "auto" }}>
+      <Box
+        sx={{
+          height: "100%",
+          overflowY: "auto",
+          "&::-webkit-scrollbar": { display: "none" },
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+      >
         {isLoading && (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
             <CircularProgress sx={{ color: COLORS.PRIMARY_PURPLE }} />
@@ -52,7 +60,7 @@ function ProfileDrawer() {
         )}
 
         {profile && (
-          <>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <ProfileCard profile={profile} />
             <ProfileTabs onTabChange={handleTabChange} />
 
@@ -64,7 +72,7 @@ function ProfileDrawer() {
                 <ProfileServices userId={userId || ""} />
               )}
             </Box>
-          </>
+          </Box>
         )}
       </Box>
     </ProfileDrawerWrapper>

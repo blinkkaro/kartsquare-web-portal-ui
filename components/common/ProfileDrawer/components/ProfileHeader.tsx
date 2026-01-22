@@ -13,9 +13,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
     <Box
       sx={{
         display: "flex",
-        flexDirection: "row",
+        flexDirection: { xs: "column", md: "row" },
         alignItems: "center",
-        gap: 2,
+        gap: { xs: 1, md: 2 },
         mb: 3,
         flexWrap: "wrap",
       }}
@@ -24,13 +24,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
         src={profile.profile_pic}
         alt={profile.first_name}
         sx={{
-          width: 80,
-          height: 80,
+          width: { xs: 100, md: 80 },
+          height: { xs: 100, md: 80 },
           border: `3px solid ${COLORS.WHITE}`,
           boxShadow: COLORS.SHADOW.DEFAULT,
         }}
       />
-      <Box sx={{ flex: 1 }}>
+      <Box sx={{ flex: 1, width: "100%", textAlign: { xs: "center", md: "left" } }}>
         <Typography
           variant="h6"
           sx={{

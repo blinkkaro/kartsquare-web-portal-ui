@@ -18,6 +18,7 @@ import { useAutoGeolocation } from "@/hooks/useGeolocation";
 import { secureStorage } from "@/helper/SecureStorage";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useServicesList } from "@/hooks/useServicesList";
+import { useRouter } from "next/navigation";
 
 // Define libraries outside component to prevent recreation
 const LIBRARIES: "places"[] = ["places"];
@@ -37,6 +38,7 @@ const MapView: React.FC = () => {
   const [userProfile, setUserProfile] = useState<string | null>(null);
   const [mapZoom, setMapZoom] = useState(12);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   const { t } = useTranslate();
 
   // Fetch services
@@ -135,6 +137,10 @@ const MapView: React.FC = () => {
 
   const handleCloseCard = useCallback(() => {
     setSelectedService(null);
+  }, []);
+
+  const handleSelectedCardClick = useCallback((service: Service) => {
+    router.push(`/cus/service/${service.service_id}`);
   }, []);
 
   const handleScrollLeft = useCallback(() => {
@@ -493,6 +499,7 @@ const MapView: React.FC = () => {
             width: "90%",
             maxWidth: "400px",
           }}
+          onClick={handleCloseCard}
         >
           <Box sx={{ position: "relative" }}>
             <IconButton

@@ -81,7 +81,7 @@ const ProfileDrawerWrapper: React.FC<ProfileDrawerWrapperProps> = ({
       {/* Custom Header with Icons */}
       <Box
         sx={{
-          p: 3,
+          p: { xs: 2, md: 3 },
           display: "flex",
           justifyContent: "flex-end",
           alignItems: "center",
