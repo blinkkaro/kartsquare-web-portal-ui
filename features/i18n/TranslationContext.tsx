@@ -364,7 +364,28 @@ export type TranslationKey =
   | "failedToLoadServices"
   | "noPostsFound"
   | "noServicesFound"
-  | "newServiceProvider";
+  | "newServiceProvider"
+  | "discoverServices"
+  | "plumber"
+  | "electrician"
+  | "carpenter"
+  | "painter"
+  | "cleaner"
+  | "gardener"
+  | "findYourServices"
+  | "findYourServicesDescription"
+  | "ask_anything_placeholder"
+  | "kartAi"
+  | "kartAiGreeting"
+  | "find"
+  | "neatMyArea"
+  | "general"
+  | "cleaning"
+  | "repairs"
+  | "education"
+  | "wellness"
+  | "all"
+  | "noBlogsFound";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

@@ -351,6 +351,8 @@ export const english = {
   failedToSelectLocation: "Failed to select location",
   noLocationsFound: "No locations found in this area",
   googleMapsApiKeyNotConfigured: "Google Maps API key not configured",
+
+  // Services List
   services_for_you: "Services for you",
   all_categories: "All",
   search_services_placeholder: "Search services...",
@@ -371,4 +373,30 @@ export const english = {
   noPostsFound: "No posts found",
   noServicesFound: "No services found",
   newServiceProvider: "New Service Provider",
+
+  discoverServices: "Discover the perfect service for you",
+  plumber: "Plumber",
+  electrician: "Electrician",
+  carpenter: "Carpenter",
+  painter: "Painter",
+  cleaner: "Cleaner",
+  gardener: "Gardener",
+  findYourServices: "Find Your Services",
+  findYourServicesDescription:
+    "Let AI help you discover the perfect service tailored to your needs",
+  ask_anything_placeholder: "Ask anything about services...",
+  kartAi: "Kart AI",
+  kartAiGreeting:
+    "Hi there! I’m Kart AI, your personal AI assistant. Let’s get you the perfect service.",
+  find: "Find a",
+  neatMyArea: "neat my area",
+  all: "All",
+  education: "Education",
+  cleaning: "Cleaning",
+  repairs: "Repairs",
+  design: "Design",
+  wellness: "Wellness",
+  gardening: "Gardening",
+  general: "General",
+  noBlogsFound: "No blogs found matching your criteria",
 };

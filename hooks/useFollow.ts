@@ -35,14 +35,26 @@ export const useFollowersList = (userId: string, limit: number = 10) => {
   });
 };
 
-export const useFollowUser = () => {
+export const useFollowUser = (currentUserId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (userId: string) => {
       return followService.followUser(userId);
     },
-    onSuccess: (_, userId) => {
-      queryClient.invalidateQueries({ queryKey: ["following", userId] });
+    onSuccess: (_, targetUserId) => {
+      // Invalidate the current user's following list
+      if (currentUserId) {
+        queryClient.invalidateQueries({
+          queryKey: ["following", currentUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["followers", currentUserId],
+        });
+      }
+      // Invalidate the target user's followers list
+      queryClient.invalidateQueries({ queryKey: ["followers", targetUserId] });
+      // Invalidate profile queries
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
     },
     onError: (error: any) => {
       throw error;
@@ -65,6 +77,7 @@ export const useUnfollowUser = (currentUserId: string) => {
         queryKey: ["profile"],
         refetchType: "all",
       });
+      queryClient.invalidateQueries({ queryKey: ["followers", currentUserId] });
     },
     onError: (error: any) => {
       throw error;

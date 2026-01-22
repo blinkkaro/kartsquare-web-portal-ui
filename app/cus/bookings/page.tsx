@@ -34,6 +34,7 @@ import { bookingService } from "../../../services/booking/bookingService";
 import { UserBooking } from "../../../services/booking/bookingInterface";
 import { COLORS } from "../../../constants/colors";
 import dayjs from "dayjs";
+import MainLayout from "@/app/mainLayout";
 
 const BookingsPage = () => {
   const theme = useTheme();
@@ -244,8 +245,7 @@ const BookingsPage = () => {
   };
 
   return (
-    <>
-      <Nav />
+    <MainLayout>
       <Box
         sx={{
           bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : "#F3F4F6", // Light gray bg like screenshot
@@ -556,7 +556,7 @@ const BookingsPage = () => {
           )}
         </Container>
       </Box>
-    </>
+    </MainLayout>
   );
 };
 

@@ -4,6 +4,8 @@ import Nav from "@/components/common/Nav";
 import { Box, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import ProfileDrawer from "@/components/common/ProfileDrawer";
+import Ai from "@/components/common/Ai";
+import AIBotton from "@/components/common/Ai/AIBotton";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -11,6 +13,7 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
 
   return (
     <Box
@@ -49,8 +52,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
         }}
       >
         {children}
+        <AIBotton setOpen={setOpen} />
       </Box>
       <ProfileDrawer />
+      <Ai open={open} onClose={() => setOpen(false)} />
     </Box>
   );
 }
