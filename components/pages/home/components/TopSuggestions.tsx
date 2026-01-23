@@ -1,95 +1,31 @@
 import React from "react";
-import {
-  Box,
-  Card,
-  Typography,
-  useTheme,
-  Avatar,
-  Button,
-  CardMedia,
-} from "@mui/material";
+import { Box, Card, Typography, useTheme, CardMedia } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import Link from "next/link";
 import { Star } from "@mui/icons-material";
 import { useTranslate } from "@/hooks/useTranslate";
-
-// Interfaces
-interface SuggestionItem {
-  id: number;
-  image: string;
-  name: string;
-  category: string;
-  rating: number;
-  collaborationCount?: number; // specific to suppliers/brands
-}
+import { useTopSuggestions } from "@/hooks/useTopSuggestions";
+import {
+  TopProvider,
+  TopService,
+} from "@/services/topSuppliers/topSupplires.interfaces";
 
 interface SectionProps {
   title: string;
-  items: SuggestionItem[];
+  items: TopService[] | TopProvider[];
 }
-
-// Dummy Data
-const TOP_OCTOPUS: SuggestionItem[] = [
-  {
-    id: 1,
-    image:
-      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1888&auto=format&fit=crop",
-    name: "Turfa al-Shah",
-    category: "Hair stylist",
-    rating: 4.8,
-  },
-  {
-    id: 2,
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1887&auto=format&fit=crop",
-    name: "Saood al-Din",
-    category: "Digital designer",
-    rating: 4.7,
-  },
-  {
-    id: 3,
-    image:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2070&auto=format&fit=crop",
-    name: "Azza al-Massri",
-    category: "Fashion designer",
-    rating: 4.9,
-  },
-];
-
-const TOP_SUPPLIERS: SuggestionItem[] = [
-  {
-    id: 1,
-    image:
-      "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2000&auto=format&fit=crop",
-    name: "Lotus Couture",
-    category: "Womens Boutique",
-    rating: 4.5,
-    collaborationCount: 45,
-  },
-  {
-    id: 2,
-    image:
-      "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?q=80&w=2069&auto=format&fit=crop",
-    name: "Shiffa Wellness",
-    category: "Health & Beauty",
-    rating: 4.8,
-    collaborationCount: 32,
-  },
-  {
-    id: 3,
-    image:
-      "https://images.unsplash.com/photo-1556906781-9a412961d289?q=80&w=2000&auto=format&fit=crop",
-    name: "Hokbyk Modest",
-    category: "Modest Fashion",
-    rating: 4.6,
-    collaborationCount: 28,
-  },
-];
-
 
 const SuggestionSection = ({ title, items }: SectionProps) => {
   const theme = useTheme();
   const { t } = useTranslate();
+  const dis
+
+  const handleOnCardClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (items.typeof === "TopProvider") {
+      set
+    }
+  }
 
   return (
     <Card
@@ -102,6 +38,8 @@ const SuggestionSection = ({ title, items }: SectionProps) => {
             ? COLORS.BACKGROUND.PRIMARY_DARK
             : COLORS.BACKGROUND.PRIMARY_LIGHT,
       }}
+      onClick={(e) => { e.stopPropagation(); }}
+
     >
       <Box
         sx={{
@@ -174,8 +112,17 @@ const SuggestionSection = ({ title, items }: SectionProps) => {
               >
                 <CardMedia
                   component="img"
-                  src={item.image}
-                  alt={item.name}
+                  src={
+                    // Type guard for TopProvider
+                    "profile_pic" in item && item.profile_pic
+                      ? item.profile_pic
+                      : "image_urls" in item &&
+                          Array.isArray(item.image_urls) &&
+                          item.image_urls.length > 0
+                        ? item.image_urls[0]
+                        : ""
+                  }
+                  alt={"name" in item ? item.name : "Image"}
                   width={100}
                   height={100}
                   style={{
@@ -230,7 +177,9 @@ const SuggestionSection = ({ title, items }: SectionProps) => {
                 textOverflow: "ellipsis",
               }}
             >
-              {item.name}
+              {"name" in item
+                ? item.name
+                : `${item.first_name} ${item.last_name}`}
             </Typography>
             <Typography
               sx={{
@@ -247,9 +196,8 @@ const SuggestionSection = ({ title, items }: SectionProps) => {
                 textOverflow: "ellipsis",
               }}
             >
-              {item.category}
             </Typography>
-            {item.collaborationCount && (
+            {"description" in item && item.description && (
               <Typography
                 sx={{
                   fontSize: "0.6rem",
@@ -260,8 +208,8 @@ const SuggestionSection = ({ title, items }: SectionProps) => {
                   textAlign: "center",
                   mt: 0.2,
                 }}
-              >
-                {item.collaborationCount} Collab
+              > 
+                {item.description.slice(0, 30)}{item.description.length > 30 ? "..." : ""}
               </Typography>
             )}
           </Box>
@@ -272,10 +220,55 @@ const SuggestionSection = ({ title, items }: SectionProps) => {
 };
 
 const TopSuggestions = () => {
+  const { provider, servicer, isLoading } = useTopSuggestions("3");
+  const { t } = useTranslate();
+  const theme = useTheme();
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          p: 2,
+          borderRadius: 4,
+          boxShadow: "none",
+          backgroundColor:
+            theme.palette.mode === "dark"
+              ? COLORS.BACKGROUND.PRIMARY_DARK
+              : COLORS.BACKGROUND.PRIMARY_LIGHT,
+          height: "5rem"
+        }}
+      >
+        {t("loading")}
+      </Box>
+    );
+  }
+
+  if (!provider?.length && !servicer?.length) {
+    return (
+      <Box
+        sx={{
+          p: 2,
+          borderRadius: 4,
+          boxShadow: "none",
+          backgroundColor:
+            theme.palette.mode === "dark"
+              ? COLORS.BACKGROUND.PRIMARY_DARK
+              : COLORS.BACKGROUND.PRIMARY_LIGHT,
+        }}
+      >
+        {t("noSuggestionsAvailable")}
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      <SuggestionSection title="Top Octopus" items={TOP_OCTOPUS} />
-      <SuggestionSection title="Top Suppliers" items={TOP_SUPPLIERS} />
+      {provider && (
+        <SuggestionSection title={t("topProviders")} items={provider || []} />
+      )}
+      {servicer && (
+        <SuggestionSection title={t("topServices")} items={servicer || []} />
+      )}
       {/* <SuggestionSection title="Top Brands" items={TOP_BRANDS} /> */}
     </Box>
   );

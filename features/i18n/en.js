@@ -375,4 +375,8 @@ export const english = {
     "Hi there! I’m Kart AI, your personal AI assistant. Let’s get you the perfect service.",
   find: "Find a",
   neatMyArea: "neat my area",
+  loading: "Loading...",
+  topProviders: "Top Providers",
+  topServices: "Top Services",
+  noSuggestionsAvailable: "No suggestions available at the moment"
 };
