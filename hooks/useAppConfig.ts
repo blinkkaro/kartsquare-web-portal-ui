@@ -42,7 +42,7 @@ export const useAppAIServiceConfig = () => {
     useEffect(() => {
         // Only fetch if we don't have data or it's stale
         if (!aiServiceConfig && !loading) {
-            dispatch(fetchAIServiceConfig());
+            // dispatch(fetchAIServiceConfig());
         }
     }, [dispatch, aiServiceConfig, loading]);
 

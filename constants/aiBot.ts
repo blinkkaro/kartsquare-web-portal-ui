@@ -8,6 +8,7 @@ export const shouldShowAIBot = (
   userRole?: AppUserType | null,
   appAIServiceConfig?: AIServiceConfigResponse | null,
 ): boolean => {
+  return true;
   if (!appAIServiceConfig?.is_active) {
     return false;
   }
