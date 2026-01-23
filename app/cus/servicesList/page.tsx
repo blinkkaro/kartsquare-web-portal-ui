@@ -1,12 +1,3 @@
-import MainLayout from "@/app/mainLayout";
-import ServicesListView from "@/components/pages/servicesList";
-
-const ListOfServices = () => {
-  return (
-    <MainLayout>
-      <ServicesListView />
-    </MainLayout>
-  );
-};
+import ListOfServices from "../../../components/pages/servicesList";
 
 export default ListOfServices;

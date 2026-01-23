@@ -44,7 +44,6 @@ class ServiceListService {
      */
     async getServiceById(id: string): Promise<Service> {
         try {
-            console.log("Fetching service by ID:", id);
             const response = await GET<Service>(
                 SERVICE_API_ENDPOINTS.GET_SERVICE_BY_ID(id),
                 {},

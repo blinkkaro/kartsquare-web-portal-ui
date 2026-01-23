@@ -352,6 +352,7 @@ export type TranslationKey =
   | "all_categories"
   | "search_services_placeholder"
   | "no_services_found"
+  | "no_services_found_description"
   | "try_different_search"
   | "sendMessage"
   | "posts"
@@ -567,6 +568,19 @@ export type TranslationKey =
   | "multipleCategoriesDesc"
   | "stayTuned"
   | "storeStayTunedDescription"
+  | "reviews"
+  | "see_all"
+  | "no_reviews_yet"
+  | "load_more_reviews"
+  | "service_not_found"
+  | "loading"
+  | "my_services"
+  | "service_description"
+  | "no_bookings_found"
+  | "no_bookings_found_description"
+  | "upcoming"
+  | "completed"
+  | "cancelled";
   | "totalServices"
   | "totalEvents"
   | "totalActiveServices"
@@ -638,7 +652,7 @@ interface TranslationContextType {
 }
 
 const TranslationContext = createContext<TranslationContextType | undefined>(
-  undefined,
+  undefined
 );
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
@@ -659,7 +673,7 @@ export function useTranslationContext() {
   const context = useContext(TranslationContext);
   if (context === undefined) {
     throw new Error(
-      "useTranslationContext must be used within a TranslationProvider",
+      "useTranslationContext must be used within a TranslationProvider"
     );
   }
   return context;

@@ -102,10 +102,10 @@ const BecomeServiceProviderView: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
-      <Title
+      {/* <Title
         title={t("becomeServiceProvider")}
         subtitle={t("becomeServiceProviderSubtitle")}
-      />
+      /> */}
 
       {/* Hero Section */}
       <Box

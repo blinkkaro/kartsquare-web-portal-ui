@@ -12,7 +12,7 @@ export enum ServiceLocationType {
 }
 
 export interface Service {
-  review_count: number;
+  review_count?: number;
   service_id: string;
   provider_id: string;
   category_id: string;
