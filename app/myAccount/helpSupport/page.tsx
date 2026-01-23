@@ -3,7 +3,7 @@ import HelpSupportView from "@/components/pages/helpSupport";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Help & Support | KartSquare Portal",
+  title: "Help & Support | kartsquare Portal",
   description: "Get help and support",
 };
 

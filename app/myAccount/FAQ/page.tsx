@@ -3,7 +3,7 @@ import FAQView from "@/components/pages/FAQ";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "FAQ | KartSquare Portal",
+  title: "FAQ | kartsquare Portal",
   description: "Frequently asked questions",
 };
 

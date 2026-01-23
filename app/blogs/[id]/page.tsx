@@ -16,7 +16,7 @@ export async function generateMetadata({
   const blog = blogs.find((b) => b.id === params.id);
   if (!blog) {
     return {
-      title: "Blog Not Found - KartSquare",
+      title: "Blog Not Found - kartsquare",
     };
   }
   return {

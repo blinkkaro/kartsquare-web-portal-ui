@@ -4,7 +4,7 @@ import React from "react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "My Preferences| KartSquare Portal",
+  title: "My Preferences| kartsquare Portal",
   description: "Update and manage your preferences",
 };
 

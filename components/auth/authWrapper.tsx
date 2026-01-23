@@ -78,7 +78,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
               fontSize: isLargeScreen ? "4rem" : "3rem",
             }}
           >
-            KartSquare
+            kartsquare
           </Typography>
         </Box>
       </Grid>

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import SelectRole from "@/components/pages/selectRole";
 
 export const metadata: Metadata = {
-  title: "Select Role | KartSquare Portal",
+  title: "Select Role | kartsquare Portal",
   description: "Select your role",
 };
 

@@ -2,7 +2,7 @@ import VerifyDocumentsView from "@/components/pages/verifyDocuments";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Verify Documents | KartSquare Portal",
+  title: "Verify Documents | kartsquare Portal",
   description: "Upload and verify your documents",
 };
 

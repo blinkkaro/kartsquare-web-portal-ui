@@ -3,8 +3,8 @@ import MainLayout from "../mainLayout";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "My Account | KartSquare Portal",
-  description: "Manage your KartSquare account",
+  title: "My Account | kartsquare Portal",
+  description: "Manage your kartsquare account",
 };
   
 export default function MyAccountPage() {

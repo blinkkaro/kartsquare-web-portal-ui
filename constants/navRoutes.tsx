@@ -22,7 +22,7 @@ export const getDesktopNavItems = (
   if (role === "SERVICE_PROVIDER") {
     return [
       { label: t("home"), href: "/" },
-      // { label: t("dashboard"), href: "/dashboard" },
+      { label: t("dashboard"), href: "/dashboard" },
       // { label: t("store"), href: "/store" },
       { label: t("services"), href: "/spr/servicesList" },
       // { label: t("events"), href: "/events" },

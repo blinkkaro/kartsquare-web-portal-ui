@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Nav from "@/components/common/Nav";
+import Footer from "@/components/common/Footer";
 import { Box, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import ProfileDrawer from "@/components/common/ProfileDrawer";
@@ -54,6 +55,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         {children}
         <AIBotton setOpen={setOpen} />
       </Box>
+      <Footer />
       <ProfileDrawer />
       <Ai open={open} onClose={() => setOpen(false)} />
     </Box>
