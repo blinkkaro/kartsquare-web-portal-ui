@@ -17,6 +17,7 @@ import Blogs from "./components/Blogs";
 import TopSuggestions from "./components/TopSuggestions";
 import { useGetStories } from "@/hooks/useStories";
 import CompactMapView from "./components/CompactMapView";
+import { Visibility } from "@/services/post/postInterfaces";
 
 interface EmptyCardProps {
   name: string;
@@ -68,7 +69,7 @@ const EmptyCard: React.FC<EmptyCardProps> = ({ name }) => {
 function HomeView() {
   const { data: posts, isLoading } = useGetPosts({
     limit: 10,
-    visibility: "public",
+    visibility: Visibility.PUBLIC,
   });
   const { data: stories, isLoading: storiesLoading } = useGetStories({
     page: 1,
