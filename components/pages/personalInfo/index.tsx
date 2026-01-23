@@ -12,6 +12,7 @@ import Button from "@/components/common/Button";
 import { formatDate } from "@/helper/helper";
 import EditProfileModal from "./components/EditProfileModal";
 import WarningModel from "@/components/common/WarningModel";
+import { getUserRole, UserRole } from "@/utils/auth";
 
 function PersonalInfoView() {
   const theme = useTheme();
@@ -22,6 +23,8 @@ function PersonalInfoView() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const isDark = theme.palette.mode === "dark";
+  const userRole = getUserRole();
+  const isServiceProvider = userRole === UserRole.SERVICE_PROVIDER;
 
   const handleDeleteAccount = () => {
     deleteProfile();
@@ -87,6 +90,13 @@ function PersonalInfoView() {
             profile?.last_name || ""
           }`}
         />
+
+        {isServiceProvider && (
+          <Labels
+            label={t("username" as any) || "Username"}
+            description={"@"+profile?.username || "-"}
+          />
+        )}
 
         <Labels
           label={t("bio")}
