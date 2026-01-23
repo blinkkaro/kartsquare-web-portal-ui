@@ -390,6 +390,10 @@ export const english = {
     "Hi there! I’m Kart AI, your personal AI assistant. Let’s get you the perfect service.",
   find: "Find a",
   neatMyArea: "neat my area",
+  loading: "Loading...",
+  topProviders: "Top Providers",
+  topServices: "Top Services",
+  noSuggestionsAvailable: "No suggestions available at the moment",
   all: "All",
   education: "Education",
   cleaning: "Cleaning",
@@ -411,11 +415,16 @@ export const english = {
   
   // Dashboard
   dashboard: "Dashboard",
+  totalBookings: "Total Bookings",
+  totalActiveEvents: "Total Active Events",
+  totalEvents: "Total Events",
+  totalActiveServices: "Active Services",
+  totalPendingBookings: "Pending Bookings",
+  totalCompletedBookings: "Completed Bookings",
+  totalServices: "Total Services",
   dashboardOverview: "Dashboard Overview",
   salesGrowth: "Sales Growth",
   totalEarnings: "Total Earnings",
-  totalActiveEvents: "Total Active Events",
-  totalActiveServices: "Total Active Services",
   pendingOrders: "Pending Orders",
   newMessages: "New Messages",
   totalCollaborations: "Total Collaborations",
@@ -437,6 +446,9 @@ export const english = {
   offline: "Offline",
   ultralipNourishingShine: "Ultralip - Nourishing shine",
   commissionRate: "Commission rate",
+  bookingsCharts: "Bookings Charts",
+  latestReviews: "Latest Reviews",
+  
   
   // Footer
   company: "Company",

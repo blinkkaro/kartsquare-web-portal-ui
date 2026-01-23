@@ -380,6 +380,10 @@ export type TranslationKey =
   | "kartAiGreeting"
   | "find"
   | "neatMyArea"
+  | "loading"
+  | "topProviders"
+  | "topServices"
+  | "noSuggestionsAvailable"
   | "general"
   | "cleaning"
   | "repairs"
@@ -577,6 +581,15 @@ export type TranslationKey =
   | "upcoming"
   | "completed"
   | "cancelled";
+  | "totalServices"
+  | "totalEvents"
+  | "totalActiveServices"
+  | "totalPendingBookings"
+  | "totalCompletedBookings"
+  | "totalBookings"
+  | "bookingsCharts"
+  | "latestReviews"
+  ;
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
