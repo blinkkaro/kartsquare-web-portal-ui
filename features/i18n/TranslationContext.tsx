@@ -580,7 +580,7 @@ export type TranslationKey =
   | "no_bookings_found_description"
   | "upcoming"
   | "completed"
-  | "cancelled";
+  | "cancelled"
   | "totalServices"
   | "totalEvents"
   | "totalActiveServices"
