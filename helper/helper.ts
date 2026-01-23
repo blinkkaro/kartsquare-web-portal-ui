@@ -136,3 +136,14 @@ export const calculateDistance = (
   const distance = R * c; // Distance in kilometers
   return distance;
 };
+
+export const formatStringTimeForReview = (timeStr: string | Date): string => {
+  const date = new Date(timeStr);
+  const formattedDate = formatDate(date);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const formattedHours = hours % 12;
+  const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+  return `${formattedDate} @ ${formattedHours}:${formattedMinutes} ${ampm}`;
+};

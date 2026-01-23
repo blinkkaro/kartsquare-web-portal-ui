@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
+import { ProviderDashboardChartResponse } from "@/services/providerDashboard/providerDashboard.interface";
 
 // Simple SVG-based line chart
 const LineChart: React.FC<{
@@ -20,18 +21,24 @@ const LineChart: React.FC<{
   labels: string[];
   isDark: boolean;
 }> = ({ data, labels, isDark }) => {
-  const maxValue = Math.max(...data, 1000);
-  const minValue = Math.min(...data, 0);
-  const range = maxValue - minValue || 1000;
+  // Calculate dynamic scale
+  const dataMax = Math.max(...data, 0);
+  const maxValue = dataMax > 0 ? Math.ceil(dataMax / 5) * 5 : 100;
+  const minValue = 0; // Always start from 0 for revenue
+  const range = maxValue - minValue;
+  
   const width = 1000;
   const height = 300;
   const padding = 40;
   const chartWidth = width - padding * 2;
   const chartHeight = height - padding * 2;
 
+  // Generate ticks (5 steps)
+  const ticks = [0, 1, 2, 3, 4, 5].map(i => Math.round((maxValue / 5) * i));
+
   // Normalize data points
   const points = data.map((value, index) => {
-    const x = (index / (data.length - 1)) * chartWidth + padding;
+    const x = ((index + 0.5) / labels.length) * chartWidth + padding;
     const y =
       chartHeight -
       ((value - minValue) / range) * chartHeight +
@@ -71,7 +78,7 @@ const LineChart: React.FC<{
         </defs>
 
         {/* Grid lines */}
-        {[0, 200, 400, 600, 800, 1000].map((value) => {
+        {ticks.map((value) => {
           const y =
             chartHeight -
             ((value - minValue) / range) * chartHeight +
@@ -91,12 +98,14 @@ const LineChart: React.FC<{
         })}
 
         {/* Area under curve */}
-        <path
-          d={`${pathData} L ${points[points.length - 1].x} ${
-            chartHeight + padding
-          } L ${padding} ${chartHeight + padding} Z`}
-          fill={`url(#${gradientId})`}
-        />
+        {points.length > 0 && (
+          <path
+            d={`${pathData} L ${points[points.length - 1].x} ${
+              chartHeight + padding
+            } L ${padding} ${chartHeight + padding} Z`}
+            fill={`url(#${gradientId})`}
+          />
+        )}
 
         {/* Line */}
         <path
@@ -123,7 +132,7 @@ const LineChart: React.FC<{
 
         {/* Labels */}
         {labels.map((label, index) => {
-          const x = (index / (labels.length - 1)) * chartWidth + padding;
+          const x = ((index + 0.5) / labels.length) * chartWidth + padding;
           return (
             <text
               key={index}
@@ -139,7 +148,7 @@ const LineChart: React.FC<{
         })}
 
         {/* Y-axis labels */}
-        {[0, 200, 400, 600, 800, 1000].map((value) => {
+        {ticks.map((value) => {
           const y =
             chartHeight -
             ((value - minValue) / range) * chartHeight +
@@ -185,7 +194,11 @@ const LineChart: React.FC<{
   );
 };
 
-const RevenueChart: React.FC = () => {
+interface RevenueChartProps {
+  chartData?: ProviderDashboardChartResponse;
+}
+
+const RevenueChart: React.FC<RevenueChartProps> = ({ chartData }) => {
   const theme = useTheme();
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
@@ -193,7 +206,6 @@ const RevenueChart: React.FC = () => {
   const [type, setType] = useState("all");
 
   // Mock data - will be replaced with API data
-  const monthlyData = [700, 400, 700, 200, 400, 500, 600, 550, 710];
   const monthlyLabels = [
     "Jan",
     "Feb",
@@ -204,6 +216,9 @@ const RevenueChart: React.FC = () => {
     "Jul",
     "Aug",
     "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
 
   return (
@@ -220,7 +235,7 @@ const RevenueChart: React.FC = () => {
       }}
     >
       <CardContent sx={{ p: 3 }}>
-        <Box
+         <Box
           sx={{
             display: "flex",
             alignItems: "center",
@@ -239,8 +254,10 @@ const RevenueChart: React.FC = () => {
                 : COLORS.TEXT.PRIMARY_LIGHT,
             }}
           >
-            {t("revenueCharts")}
+            {t("bookingsCharts")}
           </Typography>
+          </Box>
+          {/*
           <Box sx={{ display: "flex", gap: 2 }}>
             <FormControl size="small" sx={{ minWidth: 100 }}>
               <Select
@@ -285,9 +302,9 @@ const RevenueChart: React.FC = () => {
               </Select>
             </FormControl>
           </Box>
-        </Box>
+        </Box> */}
 
-        <Box sx={{ mb: 2 }}>
+        {/* <Box sx={{ mb: 2 }}>
           <Typography
             variant="body2"
             sx={{
@@ -299,10 +316,10 @@ const RevenueChart: React.FC = () => {
           >
             ₹710 {t("revenueEarnedIn")} Sep
           </Typography>
-        </Box>
+        </Box> */}
 
         <LineChart
-          data={monthlyData}
+          data={chartData?.data || []}
           labels={monthlyLabels}
           isDark={isDark}
         />

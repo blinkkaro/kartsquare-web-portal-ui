@@ -561,7 +561,16 @@ export type TranslationKey =
   | "multipleCategories"
   | "multipleCategoriesDesc"
   | "stayTuned"
-  | "storeStayTunedDescription";
+  | "storeStayTunedDescription"
+  | "totalServices"
+  | "totalEvents"
+  | "totalActiveServices"
+  | "totalPendingBookings"
+  | "totalCompletedBookings"
+  | "totalBookings"
+  | "bookingsCharts"
+  | "latestReviews"
+  ;
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

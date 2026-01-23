@@ -10,6 +10,7 @@ import {
   Button,
   Chip,
   IconButton,
+  Avatar,
 } from "@mui/material";
 import {
   ArrowForward,
@@ -19,56 +20,32 @@ import {
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useRouter } from "next/navigation";
+import { UserBooking } from "@/services/booking/bookingInterface";
+import dayjs from "dayjs";
 
-interface Booking {
-  id: string;
-  serviceName: string;
-  date: string;
-  time: string;
-  paymentStatus: string;
-  price: string;
-  image?: string;
+interface UpcomingBookingsProps {
+  bookings: UserBooking[];
 }
 
-const UpcomingBookings: React.FC = () => {
+const UpcomingBookings: React.FC<UpcomingBookingsProps> = ({ bookings = [] }) => {
   const theme = useTheme();
   const { t } = useTranslate();
   const router = useRouter();
   const isDark = theme.palette.mode === "dark";
 
-  // Mock data - will be replaced with API data
-  const bookings: Booking[] = [
-    {
-      id: "1254AB78ASDE235",
-      serviceName: t("haircutAyurvedaSpa"),
-      date: "Sep 18, 2023",
-      time: "9:00am - 18:00pm",
-      paymentStatus: t("fullPaid"),
-      price: "₹50.00",
-    },
-    {
-      id: "1254AB78ASDE236",
-      serviceName: t("haircutAyurvedaSpa"),
-      date: "Sep 18, 2023",
-      time: "9:00am - 18:00pm",
-      paymentStatus: t("fullPaid"),
-      price: "₹50.00",
-    },
-  ];
-
   return (
-    <Card
-      sx={{
-        borderRadius: "12px",
-        bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE,
-        border: `1px solid ${
-          isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
-        }`,
-        boxShadow: isDark
-          ? "0px 2px 8px rgba(0, 0, 0, 0.2)"
-          : "0px 2px 8px rgba(0, 0, 0, 0.05)",
-      }}
-    >
+      <Card
+        sx={{
+          borderRadius: "12px",
+          bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE,
+          border: `1px solid ${
+            isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
+          }`,
+          boxShadow: isDark
+            ? "0px 2px 8px rgba(0, 0, 0, 0.2)"
+            : "0px 2px 8px rgba(0, 0, 0, 0.05)",
+        }}
+      >
       <CardContent sx={{ p: 2.5 }}>
         <Box
           sx={{
@@ -106,9 +83,14 @@ const UpcomingBookings: React.FC = () => {
         </Box>
 
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {bookings.map((booking, index) => (
+          {bookings.length === 0 ? (
+             <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
+               No upcoming bookings.
+             </Typography>
+          ) : (
+             bookings.map((booking, index) => (
             <Box
-              key={index}
+              key={booking.booking_id || index}
               sx={{
                 p: 2,
                 borderRadius: "12px",
@@ -136,21 +118,30 @@ const UpcomingBookings: React.FC = () => {
                   gap: 2,
                 }}
               >
-                <Box
-                  sx={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: "8px",
-                    bgcolor: COLORS.PRIMARY_PURPLE,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: COLORS.WHITE,
-                    fontSize: "20px",
-                  }}
-                >
-                  ✂️
-                </Box>
+                {booking.service_images && booking.service_images.length > 0 ? (
+                   <Avatar 
+                     src={booking.service_images[0]} 
+                     variant="rounded" 
+                     sx={{ width: 48, height: 48 }}
+                   />
+                ) : (
+                    <Box
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: "8px",
+                        bgcolor: COLORS.PRIMARY_PURPLE,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: COLORS.WHITE,
+                        fontSize: "20px",
+                      }}
+                    >
+                      ✂️
+                    </Box>
+                )}
+                
                 <Box sx={{ flex: 1, minWidth: 0 }}>
                   <Typography
                     variant="caption"
@@ -163,7 +154,7 @@ const UpcomingBookings: React.FC = () => {
                       mb: 0.5,
                     }}
                   >
-                    {booking.id}
+                    #{booking.booking_id.substring(0, 8)}...
                   </Typography>
                   <Typography
                     variant="body2"
@@ -175,7 +166,7 @@ const UpcomingBookings: React.FC = () => {
                       mb: 1,
                     }}
                   >
-                    {booking.serviceName}
+                    {booking.service_name}
                   </Typography>
                   <Typography
                     variant="caption"
@@ -188,7 +179,7 @@ const UpcomingBookings: React.FC = () => {
                       mb: 1,
                     }}
                   >
-                    {booking.date}, {booking.time}
+                    {booking.booking_at ? dayjs(booking.booking_at).format("MMM D, YYYY @ h:mma") : "TBD"}
                   </Typography>
                   <Box
                     sx={{
@@ -200,10 +191,12 @@ const UpcomingBookings: React.FC = () => {
                     }}
                   >
                     <Chip
-                      label={booking.paymentStatus}
+                      label={booking.status}
                       size="small"
                       sx={{
-                        bgcolor: COLORS.SUCCESS_GREEN,
+                        bgcolor: booking.status === "CONFIRMED" ? COLORS.SUCCESS_GREEN : 
+                                 booking.status === "PENDING" ? "#EAB308" : // Yellow-500
+                                 "#9CA3AF", // Gray-400
                         color: COLORS.WHITE,
                         fontSize: "0.7rem",
                         height: "20px",
@@ -216,7 +209,7 @@ const UpcomingBookings: React.FC = () => {
                         color: COLORS.PRIMARY_PURPLE,
                       }}
                     >
-                      {booking.price}
+                      {booking.currency} {booking.service_price}
                     </Typography>
                   </Box>
                   <Box
@@ -272,12 +265,13 @@ const UpcomingBookings: React.FC = () => {
                       ? COLORS.TEXT.SECONDARY_DARK
                       : COLORS.TEXT.SECONDARY_LIGHT,
                   }}
+                  onClick={() => router.push(`/spr/bookings/${booking.booking_id}`)}
                 >
                   <ArrowForward fontSize="small" />
                 </IconButton>
               </Box>
             </Box>
-          ))}
+          )))}
         </Box>
       </CardContent>
     </Card>
