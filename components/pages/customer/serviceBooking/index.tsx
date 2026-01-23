@@ -22,12 +22,12 @@ import { useParams, useRouter } from "next/navigation";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import Nav from "../../../common/Nav";
 import { COLORS } from "../../../../constants/colors";
 import ImageUpload from "../../../ImageUpload";
 import { english } from "../../../../features/i18n/en";
 import { useBookingData } from "./useBookingData";
 import { useBookingForm } from "./useBookingForm";
+import MainLayout from "@/app/mainLayout";
 
 const CustomerServiceBooking = () => {
     const params = useParams();
@@ -77,9 +77,8 @@ const CustomerServiceBooking = () => {
 
     if (loading) {
         return (
-            <>
-                <Nav />
-                <Box
+            <MainLayout>
+                 <Box
                     sx={{
                         display: "flex",
                         justifyContent: "center",
@@ -90,14 +89,13 @@ const CustomerServiceBooking = () => {
                 >
                     <CircularProgress />
                 </Box>
-            </>
+            </MainLayout>
         );
     }
 
     if (!service) {
         return (
-            <>
-                <Nav />
+            <MainLayout>
                 <Box
                     sx={{
                         display: "flex",
@@ -109,13 +107,12 @@ const CustomerServiceBooking = () => {
                 >
                     <Typography variant="h6">{english.service_not_found}</Typography>
                 </Box>
-            </>
+            </MainLayout>
         );
     }
 
     return (
-        <>
-            <Nav />
+        <MainLayout>
             <Box
                 sx={{
                     bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
@@ -543,7 +540,7 @@ const CustomerServiceBooking = () => {
                     </Box>
                 </DialogContent>
             </Dialog>
-        </>
+        </MainLayout>
     );
 };
 

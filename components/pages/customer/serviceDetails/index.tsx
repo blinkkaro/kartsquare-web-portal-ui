@@ -29,6 +29,7 @@ import CustomerServiceActions from "./CustomerServiceActions";
 import CustomerServiceDetailsGrid from "./CustomerServiceDetailsGrid";
 import DescriptionDialog from "../../provider/serviceDetails/DescriptionDialog";
 import ReviewsSection from "../../provider/serviceDetails/ReviewsSection";
+import MainLayout from "@/app/mainLayout";
 
 const CustomerServiceDetails = () => {
     const params = useParams();
@@ -104,9 +105,8 @@ const CustomerServiceDetails = () => {
 
     if (loading) {
         return (
-            <>
-                <Nav />
-                <Box
+           <MainLayout>
+            <Box
                     sx={{
                         display: "flex",
                         justifyContent: "center",
@@ -119,15 +119,14 @@ const CustomerServiceDetails = () => {
                 >
                     <CircularProgress />
                 </Box>
-            </>
+           </MainLayout>
         );
     }
 
     if (!service) {
         return (
-            <>
-                <Nav />
-                <Box
+            <MainLayout >
+                 <Box
                     sx={{
                         display: "flex",
                         justifyContent: "center",
@@ -140,7 +139,7 @@ const CustomerServiceDetails = () => {
                 >
                     <Typography variant="h6">{english.service_not_found}</Typography>
                 </Box>
-            </>
+            </MainLayout>
         );
     }
 
@@ -152,9 +151,8 @@ const CustomerServiceDetails = () => {
             ];
 
     return (
-        <>
-            <Nav />
-            <Box
+       <MainLayout>
+          <Box
                 sx={{
                     bgcolor: isDark
                         ? COLORS.BACKGROUND.PRIMARY_DARK
@@ -344,7 +342,7 @@ const CustomerServiceDetails = () => {
                 onClose={() => setDescriptionDrawerOpen(false)}
                 description={service.service_desc || ""}
             />
-        </>
+       </MainLayout>
     );
 };
 
