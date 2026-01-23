@@ -1,7 +1,14 @@
-import React from "react";
-import { Box, Card, Typography, useTheme, CardMedia } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box,
+  Card,
+  Typography,
+  useTheme,
+  CardMedia,
+  IconButton,
+} from "@mui/material";
 import { COLORS } from "@/constants/colors";
-import Link from "next/link";
+// import Link from "next/link";
 import { Star } from "@mui/icons-material";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useTopSuggestions } from "@/hooks/useTopSuggestions";
@@ -9,23 +16,31 @@ import {
   TopProvider,
   TopService,
 } from "@/services/topSuppliers/topSupplires.interfaces";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import { openDrawer } from "@/features/ui/profileDrawerSlice";
+import RightDrawer from "@/components/common/RightDrawer";
+import TopRankedItem from "./TopRankedItem";
 
 interface SectionProps {
   title: string;
   items: TopService[] | TopProvider[];
+  onSeeAll: () => void;
 }
 
-const SuggestionSection = ({ title, items }: SectionProps) => {
+const SuggestionSection = ({ title, items, onSeeAll }: SectionProps) => {
   const theme = useTheme();
   const { t } = useTranslate();
-  const dis
+  const dispatch = useDispatch();
+  const router = useRouter();
 
-  const handleOnCardClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (items.typeof === "TopProvider") {
-      set
+  const handleOnCardClick = (item: TopService | TopProvider) => {
+    if ("profile_pic" in item) {
+      dispatch(openDrawer({ userId: item.id }));
+    } else {
+      router.push(`/services/${item.id}`);
     }
-  }
+  };
 
   return (
     <Card
@@ -38,8 +53,6 @@ const SuggestionSection = ({ title, items }: SectionProps) => {
             ? COLORS.BACKGROUND.PRIMARY_DARK
             : COLORS.BACKGROUND.PRIMARY_LIGHT,
       }}
-      onClick={(e) => { e.stopPropagation(); }}
-
     >
       <Box
         sx={{
@@ -64,8 +77,6 @@ const SuggestionSection = ({ title, items }: SectionProps) => {
         </Typography>
         <Typography
           variant="caption"
-          component={Link}
-          href="#"
           sx={{
             color:
               theme.palette.mode === "dark"
@@ -77,6 +88,7 @@ const SuggestionSection = ({ title, items }: SectionProps) => {
             cursor: "pointer",
             textTransform: "uppercase",
           }}
+          onClick={onSeeAll}
         >
           {t("seeall")}
         </Typography>
@@ -92,6 +104,10 @@ const SuggestionSection = ({ title, items }: SectionProps) => {
               alignItems: "center",
               width: "32%", // approx 1/3
               overflow: "hidden",
+              cursor: "pointer",
+            }}
+            onClick={(e) => {
+              handleOnCardClick(item);
             }}
           >
             <Box
@@ -195,8 +211,7 @@ const SuggestionSection = ({ title, items }: SectionProps) => {
                 overflow: "hidden",
                 textOverflow: "ellipsis",
               }}
-            >
-            </Typography>
+            ></Typography>
             {"description" in item && item.description && (
               <Typography
                 sx={{
@@ -208,8 +223,9 @@ const SuggestionSection = ({ title, items }: SectionProps) => {
                   textAlign: "center",
                   mt: 0.2,
                 }}
-              > 
-                {item.description.slice(0, 30)}{item.description.length > 30 ? "..." : ""}
+              >
+                {item.description.slice(0, 30)}
+                {item.description.length > 30 ? "..." : ""}
               </Typography>
             )}
           </Box>
@@ -220,9 +236,26 @@ const SuggestionSection = ({ title, items }: SectionProps) => {
 };
 
 const TopSuggestions = () => {
-  const { provider, servicer, isLoading } = useTopSuggestions("3");
+  const { provider, servicer, isLoading } = useTopSuggestions("10");
   const { t } = useTranslate();
   const theme = useTheme();
+
+  // Drawer state
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerType, setDrawerType] = useState<"provider" | "service" | null>(
+    null,
+  );
+
+  // Handler for See All
+  const handleSeeAll = (type: "provider" | "service") => {
+    setDrawerType(type);
+    setDrawerOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
+    setDrawerType(null);
+  };
 
   if (isLoading) {
     return (
@@ -235,7 +268,7 @@ const TopSuggestions = () => {
             theme.palette.mode === "dark"
               ? COLORS.BACKGROUND.PRIMARY_DARK
               : COLORS.BACKGROUND.PRIMARY_LIGHT,
-          height: "5rem"
+          height: "5rem",
         }}
       >
         {t("loading")}
@@ -262,15 +295,62 @@ const TopSuggestions = () => {
   }
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      {provider && (
-        <SuggestionSection title={t("topProviders")} items={provider || []} />
-      )}
-      {servicer && (
-        <SuggestionSection title={t("topServices")} items={servicer || []} />
-      )}
-      {/* <SuggestionSection title="Top Brands" items={TOP_BRANDS} /> */}
-    </Box>
+    <>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+        {provider && (
+          <SuggestionSection
+            title={t("topProviders")}
+            items={provider || []}
+            onSeeAll={() => handleSeeAll("provider")}
+          />
+        )}
+        {servicer && (
+          <SuggestionSection
+            title={t("topServices")}
+            items={servicer || []}
+            onSeeAll={() => handleSeeAll("service")}
+          />
+        )}
+      </Box>
+      <RightDrawer
+        open={drawerOpen}
+        onClose={handleDrawerClose}
+        title={drawerType === "provider" ? t("topProviders") : t("topServices")}
+        width={500}
+      >
+        <Box sx={{ p: 2 }}>
+          {drawerType === "provider" &&
+            provider &&
+            [...provider]
+              .sort((a, b) => b.rating - a.rating)
+              .map((item, index) => (
+                <TopRankedItem
+                  key={item.id}
+                  rank={index + 1}
+                  image={item.profile_pic}
+                  name={`${item.first_name} ${item.last_name}`}
+                  rating={item.rating}
+                  bookings={parseInt(item.total_bookings)}
+                  desc={`${item.city}, ${item.country}`}
+                />
+              ))}
+          {drawerType === "service" &&
+            servicer &&
+            [...servicer]
+              .sort((a, b) => b.rating - a.rating)
+              .map((item, index) => (
+                <TopRankedItem
+                  key={item.id}
+                  rank={index + 1}
+                  image={item.image_urls[0] || ""}
+                  name={item.name}
+                  rating={item.rating}
+                  desc={item.description}
+                />
+              ))}
+        </Box>
+      </RightDrawer>
+    </>
   );
 };
 
