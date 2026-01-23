@@ -10,27 +10,17 @@ import {
 import { COLORS } from "@/constants/colors";
 import Link from "next/link";
 import { useTranslate } from "@/hooks/useTranslate";
+import { useRouter } from "next/navigation";
+import router from "next/router";
+import { blogs } from "@/data/blogs";
 
 interface BlogData {
-  id: number;
+  id: string;
   image: string;
   date: string;
   title: string;
   description: string;
 }
-
-// Dummy blog data
-const DUMMY_BLOGS: BlogData[] = [
-  {
-    id: 1,
-    image:
-      "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop",
-    date: "Sep 28, 2024",
-    title: "The Ultimate Guide to Fall Fashion Trends",
-    description:
-      "Discover the top color palettes and layering techniques defining this season's wardrobe essentials.",
-  },
-];
 
 const BlogCard = ({ blog }: { blog: BlogData }) => {
   const theme = useTheme();
@@ -126,7 +116,7 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
           {blog.description}
         </Typography>
         <Link
-          href={`/blog/${blog.id}`}
+          href={`/blogs/${blog.id}`}
           passHref
           style={{ textDecoration: "none" }}
         >
@@ -155,6 +145,7 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
 const Blogs = () => {
   const theme = useTheme();
   const { t } = useTranslate();
+  const router = useRouter();
 
   return (
     <Box
@@ -186,14 +177,24 @@ const Blogs = () => {
 
       {/* Blog Cards */}
       <Box>
-        {DUMMY_BLOGS.map((blog) => (
-          <BlogCard key={blog.id} blog={blog} />
+        {blogs.slice(0, 2).map((blog) => (
+          <BlogCard
+            key={blog.id}
+            blog={{
+              id: blog.id,
+              image: blog.coverImage,
+              date: blog.date,
+              title: blog.title,
+              description: blog.description,
+            }}
+          />
         ))}
       </Box>
 
       {/* See All Button */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
         <Button
+          onClick={() => router.push("/blogs")}
           variant="outlined"
           sx={{
             borderRadius: 20,

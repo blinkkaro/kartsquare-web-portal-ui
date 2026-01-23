@@ -132,7 +132,7 @@ const PostFeedGrid: React.FC<PostFeedGridProps> = ({
   return (
     <Box
       sx={{
-        p: 3,
+        p: { xs: 1, md: 3 },
         "&::-webkit-scrollbar": { display: "none" },
         scrollbarWidth: "none",
         msOverflowStyle: "none",

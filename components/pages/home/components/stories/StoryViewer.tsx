@@ -21,8 +21,9 @@ import { Close, HeatPumpRounded, MoreVert, Send } from "@mui/icons-material";
 import { useViewStory, useDeleteStory } from "@/hooks/useStories";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import { RootState } from "@/store/store";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { secureStorage } from "@/helper/SecureStorage";
+import { openDrawer } from "@/features/ui/profileDrawerSlice";
 
 interface StoryViewerProps {
   storiesList: StoriesList[];
@@ -42,6 +43,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
+  const dispatch = useDispatch();
   const { mutate: viewStory } = useViewStory();
   const { mutate: deleteStory } = useDeleteStory();
   const profile = secureStorage.getItem("user_details");
@@ -86,7 +88,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
   useEffect(() => {
     if (currentUserIndex === initialUserIndex) {
       const firstUnseenIndex = currentUser.stories.findIndex(
-        (s) => !s.is_visited
+        (s) => !s.is_visited,
       );
       if (firstUnseenIndex !== -1) {
         setCurrentStoryIndex(firstUnseenIndex);
@@ -119,7 +121,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
         setCurrentUserIndex(nextUserIndex);
         const nextUser = storiesList[nextUserIndex];
         const firstUnseenIndex = nextUser.stories.findIndex(
-          (s) => !s.is_visited
+          (s) => !s.is_visited,
         );
         setCurrentStoryIndex(firstUnseenIndex !== -1 ? firstUnseenIndex : 0);
       } else {
@@ -265,7 +267,15 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 1, cursor: "pointer" }}
+                onClick={
+                  isOwnStory
+                    ? () =>
+                        dispatch(openDrawer({ userId: currentUser.user_id }))
+                    : undefined
+                }
+              >
                 <Avatar
                   src={currentUser.user_profile_image}
                   sx={{ width: 32, height: 32 }}
@@ -386,7 +396,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
                 }}
               >
                 <Typography sx={{ color: "rgba(255,255,255,0.7)" }}>
-                  Send a message...
+                  {t("sendMessage")}
                 </Typography>
               </Box>
               <IconButton sx={{ color: "#fff" }}>

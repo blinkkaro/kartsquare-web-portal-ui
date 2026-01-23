@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import {
   Avatar,
   Box,
@@ -24,6 +26,7 @@ const PostCard = ({ post }: { post: Posts }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const { t } = useTranslate();
+  const dispatch = useDispatch();
 
   const likeMutation = useLikePost(post.id);
 
@@ -52,7 +55,10 @@ const PostCard = ({ post }: { post: Posts }) => {
             p: 2,
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box
+            sx={{ display: "flex", alignItems: "center", gap: 1, cursor: "pointer" }}
+            onClick={() => dispatch(openDrawer({ userId: post.user_id }))}
+          >
             <Avatar
               sx={{
                 cursor: "pointer",

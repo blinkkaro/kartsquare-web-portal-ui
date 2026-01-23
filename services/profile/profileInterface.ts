@@ -1,4 +1,5 @@
 import { Posts } from "../post/postInterfaces";
+import { Service } from "../serviceList/listInteraface";
 
 export enum service_location_type {
   USER_LOCATION = "USER_LOCATION",
@@ -11,44 +12,6 @@ export enum service_status_type {
   PENDING = "PENDING",
   APPROVED = "APPROVED",
 }
-export interface Service {
-  id: any;
-  service_id: string;
-  provider_id: string;
-  category_id: string;
-  sub_category_id?: string | undefined;
-  service_name: string;
-  service_desc: string | null;
-  image_urls: string[];
-  is_price_required: boolean;
-  price: number | null;
-  currency: string;
-  service_at_location: service_location_type;
-  visiting_charge: number | null;
-  service_provider_address_id: string;
-  service_radius: number;
-  has_service_duration: boolean;
-  service_duration: number | undefined;
-  have_slots: boolean;
-  avg_service_rating: number;
-  status: service_status_type;
-  created_at: Date;
-  updated_at: Date;
-  deleted_at: Date | null;
-  is_deleted: boolean;
-  review_count: number;
-
-  // Joined fields
-  provider_name: string;
-  category_name: string;
-  sub_category_name: string | null;
-  service_provider_address: string | null;
-  provider_image_url: string | null;
-  is_following: boolean;
-  service_provider_latitude: number;
-  service_provider_longitude: number;
-}
-
 export interface profileInterface {
   id: string;
   email: string;

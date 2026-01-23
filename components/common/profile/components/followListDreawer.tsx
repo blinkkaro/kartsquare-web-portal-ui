@@ -2,15 +2,12 @@
 
 import React, { useEffect, useRef } from "react";
 import {
-  Drawer,
   Box,
   Typography,
-  IconButton,
   Avatar,
   CircularProgress,
   useTheme,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import {

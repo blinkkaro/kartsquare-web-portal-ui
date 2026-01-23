@@ -353,6 +353,18 @@ export type TranslationKey =
   | "search_services_placeholder"
   | "no_services_found"
   | "try_different_search"
+  | "sendMessage"
+  | "posts"
+  | "failedToLoadProfile"
+  | "chatTooltip"
+  | "locationTooltip"
+  | "bookmarkTooltip"
+  | "closeDrawer"
+  | "failedToLoadPosts"
+  | "failedToLoadServices"
+  | "noPostsFound"
+  | "noServicesFound"
+  | "newServiceProvider"
   | "discoverServices"
   | "plumber"
   | "electrician"
@@ -370,7 +382,14 @@ export type TranslationKey =
   | "loading"
   | "topProviders"
   | "topServices"
-  | "noSuggestionsAvailable";
+  | "noSuggestionsAvailable"
+  | "general"
+  | "cleaning"
+  | "repairs"
+  | "education"
+  | "wellness"
+  | "all"
+  | "noBlogsFound";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
