@@ -46,5 +46,8 @@ export interface UserBooking {
     provider_last_name: string;
     category_name: string;
     provider_profile_pic?: string;
+    customer_first_name?: string;
+    customer_last_name?: string;
+    customer_profile_pic?: string;
     service_price: number;
 }

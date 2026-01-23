@@ -1,3 +1,4 @@
+"use client";
 import AuthWrapper from "@/components/auth/authWrapper";
 import Title from "@/components/auth/title";
 import { useTranslate } from "@/hooks/useTranslate";
