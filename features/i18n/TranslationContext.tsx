@@ -389,6 +389,7 @@ export type TranslationKey =
   | "searchResults"
   | "searchResultsFor"
   | "noResultsFound"
+  | "tryDifferentSearch"
   | "enterSearchQuery"
   | "users"
   | "seeAllResults"

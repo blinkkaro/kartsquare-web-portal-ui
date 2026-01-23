@@ -404,6 +404,7 @@ export const english = {
   searchResults: "Search Results",
   searchResultsFor: "Search results for",
   noResultsFound: "No results found for",
+  tryDifferentSearch: "Try adjusting your search or filters",
   enterSearchQuery: "Enter a search query to find users and services",
   users: "Users",
   seeAllResults: "See all results for",

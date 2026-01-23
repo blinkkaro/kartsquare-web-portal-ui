@@ -19,7 +19,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { searchService } from "@/services/search/searchService";
-import { SearchUser, SearchService as SearchServiceType } from "@/services/search/searchInterface";
+import { SearchUser, SearchService as SearchServiceType, SearchService } from "@/services/search/searchInterface";
 import ServiceCard from "@/components/ServiceCard";
 import { Service } from "@/services/serviceList/listInteraface";
 import { useDispatch } from "react-redux";
@@ -114,7 +114,7 @@ const SearchResultsView: React.FC = () => {
     dispatch(openDrawer({ userId }));
   };
 
-  const convertToServiceCard = (service: SearchServiceType): Service => {
+  const convertToServiceCard = (service:SearchService) : any => {
     return {
       service_id: service.id,
       service_name: service.name,
@@ -140,7 +140,7 @@ const SearchResultsView: React.FC = () => {
       is_active: true,
       created_at: "",
       updated_at: "",
-    } as Service;
+    };
   };
 
   if (loading && users.length === 0 && services.length === 0) {
