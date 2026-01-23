@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import {
     Box,
     Container,
@@ -11,11 +11,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Edit, Delete, Share } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import ServiceImageCarousel from "../../../ServiceImageCarousel";
-import { serviceDetailsService } from "../../../../services/serviceDetails/serviceDetailsService";
-import { reviewService } from "../../../../services/reviews/reviewService";
-import { ServiceDetails } from "../../../../services/serviceDetails/serviceDetailsInterface";
-import { Service, ServiceStatus } from "../../../../services/serviceList/listInteraface";
-import { Review } from "../../../../services/reviews/reviewInterface";
+import { ServiceStatus } from "../../../../services/serviceList/listInteraface";
 import { COLORS } from "../../../../constants/colors";
 import AddServiceDrawer from "../addService";
 import { serviceListService } from "../../../../services/serviceList/serviceListService";
@@ -31,6 +27,9 @@ import DescriptionDrawer from "./DescriptionDialog";
 import DeleteDialog from "./DeleteDialog";
 import AdvancePayInfo from "./AdvancePayInfo";
 import MainLayout from "@/app/mainLayout";
+import { useServiceDetails } from "@/hooks/useServiceDetails";
+import { useServiceReviews } from "@/hooks/useReviews";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ProviderServiceDetails = () => {
     const params = useParams();
@@ -39,67 +38,40 @@ const ProviderServiceDetails = () => {
     const theme = useTheme();
     const { t } = useTranslate();
     const isDark = theme.palette.mode === "dark";
+    const queryClient = useQueryClient();
 
     // State
-    const [service, setService] = useState<ServiceDetails | null>(null);
-    const [reviews, setReviews] = useState<Review[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [reviewsLoading, setReviewsLoading] = useState(true);
-    const [reviewPage, setReviewPage] = useState(1);
-    const [totalReviews, setTotalReviews] = useState(0);
     const reviewsPerPage = 5;
     const [descriptionDrawerOpen, setDescriptionDrawerOpen] = useState(false);
     const [editDrawerOpen, setEditDrawerOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [deleting, setDeleting] = useState(false);
 
-    // Fetch service details
-    useEffect(() => {
-        const fetchServiceDetails = async () => {
-            try {
-                setLoading(true);
-                const data = await serviceDetailsService.getServiceById(serviceId);
-                setService(data);
-            } catch (error) {
-                console.error("Failed to fetch service details:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    // Use TanStack Query hooks - prevents duplicate API calls
+    const {
+        data: service,
+        isLoading: loading,
+        error: serviceError,
+    } = useServiceDetails(serviceId);
 
-        if (serviceId) {
-            fetchServiceDetails();
-        }
-    }, [serviceId]);
+    const {
+        data: reviewsData,
+        isLoading: reviewsLoading,
+        fetchNextPage,
+        hasNextPage,
+    } = useServiceReviews(serviceId, reviewsPerPage);
 
-    // Fetch reviews
-    useEffect(() => {
-        const fetchReviews = async () => {
-            try {
-                setReviewsLoading(true);
-                const data = await reviewService.getReviews(
-                    "SERVICE",
-                    serviceId,
-                    1,
-                    reviewPage * reviewsPerPage,
-                );
-                setReviews(data.reviews);
-                setTotalReviews(data.meta.total);
-            } catch (error) {
-                console.error("Failed to fetch reviews:", error);
-                setReviews([]);
-            } finally {
-                setReviewsLoading(false);
-            }
-        };
+    // Flatten reviews from all pages
+    const reviews = useMemo(() => {
+        return reviewsData?.pages.flatMap((page) => page.reviews) || [];
+    }, [reviewsData]);
 
-        if (serviceId) {
-            fetchReviews();
-        }
-    }, [serviceId, reviewPage]);
+    const totalReviews = reviewsData?.pages[0]?.meta.total || 0;
 
     const handleLoadMore = () => {
-        setReviewPage((prev) => prev + 1);
+        if (hasNextPage) {
+            fetchNextPage();
+        }
     };
 
     const handleEdit = () => {
@@ -110,6 +82,8 @@ const ProviderServiceDetails = () => {
         try {
             setDeleting(true);
             await serviceListService.deleteService(serviceId);
+            // Invalidate queries after deletion
+            queryClient.invalidateQueries({ queryKey: ["provider-services-list"] });
             router.push('/spr/servicesList');
         } catch (error) {
             console.error("Failed to delete service:", error);
@@ -120,16 +94,8 @@ const ProviderServiceDetails = () => {
     };
 
     const handleEditSuccess = () => {
-        // Refresh service details after edit
-        const fetchServiceDetails = async () => {
-            try {
-                const data = await serviceDetailsService.getServiceById(serviceId);
-                setService(data);
-            } catch (error) {
-                console.error("Failed to refresh service details:", error);
-            }
-        };
-        fetchServiceDetails();
+        // Invalidate and refetch service details after edit
+        queryClient.invalidateQueries({ queryKey: ["service-details", serviceId] });
     };
 
     if (loading) {
@@ -255,7 +221,7 @@ const ProviderServiceDetails = () => {
                                 avgRating={service.avg_service_rating}
                                 reviewsLoading={reviewsLoading}
                                 onLoadMore={handleLoadMore}
-                                showLoadMore={reviews.length < totalReviews}
+                                showLoadMore={hasNextPage || false}
                             />
                         </Box>
 

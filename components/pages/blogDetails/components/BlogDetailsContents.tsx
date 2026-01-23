@@ -1,8 +1,11 @@
-import { Container, Typography, Box, Avatar } from "@mui/material";
+import { COLORS } from "@/constants/colors";
+import { Container, Typography, Box, Avatar, useTheme } from "@mui/material";
 
 const BlogDetailsContent: React.FC<{ blog: any }> = ({ blog }) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
+    <Container maxWidth="md" sx={{ py: 4 , backgroundColor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT }}>
       {/* Hero Section */}
       <Box sx={{ position: "relative", mb: 4 }}>
         <img

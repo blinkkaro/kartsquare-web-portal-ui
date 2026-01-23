@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Box, Typography, Button } from "@mui/material";
+import { Avatar, Box, Typography, Button, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import { providerProfileInterface } from "@/services/profile/profileInterface";
 import ProfileStats from "./ProfileStats";
@@ -9,6 +9,8 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
+
+  const theme = useTheme();
   return (
     <Box
       sx={{
@@ -35,7 +37,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
           variant="h6"
           sx={{
             fontWeight: "bold",
-            color: COLORS.TEXT.PRIMARY_LIGHT,
+            color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
             lineHeight: 1.2,
           }}
         >
@@ -43,11 +45,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
         </Typography>
         <Typography
           variant="body2"
-          sx={{ color: COLORS.TEXT.SECONDARY_LIGHT, mb: 1 }}
+          sx={{ color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT, mb: 1 }}
         >
           {/* Fallback for job title as it's not in the interface */}
           {profile.role.toString().replaceAll("_", " ")}
-        </Typography>
+        </Typography> 
       </Box>
 
       <ProfileStats profile={profile} />

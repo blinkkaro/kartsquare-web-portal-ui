@@ -29,7 +29,10 @@ class SearchService {
         false // Search doesn't require auth
       );
 
-      return response;
+      // The response interceptor unwraps ApiResponse.data at runtime,
+      // but TypeScript types it as ApiResponse<SearchApiResponse>
+      // Cast to SearchApiResponse since interceptor already unwraps it
+      return response as unknown as SearchApiResponse;
     } catch (error) {
       console.error("Search error:", error);
       return {

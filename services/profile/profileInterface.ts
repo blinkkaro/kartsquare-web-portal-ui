@@ -48,6 +48,7 @@ export interface providerServicesInterface {
 
 export interface providerProfileInterface {
   id: string;
+  username: string;
   email: string;
   first_name: string;
   last_name: string;

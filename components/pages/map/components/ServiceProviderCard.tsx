@@ -185,7 +185,7 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
                 mb: isSmall ? 0.5 : 1,
               }}
             >
-              {service.review_count > 0 ? (
+              {service?.review_count && service?.review_count > 0 ? (
                 <>
                   <Rating
                     value={service.avg_service_rating}

@@ -10,6 +10,7 @@ import ServicesSearchBar from "./ServicesSearchBar";
 import CategoryFilter from "./CategoryFilter";
 import ServiceGrid from "./ServiceGrid";
 import ServicesPagination from "./ServicesPagination";
+import { useCategories } from "@/hooks/useCategories";
 
 const ListOfServices = () => {
     const theme = useTheme();
@@ -17,9 +18,7 @@ const ListOfServices = () => {
 
     // State
     const [services, setServices] = useState<Service[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
-    const [categoriesLoading, setCategoriesLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [search, setSearch] = useState("");
     const [searchInput, setSearchInput] = useState("");
@@ -28,22 +27,8 @@ const ListOfServices = () => {
     const [total, setTotal] = useState(0);
     const limit = 12;
 
-    // Fetch categories on mount
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                setCategoriesLoading(true);
-                const data = await serviceListService.getCategories();
-                setCategories(data.filter(cat => !cat.is_deleted));
-            } catch (error) {
-                console.error("Failed to fetch categories:", error);
-            } finally {
-                setCategoriesLoading(false);
-            }
-        };
-
-        fetchCategories();
-    }, []);
+    // Use TanStack Query hook for categories
+    const { data: categories = [], isLoading: categoriesLoading } = useCategories();
 
     // Fetch services when filters change
     useEffect(() => {

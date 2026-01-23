@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
     Box,
     Container,
@@ -8,9 +8,7 @@ import {
     useTheme,
     Button,
 } from "@mui/material";
-import Nav from "../../../common/Nav";
-import { serviceListService } from "../../../../services/serviceList/serviceListService";
-import { Service, Category } from "../../../../services/serviceList/listInteraface";
+import { Service } from "../../../../services/serviceList/listInteraface";
 import { COLORS } from "../../../../constants/colors";
 import { getUserRole, UserRole } from "../../../../utils/auth";
 import AddServiceDrawer from "../addService";
@@ -20,78 +18,50 @@ import ProviderServicesSearchBar from "./ProviderServicesSearchBar";
 import ProviderCategoriesBar from "./ProviderCategoriesBar";
 import ProviderServicesGrid from "./ProviderServicesGrid";
 import MainLayout from "@/app/mainLayout";
+import { useCategories } from "@/hooks/useCategories";
+import { useProviderServicesList, useServicesList } from "@/hooks/useServicesList";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ProviderServicesList = () => {
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark";
+    const queryClient = useQueryClient();
 
     // Get user role
     const userRole = getUserRole();
 
     // State
-    const [services, setServices] = useState<Service[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [categoriesLoading, setCategoriesLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [search, setSearch] = useState("");
     const [searchInput, setSearchInput] = useState("");
     const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [total, setTotal] = useState(0);
     const limit = 12;
     const [addServiceDrawerOpen, setAddServiceDrawerOpen] = useState(false);
 
-    // Fetch categories on mount
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                setCategoriesLoading(true);
-                const data = await serviceListService.getCategories();
-                setCategories(data.filter(cat => !cat.is_deleted));
-            } catch (error) {
-                console.error("Failed to fetch categories:", error);
-            } finally {
-                setCategoriesLoading(false);
-            }
-        };
+    // Use TanStack Query hook for categories
+    const { data: categories = [], isLoading: categoriesLoading } = useCategories();
 
-        fetchCategories();
-    }, []);
+    // Use TanStack Query hooks for services - prevents duplicate calls
+    const isProvider = userRole === UserRole.SERVICE_PROVIDER;
+    
+    const providerServicesQuery = useProviderServicesList(search, isProvider);
+    const customerServicesQuery = useServicesList(
+        {
+            page,
+            limit,
+            ...(selectedCategory && { category_id: selectedCategory }),
+            ...(search && { search }),
+        },
+        !isProvider // Only enable for non-providers
+    );
 
-    // Fetch services when filters change
-    useEffect(() => {
-        const fetchServices = async () => {
-            try {
-                setLoading(true);
-                let data;
-                if (userRole === UserRole.SERVICE_PROVIDER) {
-                    data = await serviceListService.getProviderServices({
-                        search: search
-                    });
-                } else {
-                    const filters: any = {
-                        page,
-                        limit,
-                        ...(selectedCategory && { category_id: selectedCategory }),
-                        ...(search && { search }),
-                    };
-                    data = await serviceListService.getServices(filters);
-                }
+    // Determine which query to use based on role
+    const servicesQuery = isProvider ? providerServicesQuery : customerServicesQuery;
 
-                setServices(data.services);
-                setTotalPages(data.pagination.total_pages);
-                setTotal(data.pagination.total);
-            } catch (error) {
-                console.error("Failed to fetch services:", error);
-                setServices([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchServices();
-    }, [page, selectedCategory, search, userRole]);
+    const services = servicesQuery.data?.services || [];
+    const totalPages = servicesQuery.data?.pagination?.total_pages || 1;
+    const total = servicesQuery.data?.pagination?.total || 0;
+    const loading = servicesQuery.isLoading;
 
     const handleCategoryClick = (categoryId: string | null) => {
         setSelectedCategory(categoryId);
@@ -110,22 +80,9 @@ const ProviderServicesList = () => {
     };
 
     const handleServiceAdded = () => {
-        // Refresh services list after adding a new service
+        // Invalidate and refetch services list after adding a new service
         setPage(1);
-        const fetchServices = async () => {
-            try {
-                setLoading(true);
-                const data = await serviceListService.getProviderServices({ search });
-                setServices(data.services);
-                setTotalPages(data.pagination.total_pages);
-                setTotal(data.pagination.total);
-            } catch (error) {
-                console.error("Failed to fetch services:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchServices();
+        queryClient.invalidateQueries({ queryKey: ["provider-services-list"] });
     };
 
     return (

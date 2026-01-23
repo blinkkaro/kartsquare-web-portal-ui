@@ -24,6 +24,8 @@ function ProfileDrawer() {
   const { data: profile, isLoading, error } = useProviderProfile(userId || "");
   const [activeTab, setActiveTab] = useState("Posts");
 
+  console.log("profile",profile);
+  
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     // Logic to switch content below can be added here
@@ -32,6 +34,7 @@ function ProfileDrawer() {
   return (
     <ProfileDrawerWrapper
       open={isOpen}
+      profile={profile || undefined}
       onClose={() => dispatch(closeDrawer())}
       // onChatClick={() => {}}
       onLocationClick={() => {}}
