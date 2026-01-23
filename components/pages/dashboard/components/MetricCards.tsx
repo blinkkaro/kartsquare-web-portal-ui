@@ -11,21 +11,20 @@ import {
 } from "@mui/material";
 import {
   TrendingUp,
-  People,
-  AttachMoney,
-  Event,
-  ShoppingBag,
+  Group,
+  BookOnline,
   Inventory,
-  Message,
-  Handshake,
-  Store,
+  EventAvailable,
+  PendingActions,
+  AssignmentTurnedIn,
 } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
+import { ProviderDashboardResponse } from "@/services/providerDashboard/providerDashboard.interface";
 
 interface MetricCardProps {
   title: string;
-  value: string;
+  value: string | number;
   icon: React.ReactNode;
   isDark?: boolean;
   isHighlighted?: boolean;
@@ -174,7 +173,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
   );
 };
 
-const MetricCards: React.FC = () => {
+const MetricCards: React.FC<{ stats: ProviderDashboardResponse["stats"] }> = ({ stats }) => {
   const theme = useTheme();
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
@@ -182,31 +181,36 @@ const MetricCards: React.FC = () => {
   // Mock data - will be replaced with API data
   const metrics = [
     {
-      title: t("salesGrowth"),
-      value: "+2.05%",
-      icon: <TrendingUp sx={{ fontSize: 24 }} />,
+      title: t("totalBookings"),
+      value: stats.total_bookings,
+      icon: <BookOnline sx={{ fontSize: 24 }} />,
       isHighlighted: true,
     },
     {
       title: t("followers"),
-      value: "4086",
-      icon: <People sx={{ fontSize: 24 }} />,
+      value: stats.followers,
+      icon: <Group sx={{ fontSize: 24 }} />,
       isHighlighted: true,
     },
     {
-      title: t("totalEarnings"),
-      value: "₹10.5k",
-      icon: <AttachMoney sx={{ fontSize: 24 }} />,
-    },
-    {
-      title: t("totalActiveEvents"),
-      value: "05",
-      icon: <Event sx={{ fontSize: 24 }} />,
+      title: t("totalServices"),
+      value: stats.total_services,
+      icon: <Inventory sx={{ fontSize: 24 }} />,
     },
     {
       title: t("totalActiveServices"),
-      value: "469",
-      icon: <ShoppingBag sx={{ fontSize: 24 }} />,
+      value: stats.total_active_services,
+      icon: <EventAvailable sx={{ fontSize: 24 }} />,
+    },
+    {
+      title: t("totalPendingBookings"),
+      value: stats.total_pending_bookings,
+      icon: <PendingActions sx={{ fontSize: 24 }} />,
+    },
+    {
+      title: t("totalCompletedBookings"),
+      value: stats.total_completed_bookings,
+      icon: <AssignmentTurnedIn sx={{ fontSize: 24 }} />,
     },
   ];
 

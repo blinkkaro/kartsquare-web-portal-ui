@@ -415,11 +415,16 @@ export const english = {
   
   // Dashboard
   dashboard: "Dashboard",
+  totalBookings: "Total Bookings",
+  totalActiveEvents: "Total Active Events",
+  totalEvents: "Total Events",
+  totalActiveServices: "Active Services",
+  totalPendingBookings: "Pending Bookings",
+  totalCompletedBookings: "Completed Bookings",
+  totalServices: "Total Services",
   dashboardOverview: "Dashboard Overview",
   salesGrowth: "Sales Growth",
   totalEarnings: "Total Earnings",
-  totalActiveEvents: "Total Active Events",
-  totalActiveServices: "Total Active Services",
   pendingOrders: "Pending Orders",
   newMessages: "New Messages",
   totalCollaborations: "Total Collaborations",
@@ -441,6 +446,9 @@ export const english = {
   offline: "Offline",
   ultralipNourishingShine: "Ultralip - Nourishing shine",
   commissionRate: "Commission rate",
+  bookingsCharts: "Bookings Charts",
+  latestReviews: "Latest Reviews",
+  
   
   // Footer
   company: "Company",
