@@ -25,6 +25,7 @@ export interface profileInterface {
   role: string;
   profile_pic?: string;
   bio?: string;
+  username?: string;
   created_at: string;
   followers_count: number;
   following_count: number;
@@ -48,6 +49,7 @@ export interface providerServicesInterface {
 
 export interface providerProfileInterface {
   id: string;
+  username: string;
   email: string;
   first_name: string;
   last_name: string;

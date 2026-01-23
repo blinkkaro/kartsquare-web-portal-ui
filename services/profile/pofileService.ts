@@ -24,7 +24,8 @@ class ProfileService {
     first_name: string,
     last_name: string,
     bio?: string,
-    profile_pic?: File | string
+    profile_pic?: File | string,
+    username?: string
   ): Promise<profileInterface> {
     try {
       let pic = "";
@@ -44,6 +45,7 @@ class ProfileService {
           last_name,
           bio,
           profile_pic: pic,
+          ...(username && { username }),
         }
       );
       return response.data;

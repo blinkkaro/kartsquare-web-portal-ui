@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import {
     Box,
     Container,
@@ -10,18 +10,11 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import { Bookmark, Share } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
-import Nav from "../../../common/Nav";
 import ServiceImageCarousel from "../../../ServiceImageCarousel";
 import ProviderInfoCard from "../../../ProviderInfoCard";
-import ReviewCard from "../../../ReviewCard";
 import ServiceCard from "../../../ServiceCard";
-import { serviceDetailsService } from "../../../../services/serviceDetails/serviceDetailsService";
-import { reviewService } from "../../../../services/reviews/reviewService";
-import { ServiceDetails } from "../../../../services/serviceDetails/serviceDetailsInterface";
 import { Service } from "../../../../services/serviceList/listInteraface";
-import { Review } from "../../../../services/reviews/reviewInterface";
 import { COLORS } from "../../../../constants/colors";
-import { english } from "../../../../features/i18n/en";
 import CustomerServiceBreadcrumb from "./CustomerServiceBreadcrumb";
 import CustomerServiceHeader from "./CustomerServiceHeader";
 import CustomerServiceInfo from "./CustomerServiceInfo";
@@ -30,77 +23,58 @@ import CustomerServiceDetailsGrid from "./CustomerServiceDetailsGrid";
 import DescriptionDialog from "../../provider/serviceDetails/DescriptionDialog";
 import ReviewsSection from "../../provider/serviceDetails/ReviewsSection";
 import MainLayout from "@/app/mainLayout";
+import { useServiceDetails, useProviderServices } from "@/hooks/useServiceDetails";
+import { useServiceReviews } from "@/hooks/useReviews";
+import EmptyState from "@/components/common/EmptyState";
+import { useTranslate } from "@/hooks/useTranslate";
 
 const CustomerServiceDetails = () => {
     const params = useParams();
     const router = useRouter();
     const serviceId = params.id as string;
     const theme = useTheme();
+    const { t } = useTranslate();
     const isDark = theme.palette.mode === "dark";
 
-    const [service, setService] = useState<ServiceDetails | null>(null);
-    const [relatedServices, setRelatedServices] = useState<Service[]>([]);
-    const [reviews, setReviews] = useState<Review[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [reviewsLoading, setReviewsLoading] = useState(true);
-    const [reviewPage, setReviewPage] = useState(1);
-    const [totalReviews, setTotalReviews] = useState(0);
     const reviewsPerPage = 5;
     const [descriptionDrawerOpen, setDescriptionDrawerOpen] = useState(false);
 
-    useEffect(() => {
-        const fetchServiceDetails = async () => {
-            try {
-                setLoading(true);
-                const data = await serviceDetailsService.getServiceById(serviceId);
-                setService(data);
+    // Use TanStack Query hooks - prevents duplicate API calls
+    const {
+        data: service,
+        isLoading: loading,
+        error: serviceError,
+    } = useServiceDetails(serviceId);
 
-                if (data.provider_id) {
-                    const providerServices = await serviceDetailsService.getProviderServices(
-                        data.provider_id,
-                        10
-                    );
-                    setRelatedServices(providerServices.filter((s) => s.service_id !== serviceId));
-                }
-            } catch (error) {
-                console.error("Failed to fetch service details:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    // Fetch related services only if service has provider_id
+    const {
+        data: providerServices = [],
+        isLoading: relatedServicesLoading,
+    } = useProviderServices(service?.provider_id, 10, !!service?.provider_id);
 
-        if (serviceId) {
-            fetchServiceDetails();
-        }
-    }, [serviceId]);
+    // Filter out current service from related services
+    const relatedServices = useMemo(() => {
+        return providerServices.filter((s) => s.service_id !== serviceId);
+    }, [providerServices, serviceId]);
 
-    useEffect(() => {
-        const fetchReviews = async () => {
-            try {
-                setReviewsLoading(true);
-                const data = await reviewService.getReviews(
-                    "SERVICE",
-                    serviceId,
-                    1,
-                    reviewPage * reviewsPerPage
-                );
-                setReviews(data.reviews);
-                setTotalReviews(data.meta.total);
-            } catch (error) {
-                console.error("Failed to fetch reviews:", error);
-                setReviews([]);
-            } finally {
-                setReviewsLoading(false);
-            }
-        };
+    const {
+        data: reviewsData,
+        isLoading: reviewsLoading,
+        fetchNextPage,
+        hasNextPage,
+    } = useServiceReviews(serviceId, reviewsPerPage);
 
-        if (serviceId) {
-            fetchReviews();
-        }
-    }, [serviceId, reviewPage]);
+    // Flatten reviews from all pages
+    const reviews = useMemo(() => {
+        return reviewsData?.pages.flatMap((page) => page.reviews) || [];
+    }, [reviewsData]);
+
+    const totalReviews = reviewsData?.pages[0]?.meta.total || 0;
 
     const handleLoadMore = () => {
-        setReviewPage((prev) => prev + 1);
+        if (hasNextPage) {
+            fetchNextPage();
+        }
     };
 
     if (loading) {
@@ -123,24 +97,29 @@ const CustomerServiceDetails = () => {
         );
     }
 
-    if (!service) {
+    if (!loading && !service) {
         return (
-            <MainLayout >
-                 <Box
+            <MainLayout>
+                <Box
                     sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        minHeight: "100vh",
                         bgcolor: isDark
                             ? COLORS.BACKGROUND.PRIMARY_DARK
                             : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                        minHeight: "100vh",
                     }}
                 >
-                    <Typography variant="h6">{english.service_not_found}</Typography>
+                    <EmptyState
+                        titleKey="service_not_found"
+                        variant="notFound"
+                        minHeight="80vh"
+                    />
                 </Box>
             </MainLayout>
         );
+    }
+
+    if (!service) {
+        return null;
     }
 
     const images =
@@ -209,7 +188,7 @@ const CustomerServiceDetails = () => {
                                         color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                                     }}
                                 >
-                                    {english.service_location}
+                                    {t("service_location")}
                                 </Typography>
                                 <Typography
                                     variant="body2"
@@ -296,7 +275,7 @@ const CustomerServiceDetails = () => {
                                 avgRating={service.avg_service_rating || 0}
                                 reviewsLoading={reviewsLoading}
                                 onLoadMore={handleLoadMore}
-                                showLoadMore={reviews.length < totalReviews}
+                                showLoadMore={hasNextPage || false}
                             />
                         </Box>
 

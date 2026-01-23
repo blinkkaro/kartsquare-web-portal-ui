@@ -154,7 +154,7 @@ const BecomeServiceProviderView: React.FC = () => {
             fontSize: "1rem",
             fontWeight: 600,
             "&:hover": {
-              bgcolor: COLORS.PRIMARY_PURPLE_DARK,
+              bgcolor: COLORS.TEXT.PRIMARY_DARK
             },
           }}
         >
@@ -474,7 +474,7 @@ const BecomeServiceProviderView: React.FC = () => {
             fontSize: "1.125rem",
             fontWeight: 600,
             "&:hover": {
-              bgcolor: COLORS.PRIMARY_PURPLE_DARK,
+              bgcolor: COLORS.TEXT.PRIMARY_DARK,
             },
           }}
         >

@@ -1,8 +1,7 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { Box, Container, CircularProgress, useTheme } from "@mui/material";
 import { CalendarToday } from "@mui/icons-material";
-import { providerBookingService } from "../../../../services/booking/providerBookingService";
 import { UserBooking } from "../../../../services/booking/bookingInterface";
 import { COLORS } from "../../../../constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -14,6 +13,7 @@ import ProviderBookingsTabs from "./ProviderBookingsTabs";
 import ProviderBookingsTable from "./ProviderBookingsTable";
 import ProviderBookingDetailsDrawer from "./ProviderBookingDetailsDrawer";
 import MainLayout from "@/app/mainLayout";
+import { useProviderBookings } from "@/hooks/useBookings";
 
 const ProviderBookingsPage = () => {
     const theme = useTheme();
@@ -21,34 +21,18 @@ const ProviderBookingsPage = () => {
     const isDark = theme.palette.mode === "dark";
 
     const [activeTab, setActiveTab] = useState(0);
-    const [bookings, setBookings] = useState<UserBooking[]>([]);
-    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState<UserBooking | null>(null);
+
+    // Use TanStack Query hook for bookings
+    const { data: bookings = [], isLoading: loading } = useProviderBookings();
 
     const tabs = [
         t("upcoming"),
         t("completed"),
         t("cancelled")
     ];
-
-    // Fetch bookings
-    useEffect(() => {
-        const fetchBookings = async () => {
-            try {
-                setLoading(true);
-                const data = await providerBookingService.getProviderBookings();
-                setBookings(data);
-            } catch (error) {
-                console.error("Failed to fetch bookings:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchBookings();
-    }, []);
 
     // Filter bookings based on active tab
     const getFilteredBookings = () => {

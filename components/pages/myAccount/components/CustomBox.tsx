@@ -69,13 +69,11 @@ const CustomBox: React.FC<CustomBoxProps> = ({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              bgcolor: isDark
-                ? COLORS.BACKGROUND.PAPER_DARK
-                : COLORS.BACKGROUND.PAPER_LIGHT,
+              bgcolor: isDark ? COLORS.WHITE : COLORS.LIGHT_GRAY,
               boxShadow: COLORS.SHADOW.DEFAULT,
             }}
           >
-            <GradientIcon sx={{ fontSize: { xs: 18, sm: 16 } }}>
+            <GradientIcon sx={{ fontSize: { xs: 18, sm: 16 , color:  "white" } }}>
               {icon}
             </GradientIcon>
           </Box>

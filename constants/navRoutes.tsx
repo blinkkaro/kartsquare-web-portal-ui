@@ -44,7 +44,7 @@ export const getDesktopNavItems = (
     { label: t("home"), href: "/" },
     { label: t("store"), href: "/store" },
     { label: t("services"), href: "/cus/servicesList" },
-    { label: t("events"), href: "/events" },
+    // { label: t("events"), href: "/events" },
   ];
 };
 

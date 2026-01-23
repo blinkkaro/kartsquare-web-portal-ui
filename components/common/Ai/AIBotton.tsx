@@ -60,8 +60,8 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
           position: "relative",
           display: "flex",
           alignItems: "center",
-          gap: 1.5,
-          px: 3,
+          gap: 0.5,
+          px: 1,
           // py: 1.5,
           borderRadius: "50px",
           background: COLORS.PURPLECYAN,
@@ -72,7 +72,7 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
           // boxShadow: `0 8px 24px ${COLORS.PRIMARY_PURPLE}30`,
           transition: "all 0.3s ease",
           animation: "float 3s ease-in-out infinite",
-          minWidth: { xs: "200px", md: "240px" },
+          // minWidth: { xs: "200px", md: "240px" },
           "@keyframes float": {
             "0%, 100%": {
               transform: "translateY(0px)",
@@ -113,7 +113,7 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
           },
         }}
       >
-        <Image src="/Chatbot.svg" alt="Chatbot" width={50} height={50} />
+        <Image src="/Chatbot.svg" alt="Chatbot" width={40} height={50} />
         <Box sx={{ display: "flex", flexDirection: "column", gap: 0.3 }}>
           <Typography
             variant="caption"

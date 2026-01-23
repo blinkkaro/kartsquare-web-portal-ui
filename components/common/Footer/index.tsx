@@ -36,7 +36,7 @@ const Footer: React.FC = () => {
       { label: t("aboutUs"), href: "https://www.kartsquare.com/en/aboutus" },
       { label: t("careers"), href: "/careers" },
       { label: t("blogs"), href: "/blogs" },
-      { label: t("contactUs"), href: "https://www.kartsquare.com/en/contactus" },
+      { label: t("contactUs"), href: "/contactUs" },
     ],
     services: [
       { label: t("services"), href: "/cus/servicesList" },
@@ -62,19 +62,35 @@ const Footer: React.FC = () => {
     { icon: <YouTube />, href: "https://www.youtube.com/@kartsquare", label: "YouTube" },
   ];
 
+  // Gradient definitions for light and dark modes with subtle brand color accent
+  const footerGradient = isDark
+    ? `linear-gradient(180deg, ${COLORS.BACKGROUND.SECONDARY_DARK} 0%, ${COLORS.BACKGROUND.PAPER_DARK} 50%, ${COLORS.BACKGROUND.PRIMARY_DARK} 100%)`
+    : `linear-gradient(180deg, ${COLORS.BACKGROUND.SECONDARY_LIGHT} 0%, ${COLORS.BACKGROUND.PRIMARY_LIGHT} 50%, ${COLORS.LIGHT_GRAY} 100%)`;
+
   return (
     <Box
       component="footer"
       sx={{
         mt: 2,
-        bgcolor: isDark
-          ? COLORS.BACKGROUND.PAPER_DARK
-          : COLORS.BACKGROUND.PRIMARY_LIGHT,
+        background: footerGradient,
         borderTop: `1px solid ${
           isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
         }`,
         pt: { xs: 4, md: 6 },
         pb: { xs: 3, md: 4 },
+        position: "relative",
+        "&::before": {
+          content: '""',
+          // position: "absolute",
+          position: "relative",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "1px",
+          background: isDark
+            ? `linear-gradient(90deg, transparent 0%, ${COLORS.PRIMARY_PURPLE}40 50%, transparent 100%)`
+            : `linear-gradient(90deg, transparent 0%, ${COLORS.PURPLE_ALPHA_20} 50%, transparent 100%)`,
+        },
       }}
     >
       <Container maxWidth="xl">

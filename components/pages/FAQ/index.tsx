@@ -8,6 +8,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  useTheme,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import BackButton from "@/components/common/BackButton";
@@ -67,12 +68,16 @@ function FAQView() {
       setExpanded(isExpanded ? panel : false);
     };
 
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   return (
     <Container
       maxWidth="xl"
       sx={{
         py: 4,
         display: "flex",
+        backgroundColor:isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
         flexDirection: { xs: "column", md: "row" },
         justifyContent: "space-around",
       }}

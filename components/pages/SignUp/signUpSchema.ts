@@ -32,7 +32,7 @@ export const SignUpSchema = (t: TFunction) =>
     birth_date: yup.string().required(t("birthDateRequired")),
     gender: yup
       .mixed<Gender>()
-      .oneOf(["MALE", "FEMALE", "OTHER", "PREFER_NOT_TO_SAY"])
+      .oneOf(Object.values(Gender) as Gender[])
       .required(t("genderRequired")),
   });
 

@@ -117,11 +117,13 @@ const ProviderServicesGrid = ({
                         page={currentPage}
                         onChange={onPageChange}
                         color="primary"
-                        size={{ xs: "small", sm: "medium", md: "large" }}
+                        size="medium"
                         sx={{
                             "& .MuiPaginationItem-root": {
                                 color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                                 fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" },
+                                minWidth: { xs: 32, sm: 40, md: 48 },
+                                height: { xs: 32, sm: 40, md: 48 },
                             },
                             "& .Mui-selected": {
                                 bgcolor: `${COLORS.PRIMARY_PURPLE} !important`,

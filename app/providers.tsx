@@ -37,6 +37,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
         defaultOptions: {
           queries: {
             refetchOnWindowFocus: false,
+            refetchOnMount: false, // Don't refetch on mount if data exists
+            refetchOnReconnect: true, // Refetch on reconnect
+            retry: 1, // Retry failed requests once
+            staleTime: 2 * 60 * 1000, // Data is fresh for 2 minutes
+            gcTime: 5 * 60 * 1000, // Cache data for 5 minutes (formerly cacheTime)
+          },
+          mutations: {
+            retry: 1,
           },
         },
       })

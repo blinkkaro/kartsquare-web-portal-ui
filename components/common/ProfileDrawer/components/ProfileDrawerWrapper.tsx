@@ -8,14 +8,19 @@ import {
   Tooltip,
   Box,
   Badge,
+  Avatar,
+  Typography,
 } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import { Close, LocationOn, BookmarkBorder } from "@mui/icons-material";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import Image from "next/image";
+import ProfileHeader from "./ProfileHeader";
+import { providerProfileInterface } from "@/services/profile/profileInterface";
 
 interface ProfileDrawerWrapperProps {
   open: boolean;
+  profile: providerProfileInterface | undefined;
   onClose: () => void;
   onChatClick?: () => void;
   onLocationClick?: () => void;
@@ -26,6 +31,7 @@ interface ProfileDrawerWrapperProps {
 
 const ProfileDrawerWrapper: React.FC<ProfileDrawerWrapperProps> = ({
   open,
+  profile,
   onClose,
   onChatClick,
   onLocationClick,
@@ -78,70 +84,89 @@ const ProfileDrawerWrapper: React.FC<ProfileDrawerWrapperProps> = ({
         },
       }}
     >
+     
       {/* Custom Header with Icons */}
       <Box
+  sx={{
+    p: { xs: 2, md: 3 },
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 2,
+    mt: { xs: 0, md: 1 },
+  }}
+>
+  {/* LEFT SIDE: Avatar + Username */}
+  {profile?.username && (
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1  }}>
+      <Avatar
+        src={profile.profile_pic}
+        alt={profile.first_name}
         sx={{
-          p: { xs: 2, md: 3 },
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          gap: 2,
-          mt: { xs: 0, md: 3 },
+          width: { xs: 48, md: 56 },
+          height: { xs: 48, md: 56 },
+          border: `3px solid ${COLORS.WHITE}`,
+          boxShadow: COLORS.SHADOW.DEFAULT,
         }}
-      >
-        {/* Chat Icon */}
-        {onChatClick && (
-          <Tooltip title={t("chatTooltip")} arrow>
-            <IconButton onClick={onChatClick} size="small" sx={iconButtonStyle}>
-              <Badge badgeContent={0} color="error">
-                <Image
-                  src={
-                    theme.palette.mode === "dark"
-                      ? "/icons/darkThemeChat.svg"
-                      : "/icons/chat.svg"
-                  }
-                  alt="Chat"
-                  width={20}
-                  height={20}
-                />
-              </Badge>
-            </IconButton>
-          </Tooltip>
-        )}
+      />
+     <Typography
+  sx={{
+    fontWeight: "bold",
+    color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+    lineHeight: 1.2,
+    fontSize: "clamp(0.9rem, 2.5vw, 1.25rem)",
+  }}
+>
+  @{profile.username}
+</Typography>
+    </Box>
+  )}
 
-        {/* Location Icon */}
-        {onLocationClick && (
-          <Tooltip title={t("locationTooltip")} arrow>
-            <IconButton
-              onClick={onLocationClick}
-              size="small"
-              sx={iconButtonStyle}
-            >
-              <LocationOn fontSize="small" sx={iconStyle} />
-            </IconButton>
-          </Tooltip>
-        )}
+  {/* RIGHT SIDE: Action Buttons */}
+  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+    {/* {onChatClick && (
+      <Tooltip title={t("chatTooltip")} arrow>
+        <IconButton onClick={onChatClick} size="small" sx={iconButtonStyle}>
+          <Badge badgeContent={0} color="error">
+            <Image
+              src={
+                theme.palette.mode === "dark"
+                  ? "/icons/darkThemeChat.svg"
+                  : "/icons/chat.svg"
+              }
+              alt="Chat"
+              width={20}
+              height={20}
+            />
+          </Badge>
+        </IconButton>
+      </Tooltip>
+    )} */}
 
-        {/* Bookmark Icon */}
-        {onBookmarkClick && (
-          <Tooltip title={t("bookmarkTooltip")} arrow>
-            <IconButton
-              onClick={onBookmarkClick}
-              size="small"
-              sx={iconButtonStyle}
-            >
-              <BookmarkBorder fontSize="small" sx={iconStyle} />
-            </IconButton>
-          </Tooltip>
-        )}
+    {/* {onLocationClick && (
+      <Tooltip title={t("locationTooltip")} arrow>
+        <IconButton onClick={onLocationClick} size="small" sx={iconButtonStyle}>
+          <LocationOn fontSize="small" sx={iconStyle} />
+        </IconButton>
+      </Tooltip>
+    )} */}
 
-        {/* Close Icon */}
-        <Tooltip title={t("closeDrawer")} arrow>
-          <IconButton onClick={onClose} size="small" sx={iconButtonStyle}>
-            <Close fontSize="small" sx={iconStyle} />
-          </IconButton>
-        </Tooltip>
-      </Box>
+    {/* {onBookmarkClick && (
+      <Tooltip title={t("bookmarkTooltip")} arrow>
+        <IconButton onClick={onBookmarkClick} size="small" sx={iconButtonStyle}>
+          <BookmarkBorder fontSize="small" sx={iconStyle} />
+        </IconButton>
+      </Tooltip>
+    )} */}
+
+    <Tooltip title={t("closeDrawer")} arrow>
+      <IconButton onClick={onClose} size="small" sx={iconButtonStyle}>
+        <Close fontSize="small" sx={iconStyle} />
+      </IconButton>
+    </Tooltip>
+  </Box>
+</Box>
+
 
       {/* Drawer Content */}
       {children}
