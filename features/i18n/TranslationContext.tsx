@@ -601,7 +601,15 @@ export type TranslationKey =
   | "bookingsCharts"
   | "latestReviews"
   | "profileUpdated"
-  | "profileUpdatedDescription";
+  | "profileUpdatedDescription"
+  | "nameRequired"
+  | "nameMin"
+  | "contactRequired"
+  | "contactInvalid"
+  | "messageRequired"
+  | "messageMin"
+  | "countryCode"
+  | "phoneMin";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

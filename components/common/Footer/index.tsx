@@ -40,12 +40,12 @@ const Footer: React.FC = () => {
     ],
     services: [
       { label: t("services"), href: "/cus/servicesList" },
-    //   { label: t("events"), href: "/events" },
+      //   { label: t("events"), href: "/events" },
       { label: t("store"), href: "/store" },
       { label: t("becomeServiceProvider"), href: "/supplier/register" },
     ],
     support: [
-      { label: t("helpSupport"), href: "/myAccount/helpSupport" },
+      // { label: t("helpSupport"), href: "/myAccount/helpSupport" },
       { label: t("faqs"), href: "/myAccount/FAQ" },
     ],
     legal: [
