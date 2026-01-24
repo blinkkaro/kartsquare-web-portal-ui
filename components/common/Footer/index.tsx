@@ -71,7 +71,7 @@ const Footer: React.FC = () => {
     <Box
       component="footer"
       sx={{
-        mt: 2,
+        // mt: 2,
         background: footerGradient,
         borderTop: `1px solid ${
           isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT

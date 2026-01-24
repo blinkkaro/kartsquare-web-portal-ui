@@ -50,7 +50,7 @@ const WarningModel: React.FC<SuccessModelProps> = ({
       PaperProps={{
         sx: {
           borderRadius: "24px",
-          padding: "2rem 5rem",
+          padding: { xs: "2rem 1.5rem", sm: "2rem 5rem" },
           maxWidth: "30rem",
           width: "100%",
           boxShadow: "0px 10px 40px rgba(0,0,0,0.1)",
@@ -94,7 +94,7 @@ const WarningModel: React.FC<SuccessModelProps> = ({
               fontWeight: 700,
               color: "text.primary",
               lineHeight: 1.3,
-              fontSize: "1.8rem",
+              fontSize: { xs: "1.5rem", sm: "1.8rem" },
             }}
           >
             {title}
