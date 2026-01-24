@@ -18,11 +18,11 @@ const ServiceDetailsHeader = ({
     const isDark = theme.palette.mode === "dark";
 
     return (
-        <Box 
-            sx={{ 
-                display: "flex", 
-                alignItems: "center", 
-                gap: { xs: 1, sm: 2 }, 
+        <Box
+            sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: { xs: 1, sm: 2 },
                 mb: 1,
                 flexWrap: { xs: "wrap", sm: "nowrap" },
             }}
@@ -32,7 +32,7 @@ const ServiceDetailsHeader = ({
                     sx={{
                         color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                         fontWeight: 300,
-                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                        fontSize: { xs: "1rem", sm: "1.1rem" },
                     }}
                 >
                     {currency}

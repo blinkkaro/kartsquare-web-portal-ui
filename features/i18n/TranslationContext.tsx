@@ -600,6 +600,16 @@ export type TranslationKey =
   | "totalBookings"
   | "bookingsCharts"
   | "latestReviews"
+  | "pending"
+  | "in_progress"
+  | "accept"
+  | "decline"
+  | "otp_verification"
+  | "enter_otp_description"
+  | "verify_and_start"
+  | "at_customer_location"
+  | "at_provider_location"
+  | "provider_service_at_customer_location"
   ;
 
 // Sample dictionaries

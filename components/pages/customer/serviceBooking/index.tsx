@@ -38,30 +38,8 @@ const CustomerServiceBooking = () => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [bookingResponse, setBookingResponse] = useState<any>(null);
 
-    const {
-        selectedDate,
-        setSelectedDate,
-        selectedTime,
-        setSelectedTime,
-        location,
-        setLocation,
-        notes,
-        setNotes,
-        selectedAddressId,
-        setSelectedAddressId,
-        setPhotoUrls,
-        submitting,
-        error: formError,
-        setError: setFormError,
-        success,
-        handleSubmit,
-    } = useBookingForm({
-        service: null,
-        onSuccess: (response) => {
-            setBookingResponse(response);
-            setShowSuccessModal(true);
-        },
-    });
+    const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(dayjs());
+    const [location, setLocation] = useState<"at_provider" | "at_customer">("at_provider");
 
     const {
         service,
@@ -73,12 +51,49 @@ const CustomerServiceBooking = () => {
         error: dataError,
     } = useBookingData(serviceId, selectedDate, location);
 
+    const {
+        selectedTime,
+        setSelectedTime,
+        notes,
+        setNotes,
+        selectedAddressId,
+        setSelectedAddressId,
+        setPhotoUrls,
+        submitting,
+        error: formError,
+        setError: setFormError,
+        success,
+        handleSubmit,
+    } = useBookingForm({
+        service,
+        selectedDate,
+        setSelectedDate,
+        location,
+        setLocation,
+        onSuccess: (response) => {
+            setBookingResponse(response);
+            setShowSuccessModal(true);
+        },
+    });
+
     const error = dataError || formError;
+
+    // Set initial location based on service availability
+    React.useEffect(() => {
+        const loc = service?.service_at_location as any;
+        if (loc) {
+            if (loc === "USER_LOCATION" || loc === "AT_CUSTOMER") {
+                setLocation("at_customer");
+            } else if (loc === "PROVIDER_LOCATION" || loc === "AT_PROVIDER") {
+                setLocation("at_provider");
+            }
+        }
+    }, [service, setLocation]);
 
     if (loading) {
         return (
             <MainLayout>
-                 <Box
+                <Box
                     sx={{
                         display: "flex",
                         justifyContent: "center",
@@ -178,9 +193,20 @@ const CustomerServiceBooking = () => {
                                 {service.service_name}
                             </Typography>
                             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
-                                <Typography variant="h6" sx={{ fontWeight: 600, color: COLORS.PRIMARY_PURPLE }}>
-                                    {service.currency} {service.price?.toFixed(2)}
-                                </Typography>
+                                <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
+                                    <Typography
+                                        sx={{
+                                            color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                                            fontWeight: 300,
+                                            fontSize: "1rem",
+                                        }}
+                                    >
+                                        {service.currency}
+                                    </Typography>
+                                    <Typography variant="h6" sx={{ fontWeight: 600, color: COLORS.PRIMARY_PURPLE }}>
+                                        {service.price?.toFixed(2)}
+                                    </Typography>
+                                </Box>
                                 <Chip label={service.category_name} size="small" />
                             </Box>
                         </Box>
@@ -333,73 +359,79 @@ const CustomerServiceBooking = () => {
                                 </Typography>
                                 <FormControl component="fieldset" fullWidth>
                                     <RadioGroup value={location} onChange={(e) => setLocation(e.target.value as any)}>
-                                        <FormControlLabel
-                                            value="at_customer"
-                                            control={<Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-                                            label={
-                                                <Box>
-                                                    <Typography variant="body1" fontWeight={600}>{english.at_home}</Typography>
-                                                    <Typography variant="caption" color="text.secondary">{english.service_at_your_location}</Typography>
-                                                </Box>
-                                            }
-                                        />
-                                        {location === "at_customer" && (
-                                            <Box sx={{ ml: 4, mt: 2, mb: 2 }}>
-                                                {addressLoading ? (
-                                                    <CircularProgress size={20} />
-                                                ) : userAddresses.length > 0 ? (
-                                                    <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                                                        {userAddresses.map((addr) => (
-                                                            <Box
-                                                                key={addr.id}
-                                                                onClick={() => setSelectedAddressId(addr.id)}
-                                                                sx={{
-                                                                    p: 2,
-                                                                    border: `2px solid ${selectedAddressId === addr.id ? COLORS.PRIMARY_PURPLE : isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
-                                                                    borderRadius: "12px",
-                                                                    cursor: "pointer",
-                                                                    bgcolor: selectedAddressId === addr.id ? "rgba(94, 24, 233, 0.04)" : isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
-                                                                    transition: "all 0.2s",
-                                                                    "&:hover": { borderColor: COLORS.PRIMARY_PURPLE, bgcolor: "rgba(94, 24, 233, 0.04)" },
-                                                                }}
-                                                            >
-                                                                {addr.address_name && (
-                                                                    <Typography variant="subtitle2" sx={{ fontWeight: 600, color: COLORS.PRIMARY_PURPLE, mb: 0.5 }}>
-                                                                        {addr.address_name}
-                                                                        {addr.is_default && <span style={{ marginLeft: "8px", fontSize: "0.75rem" }}>{english.default_address}</span>}
-                                                                    </Typography>
-                                                                )}
-                                                                <Typography variant="body2" sx={{ mb: 0.5 }}>
-                                                                    {addr.building_no && `${addr.building_no}, `}
-                                                                    {addr.floor && `${english.floor} ${addr.floor}, `}
-                                                                    {addr.address}
-                                                                </Typography>
-                                                                {addr.landmark && (
-                                                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                                                                        {english.near} {addr.landmark}
-                                                                    </Typography>
-                                                                )}
-                                                                <Typography variant="body2" color="text.secondary">
-                                                                    {addr.city_town}, {addr.state} - {addr.pincode}
-                                                                </Typography>
+                                        {(service.service_at_location as any === "USER_LOCATION" || service.service_at_location as any === "AT_CUSTOMER" || service.service_at_location as any === "BOTH") && (
+                                            <>
+                                                <FormControlLabel
+                                                    value="at_customer"
+                                                    control={<Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+                                                    label={
+                                                        <Box>
+                                                            <Typography variant="body1" fontWeight={600}>{english.at_home}</Typography>
+                                                            <Typography variant="caption" color="text.secondary">{english.service_at_your_location}</Typography>
+                                                        </Box>
+                                                    }
+                                                />
+                                                {location === "at_customer" && (
+                                                    <Box sx={{ ml: 4, mt: 2, mb: 2 }}>
+                                                        {addressLoading ? (
+                                                            <CircularProgress size={20} />
+                                                        ) : userAddresses.length > 0 ? (
+                                                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                                                                {userAddresses.map((addr) => (
+                                                                    <Box
+                                                                        key={addr.id}
+                                                                        onClick={() => setSelectedAddressId(addr.id)}
+                                                                        sx={{
+                                                                            p: 2,
+                                                                            border: `2px solid ${selectedAddressId === addr.id ? COLORS.PRIMARY_PURPLE : isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+                                                                            borderRadius: "12px",
+                                                                            cursor: "pointer",
+                                                                            bgcolor: selectedAddressId === addr.id ? "rgba(94, 24, 233, 0.04)" : isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
+                                                                            transition: "all 0.2s",
+                                                                            "&:hover": { borderColor: COLORS.PRIMARY_PURPLE, bgcolor: "rgba(94, 24, 233, 0.04)" },
+                                                                        }}
+                                                                    >
+                                                                        {addr.address_name && (
+                                                                            <Typography variant="subtitle2" sx={{ fontWeight: 600, color: COLORS.PRIMARY_PURPLE, mb: 0.5 }}>
+                                                                                {addr.address_name}
+                                                                                {addr.is_default && <span style={{ marginLeft: "8px", fontSize: "0.75rem" }}>{english.default_address}</span>}
+                                                                            </Typography>
+                                                                        )}
+                                                                        <Typography variant="body2" sx={{ mb: 0.5 }}>
+                                                                            {addr.building_no && `${addr.building_no}, `}
+                                                                            {addr.floor && `${english.floor} ${addr.floor}, `}
+                                                                            {addr.address}
+                                                                        </Typography>
+                                                                        {addr.landmark && (
+                                                                            <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                                                                                {english.near} {addr.landmark}
+                                                                            </Typography>
+                                                                        )}
+                                                                        <Typography variant="body2" color="text.secondary">
+                                                                            {addr.city_town}, {addr.state} - {addr.pincode}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                ))}
                                                             </Box>
-                                                        ))}
+                                                        ) : (
+                                                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{english.no_saved_addresses}</Typography>
+                                                        )}
                                                     </Box>
-                                                ) : (
-                                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{english.no_saved_addresses}</Typography>
                                                 )}
-                                            </Box>
+                                            </>
                                         )}
-                                        <FormControlLabel
-                                            value="at_provider"
-                                            control={<Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-                                            label={
-                                                <Box>
-                                                    <Typography variant="body1" fontWeight={600}>{english.at_service_provider_location}</Typography>
-                                                    <Typography variant="caption" color="text.secondary">{service.service_provider_address || english.providers_location}</Typography>
-                                                </Box>
-                                            }
-                                        />
+                                        {(service.service_at_location as any === "PROVIDER_LOCATION" || service.service_at_location as any === "AT_PROVIDER" || service.service_at_location as any === "BOTH") && (
+                                            <FormControlLabel
+                                                value="at_provider"
+                                                control={<Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+                                                label={
+                                                    <Box>
+                                                        <Typography variant="body1" fontWeight={600}>{english.at_service_provider_location}</Typography>
+                                                        <Typography variant="caption" color="text.secondary">{service.service_provider_address || english.providers_location}</Typography>
+                                                    </Box>
+                                                }
+                                            />
+                                        )}
                                     </RadioGroup>
                                 </FormControl>
                             </Box>
@@ -435,7 +467,7 @@ const CustomerServiceBooking = () => {
                                 fullWidth
                                 variant="contained"
                                 size="large"
-                                onClick={handleSubmit}
+                                onClick={() => handleSubmit(service?.service_id)}
                                 disabled={submitting || success}
                                 sx={{
                                     bgcolor: COLORS.PRIMARY_PURPLE,

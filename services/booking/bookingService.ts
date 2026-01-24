@@ -1,4 +1,4 @@
-import { GET, POST, PATCH } from "../api";
+import { GET, POST, PATCH, PUT } from "../api";
 import { BOOKING_API_ENDPOINTS } from "./apiEndPoints";
 import { CreateBookingRequest, BookingResponse, UserBooking } from "./bookingInterface";
 import { bookingListingService } from "./bookingListing";
@@ -33,11 +33,14 @@ class BookingService {
     /**
      * Update booking status
      */
-    async updateBookingStatus(bookingId: string, status: string): Promise<any> {
+    async updateBookingStatus(bookingId: string, status: string, otp?: string): Promise<any> {
         try {
-            const response = await PATCH<any>(
+            const body: any = { status };
+            if (otp) body.otp = otp;
+
+            const response = await PUT<any>(
                 BOOKING_API_ENDPOINTS.UPDATE_BOOKING_STATUS(bookingId),
-                { status },
+                body,
                 {},
                 true
             );

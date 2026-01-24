@@ -30,16 +30,16 @@ const ReviewsSection = ({
     const isDark = theme.palette.mode === "dark";
 
     return (
-        <Box id="reviews-section" sx={{ mt: { xs: 3, sm: 4 } }}>
-            <Box 
-                sx={{ 
-                    display: "flex", 
-                    justifyContent: "space-between", 
+        <Box id="reviews-section" sx={{ mt: { xs: 2, sm: 2 } }}>
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
                     alignItems: { xs: "flex-start", sm: "center" },
                     flexDirection: { xs: "column", sm: "row" },
                     gap: { xs: 1, sm: 0 },
                     mb: { xs: 2, sm: 3 },
-                    mt: { xs: 4, sm: 10 },
+                    mt: { xs: 2, sm: 4 },
                 }}
             >
                 <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 2 }, flexWrap: "wrap" }}>

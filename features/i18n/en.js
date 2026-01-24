@@ -404,7 +404,7 @@ export const english = {
   gardening: "Gardening",
   general: "General",
   noBlogsFound: "No blogs found matching your criteria",
-  
+
   // Search
   searchResults: "Search Results",
   searchResultsFor: "Search results for",
@@ -413,7 +413,7 @@ export const english = {
   enterSearchQuery: "Enter a search query to find users and services",
   users: "Users",
   seeAllResults: "See all results for",
-  
+
   // Dashboard
   dashboard: "Dashboard",
   totalBookings: "Total Bookings",
@@ -449,8 +449,8 @@ export const english = {
   commissionRate: "Commission rate",
   bookingsCharts: "Bookings Charts",
   latestReviews: "Latest Reviews",
-  
-  
+
+
   // Footer
   company: "Company",
   aboutUs: "About Us",
@@ -477,7 +477,7 @@ export const english = {
   refundPolicy: "Refund Policy",
   cancellationPolicy: "Cancellation Policy",
   allRightsReserved: "All rights reserved",
-  
+
   // Careers Page
   careersSubtitle: "Join our team and help shape the future of service delivery",
   joinOurTeam: "Join Our Team",
@@ -510,7 +510,7 @@ export const english = {
   dontSeePosition: "Don't See a Position That Fits?",
   sendResume: "We're always looking for talented individuals to join our team. Send us your resume and we'll keep you in mind for future opportunities.",
   sendYourResume: "Send Your Resume",
-  
+
   // Become Service Provider Page
   becomeServiceProviderSubtitle: "Join thousands of service providers and grow your business with KartSquare",
   joinAsServiceProvider: "Join as a Service Provider",
@@ -549,7 +549,7 @@ export const english = {
   startYourJourney: "Join KartSquare today and start your journey as a service provider. Create your account, complete your profile, and start receiving bookings.",
   getStartedNow: "Get Started Now",
   registerNow: "Register Now",
-  
+
   // Cookie Policy Page
   whatAreCookies: "What Are Cookies?",
   cookiesDescription: "Cookies are small text files that are placed on your device when you visit a website. They are widely used to make websites work more efficiently and provide information to the website owners.",
@@ -572,7 +572,7 @@ export const english = {
   updatesToPolicy: "Updates to This Policy",
   cookiePolicyUpdatesDescription: "We may update this Cookie Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any material changes by posting the new Cookie Policy on this page.",
   cookiePolicyContactDescription: "If you have any questions about our use of cookies or this Cookie Policy, please contact us through our contact page or email us at support@kartsquare.com.",
-  
+
   // Careers Page Additional
   currentlyNoOpenings: "We're not currently hiring, but we'd love to hear from you!",
   whyJoinUsSubtitle: "Discover what makes KartSquare a great place to work",
@@ -589,7 +589,7 @@ export const english = {
   submitting: "Submitting...",
   thankYou: "Thank You!",
   resumeSubmittedSuccess: "Your resume has been submitted successfully. We'll review it and get back to you if there's a match.",
-  
+
   // Store Page
   storeComingSoon: "Store Coming Soon",
   storeComingSoonDescription: "We're building something amazing! Our online store will be launching soon with a wide selection of products, exclusive deals, and seamless shopping experience.",
@@ -622,6 +622,12 @@ export const english = {
   in_progress: "In Progress",
   completed: "Completed",
   cancelled: "Cancelled",
+  pending: "Pending",
+  accept: "Accept",
+  decline: "Decline",
+  otp_verification: "OTP Verification",
+  enter_otp_description: "Please enter the OTP provided by the customer to start the service.",
+  verify_and_start: "Verify & Start",
   no_bookings_found: "No bookings found",
   no_bookings_found_description: "You don't have any bookings in this category yet. New bookings will appear here once customers book your services.",
   reschedule: "Reschedule",
@@ -699,8 +705,8 @@ export const english = {
   minutes: "Minutes",
   enable_time_slots: "Enable time slots for this service",
   service_location: "Service Location",
-  at_provider_location: "At Provider Location",
-  at_customer_location: "I provide this service at customer location",
+  at_provider_location: "Provider Location",
+  at_customer_location: "Customer Location",
   select_address: "Select Address",
   no_address_yet: "You do not have an address yet.",
   add_address: "Add Address",
@@ -792,4 +798,6 @@ export const english = {
   customer_info: "Customer Info.",
   service_fee: "Service fee",
   total_receivable_amount: "Total receivable amount",
+  otp_to_provider_label: "Service Start Code",
+  otp_to_provider_instruction: "Share this OTP with the provider only when they arrive to begin your service.",
 };

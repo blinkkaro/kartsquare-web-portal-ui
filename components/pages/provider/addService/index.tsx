@@ -25,6 +25,8 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
     onSuccess,
     editService
 }) => {
+    const [localCategoryId, setLocalCategoryId] = React.useState("");
+
     // Data fetching hook
     const {
         categories,
@@ -37,7 +39,7 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
         setError: setDataError,
         refreshAddresses,
         setSubcategories,
-    } = useServiceData(open, "", "");
+    } = useServiceData(open, localCategoryId, "");
 
     // Form state hook
     const {
@@ -83,6 +85,11 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
         onClose,
         setSubcategories,
     });
+
+    // Sync local category ID with form category ID to trigger fetching
+    useEffect(() => {
+        setLocalCategoryId(categoryId);
+    }, [categoryId]);
 
     // Auto-select first address when addresses load
     useEffect(() => {
