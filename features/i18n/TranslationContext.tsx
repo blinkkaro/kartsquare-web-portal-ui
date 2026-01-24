@@ -22,6 +22,18 @@ export type TranslationKey =
   | "service_provider"
   | "supplier"
   | "login_subtitle"
+  | "verifyEmailTitle"
+  | "verifyEmailSubTitle"
+  | "verifyDocumentTitle"
+  | "verifyDocumentSubTitle"
+  | "preferencesTitle"
+  | "preferencesSubTitle"
+  | "selectRoleHomeTitle"
+  | "selectRoleHomeSubtitle"
+  | "selectRoleMapTitle"
+  | "selectRoleMapSubtitle"
+  | "selectRoleBookingTitle"
+  | "selectRoleBookingSubtitle"
   | "emailInvalid"
   | "emailRequired"
   | "passwordMin"
@@ -600,7 +612,8 @@ export type TranslationKey =
   | "totalBookings"
   | "bookingsCharts"
   | "latestReviews"
-  ;
+  | "phoneNumberLength"
+  | "phoneNumberInvalid";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
@@ -663,7 +676,7 @@ interface TranslationContextType {
 }
 
 const TranslationContext = createContext<TranslationContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
@@ -684,7 +697,7 @@ export function useTranslationContext() {
   const context = useContext(TranslationContext);
   if (context === undefined) {
     throw new Error(
-      "useTranslationContext must be used within a TranslationProvider"
+      "useTranslationContext must be used within a TranslationProvider",
     );
   }
   return context;

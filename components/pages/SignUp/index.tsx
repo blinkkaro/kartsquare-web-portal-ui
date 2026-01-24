@@ -28,11 +28,12 @@ function SignUpView() {
       setLoading(true);
       setError("");
       const Role = role!.toString().toUpperCase();
+
       await dispatch(registerUser({ ...data, role: Role as AppUserType })).unwrap();
       // Redirect to email verification immediately after successful signup
       router.replace("/emailVerfication");
     } catch (error: any) {
-      setError(error?.response?.data?.message || error?.message);
+      setError(error || "An unexpected error occurred");
     } finally {
       setLoading(false);
     }

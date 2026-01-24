@@ -26,7 +26,11 @@ export const SignUpSchema = (t: TFunction) =>
         t("passwordComplexity")
       )
       .required(t("passwordRequired")),
-    phone_number: yup.string().required(t("phoneNumberRequired")),
+    phone_number: yup
+      .string()
+      .required(t("phoneNumberRequired"))
+      .length(10, t("phoneNumberLength"))
+      .matches(/^[0-9]+$/, t("phoneNumberInvalid")),
     country_code: yup.string().required(t("countryCodeRequired")),
     country: yup.string().required(t("countryRequired")),
     birth_date: yup.string().required(t("birthDateRequired")),
