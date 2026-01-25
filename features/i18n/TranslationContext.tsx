@@ -651,7 +651,8 @@ export type TranslationKey =
   | "shareOnWhatsApp"
   | "shareViaEmail"
   | "noPostsFound"
-  | "noServicesFound";
+  | "noServicesFound"
+  | "phoneMin"
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
