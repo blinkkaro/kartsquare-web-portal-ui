@@ -6,6 +6,7 @@ import {
   providerPostsInterface,
   providerProfileInterface,
   providerServicesInterface,
+  ProviderProfileByUsernameResponse,
 } from "./profileInterface";
 
 class ProfileService {
@@ -100,6 +101,19 @@ class ProfileService {
     try {
       const response = await GET<providerProfileInterface>(
         APIENDPOINTS.GET_PROVIDER_PROFILE(id)
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getProviderProfileByUsername(
+    username: string
+  ): Promise<ProviderProfileByUsernameResponse> {
+    try {
+      const response = await GET<ProviderProfileByUsernameResponse>(
+        APIENDPOINTS.GET_PROVIDER_PROFILE_BY_USERNAME(username)
       );
       return response.data;
     } catch (error) {

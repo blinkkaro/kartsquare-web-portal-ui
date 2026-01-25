@@ -39,7 +39,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   const maxDate = new Date(
     today.getFullYear() - 13,
     today.getMonth(),
-    today.getDate()
+    today.getDate(),
   )
     .toISOString()
     .split("T")[0];
@@ -66,7 +66,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   const selectedCountryCode = watch("country_code");
   const gender = watch("gender");
   const selectedCountry = countries.find(
-    (c) => c.phone_code === selectedCountryCode
+    (c) => c.phone_code === selectedCountryCode,
   );
 
   return (
@@ -180,6 +180,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 name="phone_number"
                 control={control}
                 placeholder="621 121221"
+                type="tel"
+                inputProps={{
+                  maxLength: 10,
+                  inputMode: "numeric",
+                  pattern: "[0-9]*",
+                }}
               />
             </Box>
           </Box>
@@ -372,7 +378,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         >
           {t("signup")}
         </Button>
-        <Button
+        {/* <Button
           variant="contained"
           startIcon={<GoogleIcon />}
           sx={{
@@ -387,7 +393,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           }}
         >
           {t("continue_with_google")}
-        </Button>
+        </Button> */}
       </Box>
     </Box>
   );

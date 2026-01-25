@@ -34,7 +34,7 @@ const ScheduleView = () => {
       start_time: "09:00",
       end_time: "17:00",
       is_active: false,
-    }))
+    })),
   );
   const [is24By7, setIs24By7] = useState(false);
   const [isSameTime, setIsSameTime] = useState(false);
@@ -55,7 +55,7 @@ const ScheduleView = () => {
           is_active: true,
           start_time: "00:00",
           end_time: "23:59",
-        }))
+        })),
       );
     }
   };
@@ -72,7 +72,7 @@ const ScheduleView = () => {
           start_time: source.start_time,
           end_time: source.end_time,
           is_active: true,
-        }))
+        })),
       );
     }
   };
@@ -98,7 +98,7 @@ const ScheduleView = () => {
   const handleTimeChange = (
     index: number,
     field: "start_time" | "end_time",
-    value: string
+    value: string,
   ) => {
     if (is24By7) return;
 
@@ -137,11 +137,21 @@ const ScheduleView = () => {
   return (
     <AuthWrapper>
       {/* Header */}
-      <Box sx={{ mb: 4, display: "flex", alignItems: "center", gap: 2 }}>
+      <Box
+        sx={{
+          mb: { xs: 2, md: 4 },
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+        }}
+      >
         <BackButton />
       </Box>
 
-      <Title title={t("setYourSchedule")} subtitle={t("defineYourAvailability")} />
+      <Title
+        title={t("setYourSchedule")}
+        subtitle={t("defineYourAvailability")}
+      />
 
       <ErrorMessage isVisible={!!error} error={error} />
 
@@ -188,10 +198,10 @@ const ScheduleView = () => {
         sx={{
           bgcolor: "background.paper",
           borderRadius: 2,
-          px: 2,
+          px: { xs: 1.5, md: 2 },
           pt: 1,
           pb: 1,
-          mb: 10,
+          mb: { xs: 12, md: 10 },
           boxShadow: "0px 4px 20px " + COLORS.SHADOW.DEFAULT,
         }}
       >
@@ -213,10 +223,25 @@ const ScheduleView = () => {
       </Box>
 
       {/* Footer Button */}
-
-      <Button fullWidth onClick={onSave} isLoading={loading}>
-        {t("saveAndContinue")}
-      </Button>
+      <Box
+        sx={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          p: { xs: 2, md: 3 },
+          bgcolor: "background.default",
+          borderTop: "1px solid",
+          borderColor: "divider",
+          zIndex: 10,
+        }}
+      >
+        <Box sx={{ maxWidth: "600px", mx: "auto" }}>
+          <Button fullWidth onClick={onSave} isLoading={loading}>
+            {t("saveAndContinue")}
+          </Button>
+        </Box>
+      </Box>
     </AuthWrapper>
   );
 };

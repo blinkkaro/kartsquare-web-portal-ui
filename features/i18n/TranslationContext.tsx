@@ -22,6 +22,18 @@ export type TranslationKey =
   | "service_provider"
   | "supplier"
   | "login_subtitle"
+  | "verifyEmailTitle"
+  | "verifyEmailSubTitle"
+  | "verifyDocumentTitle"
+  | "verifyDocumentSubTitle"
+  | "preferencesTitle"
+  | "preferencesSubTitle"
+  | "selectRoleHomeTitle"
+  | "selectRoleHomeSubtitle"
+  | "selectRoleMapTitle"
+  | "selectRoleMapSubtitle"
+  | "selectRoleBookingTitle"
+  | "selectRoleBookingSubtitle"
   | "emailInvalid"
   | "emailRequired"
   | "passwordMin"
@@ -600,17 +612,46 @@ export type TranslationKey =
   | "totalBookings"
   | "bookingsCharts"
   | "latestReviews"
+  | "page_not_found"
+  | "page_not_found_description"
+  | "go_back_home"
+  | "go_back"
+  | "error_404"
   | "pending"
   | "in_progress"
   | "accept"
   | "decline"
+  | "mark_as_complete"
   | "otp_verification"
   | "enter_otp_description"
   | "verify_and_start"
   | "at_customer_location"
   | "at_provider_location"
   | "provider_service_at_customer_location"
-  ;
+  | "phoneNumberLength"
+  | "phoneNumberInvalid"
+  | "profileUpdated"
+  | "profileUpdatedDescription"
+  | "nameRequired"
+  | "nameMin"
+  | "contactRequired"
+  | "contactInvalid"
+  | "messageRequired"
+  | "messageMin"
+  | "countryCode"
+  | "phoneMin"
+  | "profileNotFound"
+  | "copyLink"
+  | "linkCopied"
+  | "failedToCopy"
+  | "copiedToClipboard"
+  | "copyFailed"
+  | "shareOnFacebook"
+  | "shareOnTwitter"
+  | "shareOnWhatsApp"
+  | "shareViaEmail"
+  | "noPostsFound"
+  | "noServicesFound";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
@@ -673,7 +714,7 @@ interface TranslationContextType {
 }
 
 const TranslationContext = createContext<TranslationContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
@@ -694,7 +735,7 @@ export function useTranslationContext() {
   const context = useContext(TranslationContext);
   if (context === undefined) {
     throw new Error(
-      "useTranslationContext must be used within a TranslationProvider"
+      "useTranslationContext must be used within a TranslationProvider",
     );
   }
   return context;

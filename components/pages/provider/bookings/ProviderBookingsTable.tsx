@@ -52,16 +52,19 @@ const ProviderBookingsTable: React.FC<ProviderBookingsTableProps> = ({ bookings,
             <Table sx={{ minWidth: 650, borderSpacing: "0 12px", borderCollapse: "separate" }}>
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={headerCellStyle}>{english.id}</TableCell>
-                        <TableCell sx={headerCellStyle}>{english.service_name}</TableCell>
-                        <TableCell sx={headerCellStyle}>{english.booking_date}</TableCell>
-                        <TableCell sx={headerCellStyle}>{english.pay}</TableCell>
-                        <TableCell sx={headerCellStyle}>{english.service_location}</TableCell>
-                        <TableCell sx={{ ...headerCellStyle, textAlign: 'right' }}>{english.action}</TableCell>
+                        <TableCell sx={headerCellStyle}>S.No</TableCell>
+                        <TableCell sx={headerCellStyle}>{english.id || "ID"}</TableCell>
+                        <TableCell sx={headerCellStyle}>{english.service_name || "Service"}</TableCell>
+                        <TableCell sx={headerCellStyle}>{english.customer || "Customer"}</TableCell>
+                        <TableCell sx={headerCellStyle}>{english.booking_date || "Date"}</TableCell>
+                        <TableCell sx={headerCellStyle}>{english.service_charge || "Service Charge"}</TableCell>
+                        {/* <TableCell sx={headerCellStyle}>{english.service_location || "Location Type"}</TableCell> */}
+                        <TableCell sx={headerCellStyle}>{english.address || "Actual Location"}</TableCell>
+                        <TableCell sx={{ ...headerCellStyle, textAlign: 'right' }}>{english.action || "Action"}</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {bookings.map((booking) => (
+                    {bookings.map((booking, index) => (
                         <TableRow
                             key={booking.booking_id}
                             sx={{
@@ -72,19 +75,35 @@ const ProviderBookingsTable: React.FC<ProviderBookingsTableProps> = ({ bookings,
                             }}
                         >
                             <TableCell sx={cellStyle}>
+                                <Typography variant="body2" fontWeight={600} sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#6B7280" }}>
+                                    {index + 1}.
+                                </Typography>
+                            </TableCell>
+                            <TableCell sx={cellStyle}>
                                 {booking.booking_id.substring(0, 15)}...
                             </TableCell>
                             <TableCell sx={cellStyle}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                                     <Box
                                         component="img"
-                                        src={(booking as any).service_images?.[0] || (booking as any).service_image?.[0] || booking.photo_url?.[0] || "/placeholder.png"}
-                                        sx={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover" }}
+                                        src={booking.service_images?.[0] || "/placeholder.png"}
+                                        sx={{
+                                            width: 48,
+                                            height: 48,
+                                            borderRadius: "8px",
+                                            objectFit: "cover",
+                                            border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)"}`
+                                        }}
                                     />
-                                    <Typography variant="body2" fontWeight={600}>
+                                    <Typography variant="body2" sx={{ fontWeight: 700, maxWidth: 150 }} noWrap>
                                         {booking.service_name}
                                     </Typography>
                                 </Box>
+                            </TableCell>
+                            <TableCell sx={cellStyle}>
+                                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                    {booking.customer_details ? `${booking.customer_details?.first_name || ""} ${booking.customer_details?.last_name || ""}` : "N/A"}
+                                </Typography>
                             </TableCell>
                             <TableCell sx={cellStyle}>
                                 <Box>
@@ -119,12 +138,55 @@ const ProviderBookingsTable: React.FC<ProviderBookingsTableProps> = ({ bookings,
                                 </Box>
                             </TableCell>
                             <TableCell sx={cellStyle}>
-                                <Typography variant="body2" fontWeight={600}>
-                                    {booking.service_location === 'at_customer'
-                                        ? t("at_customer_location")
-                                        : t("at_provider_location")}
-                                </Typography>
+                                {booking.booking_address ? (
+                                    <Box>
+                                        <Typography variant="caption" sx={{
+                                            color: COLORS.PRIMARY_PURPLE,
+                                            fontWeight: 700,
+                                            display: 'block',
+                                            mb: 0.5,
+                                            fontSize: '0.65rem',
+                                            textTransform: 'uppercase'
+                                        }}>
+                                            {booking.service_location === 'at_customer' ? "At Home" : "At Service Provider Location"}
+                                        </Typography>
+                                        <Typography variant="body2" fontWeight={600} sx={{
+                                            maxWidth: '200px',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap'
+                                        }}>
+                                            {booking.booking_address.address}
+                                        </Typography>
+                                        <Typography variant="caption" display="block" sx={{ color: "text.secondary", fontSize: '0.75rem' }}>
+                                            {booking.booking_address.cityTown}, {booking.booking_address.state} — {booking.booking_address.pincode}
+                                        </Typography>
+                                    </Box>
+                                ) : (
+                                    <Typography variant="body2" sx={{ color: "text.secondary" }}>N/A</Typography>
+                                )}
                             </TableCell>
+
+                            {/* <TableCell sx={cellStyle}>
+                                <Box
+                                    sx={{
+                                        display: "inline-block",
+                                        px: 1.5,
+                                        py: 0.5,
+                                        borderRadius: "20px",
+                                        bgcolor: booking.service_location === 'at_customer'
+                                            ? "rgba(94, 24, 233, 0.1)"
+                                            : "rgba(16, 185, 129, 0.1)",
+                                        color: booking.service_location === 'at_customer'
+                                            ? COLORS.PRIMARY_PURPLE
+                                            : "#10B981",
+                                    }}
+                                >
+                                    <Typography variant="caption" sx={{ fontWeight: 700, textTransform: 'capitalize' }}>
+                                        {booking.service_location?.replace('_', ' ')}
+                                    </Typography>
+                                </Box>
+                            </TableCell> */}
 
                             <TableCell sx={{ ...cellStyle, textAlign: 'right' }}>
                                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>

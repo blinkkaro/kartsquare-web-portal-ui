@@ -15,7 +15,6 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useTranslate } from "@/hooks/useTranslate";
-import { COLORS } from "@/constants/colors";
 import { LoginSchema } from "../loginSchema";
 import { LoginFormData } from "../loginSchema";
 import ErrorMessage from "@/components/common/ErrorMessage";
@@ -143,7 +142,7 @@ export default function LoginForm({
           {t("login")}
         </Button>
 
-        <Button
+        {/* <Button
           variant="contained"
           startIcon={<GoogleIcon />}
           sx={{
@@ -158,7 +157,7 @@ export default function LoginForm({
           }}
         >
           {t("continue_with_google")}
-        </Button>
+        </Button> */}
       </Stack>
 
       <Box sx={{ mt: { xs: 3, sm: 4 }, textAlign: "center" }}>

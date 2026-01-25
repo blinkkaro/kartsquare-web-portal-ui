@@ -11,8 +11,8 @@ export enum ServiceLocationType {
   AT_CUSTOMER = "AT_CUSTOMER",
   BOTH = "BOTH",
   CUSTOMER_LOCATION = "CUSTOMER_LOCATION",
-  USER_LOCATION = "USER_LOCATION",
-  PROVIDER_LOCATION = "PROVIDER_LOCATION",
+  USER_LOCATION = "at_customer",
+  PROVIDER_LOCATION = "at_provider",
 }
 
 export interface Service {
@@ -46,6 +46,17 @@ export interface Service {
   category_name: string;
   sub_category_name: string | null;
   service_provider_address: string | null;
+  service_address?: {
+    building_no: string;
+    floor: string;
+    address: string;
+    landmark: string;
+    pincode: string;
+    city_town: string;
+    state: string;
+    latitude: number;
+    longitude: number;
+  };
   provider_image_url: string | null;
   is_following?: boolean;
   service_provider_latitude?: number;
@@ -98,7 +109,7 @@ export interface ServiceCreateRequest {
   is_price_required: boolean;
   price?: number;
   currency: string;
-  service_at_location: "USER_LOCATION" | "PROVIDER_LOCATION" | "BOTH";
+  service_at_location: "at_customer" | "at_provider" | "BOTH";
   visiting_charge?: number;
   service_provider_address_id: string;
   service_radius: number;

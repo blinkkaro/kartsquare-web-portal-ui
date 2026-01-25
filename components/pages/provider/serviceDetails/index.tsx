@@ -6,6 +6,7 @@ import {
     Typography,
     CircularProgress,
     useTheme,
+    Divider,
 } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { Edit, Delete, Share } from "@mui/icons-material";
@@ -25,6 +26,7 @@ import ServiceLocation from "./ServiceLocation";
 import ReviewsSection from "./ReviewsSection";
 import DescriptionDrawer from "./DescriptionDialog";
 import DeleteDialog from "./DeleteDialog";
+import ShareDialog from "./ShareDialog";
 import AdvancePayInfo from "./AdvancePayInfo";
 import MainLayout from "@/app/mainLayout";
 import { useServiceDetails } from "@/hooks/useServiceDetails";
@@ -45,6 +47,7 @@ const ProviderServiceDetails = () => {
     const [descriptionDrawerOpen, setDescriptionDrawerOpen] = useState(false);
     const [editDrawerOpen, setEditDrawerOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [shareDialogOpen, setShareDialogOpen] = useState(false);
     const [deleting, setDeleting] = useState(false);
 
     // Use TanStack Query hooks - prevents duplicate API calls
@@ -109,8 +112,9 @@ const ProviderServiceDetails = () => {
     };
 
     const handleEditSuccess = () => {
-        // Invalidate and refetch service details after edit
+        // Invalidate and refetch service details and list after edit
         queryClient.invalidateQueries({ queryKey: ["service-details", serviceId] });
+        queryClient.invalidateQueries({ queryKey: ["provider-services-list"] });
     };
 
     if (loading) {
@@ -203,46 +207,77 @@ const ProviderServiceDetails = () => {
                         </Box>
 
                         {/* Middle Column - All Content */}
-                        <Box sx={{ order: { xs: 2, md: 2 } }}>
+                        <Box
+                            sx={{
+                                order: { xs: 2, md: 2 },
+                                bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "white",
+                                borderRadius: "16px",
+                                p: { xs: 2, sm: 3 },
+                                border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.04)"}`,
+                            }}
+                        >
                             {/* Price and Category */}
-                            <ServiceDetailsHeader
-                                price={service.price ? service.price / 100 : 0}
-                                currency={service.currency || "INR"}
-                                categoryName={service.category_name || ""}
-                            />
+                            <Box sx={{ py: 2 }}>
+                                <ServiceDetailsHeader
+                                    price={service.price || 0}
+                                    currency={service.currency || "INR"}
+                                    categoryName={service.category_name || ""}
+                                />
+                            </Box>
+
+                            <Divider sx={{ opacity: 0.6 }} />
 
                             {/* Service Info */}
-                            <ServiceDetailsInfo
-                                serviceName={service.service_name || ""}
-                                serviceDesc={service.service_desc || ""}
-                                status={service.status || "ACTIVE"}
-                                onContinueReading={() => setDescriptionDrawerOpen(true)}
-                                showContinueReading={!!(service.service_desc && service.service_desc.length > 50)}
-                            />
+                            <Box sx={{ py: 2 }}>
+                                <ServiceDetailsInfo
+                                    serviceName={service.service_name || ""}
+                                    serviceDesc={service.service_desc || ""}
+                                    status={service.status || "ACTIVE"}
+                                    createdAt={service.created_at}
+                                    onContinueReading={() => setDescriptionDrawerOpen(true)}
+                                    showContinueReading={!!(service.service_desc && service.service_desc.length > 50)}
+                                />
+                            </Box>
 
-                            {/* Service Details Grid */}
-                            <ServiceDetailsGrid
-                                serviceDuration={service.service_duration || 150}
-                                serviceStatus={service.status === 'ACTIVE'}
-                                onStatusToggle={handleStatusToggle}
-                                isUpdating={updatingStatus}
-                            />
+                            <Divider sx={{ opacity: 0.6 }} />
+
+                            {/* Service Details Grid (Duration & Status) */}
+                            <Box sx={{ py: 1 }}>
+                                <ServiceDetailsGrid
+                                    serviceDuration={service.service_duration || 0}
+                                    serviceStatus={service.status === 'ACTIVE'}
+                                    onStatusToggle={handleStatusToggle}
+                                    isUpdating={updatingStatus}
+                                    status={service.status}
+                                    haveSlots={service.have_slots}
+                                />
+                            </Box>
+
+                            <Divider sx={{ opacity: 0.6 }} />
 
                             {/* Service Location */}
-                            <ServiceLocation
-                                address={service.service_provider_address || ""}
-                                serviceAtLocation={service.service_at_location}
-                            />
+                            <Box sx={{ py: 2 }}>
+                                <ServiceLocation
+                                    address={service.service_provider_address || ""}
+                                    serviceAtLocation={service.service_at_location}
+                                    visitingCharge={service.visiting_charge}
+                                    serviceRadius={service.service_radius}
+                                />
+                            </Box>
+
+                            <Divider sx={{ opacity: 0.6 }} />
 
                             {/* Reviews Section */}
-                            <ReviewsSection
-                                reviews={reviews}
-                                totalReviews={totalReviews}
-                                avgRating={service.avg_service_rating}
-                                reviewsLoading={reviewsLoading}
-                                onLoadMore={handleLoadMore}
-                                showLoadMore={hasNextPage || false}
-                            />
+                            <Box sx={{ py: 2 }}>
+                                <ReviewsSection
+                                    reviews={reviews}
+                                    totalReviews={totalReviews}
+                                    avgRating={service.avg_service_rating}
+                                    reviewsLoading={reviewsLoading}
+                                    onLoadMore={handleLoadMore}
+                                    showLoadMore={hasNextPage || false}
+                                />
+                            </Box>
                         </Box>
 
                         {/* Right Column - Action Buttons - Mobile: Horizontal, Desktop: Vertical */}
@@ -288,7 +323,7 @@ const ProviderServiceDetails = () => {
                                 <Delete fontSize="small" />
                             </IconButton>
                             <IconButton
-                                onClick={() => {/* TODO: Implement share */ }}
+                                onClick={() => setShareDialogOpen(true)}
                                 sx={{
                                     bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.9)",
                                     border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"}`,
@@ -329,6 +364,14 @@ const ProviderServiceDetails = () => {
                 onConfirm={handleDelete}
                 serviceName={service.service_name}
                 deleting={deleting}
+            />
+
+            {/* Share Dialog */}
+            <ShareDialog
+                open={shareDialogOpen}
+                onClose={() => setShareDialogOpen(false)}
+                serviceName={service.service_name}
+                serviceId={service.service_id}
             />
         </MainLayout>
     );

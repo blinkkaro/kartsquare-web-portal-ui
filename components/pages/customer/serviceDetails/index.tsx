@@ -6,6 +6,7 @@ import {
     Typography,
     CircularProgress,
     useTheme,
+    Divider,
 } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { Bookmark, Share } from "@mui/icons-material";
@@ -22,6 +23,7 @@ import CustomerServiceActions from "./CustomerServiceActions";
 import CustomerServiceDetailsGrid from "./CustomerServiceDetailsGrid";
 import DescriptionDialog from "../../provider/serviceDetails/DescriptionDialog";
 import ReviewsSection from "../../provider/serviceDetails/ReviewsSection";
+import ServiceLocation from "../../provider/serviceDetails/ServiceLocation";
 import MainLayout from "@/app/mainLayout";
 import { useServiceDetails, useProviderServices } from "@/hooks/useServiceDetails";
 import { useServiceReviews } from "@/hooks/useReviews";
@@ -137,103 +139,113 @@ const CustomerServiceDetails = () => {
                         ? COLORS.BACKGROUND.PRIMARY_DARK
                         : COLORS.BACKGROUND.SECONDARY_LIGHT,
                     minHeight: "100vh",
-                    pt: 10,
-                    pb: 4,
+                    pt: { xs: 2, sm: 4, md: 10 },
+                    pb: { xs: 2, sm: 3, md: 4 },
+                    px: { xs: 1, sm: 2 },
                 }}
             >
-                <Container maxWidth="xl">
+                <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
                     <CustomerServiceBreadcrumb serviceName={service.service_name || ""} />
 
                     <Box
                         sx={{
                             display: "grid",
-                            gridTemplateColumns: { xs: "1fr", md: "1fr 1fr auto" },
-                            gap: 4,
+                            gridTemplateColumns: {
+                                xs: "1fr",
+                                md: "1fr 1fr",
+                                lg: "1fr 1fr auto"
+                            },
+                            gap: { xs: 2, sm: 3, md: 4 },
                             alignItems: "start",
                         }}
                     >
-                        <Box sx={{ position: "sticky", top: 80 }}>
+                        <Box
+                            sx={{
+                                position: { xs: "static", md: "sticky" },
+                                top: { md: 80 },
+                                order: { xs: 1, md: 1 },
+                            }}
+                        >
                             <ServiceImageCarousel images={images} serviceName={service.service_name || ""} />
                         </Box>
 
-                        <Box>
-                            <CustomerServiceHeader
-                                price={service.price ? service.price / 100 : 0}
-                                currency={service.currency || "AED"}
-                                categoryName={service.category_name || ""}
-                                onBookmark={() => {/* TODO: Implement */ }}
-                                onShare={() => {/* TODO: Implement */ }}
-                            />
-
-                            <CustomerServiceInfo
-                                serviceName={service.service_name || ""}
-                                serviceDesc={service.service_desc || ""}
-                                onContinueReading={() => setDescriptionDrawerOpen(true)}
-                                showContinueReading={!!(service.service_desc && service.service_desc.split('\n').length > 10)}
-                            />
-
-                            <CustomerServiceActions
-                                onAddToCart={() => {/* TODO: Implement */ }}
-                                onBookNow={() => router.push(`/services/${serviceId}/book`)}
-                            />
-
-                            <CustomerServiceDetailsGrid serviceDuration={service.service_duration || 0} />
-
-                            <Box sx={{ mb: 3 }}>
-                                <Typography
-                                    variant="subtitle2"
-                                    sx={{
-                                        fontWeight: 600,
-                                        mb: 1,
-                                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                                    }}
-                                >
-                                    {t("service_location")}
-                                </Typography>
-                                <Typography
-                                    variant="body2"
-                                    sx={{
-                                        color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                                        mb: service.service_at_location === "CUSTOMER_LOCATION" ? 1.5 : 0
-                                    }}
-                                >
-                                    {service.service_provider_address || "123 Main Street, Al Satwa Dubai, United Arab Emirates"}
-                                </Typography>
-                                {service.service_at_location === "CUSTOMER_LOCATION" && (
-                                    <Box
-                                        sx={{
-                                            display: "inline-block",
-                                            px: 2,
-                                            py: 0.8,
-                                            borderRadius: "20px",
-                                            border: `1px solid ${COLORS.PRIMARY_PURPLE}`,
-                                            bgcolor: isDark ? "rgba(94, 24, 233, 0.08)" : "rgba(94, 24, 233, 0.04)",
-                                        }}
-                                    >
-                                        <Typography
-                                            variant="caption"
-                                            sx={{
-                                                color: COLORS.PRIMARY_PURPLE,
-                                                fontWeight: 600,
-                                                fontSize: "0.75rem",
-                                            }}
-                                        >
-                                            {t("provider_service_at_customer_location") || "I provide this service at customer location"}
-                                        </Typography>
-                                    </Box>
-                                )}
+                        <Box
+                            sx={{
+                                order: { xs: 2, md: 2 },
+                                bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "white",
+                                borderRadius: "16px",
+                                p: { xs: 2, sm: 3 },
+                                border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.04)"}`,
+                            }}
+                        >
+                            <Box sx={{ py: 2 }}>
+                                <CustomerServiceHeader
+                                    price={service.price || 0}
+                                    currency={service.currency || "INR"}
+                                    categoryName={service.category_name || ""}
+                                    onBookmark={() => {/* TODO: Implement */ }}
+                                    onShare={() => {/* TODO: Implement */ }}
+                                />
                             </Box>
 
-                            <Box sx={{ mb: 4, mt: 4 }}>
+                            <Divider sx={{ opacity: 0.6 }} />
+
+                            <Box sx={{ py: 2 }}>
+                                <CustomerServiceInfo
+                                    serviceName={service.service_name || ""}
+                                    serviceDesc={service.service_desc || ""}
+                                    onContinueReading={() => setDescriptionDrawerOpen(true)}
+                                    showContinueReading={!!(service.service_desc && service.service_desc.length > 50)}
+                                />
+                            </Box>
+
+                            <Divider sx={{ opacity: 0.6 }} />
+
+                            <Box sx={{ py: 2 }}>
+                                <CustomerServiceActions
+                                    onAddToCart={() => {/* TODO: Implement */ }}
+                                    onBookNow={() => router.push(`/services/${serviceId}/book`)}
+                                />
+                            </Box>
+
+                            <Divider sx={{ opacity: 0.6 }} />
+
+                            <Box sx={{ py: 2 }}>
+                                <CustomerServiceDetailsGrid
+                                    serviceDuration={service.service_duration || 0}
+                                    haveSlots={service.have_slots}
+                                />
+                            </Box>
+
+                            <Divider sx={{ opacity: 0.6 }} />
+
+                            <Box sx={{ py: 2 }}>
+                                <ServiceLocation
+                                    address={
+                                        service.service_address
+                                            ? `${service.service_address.building_no}${service.service_address.floor ? `, ${service.service_address.floor} Floor` : ""}, ${service.service_address.address}, ${service.service_address.city_town}, ${service.service_address.state} - ${service.service_address.pincode}`
+                                            : service.service_provider_address || ""
+                                    }
+                                    serviceAtLocation={service.service_at_location}
+                                    visitingCharge={service.visiting_charge}
+                                    serviceRadius={service.service_radius}
+                                />
+                            </Box>
+
+                            <Divider sx={{ opacity: 0.6 }} />
+
+                            <Box sx={{ py: 3 }}>
                                 <Typography
-                                    variant="h5"
+                                    variant="caption"
                                     sx={{
-                                        fontWeight: 700,
-                                        mb: 3,
-                                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                                        fontWeight: 800,
+                                        mb: 2,
+                                        display: "block",
+                                        letterSpacing: "0.1em",
+                                        color: "#94A3B8"
                                     }}
                                 >
-                                    Service provider Info.
+                                    {service.provider_name?.toUpperCase() || "SERVICE PROVIDER"} INFO.
                                 </Typography>
                                 <ProviderInfoCard
                                     providerId={service.provider_id || ""}
@@ -244,67 +256,84 @@ const CustomerServiceDetails = () => {
                             </Box>
 
                             {relatedServices.length > 0 && (
-                                <Box sx={{ mt: 4 }}>
-                                    <Typography
-                                        variant="h5"
-                                        sx={{
-                                            fontWeight: 700,
-                                            mb: 3,
-                                            color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                                        }}
-                                    >
-                                        Other Services
-                                    </Typography>
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            gap: 2,
-                                            overflowX: "auto",
-                                            pb: 2,
-                                            "&::-webkit-scrollbar": {
-                                                height: "8px",
-                                            },
-                                            "&::-webkit-scrollbar-track": {
-                                                bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
-                                                borderRadius: "4px",
-                                            },
-                                            "&::-webkit-scrollbar-thumb": {
-                                                bgcolor: isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT,
-                                                borderRadius: "4px",
-                                                "&:hover": {
-                                                    bgcolor: COLORS.PRIMARY_PURPLE,
+                                <>
+                                    <Divider sx={{ opacity: 0.6 }} />
+                                    <Box sx={{ py: 3 }}>
+                                        <Typography
+                                            variant="h6"
+                                            sx={{
+                                                fontWeight: 700,
+                                                mb: 2,
+                                                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                                            }}
+                                        >
+                                            Other Services
+                                        </Typography>
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                gap: 2,
+                                                overflowX: "auto",
+                                                pb: 2,
+                                                "&::-webkit-scrollbar": {
+                                                    height: "8px",
                                                 },
-                                            },
-                                        }}
-                                    >
-                                        {relatedServices.map((relatedService) => (
-                                            <Box
-                                                key={relatedService.service_id}
-                                                sx={{
-                                                    minWidth: "280px",
-                                                    maxWidth: "280px",
-                                                    flexShrink: 0,
-                                                }}
-                                            >
-                                                <ServiceCard service={relatedService} />
-                                            </Box>
-                                        ))}
+                                                "&::-webkit-scrollbar-track": {
+                                                    bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                                                    borderRadius: "4px",
+                                                },
+                                                "&::-webkit-scrollbar-thumb": {
+                                                    bgcolor: isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT,
+                                                    borderRadius: "4px",
+                                                    "&:hover": {
+                                                        bgcolor: COLORS.PRIMARY_PURPLE,
+                                                    },
+                                                },
+                                            }}
+                                        >
+                                            {relatedServices.map((relatedService) => (
+                                                <Box
+                                                    key={relatedService.service_id}
+                                                    sx={{
+                                                        minWidth: "280px",
+                                                        maxWidth: "280px",
+                                                        flexShrink: 0,
+                                                    }}
+                                                >
+                                                    <ServiceCard service={relatedService} />
+                                                </Box>
+                                            ))}
+                                        </Box>
                                     </Box>
-                                </Box>
+                                </>
                             )}
 
-                            <ReviewsSection
-                                reviews={reviews}
-                                totalReviews={totalReviews}
-                                avgRating={service.avg_service_rating || 0}
-                                reviewsLoading={reviewsLoading}
-                                onLoadMore={handleLoadMore}
-                                showLoadMore={hasNextPage || false}
-                            />
+                            <Divider sx={{ opacity: 0.6 }} />
+
+                            <Box sx={{ py: 3 }}>
+                                <ReviewsSection
+                                    reviews={reviews}
+                                    totalReviews={totalReviews}
+                                    avgRating={service.avg_service_rating || 0}
+                                    reviewsLoading={reviewsLoading}
+                                    onLoadMore={handleLoadMore}
+                                    showLoadMore={hasNextPage || false}
+                                />
+                            </Box>
                         </Box>
 
-                        {/* Right Column - Vertical Action Buttons (Synced with Provider) */}
-                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
+                        {/* Right Column - Action Buttons - Mobile: Horizontal, Desktop: Vertical (Synced with Provider) */}
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: { xs: "row", lg: "column" },
+                                gap: { xs: 1, sm: 2 },
+                                justifyContent: { xs: "flex-start", lg: "flex-start" },
+                                order: { xs: 3, md: 3 },
+                                pt: { xs: 0, lg: 1 },
+                                mb: { xs: 2, lg: 0 },
+                            }}
+                        >
                             <IconButton
                                 onClick={() => {/* TODO: Implement save/bookmark */ }}
                                 sx={{
@@ -314,8 +343,8 @@ const CustomerServiceDetails = () => {
                                     "&:hover": {
                                         bgcolor: isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 1)",
                                     },
-                                    width: 44,
-                                    height: 44,
+                                    width: { xs: 40, sm: 44 },
+                                    height: { xs: 40, sm: 44 },
                                 }}
                             >
                                 <Bookmark fontSize="small" />
@@ -329,8 +358,8 @@ const CustomerServiceDetails = () => {
                                     "&:hover": {
                                         bgcolor: isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 1)",
                                     },
-                                    width: 44,
-                                    height: 44,
+                                    width: { xs: 40, sm: 44 },
+                                    height: { xs: 40, sm: 44 },
                                 }}
                             >
                                 <Share fontSize="small" />

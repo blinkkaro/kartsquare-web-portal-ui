@@ -112,9 +112,13 @@ const ServiceBasicInfo = ({
                 <TextField
                     fullWidth
                     size="small"
-                    type="number"
                     value={price}
-                    onChange={(e) => onPriceChange(e.target.value)}
+                    onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9.]/g, '');
+                        if (val === '' || (parseFloat(val) <= 10000 && (val.match(/\./g) || []).length <= 1)) {
+                            onPriceChange(val);
+                        }
+                    }}
                     placeholder={english.enter_price}
                 />
             </Box>
