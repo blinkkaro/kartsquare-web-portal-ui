@@ -161,9 +161,19 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
-        {React.cloneElement(icon, {
-          sx: { fontSize: 18, color: iconColor },
-        })}
+        <Box
+          component="span"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            "& svg": {
+              fontSize: 18,
+              color: iconColor,
+            },
+          }}
+        >
+          {icon}
+        </Box>
         <Typography
           variant="body2"
           sx={{

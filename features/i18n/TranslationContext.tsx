@@ -638,7 +638,19 @@ export type TranslationKey =
   | "messageRequired"
   | "messageMin"
   | "countryCode"
-  | "phoneMin";
+  | "phoneMin"
+  | "profileNotFound"
+  | "copyLink"
+  | "linkCopied"
+  | "failedToCopy"
+  | "copiedToClipboard"
+  | "copyFailed"
+  | "shareOnFacebook"
+  | "shareOnTwitter"
+  | "shareOnWhatsApp"
+  | "shareViaEmail"
+  | "noPostsFound"
+  | "noServicesFound";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

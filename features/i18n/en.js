@@ -877,6 +877,8 @@ export const english = {
   copyLink: "Copy Link",
   linkCopied: "Link copied to clipboard!",
   failedToCopy: "Failed to copy link",
+  copiedToClipboard: "Link copied to clipboard!",
+  copyFailed: "Failed to copy link",
   shareOnFacebook: "Share on Facebook",
   shareOnTwitter: "Share on Twitter",
   shareOnWhatsApp: "Share on WhatsApp",

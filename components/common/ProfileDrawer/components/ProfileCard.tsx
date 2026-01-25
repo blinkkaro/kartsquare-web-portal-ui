@@ -18,7 +18,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile }) => {
   const theme = useTheme();
 
   const handleFollow = () => {
-    followMutation.mutate(profile.is_following);
+    followMutation.mutate(profile.is_following ?? false);
   };
 
   return (
