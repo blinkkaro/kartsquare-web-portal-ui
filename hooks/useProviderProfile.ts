@@ -1,6 +1,6 @@
 import followService from '@/services/follow/followService';
 import { profileService } from '@/services/profile/pofileService';
-import { providerPostsInterface, providerProfileInterface, providerServicesInterface } from '@/services/profile/profileInterface';
+import { providerPostsInterface, providerProfileInterface, providerServicesInterface, ProviderProfileByUsernameResponse } from '@/services/profile/profileInterface';
 import {
   useQuery,
   useMutation,
@@ -49,6 +49,14 @@ export const useProviderPosts = (userId: string) => {
   });
 };
 
+export const useProviderProfileByUsername = (username: string) => {
+  return useQuery({
+    queryKey: ['providerProfileByUsername', username],
+    queryFn: () => profileService.getProviderProfileByUsername(username),
+    enabled: !!username,
+  });
+};
+
 export const useFollowProvider = (userId: string) => {
   const queryClient = useQueryClient();
   const queryKey = ['providerProfile', userId];
@@ -62,10 +70,19 @@ export const useFollowProvider = (userId: string) => {
     onMutate: async isFollowing => {
       // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries({ queryKey });
+      await queryClient.cancelQueries({ 
+        predicate: (query) => query.queryKey[0] === 'providerProfileByUsername' 
+      });
 
       // Snapshot the previous value
       const previousProfile =
         queryClient.getQueryData<providerProfileInterface>(queryKey);
+      
+      // Also get username-based query data
+      const usernameQueries = queryClient.getQueriesData({ 
+        predicate: (query) => query.queryKey[0] === 'providerProfileByUsername' 
+      });
+      const previousUsernameData = usernameQueries[0]?.[1] as ProviderProfileByUsernameResponse | undefined;
 
       // Optimistically update to the new value
       if (previousProfile) {
@@ -78,8 +95,25 @@ export const useFollowProvider = (userId: string) => {
         });
       }
 
+      // Update username-based query if it exists
+      if (previousUsernameData && usernameQueries[0]) {
+        queryClient.setQueryData<ProviderProfileByUsernameResponse>(
+          usernameQueries[0][0],
+          {
+            ...previousUsernameData,
+            profile: {
+              ...previousUsernameData.profile,
+              is_following: !isFollowing,
+              followers_count: isFollowing
+                ? previousUsernameData.profile.followers_count - 1
+                : previousUsernameData.profile.followers_count + 1,
+            },
+          }
+        );
+      }
+
       // Return a context object with the snapshotted value
-      return { previousProfile };
+      return { previousProfile, previousUsernameData, usernameQueryKey: usernameQueries[0]?.[0] };
     },
 
     onError: (err, newTodo, context) => {
@@ -87,11 +121,17 @@ export const useFollowProvider = (userId: string) => {
       if (context?.previousProfile) {
         queryClient.setQueryData(queryKey, context.previousProfile);
       }
+      if (context?.previousUsernameData && context?.usernameQueryKey) {
+        queryClient.setQueryData(context.usernameQueryKey, context.previousUsernameData);
+      }
     },
 
     onSettled: () => {
       // Always refetch after error or success:
       queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ 
+        predicate: (query) => query.queryKey[0] === 'providerProfileByUsername' 
+      });
     },
   });
 };

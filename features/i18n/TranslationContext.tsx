@@ -600,6 +600,11 @@ export type TranslationKey =
   | "totalBookings"
   | "bookingsCharts"
   | "latestReviews"
+  | "page_not_found"
+  | "page_not_found_description"
+  | "go_back_home"
+  | "go_back"
+  | "error_404"
   ;
 
 // Sample dictionaries

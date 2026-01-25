@@ -792,4 +792,20 @@ export const english = {
   customer_info: "Customer Info.",
   service_fee: "Service fee",
   total_receivable_amount: "Total receivable amount",
+  // 404 Page
+  page_not_found: "Page Not Found",
+  page_not_found_description: "Sorry, we couldn't find the page you're looking for. The page might have been moved, deleted, or doesn't exist.",
+  go_back_home: "Go Back Home",
+  go_back: "Go Back",
+  error_404: "404",
+  // Profile Page
+  profileNotFound: "Profile not found",
+  followers: "Followers",
+  copyLink: "Copy Link",
+  linkCopied: "Link copied to clipboard!",
+  failedToCopy: "Failed to copy link",
+  shareOnFacebook: "Share on Facebook",
+  shareOnTwitter: "Share on Twitter",
+  shareOnWhatsApp: "Share on WhatsApp",
+  shareViaEmail: "Share via Email",
 };

@@ -47,6 +47,27 @@ export interface providerServicesInterface {
   pagination: pagination;
 }
 
+export interface DefaultAddress {
+  id: string;
+  user_id: string;
+  address_name: string;
+  building_no: string | null;
+  floor: string | null;
+  address: string;
+  landmark: string | null;
+  pincode: string;
+  city_town: string;
+  state: string;
+  country: string;
+  is_default: boolean;
+  deleted_at: string | null;
+  created_at: string;
+  updated_at: string;
+  is_deleted: boolean;
+  latitude: number;
+  longitude: number;
+}
+
 export interface providerProfileInterface {
   id: string;
   username: string;
@@ -60,6 +81,8 @@ export interface providerProfileInterface {
   gender: string;
   role: string;
   profile_pic: string;
+  banner_image?: string;
+  preferences?: string[];
   bio?: string;
   created_at: string;
   user_rating: number;
@@ -67,8 +90,15 @@ export interface providerProfileInterface {
   following_count: number;
   services_count: number;
   total_posts: string;
-  is_following: boolean;
-  follows_back: boolean;
-  total_bookings: number;
-  total_reviews: number;
+  is_following?: boolean;
+  follows_back?: boolean;
+  total_bookings: number | null;
+  total_reviews: number | null;
+  default_address?: DefaultAddress;
+}
+
+export interface ProviderProfileByUsernameResponse {
+  profile: providerProfileInterface;
+  services: Service[];
+  posts: Posts[];
 }
