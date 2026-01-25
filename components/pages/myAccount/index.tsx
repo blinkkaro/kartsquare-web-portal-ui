@@ -41,7 +41,7 @@ function MyAccountView() {
   };
 
   return (
-    <ProfileWrapper>
+    <ProfileWrapper showProfileOnMobile={true}>
       <Box>
         <Typography
           variant="h4"
@@ -71,12 +71,12 @@ function MyAccountView() {
               key={item.label}
               sx={{
                 flexBasis: {
-                  xs: "100%",
+                  xs: "calc(50% - 8px)",
                   sm: "calc(50% - 16px)",
                   lg: "calc(25% - 16px)",
                 },
                 maxWidth: {
-                  xs: "100%",
+                  xs: "calc(50% - 8px)",
                   sm: "calc(50% - 16px)",
                   lg: "calc(25% - 16px)",
                 },
@@ -128,12 +128,12 @@ function MyAccountView() {
               key={item.label}
               sx={{
                 flexBasis: {
-                  xs: "100%",
+                  xs: "calc(50% - 8px)",
                   sm: "calc(50% - 16px)",
                   lg: "calc(25% - 16px)",
                 },
                 maxWidth: {
-                  xs: "100%",
+                  xs: "calc(50% - 8px)",
                   sm: "calc(50% - 16px)",
                   lg: "calc(25% - 16px)",
                 },

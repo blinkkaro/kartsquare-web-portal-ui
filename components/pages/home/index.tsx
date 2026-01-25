@@ -19,53 +19,6 @@ import { useGetStories } from "@/hooks/useStories";
 import CompactMapView from "./components/CompactMapView";
 import { Visibility } from "@/services/post/postInterfaces";
 
-interface EmptyCardProps {
-  name: string;
-}
-
-const EmptyCard: React.FC<EmptyCardProps> = ({ name }) => {
-  const theme = useTheme();
-  return (
-    <Card
-      sx={{
-        height: "100%",
-        minHeight: 200,
-        border: `1px solid`,
-        borderColor: COLORS.BORDER.DEFAULT_LIGHT,
-        borderRadius: 2,
-        boxShadow: COLORS.SHADOW.LIGHT,
-        transition: "all 0.3s ease",
-        bgcolor:
-          theme.palette.mode === "dark"
-            ? COLORS.BACKGROUND.PRIMARY_DARK
-            : COLORS.BACKGROUND.PRIMARY_LIGHT,
-      }}
-    >
-      <CardContent
-        sx={{
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Typography
-          variant="h6"
-          sx={{
-            color:
-              theme.palette.mode === "dark"
-                ? COLORS.TEXT.PRIMARY_DARK
-                : COLORS.TEXT.PRIMARY_LIGHT,
-            fontWeight: 600,
-          }}
-        >
-          {name}
-        </Typography>
-      </CardContent>
-    </Card>
-  );
-};
-
 function HomeView() {
   const { data: posts, isLoading } = useGetPosts({
     limit: 10,

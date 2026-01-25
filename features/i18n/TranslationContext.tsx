@@ -613,7 +613,17 @@ export type TranslationKey =
   | "bookingsCharts"
   | "latestReviews"
   | "phoneNumberLength"
-  | "phoneNumberInvalid";
+  | "phoneNumberInvalid"
+  | "profileUpdated"
+  | "profileUpdatedDescription"
+  | "nameRequired"
+  | "nameMin"
+  | "contactRequired"
+  | "contactInvalid"
+  | "messageRequired"
+  | "messageMin"
+  | "countryCode"
+  | "phoneMin";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

@@ -857,4 +857,17 @@ export const english = {
   total_receivable_amount: "Total receivable amount",
   phoneNumberLength: "Phone number must be 10 digits",
   phoneNumberInvalid: "Phone number must contain only numbers",
+
+  profileUpdated: "Profile Updated",
+  profileUpdatedDescription:
+    "It may take a little while for your profile changes to be reflected.",
+  // Contact Us
+  nameRequired: "Name is required",
+  nameMin: "Name must be at least 2 characters",
+  contactRequired: "Contact number is required",
+  contactInvalid: "Invalid contact number format",
+  messageRequired: "Message is required",
+  messageMin: "Message must be at least 10 characters",
+  countryCode: "Country code",
+  phoneMin: "Phone number must be at least 10 digits",
 };
