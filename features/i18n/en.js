@@ -13,6 +13,24 @@ export const english = {
   service_provider: "Service Provider",
   supplier: "Supplier",
   login_subtitle: "Enter your email & password to login.",
+  verifyEmailTitle: "Welcome to KartSquare",
+  verifyEmailSubTitle:
+    "Verify your email to join a world of seamless services and opportunities.",
+  verifyDocumentTitle: "Build Trust & Credibility",
+  verifyDocumentSubTitle:
+    "Verified profiles get more engagement. Upload your documents to stand out.",
+  preferencesTitle: "Your Experience, Your Way",
+  preferencesSubTitle:
+    "Tell us what you need. We tailor the app to match your unique preferences.",
+  selectRoleHomeTitle: "One-Stop Solution for Your Home",
+  selectRoleHomeSubtitle:
+    "From repairs to renovations, find trusted experts for all your home needs instantly.",
+  selectRoleMapTitle: "Find Top Providers Nearby",
+  selectRoleMapSubtitle:
+    "Locate the best service providers in your neighborhood with real-time tracking.",
+  selectRoleBookingTitle: "Effortless Booking & Tracking",
+  selectRoleBookingSubtitle:
+    "Book services in seconds and track your requests with ease.",
   emailInvalid: "Invalid email",
   emailRequired: "Email is required",
   passwordMin: "Password must be at least 8 characters",
@@ -837,6 +855,8 @@ export const english = {
   customer_info: "Customer Info.",
   service_fee: "Service fee",
   total_receivable_amount: "Total receivable amount",
+  phoneNumberLength: "Phone number must be 10 digits",
+  phoneNumberInvalid: "Phone number must contain only numbers",
 
   profileUpdated: "Profile Updated",
   profileUpdatedDescription:

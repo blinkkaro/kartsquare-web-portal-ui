@@ -12,8 +12,8 @@ export const rolesData: RolesData[] = [
     name: "service_provider",
     icon: "briefcase",
   },
-  {
-    name: "supplier",
-    icon: "crown",
-  },
+  // {
+  //   name: "supplier",
+  //   icon: "crown",
+  // },
 ];
