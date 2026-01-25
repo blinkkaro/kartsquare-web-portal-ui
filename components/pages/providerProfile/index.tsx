@@ -145,7 +145,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
     media_urls: Array.isArray(post.media_urls) ? post.media_urls[0] : post.media_urls,
   }));
 
-  const StatRow = ({ icon, label, value, iconColor }: { icon: React.ReactElement, label: string, value: string, iconColor: string }) => (
+  const StatRow = ({ icon, label, value, iconColor }: { icon: React.ReactElement, label: string, value: string| number, iconColor: string }) => (
     <Box
       sx={{
         display: "flex",
