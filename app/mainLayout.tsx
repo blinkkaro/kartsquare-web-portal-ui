@@ -17,6 +17,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   const [open, setOpen] = React.useState(false);
 
   return (
+    <>
     <Box
       sx={{
         minHeight: "100vh",
@@ -55,9 +56,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
         {children}
         <AIBotton setOpen={setOpen} />
       </Box>
-      <Footer />
       <ProfileDrawer />
       <Ai open={open} onClose={() => setOpen(false)} />
     </Box>
+    <Footer />
+    </>
   );
 }

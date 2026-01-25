@@ -8,12 +8,21 @@ import { english } from "@/features/i18n/en";
 interface UseBookingFormProps {
     service: ServiceDetails | null;
     onSuccess: (response: any) => void;
+    selectedDate: Dayjs | null;
+    setSelectedDate: (date: Dayjs | null) => void;
+    location: "at_provider" | "at_customer";
+    setLocation: (location: "at_provider" | "at_customer") => void;
 }
 
-export const useBookingForm = ({ service, onSuccess }: UseBookingFormProps) => {
-    const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
+export const useBookingForm = ({
+    service,
+    onSuccess,
+    selectedDate,
+    setSelectedDate,
+    location,
+    setLocation,
+}: UseBookingFormProps) => {
     const [selectedTime, setSelectedTime] = useState<string>("");
-    const [location, setLocation] = useState<"at_provider" | "at_customer">("at_provider");
     const [customerAddress, setCustomerAddress] = useState("");
     const [notes, setNotes] = useState("");
     const [selectedAddressId, setSelectedAddressId] = useState<string>("");
@@ -23,10 +32,17 @@ export const useBookingForm = ({ service, onSuccess }: UseBookingFormProps) => {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (serviceIdFromProps?: string) => {
         try {
             setError(null);
             setSubmitting(true);
+
+            const finalServiceId = serviceIdFromProps || service?.service_id;
+
+            if (!finalServiceId) {
+                setError(english.service_not_found);
+                return;
+            }
 
             if (!selectedDate) {
                 setError(english.select_date_error);
@@ -51,7 +67,7 @@ export const useBookingForm = ({ service, onSuccess }: UseBookingFormProps) => {
             }
 
             const bookingData: any = {
-                service_id: service?.service_id,
+                service_id: finalServiceId,
                 service_location: location,
                 customer_notes: notes.trim() || undefined,
                 schedule_at: scheduleAt,

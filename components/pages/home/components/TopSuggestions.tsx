@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import RightDrawer from "@/components/common/RightDrawer";
 import TopRankedItem from "./TopRankedItem";
+import { truncateHTML } from "@/helper/helper";
 
 interface SectionProps {
   title: string;
@@ -94,142 +95,134 @@ const SuggestionSection = ({ title, items, onSeeAll }: SectionProps) => {
         </Typography>
       </Box>
 
-      <Box sx={{ display: "flex", gap: 1, justifyContent: "space-between" }}>
-        {items.map((item) => (
-          <Box
-            key={item.id}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              width: "32%", // approx 1/3
-              overflow: "hidden",
-              cursor: "pointer",
-            }}
-            onClick={(e) => {
-              handleOnCardClick(item);
-            }}
-          >
+      <Box sx={{ display: "flex", gap: 1 }}>
+        {items
+          .filter(
+            (item, index, self) =>
+              index === self.findIndex((t) => t.id === item.id),
+          )
+          .slice(0, 3)
+          .map((item) => (
             <Box
+              key={item.id}
               sx={{
-                position: "relative",
-                width: "100%",
-                aspectRatio: "1/1",
-                mb: 1,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                width: { xs: "30%", sm: "32%" }, // responsive width
+                overflow: "hidden",
+                cursor: "pointer",
+              }}
+              onClick={(e) => {
+                handleOnCardClick(item);
               }}
             >
               <Box
                 sx={{
+                  position: "relative",
                   width: "100%",
-                  height: "100%",
-                  borderRadius: 3,
-                  overflow: "hidden",
+                  aspectRatio: "1/1",
+                  mb: 1,
                 }}
               >
-                <CardMedia
-                  component="img"
-                  src={
-                    // Type guard for TopProvider
-                    "profile_pic" in item && item.profile_pic
-                      ? item.profile_pic
-                      : "image_urls" in item &&
-                          Array.isArray(item.image_urls) &&
-                          item.image_urls.length > 0
-                        ? item.image_urls[0]
-                        : ""
-                  }
-                  alt={"name" in item ? item.name : "Image"}
-                  width={100}
-                  height={100}
-                  style={{
+                <Box
+                  sx={{
                     width: "100%",
-                    height: "7rem",
-                    objectFit: "cover",
+                    height: "100%",
+                    borderRadius: 3,
+                    overflow: "hidden",
                   }}
-                />
+                >
+                  <CardMedia
+                    component="img"
+                    src={
+                      // Type guard for TopProvider
+                      "profile_pic" in item && item.profile_pic
+                        ? item.profile_pic
+                        : "image_urls" in item &&
+                            Array.isArray(item.image_urls) &&
+                            item.image_urls.length > 0
+                          ? item.image_urls[0]
+                          : undefined
+                    }
+                    alt={"name" in item ? item.name : "Image"}
+                    width={100}
+                    height={100}
+                    style={{
+                      width: "100%",
+                      height: "100%", // Fit container
+                      aspectRatio: "1/1",
+                      objectFit: "cover",
+                    }}
+                  />
+                </Box>
+
+                {/* Rating Badge */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    bottom: -8,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    bgcolor: "#2B2B39",
+                    color: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.2,
+                    px: 0.8,
+                    py: 0.2,
+                    borderRadius: 4,
+                    border: "2px solid white",
+                    zIndex: 2,
+                    boxShadow: 2,
+                  }}
+                >
+                  <Star sx={{ fontSize: 10, color: "#FFB400" }} />
+                  <Typography sx={{ fontSize: "0.6rem", fontWeight: 700 }}>
+                    {item.rating}
+                  </Typography>
+                </Box>
               </Box>
 
-              {/* Rating Badge */}
-              <Box
-                sx={{
-                  position: "absolute",
-                  bottom: -8,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  bgcolor: "#2B2B39",
-                  color: "white",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 0.2,
-                  px: 0.8,
-                  py: 0.2,
-                  borderRadius: 4,
-                  border: "2px solid white",
-                  zIndex: 2,
-                  boxShadow: 2,
-                }}
-              >
-                <Star sx={{ fontSize: 10, color: "#FFB400" }} />
-                <Typography sx={{ fontSize: "0.6rem", fontWeight: 700 }}>
-                  {item.rating}
-                </Typography>
-              </Box>
-            </Box>
-
-            <Typography
-              sx={{
-                fontWeight: 700,
-                fontSize: "0.8rem",
-                textAlign: "center",
-                mt: 1.5,
-                lineHeight: 1.2,
-                color:
-                  theme.palette.mode === "dark"
-                    ? COLORS.TEXT.PRIMARY_DARK
-                    : COLORS.TEXT.PRIMARY_LIGHT,
-                width: "100%",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {"name" in item
-                ? item.name
-                : `${item.first_name} ${item.last_name}`}
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: "0.65rem",
-                color:
-                  theme.palette.mode === "dark"
-                    ? COLORS.TEXT.SECONDARY_DARK
-                    : COLORS.TEXT.SECONDARY_LIGHT,
-                textAlign: "center",
-                lineHeight: 1.2,
-                width: "100%",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            ></Typography>
-            {"description" in item && item.description && (
               <Typography
                 sx={{
-                  fontSize: "0.6rem",
+                  fontWeight: 700,
+                  fontSize: "0.8rem",
+                  textAlign: "center",
+                  mt: 1.5,
+                  lineHeight: 1.2,
                   color:
                     theme.palette.mode === "dark"
-                      ? COLORS.TEXT.SECONDARY_DARK
-                      : COLORS.TEXT.SECONDARY_LIGHT,
-                  textAlign: "center",
-                  mt: 0.2,
+                      ? COLORS.TEXT.PRIMARY_DARK
+                      : COLORS.TEXT.PRIMARY_LIGHT,
+                  width: "100%",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
                 }}
               >
-                {item.description.slice(0, 30)}
-                {item.description.length > 30 ? "..." : ""}
+                {"name" in item
+                  ? item.name
+                  : `${item.first_name} ${item.last_name}`}
               </Typography>
-            )}
-          </Box>
-        ))}
+              {"description" in item && item.description && (
+                <Typography
+                  sx={{
+                    fontSize: "0.6rem",
+                    color:
+                      theme.palette.mode === "dark"
+                        ? COLORS.TEXT.SECONDARY_DARK
+                        : COLORS.TEXT.SECONDARY_LIGHT,
+                    textAlign: "center",
+                    mt: 0.2,
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: truncateHTML(item.description, 30),
+                  }}
+                />
+              )}
+            </Box>
+          ))}
       </Box>
     </Card>
   );

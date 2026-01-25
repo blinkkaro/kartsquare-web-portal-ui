@@ -84,7 +84,7 @@ const BookingsTable: React.FC<BookingsTableProps> = ({ bookings, activeTab, onVi
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                     <Box
                                         component="img"
-                                        src={booking.service_images?.[0] || "/placeholder.png"}
+                                        src={(booking as any).service_images?.[0] || (booking as any).service_image?.[0] || booking.photo_url?.[0] || "/placeholder.png"}
                                         sx={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover" }}
                                     />
                                     <Typography variant="body2" fontWeight={600}>

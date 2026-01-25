@@ -208,11 +208,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
               sx={{ color: COLORS.PRIMARY_PURPLE }}
             >
               <Typography
-                variant="caption"
+                variant="body2"
                 component="span"
                 sx={{
                   color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                  mr: 0.5
+                  mr: 0.5,
+                  fontSize: "0.85rem",
                 }}
               >
                 {service.currency}

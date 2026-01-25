@@ -6,22 +6,18 @@ import { english } from "../../../../features/i18n/en";
 interface ProviderBookingsTabsProps {
     activeTab: number;
     onTabChange: (newValue: number) => void;
-    bookingCounts: number;
+    counts: number[];
+    tabs: string[];
 }
 
 const ProviderBookingsTabs: React.FC<ProviderBookingsTabsProps> = ({
     activeTab,
     onTabChange,
-    bookingCounts
+    counts,
+    tabs
 }) => {
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark";
-
-    const tabs = [
-        english.upcoming,
-        english.completed,
-        english.cancelled
-    ];
 
     return (
         <Box sx={{ mb: 4 }}>
@@ -40,16 +36,41 @@ const ProviderBookingsTabs: React.FC<ProviderBookingsTabsProps> = ({
                         fontSize: "0.95rem",
                         color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#6B7280",
                         mr: 2,
+                        minWidth: 'auto',
+                        px: 1,
                         "&.Mui-selected": {
                             color: isDark ? "white" : "#111827",
                         },
                     },
                 }}
             >
-                {tabs.map((tab) => (
+                {tabs.map((tab, index) => (
                     <Tab
                         key={tab}
-                        label={`${tab} ${bookingCounts > 0 ? `(${bookingCounts})` : ''}`}
+                        label={
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                {tab}
+                                {counts[index] !== undefined && (
+                                    <Box
+                                        sx={{
+                                            bgcolor: activeTab === index
+                                                ? COLORS.PRIMARY_PURPLE
+                                                : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
+                                            color: activeTab === index ? 'white' : 'inherit',
+                                            borderRadius: '6px',
+                                            px: 0.8,
+                                            py: 0.2,
+                                            fontSize: '0.75rem',
+                                            fontWeight: 700,
+                                            minWidth: '20px',
+                                            textAlign: 'center'
+                                        }}
+                                    >
+                                        {counts[index]}
+                                    </Box>
+                                )}
+                            </Box>
+                        }
                         disableRipple
                     />
                 ))}

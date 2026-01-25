@@ -34,6 +34,21 @@ const BookingsPage = () => {
         english.cancelled
     ];
 
+    const counts = useMemo(() => {
+        return {
+            upcoming: bookings.filter(b =>
+                (b.status === "CONFIRMED" && dayjs(b.booking_at).isAfter(dayjs())) ||
+                b.status === "PENDING"
+            ).length,
+            in_progress: bookings.filter(b =>
+                (b.status === "CONFIRMED" && dayjs(b.booking_at).isBefore(dayjs())) ||
+                b.status === "ACTIVE" || b.status === "IN_PROGRESS" as any
+            ).length,
+            completed: bookings.filter(b => b.status === "COMPLETED").length,
+            cancelled: bookings.filter(b => b.status === "CANCELLED").length
+        };
+    }, [bookings]);
+
     // Filter bookings based on active tab
     const getFilteredBookings = () => {
         let filtered = bookings;
@@ -49,7 +64,7 @@ const BookingsPage = () => {
             case english.in_progress:
                 filtered = bookings.filter(b =>
                     (b.status === "CONFIRMED" && dayjs(b.booking_at).isBefore(dayjs())) ||
-                    b.status === "IN_PROGRESS" as any
+                    b.status === "ACTIVE" || b.status === "IN_PROGRESS" as any
                 );
                 break;
             case english.completed:
@@ -80,8 +95,8 @@ const BookingsPage = () => {
     };
 
     return (
-       <MainLayout >
-         <Box
+        <MainLayout >
+            <Box
                 sx={{
                     bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
                     minHeight: "100%",
@@ -103,6 +118,7 @@ const BookingsPage = () => {
                     <BookingsTabs
                         activeTab={activeTab}
                         onTabChange={setActiveTab}
+                        counts={[counts.upcoming, counts.in_progress, counts.completed, counts.cancelled]}
                     />
 
                     {/* Bookings Content */}
@@ -113,38 +129,38 @@ const BookingsPage = () => {
                     ) : filteredBookings.length === 0 ? (
                         <Box sx={{ textAlign: "center", py: 8 }}>
                             <Typography variant="h6" sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT }}>
-                            <EmptyState
-                            titleKey="no_bookings_found"
-                            descriptionKey="no_bookings_found_description"
-                            icon={
-                                <Box
-                                    sx={{
-                                        width: { xs: 100, sm: 120 },
-                                        height: { xs: 100, sm: 120 },
-                                        borderRadius: "50%",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        bgcolor: isDark
-                                            ? COLORS.BACKGROUND.SECONDARY_DARK
-                                            : COLORS.PURPLE_ALPHA_10,
-                                        mb: 3,
-                                        border: `3px solid ${COLORS.PRIMARY_PURPLE}20`,
-                                    }}
-                                >
-                                    <CalendarToday
-                                        sx={{
-                                            fontSize: { xs: 48, sm: 64 },
-                                            color: COLORS.PRIMARY_PURPLE,
-                                            opacity: 0.8,
-                                        }}
-                                    />
-                                </Box>
-                            }
-                            minHeight={400}
-                            sx={{ minHeight: { xs: 300, sm: 400 } }}
-                            variant="empty"
-                        />
+                                <EmptyState
+                                    titleKey="no_bookings_found"
+                                    descriptionKey="no_bookings_found_description"
+                                    icon={
+                                        <Box
+                                            sx={{
+                                                width: { xs: 100, sm: 120 },
+                                                height: { xs: 100, sm: 120 },
+                                                borderRadius: "50%",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                bgcolor: isDark
+                                                    ? COLORS.BACKGROUND.SECONDARY_DARK
+                                                    : COLORS.PURPLE_ALPHA_10,
+                                                mb: 3,
+                                                border: `3px solid ${COLORS.PRIMARY_PURPLE}20`,
+                                            }}
+                                        >
+                                            <CalendarToday
+                                                sx={{
+                                                    fontSize: { xs: 48, sm: 64 },
+                                                    color: COLORS.PRIMARY_PURPLE,
+                                                    opacity: 0.8,
+                                                }}
+                                            />
+                                        </Box>
+                                    }
+                                    minHeight={400}
+                                    sx={{ minHeight: { xs: 300, sm: 400 } }}
+                                    variant="empty"
+                                />
                             </Typography>
                         </Box>
                     ) : (

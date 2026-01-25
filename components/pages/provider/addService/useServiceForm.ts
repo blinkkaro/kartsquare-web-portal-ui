@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { serviceListService } from "@/services/serviceList/serviceListService";
 import { verifyDocumentService } from "@/services/auth/verifyDocument.service";
-import { subcategoryService } from "@/services/subcategory/subcategoryService";
 import { getUserId } from "@/utils/auth";
 import { ServiceDetails } from "@/services/serviceDetails/serviceDetailsInterface";
 import { english } from "@/features/i18n/en";
@@ -82,19 +81,9 @@ export const useServiceForm = ({
                     setSelectedImages([]);
                 }
 
-                // Fetch subcategories for the selected category
-                if (editService.category_id) {
-                    try {
-                        const data = await subcategoryService.getSubcategoriesByCategoryId(editService.category_id);
-                        setSubcategories(data || []);
-                        // Set subcategory ID immediately after fetching subcategories
-                        if (editService.sub_category_id) {
-                            setSubcategoryId(editService.sub_category_id);
-                        }
-                    } catch (err) {
-                        console.error("Failed to fetch subcategories for edit:", err);
-                        setSubcategories([]);
-                    }
+                // Subcategory ID will be set by useServiceData effect
+                if (editService.sub_category_id) {
+                    setSubcategoryId(editService.sub_category_id);
                 }
             }
         };

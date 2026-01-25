@@ -29,10 +29,22 @@ const ProviderBookingsPage = () => {
     const { data: bookings = [], isLoading: loading } = useProviderBookings();
 
     const tabs = [
+        t("pending"),
         t("upcoming"),
+        t("in_progress"),
         t("completed"),
         t("cancelled")
     ];
+
+    const tabCounts = useMemo(() => {
+        return [
+            bookings.filter(b => b.status === "PENDING").length,
+            bookings.filter(b => b.status === "CONFIRMED").length,
+            bookings.filter(b => b.status === "ACTIVE").length,
+            bookings.filter(b => b.status === "COMPLETED").length,
+            bookings.filter(b => b.status === "CANCELLED").length,
+        ];
+    }, [bookings]);
 
     // Filter bookings based on active tab
     const getFilteredBookings = () => {
@@ -40,11 +52,12 @@ const ProviderBookingsPage = () => {
 
         // Filter by status
         const currentTab = tabs[activeTab];
-        if (currentTab === t("upcoming")) {
-            filtered = bookings.filter(b =>
-                (b.status === "CONFIRMED" && dayjs(b.booking_at).isAfter(dayjs())) ||
-                b.status === "PENDING"
-            );
+        if (currentTab === t("pending")) {
+            filtered = bookings.filter(b => b.status === "PENDING");
+        } else if (currentTab === t("upcoming")) {
+            filtered = bookings.filter(b => b.status === "CONFIRMED");
+        } else if (currentTab === t("in_progress")) {
+            filtered = bookings.filter(b => b.status === "ACTIVE");
         } else if (currentTab === t("completed")) {
             filtered = bookings.filter(b => b.status === "COMPLETED");
         } else if (currentTab === t("cancelled")) {
@@ -71,7 +84,7 @@ const ProviderBookingsPage = () => {
 
     return (
         <MainLayout >
-             <Box
+            <Box
                 sx={{
                     bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
                     minHeight: "100%",
@@ -93,7 +106,8 @@ const ProviderBookingsPage = () => {
                     <ProviderBookingsTabs
                         activeTab={activeTab}
                         onTabChange={setActiveTab}
-                        bookingCounts={filteredBookings.length}
+                        counts={tabCounts}
+                        tabs={tabs}
                     />
 
                     {/* Bookings Content */}
@@ -138,6 +152,7 @@ const ProviderBookingsPage = () => {
                         <ProviderBookingsTable
                             bookings={filteredBookings}
                             activeTab={activeTab}
+                            tabs={tabs}
                             onViewDetails={handleViewDetails}
                         />
                     )}

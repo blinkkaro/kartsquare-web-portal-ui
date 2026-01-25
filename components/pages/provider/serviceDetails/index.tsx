@@ -93,6 +93,21 @@ const ProviderServiceDetails = () => {
         }
     };
 
+    const [updatingStatus, setUpdatingStatus] = useState(false);
+
+    const handleStatusToggle = async (newStatus: 'ACTIVE' | 'INACTIVE') => {
+        try {
+            setUpdatingStatus(true);
+            await serviceListService.toggleServiceStatus(serviceId, newStatus);
+            queryClient.invalidateQueries({ queryKey: ["service-details", serviceId] });
+            queryClient.invalidateQueries({ queryKey: ["provider-services-list"] });
+        } catch (error) {
+            console.error("Failed to toggle service status:", error);
+        } finally {
+            setUpdatingStatus(false);
+        }
+    };
+
     const handleEditSuccess = () => {
         // Invalidate and refetch service details after edit
         queryClient.invalidateQueries({ queryKey: ["service-details", serviceId] });
@@ -147,8 +162,8 @@ const ProviderServiceDetails = () => {
             ];
 
     return (
-       <MainLayout>
-         <Box
+        <MainLayout>
+            <Box
                 sx={{
                     bgcolor: isDark
                         ? COLORS.BACKGROUND.PRIMARY_DARK
@@ -167,18 +182,18 @@ const ProviderServiceDetails = () => {
                     <Box
                         sx={{
                             display: "grid",
-                            gridTemplateColumns: { 
-                                xs: "1fr", 
+                            gridTemplateColumns: {
+                                xs: "1fr",
                                 md: "1fr 1fr",
-                                lg: "1fr 1fr auto" 
+                                lg: "1fr 1fr auto"
                             },
                             gap: { xs: 2, sm: 3, md: 4 },
                             alignItems: "start",
                         }}
                     >
                         {/* Left Column - Images Only (Square) */}
-                        <Box 
-                            sx={{ 
+                        <Box
+                            sx={{
                                 position: { xs: "static", md: "sticky" },
                                 top: { md: 80 },
                                 order: { xs: 1, md: 1 },
@@ -208,11 +223,16 @@ const ProviderServiceDetails = () => {
                             {/* Service Details Grid */}
                             <ServiceDetailsGrid
                                 serviceDuration={service.service_duration || 150}
-                                serviceStatus={service.status === ServiceStatus.APPROVED}
+                                serviceStatus={service.status === 'ACTIVE'}
+                                onStatusToggle={handleStatusToggle}
+                                isUpdating={updatingStatus}
                             />
 
                             {/* Service Location */}
-                            <ServiceLocation address={service.service_provider_address || ""} />
+                            <ServiceLocation
+                                address={service.service_provider_address || ""}
+                                serviceAtLocation={service.service_at_location}
+                            />
 
                             {/* Reviews Section */}
                             <ReviewsSection
@@ -226,9 +246,9 @@ const ProviderServiceDetails = () => {
                         </Box>
 
                         {/* Right Column - Action Buttons - Mobile: Horizontal, Desktop: Vertical */}
-                        <Box 
-                            sx={{ 
-                                display: "flex", 
+                        <Box
+                            sx={{
+                                display: "flex",
                                 flexDirection: { xs: "row", lg: "column" },
                                 gap: { xs: 1, sm: 2 },
                                 justifyContent: { xs: "flex-start", lg: "flex-start" },
@@ -310,7 +330,7 @@ const ProviderServiceDetails = () => {
                 serviceName={service.service_name}
                 deleting={deleting}
             />
-       </MainLayout>
+        </MainLayout>
     );
 };
 

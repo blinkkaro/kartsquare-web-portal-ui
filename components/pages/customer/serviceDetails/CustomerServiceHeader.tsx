@@ -29,7 +29,7 @@ const CustomerServiceHeader = ({
                     sx={{
                         color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                         fontWeight: 300,
-                        fontSize: "0.875rem",
+                        fontSize: "1.1rem",
                     }}
                 >
                     {currency}

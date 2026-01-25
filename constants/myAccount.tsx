@@ -12,7 +12,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import LockIcon from "@mui/icons-material/Lock";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ListIcon from "@mui/icons-material/List";
-import HelpIcon from "@mui/icons-material/Help";
+import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import SecurityIcon from "@mui/icons-material/Security";
 import DescriptionIcon from "@mui/icons-material/Description";
 
@@ -128,9 +128,9 @@ export const myAccountSettingNav = (
       icon: <ListIcon />,
     },
     {
-      label: t("helpSupport"),
-      href: "myAccount/helpSupport",
-      icon: <HelpIcon />,
+      label: t("contactUs"),
+      href: "/contactUs",
+      icon: <LocalPhoneIcon />,
     },
     // {
     //   label: t("rcPolicy"),
