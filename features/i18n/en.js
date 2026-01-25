@@ -468,6 +468,7 @@ export const english = {
   bookingsCharts: "Bookings Charts",
   latestReviews: "Latest Reviews",
 
+
   // Footer
   company: "Company",
   aboutUs: "About Us",
@@ -618,6 +619,8 @@ export const english = {
   cookieConsentDescription:
     "By continuing to use our website, you consent to our use of cookies as described in this policy. If you do not agree to our use of cookies, you should disable cookies in your browser settings or refrain from using our website.",
   updatesToPolicy: "Updates to This Policy",
+  cookiePolicyUpdatesDescription: "We may update this Cookie Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any material changes by posting the new Cookie Policy on this page.",
+  cookiePolicyContactDescription: "If you have any questions about our use of cookies or this Cookie Policy, please contact us through our contact page or email us at support@kartsquare.com.",
   cookiePolicyUpdatesDescription:
     "We may update this Cookie Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any material changes by posting the new Cookie Policy on this page.",
   cookiePolicyContactDescription:
@@ -640,6 +643,7 @@ export const english = {
   submitApplication: "Submit Application",
   submitting: "Submitting...",
   thankYou: "Thank You!",
+  resumeSubmittedSuccess: "Your resume has been submitted successfully. We'll review it and get back to you if there's a match.",
   resumeSubmittedSuccess:
     "Your resume has been submitted successfully. We'll review it and get back to you if there's a match.",
 
@@ -680,6 +684,12 @@ export const english = {
   in_progress: "In Progress",
   completed: "Completed",
   cancelled: "Cancelled",
+  pending: "Pending",
+  accept: "Accept",
+  decline: "Decline",
+  otp_verification: "OTP Verification",
+  enter_otp_description: "Please enter the OTP provided by the customer to start the service.",
+  verify_and_start: "Verify & Start",
   no_bookings_found: "No bookings found",
   no_bookings_found_description:
     "You don't have any bookings in this category yet. New bookings will appear here once customers book your services.",
@@ -760,8 +770,8 @@ export const english = {
   minutes: "Minutes",
   enable_time_slots: "Enable time slots for this service",
   service_location: "Service Location",
-  at_provider_location: "At Provider Location",
-  at_customer_location: "I provide this service at customer location",
+  at_provider_location: "Provider Location",
+  at_customer_location: "Customer Location",
   select_address: "Select Address",
   no_address_yet: "You do not have an address yet.",
   add_address: "Add Address",
@@ -855,6 +865,8 @@ export const english = {
   customer_info: "Customer Info.",
   service_fee: "Service fee",
   total_receivable_amount: "Total receivable amount",
+  otp_to_provider_label: "Service Start Code",
+  otp_to_provider_instruction: "Share this OTP with the provider only when they arrive to begin your service.",
   phoneNumberLength: "Phone number must be 10 digits",
   phoneNumberInvalid: "Phone number must contain only numbers",
 

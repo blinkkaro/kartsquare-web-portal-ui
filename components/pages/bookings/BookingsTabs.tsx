@@ -6,9 +6,10 @@ import { english } from "../../../features/i18n/en";
 interface BookingsTabsProps {
     activeTab: number;
     onTabChange: (newValue: number) => void;
+    counts?: number[];
 }
 
-const BookingsTabs: React.FC<BookingsTabsProps> = ({ activeTab, onTabChange }) => {
+const BookingsTabs: React.FC<BookingsTabsProps> = ({ activeTab, onTabChange, counts }) => {
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark";
 
@@ -36,14 +37,43 @@ const BookingsTabs: React.FC<BookingsTabsProps> = ({ activeTab, onTabChange }) =
                         fontSize: "0.95rem",
                         color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#6B7280",
                         mr: 2,
+                        minWidth: 'auto',
+                        px: 1,
                         "&.Mui-selected": {
                             color: isDark ? "white" : "#111827",
                         },
                     },
                 }}
             >
-                {tabs.map((tab) => (
-                    <Tab key={tab} label={tab} disableRipple />
+                {tabs.map((tab, index) => (
+                    <Tab
+                        key={tab}
+                        label={
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                {tab}
+                                {counts && counts[index] !== undefined && (
+                                    <Box
+                                        sx={{
+                                            bgcolor: activeTab === index
+                                                ? COLORS.PRIMARY_PURPLE
+                                                : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
+                                            color: activeTab === index ? 'white' : 'inherit',
+                                            borderRadius: '6px',
+                                            px: 0.8,
+                                            py: 0.2,
+                                            fontSize: '0.75rem',
+                                            fontWeight: 700,
+                                            minWidth: '20px',
+                                            textAlign: 'center'
+                                        }}
+                                    >
+                                        {counts[index]}
+                                    </Box>
+                                )}
+                            </Box>
+                        }
+                        disableRipple
+                    />
                 ))}
             </Tabs>
             {/* Thin divider line under tabs */}

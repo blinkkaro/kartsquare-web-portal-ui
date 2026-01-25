@@ -9,17 +9,27 @@ interface ServiceDetailsGridProps {
     bookings?: number;
     homeFee?: number;
     serviceStatus?: boolean;
+    onStatusToggle?: (newStatus: 'ACTIVE' | 'INACTIVE') => void;
+    isUpdating?: boolean;
 }
 
 const ServiceDetailsGrid = ({
     serviceDuration,
     bookings = 80,
     homeFee = 10.00,
-    serviceStatus = true
+    serviceStatus = true,
+    onStatusToggle,
+    isUpdating = false
 }: ServiceDetailsGridProps) => {
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark";
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+    const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (onStatusToggle) {
+            onStatusToggle(event.target.checked ? 'ACTIVE' : 'INACTIVE');
+        }
+    };
 
     return (
         <Box
@@ -80,6 +90,8 @@ const ServiceDetailsGrid = ({
                     </Typography>
                     <Switch
                         checked={serviceStatus}
+                        onChange={handleToggle}
+                        disabled={isUpdating}
                         size={isMobile ? "small" : "medium"}
                         sx={{
                             "& .MuiSwitch-switchBase.Mui-checked": {

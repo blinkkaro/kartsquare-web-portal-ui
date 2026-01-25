@@ -16,22 +16,19 @@ import { COLORS } from "../../../../constants/colors";
 import { english } from "../../../../features/i18n/en";
 import dayjs from "dayjs";
 import ProviderBookingActionButtons from "./ProviderBookingActionButtons";
+import { useTranslate } from "@/hooks/useTranslate";
 
 interface ProviderBookingsTableProps {
     bookings: UserBooking[];
     activeTab: number;
+    tabs: string[];
     onViewDetails: (booking: UserBooking) => void;
 }
 
-const ProviderBookingsTable: React.FC<ProviderBookingsTableProps> = ({ bookings, activeTab, onViewDetails }) => {
+const ProviderBookingsTable: React.FC<ProviderBookingsTableProps> = ({ bookings, activeTab, tabs, onViewDetails }) => {
     const theme = useTheme();
+    const { t } = useTranslate();
     const isDark = theme.palette.mode === "dark";
-
-    const tabs = [
-        english.upcoming,
-        english.completed,
-        english.cancelled
-    ];
 
     // Reusable Table Cell Styles
     const cellStyle = {
@@ -81,7 +78,7 @@ const ProviderBookingsTable: React.FC<ProviderBookingsTableProps> = ({ bookings,
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                     <Box
                                         component="img"
-                                        src={booking.service_images?.[0] || "/placeholder.png"}
+                                        src={(booking as any).service_images?.[0] || (booking as any).service_image?.[0] || booking.photo_url?.[0] || "/placeholder.png"}
                                         sx={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover" }}
                                     />
                                     <Typography variant="body2" fontWeight={600}>
@@ -101,11 +98,20 @@ const ProviderBookingsTable: React.FC<ProviderBookingsTableProps> = ({ bookings,
                             </TableCell>
                             <TableCell sx={cellStyle}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    {tabs[activeTab] === english.completed && (
+                                    {tabs[activeTab] === t("completed") && (
+                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#10B981' }} />
+                                    )}
+                                    {tabs[activeTab] === t("cancelled") && (
+                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#EF4444' }} />
+                                    )}
+                                    {tabs[activeTab] === t("in_progress") && (
                                         <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#3B82F6' }} />
                                     )}
-                                    {tabs[activeTab] === english.cancelled && (
-                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#EF4444' }} />
+                                    {tabs[activeTab] === t("upcoming") && (
+                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#F59E0B' }} />
+                                    )}
+                                    {tabs[activeTab] === t("pending") && (
+                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#6366F1' }} />
                                     )}
                                     <Typography variant="body2" fontWeight={700} sx={{ color: isDark ? "text.primary" : "#374151" }}>
                                         {booking.currency} {booking.service_price.toFixed(2)}
@@ -113,18 +119,11 @@ const ProviderBookingsTable: React.FC<ProviderBookingsTableProps> = ({ bookings,
                                 </Box>
                             </TableCell>
                             <TableCell sx={cellStyle}>
-                                {booking.service_location === 'at_customer' ? (
-                                    <Box>
-                                        <Typography variant="body2" fontWeight={600}>
-                                            123 Main Street, Al Satwa...
-                                        </Typography>
-                                        <Typography variant="caption" display="block" color="text.secondary">
-                                            Dubai, United Arab Emira...
-                                        </Typography>
-                                    </Box>
-                                ) : (
-                                    <Typography variant="body2" sx={{ color: "text.secondary" }}>—</Typography>
-                                )}
+                                <Typography variant="body2" fontWeight={600}>
+                                    {booking.service_location === 'at_customer'
+                                        ? t("at_customer_location")
+                                        : t("at_provider_location")}
+                                </Typography>
                             </TableCell>
 
                             <TableCell sx={{ ...cellStyle, textAlign: 'right' }}>

@@ -79,8 +79,8 @@ const CustomerServiceDetails = () => {
 
     if (loading) {
         return (
-           <MainLayout>
-            <Box
+            <MainLayout>
+                <Box
                     sx={{
                         display: "flex",
                         justifyContent: "center",
@@ -93,7 +93,7 @@ const CustomerServiceDetails = () => {
                 >
                     <CircularProgress />
                 </Box>
-           </MainLayout>
+            </MainLayout>
         );
     }
 
@@ -130,8 +130,8 @@ const CustomerServiceDetails = () => {
             ];
 
     return (
-       <MainLayout>
-          <Box
+        <MainLayout>
+            <Box
                 sx={{
                     bgcolor: isDark
                         ? COLORS.BACKGROUND.PRIMARY_DARK
@@ -194,10 +194,34 @@ const CustomerServiceDetails = () => {
                                     variant="body2"
                                     sx={{
                                         color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                                        mb: service.service_at_location === "CUSTOMER_LOCATION" ? 1.5 : 0
                                     }}
                                 >
                                     {service.service_provider_address || "123 Main Street, Al Satwa Dubai, United Arab Emirates"}
                                 </Typography>
+                                {service.service_at_location === "CUSTOMER_LOCATION" && (
+                                    <Box
+                                        sx={{
+                                            display: "inline-block",
+                                            px: 2,
+                                            py: 0.8,
+                                            borderRadius: "20px",
+                                            border: `1px solid ${COLORS.PRIMARY_PURPLE}`,
+                                            bgcolor: isDark ? "rgba(94, 24, 233, 0.08)" : "rgba(94, 24, 233, 0.04)",
+                                        }}
+                                    >
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                color: COLORS.PRIMARY_PURPLE,
+                                                fontWeight: 600,
+                                                fontSize: "0.75rem",
+                                            }}
+                                        >
+                                            {t("provider_service_at_customer_location") || "I provide this service at customer location"}
+                                        </Typography>
+                                    </Box>
+                                )}
                             </Box>
 
                             <Box sx={{ mb: 4, mt: 4 }}>
@@ -321,7 +345,7 @@ const CustomerServiceDetails = () => {
                 onClose={() => setDescriptionDrawerOpen(false)}
                 description={service.service_desc || ""}
             />
-       </MainLayout>
+        </MainLayout>
     );
 };
 

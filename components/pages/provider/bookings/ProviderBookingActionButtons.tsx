@@ -1,8 +1,12 @@
-import React from "react";
-import { Box, Button, IconButton } from "@mui/material";
-import { Visibility, PlayArrow } from "@mui/icons-material";
+import React, { useState } from "react";
+import { Visibility, PlayArrow, CheckCircle, Cancel, Check, LockOutlined } from "@mui/icons-material";
+import { Dialog, Box, Typography, TextField, Slide, useTheme, IconButton, CircularProgress, Button } from "@mui/material";
+import { TransitionProps } from "@mui/material/transitions";
 import { UserBooking } from "../../../../services/booking/bookingInterface";
-import { english } from "../../../../features/i18n/en";
+import { useTranslate } from "@/hooks/useTranslate";
+import { bookingService } from "../../../../services/booking/bookingService";
+import { useQueryClient } from "@tanstack/react-query";
+import { COLORS } from "../../../../constants/colors";
 
 interface ProviderBookingActionButtonsProps {
     booking: UserBooking;
@@ -10,24 +14,233 @@ interface ProviderBookingActionButtonsProps {
     onViewDetails: (booking: UserBooking) => void;
 }
 
+const Transition = React.forwardRef(function Transition(
+    props: TransitionProps & {
+        children: React.ReactElement<any, any>;
+    },
+    ref: React.Ref<unknown>
+) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const ProviderBookingActionButtons: React.FC<ProviderBookingActionButtonsProps> = ({ booking, tabName, onViewDetails }) => {
-    if (tabName === english.upcoming) {
+    const { t } = useTranslate();
+    const theme = useTheme();
+    const isDark = theme.palette.mode === "dark";
+    const queryClient = useQueryClient();
+    const [loading, setLoading] = useState(false);
+    const [openOtpDialog, setOpenOtpDialog] = useState(false);
+    const [otp, setOtp] = useState("");
+
+    const handleUpdateStatus = async (status: string, otpValue?: string) => {
+        setLoading(true);
+        try {
+            await bookingService.updateBookingStatus(booking.booking_id, status, otpValue);
+            // Invalidate the query to refresh the list
+            queryClient.invalidateQueries({ queryKey: ["provider-bookings"] });
+            setOpenOtpDialog(false);
+            setOtp("");
+        } catch (error) {
+            console.error("Failed to update status:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading && !openOtpDialog) {
+        return <CircularProgress size={20} sx={{ mr: 2 }} />;
+    }
+
+    if (tabName === t("pending")) {
         return (
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                 <Button
                     variant="contained"
                     size="small"
-                    startIcon={<PlayArrow />}
-                    sx={{ bgcolor: "#4F46E5", color: "white", textTransform: "none", borderRadius: "20px", px: 2, fontSize: "0.75rem", fontWeight: 600, "&:hover": { bgcolor: "#4338ca" } }}
+                    startIcon={<Check />}
+                    onClick={() => handleUpdateStatus("CONFIRMED")}
+                    sx={{ bgcolor: "#10B981", color: "white", textTransform: "none", borderRadius: "20px", px: 2, fontSize: "0.75rem", fontWeight: 600, "&:hover": { bgcolor: "#059669" } }}
                 >
-                    {english.start}
+                    {t("accept")}
                 </Button>
                 <Button
                     variant="contained"
                     size="small"
-                    sx={{ bgcolor: "#1F2937", color: "white", textTransform: "none", borderRadius: "20px", px: 2, fontSize: "0.75rem", fontWeight: 600, "&:hover": { bgcolor: "#111827" } }}
+                    startIcon={<Cancel />}
+                    onClick={() => handleUpdateStatus("CANCELLED")}
+                    sx={{ bgcolor: "#EF4444", color: "white", textTransform: "none", borderRadius: "20px", px: 2, fontSize: "0.75rem", fontWeight: 600, "&:hover": { bgcolor: "#DC2626" } }}
                 >
-                    {english.cancel}
+                    {t("decline")}
+                </Button>
+                <IconButton size="small" onClick={() => onViewDetails(booking)}>
+                    <Visibility fontSize="small" />
+                </IconButton>
+            </Box>
+        );
+    }
+
+    if (tabName === t("upcoming")) {
+        return (
+            <>
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <Button
+                        variant="contained"
+                        size="small"
+                        startIcon={<PlayArrow />}
+                        onClick={() => setOpenOtpDialog(true)}
+                        sx={{ bgcolor: "#4F46E5", color: "white", textTransform: "none", borderRadius: "20px", px: 2, fontSize: "0.75rem", fontWeight: 600, "&:hover": { bgcolor: "#4338ca" } }}
+                    >
+                        {t("start")}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        size="small"
+                        startIcon={<Cancel />}
+                        onClick={() => handleUpdateStatus("CANCELLED")}
+                        sx={{ bgcolor: "#1F2937", color: "white", textTransform: "none", borderRadius: "20px", px: 2, fontSize: "0.75rem", fontWeight: 600, "&:hover": { bgcolor: "#111827" } }}
+                    >
+                        {t("decline")}
+                    </Button>
+                    <IconButton size="small" onClick={() => onViewDetails(booking)}>
+                        <Visibility fontSize="small" />
+                    </IconButton>
+                </Box>
+
+                <Dialog
+                    open={openOtpDialog}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={() => !loading && setOpenOtpDialog(false)}
+                    PaperProps={{
+                        sx: {
+                            borderRadius: "24px",
+                            padding: { xs: "2rem 1.5rem", sm: "2rem 4rem" },
+                            maxWidth: "28rem",
+                            width: "100%",
+                            boxShadow: "0px 10px 40px rgba(0,0,0,0.1)",
+                            margin: "16px",
+                        },
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            textAlign: "center",
+                            gap: 1.5,
+                        }}
+                    >
+                        {/* Security Icon */}
+                        <Box
+                            sx={{
+                                width: 80,
+                                height: 80,
+                                borderRadius: "50%",
+                                bgcolor: `${COLORS.PRIMARY_PURPLE}10`,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                mb: 1,
+                            }}
+                        >
+                            <LockOutlined sx={{ fontSize: 40, color: COLORS.PRIMARY_PURPLE }} />
+                        </Box>
+
+                        <Typography variant="h5" sx={{ fontWeight: 800, color: "text.primary" }}>
+                            {t("otp_verification")}
+                        </Typography>
+
+                        <Typography variant="body2" sx={{ color: "text.secondary", mb: 2, px: 2 }}>
+                            {t("enter_otp_description")}
+                        </Typography>
+
+                        <TextField
+                            autoFocus
+                            placeholder="Enter 6-digit Code"
+                            fullWidth
+                            variant="outlined"
+                            value={otp}
+                            onChange={(e) => setOtp(e.target.value)}
+                            disabled={loading}
+                            inputProps={{
+                                maxLength: 6,
+                                style: {
+                                    textAlign: 'center',
+                                    fontSize: '1.5rem',
+                                    fontWeight: 700,
+                                    letterSpacing: '8px',
+                                    padding: '12px',
+                                }
+                            }}
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: "16px",
+                                    bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#F9FAFB",
+                                    "& fieldset": { borderColor: isDark ? "rgba(255,255,255,0.1)" : "#E5E7EB" },
+                                    "&.Mui-focused fieldset": { borderColor: COLORS.PRIMARY_PURPLE, borderWidth: '2px' },
+                                    "& input::placeholder": {
+                                        fontSize: "0.875rem",
+                                        letterSpacing: "normal",
+                                        fontWeight: 500,
+                                        opacity: 0.5
+                                    }
+                                },
+                                mb: 3
+                            }}
+                        />
+
+                        <Box sx={{ width: '100%', display: 'flex', gap: 2 }}>
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                onClick={() => setOpenOtpDialog(false)}
+                                disabled={loading}
+                                sx={{
+                                    borderRadius: "12px",
+                                    py: 1.5,
+                                    textTransform: "none",
+                                    fontWeight: 600,
+                                    borderColor: isDark ? "rgba(255,255,255,0.1)" : "#E5E7EB",
+                                    color: isDark ? "white" : "#4B5563"
+                                }}
+                            >
+                                {t("cancel")}
+                            </Button>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                onClick={() => handleUpdateStatus("ACTIVE", otp)}
+                                disabled={loading || otp.length < 6}
+                                sx={{
+                                    borderRadius: "12px",
+                                    py: 1.5,
+                                    textTransform: "none",
+                                    fontWeight: 600,
+                                    bgcolor: COLORS.PRIMARY_PURPLE,
+                                    "&:hover": { bgcolor: COLORS.PURPLE_HOVER }
+                                }}
+                            >
+                                {loading ? <CircularProgress size={24} color="inherit" /> : t("verify_and_start")}
+                            </Button>
+                        </Box>
+                    </Box>
+                </Dialog>
+            </>
+        );
+    }
+
+    if (tabName === t("in_progress")) {
+        return (
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                <Button
+                    variant="contained"
+                    size="small"
+                    startIcon={<CheckCircle />}
+                    onClick={() => handleUpdateStatus("COMPLETED")}
+                    sx={{ bgcolor: "#3B82F6", color: "white", textTransform: "none", borderRadius: "20px", px: 2, fontSize: "0.75rem", fontWeight: 600, "&:hover": { bgcolor: "#2563EB" } }}
+                >
+                    {t("completed")}
                 </Button>
                 <IconButton size="small" onClick={() => onViewDetails(booking)}>
                     <Visibility fontSize="small" />

@@ -1,4 +1,5 @@
 export enum ServiceStatus {
+  ACTIVE = "ACTIVE",
   PENDING_APPROVAL = "PENDING_APPROVAL",
   APPROVED = "APPROVED",
   REJECTED = "REJECTED",
@@ -9,6 +10,9 @@ export enum ServiceLocationType {
   AT_PROVIDER = "AT_PROVIDER",
   AT_CUSTOMER = "AT_CUSTOMER",
   BOTH = "BOTH",
+  CUSTOMER_LOCATION = "CUSTOMER_LOCATION",
+  USER_LOCATION = "USER_LOCATION",
+  PROVIDER_LOCATION = "PROVIDER_LOCATION",
 }
 
 export interface Service {
