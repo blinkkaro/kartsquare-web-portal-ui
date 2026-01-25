@@ -73,7 +73,7 @@ const PostCard = ({ post }: { post: Posts }) => {
               {post.user.first_name} {post.user.last_name}
             </Typography>
           </Box>
-          <Box
+          {/* <Box
             sx={{
               backgroundColor: "rgba(0, 0, 0, 0.5)",
               borderRadius: "50%",
@@ -91,7 +91,7 @@ const PostCard = ({ post }: { post: Posts }) => {
                 color: COLORS.TEXT.PRIMARY_DARK,
               }}
             />
-          </Box>
+          </Box> */}
         </Box>
         <Box
           sx={{
@@ -237,7 +237,7 @@ const PostCard = ({ post }: { post: Posts }) => {
             </Typography>
           )}
         </Box>
-        <Box sx={{ cursor: "pointer" }}>
+        {/* <Box sx={{ cursor: "pointer" }}>
           <Image
             src={
               theme.palette.mode === "dark"
@@ -248,7 +248,7 @@ const PostCard = ({ post }: { post: Posts }) => {
             width={25}
             height={25}
           />
-        </Box>
+        </Box> */}
         <Box
           sx={{
             cursor: "pointer",

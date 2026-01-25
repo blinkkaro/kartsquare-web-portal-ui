@@ -34,7 +34,7 @@ const CustomBox: React.FC<CustomBoxProps> = ({
         border: `1px solid ${
           isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
         }`,
-        minWidth: 160,
+        minWidth: { xs: 140, sm: 160 },
         transition: "all 0.3s ease",
         cursor: "pointer",
         "&:hover": {
@@ -73,7 +73,7 @@ const CustomBox: React.FC<CustomBoxProps> = ({
               boxShadow: COLORS.SHADOW.DEFAULT,
             }}
           >
-            <GradientIcon sx={{ fontSize: { xs: 18, sm: 16 , color:  "white" } }}>
+            <GradientIcon sx={{ fontSize: { xs: 18, sm: 16, color: "white" } }}>
               {icon}
             </GradientIcon>
           </Box>

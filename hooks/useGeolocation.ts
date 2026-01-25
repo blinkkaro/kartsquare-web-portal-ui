@@ -25,7 +25,7 @@ export const useGeolocation = (options?: UseGeolocationOptions) => {
     isLoading: false,
     error: null,
   });
-  const {t} = useTranslate()
+  const { t } = useTranslate();
 
   const getCoordinates = () => {
     if (!navigator.geolocation) {
@@ -76,7 +76,7 @@ export const useGeolocation = (options?: UseGeolocationOptions) => {
           error: errorMessage,
         });
       },
-      defaultOptions
+      defaultOptions,
     );
   };
 

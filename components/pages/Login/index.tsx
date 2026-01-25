@@ -2,15 +2,16 @@
 
 import LoginForm from "./components/LoginForm";
 import { useRouter, useSearchParams } from "next/navigation";
-import AuthWrapper from "@/components/auth/authWrapper";
+import AuthCarouselWrapper, {
+  CarouselItem,
+} from "@/components/auth/authCarouselWrapper";
 import { LoginFormData } from "./loginSchema";
 import { useState } from "react";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
 import { useAppDispatch } from "@/store/hooks";
-import { Box } from "@mui/material";
-import BackButton from "@/components/common/BackButton";
 import { loginUser } from "@/features/ui/authSlice";
+import { useTranslate } from "@/hooks/useTranslate";
 
 export default function LoginView() {
   const router = useRouter();
@@ -19,6 +20,25 @@ export default function LoginView() {
   const role = searchParams.get("role");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslate();
+
+  const carouselData: CarouselItem[] = [
+    {
+      image: "/auth/VerifyPopup.svg",
+      title: t("verifyEmailTitle"),
+      subtitle: t("verifyEmailSubTitle"),
+    },
+    {
+      image: "/auth/VerifyDocuments.svg",
+      title: t("verifyDocumentTitle"),
+      subtitle: t("verifyDocumentSubTitle"),
+    },
+    {
+      image: "/auth/Preferences.svg",
+      title: t("preferencesTitle"),
+      subtitle: t("preferencesSubTitle"),
+    },
+  ];
 
   const OnSubmit = async (data: LoginFormData) => {
     try {
@@ -32,7 +52,9 @@ export default function LoginView() {
       const Role = role.toString().toUpperCase();
 
       // Dispatch loginUser thunk
-      const result = await dispatch(loginUser({ ...data, role: Role })).unwrap();
+      const result = await dispatch(
+        loginUser({ ...data, role: Role }),
+      ).unwrap();
 
       if (result) {
         const user = result.user;
@@ -51,31 +73,32 @@ export default function LoginView() {
         handleRegistrationStepNavigation(
           dispatch,
           router,
-          registerStep as UserRegisterSteps
+          registerStep as UserRegisterSteps,
         );
       }
     } catch (error: any) {
-      console.log(error);
-      setError(
-        error ||
-        "An unexpected error occurred"
-      );
+      setError(error || "An unexpected error occurred");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleBack = () => {
+    router.push("/selectRole");
+  };
+
   return (
-    <AuthWrapper>
-      <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 10 }}>
-        <BackButton />
-      </Box>
+    <AuthCarouselWrapper
+      carouselItems={carouselData}
+      showBackButton={true}
+      backButtonAction={handleBack}
+    >
       <LoginForm
         role={role || ""}
         onSubmit={OnSubmit}
         loading={loading}
         error={error}
       />
-    </AuthWrapper>
+    </AuthCarouselWrapper>
   );
 }

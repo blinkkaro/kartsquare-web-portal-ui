@@ -1,6 +1,5 @@
 import { AuthResponse, LoginCredentials, RegisterData } from "./auth.interface";
 import { API_ENDPOINTS } from "./apiEndPoint";
-import api from "../api";
 import { POST } from "../api";
 import { secureStorage } from "@/helper/SecureStorage";
 

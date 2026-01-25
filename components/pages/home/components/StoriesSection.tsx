@@ -12,19 +12,16 @@ import { Add } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import StoryViewer from "./stories/StoryViewer";
 import AddStoryModal from "./stories/AddStoryModal";
-import { useAppSelector } from "@/store/hooks";
 import { InfiniteData } from "@tanstack/react-query";
 import {
-  StoriesList,
   StoriesListResponse,
   StoryItem,
 } from "@/services/stories/stories.interface";
 import { useAddStory } from "@/hooks/useStories";
 import { MediaType } from "@/services/stories/stories.interface";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
 import { secureStorage } from "@/helper/SecureStorage";
+import { AppUserType } from "@/services/auth/auth.interface";
 
 const StoriesSection = ({
   data,
@@ -36,6 +33,7 @@ const StoriesSection = ({
   const theme = useTheme();
   const profile = secureStorage.getItem("user_details");
   const { t } = useTranslationContext();
+  const isCustomer = profile?.role === AppUserType.CUSTOMER;
 
   const [viewerOpen, setViewerOpen] = useState(false);
   const [addStoryOpen, setAddStoryOpen] = useState(false);
@@ -105,14 +103,14 @@ const StoriesSection = ({
   // Sort stories: User story first, then unseen other stories, then seen other stories
   const userStory = storiesList.find((story) => story.user_id === profile?.id);
   const otherStories = storiesList.filter(
-    (story) => story.user_id !== profile?.id
+    (story) => story.user_id !== profile?.id,
   );
 
   const unseenOtherStories = otherStories.filter((s) =>
-    hasUnseenStories(s.stories)
+    hasUnseenStories(s.stories),
   );
   const seenOtherStories = otherStories.filter(
-    (s) => !hasUnseenStories(s.stories)
+    (s) => !hasUnseenStories(s.stories),
   );
 
   const sortedOtherStories = [...unseenOtherStories, ...seenOtherStories];
@@ -129,7 +127,9 @@ const StoriesSection = ({
 
   const handleUserItemClick = () => {
     if (!userStory) {
-      setAddStoryOpen(true);
+      if (!isCustomer) {
+        setAddStoryOpen(true);
+      }
     } else {
       handleStoryClick(0);
     }
@@ -176,23 +176,25 @@ const StoriesSection = ({
                   overlap="circular"
                   anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                   badgeContent={
-                    <Box
-                      sx={{
-                        bgcolor: COLORS.PRIMARY_PURPLE,
-                        borderRadius: "50%",
-                        width: 20,
-                        height: 20,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        border: `2px solid ${theme.palette.background.paper}`,
-                      }}
-                    >
-                      <Add
-                        sx={{ color: "white", fontSize: 14 }}
-                        onClick={() => setAddStoryOpen(true)}
-                      />
-                    </Box>
+                    !isCustomer && (
+                      <Box
+                        sx={{
+                          bgcolor: COLORS.PRIMARY_PURPLE,
+                          borderRadius: "50%",
+                          width: 20,
+                          height: 20,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          border: `2px solid ${theme.palette.background.paper}`,
+                        }}
+                      >
+                        <Add
+                          sx={{ color: "white", fontSize: 14 }}
+                          onClick={() => setAddStoryOpen(true)}
+                        />
+                      </Box>
+                    )
                   }
                 >
                   <Box

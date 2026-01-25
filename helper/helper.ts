@@ -121,7 +121,7 @@ export const calculateDistance = (
   lat1: number,
   lon1: number,
   lat2: number,
-  lon2: number
+  lon2: number,
 ): number => {
   const R = 6371; // Radius of the Earth in kilometers
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -142,8 +142,24 @@ export const formatStringTimeForReview = (timeStr: string | Date): string => {
   const formattedDate = formatDate(date);
   const hours = date.getHours();
   const minutes = date.getMinutes();
-  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const ampm = hours >= 12 ? "PM" : "AM";
   const formattedHours = hours % 12;
-  const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+  const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
   return `${formattedDate} @ ${formattedHours}:${formattedMinutes} ${ampm}`;
+};
+
+// Helper function to truncate HTML content safely
+export const truncateHTML = (html: string, maxLength: number): string => {
+  // Create a temporary div to parse HTML
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
+  const textContent = tempDiv.textContent || tempDiv.innerText || "";
+
+  // If text content is within limit, return original HTML
+  if (textContent.length <= maxLength) {
+    return html;
+  }
+
+  // Otherwise, truncate the text content and return plain text with ellipsis
+  return textContent.slice(0, maxLength) + "...";
 };
