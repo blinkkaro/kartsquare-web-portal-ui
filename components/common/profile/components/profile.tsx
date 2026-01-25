@@ -128,7 +128,7 @@ function Profile({ profile }: { profile: profileInterface }) {
             {role === "SERVICE_PROVIDER" ? t("followers") : t("following")}
           </Button>
 
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+          {/* <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
             <IconButton
               sx={{
                 bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#F5F5F7",
@@ -146,7 +146,7 @@ function Profile({ profile }: { profile: profileInterface }) {
                 alt="share"
               />
             </IconButton>
-          </Box>
+          </Box> */}
         </Box>
       </Box>
 

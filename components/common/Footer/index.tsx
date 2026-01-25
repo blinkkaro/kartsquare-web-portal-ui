@@ -40,12 +40,12 @@ const Footer: React.FC = () => {
     ],
     services: [
       { label: t("services"), href: "/cus/servicesList" },
-    //   { label: t("events"), href: "/events" },
+      //   { label: t("events"), href: "/events" },
       { label: t("store"), href: "/store" },
       { label: t("becomeServiceProvider"), href: "/supplier/register" },
     ],
     support: [
-      { label: t("helpSupport"), href: "/myAccount/helpSupport" },
+      // { label: t("helpSupport"), href: "/myAccount/helpSupport" },
       { label: t("faqs"), href: "/myAccount/FAQ" },
     ],
     legal: [
@@ -71,7 +71,7 @@ const Footer: React.FC = () => {
     <Box
       component="footer"
       sx={{
-        mt: 2,
+        // mt: 2,
         background: footerGradient,
         borderTop: `1px solid ${
           isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT

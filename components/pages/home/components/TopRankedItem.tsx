@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Typography, Card, CardMedia, useTheme } from "@mui/material";
 import { Star } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
+import { truncateHTML } from "@/helper/helper";
 
 interface TopRankedItemProps {
   rank: number;
@@ -51,7 +52,7 @@ const TopRankedItem: React.FC<TopRankedItemProps> = ({
       {/* Image */}
       <CardMedia
         component="img"
-        src={image}
+        src={image || undefined}
         alt={name}
         sx={{
           width: 60,
@@ -82,16 +83,17 @@ const TopRankedItem: React.FC<TopRankedItemProps> = ({
             <Typography
               sx={{ fontSize: "0.9rem", color: COLORS.TEXT.SECONDARY_LIGHT }}
             >
-               {bookings} bookings
+              {bookings} bookings
             </Typography>
           )}
         </Box>
         {desc && (
           <Typography
             sx={{ fontSize: "0.85rem", color: COLORS.TEXT.SECONDARY_LIGHT }}
-          >
-            {desc.length > 80 ? desc.slice(0, 80) + "..." : desc}
-          </Typography>
+            dangerouslySetInnerHTML={{
+              __html: truncateHTML(desc, 40),
+            }}
+          />
         )}
       </Box>
     </Card>

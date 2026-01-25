@@ -404,7 +404,7 @@ export const english = {
   gardening: "Gardening",
   general: "General",
   noBlogsFound: "No blogs found matching your criteria",
-  
+
   // Search
   searchResults: "Search Results",
   searchResultsFor: "Search results for",
@@ -413,7 +413,7 @@ export const english = {
   enterSearchQuery: "Enter a search query to find users and services",
   users: "Users",
   seeAllResults: "See all results for",
-  
+
   // Dashboard
   dashboard: "Dashboard",
   totalBookings: "Total Bookings",
@@ -449,8 +449,7 @@ export const english = {
   commissionRate: "Commission rate",
   bookingsCharts: "Bookings Charts",
   latestReviews: "Latest Reviews",
-  
-  
+
   // Footer
   company: "Company",
   aboutUs: "About Us",
@@ -477,22 +476,29 @@ export const english = {
   refundPolicy: "Refund Policy",
   cancellationPolicy: "Cancellation Policy",
   allRightsReserved: "All rights reserved",
-  
+
   // Careers Page
-  careersSubtitle: "Join our team and help shape the future of service delivery",
+  careersSubtitle:
+    "Join our team and help shape the future of service delivery",
   joinOurTeam: "Join Our Team",
-  careersHeroDescription: "At KartSquare, we're building the future of service delivery. We're looking for passionate, innovative individuals who want to make a difference. Join us and be part of a team that's transforming how people connect with services.",
+  careersHeroDescription:
+    "At KartSquare, we're building the future of service delivery. We're looking for passionate, innovative individuals who want to make a difference. Join us and be part of a team that's transforming how people connect with services.",
   whyJoinUs: "Why Join Us",
   competitiveSalary: "Competitive Salary",
-  competitiveSalaryDesc: "We offer competitive compensation packages that reflect your skills and experience.",
+  competitiveSalaryDesc:
+    "We offer competitive compensation packages that reflect your skills and experience.",
   learningDevelopment: "Learning & Development",
-  learningDevelopmentDesc: "Continuous learning opportunities with access to courses, workshops, and conferences.",
+  learningDevelopmentDesc:
+    "Continuous learning opportunities with access to courses, workshops, and conferences.",
   collaborativeCulture: "Collaborative Culture",
-  collaborativeCultureDesc: "Work in a supportive environment where your ideas matter and collaboration is key.",
+  collaborativeCultureDesc:
+    "Work in a supportive environment where your ideas matter and collaboration is key.",
   careerGrowth: "Career Growth",
-  careerGrowthDesc: "Clear career paths and opportunities for advancement within the organization.",
+  careerGrowthDesc:
+    "Clear career paths and opportunities for advancement within the organization.",
   ourCulture: "Our Culture",
-  cultureDescription: "At KartSquare, we believe in fostering an inclusive, innovative, and collaborative work environment. We value diversity, encourage creativity, and support our team members in achieving their professional goals. Our culture is built on trust, transparency, and a shared commitment to excellence.",
+  cultureDescription:
+    "At KartSquare, we believe in fostering an inclusive, innovative, and collaborative work environment. We value diversity, encourage creativity, and support our team members in achieving their professional goals. Our culture is built on trust, transparency, and a shared commitment to excellence.",
   openPositions: "Open Positions",
   seniorSoftwareEngineer: "Senior Software Engineer",
   productManager: "Product Manager",
@@ -508,35 +514,48 @@ export const english = {
   fullTime: "Full-Time",
   applyNow: "Apply Now",
   dontSeePosition: "Don't See a Position That Fits?",
-  sendResume: "We're always looking for talented individuals to join our team. Send us your resume and we'll keep you in mind for future opportunities.",
+  sendResume:
+    "We're always looking for talented individuals to join our team. Send us your resume and we'll keep you in mind for future opportunities.",
   sendYourResume: "Send Your Resume",
-  
+
   // Become Service Provider Page
-  becomeServiceProviderSubtitle: "Join thousands of service providers and grow your business with KartSquare",
+  becomeServiceProviderSubtitle:
+    "Join thousands of service providers and grow your business with KartSquare",
   joinAsServiceProvider: "Join as a Service Provider",
-  becomeServiceProviderHero: "Transform your service business with KartSquare. Connect with customers, manage bookings, and grow your revenue all in one platform. Join our community of trusted service providers today.",
+  becomeServiceProviderHero:
+    "Transform your service business with KartSquare. Connect with customers, manage bookings, and grow your revenue all in one platform. Join our community of trusted service providers today.",
   whyJoinAsProvider: "Why Join as a Service Provider",
   growYourBusiness: "Grow Your Business",
-  growYourBusinessDesc: "Expand your customer base and increase your bookings through our platform.",
+  growYourBusinessDesc:
+    "Expand your customer base and increase your bookings through our platform.",
   reachMoreCustomers: "Reach More Customers",
-  reachMoreCustomersDesc: "Get discovered by thousands of customers actively looking for your services.",
+  reachMoreCustomersDesc:
+    "Get discovered by thousands of customers actively looking for your services.",
   securePayments: "Secure Payments",
-  securePaymentsDesc: "Receive payments securely and on time with our integrated payment system.",
+  securePaymentsDesc:
+    "Receive payments securely and on time with our integrated payment system.",
   businessInsights: "Business Insights",
-  businessInsightsDesc: "Access analytics and insights to understand your business performance and make data-driven decisions.",
+  businessInsightsDesc:
+    "Access analytics and insights to understand your business performance and make data-driven decisions.",
   dedicatedSupport: "Dedicated Support",
-  dedicatedSupportDesc: "Get dedicated support from our team to help you succeed on the platform.",
+  dedicatedSupportDesc:
+    "Get dedicated support from our team to help you succeed on the platform.",
   verifiedProfile: "Verified Profile",
-  verifiedProfileDesc: "Build trust with customers through our verification and rating system.",
+  verifiedProfileDesc:
+    "Build trust with customers through our verification and rating system.",
   howItWorks: "How It Works",
   createAccount: "Create Account",
-  createAccountDesc: "Sign up as a service provider and create your account in minutes.",
+  createAccountDesc:
+    "Sign up as a service provider and create your account in minutes.",
   completeProfile: "Complete Profile",
-  completeProfileDesc: "Add your services, pricing, availability, and showcase your expertise.",
+  completeProfileDesc:
+    "Add your services, pricing, availability, and showcase your expertise.",
   verifyDocuments: "Verify Documents",
-  verifyDocumentsDesc: "Complete verification to build trust and credibility with customers.",
+  verifyDocumentsDesc:
+    "Complete verification to build trust and credibility with customers.",
   startEarning: "Start Earning",
-  startEarningDesc: "Start receiving bookings and earning revenue from day one.",
+  startEarningDesc:
+    "Start receiving bookings and earning revenue from day one.",
   requirements: "Requirements",
   validBusinessLicense: "Valid business license or professional certification",
   professionalExperience: "Professional experience in your service category",
@@ -544,40 +563,55 @@ export const english = {
   responsiveCustomerService: "Responsive customer service and communication",
   complianceWithStandards: "Compliance with industry standards and regulations",
   joinThousands: "Join Thousands of Successful Providers",
-  providerSuccessStory: "Join a community of successful service providers who have grown their businesses with KartSquare. From freelancers to established businesses, our platform helps you reach more customers and scale your operations.",
+  providerSuccessStory:
+    "Join a community of successful service providers who have grown their businesses with KartSquare. From freelancers to established businesses, our platform helps you reach more customers and scale your operations.",
   readyToStart: "Ready to Start?",
-  startYourJourney: "Join KartSquare today and start your journey as a service provider. Create your account, complete your profile, and start receiving bookings.",
+  startYourJourney:
+    "Join KartSquare today and start your journey as a service provider. Create your account, complete your profile, and start receiving bookings.",
   getStartedNow: "Get Started Now",
   registerNow: "Register Now",
-  
+
   // Cookie Policy Page
   whatAreCookies: "What Are Cookies?",
-  cookiesDescription: "Cookies are small text files that are placed on your device when you visit a website. They are widely used to make websites work more efficiently and provide information to the website owners.",
+  cookiesDescription:
+    "Cookies are small text files that are placed on your device when you visit a website. They are widely used to make websites work more efficiently and provide information to the website owners.",
   howWeUseCookies: "How We Use Cookies",
-  cookiesUsageDescription: "KartSquare uses cookies to enhance your browsing experience, analyze site traffic, and personalize content. We use both session cookies (which expire when you close your browser) and persistent cookies (which remain on your device until they expire or are deleted).",
+  cookiesUsageDescription:
+    "KartSquare uses cookies to enhance your browsing experience, analyze site traffic, and personalize content. We use both session cookies (which expire when you close your browser) and persistent cookies (which remain on your device until they expire or are deleted).",
   essentialCookies: "Essential Cookies",
-  essentialCookiesDescription: "These cookies are necessary for the website to function properly. They enable core functionality such as security, network management, and accessibility. You cannot opt-out of these cookies.",
+  essentialCookiesDescription:
+    "These cookies are necessary for the website to function properly. They enable core functionality such as security, network management, and accessibility. You cannot opt-out of these cookies.",
   analyticsCookies: "Analytics Cookies",
-  analyticsCookiesDescription: "These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously. This helps us improve our website and user experience.",
+  analyticsCookiesDescription:
+    "These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously. This helps us improve our website and user experience.",
   marketingCookies: "Marketing Cookies",
-  marketingCookiesDescription: "These cookies are used to track visitors across websites to display relevant advertisements. They may also be used to limit the number of times you see an advertisement and measure the effectiveness of advertising campaigns.",
+  marketingCookiesDescription:
+    "These cookies are used to track visitors across websites to display relevant advertisements. They may also be used to limit the number of times you see an advertisement and measure the effectiveness of advertising campaigns.",
   preferenceCookies: "Preference Cookies",
-  preferenceCookiesDescription: "These cookies allow our website to remember information that changes the way the website behaves or looks, such as your preferred language or region.",
+  preferenceCookiesDescription:
+    "These cookies allow our website to remember information that changes the way the website behaves or looks, such as your preferred language or region.",
   managingCookies: "Managing Cookies",
-  managingCookiesDescription: "You can control and manage cookies in various ways. Most web browsers allow you to control cookies through their settings. You can set your browser to refuse cookies or delete certain cookies. However, if you choose to disable cookies, some features of our website may not function properly.",
+  managingCookiesDescription:
+    "You can control and manage cookies in various ways. Most web browsers allow you to control cookies through their settings. You can set your browser to refuse cookies or delete certain cookies. However, if you choose to disable cookies, some features of our website may not function properly.",
   thirdPartyCookies: "Third-Party Cookies",
-  thirdPartyCookiesDescription: "In addition to our own cookies, we may also use various third-party cookies to report usage statistics of the website, deliver advertisements, and so on. These third-party cookies are governed by the respective privacy policies of those third parties.",
+  thirdPartyCookiesDescription:
+    "In addition to our own cookies, we may also use various third-party cookies to report usage statistics of the website, deliver advertisements, and so on. These third-party cookies are governed by the respective privacy policies of those third parties.",
   cookieConsent: "Cookie Consent",
-  cookieConsentDescription: "By continuing to use our website, you consent to our use of cookies as described in this policy. If you do not agree to our use of cookies, you should disable cookies in your browser settings or refrain from using our website.",
+  cookieConsentDescription:
+    "By continuing to use our website, you consent to our use of cookies as described in this policy. If you do not agree to our use of cookies, you should disable cookies in your browser settings or refrain from using our website.",
   updatesToPolicy: "Updates to This Policy",
-  cookiePolicyUpdatesDescription: "We may update this Cookie Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any material changes by posting the new Cookie Policy on this page.",
-  cookiePolicyContactDescription: "If you have any questions about our use of cookies or this Cookie Policy, please contact us through our contact page or email us at support@kartsquare.com.",
-  
+  cookiePolicyUpdatesDescription:
+    "We may update this Cookie Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any material changes by posting the new Cookie Policy on this page.",
+  cookiePolicyContactDescription:
+    "If you have any questions about our use of cookies or this Cookie Policy, please contact us through our contact page or email us at support@kartsquare.com.",
+
   // Careers Page Additional
-  currentlyNoOpenings: "We're not currently hiring, but we'd love to hear from you!",
+  currentlyNoOpenings:
+    "We're not currently hiring, but we'd love to hear from you!",
   whyJoinUsSubtitle: "Discover what makes KartSquare a great place to work",
   submitYourResume: "Submit Your Resume",
-  submitResumeDescription: "Even though we don't have open positions right now, we're always looking for talented individuals. Submit your resume and we'll keep you in mind for future opportunities.",
+  submitResumeDescription:
+    "Even though we don't have open positions right now, we're always looking for talented individuals. Submit your resume and we'll keep you in mind for future opportunities.",
   fullName: "Full Name",
   interestedPosition: "Position of Interest",
   yearsOfExperience: "Years of Experience",
@@ -588,11 +622,13 @@ export const english = {
   submitApplication: "Submit Application",
   submitting: "Submitting...",
   thankYou: "Thank You!",
-  resumeSubmittedSuccess: "Your resume has been submitted successfully. We'll review it and get back to you if there's a match.",
-  
+  resumeSubmittedSuccess:
+    "Your resume has been submitted successfully. We'll review it and get back to you if there's a match.",
+
   // Store Page
   storeComingSoon: "Store Coming Soon",
-  storeComingSoonDescription: "We're building something amazing! Our online store will be launching soon with a wide selection of products, exclusive deals, and seamless shopping experience.",
+  storeComingSoonDescription:
+    "We're building something amazing! Our online store will be launching soon with a wide selection of products, exclusive deals, and seamless shopping experience.",
   days: "Days",
   hours: "Hours",
   minutes: "Minutes",
@@ -601,9 +637,11 @@ export const english = {
   whatToExpect: "What to Expect",
   storeFeaturesSubtitle: "Get ready for an amazing shopping experience",
   wideSelection: "Wide Selection",
-  wideSelectionDesc: "Browse through thousands of products across multiple categories",
+  wideSelectionDesc:
+    "Browse through thousands of products across multiple categories",
   fastDelivery: "Fast Delivery",
-  fastDeliveryDesc: "Get your orders delivered quickly and safely to your doorstep",
+  fastDeliveryDesc:
+    "Get your orders delivered quickly and safely to your doorstep",
   securePayment: "Secure Payment",
   securePaymentDesc: "Shop with confidence using our secure payment gateway",
   qualityProducts: "Quality Products",
@@ -611,9 +649,11 @@ export const english = {
   bestPrices: "Best Prices",
   bestPricesDesc: "Competitive prices with exclusive deals and discounts",
   multipleCategories: "Multiple Categories",
-  multipleCategoriesDesc: "Everything you need in one place - from electronics to fashion",
+  multipleCategoriesDesc:
+    "Everything you need in one place - from electronics to fashion",
   stayTuned: "Stay Tuned!",
-  storeStayTunedDescription: "Be the first to know when we launch. Follow us on social media and subscribe to our newsletter for updates and exclusive early access offers.",
+  storeStayTunedDescription:
+    "Be the first to know when we launch. Follow us on social media and subscribe to our newsletter for updates and exclusive early access offers.",
   // Bookings Page
   orders_bookings: "Orders/Bookings",
   search_bookings_placeholder: "Search by Request ID, name, email, date...",
@@ -623,7 +663,8 @@ export const english = {
   completed: "Completed",
   cancelled: "Cancelled",
   no_bookings_found: "No bookings found",
-  no_bookings_found_description: "You don't have any bookings in this category yet. New bookings will appear here once customers book your services.",
+  no_bookings_found_description:
+    "You don't have any bookings in this category yet. New bookings will appear here once customers book your services.",
   reschedule: "Reschedule",
   request_refund: "Request a Refund",
   view_details: "View Details",
@@ -639,7 +680,8 @@ export const english = {
   all_categories: "All Categories",
   search_services: "Search services...",
   no_services_found: "No services found",
-  no_services_found_description: "No services found. Try adjusting your search or filters",
+  no_services_found_description:
+    "No services found. Try adjusting your search or filters",
   loading_services: "Loading services...",
   // Provider Bookings Page
   provider_bookings: "Bookings",
@@ -668,7 +710,8 @@ export const english = {
   service_description: "Service Description",
   close: "Close",
   delete_service: "Delete Service?",
-  delete_service_confirm: "Are you sure you want to delete \"{serviceName}\"? This action cannot be undone.",
+  delete_service_confirm:
+    'Are you sure you want to delete "{serviceName}"? This action cannot be undone.',
   deleting: "Deleting...",
   service_not_found: "Service not found",
   reviews: "Reviews",
@@ -764,14 +807,16 @@ export const english = {
   booking_id: "Booking ID",
   scheduled_for: "Scheduled for",
   at_time: "at",
-  service_provider_contact: "The service provider will contact you shortly to confirm the details.",
+  service_provider_contact:
+    "The service provider will contact you shortly to confirm the details.",
   view_booking_details: "View Booking Details",
   back_to_services: "Back to Services",
   home_fee: "Home fee",
   advance_pay: "Advance pay",
   after_pay: "After pay",
   my_address: "My Address",
-  provider_service_at_customer_location: "I provide this service at customer location",
+  provider_service_at_customer_location:
+    "I provide this service at customer location",
   bookings: "Bookings",
   continueReading: "Continue Reading",
   booking_details: "Booking details",
@@ -792,4 +837,17 @@ export const english = {
   customer_info: "Customer Info.",
   service_fee: "Service fee",
   total_receivable_amount: "Total receivable amount",
+
+  profileUpdated: "Profile Updated",
+  profileUpdatedDescription:
+    "It may take a little while for your profile changes to be reflected.",
+  // Contact Us
+  nameRequired: "Name is required",
+  nameMin: "Name must be at least 2 characters",
+  contactRequired: "Contact number is required",
+  contactInvalid: "Invalid contact number format",
+  messageRequired: "Message is required",
+  messageMin: "Message must be at least 10 characters",
+  countryCode: "Country code",
+  phoneMin: "Phone number must be at least 10 digits",
 };
