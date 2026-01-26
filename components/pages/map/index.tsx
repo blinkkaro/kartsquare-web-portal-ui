@@ -110,12 +110,12 @@ const MapView: React.FC = () => {
   const handleMarkerClick = useCallback((service: Service) => {
     setSelectedService(service);
     if (
-      service.service_provider_latitude &&
-      service.service_provider_longitude
+      service?.service_address?.latitude &&
+      service?.service_address?.longitude
     ) {
       setMapCenter({
-        lat: service.service_provider_latitude,
-        lng: service.service_provider_longitude,
+        lat: service.service_address.latitude,
+        lng: service.service_address.longitude,
       });
       setMapZoom(15); // Zoom in when marker is clicked
     }
@@ -124,12 +124,12 @@ const MapView: React.FC = () => {
   const handleCardClick = useCallback((service: Service) => {
     setSelectedService(service);
     if (
-      service.service_provider_latitude &&
-      service.service_provider_longitude
+      service?.service_address?.latitude &&
+      service?.service_address?.longitude
     ) {
       setMapCenter({
-        lat: service.service_provider_latitude,
-        lng: service.service_provider_longitude,
+        lat: service.service_address.latitude,
+        lng: service.service_address.longitude,
       });
       setMapZoom(15); // Zoom in when card is clicked
     }
@@ -225,13 +225,13 @@ const MapView: React.FC = () => {
       >
         {/* Custom Markers for Service Providers */}
         {services.map((service) =>
-          service.service_provider_latitude &&
-          service.service_provider_longitude ? (
+          service?.service_address?.latitude &&
+          service?.service_address?.longitude ? (
             <OverlayView
               key={service.service_id}
               position={{
-                lat: service.service_provider_latitude || 0,
-                lng: service.service_provider_longitude || 0,
+                lat: service.service_address.latitude || 0,
+                lng: service.service_address.longitude || 0,
               }}
               mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
             >

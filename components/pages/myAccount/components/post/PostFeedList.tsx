@@ -101,7 +101,7 @@ const PostFeedList: React.FC<PostFeedListProps> = ({
         </Box>
       )}
 
-      {/* End of List Message */}
+      {/* End of List Message
       {!hasNextPage && posts.length > 0 && (
         <Typography
           variant="body2"
@@ -109,7 +109,7 @@ const PostFeedList: React.FC<PostFeedListProps> = ({
         >
           {t("noPosts") || "No more posts"}
         </Typography>
-      )}
+      )} */}
     </Box>
   );
 };

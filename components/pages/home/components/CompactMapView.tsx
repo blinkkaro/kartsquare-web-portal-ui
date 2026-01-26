@@ -124,13 +124,13 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
       >
         {/* Custom Markers for Service Providers */}
         {services.map((service) =>
-          service.service_provider_latitude &&
-          service.service_provider_longitude ? (
+          service?.service_address?.latitude &&
+          service?.service_address?.longitude ? (
             <OverlayView
               key={service.service_id}
               position={{
-                lat: service.service_provider_latitude || 0,
-                lng: service.service_provider_longitude || 0,
+                lat: service.service_address.latitude || 0,
+                lng: service.service_address.longitude || 0,
               }}
               mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
             >

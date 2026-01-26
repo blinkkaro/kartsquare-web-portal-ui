@@ -10,30 +10,22 @@ import {
 import { ArrowBack } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import { Posts } from "@/services/post/postInterfaces";
-import { useProviderPosts } from "@/hooks/useProviderProfile";
 import PostFeedGrid from "@/components/pages/myAccount/components/post/PostFeedGrid";
 import PostFeedList from "@/components/pages/myAccount/components/post/PostFeedList";
 
 interface ProfilePostsProps {
-  userId: string;
+  posts: Posts[];
+  isLoading?: boolean;
 }
 
-export default function ProfilePosts({ userId }: ProfilePostsProps) {
+export default function ProfilePosts({
+  posts,
+  isLoading = false,
+}: ProfilePostsProps) {
   const { t } = useTranslate();
   const theme = useTheme();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedPostIndex, setSelectedPostIndex] = useState(0);
-
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError,
-  } = useProviderPosts(userId);
-
-  const allPosts = data?.pages.flatMap((page) => page.posts) || [];
 
   const handlePostClick = (post: Posts, index: number) => {
     setSelectedPostIndex(index);
@@ -52,17 +44,7 @@ export default function ProfilePosts({ userId }: ProfilePostsProps) {
     );
   }
 
-  if (isError) {
-    return (
-      <Box sx={{ textAlign: "center", mt: 4 }}>
-        <Typography color="error">
-          {t("failedToLoadPosts")}
-        </Typography>
-      </Box>
-    );
-  }
-
-  if (!isLoading && allPosts.length === 0) {
+  if (!isLoading && posts.length === 0) {
     return (
       <Box
         sx={{ textAlign: "center", mt: 4, color: COLORS.TEXT.SECONDARY_LIGHT }}
@@ -71,6 +53,11 @@ export default function ProfilePosts({ userId }: ProfilePostsProps) {
       </Box>
     );
   }
+
+  // Dummy pagination functions since posts are already loaded from parent
+  const fetchNextPage = () => {};
+  const hasNextPage = false;
+  const isFetchingNextPage = false;
 
   return (
     <Box
@@ -85,7 +72,7 @@ export default function ProfilePosts({ userId }: ProfilePostsProps) {
       {/* Content */}
       {viewMode === "grid" ? (
         <PostFeedGrid
-          posts={allPosts}
+          posts={posts}
           isLoading={isLoading}
           fetchNextPage={fetchNextPage}
           hasNextPage={hasNextPage}
@@ -94,7 +81,7 @@ export default function ProfilePosts({ userId }: ProfilePostsProps) {
         />
       ) : (
         <PostFeedList
-          posts={allPosts}
+          posts={posts}
           initialIndex={selectedPostIndex}
           fetchNextPage={fetchNextPage}
           hasNextPage={hasNextPage}

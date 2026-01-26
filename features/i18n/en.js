@@ -468,7 +468,6 @@ export const english = {
   bookingsCharts: "Bookings Charts",
   latestReviews: "Latest Reviews",
 
-
   // Footer
   company: "Company",
   aboutUs: "About Us",
@@ -619,8 +618,10 @@ export const english = {
   cookieConsentDescription:
     "By continuing to use our website, you consent to our use of cookies as described in this policy. If you do not agree to our use of cookies, you should disable cookies in your browser settings or refrain from using our website.",
   updatesToPolicy: "Updates to This Policy",
-  cookiePolicyUpdatesDescription: "We may update this Cookie Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any material changes by posting the new Cookie Policy on this page.",
-  cookiePolicyContactDescription: "If you have any questions about our use of cookies or this Cookie Policy, please contact us through our contact page or email us at support@kartsquare.com.",
+  cookiePolicyUpdatesDescription:
+    "We may update this Cookie Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any material changes by posting the new Cookie Policy on this page.",
+  cookiePolicyContactDescription:
+    "If you have any questions about our use of cookies or this Cookie Policy, please contact us through our contact page or email us at support@kartsquare.com.",
   cookiePolicyUpdatesDescription:
     "We may update this Cookie Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any material changes by posting the new Cookie Policy on this page.",
   cookiePolicyContactDescription:
@@ -643,7 +644,8 @@ export const english = {
   submitApplication: "Submit Application",
   submitting: "Submitting...",
   thankYou: "Thank You!",
-  resumeSubmittedSuccess: "Your resume has been submitted successfully. We'll review it and get back to you if there's a match.",
+  resumeSubmittedSuccess:
+    "Your resume has been submitted successfully. We'll review it and get back to you if there's a match.",
   resumeSubmittedSuccess:
     "Your resume has been submitted successfully. We'll review it and get back to you if there's a match.",
 
@@ -689,7 +691,8 @@ export const english = {
   decline: "Decline",
   mark_as_complete: "Mark as complete",
   otp_verification: "OTP Verification",
-  enter_otp_description: "Please enter the OTP provided by the customer to start the service.",
+  enter_otp_description:
+    "Please enter the OTP provided by the customer to start the service.",
   verify_and_start: "Verify & Start",
   no_bookings_found: "No bookings found",
   no_bookings_found_description:
@@ -871,7 +874,8 @@ export const english = {
   service_fee: "Service fee",
   total_receivable_amount: "Total receivable amount",
   otp_to_provider_label: "Service Start Code",
-  otp_to_provider_instruction: "Share this OTP with the provider only when they arrive to begin your service.",
+  otp_to_provider_instruction:
+    "Share this OTP with the provider only when they arrive to begin your service.",
   phoneNumberLength: "Phone number must be 10 digits",
   phoneNumberInvalid: "Phone number must contain only numbers",
 
@@ -902,4 +906,22 @@ export const english = {
   shareOnTwitter: "Share on Twitter",
   shareOnWhatsApp: "Share on WhatsApp",
   shareViaEmail: "Share via Email",
+  shareProfile: "Share Profile",
+  viewProfile: "View Profile",
+  noPostsFoundDescription: "This profile hasn't shared any posts yet.",
+  verified: "Verified",
+  active: "Active",
+  inactive: "Inactive",
+  waitingForApproval: "Waiting for Approval",
+  copied: "Copied",
+  id: "ID",
+  complete: "Complete",
+  confirm: "Confirm",
+  start: "Start",
+  cancel_booking_title: "Cancel Booking?",
+  cancel_booking_description:
+    "Are you sure you want to cancel this booking? This action cannot be undone and the customer will be notified.",
+  yes_cancel: "Yes, Cancel Booking",
+  no_keep_booking: "No, Keep Booking",
+  near: "Near",
 };
