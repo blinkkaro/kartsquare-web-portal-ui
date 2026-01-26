@@ -44,10 +44,11 @@ export interface CustomAxiosInstance extends AxiosInstance {
 
 const api: CustomAxiosInstance = axios.create({
   baseURL:
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1", // Fallback to local
+    process.env.NEXT_PUBLIC_API_URL || "https://congruous-princeton-unfestooned.ngrok-free.dev/api/v1", // Fallback to local
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "true",
   },
 }) as CustomAxiosInstance;
 
@@ -104,7 +105,7 @@ api.interceptors.response.use(
         //   api.defaults.headers.common["Authorization"] = `Bearer ${response.data.tokens.access_token}`;
         //   originalRequest.headers["Authorization"] = `Bearer ${response.data.tokens.access_token}`;
 
-        
+
 
         //   return api(originalRequest);
         // }

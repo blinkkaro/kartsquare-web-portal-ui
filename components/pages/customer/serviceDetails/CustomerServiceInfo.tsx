@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { Box, Typography, Button, useTheme } from "@mui/material";
+import { Bolt, Verified } from "@mui/icons-material";
 import { COLORS } from "../../../../constants/colors";
 import { english } from "../../../../features/i18n/en";
 
@@ -23,16 +24,66 @@ const CustomerServiceInfo = ({
     return (
         <>
             {/* Service Title */}
-            <Typography
-                variant="h4"
-                sx={{
-                    fontWeight: 700,
-                    mb: 2,
-                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                }}
-            >
-                {serviceName}
-            </Typography>
+            <Box sx={{ mb: 2 }}>
+                <Typography
+                    variant="h4"
+                    sx={{
+                        fontWeight: 800,
+                        mb: 1.5,
+                        color: COLORS.PRIMARY_PURPLE,
+                        fontSize: { xs: "1.75rem", sm: "2.25rem" },
+                        lineHeight: 1.2
+                    }}
+                >
+                    {serviceName}
+                </Typography>
+
+                {/* Service Quality Badges */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap", mb: 1 }}>
+                    {/* Verified Service Badge */}
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        color: "#1D4ED8",
+                        fontWeight: 800,
+                        cursor: 'default'
+                    }}>
+                        <Verified sx={{ fontSize: '16px' }} />
+                        <Typography sx={{
+                            fontWeight: 900,
+                            fontSize: "0.75rem",
+                            fontStyle: 'italic',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.02em'
+                        }}>
+                            Verified Service
+                        </Typography>
+                    </Box>
+
+                    {/* High Success Rate Badge */}
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        bgcolor: "#ECFDF5", // Light Green
+                        color: "#059669", // Success Green
+                        px: 1,
+                        py: 0.4,
+                        borderRadius: "6px",
+                        border: "1px solid #10B98130"
+                    }}>
+                        <Bolt sx={{ fontSize: '14px' }} />
+                        <Typography sx={{
+                            fontWeight: 800,
+                            fontSize: "0.65rem",
+                            letterSpacing: '0.04em'
+                        }}>
+                            HIGH SUCCESS RATE
+                        </Typography>
+                    </Box>
+                </Box>
+            </Box>
 
             {/* Description */}
             <Typography

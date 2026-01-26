@@ -59,7 +59,16 @@ const ProviderBookingActionButtons: React.FC<ProviderBookingActionButtonsProps> 
                     size="small"
                     startIcon={<Check />}
                     onClick={() => handleUpdateStatus("CONFIRMED")}
-                    sx={{ bgcolor: "#10B981", color: "white", textTransform: "none", borderRadius: "20px", px: 2, fontSize: "0.75rem", fontWeight: 600, "&:hover": { bgcolor: "#059669" } }}
+                    sx={{
+                        bgcolor: COLORS.PRIMARY_PURPLE,
+                        color: "white",
+                        textTransform: "none",
+                        borderRadius: "20px",
+                        px: 2,
+                        fontSize: "0.75rem",
+                        fontWeight: 600,
+                        "&:hover": { bgcolor: COLORS.PURPLE_HOVER }
+                    }}
                 >
                     {t("accept")}
                 </Button>
@@ -68,7 +77,16 @@ const ProviderBookingActionButtons: React.FC<ProviderBookingActionButtonsProps> 
                     size="small"
                     startIcon={<Cancel />}
                     onClick={() => handleUpdateStatus("CANCELLED")}
-                    sx={{ bgcolor: "#EF4444", color: "white", textTransform: "none", borderRadius: "20px", px: 2, fontSize: "0.75rem", fontWeight: 600, "&:hover": { bgcolor: "#DC2626" } }}
+                    sx={{
+                        bgcolor: "#1F2937",
+                        color: "white",
+                        textTransform: "none",
+                        borderRadius: "20px",
+                        px: 2,
+                        fontSize: "0.75rem",
+                        fontWeight: 600,
+                        "&:hover": { bgcolor: "#111827" }
+                    }}
                 >
                     {t("decline")}
                 </Button>
@@ -88,7 +106,16 @@ const ProviderBookingActionButtons: React.FC<ProviderBookingActionButtonsProps> 
                         size="small"
                         startIcon={<PlayArrow />}
                         onClick={() => setOpenOtpDialog(true)}
-                        sx={{ bgcolor: "#4F46E5", color: "white", textTransform: "none", borderRadius: "20px", px: 2, fontSize: "0.75rem", fontWeight: 600, "&:hover": { bgcolor: "#4338ca" } }}
+                        sx={{
+                            bgcolor: COLORS.PRIMARY_PURPLE,
+                            color: "white",
+                            textTransform: "none",
+                            borderRadius: "20px",
+                            px: 2,
+                            fontSize: "0.75rem",
+                            fontWeight: 600,
+                            "&:hover": { bgcolor: COLORS.PURPLE_HOVER }
+                        }}
                     >
                         {t("start")}
                     </Button>
@@ -238,9 +265,18 @@ const ProviderBookingActionButtons: React.FC<ProviderBookingActionButtonsProps> 
                     size="small"
                     startIcon={<CheckCircle />}
                     onClick={() => handleUpdateStatus("COMPLETED")}
-                    sx={{ bgcolor: "#3B82F6", color: "white", textTransform: "none", borderRadius: "20px", px: 2, fontSize: "0.75rem", fontWeight: 600, "&:hover": { bgcolor: "#2563EB" } }}
+                    sx={{
+                        bgcolor: COLORS.PRIMARY_PURPLE,
+                        color: "white",
+                        textTransform: "none",
+                        borderRadius: "20px",
+                        px: 2,
+                        fontSize: "0.75rem",
+                        fontWeight: 600,
+                        "&:hover": { bgcolor: COLORS.PURPLE_HOVER }
+                    }}
                 >
-                    {t("completed")}
+                    {t("mark_as_complete")}
                 </Button>
                 <IconButton size="small" onClick={() => onViewDetails(booking)}>
                     <Visibility fontSize="small" />

@@ -14,6 +14,8 @@ import {
   Star,
   ArrowBackIos,
   ArrowForwardIos,
+  Verified,
+  Bolt,
 } from "@mui/icons-material";
 import { COLORS } from "../constants/colors";
 import { Service } from "../services/serviceList/listInteraface";
@@ -46,16 +48,42 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
     setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
-  const handleCardClick = () => {
-    const userRole = getUserRole();
-    const userId = getUserId();
+  const userRole = getUserRole();
+  const userId = getUserId();
+  const isOwner = userRole === UserRole.SERVICE_PROVIDER && service.provider_id === userId;
 
+  const handleCardClick = () => {
     // If service provider viewing their own service, go to provider details page
-    if (userRole === UserRole.SERVICE_PROVIDER && service.provider_id === userId) {
+    if (isOwner) {
       router.push(`/spr/services/${service.service_id}`);
     } else {
       // Otherwise (customer or provider viewing other services), go to customer details page
       router.push(`/services/${service.service_id}`);
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "ACTIVE":
+        return {
+          bg: "rgba(46, 125, 50, 0.9)", // Success Green
+          text: "#ffffff"
+        };
+      case "INACTIVE":
+        return {
+          bg: "rgba(211, 47, 47, 0.9)", // Error Red
+          text: "#ffffff"
+        };
+      case "PENDING_APPROVAL":
+        return {
+          bg: "rgba(237, 108, 2, 0.9)", // Warning Orange
+          text: "#ffffff"
+        };
+      default:
+        return {
+          bg: "rgba(158, 158, 158, 0.9)", // Grey
+          text: "#ffffff"
+        };
     }
   };
 
@@ -106,6 +134,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             alignItems: "center",
             gap: 0.5,
             backdropFilter: "blur(8px)",
+            zIndex: 1,
           }}
         >
           <Star sx={{ fontSize: 14, color: "#FFC107" }} />
@@ -113,6 +142,38 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             {service.avg_service_rating ? Number(service.avg_service_rating).toFixed(1) : "0.0"}
           </Typography>
         </Box>
+
+        {/* Status Badge (Only for Provider's own services) */}
+        {isOwner && service.status && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 12,
+              right: 12,
+              bgcolor: getStatusColor(service.status).bg,
+              color: getStatusColor(service.status).text,
+              padding: "4px 12px",
+              borderRadius: "8px",
+              display: "flex",
+              alignItems: "center",
+              backdropFilter: "blur(8px)",
+              zIndex: 1,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+            }}
+          >
+            <Typography
+              variant="caption"
+              sx={{
+                fontWeight: 700,
+                fontSize: "0.7rem",
+                textTransform: 'capitalize',
+                letterSpacing: '0.02em'
+              }}
+            >
+              {service.status.replace('_', ' ').toLowerCase()}
+            </Typography>
+          </Box>
+        )}
 
         {/* Navigation Arrows - only show if multiple images */}
         {images.length > 1 && (
@@ -186,17 +247,23 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             <Typography
               variant="caption"
               sx={{
-                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT
+                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5
               }}
             >
               by <Box
                 component="span"
                 sx={{
                   color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                  fontWeight: 500
+                  fontWeight: 600
                 }}
               >
                 {service.provider_name}
+              </Box>
+              <Box sx={{ color: "#1D4ED8", display: 'flex', alignItems: 'center' }}>
+                <Verified sx={{ fontSize: '12px' }} />
               </Box>
             </Typography>
           </Box>
@@ -223,20 +290,40 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
           )}
         </Box>
 
-        {/* Title */}
-        <Typography
-          variant="h6"
-          component="h3"
-          sx={{
-            fontWeight: 700,
-            fontSize: "1rem",
-            mb: 0.5,
-            lineHeight: 1.2,
-            color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-          }}
-        >
-          {service.service_name}
-        </Typography>
+        {/* Title & Success Badge Row */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
+          <Typography
+            variant="h6"
+            component="h3"
+            sx={{
+              fontWeight: 800,
+              fontSize: "1rem",
+              lineHeight: 1.2,
+              color: COLORS.PRIMARY_PURPLE,
+            }}
+          >
+            {service.service_name}
+          </Typography>
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.3,
+            bgcolor: "#ECFDF5",
+            color: "#059669",
+            px: 0.6,
+            py: 0.1,
+            borderRadius: "4px",
+            border: "1px solid #10B98130"
+          }}>
+            <Bolt sx={{ fontSize: '10px' }} />
+            <Typography sx={{
+              fontWeight: 900,
+              fontSize: "0.55rem"
+            }}>
+              HIGH SUCCESS
+            </Typography>
+          </Box>
+        </Box>
 
         {/* Description */}
         <Typography

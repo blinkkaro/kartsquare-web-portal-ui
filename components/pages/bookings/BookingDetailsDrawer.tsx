@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import {
-    Drawer,
     Box,
     Typography,
     IconButton,
@@ -10,6 +9,8 @@ import {
     Button,
     Chip,
     useTheme,
+    Dialog,
+    Fade,
 } from "@mui/material";
 import { Close, ChatBubbleOutline, NearMe, CheckCircle } from "@mui/icons-material";
 import { UserBooking, BookingDetails } from "../../../services/booking/bookingInterface";
@@ -19,6 +20,7 @@ import dayjs from "dayjs";
 import RightDrawer from "../../common/RightDrawer";
 import { bookingDetailsService } from "../../../services/booking/bookingDetails";
 import { CircularProgress } from "@mui/material";
+import { Phone, CalendarToday, LocationOn } from "@mui/icons-material";
 
 interface BookingDetailsDrawerProps {
     open: boolean;
@@ -35,6 +37,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
     const isDark = theme.palette.mode === "dark";
     const [booking, setBooking] = React.useState<BookingDetails | null>(null);
     const [loading, setLoading] = React.useState(false);
+    const [previewImage, setPreviewImage] = React.useState<string | null>(null);
 
     React.useEffect(() => {
         if (open && initialBooking?.booking_id) {
@@ -58,8 +61,6 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
 
     if (!initialBooking) return null;
 
-    const subtotal = booking ? booking.service_price : (initialBooking.service_price);
-
     // Map status to colors
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -67,19 +68,21 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
             case "CONFIRMED": return { bg: "#ECFDF5", text: "#10B981" };
             case "CANCELLED": return { bg: "#FEF2F2", text: "#EF4444" };
             case "COMPLETED": return { bg: "#EFF6FF", text: "#3B82F6" };
+            case "ACTIVE": return { bg: "#EEF2FF", text: "#6366F1" };
             default: return { bg: "#F3F4F6", text: "#6B7280" };
         }
     };
 
     const currentBooking = booking || initialBooking;
     const statusStyle = getStatusColor(currentBooking.status);
+    const totalAmount = currentBooking.service_price;
 
     return (
         <RightDrawer
             open={open}
             onClose={onClose}
             title={english.booking_details}
-            width={450}
+            width={500}
         >
             <Box sx={{ px: 4, pb: 4 }}>
                 {loading ? (
@@ -88,91 +91,116 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                     </Box>
                 ) : (
                     <>
-                        {/* Status & ID Summary */}
-                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1 }}>
-                            <Chip
-                                label={currentBooking.status.charAt(0) + currentBooking.status.slice(1).toLowerCase()}
-                                size="small"
-                                sx={{
-                                    bgcolor: statusStyle.bg,
-                                    color: statusStyle.text,
-                                    fontWeight: 600,
-                                    fontSize: "0.75rem",
-                                }}
-                            />
-                            <Typography variant="caption" sx={{ color: "#9CA3AF", fontWeight: 500 }}>
-                                {currentBooking.status === "COMPLETED" ? english.paid : english.service_charge}
+                        {/* Subtle Top Booking ID */}
+                        <Box sx={{ mb: 3, mt: -1 }}>
+                            <Typography variant="caption" sx={{ color: "#94A3B8", fontWeight: 700, letterSpacing: "0.1em" }}>
+                                BOOKING ID: <span style={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700 }}>#{currentBooking.booking_id.toUpperCase()}</span>
                             </Typography>
                         </Box>
 
-                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.5 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 500, color: isDark ? "white" : "inherit" }}>
-                                {english.id} | <span style={{ fontWeight: 700 }}>{currentBooking.booking_id.substring(0, 16)}</span>
-                            </Typography>
-                            <Typography variant="h6" sx={{ fontWeight: 800, color: isDark ? "white" : "inherit" }}>
-                                <span style={{ color: "#9CA3AF", fontWeight: 500, fontSize: "0.875rem", marginRight: "4px" }}>
-                                    {booking?.service_currency || initialBooking.currency}
-                                </span>
-                                {subtotal.toFixed(2)}
-                            </Typography>
-                        </Box>
-
-                        <Typography variant="caption" sx={{ color: "#9CA3AF", display: "block", mb: 4 }}>
-                            {english.booked_date} <span style={{ color: isDark ? "#E5E7EB" : "#2D2D2D", fontWeight: 500, marginLeft: "4px" }}>
-                                {dayjs(currentBooking.booking_at).format("MMM DD, YYYY")}
-                            </span>
-                        </Typography>
-
-                        {/* Service Card */}
-                        <Box
-                            sx={{
-                                bgcolor: isDark ? "rgba(94, 24, 233, 0.08)" : "#F4F2FF",
-                                borderRadius: "24px",
-                                p: 3,
-                                mb: 4,
-                                position: "relative",
-                            }}
-                        >
-                            <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
-                                <Avatar
+                        {/* Unified Header & Hero Section */}
+                        <Box sx={{
+                            mx: -4,
+                            mb: 4,
+                            position: "relative",
+                            borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "#F1F5F9"}`,
+                        }}>
+                            {/* Hero Background Image */}
+                            <Box sx={{ position: "relative", height: 220, overflow: "hidden" }}>
+                                <Box
+                                    component="img"
                                     src={booking ? booking.service_image?.[0] : initialBooking.service_images?.[0]}
-                                    sx={{ width: 48, height: 48, border: "2px solid white" }}
-                                />
-                                <Box>
-                                    <Typography sx={{ fontWeight: 700, color: isDark ? "white" : "#2D2D2D", fontSize: "1.1rem" }}>
-                                        {currentBooking.service_name}
-                                    </Typography>
-                                    <Typography sx={{ color: isDark ? "#9CA3AF" : "#4B5563", fontSize: "0.875rem", fontWeight: 500 }}>
-                                        {dayjs(currentBooking.booking_at).format("MMM DD, YYYY")}, {dayjs(currentBooking.booking_at).format("h:mm a")}
-                                    </Typography>
-                                </Box>
-                            </Box>
-
-                            <Divider sx={{ mb: 2, borderColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.5)" }} />
-
-                            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                <Box>
-                                    <Typography variant="caption" sx={{ color: "#9CA3AF", display: "block", mb: 0.5 }}>
-                                        {currentBooking.service_location === "at_customer" ? english.at_customer_location : english.at_provider_location}
-                                    </Typography>
-                                    <Typography sx={{ fontWeight: 600, color: isDark ? "white" : "#2D2D2D", fontSize: "0.875rem" }}>
-                                        {currentBooking.service_location === "at_customer" ? english.at_customer_location : english.at_provider_location}
-                                    </Typography>
-                                </Box>
-                                <IconButton
                                     sx={{
-                                        bgcolor: "white",
-                                        boxShadow: "0px 4px 12px rgba(0,0,0,0.05)",
-                                        "&:hover": { bgcolor: "white" },
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                        filter: "brightness(0.7)",
+                                    }}
+                                />
+                                {/* Status Chip Overlay */}
+                                <Box sx={{ position: "absolute", top: 20, left: 24 }}>
+                                    <Chip
+                                        label={currentBooking.status}
+                                        sx={{
+                                            bgcolor: "rgba(255,255,255,0.9)",
+                                            color: COLORS.PRIMARY_PURPLE,
+                                            backdropFilter: "blur(10px)",
+                                            fontWeight: 800,
+                                            fontSize: "0.75rem",
+                                            height: 28,
+                                            borderRadius: "10px",
+                                            boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+                                        }}
+                                    />
+                                </Box>
+
+                                {/* Service Info Glass Overlay */}
+                                <Box
+                                    sx={{
+                                        position: "absolute",
+                                        bottom: 0,
+                                        left: 0,
+                                        right: 0,
+                                        p: 3,
+                                        background: "linear-gradient(to top, rgba(0,0,0,0.8), transparent)",
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'flex-end'
                                     }}
                                 >
-                                    <NearMe sx={{ color: "#3B82F6", fontSize: 20 }} />
-                                </IconButton>
+                                    <Box>
+                                        <Typography variant="h5" sx={{ fontWeight: 900, color: "white", mb: 0.5 }}>
+                                            {currentBooking.service_name}
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', gap: 1.5 }}>
+                                            <Box sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 0.8,
+                                                bgcolor: "rgba(255,255,255,0.15)",
+                                                px: 1.5,
+                                                py: 0.5,
+                                                borderRadius: "8px",
+                                                backdropFilter: "blur(4px)",
+                                                border: "1px solid rgba(255,255,255,0.1)"
+                                            }}>
+                                                <CalendarToday sx={{ fontSize: 14, color: "#FCD34D" }} />
+                                                <Typography variant="caption" sx={{ color: "white", fontWeight: 800 }}>
+                                                    {dayjs(currentBooking.booking_at).format("MMM DD, h:mm A")}
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 0.8,
+                                                bgcolor: "rgba(255,255,255,0.15)",
+                                                px: 1.5,
+                                                py: 0.5,
+                                                borderRadius: "8px",
+                                                backdropFilter: "blur(4px)",
+                                                border: "1px solid rgba(255,255,255,0.1)"
+                                            }}>
+                                                <LocationOn sx={{ fontSize: 14, color: "#FCD34D" }} />
+                                                <Typography variant="caption" sx={{ color: "white", fontWeight: 800 }}>
+                                                    {currentBooking.service_location === 'at_customer' ? "At Home" : "At Provider"}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    </Box>
+                                    <Box sx={{ textAlign: 'right' }}>
+                                        <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 700, letterSpacing: "0.1em", display: "block" }}>
+                                            TOTAL
+                                        </Typography>
+                                        <Typography variant="h5" sx={{ fontWeight: 900, color: "white" }}>
+                                            {currentBooking.service_currency || initialBooking.currency} {totalAmount.toFixed(0)}
+                                        </Typography>
+                                    </Box>
+                                </Box>
                             </Box>
                         </Box>
 
                         {/* OTP Section (Only for CONFIRMED status) */}
-                        {currentBooking.status === "CONFIRMED" && booking?.otp && (
+                        {currentBooking.status === "CONFIRMED" && currentBooking.otp && (
                             <Box
                                 sx={{
                                     background: isDark
@@ -217,7 +245,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                                 </Box>
 
                                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1.5, mb: 2 }}>
-                                    {booking.otp.toString().split('').map((digit, i) => (
+                                    {(currentBooking.otp as number).toString().split('').map((digit: string, i: number) => (
                                         <Box
                                             key={i}
                                             sx={{
@@ -246,105 +274,245 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                             </Box>
                         )}
 
-                        {/* Customer Notes */}
-                        {currentBooking.customer_notes && (
-                            <Box sx={{ mb: 4 }}>
-                                <Typography variant="body1" sx={{ fontWeight: 800, color: isDark ? "white" : "#2D2D2D", mb: 1 }}>
-                                    {english.customer_notes_title}
-                                </Typography>
-                                <Typography variant="body2" sx={{ color: isDark ? "#9CA3AF" : "#4B5563", bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#F9FAFB", p: 2, borderRadius: "12px" }}>
-                                    {currentBooking.customer_notes}
-                                </Typography>
-                            </Box>
-                        )}
-
-                        {/* Photos */}
-                        {currentBooking.photo_url && currentBooking.photo_url.length > 0 && (
-                            <Box sx={{ mb: 4 }}>
-                                <Typography variant="body1" sx={{ fontWeight: 800, color: isDark ? "white" : "#2D2D2D", mb: 2 }}>
-                                    {english.uploaded_photos_title}
-                                </Typography>
-                                <Box sx={{ display: "flex", gap: 1, overflowX: "auto", pb: 1 }}>
-                                    {currentBooking.photo_url?.map((url: string, idx: number) => (
-                                        <Box
-                                            key={idx}
-                                            component="img"
-                                            src={url}
-                                            sx={{ width: 80, height: 80, borderRadius: "12px", objectFit: "cover", flexShrink: 0 }}
-                                        />
-                                    ))}
-                                </Box>
-                            </Box>
-                        )}
-
-                        {/* Provider Info */}
-                        <Typography variant="body1" sx={{ fontWeight: 800, color: isDark ? "white" : "#2D2D2D", mb: 2 }}>
-                            {english.service_provider_info}
-                        </Typography>
-                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
-                            <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                        {/* Unified Info Sheet */}
+                        <Box sx={{
+                            borderRadius: "32px",
+                            bgcolor: isDark ? "rgba(255,255,255,0.02)" : "#FFFFFF",
+                            border: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "#F1F5F9"}`,
+                            boxShadow: "0 20px 40px rgba(0,0,0,0.02)",
+                            overflow: "hidden",
+                            mb: 4
+                        }}>
+                            {/* Provider Row */}
+                            <Box sx={{ p: 3, display: "flex", alignItems: "center", gap: 2.5 }}>
                                 <Avatar
-                                    src={booking ? booking.provider_profile_pic || undefined : initialBooking.provider_profile_pic}
-                                    sx={{ width: 48, height: 48 }}
+                                    src={currentBooking.provider_details?.profile_pic || undefined}
+                                    sx={{ width: 64, height: 64, border: `2px solid ${COLORS.PRIMARY_PURPLE}20` }}
                                 />
-                                <Box>
-                                    <Typography sx={{ fontWeight: 700, color: isDark ? "white" : "#2D2D2D" }}>
-                                        by {booking ? booking.provider_first_name : initialBooking.provider_first_name} {booking ? booking.provider_last_name : initialBooking.provider_last_name}
+                                <Box sx={{ flex: 1 }}>
+                                    <Typography variant="caption" sx={{ color: "#94A3B8", fontWeight: 700, letterSpacing: "0.1em", mb: 0.5, display: "block" }}>
+                                        PROVIDER
                                     </Typography>
-                                    <Typography variant="caption" sx={{ color: "#9CA3AF", fontWeight: 500 }}>
-                                        {booking ? booking.category_name : initialBooking.category_name} {english.provider_suffix}
+                                    <Typography sx={{ fontWeight: 900, fontSize: "1.2rem", color: isDark ? "white" : "#0F172A" }}>
+                                        {currentBooking.provider_details?.first_name} {currentBooking.provider_details?.last_name}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700 }}>
+                                        {currentBooking.category_name} Service
+                                    </Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', gap: 1 }}>
+                                    <IconButton
+                                        href={`tel:${currentBooking.provider_details?.contact_number || currentBooking.contact_number}`}
+                                        sx={{ bgcolor: "#F1F5F9", color: COLORS.PRIMARY_PURPLE, "&:hover": { bgcolor: "#E2E8F0" } }}
+                                    >
+                                        <Phone fontSize="small" />
+                                    </IconButton>
+                                    <IconButton
+                                        sx={{ bgcolor: "#F1F5F9", color: "#3B82F6", "&:hover": { bgcolor: "#E2E8F0" } }}
+                                    >
+                                        <ChatBubbleOutline fontSize="small" />
+                                    </IconButton>
+                                </Box>
+                            </Box>
+
+                            <Divider sx={{ mx: 3, opacity: 0.5 }} />
+
+                            {/* Location Row */}
+                            <Box sx={{ p: 3, display: 'flex', gap: 2.5 }}>
+                                <Box sx={{
+                                    width: 48,
+                                    height: 48,
+                                    borderRadius: "16px",
+                                    bgcolor: "#F1F5F9",
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    flexShrink: 0
+                                }}>
+                                    <NearMe sx={{ color: "#64748B", fontSize: 20 }} />
+                                </Box>
+                                <Box>
+                                    <Typography variant="caption" sx={{ color: "#94A3B8", fontWeight: 700, letterSpacing: "0.1em", mb: 0.5, display: "block" }}>
+                                        SERVICE ADDRESS
+                                    </Typography>
+                                    <Typography sx={{ fontWeight: 800, fontSize: "1rem", mb: 0.8, color: isDark ? "white" : "#1E293B" }}>
+                                        {currentBooking.booking_address?.name}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: "#64748B", lineHeight: 1.8, fontWeight: 500 }}>
+                                        {currentBooking.booking_address?.address}
+                                        {currentBooking.booking_address?.landmark && (
+                                            <><br /><span style={{ color: "#94A3B8", fontSize: '0.75rem' }}>Landmark:</span> {currentBooking.booking_address?.landmark}</>
+                                        )}
+                                        <br />
+                                        {currentBooking.booking_address?.cityTown}, {currentBooking.booking_address?.state} — {currentBooking.booking_address?.pincode}
                                     </Typography>
                                 </Box>
                             </Box>
-                            <IconButton
-                                sx={{
-                                    border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "#F3F4F6"}`,
-                                    bgcolor: isDark ? "transparent" : "white",
-                                    boxShadow: "0px 4px 12px rgba(0,0,0,0.03)",
-                                }}
-                            >
-                                <ChatBubbleOutline sx={{ color: "#3B82F6", fontSize: 20 }} />
-                            </IconButton>
                         </Box>
 
-                        <Box sx={{ mb: 6 }} />
+                        {/* Secondary Flow: Instructions & Evidence */}
+                        <Box sx={{ px: 1 }}>
+                            {/* Notes Section with Subtle Quote Style */}
+                            {currentBooking.customer_notes && (
+                                <Box sx={{ mb: 4 }}>
+                                    <Typography variant="caption" sx={{ color: "#94A3B8", fontWeight: 700, letterSpacing: "0.1em", mb: 2, display: "block" }}>
+                                        YOUR INSTRUCTIONS
+                                    </Typography>
+                                    <Box sx={{
+                                        p: 3,
+                                        borderRadius: "24px",
+                                        bgcolor: isDark ? "rgba(255,255,255,0.02)" : "#F8FAFC",
+                                        border: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "#E2E8F0"}`,
+                                        position: 'relative'
+                                    }}>
+                                        <Typography variant="body2" sx={{ color: isDark ? "#CBD5E1" : "#475569", fontStyle: "italic", lineHeight: 1.8, fontWeight: 500 }}>
+                                            "{currentBooking.customer_notes}"
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            )}
 
-                        {/* Actions */}
-                        <Box sx={{ display: "flex", gap: 2 }}>
+                            {/* Visual Evidence with Smooth Scrolling */}
+                            {(currentBooking.booking_photo_url || currentBooking.photo_url) && (
+                                <Box sx={{ mb: 4 }}>
+                                    <Typography variant="caption" sx={{ color: "#94A3B8", fontWeight: 700, letterSpacing: "0.1em", mb: 2, display: "block" }}>
+                                        VISUAL EVIDENCE ({(currentBooking.booking_photo_url || []).length + (currentBooking.photo_url || []).length})
+                                    </Typography>
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            gap: 2,
+                                            overflowX: "auto",
+                                            pt: 1.5,
+                                            pb: 2,
+                                            px: 0.5,
+                                            mx: -0.5,
+                                            "&::-webkit-scrollbar": { height: "4px" },
+                                            "&::-webkit-scrollbar-thumb": {
+                                                backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)",
+                                                borderRadius: "10px",
+                                            }
+                                        }}
+                                    >
+                                        {[...(currentBooking.booking_photo_url || []), ...(currentBooking.photo_url || [])].map((url, idx) => (
+                                            <Box
+                                                key={idx}
+                                                component="img"
+                                                src={url}
+                                                onClick={() => setPreviewImage(url)}
+                                                sx={{
+                                                    width: 130,
+                                                    height: 130,
+                                                    borderRadius: "20px",
+                                                    objectFit: "cover",
+                                                    flexShrink: 0,
+                                                    cursor: "pointer",
+                                                    transition: "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                                                    border: `2px solid ${isDark ? "rgba(255,255,255,0.05)" : "#FFFFFF"}`,
+                                                    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                                                    "&:hover": {
+                                                        transform: "scale(1.05) translateY(-5px)",
+                                                        boxShadow: `0 15px 30px ${isDark ? "rgba(0,0,0,0.4)" : "rgba(94, 24, 233, 0.15)"}`,
+                                                        borderColor: COLORS.PRIMARY_PURPLE,
+                                                    }
+                                                }}
+                                            />
+                                        ))}
+                                    </Box>
+                                </Box>
+                            )}
+                        </Box>
+
+                        {/* Action Buttons */}
+                        <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
                             <Button
                                 fullWidth
-                                variant="contained"
+                                variant="outlined"
                                 sx={{
-                                    bgcolor: "#4F46E5",
-                                    color: "white",
                                     borderRadius: "16px",
-                                    py: 1.5,
+                                    py: 1.8,
                                     textTransform: "none",
-                                    fontWeight: 700,
-                                    "&:hover": { bgcolor: "#4338CA" },
+                                    fontWeight: 800,
+                                    borderColor: isDark ? "rgba(255,255,255,0.1)" : "#E2E8F0",
+                                    color: isDark ? "white" : "#475569",
+                                    "&:hover": { bgcolor: "rgba(0,0,0,0.02)" }
                                 }}
                             >
-                                {english.reschedule}
+                                Help & Support
                             </Button>
                             <Button
                                 fullWidth
                                 variant="contained"
                                 sx={{
-                                    bgcolor: isDark ? "#374151" : "#2D2D39",
+                                    bgcolor: COLORS.PRIMARY_PURPLE,
                                     color: "white",
                                     borderRadius: "16px",
-                                    py: 1.5,
+                                    py: 1.8,
                                     textTransform: "none",
-                                    fontWeight: 700,
-                                    "&:hover": { bgcolor: isDark ? "#4B5563" : "#1F1F2A" },
+                                    fontWeight: 800,
+                                    boxShadow: `0 8px 20px ${COLORS.PRIMARY_PURPLE}30`,
+                                    "&:hover": { bgcolor: COLORS.PURPLE_HOVER }
                                 }}
                             >
-                                {english.cancel}
+                                Reschedule
                             </Button>
                         </Box>
+
+                        <Box sx={{ mt: 4 }} />
                     </>
                 )}
             </Box>
+
+            {/* Image Preview Modal */}
+            <Dialog
+                open={!!previewImage}
+                onClose={() => setPreviewImage(null)}
+                maxWidth="lg"
+                TransitionComponent={Fade}
+                TransitionProps={{ timeout: 400 }}
+                PaperProps={{
+                    sx: {
+                        bgcolor: "transparent",
+                        boxShadow: "none",
+                        overflow: "hidden",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        maxWidth: "90vw",
+                        maxHeight: "90vh",
+                    }
+                }}
+            >
+                <Box sx={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <IconButton
+                        onClick={() => setPreviewImage(null)}
+                        sx={{
+                            position: "absolute",
+                            top: 8,
+                            right: 8,
+                            bgcolor: "rgba(0,0,0,0.5)",
+                            color: "white",
+                            "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
+                            zIndex: 1,
+                        }}
+                    >
+                        <Close />
+                    </IconButton>
+                    {previewImage && (
+                        <Box
+                            component="img"
+                            src={previewImage}
+                            sx={{
+                                maxWidth: "100%",
+                                maxHeight: "90vh",
+                                objectFit: "contain",
+                                borderRadius: "12px",
+                                boxShadow: "0px 10px 40px rgba(0,0,0,0.5)",
+                            }}
+                        />
+                    )}
+                </Box>
+            </Dialog>
         </RightDrawer>
     );
 };

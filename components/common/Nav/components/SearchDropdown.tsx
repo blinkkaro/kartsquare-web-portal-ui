@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
+import { getUserRole, UserRole } from "../../../../utils/auth";
 
 interface SearchDropdownProps {
   open: boolean;
@@ -55,11 +56,11 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   useEffect(() => {
     if (typeof window !== "undefined") {
       setViewportHeight(window.innerHeight);
-      
+
       const handleResize = () => {
         setViewportHeight(window.innerHeight);
       };
-      
+
       window.addEventListener("resize", handleResize);
       return () => window.removeEventListener("resize", handleResize);
     }
@@ -74,8 +75,15 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   };
 
   const handleServiceClick = (serviceId: string) => {
-    // Navigate to service details page
-    router.push(`/services/${serviceId}`);
+    // Determine the route based on the user's role
+    const role = getUserRole();
+    if (role === UserRole.SERVICE_PROVIDER) {
+      // Redirect to provider service detail page
+      router.push(`/spr/services/${serviceId}`);
+    } else {
+      // Default detail page (customer view)
+      router.push(`/services/${serviceId}`);
+    }
     onClose();
   };
 
@@ -86,15 +94,15 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   // iPhone SE has ~568px viewport height, so we need to be careful
   const maxHeight = useMemo(() => {
     if (typeof window === "undefined" || !anchorEl) return 600;
-    
+
     const searchBarTop = anchorEl.getBoundingClientRect().top;
     const searchBarHeight = anchorEl.offsetHeight;
     const bottomPadding = 16; // Padding from bottom
     const topPadding = 8; // Gap between search bar and dropdown
-    
+
     // Calculate available height
     const availableHeight = viewportHeight - searchBarTop - searchBarHeight - topPadding - bottomPadding;
-    
+
     // For very small screens (iPhone SE ~568px), use more conservative limits
     if (viewportHeight <= 667) {
       // iPhone SE and similar small devices - use 70% of available or 350px max
@@ -124,9 +132,8 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
         bgcolor: isDark
           ? COLORS.BACKGROUND.PAPER_DARK
           : COLORS.BACKGROUND.PAPER_LIGHT,
-        border: `1px solid ${
-          isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
-        }`,
+        border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
+          }`,
         borderRadius: "16px",
         zIndex: 1300,
         boxShadow: isDark
@@ -158,18 +165,16 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
               ? COLORS.BACKGROUND.SECONDARY_DARK
               : COLORS.BACKGROUND.SECONDARY_LIGHT,
             borderRadius: "4px",
-            border: `1px solid ${
-              isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
-            }`,
+            border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
+              }`,
           },
           "&::-webkit-scrollbar-thumb": {
             background: isDark
               ? `${COLORS.PRIMARY_PURPLE}CC`
               : `${COLORS.PRIMARY_PURPLE}CC`,
             borderRadius: "4px",
-            border: `1px solid ${
-              isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT
-            }`,
+            border: `1px solid ${isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT
+              }`,
             "&:hover": {
               background: isDark
                 ? COLORS.PRIMARY_PURPLE
@@ -375,11 +380,10 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
                       sx={{
                         cursor: "pointer",
                         borderRadius: "12px",
-                        border: `1px solid ${
-                          isDark
-                            ? COLORS.BORDER.DEFAULT_DARK
-                            : COLORS.BORDER.DEFAULT_LIGHT
-                        }`,
+                        border: `1px solid ${isDark
+                          ? COLORS.BORDER.DEFAULT_DARK
+                          : COLORS.BORDER.DEFAULT_LIGHT
+                          }`,
                         bgcolor: isDark
                           ? COLORS.BACKGROUND.SECONDARY_DARK
                           : COLORS.BACKGROUND.SECONDARY_LIGHT,

@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, TextField, InputAdornment, IconButton, Button } from "@mui/material";
-import { Search, CalendarToday } from "@mui/icons-material";
+import { Search } from "@mui/icons-material";
 import { useTheme } from "@mui/material";
 import { COLORS } from "../../../constants/colors";
 import { english } from "../../../features/i18n/en";
@@ -55,22 +55,6 @@ const BookingsSearchBar: React.FC<BookingsSearchBarProps> = ({
                     }
                 }}
             />
-            {/* Calendar Button */}
-            <Button
-                variant="outlined"
-                startIcon={<CalendarToday />}
-                sx={{
-                    borderColor: isDark ? COLORS.BORDER.DEFAULT_DARK : "#E5E7EB",
-                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : "#374151",
-                    textTransform: "none",
-                    borderRadius: "8px",
-                    bgcolor: isDark ? "transparent" : "white",
-                    height: "40px",
-                    px: 2
-                }}
-            >
-                {english.calendar}
-            </Button>
         </Box>
     );
 };

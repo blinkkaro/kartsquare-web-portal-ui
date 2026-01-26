@@ -32,7 +32,7 @@ const ServiceDetailsBreadcrumb = ({ serviceName }: ServiceDetailsBreadcrumbProps
         >
             <Link
                 component="button"
-                onClick={() => router.push("/")}
+                onClick={() => window.location.href = "/"}
                 sx={{
                     color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                     textDecoration: "none",
@@ -48,7 +48,7 @@ const ServiceDetailsBreadcrumb = ({ serviceName }: ServiceDetailsBreadcrumbProps
             </Link>
             <Link
                 component="button"
-                onClick={() => router.push("/spr/servicesList")}
+                onClick={() => window.location.href = "/spr/servicesList"}
                 sx={{
                     color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                     textDecoration: "none",

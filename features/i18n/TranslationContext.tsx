@@ -621,6 +621,7 @@ export type TranslationKey =
   | "in_progress"
   | "accept"
   | "decline"
+  | "mark_as_complete"
   | "otp_verification"
   | "enter_otp_description"
   | "verify_and_start"
@@ -650,7 +651,8 @@ export type TranslationKey =
   | "shareOnWhatsApp"
   | "shareViaEmail"
   | "noPostsFound"
-  | "noServicesFound";
+  | "noServicesFound"
+  | "phoneMin"
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

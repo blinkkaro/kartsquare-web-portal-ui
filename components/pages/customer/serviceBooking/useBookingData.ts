@@ -74,20 +74,20 @@ export const useBookingData = (
         fetchSlots();
     }, [serviceId, service, selectedDate, userTimezone]);
 
+    const fetchAddresses = async () => {
+        try {
+            setAddressLoading(true);
+            const addresses = await userAddressService.getUserAddresses();
+            setUserAddresses(addresses || []);
+        } catch (error) {
+            console.error("Failed to fetch addresses:", error);
+        } finally {
+            setAddressLoading(false);
+        }
+    };
+
     // Fetch user addresses
     useEffect(() => {
-        const fetchAddresses = async () => {
-            try {
-                setAddressLoading(true);
-                const addresses = await userAddressService.getUserAddresses();
-                setUserAddresses(addresses || []);
-            } catch (error) {
-                console.error("Failed to fetch addresses:", error);
-            } finally {
-                setAddressLoading(false);
-            }
-        };
-
         if (location === "at_customer") {
             fetchAddresses();
         }
@@ -102,5 +102,6 @@ export const useBookingData = (
         addressLoading,
         error,
         setError,
+        refetchAddresses: fetchAddresses
     };
 };

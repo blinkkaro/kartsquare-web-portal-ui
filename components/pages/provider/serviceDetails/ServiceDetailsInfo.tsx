@@ -8,6 +8,7 @@ interface ServiceDetailsInfoProps {
     serviceName: string;
     serviceDesc: string;
     status: string;
+    createdAt?: string;
     onContinueReading: () => void;
     showContinueReading: boolean;
 }
@@ -16,6 +17,7 @@ const ServiceDetailsInfo = ({
     serviceName,
     serviceDesc,
     status,
+    createdAt,
     onContinueReading,
     showContinueReading
 }: ServiceDetailsInfoProps) => {
@@ -29,14 +31,29 @@ const ServiceDetailsInfo = ({
                 variant="h4"
                 sx={{
                     fontWeight: 700,
-                    mb: { xs: 1.5, sm: 2 },
-                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                    mb: 0.5,
+                    color: COLORS.PRIMARY_PURPLE,
                     fontSize: { xs: "1.25rem", sm: "1.5rem", md: "2rem" },
                     lineHeight: { xs: 1.3, sm: 1.4 },
                 }}
             >
                 {serviceName}
             </Typography>
+
+            {createdAt && (
+                <Typography
+                    variant="caption"
+                    sx={{
+                        display: "block",
+                        mb: { xs: 1.5, sm: 2 },
+                        color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                        fontSize: "0.75rem",
+                        fontWeight: 500
+                    }}
+                >
+                    {english.created_at || "Created At"}: {new Date(createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                </Typography>
+            )}
 
             {/* Description */}
             <Typography

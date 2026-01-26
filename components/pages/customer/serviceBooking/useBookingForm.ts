@@ -71,10 +71,9 @@ export const useBookingForm = ({
                 service_location: location,
                 customer_notes: notes.trim() || undefined,
                 schedule_at: scheduleAt,
-                address_id: location === "at_customer" ? selectedAddressId || undefined : undefined,
-                service_provider_address_id: location === "at_provider" && service?.service_provider_address_id
-                    ? service.service_provider_address_id
-                    : undefined,
+                address_id: location === "at_customer"
+                    ? (selectedAddressId || undefined)
+                    : service?.service_provider_address_id,
                 photo_url: photoUrls.length > 0 ? photoUrls : undefined,
                 distance_km: 10,
                 service_radius: 10,

@@ -57,17 +57,18 @@ const BookingsTable: React.FC<BookingsTableProps> = ({ bookings, activeTab, onVi
             <Table sx={{ minWidth: 650, borderSpacing: "0 12px", borderCollapse: "separate" }}>
                 <TableHead>
                     <TableRow>
+                        <TableCell sx={headerCellStyle}>S.No</TableCell>
                         <TableCell sx={headerCellStyle}>{english.id}</TableCell>
                         <TableCell sx={headerCellStyle}>{english.service_name}</TableCell>
                         <TableCell sx={headerCellStyle}>{english.booking_date}</TableCell>
-                        <TableCell sx={headerCellStyle}>{english.pay}</TableCell>
+                        <TableCell sx={headerCellStyle}>{english.service_charge}</TableCell>
                         <TableCell sx={headerCellStyle}>{english.service_location}</TableCell>
                         {tabs[activeTab] === english.completed && <TableCell sx={headerCellStyle}>{english.rating}</TableCell>}
                         <TableCell sx={{ ...headerCellStyle, textAlign: 'right' }}>{english.action}</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {bookings.map((booking) => (
+                    {bookings.map((booking, index) => (
                         <TableRow
                             key={booking.booking_id}
                             sx={{
@@ -77,6 +78,11 @@ const BookingsTable: React.FC<BookingsTableProps> = ({ bookings, activeTab, onVi
                                 "& > td:last-of-type": { borderRadius: "0 12px 12px 0" },
                             }}
                         >
+                            <TableCell sx={cellStyle}>
+                                <Typography variant="body2" fontWeight={600} sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#6B7280" }}>
+                                    {index + 1}.
+                                </Typography>
+                            </TableCell>
                             <TableCell sx={cellStyle}>
                                 #{booking.booking_id.substring(0, 8)}...
                             </TableCell>
@@ -117,17 +123,36 @@ const BookingsTable: React.FC<BookingsTableProps> = ({ bookings, activeTab, onVi
                                 </Box>
                             </TableCell>
                             <TableCell sx={cellStyle}>
-                                {booking.service_location === 'at_customer' ? (
+                                {booking.booking_address ? (
                                     <Box>
-                                        <Typography variant="body2" fontWeight={600}>
-                                            123 Main Street, Al Satwa...
+                                        <Typography variant="caption" sx={{
+                                            color: COLORS.PRIMARY_PURPLE,
+                                            fontWeight: 700,
+                                            display: 'block',
+                                            mb: 0.5,
+                                            fontSize: '0.65rem',
+                                            textTransform: 'uppercase'
+                                        }}>
+                                            {booking.service_location === 'at_customer' ? english.at_home : english.at_service_provider_location}
+                                        </Typography>
+                                        <Typography variant="body2" fontWeight={600} sx={{
+                                            maxWidth: '180px',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap'
+                                        }}>
+                                            {booking.booking_address.address}
                                         </Typography>
                                         <Typography variant="caption" display="block" color="text.secondary">
-                                            Dubai, United Arab Emira...
+                                            {booking.booking_address.cityTown}, {booking.booking_address.state}
                                         </Typography>
                                     </Box>
                                 ) : (
-                                    <Typography variant="body2" sx={{ color: "text.secondary" }}>—</Typography>
+                                    <Box>
+                                        <Typography variant="body2" fontWeight={600} color="text.secondary">
+                                            {booking.service_location === 'at_customer' ? english.at_customer_location : english.at_provider_location}
+                                        </Typography>
+                                    </Box>
                                 )}
                             </TableCell>
 

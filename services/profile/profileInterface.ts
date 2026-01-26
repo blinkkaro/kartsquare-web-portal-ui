@@ -2,8 +2,8 @@ import { Posts } from "../post/postInterfaces";
 import { Service } from "../serviceList/listInteraface";
 
 export enum service_location_type {
-  USER_LOCATION = "USER_LOCATION",
-  PROVIDER_LOCATION = "PROVIDER_LOCATION",
+  USER_LOCATION = "at_customer",
+  PROVIDER_LOCATION = "at_provider",
 }
 
 export enum service_status_type {

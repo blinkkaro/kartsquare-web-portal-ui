@@ -18,8 +18,8 @@ import AddressDrawer from "@/components/common/address/AddressDrawer";
 import { english } from "@/features/i18n/en";
 
 interface ServiceLocationProps {
-    locationType: "USER_LOCATION" | "PROVIDER_LOCATION";
-    onLocationTypeChange: (value: "USER_LOCATION" | "PROVIDER_LOCATION") => void;
+    locationType: "at_customer" | "at_provider";
+    onLocationTypeChange: (value: "at_customer" | "at_provider") => void;
     addresses: UserAddress[];
     selectedAddressId: string;
     onAddressSelect: (addressId: string) => void;
@@ -64,12 +64,12 @@ const ServiceLocation = ({
                     onChange={(e) => onLocationTypeChange(e.target.value as any)}
                 >
                     <FormControlLabel
-                        value="PROVIDER_LOCATION"
+                        value="at_provider"
                         control={<Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />}
                         label={english.at_provider_location}
                     />
                     <FormControlLabel
-                        value="USER_LOCATION"
+                        value="at_customer"
                         control={<Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />}
                         label={english.at_customer_location}
                     />
@@ -160,8 +160,12 @@ const ServiceLocation = ({
                     onClick={() => setAddressDrawerOpen(true)}
                     sx={{
                         mt: 1,
-                        borderColor: COLORS.WHITE,
-                        color: COLORS.WHITE,
+                        borderColor: COLORS.PRIMARY_PURPLE,
+                        color: COLORS.PRIMARY_PURPLE,
+                        "&:hover": {
+                            borderColor: COLORS.PURPLE_HOVER,
+                            bgcolor: COLORS.PURPLE_ALPHA_04,
+                        },
                     }}
                 >
                     {english.add_address}
@@ -169,7 +173,7 @@ const ServiceLocation = ({
             </Box>
 
             {/* Visiting Charge for User Location */}
-            {locationType === "USER_LOCATION" && (
+            {locationType === "at_customer" && (
                 <Box sx={{ mb: 2 }}>
                     <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>
                         {english.visiting_charge_inr}
@@ -178,9 +182,13 @@ const ServiceLocation = ({
                     <TextField
                         fullWidth
                         size="small"
-                        type="number"
                         value={visitingCharge}
-                        onChange={(e) => onVisitingChargeChange(e.target.value)}
+                        onChange={(e) => {
+                            const val = e.target.value.replace(/[^0-9.]/g, '');
+                            if (val === '' || (parseFloat(val) <= 10000 && (val.match(/\./g) || []).length <= 1)) {
+                                onVisitingChargeChange(val);
+                            }
+                        }}
                         placeholder={english.enter_visiting_charge}
                     />
                 </Box>
@@ -194,11 +202,14 @@ const ServiceLocation = ({
                 <TextField
                     fullWidth
                     size="small"
-                    type="number"
                     value={serviceRadius}
-                    onChange={(e) => onServiceRadiusChange(e.target.value)}
+                    onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        if (val === '' || parseInt(val) <= 100) {
+                            onServiceRadiusChange(val);
+                        }
+                    }}
                     placeholder="5"
-                    inputProps={{ min: 5, max: 25 }}
                 />
             </Box>
 

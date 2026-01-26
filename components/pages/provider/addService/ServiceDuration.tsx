@@ -38,11 +38,14 @@ const ServiceDuration = ({
                     <TextField
                         fullWidth
                         size="small"
-                        type="number"
                         value={days}
-                        onChange={(e) => onDaysChange(e.target.value)}
+                        onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, '');
+                            if (val === '' || parseInt(val) <= 365) {
+                                onDaysChange(val || "0");
+                            }
+                        }}
                         placeholder="00"
-                        inputProps={{ min: 0 }}
                     />
                 </Box>
                 <Box sx={{ flex: 1 }}>
@@ -52,11 +55,14 @@ const ServiceDuration = ({
                     <TextField
                         fullWidth
                         size="small"
-                        type="number"
                         value={hours}
-                        onChange={(e) => onHoursChange(e.target.value)}
+                        onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, '');
+                            if (val === '' || parseInt(val) <= 24) {
+                                onHoursChange(val || "0");
+                            }
+                        }}
                         placeholder="00"
-                        inputProps={{ min: 0, max: 23 }}
                     />
                 </Box>
                 <Box sx={{ flex: 1 }}>
@@ -66,11 +72,14 @@ const ServiceDuration = ({
                     <TextField
                         fullWidth
                         size="small"
-                        type="number"
                         value={minutes}
-                        onChange={(e) => onMinutesChange(e.target.value)}
+                        onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, '');
+                            if (val === '' || parseInt(val) <= 60) {
+                                onMinutesChange(val || "0");
+                            }
+                        }}
                         placeholder="00"
-                        inputProps={{ min: 0, max: 59 }}
                     />
                 </Box>
             </Box>

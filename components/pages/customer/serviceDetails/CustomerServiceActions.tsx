@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Box, Button, useTheme } from "@mui/material";
-import { ShoppingCart } from "@mui/icons-material";
+import { ShoppingCart, CalendarMonth } from "@mui/icons-material";
 import { COLORS } from "../../../../constants/colors";
 import { english } from "../../../../features/i18n/en";
 
@@ -15,42 +15,55 @@ const CustomerServiceActions = ({ onAddToCart, onBookNow }: CustomerServiceActio
     const isDark = theme.palette.mode === "dark";
 
     return (
-        <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
-            <Button
+        <Box sx={{ display: "flex", gap: 2, mb: 1, py: 1 }}>
+            {/* <Button
                 variant="contained"
                 onClick={onAddToCart}
+                startIcon={<ShoppingCart sx={{ fontSize: '1.2rem !important' }} />}
                 sx={{
-                    bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "#2D2D2D",
+                    flex: 1,
+                    bgcolor: isDark ? "rgba(255, 255, 255, 0.1)" : "#1A1A1A",
                     color: "white",
-                    borderRadius: "24px",
-                    px: 4,
-                    py: 1,
+                    borderRadius: "30px",
+                    px: 3,
+                    py: 1.2,
                     textTransform: "none",
-                    fontWeight: 600,
+                    fontWeight: 700,
+                    letterSpacing: "0.02em",
                     "&:hover": {
-                        bgcolor: isDark ? "rgba(255, 255, 255, 0.12)" : "#3D3D3D",
+                        bgcolor: isDark ? "rgba(255, 255, 255, 0.15)" : "#000000",
+                        transform: "translateY(-1px)",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
                     },
+                    transition: "all 0.2s ease-in-out"
                 }}
             >
-                {english.add_to_cart}
-            </Button>
+                {english.add_to_cart || "Add to Cart"}
+            </Button> */}
             <Button
                 variant="contained"
+                fullWidth
                 onClick={onBookNow}
+                startIcon={<CalendarMonth sx={{ fontSize: '1.2rem !important' }} />}
                 sx={{
-                    bgcolor: "#4F46E5", // Vibrant purple-blue from screenshot
+                    flex: 1,
+                    bgcolor: COLORS.PRIMARY_PURPLE,
                     color: "white",
-                    borderRadius: "24px",
-                    px: 4,
-                    py: 1,
+                    borderRadius: "30px",
+                    px: 3,
+                    py: 1.2,
                     textTransform: "none",
-                    fontWeight: 600,
+                    fontWeight: 700,
+                    letterSpacing: "0.02em",
                     "&:hover": {
-                        bgcolor: "#4338CA",
+                        bgcolor: COLORS.PURPLE_HOVER,
+                        transform: "translateY(-1px)",
+                        boxShadow: `0 4px 12px ${COLORS.PRIMARY_PURPLE}40`
                     },
+                    transition: "all 0.2s ease-in-out"
                 }}
             >
-                {english.book_now}
+                {english.book_now || "Book Now"}
             </Button>
         </Box>
     );

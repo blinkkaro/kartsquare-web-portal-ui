@@ -29,7 +29,7 @@ export const useServiceForm = ({
     const [days, setDays] = useState("0");
     const [hours, setHours] = useState("0");
     const [minutes, setMinutes] = useState("0");
-    const [locationType, setLocationType] = useState<"USER_LOCATION" | "PROVIDER_LOCATION">("PROVIDER_LOCATION");
+    const [locationType, setLocationType] = useState<"at_customer" | "at_provider">("at_provider");
     const [visitingCharge, setVisitingCharge] = useState("");
     const [selectedAddressId, setSelectedAddressId] = useState("");
     const [serviceRadius, setServiceRadius] = useState("5");
@@ -52,7 +52,7 @@ export const useServiceForm = ({
                 setServiceName(editService.service_name || "");
                 setDescription(editService.service_desc || "");
 
-                const priceInCurrency = editService.price ? (editService.price / 100).toFixed(2) : "";
+                const priceInCurrency = editService.price ? editService.price.toString() : "";
                 setPrice(priceInCurrency);
 
                 const totalMinutes = editService.service_duration || 0;
@@ -64,12 +64,12 @@ export const useServiceForm = ({
                 setMinutes(minutesCalc.toString());
 
                 const locType = editService.service_at_location as string;
-                if (locType === "USER_LOCATION" || locType === "PROVIDER_LOCATION") {
-                    setLocationType(locType as "USER_LOCATION" | "PROVIDER_LOCATION");
+                if (locType === "at_customer" || locType === "at_provider") {
+                    setLocationType(locType as "at_customer" | "at_provider");
                 }
 
                 if (editService.visiting_charge) {
-                    setVisitingCharge((editService.visiting_charge / 100).toFixed(2));
+                    setVisitingCharge(editService.visiting_charge.toString());
                 }
 
                 setSelectedAddressId(editService.service_provider_address_id || "");
@@ -153,7 +153,7 @@ export const useServiceForm = ({
             setError(english.select_address_error);
             return false;
         }
-        if (locationType === "USER_LOCATION" && (!visitingCharge || parseFloat(visitingCharge) <= 0)) {
+        if (locationType === "at_customer" && (!visitingCharge || parseFloat(visitingCharge) < 0)) {
             setError(english.enter_visiting_charge_error);
             return false;
         }
@@ -193,12 +193,12 @@ export const useServiceForm = ({
             const requestData: any = {
                 provider_id: userId,
                 category_id: categoryId,
-                subcategory_id: subcategoryId,
+                sub_category_id: subcategoryId,
                 service_name: serviceName,
                 service_desc: description,
                 image_urls: uploadedUrls,
                 is_price_required: true,
-                price: Math.round(parseFloat(price) * 100),
+                price: parseFloat(price),
                 currency: "INR",
                 service_at_location: locationType,
                 service_provider_address_id: selectedAddressId,
@@ -208,8 +208,8 @@ export const useServiceForm = ({
                 have_slots: haveSlots,
             };
 
-            if (locationType === "USER_LOCATION") {
-                requestData.visiting_charge = Math.round(parseFloat(visitingCharge) * 100);
+            if (locationType === "at_customer") {
+                requestData.visiting_charge = parseFloat(visitingCharge);
             }
 
             if (editService) {
@@ -239,7 +239,7 @@ export const useServiceForm = ({
         setDays("0");
         setHours("0");
         setMinutes("0");
-        setLocationType("PROVIDER_LOCATION");
+        setLocationType("at_provider");
         setVisitingCharge("");
         setSelectedAddressId("");
         setServiceRadius("5");

@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
-import { Box, Typography, useTheme, Switch, useMediaQuery } from "@mui/material";
+import { Box, Typography, useTheme, Switch, useMediaQuery, Tooltip } from "@mui/material";
+import { AccessTime } from "@mui/icons-material";
 import { COLORS } from "../../../../constants/colors";
 import { english } from "../../../../features/i18n/en";
 
@@ -11,6 +12,8 @@ interface ServiceDetailsGridProps {
     serviceStatus?: boolean;
     onStatusToggle?: (newStatus: 'ACTIVE' | 'INACTIVE') => void;
     isUpdating?: boolean;
+    status?: string | null;
+    haveSlots?: boolean;
 }
 
 const ServiceDetailsGrid = ({
@@ -19,7 +22,9 @@ const ServiceDetailsGrid = ({
     homeFee = 10.00,
     serviceStatus = true,
     onStatusToggle,
-    isUpdating = false
+    isUpdating = false,
+    status = "",
+    haveSlots = false
 }: ServiceDetailsGridProps) => {
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark";
@@ -34,11 +39,8 @@ const ServiceDetailsGrid = ({
     return (
         <Box
             sx={{
-                bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.9)",
-                border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"}`,
                 borderRadius: { xs: "8px", sm: "12px" },
-                p: { xs: 1.5, sm: 2 },
-                mb: { xs: 2, sm: 3 },
+                py: { xs: 1.5, sm: 2 },
             }}
         >
             {/* Combined Row: Duration and Service Status */}
@@ -72,9 +74,37 @@ const ServiceDetailsGrid = ({
                             fontSize: { xs: "0.875rem", sm: "1rem" },
                         }}
                     >
-                        {serviceDuration ? `${Math.floor(serviceDuration / 60)}h ${serviceDuration % 60}${english.min}` : "2h 30min"}
+                        {(() => {
+                            if (!serviceDuration) return "0d 0h 0m";
+                            const d = Math.floor(serviceDuration / (24 * 60));
+                            const h = Math.floor((serviceDuration % (24 * 60)) / 60);
+                            const m = serviceDuration % 60;
+                            return `${d > 0 ? `${d}d ` : ""}${h > 0 ? `${h}h ` : ""}${m > 0 ? `${m}m` : d === 0 && h === 0 ? "0m" : ""}`;
+                        })()}
                     </Typography>
                 </Box>
+
+                {/* Slots Indicator */}
+                {haveSlots && (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <AccessTime
+                            sx={{
+                                fontSize: "1rem",
+                                color: COLORS.PRIMARY_PURPLE,
+                            }}
+                        />
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                fontWeight: 600,
+                                color: COLORS.PRIMARY_PURPLE,
+                                fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                            }}
+                        >
+                            {english.time_slots_enabled || "Time Slots Enabled"}
+                        </Typography>
+                    </Box>
+                )}
 
                 {/* Service status */}
                 <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 2 } }}>
@@ -88,20 +118,32 @@ const ServiceDetailsGrid = ({
                     >
                         {english.service_status}
                     </Typography>
-                    <Switch
-                        checked={serviceStatus}
-                        onChange={handleToggle}
-                        disabled={isUpdating}
-                        size={isMobile ? "small" : "medium"}
-                        sx={{
-                            "& .MuiSwitch-switchBase.Mui-checked": {
-                                color: COLORS.PRIMARY_PURPLE,
-                            },
-                            "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                                backgroundColor: COLORS.PRIMARY_PURPLE,
-                            },
-                        }}
-                    />
+                    <Tooltip
+                        title={status === 'PENDING_APPROVAL' ? "This service is currently pending approval. You will be able to activate or deactivate it once it has been approved." : ""}
+                        arrow
+                        placement="top"
+                    >
+                        <Box sx={{ display: 'inline-block' }}>
+                            <Switch
+                                checked={serviceStatus}
+                                onChange={handleToggle}
+                                disabled={isUpdating || status === 'PENDING_APPROVAL'}
+                                size={isMobile ? "small" : "medium"}
+                                sx={{
+                                    "& .MuiSwitch-switchBase.Mui-checked": {
+                                        color: COLORS.PRIMARY_PURPLE,
+                                    },
+                                    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                                        backgroundColor: COLORS.PRIMARY_PURPLE,
+                                    },
+                                    "&.Mui-disabled": {
+                                        cursor: "not-allowed",
+                                        pointerEvents: "auto"
+                                    }
+                                }}
+                            />
+                        </Box>
+                    </Tooltip>
                 </Box>
             </Box>
         </Box>

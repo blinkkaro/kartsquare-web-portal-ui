@@ -17,7 +17,7 @@ import {
     Dialog,
     DialogContent,
 } from "@mui/material";
-import { CheckCircle } from "@mui/icons-material";
+import { CheckCircle, Bolt, Verified } from "@mui/icons-material";
 import { useParams, useRouter } from "next/navigation";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -28,6 +28,7 @@ import { english } from "../../../../features/i18n/en";
 import { useBookingData } from "./useBookingData";
 import { useBookingForm } from "./useBookingForm";
 import MainLayout from "@/app/mainLayout";
+import AddressDrawer from "@/components/common/address/AddressDrawer";
 
 const CustomerServiceBooking = () => {
     const params = useParams();
@@ -40,6 +41,7 @@ const CustomerServiceBooking = () => {
 
     const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(dayjs());
     const [location, setLocation] = useState<"at_provider" | "at_customer">("at_provider");
+    const [addressDrawerOpen, setAddressDrawerOpen] = useState(false);
 
     const {
         service,
@@ -49,6 +51,7 @@ const CustomerServiceBooking = () => {
         slotsLoading,
         addressLoading,
         error: dataError,
+        refetchAddresses
     } = useBookingData(serviceId, selectedDate, location);
 
     const {
@@ -82,9 +85,9 @@ const CustomerServiceBooking = () => {
     React.useEffect(() => {
         const loc = service?.service_at_location as any;
         if (loc) {
-            if (loc === "USER_LOCATION" || loc === "AT_CUSTOMER") {
+            if (loc === "at_customer" || loc === "AT_CUSTOMER") {
                 setLocation("at_customer");
-            } else if (loc === "PROVIDER_LOCATION" || loc === "AT_PROVIDER") {
+            } else if (loc === "at_provider" || loc === "AT_PROVIDER") {
                 setLocation("at_provider");
             }
         }
@@ -189,10 +192,52 @@ const CustomerServiceBooking = () => {
                             sx={{ width: 80, height: 80, borderRadius: "12px", objectFit: "cover" }}
                         />
                         <Box>
-                            <Typography variant="h5" sx={{ fontWeight: 700, color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }}>
+                            <Typography variant="h5" sx={{ fontWeight: 800, color: COLORS.PRIMARY_PURPLE }}>
                                 {service.service_name}
                             </Typography>
-                            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
+
+                            {/* Trust Badges */}
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap", mt: 0.5, mb: 1 }}>
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 0.5,
+                                    color: "#1D4ED8",
+                                    fontWeight: 800
+                                }}>
+                                    <Verified sx={{ fontSize: '14px' }} />
+                                    <Typography sx={{
+                                        fontWeight: 900,
+                                        fontSize: "0.65rem",
+                                        fontStyle: 'italic',
+                                        textTransform: 'uppercase'
+                                    }}>
+                                        Verified Service
+                                    </Typography>
+                                </Box>
+
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 0.5,
+                                    bgcolor: "#ECFDF5",
+                                    color: "#059669",
+                                    px: 0.8,
+                                    py: 0.2,
+                                    borderRadius: "4px",
+                                    border: "1px solid #10B98130"
+                                }}>
+                                    <Bolt sx={{ fontSize: '12px' }} />
+                                    <Typography sx={{
+                                        fontWeight: 800,
+                                        fontSize: "0.6rem"
+                                    }}>
+                                        HIGH SUCCESS
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                                 <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
                                     <Typography
                                         sx={{
@@ -359,7 +404,7 @@ const CustomerServiceBooking = () => {
                                 </Typography>
                                 <FormControl component="fieldset" fullWidth>
                                     <RadioGroup value={location} onChange={(e) => setLocation(e.target.value as any)}>
-                                        {(service.service_at_location as any === "USER_LOCATION" || service.service_at_location as any === "AT_CUSTOMER" || service.service_at_location as any === "BOTH") && (
+                                        {(service.service_at_location as any === "at_customer" || service.service_at_location as any === "AT_CUSTOMER" || service.service_at_location as any === "BOTH") && (
                                             <>
                                                 <FormControlLabel
                                                     value="at_customer"
@@ -382,32 +427,50 @@ const CustomerServiceBooking = () => {
                                                                         key={addr.id}
                                                                         onClick={() => setSelectedAddressId(addr.id)}
                                                                         sx={{
-                                                                            p: 2,
-                                                                            border: `2px solid ${selectedAddressId === addr.id ? COLORS.PRIMARY_PURPLE : isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
-                                                                            borderRadius: "12px",
+                                                                            p: 2.5,
+                                                                            position: 'relative',
+                                                                            border: `1.5px solid ${selectedAddressId === addr.id ? COLORS.PRIMARY_PURPLE : isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)"}`,
+                                                                            borderRadius: "16px",
                                                                             cursor: "pointer",
-                                                                            bgcolor: selectedAddressId === addr.id ? "rgba(94, 24, 233, 0.04)" : isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
-                                                                            transition: "all 0.2s",
-                                                                            "&:hover": { borderColor: COLORS.PRIMARY_PURPLE, bgcolor: "rgba(94, 24, 233, 0.04)" },
+                                                                            bgcolor: selectedAddressId === addr.id
+                                                                                ? (isDark ? "rgba(94, 24, 233, 0.12)" : "rgba(94, 24, 233, 0.05)")
+                                                                                : (isDark ? "rgba(255,255,255,0.02)" : "white"),
+                                                                            boxShadow: selectedAddressId === addr.id
+                                                                                ? `0 8px 24px -6px ${COLORS.PRIMARY_PURPLE}25`
+                                                                                : "none",
+                                                                            transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                                                                            display: 'flex',
+                                                                            flexDirection: 'column',
+                                                                            "&:hover": {
+                                                                                borderColor: COLORS.PRIMARY_PURPLE,
+                                                                                bgcolor: isDark ? "rgba(94, 24, 233, 0.08)" : "rgba(94, 24, 233, 0.03)",
+                                                                                transform: "translateY(-2px)"
+                                                                            },
                                                                         }}
                                                                     >
+                                                                        {selectedAddressId === addr.id && (
+                                                                            <Box sx={{ position: 'absolute', top: 16, right: 16, color: COLORS.PRIMARY_PURPLE }}>
+                                                                                <CheckCircle sx={{ fontSize: '20px' }} />
+                                                                            </Box>
+                                                                        )}
+
                                                                         {addr.address_name && (
-                                                                            <Typography variant="subtitle2" sx={{ fontWeight: 600, color: COLORS.PRIMARY_PURPLE, mb: 0.5 }}>
+                                                                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: COLORS.PRIMARY_PURPLE, mb: 0.5, letterSpacing: '0.02em', textTransform: 'uppercase', fontSize: '0.7rem' }}>
                                                                                 {addr.address_name}
-                                                                                {addr.is_default && <span style={{ marginLeft: "8px", fontSize: "0.75rem" }}>{english.default_address}</span>}
+                                                                                {addr.is_default && <span style={{ marginLeft: "8px", fontSize: "0.6rem", background: COLORS.PRIMARY_PURPLE, color: 'white', padding: '2px 8px', borderRadius: '4px' }}>{english.default_address}</span>}
                                                                             </Typography>
                                                                         )}
-                                                                        <Typography variant="body2" sx={{ mb: 0.5 }}>
+                                                                        <Typography variant="body2" sx={{ fontWeight: 700, pr: 4, mb: 0.5, color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }}>
                                                                             {addr.building_no && `${addr.building_no}, `}
                                                                             {addr.floor && `${english.floor} ${addr.floor}, `}
                                                                             {addr.address}
                                                                         </Typography>
                                                                         {addr.landmark && (
-                                                                            <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                                                                                {english.near} {addr.landmark}
+                                                                            <Typography variant="caption" sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT, mb: 0.5, display: 'block', fontWeight: 500 }}>
+                                                                                <Box component="span" sx={{ opacity: 0.6, mr: 0.5 }}>{english.near}</Box> {addr.landmark}
                                                                             </Typography>
                                                                         )}
-                                                                        <Typography variant="body2" color="text.secondary">
+                                                                        <Typography variant="caption" sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT, fontWeight: 500, opacity: 0.8 }}>
                                                                             {addr.city_town}, {addr.state} - {addr.pincode}
                                                                         </Typography>
                                                                     </Box>
@@ -416,21 +479,79 @@ const CustomerServiceBooking = () => {
                                                         ) : (
                                                             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{english.no_saved_addresses}</Typography>
                                                         )}
+
+                                                        <Button
+                                                            variant="outlined"
+                                                            size="small"
+                                                            onClick={() => setAddressDrawerOpen(true)}
+                                                            sx={{
+                                                                mt: 2,
+                                                                borderColor: COLORS.PRIMARY_PURPLE,
+                                                                color: COLORS.PRIMARY_PURPLE,
+                                                                borderRadius: "8px",
+                                                                textTransform: "none",
+                                                                fontWeight: 600,
+                                                                "&:hover": {
+                                                                    borderColor: COLORS.PURPLE_HOVER,
+                                                                    bgcolor: "rgba(94, 24, 233, 0.04)"
+                                                                }
+                                                            }}
+                                                        >
+                                                            + {english.add_address}
+                                                        </Button>
                                                     </Box>
                                                 )}
                                             </>
                                         )}
-                                        {(service.service_at_location as any === "PROVIDER_LOCATION" || service.service_at_location as any === "AT_PROVIDER" || service.service_at_location as any === "BOTH") && (
-                                            <FormControlLabel
-                                                value="at_provider"
-                                                control={<Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-                                                label={
-                                                    <Box>
-                                                        <Typography variant="body1" fontWeight={600}>{english.at_service_provider_location}</Typography>
-                                                        <Typography variant="caption" color="text.secondary">{service.service_provider_address || english.providers_location}</Typography>
+                                        {(service.service_at_location as any === "at_provider" || service.service_at_location as any === "AT_PROVIDER" || service.service_at_location as any === "BOTH") && (
+                                            <>
+                                                <FormControlLabel
+                                                    value="at_provider"
+                                                    control={<Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+                                                    label={
+                                                        <Box>
+                                                            <Typography variant="body1" fontWeight={600}>{english.at_service_provider_location}</Typography>
+                                                            <Typography variant="caption" color="text.secondary">I will visit the provider's location for this service</Typography>
+                                                        </Box>
+                                                    }
+                                                />
+                                                {location === "at_provider" && (
+                                                    <Box sx={{ ml: 4, mt: 2, mb: 2 }}>
+                                                        <Box
+                                                            sx={{
+                                                                p: 2.5,
+                                                                position: 'relative',
+                                                                border: `1.5px solid ${COLORS.PRIMARY_PURPLE}`,
+                                                                borderRadius: "16px",
+                                                                bgcolor: isDark ? "rgba(94, 24, 233, 0.12)" : "rgba(94, 24, 233, 0.05)",
+                                                                boxShadow: `0 8px 24px -6px ${COLORS.PRIMARY_PURPLE}25`,
+                                                                display: 'flex',
+                                                                flexDirection: 'column',
+                                                            }}
+                                                        >
+                                                            <Box sx={{ position: 'absolute', top: 16, right: 16, color: COLORS.PRIMARY_PURPLE }}>
+                                                                <CheckCircle sx={{ fontSize: '20px' }} />
+                                                            </Box>
+
+                                                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: COLORS.PRIMARY_PURPLE, mb: 0.5, letterSpacing: '0.02em', textTransform: 'uppercase', fontSize: '0.7rem' }}>
+                                                                {service.provider_name?.toUpperCase() || "PROVIDER"} ADDRESS
+                                                            </Typography>
+
+                                                            <Typography variant="body2" sx={{ fontWeight: 700, pr: 4, mb: 1, color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }}>
+                                                                {service.service_address
+                                                                    ? `${service.service_address.building_no}${service.service_address.floor ? `, ${service.service_address.floor} Floor` : ""}, ${service.service_address.address}`
+                                                                    : service.service_provider_address || english.providers_location}
+                                                            </Typography>
+
+                                                            {service.service_address && (
+                                                                <Typography variant="caption" sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT, fontWeight: 500, opacity: 0.8 }}>
+                                                                    {service.service_address.city_town}, {service.service_address.state} - {service.service_address.pincode}
+                                                                </Typography>
+                                                            )}
+                                                        </Box>
                                                     </Box>
-                                                }
-                                            />
+                                                )}
+                                            </>
                                         )}
                                     </RadioGroup>
                                 </FormControl>
@@ -572,6 +693,16 @@ const CustomerServiceBooking = () => {
                     </Box>
                 </DialogContent>
             </Dialog>
+
+            {/* Address Drawer */}
+            <AddressDrawer
+                open={addressDrawerOpen}
+                onClose={() => {
+                    setAddressDrawerOpen(false);
+                    refetchAddresses();
+                }}
+                mode="add"
+            />
         </MainLayout>
     );
 };

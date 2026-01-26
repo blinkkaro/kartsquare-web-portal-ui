@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import { Box, Typography, Button, CircularProgress } from "@mui/material";
+import { Box, Typography, Button, CircularProgress, useTheme } from "@mui/material";
 import RightDrawer from "@/components/common/RightDrawer";
 import { ServiceDetails } from "@/services/serviceDetails/serviceDetailsInterface";
 import { COLORS } from "@/constants/colors";
@@ -25,6 +25,8 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
     onSuccess,
     editService
 }) => {
+    const theme = useTheme();
+    const isDark = theme.palette.mode === "dark";
     const [localCategoryId, setLocalCategoryId] = React.useState("");
 
     // Data fetching hook
@@ -123,11 +125,12 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
                 {error && (
                     <Box
                         sx={{
-                            bgcolor: "error.light",
-                            color: "error.dark",
+                            bgcolor: isDark ? "rgba(255, 255, 255, 0.05)" : "white",
+                            color: "error.main",
                             p: 2,
-                            borderRadius: 1,
+                            borderRadius: "12px",
                             mb: 2,
+                            border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(211, 47, 47, 0.2)"}`,
                         }}
                     >
                         <Typography variant="body2">{error}</Typography>
