@@ -6,6 +6,9 @@ import axios, {
   AxiosResponse,
   AxiosRequestConfig,
 } from "axios";
+import { store } from "@/store/store";
+import { openLoginModal } from "@/features/ui/loginModalSlice";
+
 // Create Axios instance with default config
 
 export interface ApiResponse<T = any> {
@@ -67,6 +70,27 @@ api.interceptors.request.use(
   }
 );
 
+let isRefreshing = false;
+let failedQueue: any[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.resolve({
+        data: null,
+        errors: error,
+        status: "failed",
+        success: false,
+        message: "Authentication required",
+      });
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
+
 // Response Interceptor
 api.interceptors.response.use(
   (response: AxiosResponse<ApiResponse>) => {
@@ -78,7 +102,31 @@ api.interceptors.response.use(
     };
 
     if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise(function (resolve, reject) {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token: any) => {
+            if (typeof token === "string") {
+              originalRequest.headers["Authorization"] = "Bearer " + token;
+              return api(originalRequest);
+            }
+            // It's a failure response object
+            return Promise.resolve(token);
+          })
+          .catch((err) => {
+            return Promise.resolve({
+              data: null,
+              errors: err,
+              status: "failed",
+              success: false,
+              message: "Authentication required",
+            } as unknown as AxiosResponse<ApiResponse>);
+          });
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
         const refreshToken = secureStorage.getItem("refreshToken");
@@ -94,50 +142,60 @@ api.interceptors.response.use(
         // Call refresh token API
         const response = await authService.refreshToken(refreshToken);
 
-        // if (response.data && response.data.tokens) {
-        //   secureStorage.setItem("token", response.data.tokens.access_token);
-        //   secureStorage.setItem(
-        //     "refreshToken",
-        //     response.data.tokens.refresh_token
-        //   );
+        if (response.data && response.data.tokens) {
+          secureStorage.setItem("token", response.data.tokens.access_token);
+          secureStorage.setItem(
+            "refreshToken",
+            response.data.tokens.refresh_token,
+          );
 
-        //   // Update header
-        //   api.defaults.headers.common["Authorization"] = `Bearer ${response.data.tokens.access_token}`;
-        //   originalRequest.headers["Authorization"] = `Bearer ${response.data.tokens.access_token}`;
+          // Update header
+          api.defaults.headers.common["Authorization"] =
+            `Bearer ${response.data.tokens.access_token}`;
+          originalRequest.headers["Authorization"] =
+            `Bearer ${response.data.tokens.access_token}`;
 
+          processQueue(null, response.data.tokens.access_token);
 
-
-        //   return api(originalRequest);
-        // }
+          return api(originalRequest);
+        } else {
+          throw new Error("Invalid response from refresh token API");
+        }
       } catch (refreshError) {
+        processQueue(refreshError, null);
         // Refresh failed - only clear storage, don't redirect
         // Let the app handle navigation based on context
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
-        localStorage.removeItem("user");
+        localStorage.removeItem("role");
+        localStorage.removeItem("register_step");
+        localStorage.removeItem("user_details");
 
-        // Only redirect to login if we're on a protected route
-        // For public pages like service details, just throw the error
-        const currentPath = window.location.pathname;
-        const publicPaths = ['/services/', '/cus/servicesList', '/'];
-        const isPublicPath = publicPaths.some(path => currentPath.includes(path) || currentPath === path);
+        // Open Login Modal instead of redirecting
+        store.dispatch(openLoginModal());
 
-        if (!isPublicPath) {
-          window.location.href = "/selectRole";
-        }
-
-        return Promise.reject(refreshError);
+        // Return a safe response so the app doesn't crash
+        // The component can check success: false
+        return Promise.resolve({
+          data: null,
+          errors: refreshError,
+          status: "failed",
+          success: false,
+          message: "Authentication required",
+        } as unknown as AxiosResponse<ApiResponse>);
+      } finally {
+        isRefreshing = false;
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 // Wrapper methods
 export const GET = async <T>(
   endpoint: string,
   params: object = {},
-  requiresAuth: boolean = true
+  requiresAuth: boolean = true,
 ) => {
   return await api.get<T>(endpoint, {
     params,
@@ -149,7 +207,7 @@ export const POST = async <T>(
   endpoint: string,
   data: object,
   params: object = {},
-  requiresAuth: boolean = true
+  requiresAuth: boolean = true,
 ) => {
   const config = {
     params,
@@ -158,7 +216,10 @@ export const POST = async <T>(
   } as AxiosRequestConfig;
 
   if (data instanceof FormData) {
-    config.headers = { ...config.headers, "Content-Type": "multipart/form-data" };
+    config.headers = {
+      ...config.headers,
+      "Content-Type": "multipart/form-data",
+    };
   }
 
   return await api.post<T>(endpoint, data, config);
@@ -168,7 +229,7 @@ export const PUT = async <T>(
   endpoint: string,
   data: object,
   params: object = {},
-  requiresAuth: boolean = true
+  requiresAuth: boolean = true,
 ) => {
   const config = {
     params,
@@ -177,7 +238,10 @@ export const PUT = async <T>(
   } as AxiosRequestConfig;
 
   if (data instanceof FormData) {
-    config.headers = { ...config.headers, "Content-Type": "multipart/form-data" };
+    config.headers = {
+      ...config.headers,
+      "Content-Type": "multipart/form-data",
+    };
   }
 
   return await api.put<T>(endpoint, data, config);
@@ -196,7 +260,10 @@ export const PATCH = async <T>(
   } as AxiosRequestConfig;
 
   if (data instanceof FormData) {
-    config.headers = { ...config.headers, "Content-Type": "multipart/form-data" };
+    config.headers = {
+      ...config.headers,
+      "Content-Type": "multipart/form-data",
+    };
   }
 
   return await api.patch<T>(endpoint, data, config);
@@ -205,7 +272,7 @@ export const PATCH = async <T>(
 export const DELETE = async <T>(
   endpoint: string,
   params: object = {},
-  requiresAuth: boolean = true
+  requiresAuth: boolean = true,
 ) => {
   return await api.delete<T>(endpoint, {
     params,

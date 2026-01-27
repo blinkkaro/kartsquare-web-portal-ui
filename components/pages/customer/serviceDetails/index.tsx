@@ -29,6 +29,9 @@ import { useServiceDetails, useProviderServices } from "@/hooks/useServiceDetail
 import { useServiceReviews } from "@/hooks/useReviews";
 import EmptyState from "@/components/common/EmptyState";
 import { useTranslate } from "@/hooks/useTranslate";
+import { secureStorage } from "@/helper/SecureStorage";
+import { useDispatch } from "react-redux";
+import { openLoginModal } from "@/features/ui/loginModalSlice";
 
 const CustomerServiceDetails = () => {
     const params = useParams();
@@ -37,9 +40,19 @@ const CustomerServiceDetails = () => {
     const theme = useTheme();
     const { t } = useTranslate();
     const isDark = theme.palette.mode === "dark";
+    const dispatch = useDispatch();
 
     const reviewsPerPage = 5;
     const [descriptionDrawerOpen, setDescriptionDrawerOpen] = useState(false);
+
+    const handleBookNow = () => {
+        const token = secureStorage.getItem("token");
+        if (!token) {
+            dispatch(openLoginModal())
+        }else{
+            router.push(`/services/${serviceId}/book`)
+        }
+    }
 
     // Use TanStack Query hooks - prevents duplicate API calls
     const {
@@ -204,7 +217,7 @@ const CustomerServiceDetails = () => {
                             <Box sx={{ py: 2 }}>
                                 <CustomerServiceActions
                                     onAddToCart={() => {/* TODO: Implement */ }}
-                                    onBookNow={() => router.push(`/services/${serviceId}/book`)}
+                                    onBookNow={() => handleBookNow()}
                                 />
                             </Box>
 

@@ -652,6 +652,9 @@ export type TranslationKey =
   | "noPostsFound"
   | "noServicesFound"
   | "phoneMin"
+  | "auth_required_title"
+  | "auth_required_description"
+  
   | "getInTouch"
   | "viewProfile"
   | "shareProfile"
