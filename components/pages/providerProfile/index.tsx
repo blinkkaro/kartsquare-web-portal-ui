@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import {
   Box,
+  Button,
   Container,
   Avatar,
   Typography,
@@ -48,8 +49,10 @@ import PostFeedGrid from "@/components/pages/myAccount/components/post/PostFeedG
 import { Posts } from "@/services/post/postInterfaces";
 import { Service } from "@/services/serviceList/listInteraface";
 import { UserRole } from "@/utils/auth";
-import Button from "@/components/common/Button";
-import ProfilePosts from "@/components/common/ProfileDrawer/components/ProfilePosts";
+import ContactUsSection from "./components/ContactUsSection";
+import ProviderMapSection from "./components/ProviderMapSection";
+import ProfileNotFound from "./components/ProfileNotFound";
+import ProviderReviews from "./components/ProviderReviews";
 
 interface ProviderProfilePageProps {
   username: string;
@@ -68,12 +71,14 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
 
+
   const [activeTab, setActiveTab] = useState(PROFILE_TABS.Services);
   const [shareMenuAnchor, setShareMenuAnchor] = useState<null | HTMLElement>(
     null,
   );
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [isBioExpanded, setIsBioExpanded] = useState(false);
 
   const {
     data: profileData,
@@ -83,6 +88,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
   const profile = profileData?.profile;
   const services = profileData?.services || [];
   const posts = profileData?.posts || [];
+
 
   const followMutation = useFollowProvider(profile?.id || "");
 
@@ -160,17 +166,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
       : post.media_urls,
   }));
 
-  const StatRow = ({
-    icon,
-    label,
-    value,
-    iconColor,
-  }: {
-    icon: React.ReactElement;
-    label: string;
-    value: string | number;
-    iconColor: string;
-  }) => (
+  const StatRow = ({ icon, label, value, iconColor }: { icon: React.ReactElement, label: string, value: string | number, iconColor: string }) => (
     <Box
       sx={{
         display: "flex",
@@ -182,6 +178,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
         "&:not(:last-child)": {
           mb: 1,
         },
+
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
@@ -213,6 +210,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
         </Typography>
       </Box>
 
+
       <Typography
         variant="body1"
         sx={{
@@ -229,11 +227,12 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
     </Box>
   );
 
+
   // Format location from default_address
   const getLocationString = () => {
     if (profile?.default_address) {
       const addr = profile.default_address;
-      const parts = [addr.city_town, addr.state, addr.country].filter(Boolean);
+      const parts = [addr.building_no, addr.address, addr.city_town, addr.pincode, addr.state, addr.country].filter(Boolean);
       return parts.join(", ");
     }
     return profile?.country || "";
@@ -255,34 +254,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
   }
 
   if (error || !profile) {
-    return (
-      <Container maxWidth="md">
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            minHeight: "60vh",
-            textAlign: "center",
-          }}
-        >
-          <Typography variant="h5" sx={{ mb: 2, color: "error.main" }}>
-            {t("profileNotFound") || "Profile not found"}
-          </Typography>
-          <Button
-            variant="contained"
-            onClick={() => router.back()}
-            sx={{
-              bgcolor: COLORS.PRIMARY_PURPLE,
-              "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
-            }}
-          >
-            {t("go_back")}
-          </Button>
-        </Box>
-      </Container>
-    );
+    return <ProfileNotFound />;
   }
 
   return (
@@ -356,7 +328,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
         <Grid container spacing={3}>
           {/* Left Sidebar - Profile Details (No Box) */}
           <Grid size={{ xs: 12, md: 4 }}>
-            <Box sx={{ position: "relative" }}>
+            <Box sx={{ position: "sticky", top: 100, alignSelf: "start" }}>
               {/* Avatar - Overlapping Banner */}
               <Box
                 sx={{
@@ -384,62 +356,87 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   variant="h5"
                   sx={{
                     fontWeight: 800,
-                    color:
-                      theme.palette.mode === "dark"
-                        ? COLORS.TEXT.PRIMARY_DARK
-                        : COLORS.TEXT.PRIMARY_LIGHT,
+                    color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                     mb: 1,
                     fontSize: "1.5rem",
                   }}
                 >
                   {profile.first_name} {profile.last_name}
                 </Typography>
-                <Box
+                <Typography
+                  variant="body2"
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
                     mb: 1,
-                    gap: 1,
+                    color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                    fontSize: "0.875rem",
+                    fontWeight: 600,
                   }}
                 >
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      // mb: 1,
-                      color:
-                        theme.palette.mode === "dark"
-                          ? COLORS.TEXT.PRIMARY_DARK
-                          : COLORS.TEXT.PRIMARY_LIGHT,
-                      fontSize: "0.875rem",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {`@${profile?.username || "-"}`}
-                  </Typography>
-                  <Box
-                    sx={{
-                      color: "#1D4ED8",
-                      display: "flex",
-                    }}
-                  >
-                    <Verified sx={{ fontSize: "18px" }} />
-                  </Box>
-                </Box>
+                  {`@${profile?.username || "-"}`}
+                </Typography>
+
+                {/* Bio Section with Truncation */}
                 <Typography
                   variant="body2"
                   color="text.secondary"
                   sx={{
                     fontWeight: 600,
-                    color:
-                      theme.palette.mode === "dark"
-                        ? COLORS.TEXT.PRIMARY_DARK
-                        : COLORS.TEXT.PRIMARY_LIGHT,
+                    color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                     fontSize: "0.875rem",
                   }}
                 >
-                  {profile.bio || UserRole.SERVICE_PROVIDER}
+                  {(() => {
+                    const bioText = profile.bio || "Service Provider";
+                    const words = bioText.split(" ");
+                    const WORD_LIMIT = 10;
+                    const isLongBio = words.length > WORD_LIMIT;
+
+                    if (!isLongBio || isBioExpanded) {
+                      return (
+                        <>
+                          {bioText}
+                          {isLongBio && (
+                            <Typography
+                              component="span"
+                              onClick={() => setIsBioExpanded(false)}
+                              sx={{
+                                color: COLORS.PRIMARY_PURPLE,
+                                cursor: "pointer",
+                                ml: 0.5,
+                                fontWeight: 700,
+                                fontSize: "0.80rem",
+                                "&:hover": { textDecoration: "underline" },
+                              }}
+                            >
+                              Show Less
+                            </Typography>
+                          )}
+                        </>
+                      );
+                    }
+
+                    return (
+                      <>
+                        {words.slice(0, WORD_LIMIT).join(" ")}...
+                        <Typography
+                          component="span"
+                          onClick={() => setIsBioExpanded(true)}
+                          sx={{
+                            color: COLORS.PRIMARY_PURPLE,
+                            cursor: "pointer",
+                            ml: 0.5,
+                            fontWeight: 700,
+                            fontSize: "0.80rem",
+                            "&:hover": { textDecoration: "underline" },
+                          }}
+                        >
+                          Read More
+                        </Typography>
+                      </>
+                    );
+                  })()}
                 </Typography>
+
               </Box>
 
               {/* Contact Information */}
@@ -451,10 +448,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       alignItems: "center",
                       gap: 1.5,
                       mb: 1.5,
-                      color:
-                        theme.palette.mode === "dark"
-                          ? COLORS.TEXT.PRIMARY_DARK
-                          : COLORS.TEXT.PRIMARY_LIGHT,
+                      color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                     }}
                   >
                     <EmailIcon sx={{ fontSize: 18, color: "#999" }} />
@@ -463,10 +457,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       component={Link}
                       href={`mailto:${profile.email}`}
                       sx={{
-                        color:
-                          theme.palette.mode === "dark"
-                            ? COLORS.TEXT.PRIMARY_DARK
-                            : COLORS.TEXT.PRIMARY_LIGHT,
+                        color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                         textDecoration: "none",
                         fontWeight: 600,
                         fontSize: "0.875rem",
@@ -487,20 +478,14 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       gap: 1.5,
                       mb: 1.5,
                       fontWeight: 600,
-                      color:
-                        theme.palette.mode === "dark"
-                          ? COLORS.TEXT.PRIMARY_DARK
-                          : COLORS.TEXT.PRIMARY_LIGHT,
+                      color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                     }}
                   >
                     <LocationOn sx={{ fontSize: 18, color: "#999" }} />
                     <Typography
                       variant="body2"
                       sx={{
-                        color:
-                          theme.palette.mode === "dark"
-                            ? COLORS.TEXT.PRIMARY_DARK
-                            : COLORS.TEXT.PRIMARY_LIGHT,
+                        color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                         fontWeight: 600,
                         fontSize: "0.875rem",
                       }}
@@ -516,20 +501,14 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       alignItems: "center",
                       gap: 1.5,
                       fontWeight: 600,
-                      color:
-                        theme.palette.mode === "dark"
-                          ? COLORS.TEXT.PRIMARY_DARK
-                          : COLORS.TEXT.PRIMARY_LIGHT,
+                      color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                     }}
                   >
                     <Phone sx={{ fontSize: 18, color: "#999" }} />
                     <Typography
                       variant="body2"
                       sx={{
-                        color:
-                          theme.palette.mode === "dark"
-                            ? COLORS.TEXT.PRIMARY_DARK
-                            : COLORS.TEXT.PRIMARY_LIGHT,
+                        color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                         fontWeight: 600,
                         fontSize: "0.875rem",
                       }}
@@ -547,26 +526,27 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   onClick={handleFollow}
                   disabled={followMutation.isPending || !profile.id}
                   fullWidth
-                  // sx={{
-                  //   bgcolor: COLORS.PRIMARY_PURPLE,
-                  //   color: COLORS.WHITE,
-                  //   textTransform: "none",
-                  //   fontWeight: 600,
-                  //   py: 1.25,
-                  //   borderRadius: 2,
-                  //   fontSize: "0.9375rem",
-                  //   boxShadow: "none",
-                  //   "&:hover": {
-                  //     bgcolor: COLORS.PURPLE_HOVER,
-                  //     boxShadow: "0 4px 12px rgba(94, 24, 233, 0.3)",
-                  //   },
-                  //   "&.Mui-disabled": {
-                  //     bgcolor: COLORS.PRIMARY_PURPLE,
-                  //     opacity: 0.6,
-                  //   },
-                  // }}
+                  sx={{
+                    bgcolor: COLORS.PRIMARY_PURPLE,
+                    color: COLORS.WHITE,
+                    textTransform: "none",
+                    fontWeight: 600,
+                    py: 1.25,
+                    borderRadius: 2,
+                    fontSize: "0.9375rem",
+                    boxShadow: "none",
+                    "&:hover": {
+                      bgcolor: COLORS.PURPLE_HOVER,
+                      boxShadow: "0 4px 12px rgba(94, 24, 233, 0.3)",
+                    },
+                    "&.Mui-disabled": {
+                      bgcolor: COLORS.PRIMARY_PURPLE,
+                      opacity: 0.6,
+                    },
+                  }}
                 >
-                  {profile.is_following ? t("following") : t("follow")}
+                  {/* {profile.is_following ? t("following") : t("follow")} */}
+                  Contact {profile?.first_name}
                 </Button>
                 <IconButton
                   onClick={handleShareClick}
@@ -577,15 +557,9 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     "&:hover": {
                       bgcolor: "#eeeeee",
                     },
-                    width: "10%",
                   }}
                 >
-                  <Image
-                    src={ `/icons/share.svg`}
-                    width={24}
-                    height={24}
-                    alt="share"
-                  />
+                  <Share sx={{ fontSize: 20 }} />
                 </IconButton>
               </Box>
 
@@ -621,6 +595,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   iconColor={COLORS.PRIMARY_BLUE}
                 />
 
+
                 <StatRow
                   icon={<BusinessCenter />}
                   label={t("services")}
@@ -638,17 +613,14 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   sx={{
                     fontWeight: 600,
                     mb: 2,
-                    color:
-                      theme.palette.mode === "dark"
-                        ? COLORS.TEXT.PRIMARY_DARK
-                        : COLORS.TEXT.PRIMARY_LIGHT,
+                    color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                     textTransform: "uppercase",
                     letterSpacing: 0.5,
                     fontSize: "0.75rem",
                     display: "block",
                   }}
                 >
-                  {t("shareProfile")}
+                  Share Profile
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
                   <IconButton
@@ -709,6 +681,10 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   </IconButton>
                 </Box>
               </Box>
+
+              <Divider sx={{ my: 3, borderColor: "#e0e0e0" }} />
+
+              <ProviderReviews providerName={profile?.first_name + " " + profile?.last_name} />
             </Box>
           </Grid>
 
@@ -723,69 +699,52 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
               }}
             >
               <Box sx={{ display: "flex", gap: 4 }}>
-                <Box
-                  onClick={() => handleTabChange("Services")}
-                  sx={{
-                    py: 2,
-                    cursor: "pointer",
-                    position: "relative",
-                    borderBottom:
-                      activeTab === "Services"
-                        ? `2px solid ${COLORS.PRIMARY_PURPLE}`
-                        : "2px solid transparent",
-                    mb: -1,
-                  }}
-                >
-                  <Typography
-                    variant="body1"
+                <Box sx={{ display: "flex", gap: 4 }}>
+                  <Box
+                    onClick={() => handleTabChange("Services")}
                     sx={{
-                      fontWeight: activeTab === "Services" ? 700 : 400,
-                      color:
-                        activeTab === "Services"
-                          ? theme.palette.mode === "dark"
-                            ? COLORS.TEXT.PRIMARY_DARK
-                            : COLORS.TEXT.PRIMARY_LIGHT
-                          : theme.palette.mode === "dark"
-                            ? COLORS.TEXT.SECONDARY_DARK
-                            : COLORS.TEXT.SECONDARY_LIGHT,
-                      fontSize: "0.9375rem",
-                      textTransform: "none",
+                      py: 2,
+                      cursor: "pointer",
+                      position: "relative",
+                      borderBottom: activeTab === "Services" ? `2px solid ${COLORS.PRIMARY_PURPLE}` : "2px solid transparent",
+                      mb: -1,
                     }}
                   >
-                    {t("services")}
-                  </Typography>
-                </Box>
-                <Box
-                  onClick={() => handleTabChange(PROFILE_TABS.Posts)}
-                  sx={{
-                    py: 2,
-                    cursor: "pointer",
-                    position: "relative",
-                    borderBottom:
-                      activeTab === PROFILE_TABS.Posts
-                        ? `2px solid ${COLORS.PRIMARY_PURPLE}`
-                        : "2px solid transparent",
-                    mb: -1,
-                  }}
-                >
-                  <Typography
-                    variant="body1"
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontWeight: activeTab === "Services" ? 700 : 400,
+                        color: activeTab === "Services" ? theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT : theme.palette.mode === "dark" ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                        fontSize: "1.5rem",
+                        textTransform: "none",
+                      }}
+                    >
+                      {t("services")}
+                    </Typography>
+                  </Box>
+                  <Box
+                    onClick={() => handleTabChange(PROFILE_TABS.Posts)}
                     sx={{
-                      fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 400,
-                      color:
-                        activeTab === "Posts"
-                          ? theme.palette.mode === "dark"
-                            ? COLORS.TEXT.PRIMARY_DARK
-                            : COLORS.TEXT.PRIMARY_LIGHT
-                          : theme.palette.mode === "dark"
-                            ? COLORS.TEXT.SECONDARY_DARK
-                            : COLORS.TEXT.SECONDARY_LIGHT,
-                      fontSize: "0.9375rem",
-                      textTransform: "none",
+                      py: 2,
+                      cursor: "pointer",
+                      position: "relative",
+                      borderBottom: activeTab === PROFILE_TABS.Posts ? `2px solid ${COLORS.PRIMARY_PURPLE}` : "2px solid transparent",
+                      mb: -1,
                     }}
                   >
-                    {t("posts")}
-                  </Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 400,
+                        color: activeTab === "Posts" ? theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT : theme.palette.mode === "dark" ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                        fontSize: "1.5rem",
+                        textTransform: "none",
+                      }}
+                    >
+                      {t("posts")}
+                    </Typography>
+                  </Box>
+
                 </Box>
               </Box>
             </Box>
@@ -803,16 +762,20 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       }}
                     >
                       <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                        {t("noPostsFound")}
+                        {t("noPostsFound") || "No posts found"}
                       </Typography>
                       <Typography variant="body2" sx={{ color: "#999" }}>
-                        {t("noPostsFoundDescription")}
+                        This profile hasn't shared any posts yet.
                       </Typography>
                     </Box>
                   ) : (
-                    <ProfilePosts
+                    <PostFeedGrid
                       posts={transformedPosts}
-                      isLoading={isLoading}
+                      isLoading={false}
+                      fetchNextPage={() => { }}
+                      hasNextPage={false}
+                      isFetchingNextPage={false}
+                      onPostClick={() => { }}
                     />
                   )}
                 </Box>
@@ -848,6 +811,77 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   )}
                 </Box>
               )}
+            </Box>
+
+            {/* Contact Us & Map Section */}
+            <Box sx={{ mt: 8, display: "flex", flexDirection: "column", gap: 6 }}>
+              {/* Map Section */}
+              {/* Map Section */}
+              <Box>
+                <Box sx={{ mb: 4, textAlign: "center" }}>
+                  <Box sx={{ display: "inline-block", position: "relative", mb: 1 }}>
+                    <Typography variant="h4" sx={{
+                      fontWeight: 800,
+                      color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                      position: "relative",
+                      pb: 1.5,
+                      "&::after": {
+                        content: '""',
+                        position: "absolute",
+                        bottom: 0,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        width: "60px",
+                        height: "4px",
+                        bgcolor: COLORS.PRIMARY_PURPLE,
+                        borderRadius: "4px"
+                      }
+                    }}>
+                      {"Location"}
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1" sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT, mt: 1 }}>
+                    Explore where we are located and plan your visit.
+                  </Typography>
+                </Box>
+                <ProviderMapSection
+                  latitude={profile.default_address?.latitude}
+                  longitude={profile.default_address?.longitude}
+                  providerImage={profile.profile_pic}
+                  address={getLocationString()}
+                />
+              </Box>
+
+              {/* Contact Section */}
+              <Box>
+                <Box sx={{ mb: 4, textAlign: "center" }}>
+                  <Box sx={{ display: "inline-block", position: "relative", mb: 1 }}>
+                    <Typography variant="h4" sx={{
+                      fontWeight: 800,
+                      color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                      position: "relative",
+                      pb: 1.5,
+                      "&::after": {
+                        content: '""',
+                        position: "absolute",
+                        bottom: 0,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        width: "60px",
+                        height: "4px",
+                        bgcolor: COLORS.PRIMARY_PURPLE,
+                        borderRadius: "4px"
+                      }
+                    }}>
+                      {t("contactUs") || "Contact Us"}
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1" sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT, mt: 1 }}>
+                    Ready to get started? Send us a message directly.
+                  </Typography>
+                </Box>
+                <ContactUsSection profile={profile} />
+              </Box>
             </Box>
           </Grid>
         </Grid>
@@ -947,7 +981,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
           {snackbarMessage}
         </Alert>
       </Snackbar>
-    </Box>
+    </Box >
   );
 };
 
