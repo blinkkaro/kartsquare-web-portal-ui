@@ -54,13 +54,14 @@ function DashboardView() {
   }
 
   if (error) {
-    return (
-      <Box sx={{ py: { xs: 2, md: 3 } }}>
-        <Typography variant="h4">
-          Error: {(error as any).data.message}
-        </Typography>
-      </Box>
-    );
+    console.error("Dashboard Error:", error);
+    // return (
+    //   <Box sx={{ py: { xs: 2, md: 3 } }}>
+    //     <Typography variant="h4">
+    //       Error: {(error as any).data.message}
+    //     </Typography>
+    //   </Box>
+    // );
   }
 
   return (
@@ -83,7 +84,18 @@ function DashboardView() {
         <Grid size={{ xs: 12, lg: 8 }}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             {/* Metric Cards */}
-            <MetricCards stats={providerDashboardData?.stats!} />
+            <MetricCards
+              stats={
+                providerDashboardData?.stats || {
+                  total_bookings: 0,
+                  followers: 0,
+                  total_services: 0,
+                  total_active_services: 0,
+                  total_pending_bookings: 0,
+                  total_completed_bookings: 0,
+                }
+              }
+            />
 
             {/* Revenue Chart */}
             <RevenueChart chartData={providerDashboardChartData} />

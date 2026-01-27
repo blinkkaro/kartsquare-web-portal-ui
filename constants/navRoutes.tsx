@@ -6,6 +6,7 @@ import {
   Event,
   ShoppingBag,
   Chat,
+  Dashboard,
 } from "@mui/icons-material";
 import { TranslationKey } from "@/features/i18n/TranslationContext";
 
@@ -81,6 +82,9 @@ export const getMobileNavItems = (
       { label: t("bookings"), href: bookingsHref, icon: <ShoppingBag /> },
       // { label: t("chat"), href: "/chat", icon: <Chat /> }
     );
+    if(role === "SERVICE_PROVIDER") {
+      items.push({ label: t("dashboard"), href: "/dashboard", icon: <Dashboard /> });
+    }
   }
 
   return items;
