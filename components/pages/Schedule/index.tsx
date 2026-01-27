@@ -16,6 +16,8 @@ import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { useAppDispatch } from "@/store/hooks";
 import { useTranslate } from "@/hooks/useTranslate";
 import Title from "@/components/auth/title";
+import { secureStorage } from "@/helper/SecureStorage";
+import { logout } from "@/features/ui/authSlice";
 
 const DAYS = [
   { name: "Sunday", value: 0 },
@@ -125,13 +127,24 @@ const ScheduleView = () => {
       handleRegistrationStepNavigation(
         dispatch,
         router,
-        UserRegisterSteps.SCHEDULE_ADDED
+        UserRegisterSteps.SCHEDULE_ADDED,
       );
     } catch (err: any) {
       setError(err.message || "Failed to save schedule");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBack = () => {
+    secureStorage.removeItem("token");
+    secureStorage.removeItem("refreshToken");
+    secureStorage.removeItem("register_step");
+    secureStorage.removeItem("role");
+    secureStorage.removeItem("user_details");
+
+    dispatch(logout());
+    router.back();
   };
 
   return (
@@ -145,7 +158,7 @@ const ScheduleView = () => {
           gap: 2,
         }}
       >
-        <BackButton />
+        <BackButton onClick={() => handleBack()} />
       </Box>
 
       <Title
@@ -223,25 +236,9 @@ const ScheduleView = () => {
       </Box>
 
       {/* Footer Button */}
-      <Box
-        sx={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          p: { xs: 2, md: 3 },
-          bgcolor: "background.default",
-          borderTop: "1px solid",
-          borderColor: "divider",
-          zIndex: 10,
-        }}
-      >
-        <Box sx={{ maxWidth: "600px", mx: "auto" }}>
-          <Button fullWidth onClick={onSave} isLoading={loading}>
-            {t("saveAndContinue")}
-          </Button>
-        </Box>
-      </Box>
+      <Button fullWidth onClick={onSave} isLoading={loading}>
+        {t("saveAndContinue")}
+      </Button>
     </AuthWrapper>
   );
 };

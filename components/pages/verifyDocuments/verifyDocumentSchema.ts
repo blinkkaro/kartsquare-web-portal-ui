@@ -15,6 +15,5 @@ export const verifyDocumentSchema = (t: TFunction) => {
     backImage: fileSchema,
     profilePic: fileSchema,
     policeVerification: yup.mixed().nullable().notRequired(),
-
   });
 };

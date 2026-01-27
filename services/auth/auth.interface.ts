@@ -68,8 +68,8 @@ export interface Doc {
   aadharNumber: string;
   frontImageUrl: string;
   backImageUrl: string;
-  profilePicUrl: string;
-  policeVerificationUrl: string;
+  profilePic: string; 
+  policeVerification: string;
 }
 
 export interface ImageUploadApiResponse {

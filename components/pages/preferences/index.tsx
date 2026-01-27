@@ -57,12 +57,12 @@ function PreferencesView() {
     setErrorMsg("");
     try {
       await prefranceService.addPreferenceForTheUser(
-        Array.from(selectedPreferenceIds)
+        Array.from(selectedPreferenceIds),
       );
       handleRegistrationStepNavigation(
         dispatch,
         router,
-        UserRegisterSteps.COMPLETED
+        UserRegisterSteps.COMPLETED,
       );
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to save preferences");

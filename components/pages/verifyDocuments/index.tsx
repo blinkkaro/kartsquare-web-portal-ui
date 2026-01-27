@@ -30,7 +30,7 @@ interface VerifyDocumentFormInputs {
   frontImage: File | null;
   backImage: File | null;
   profilePic: File | null;
-  policeVerification: File | null;
+  policeVerification?: File | null;
 }
 
 function VerifyDocumentsView() {
@@ -73,12 +73,12 @@ function VerifyDocumentsView() {
           data.frontImage,
           data.backImage,
           data.profilePic,
-          data.policeVerification || undefined
+          data.policeVerification || undefined,
         );
         handleRegistrationStepNavigation(
           dispatch,
           router,
-          UserRegisterSteps.DOCUMENT_VERIFIED
+          UserRegisterSteps.DOCUMENT_VERIFIED,
         );
       }
     } catch (error: any) {
