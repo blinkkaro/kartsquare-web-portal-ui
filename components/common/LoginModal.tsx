@@ -19,23 +19,27 @@ function LoginModal() {
       title={t("auth_required_title")}
       description={t("auth_required_description")}
       ActionsButtons={
-        <Box sx={{ display: "flex", gap: 2 }}>
+        <Box sx={{ display: "flex", gap: 2, width: "100%", mt: 2 }}>
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={() => {
+              dispatch(closeLoginModal());
+            }}
+            sx={{ borderRadius: "50px", py: 1.5 }}
+          >
+            {t("cancel")}
+          </Button>
           <Button
             variant="contained"
+            fullWidth
             onClick={() => {
               router.push("/selectRole");
               dispatch(closeLoginModal());
             }}
+            sx={{ borderRadius: "50px", py: 1.5 }}
           >
-            {t("login")}    
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              dispatch(closeLoginModal());
-            }}
-          >
-            {t("cancel")}    
+            {t("login")}
           </Button>
         </Box>
       }

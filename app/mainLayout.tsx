@@ -8,7 +8,6 @@ import ProfileDrawer from "@/components/common/ProfileDrawer";
 import Ai from "@/components/common/Ai";
 import AIBotton from "@/components/common/Ai/AIBotton";
 import LoginModal from "@/components/common/LoginModal";
-import { useAuthModal } from "@/hooks/useAuthModal";
 import { useRouter } from "next/navigation";
 
 interface MainLayoutProps {
@@ -18,12 +17,6 @@ interface MainLayoutProps {
 export default function MainLayout({ children }: MainLayoutProps) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const router = useRouter();
-
-  // Apply the auth modal hook to handle protected routes
- useAuthModal();
-
-
 
   return (
     <>
