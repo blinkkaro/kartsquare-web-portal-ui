@@ -62,7 +62,7 @@ export default function LoginForm({
         <Title title={t("welcome_back")} subtitle={t("login_subtitle")} />
       </Box>
       <ErrorMessage isVisible={!!error} error={error!} />
-      <Stack spacing={{ xs: 2, sm: 3, lg: 2, xl: 3}}>
+      <Stack spacing={{ xs: 2, sm: 3, lg: 2, xl: 3 }}>
         <Box>
           <Typography
             variant="subtitle2"
@@ -167,7 +167,7 @@ export default function LoginForm({
           sx={{ fontSize: { lg: "0.875rem", xl: "1rem" } }}
         >
           {t("no_account")}
-          <Link href={`/signUp?role=${role}`}>
+          <Link href={`/signup?role=${role}`}>
             <Typography
               component="span"
               sx={{
