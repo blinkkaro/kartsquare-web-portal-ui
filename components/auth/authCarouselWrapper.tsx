@@ -266,7 +266,7 @@ function AuthCarouselWrapper({
 
       {/* Right Side (Form) */}
       <Grid size={{ xs: 12, lg: 6 }}>
-        <Box sx={{ position: "absolute", top: 24, right: 24 }}>
+        {/* <Box sx={{ position: "absolute", top: 24, right: 24 }}>
           <Select
             value={locale}
             onChange={handleLanguageChange}
@@ -279,7 +279,7 @@ function AuthCarouselWrapper({
             <MenuItem value="es">🇪🇸 ES</MenuItem>
             <MenuItem value="hi">🇮🇳 HI</MenuItem>
           </Select>
-        </Box>
+        </Box> */}
         <Box
           sx={{
             background: "none",

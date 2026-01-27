@@ -36,6 +36,7 @@ export const useUpdateProfile = () => {
 
   return useMutation({
     mutationFn: (data: {
+      banner_image?: File | string;
       first_name: string;
       last_name: string;
       bio?: string;
@@ -48,6 +49,7 @@ export const useUpdateProfile = () => {
         data.bio,
         data.profile_pic,
         data.username,
+        data.banner_image,
       ),
     onSuccess: (updatedProfile) => {
       // Invalidate React Query cache

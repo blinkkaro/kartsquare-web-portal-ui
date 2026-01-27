@@ -1,5 +1,4 @@
 "use client";
-"use client";
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { english } from "./en";
@@ -653,6 +652,27 @@ export type TranslationKey =
   | "noPostsFound"
   | "noServicesFound"
   | "phoneMin"
+  | "viewProfile"
+  | "shareProfile"
+  | "noPostsFoundDescription"
+  | "verified"
+  | "active"
+  | "inactive"
+  | "waitingForApproval"
+  | "copied"
+  | "id"
+  | "complete"
+  | "confirm"
+  | "cancel"
+  | "start"
+  | "cancel_booking_title"
+  | "cancel_booking_description"
+  | "yes_cancel"
+  | "no_keep_booking"
+  | "near"
+  | "no_upcoming_bookings"
+  | "no_upcoming_bookings_desc"
+  | "no_reviews_yet_desc";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

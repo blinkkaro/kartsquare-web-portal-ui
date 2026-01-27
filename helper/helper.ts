@@ -1,3 +1,6 @@
+import { service_address } from "@/services/providerDashboard/providerDashboard.interface";
+import { TranslationKey } from "../features/i18n/TranslationContext";
+
 export const formatTime = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
   const secs = seconds % 60;
@@ -162,4 +165,37 @@ export const truncateHTML = (html: string, maxLength: number): string => {
 
   // Otherwise, truncate the text content and return plain text with ellipsis
   return textContent.slice(0, maxLength) + "...";
+};
+
+export const formatAddress = (
+  address: service_address,
+  t: (key: TranslationKey) => string,
+): string => {
+  const landmarkText = address.landmark
+    ? `${t("near")} ${address.landmark}`
+    : undefined;
+
+  const parts = [
+    address.building_no,
+    address.floor,
+    address.address,
+    landmarkText,
+    address.city_town,
+    address.state,
+    address.country,
+  ]
+    .filter((part) => part && part.trim().length > 0)
+    .map((part) => part!.trim());
+
+  let result = parts.join(", ");
+
+  if (address.pincode) {
+    result = result ? `${result} - ${address.pincode}` : `${address.pincode}`;
+  }
+
+  if (address.address) {
+    result += ` (${address.address})`;
+  }
+
+  return result;
 };

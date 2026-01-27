@@ -59,8 +59,6 @@ export interface Service {
   };
   provider_image_url: string | null;
   is_following?: boolean;
-  service_provider_latitude?: number;
-  service_provider_longitude?: number;
 }
 
 export interface ServiceListResponse {
