@@ -68,14 +68,14 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
     if (
       coordinates?.latitude &&
       coordinates?.longitude &&
-      service.service_provider_latitude &&
-      service.service_provider_longitude
+      service?.service_address?.latitude &&
+      service?.service_address?.longitude
     ) {
       const dist = calculateDistance(
         coordinates.latitude,
         coordinates.longitude,
-        service.service_provider_latitude,
-        service.service_provider_longitude,
+        service?.service_address?.latitude,
+        service?.service_address?.longitude,
       );
       return `${dist.toFixed(1)} km`;
     }

@@ -2,7 +2,10 @@ import { RootState } from "@/store/store";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { closeDrawer } from "@/features/ui/profileDrawerSlice";
-import { useProviderProfile } from "@/hooks/useProviderProfile";
+import {
+  useProviderProfile,
+  useProviderPosts,
+} from "@/hooks/useProviderProfile";
 import ProfileCard from "./components/ProfileCard";
 import ProfileTabs from "./components/ProfileTabs";
 import ProfilePosts from "./components/ProfilePosts";
@@ -22,10 +25,15 @@ function ProfileDrawer() {
   // Always call the hook, but handle the enabled state or null userId gracefully
   // The hook implementation `enabled: !!userId` handles the skipping query.
   const { data: profile, isLoading, error } = useProviderProfile(userId || "");
+  const { data: postsData, isLoading: postsLoading } = useProviderPosts(
+    userId || "",
+  );
   const [activeTab, setActiveTab] = useState("Posts");
 
-  console.log("profile",profile);
-  
+  const allPosts = postsData?.pages.flatMap((page) => page.posts) || [];
+
+  console.log("profile", profile);
+
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     // Logic to switch content below can be added here
@@ -64,13 +72,18 @@ function ProfileDrawer() {
 
         {profile && (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <ProfileCard profile={profile} />
+            <ProfileCard
+              profile={profile}
+              onClose={() => dispatch(closeDrawer())}
+            />
             <ProfileTabs onTabChange={handleTabChange} />
 
             {/* Content Area Placeholder */}
             {/* Content Area */}
             <Box sx={{ mt: 2 }}>
-              {activeTab === "Posts" && <ProfilePosts userId={userId || ""} />}
+              {activeTab === "Posts" && (
+                <ProfilePosts posts={allPosts} isLoading={postsLoading} />
+              )}
               {activeTab === "Services" && (
                 <ProfileServices userId={userId || ""} />
               )}

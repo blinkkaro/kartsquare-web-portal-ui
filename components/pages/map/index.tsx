@@ -110,12 +110,12 @@ const MapView: React.FC = () => {
   const handleMarkerClick = useCallback((service: Service) => {
     setSelectedService(service);
     if (
-      service.service_provider_latitude &&
-      service.service_provider_longitude
+      service?.service_address?.latitude &&
+      service?.service_address?.longitude
     ) {
       setMapCenter({
-        lat: service.service_provider_latitude,
-        lng: service.service_provider_longitude,
+        lat: service.service_address.latitude,
+        lng: service.service_address.longitude,
       });
       setMapZoom(15); // Zoom in when marker is clicked
     }
@@ -124,12 +124,12 @@ const MapView: React.FC = () => {
   const handleCardClick = useCallback((service: Service) => {
     setSelectedService(service);
     if (
-      service.service_provider_latitude &&
-      service.service_provider_longitude
+      service?.service_address?.latitude &&
+      service?.service_address?.longitude
     ) {
       setMapCenter({
-        lat: service.service_provider_latitude,
-        lng: service.service_provider_longitude,
+        lat: service.service_address.latitude,
+        lng: service.service_address.longitude,
       });
       setMapZoom(15); // Zoom in when card is clicked
     }
@@ -183,11 +183,6 @@ const MapView: React.FC = () => {
   const isLoading =
     !isLoaded || isGeoLoading || (isServicesLoading && !servicesData); // Allow interactions while refetching for search
 
-  if (loadError || geoError || servicesError) {
-    // Basic error handling for now
-    console.error("Map Error", loadError, geoError, servicesError);
-  }
-
   if (isLoading) {
     return (
       <Box
@@ -219,19 +214,19 @@ const MapView: React.FC = () => {
           mapCenter ||
           (coordinates?.latitude && coordinates?.longitude
             ? { lat: coordinates.latitude, lng: coordinates.longitude }
-            : { lat: 0, lng: 0 })
+            : { lat: 26.9167, lng: 75.7833 })
         }
         options={mapOptions}
       >
         {/* Custom Markers for Service Providers */}
         {services.map((service) =>
-          service.service_provider_latitude &&
-          service.service_provider_longitude ? (
+          service?.service_address?.latitude &&
+          service?.service_address?.longitude ? (
             <OverlayView
               key={service.service_id}
               position={{
-                lat: service.service_provider_latitude || 0,
-                lng: service.service_provider_longitude || 0,
+                lat: service.service_address.latitude || 0,
+                lng: service.service_address.longitude || 0,
               }}
               mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
             >

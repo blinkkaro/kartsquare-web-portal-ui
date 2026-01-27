@@ -6,19 +6,27 @@ import ProfileHeader from "./ProfileHeader";
 import { useFollowProvider } from "@/hooks/useProviderProfile";
 import { useTranslate } from "@/hooks/useTranslate";
 import Button from "../../Button";
+import { useRouter } from "next/navigation";
 
 interface ProfileCardProps {
   profile: providerProfileInterface;
+  onClose: () => void;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ profile }) => {
+const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClose }) => {
   const followMutation = useFollowProvider(profile.id);
   const [isExpand, setIsExpand] = useState(false);
   const { t } = useTranslate();
   const theme = useTheme();
+  const router = useRouter();
 
   const handleFollow = () => {
     followMutation.mutate(profile.is_following ?? false);
+  };
+
+  const handleViewProfile = () => {
+    router.push(`/profile/${profile.username}`);
+    onClose();
   };
 
   return (
@@ -44,8 +52,12 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile }) => {
           lineHeight: 1.6,
         }}
       >
-        {isExpand ? profile.bio : profile.bio?.slice(0, 100) + "..."}
-        {!isExpand && (
+        {profile.bio && profile.bio.length > 100
+          ? isExpand
+            ? profile.bio
+            : profile.bio?.slice(0, 100) + "..."
+          : profile.bio}
+        {!isExpand && profile.bio && (
           <Box
             component="span"
             onClick={() => setIsExpand(true)}
@@ -65,9 +77,33 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile }) => {
       </Typography>
 
       {/* Actions Row */}
-      <Box sx={{ display: "flex", alignItems: "center", justifyContent: {xs: "center", md: "left"} }}>
-        <Button onClick={handleFollow} sx={{ width: "30%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: { xs: "center", md: "left" },
+          gap: { xs: 2, md: 5 },
+        }}
+      >
+        <Button fullWidth onClick={handleFollow}>
           {profile.is_following ? t("following") : t("follow")}
+        </Button>
+        <Button
+          fullWidth
+          variant="outlined"
+          onClick={handleViewProfile}
+          sx={{
+            color:
+              theme.palette.mode === "dark"
+                ? COLORS.TEXT.PRIMARY_DARK
+                : COLORS.TEXT.PRIMARY_LIGHT,
+            borderColor:
+              theme.palette.mode === "dark"
+                ? COLORS.TEXT.PRIMARY_DARK
+                : COLORS.TEXT.PRIMARY_LIGHT,
+          }}
+        >
+          {t("viewProfile")}
         </Button>
       </Box>
     </Box>

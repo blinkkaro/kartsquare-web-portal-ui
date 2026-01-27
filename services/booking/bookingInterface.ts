@@ -25,7 +25,13 @@ export interface UserAddress {
     postal_code: string;
     is_default: boolean;
 }
-
+export enum BookingStatus {
+  PENDING = "PENDING",
+  CONFIRMED = "CONFIRMED",
+  CANCELLED = "CANCELLED",
+  COMPLETED = "COMPLETED",
+  ACTIVE = "ACTIVE",
+}
 export interface UserBooking {
     booking_id: string;
     service_images: string[];
@@ -34,7 +40,7 @@ export interface UserBooking {
     service_category_id: string;
     provider_id: string;
     customer_id: string;
-    status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED" | "ACTIVE";
+    status: BookingStatus;
     distance_km?: string;
     booking_at: string;
     booking_created_at?: string;
