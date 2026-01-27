@@ -88,7 +88,19 @@ export const useAddPostComment = (postId: string) => {
         context.previousComments.forEach(([key, data]) => {
           queryClient.setQueryData(key, data);
         });
+        
       }
+      queryClient.setQueriesData({ queryKey: ["posts"] }, (old: any) => {
+        if (!old?.posts) return old;
+        return {
+          ...old,
+          posts: old.posts.map((post: any) =>
+            post.id === postId
+              ? { ...post, comments_count: (post.comments_count || 0) - 1 }
+              : post
+          ),
+        };
+      });
     },
   });
 };

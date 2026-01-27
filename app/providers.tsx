@@ -11,8 +11,10 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { TranslationProvider } from "@/features/i18n/TranslationContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import RegistrationGuard from "@/helper/RegistrationGuard";
+import { SocketProvider } from "@/contexts/SocketContext";
 
 import { useHydrateStore } from "@/hooks/useHydrateStore";
+import { Toaster } from "react-hot-toast";
 
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
   const mode = useAppSelector((state) => state.ui.mode);
@@ -55,9 +57,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <AppRouterCacheProvider>
           <TranslationProvider>
-            <ThemeWrapper>
-              <RegistrationGuard>{children}</RegistrationGuard>
-            </ThemeWrapper>
+            <SocketProvider>
+              <ThemeWrapper>
+                <Toaster position="top-right" />
+                <RegistrationGuard>{children}</RegistrationGuard>
+              </ThemeWrapper>
+            </SocketProvider>
           </TranslationProvider>
         </AppRouterCacheProvider>
       </QueryClientProvider>

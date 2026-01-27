@@ -652,6 +652,10 @@ export type TranslationKey =
   | "noPostsFound"
   | "noServicesFound"
   | "phoneMin"
+  | "auth_required_title"
+  | "auth_required_description"
+  
+  | "getInTouch"
   | "viewProfile"
   | "shareProfile"
   | "noPostsFoundDescription"
@@ -672,6 +676,7 @@ export type TranslationKey =
   | "near"
   | "no_upcoming_bookings"
   | "no_upcoming_bookings_desc"
+  | "goBack"
   | "no_reviews_yet_desc";
 
 // Sample dictionaries

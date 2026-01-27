@@ -3,6 +3,7 @@ import uiReducer from "@/features/ui/uiSlice";
 import authReducer from "@/features/ui/authSlice";
 import profileDrawerReducer from "@/features/ui/profileDrawerSlice";
 import appConfigReducer from "@/features/ui/appConfigSlice";
+import loginModalReducer from "@/features/ui/loginModalSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     auth: authReducer,
     profileDrawer: profileDrawerReducer,
     appConfig: appConfigReducer,
+    loginModal: loginModalReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
 });

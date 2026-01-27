@@ -26,6 +26,7 @@ export interface User {
   is_Verified: boolean;
   register_step: number;
   profile_pic: string;
+  unread_notification_count?: number;
 }
 
 export interface AuthResponse {
