@@ -295,7 +295,7 @@ const StoreView: React.FC = () => {
       <Container maxWidth="xl" sx={{ py: 3 }}>
         <Grid container spacing={3}>
           {/* Left Sidebar */}
-          <Grid item xs={12} md={3} lg={2.5} sx={{ display: { xs: "none", md: "block" } }}>
+          <Grid size={{ xs: 12, md: 3, lg: 2.5 }} sx={{ display: { xs: "none", md: "block" } }}>
             <CategorySidebar
               selectedCategory={selectedCategory}
               onSelectCategory={setSelectedCategory}
@@ -303,7 +303,7 @@ const StoreView: React.FC = () => {
           </Grid>
 
           {/* Main Content */}
-          <Grid item xs={12} md={9} lg={9.5}>
+          <Grid size={{ xs: 12, md: 9, lg: 9.5 }}>
             <Box sx={{ mb: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <Typography variant="h6" fontWeight={700} color={isDark ? "text.primary" : "textPrimary"}>
                 {selectedCategory === "all" ? "All Products" : "Filtered Rules"}
@@ -417,12 +417,12 @@ const StoreView: React.FC = () => {
                     <Box sx={{ mb: 2 }}>
                       {Object.entries(product.specs).slice(0, 3).map(([key, value]) => (
                         <Grid container key={key} sx={{ mb: 0.5 }}>
-                          <Grid item xs={5}>
+                          <Grid size={{ xs: 5 }}>
                             <Typography variant="body2" color="text.secondary">
                               {key}
                             </Typography>
                           </Grid>
-                          <Grid item xs={7}>
+                          <Grid size={{ xs: 7 }}>
                             <Typography variant="body2" color={isDark ? "text.primary" : "text.primary"} fontWeight={500}>
                               : {value}
                             </Typography>

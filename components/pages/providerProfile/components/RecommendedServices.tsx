@@ -46,7 +46,7 @@ const RecommendedServices: React.FC<RecommendedServicesProps> = ({ services }) =
                 }}
             >
                 <Star sx={{ color: COLORS.SECONDARY_ORANGE }} />
-                {t("topRatedServices") || "Top Rated Services"}
+                {"Top Rated Services"}
             </Typography>
 
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>

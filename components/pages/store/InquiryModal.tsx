@@ -67,7 +67,7 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
                 )}
 
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                         <TextField
                             fullWidth
                             label="Mobile Number *"
@@ -79,7 +79,7 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
                             }}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                         <TextField
                             fullWidth
                             label="Your Name *"
@@ -88,7 +88,7 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
                             size="small"
                         />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                         <TextField
                             fullWidth
                             label="Quantity"
@@ -98,7 +98,7 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
                             size="small"
                         />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                         <TextField
                             fullWidth
                             label="Requirement Details"

@@ -80,7 +80,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
       <Container maxWidth="xl">
         <Grid container spacing={4}>
           {/* Left: Images (Sticky) */}
-          <Grid item xs={12} md={4} sx={{ position: "relative" }}>
+          <Grid size={{ xs: 12, md: 4 }} sx={{ position: "relative" }}>
             <Box sx={{ position: "sticky", top: 100 }}>
               <Box
                 sx={{
@@ -151,7 +151,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
           </Grid>
 
           {/* Right: Details (Scrollable) */}
-          <Grid item xs={12} md={8}>
+          <Grid size={{ xs: 12, md: 8 }}>
             <Box component={Paper} elevation={0} sx={{ p: { xs: 2, md: 4 }, borderRadius: 4, border: "1px solid #e0e0e0", display: "flex", flexDirection: "column", gap: 3 }}>
               {/* Header Section */}
               <Box>
