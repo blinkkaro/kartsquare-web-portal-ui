@@ -902,4 +902,6 @@ export const english = {
   shareOnTwitter: "Share on Twitter",
   shareOnWhatsApp: "Share on WhatsApp",
   shareViaEmail: "Share via Email",
+    auth_required_title: "Login Required",
+  auth_required_description: "You need to login to access this feature",
 };

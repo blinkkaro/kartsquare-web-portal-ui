@@ -653,7 +653,9 @@ export type TranslationKey =
   | "noPostsFound"
   | "noServicesFound"
   | "phoneMin"
-
+  | "auth_required_title"
+  | "auth_required_description"
+  
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
   en: english,

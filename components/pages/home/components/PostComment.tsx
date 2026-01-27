@@ -34,10 +34,15 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
   const addCommentMutation = useAddPostComment(post.id);
 
   const handleSubmitComment = async () => {
-    if (commentText.trim()) {
-      await addCommentMutation.mutateAsync(commentText);
-      setCommentText("");
+    try {
+      if (commentText.trim()) {
+        await addCommentMutation.mutateAsync(commentText);
+        setCommentText("");
+      }
+    } catch (error) {
+      onClose();
     }
+
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
