@@ -12,13 +12,13 @@ import { secureStorage } from "./SecureStorage";
 export const handleRegistrationStepNavigation = (
   dispatch: Dispatch,
   router: AppRouterInstance,
-  newStep: UserRegisterSteps
+  newStep: UserRegisterSteps,
 ) => {
   const role = secureStorage.getItem("role");
   const register_step = secureStorage.getItem("register_step");
 
   if (!register_step || !role) {
-    router.replace("/");
+    // router.replace("/");
     return;
   }
 
@@ -40,5 +40,9 @@ export const handleRegistrationStepNavigation = (
   const nextPath = getPathForScreen(nextScreen);
 
   console.log(`Navigating to next path: ${nextPath} for step: ${newStep}`);
-  router.push(nextPath);
+  if(nextPath){
+    setTimeout(() => {
+      router.push(nextPath);
+    }, 300);
+  }
 };

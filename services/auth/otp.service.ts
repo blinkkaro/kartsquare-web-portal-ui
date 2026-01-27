@@ -32,7 +32,7 @@ class OtpService {
         API_ENDPOINTS.RESEND_OTP,
         {},
         {},
-        false
+        true
       );
       if (response.status === "success") {
         return true;

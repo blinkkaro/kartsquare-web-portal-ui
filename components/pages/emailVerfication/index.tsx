@@ -115,6 +115,9 @@ function EmailVerificationView() {
   const handleBack = () => {
     secureStorage.removeItem("token");
     secureStorage.removeItem("refreshToken");
+    secureStorage.removeItem("register_step");
+    secureStorage.removeItem("role");
+    secureStorage.removeItem("user_details");
 
     dispatch(logout());
     router.back();
