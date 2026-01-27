@@ -653,6 +653,7 @@ export type TranslationKey =
   | "noPostsFound"
   | "noServicesFound"
   | "phoneMin"
+  | "getInTouch"
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

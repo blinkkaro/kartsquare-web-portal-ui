@@ -45,6 +45,10 @@ import PostFeedGrid from "@/components/pages/myAccount/components/post/PostFeedG
 import { Posts } from "@/services/post/postInterfaces";
 import { Service } from "@/services/serviceList/listInteraface";
 import { UserRole } from "@/utils/auth";
+import ContactUsSection from "./components/ContactUsSection";
+import ProviderMapSection from "./components/ProviderMapSection";
+import ProfileNotFound from "./components/ProfileNotFound";
+import ProviderReviews from "./components/ProviderReviews";
 
 interface ProviderProfilePageProps {
   username: string;
@@ -60,7 +64,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
   const theme = useTheme();
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
-  
+
   const [activeTab, setActiveTab] = useState(PROFILE_TABS.Services);
   const [shareMenuAnchor, setShareMenuAnchor] = useState<null | HTMLElement>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -70,7 +74,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
   const profile = profileData?.profile;
   const services = profileData?.services || [];
   const posts = profileData?.posts || [];
-  
+
   const followMutation = useFollowProvider(profile?.id || "");
 
   const handleTabChange = (tab: string) => {
@@ -145,7 +149,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
     media_urls: Array.isArray(post.media_urls) ? post.media_urls[0] : post.media_urls,
   }));
 
-  const StatRow = ({ icon, label, value, iconColor }: { icon: React.ReactElement, label: string, value: string| number, iconColor: string }) => (
+  const StatRow = ({ icon, label, value, iconColor }: { icon: React.ReactElement, label: string, value: string | number, iconColor: string }) => (
     <Box
       sx={{
         display: "flex",
@@ -157,7 +161,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
         "&:not(:last-child)": {
           mb: 1,
         },
-      
+
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
@@ -188,7 +192,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
           {label}
         </Typography>
       </Box>
-  
+
       <Typography
         variant="body1"
         sx={{
@@ -204,13 +208,13 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
       </Typography>
     </Box>
   );
-  
+
 
   // Format location from default_address
   const getLocationString = () => {
     if (profile?.default_address) {
       const addr = profile.default_address;
-      const parts = [addr.city_town, addr.state, addr.country].filter(Boolean);
+      const parts = [addr.building_no, addr.address, addr.city_town, addr.pincode, addr.state, addr.country].filter(Boolean);
       return parts.join(", ");
     }
     return profile?.country || "";
@@ -232,34 +236,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
   }
 
   if (error || !profile) {
-    return (
-      <Container maxWidth="md">
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            minHeight: "60vh",
-            textAlign: "center",
-          }}
-        >
-          <Typography variant="h5" sx={{ mb: 2, color: "error.main" }}>
-            {t("profileNotFound") || "Profile not found"}
-          </Typography>
-          <Button
-            variant="contained"
-            onClick={() => router.back()}
-            sx={{
-              bgcolor: COLORS.PRIMARY_PURPLE,
-              "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
-            }}
-          >
-            {t("go_back")}
-          </Button>
-        </Box>
-      </Container>
-    );
+    return <ProfileNotFound />;
   }
 
   return (
@@ -328,7 +305,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
         <Grid container spacing={3}>
           {/* Left Sidebar - Profile Details (No Box) */}
           <Grid size={{ xs: 12, md: 4 }}>
-            <Box sx={{ position: "relative" }}>
+            <Box sx={{ position: "sticky", top: 100, alignSelf: "start" }}>
               {/* Avatar - Overlapping Banner */}
               <Box
                 sx={{
@@ -350,284 +327,289 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
                 />
               </Box>
 
-                  {/* Name and Bio */}
-                  <Box sx={{ textAlign: "center", mb: 3 }}>
-                    <Typography
-                      variant="h5"
-                      sx={{
-                        fontWeight: 800,
-                        color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                        mb: 1,
-                        fontSize: "1.5rem",
-                      }}
-                    >
-                      {profile.first_name} {profile.last_name}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        mb: 1,
-                        color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                        fontSize: "0.875rem",
-                        fontWeight: 600,
-                      }}
-                    >
-                     {`@${profile?.username || "-"}`}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{
-                        fontWeight: 600,
-                        color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                        fontSize: "0.875rem",
-                      }}
-                    >
-                      {profile.bio || UserRole.SERVICE_PROVIDER}
-                    </Typography>
-                    
-                  </Box>
+              {/* Name and Bio */}
+              <Box sx={{ textAlign: "center", mb: 3 }}>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: 800,
+                    color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                    mb: 1,
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  {profile.first_name} {profile.last_name}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mb: 1,
+                    color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                    fontSize: "0.875rem",
+                    fontWeight: 600,
+                  }}
+                >
+                  {`@${profile?.username || "-"}`}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    fontWeight: 600,
+                    color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                    fontSize: "0.875rem",
+                  }}
+                >
+                  {profile.bio || UserRole.SERVICE_PROVIDER}
+                </Typography>
 
-                  {/* Contact Information */}
-                  <Box sx={{ mb: 3 }}>
-                    {profile.email && (
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1.5,
-                          mb: 1.5,
-                          color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                        }}
-                      >
-                        <EmailIcon sx={{ fontSize: 18, color: "#999" }} />
-                        <Typography
-                          variant="body2"
-                          component={Link}
-                          href={`mailto:${profile.email}`}
-                          sx={{
-                            color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                            textDecoration: "none",
-                            fontWeight: 600,
-                            fontSize: "0.875rem",
-                            "&:hover": {
-                              color: COLORS.PRIMARY_PURPLE,
-                            },
-                          }}
-                        >
-                          {profile.email}
-                        </Typography>
-                      </Box>
-                    )}
-                    {getLocationString() && (
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1.5,
-                          mb: 1.5,
-                          fontWeight: 600,
-                          color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                        }}
-                      >
-                        <LocationOn sx={{ fontSize: 18, color: "#999" }} />
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                            fontWeight: 600,
-                            fontSize: "0.875rem",
-                          }}
-                        >
-                          {getLocationString()}
-                        </Typography>
-                      </Box>
-                    )}
-                    {profile.phone_number && (
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1.5,
-                          fontWeight: 600,
-                          color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                        }}
-                      >
-                        <Phone sx={{ fontSize: 18, color: "#999" }} />
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                            fontWeight: 600,
-                            fontSize: "0.875rem",
-                          }}
-                        >
-                          {profile.country_code} {profile.phone_number}
-                        </Typography>
-                      </Box>
-                    )}
-                  </Box>
+              </Box>
 
-                  {/* Action Buttons */}
-                  <Box sx={{ display: "flex", gap: 1.5, mb: 3 }}>
-                    <Button
-                      variant="contained"
-                      onClick={handleFollow}
-                      disabled={followMutation.isPending || !profile.id}
-                      fullWidth
-                      sx={{
-                        bgcolor: COLORS.PRIMARY_PURPLE,
-                        color: COLORS.WHITE,
-                        textTransform: "none",
-                        fontWeight: 600,
-                        py: 1.25,
-                        borderRadius: 2,
-                        fontSize: "0.9375rem",
-                        boxShadow: "none",
-                        "&:hover": {
-                          bgcolor: COLORS.PURPLE_HOVER,
-                          boxShadow: "0 4px 12px rgba(94, 24, 233, 0.3)",
-                        },
-                        "&.Mui-disabled": {
-                          bgcolor: COLORS.PRIMARY_PURPLE,
-                          opacity: 0.6,
-                        },
-                      }}
-                    >
-                      {profile.is_following ? t("following") : t("follow")}
-                    </Button>
-                    <IconButton
-                      onClick={handleShareClick}
-                      sx={{
-                        bgcolor: "#f5f5f5",
-                        color: "#666",
-                        border: "1px solid #e0e0e0",
-                        "&:hover": {
-                          bgcolor: "#eeeeee",
-                        },
-                      }}
-                    >
-                      <Share sx={{ fontSize: 20 }} />
-                    </IconButton>
-                  </Box>
-
-                  <Divider sx={{ my: 3, borderColor: "#e0e0e0" }} />
-
-                  {/* Statistics */}
+              {/* Contact Information */}
+              <Box sx={{ mb: 3 }}>
+                {profile.email && (
                   <Box
-  sx={{
-    mb: 3,
-    display: "flex",
-    flexDirection: "column",
-    gap: 0.5,
-  }}
->
-  <StatRow
-    icon={<Visibility />}
-    label={t("posts")}
-    value={profile?.total_posts || 0}
-    iconColor="#999"
-  />
-
-  <StatRow
-    icon={<Favorite />}
-    label={t("followers") || "Followers"}
-    value={profile?.followers_count || 0}
-    iconColor={COLORS.SECONDARY_ORANGE}
-  />
-
-  <StatRow
-    icon={<People />}
-    label={t("following")}
-    value={profile.following_count || 0}
-    iconColor={COLORS.PRIMARY_BLUE}
-  />
-
-  <StatRow
-    icon={<BusinessCenter />}
-    label={t("services")}
-    value={profile.services_count || 0}
-    iconColor={COLORS.PRIMARY_PURPLE}
-  />
-</Box>
-
-                  <Divider sx={{ my: 3, borderColor: "#e0e0e0" }} />
-
-                  {/* Share Profile Section */}
-                  <Box>
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1.5,
+                      mb: 1.5,
+                      color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                    }}
+                  >
+                    <EmailIcon sx={{ fontSize: 18, color: "#999" }} />
                     <Typography
-                      variant="caption"
+                      variant="body2"
+                      component={Link}
+                      href={`mailto:${profile.email}`}
                       sx={{
-                        fontWeight: 600,
-                        mb: 2,
                         color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                        textTransform: "uppercase",
-                        letterSpacing: 0.5,
-                        fontSize: "0.75rem",
-                        display: "block",
+                        textDecoration: "none",
+                        fontWeight: 600,
+                        fontSize: "0.875rem",
+                        "&:hover": {
+                          color: COLORS.PRIMARY_PURPLE,
+                        },
                       }}
                     >
-                      Share Profile
+                      {profile.email}
                     </Typography>
-                    <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                      <IconButton
-                        onClick={() => handleSocialShare("facebook")}
-                        sx={{
-                          bgcolor: "#f5f5f5",
-                          color: COLORS.PRIMARY_BLUE,
-                          width: 40,
-                          height: 40,
-                          "&:hover": {
-                            bgcolor: "rgba(24, 119, 242, 0.1)",
-                          },
-                        }}
-                      >
-                        <Facebook sx={{ fontSize: 20 }} />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => handleSocialShare("twitter")}
-                        sx={{
-                          bgcolor: "#f5f5f5",
-                          color: COLORS.PRIMARY_BLUE,
-                          width: 40,
-                          height: 40,
-                          "&:hover": {
-                            bgcolor: "rgba(29, 161, 242, 0.1)",
-                          },
-                        }}
-                      >
-                        <Twitter sx={{ fontSize: 20 }} />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => handleSocialShare("whatsapp")}
-                        sx={{
-                          bgcolor: "#f5f5f5",
-                          color: COLORS.SUCCESS_GREEN,
-                          width: 40,
-                          height: 40,
-                          "&:hover": {
-                            bgcolor: "rgba(37, 211, 102, 0.1)",
-                          },
-                        }}
-                      >
-                        <WhatsApp sx={{ fontSize: 20 }} />
-                      </IconButton>
-                      <IconButton
-                        onClick={handleCopyLink}
-                        sx={{
-                          bgcolor: "#f5f5f5",
-                          color: COLORS.PRIMARY_PURPLE,
-                          width: 40,
-                          height: 40,
-                          "&:hover": {
-                            bgcolor: COLORS.PURPLE_ALPHA_10,
-                          },
-                        }}
-                      >
-                        <ContentCopy sx={{ fontSize: 20 }} />
-                      </IconButton>
-                    </Box>
                   </Box>
+                )}
+                {getLocationString() && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1.5,
+                      mb: 1.5,
+                      fontWeight: 600,
+                      color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                    }}
+                  >
+                    <LocationOn sx={{ fontSize: 18, color: "#999" }} />
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                        fontWeight: 600,
+                        fontSize: "0.875rem",
+                      }}
+                    >
+                      {getLocationString()}
+                    </Typography>
+                  </Box>
+                )}
+                {profile.phone_number && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1.5,
+                      fontWeight: 600,
+                      color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                    }}
+                  >
+                    <Phone sx={{ fontSize: 18, color: "#999" }} />
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                        fontWeight: 600,
+                        fontSize: "0.875rem",
+                      }}
+                    >
+                      {profile.country_code} {profile.phone_number}
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+
+              {/* Action Buttons */}
+              <Box sx={{ display: "flex", gap: 1.5, mb: 3 }}>
+                <Button
+                  variant="contained"
+                  onClick={handleFollow}
+                  disabled={followMutation.isPending || !profile.id}
+                  fullWidth
+                  sx={{
+                    bgcolor: COLORS.PRIMARY_PURPLE,
+                    color: COLORS.WHITE,
+                    textTransform: "none",
+                    fontWeight: 600,
+                    py: 1.25,
+                    borderRadius: 2,
+                    fontSize: "0.9375rem",
+                    boxShadow: "none",
+                    "&:hover": {
+                      bgcolor: COLORS.PURPLE_HOVER,
+                      boxShadow: "0 4px 12px rgba(94, 24, 233, 0.3)",
+                    },
+                    "&.Mui-disabled": {
+                      bgcolor: COLORS.PRIMARY_PURPLE,
+                      opacity: 0.6,
+                    },
+                  }}
+                >
+                  {/* {profile.is_following ? t("following") : t("follow")} */}
+                  Contact {profile?.first_name}
+                </Button>
+                <IconButton
+                  onClick={handleShareClick}
+                  sx={{
+                    bgcolor: "#f5f5f5",
+                    color: "#666",
+                    border: "1px solid #e0e0e0",
+                    "&:hover": {
+                      bgcolor: "#eeeeee",
+                    },
+                  }}
+                >
+                  <Share sx={{ fontSize: 20 }} />
+                </IconButton>
+              </Box>
+
+              <Divider sx={{ my: 3, borderColor: "#e0e0e0" }} />
+
+              {/* Statistics */}
+              <Box
+                sx={{
+                  mb: 3,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 0.5,
+                }}
+              >
+                <StatRow
+                  icon={<Visibility />}
+                  label={t("posts")}
+                  value={profile?.total_posts || 0}
+                  iconColor="#999"
+                />
+
+                <StatRow
+                  icon={<Favorite />}
+                  label={t("followers") || "Followers"}
+                  value={profile?.followers_count || 0}
+                  iconColor={COLORS.SECONDARY_ORANGE}
+                />
+
+                <StatRow
+                  icon={<People />}
+                  label={t("following")}
+                  value={profile.following_count || 0}
+                  iconColor={COLORS.PRIMARY_BLUE}
+                />
+
+                <StatRow
+                  icon={<BusinessCenter />}
+                  label={t("services")}
+                  value={profile.services_count || 0}
+                  iconColor={COLORS.PRIMARY_PURPLE}
+                />
+              </Box>
+
+              <Divider sx={{ my: 3, borderColor: "#e0e0e0" }} />
+
+              {/* Share Profile Section */}
+              <Box>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontWeight: 600,
+                    mb: 2,
+                    color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                    textTransform: "uppercase",
+                    letterSpacing: 0.5,
+                    fontSize: "0.75rem",
+                    display: "block",
+                  }}
+                >
+                  Share Profile
+                </Typography>
+                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                  <IconButton
+                    onClick={() => handleSocialShare("facebook")}
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      color: COLORS.PRIMARY_BLUE,
+                      width: 40,
+                      height: 40,
+                      "&:hover": {
+                        bgcolor: "rgba(24, 119, 242, 0.1)",
+                      },
+                    }}
+                  >
+                    <Facebook sx={{ fontSize: 20 }} />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => handleSocialShare("twitter")}
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      color: COLORS.PRIMARY_BLUE,
+                      width: 40,
+                      height: 40,
+                      "&:hover": {
+                        bgcolor: "rgba(29, 161, 242, 0.1)",
+                      },
+                    }}
+                  >
+                    <Twitter sx={{ fontSize: 20 }} />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => handleSocialShare("whatsapp")}
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      color: COLORS.SUCCESS_GREEN,
+                      width: 40,
+                      height: 40,
+                      "&:hover": {
+                        bgcolor: "rgba(37, 211, 102, 0.1)",
+                      },
+                    }}
+                  >
+                    <WhatsApp sx={{ fontSize: 20 }} />
+                  </IconButton>
+                  <IconButton
+                    onClick={handleCopyLink}
+                    sx={{
+                      bgcolor: "#f5f5f5",
+                      color: COLORS.PRIMARY_PURPLE,
+                      width: 40,
+                      height: 40,
+                      "&:hover": {
+                        bgcolor: COLORS.PURPLE_ALPHA_10,
+                      },
+                    }}
+                  >
+                    <ContentCopy sx={{ fontSize: 20 }} />
+                  </IconButton>
+                </Box>
+              </Box>
+
+              <Divider sx={{ my: 3, borderColor: "#e0e0e0" }} />
+
+              <ProviderReviews providerName={profile?.first_name + " " + profile?.last_name} />
             </Box>
           </Grid>
 
@@ -641,118 +623,152 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
                 mb: 3,
               }}
             >
-                <Box sx={{ display: "flex", gap: 4 }}>
+              <Box sx={{ display: "flex", gap: 4 }}>
                 <Box
-                    onClick={() => handleTabChange("Services")}
+                  onClick={() => handleTabChange("Services")}
+                  sx={{
+                    py: 2,
+                    cursor: "pointer",
+                    position: "relative",
+                    borderBottom: activeTab === "Services" ? `2px solid ${COLORS.PRIMARY_PURPLE}` : "2px solid transparent",
+                    mb: -1,
+                  }}
+                >
+                  <Typography
+                    variant="body1"
                     sx={{
-                      py: 2,
-                      cursor: "pointer",
-                      position: "relative",
-                      borderBottom: activeTab === "Services" ? `2px solid ${COLORS.PRIMARY_PURPLE}` : "2px solid transparent",
-                      mb: -1,
+                      fontWeight: activeTab === "Services" ? 700 : 400,
+                      color: activeTab === "Services" ? theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT : theme.palette.mode === "dark" ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                      fontSize: "0.9375rem",
+                      textTransform: "none",
                     }}
                   >
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        fontWeight: activeTab === "Services" ? 700 : 400,
-                        color: activeTab === "Services" ? theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT : theme.palette.mode === "dark" ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                        fontSize: "0.9375rem",
-                        textTransform: "none",
-                      }}
-                    >
-                      {t("services")}
-                    </Typography>
-                  </Box>
-                  <Box
-                    onClick={() => handleTabChange(PROFILE_TABS.Posts)}
-                    sx={{
-                      py: 2,
-                      cursor: "pointer",
-                      position: "relative",
-                      borderBottom: activeTab === PROFILE_TABS.Posts ? `2px solid ${COLORS.PRIMARY_PURPLE}` : "2px solid transparent",
-                      mb: -1,
-                    }}
-                  >
-                    <Typography
-                      variant="body1"
-                      sx={{
-                          fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 400,
-                        color: activeTab === "Posts" ? theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT : theme.palette.mode === "dark" ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                        fontSize: "0.9375rem",
-                        textTransform: "none",
-                      }}
-                    >
-                      {t("posts")}
-                    </Typography>
-                  </Box>
-                 
+                    {t("services")}
+                  </Typography>
                 </Box>
+                <Box
+                  onClick={() => handleTabChange(PROFILE_TABS.Posts)}
+                  sx={{
+                    py: 2,
+                    cursor: "pointer",
+                    position: "relative",
+                    borderBottom: activeTab === PROFILE_TABS.Posts ? `2px solid ${COLORS.PRIMARY_PURPLE}` : "2px solid transparent",
+                    mb: -1,
+                  }}
+                >
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 400,
+                      color: activeTab === "Posts" ? theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT : theme.palette.mode === "dark" ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                      fontSize: "0.9375rem",
+                      textTransform: "none",
+                    }}
+                  >
+                    {t("posts")}
+                  </Typography>
+                </Box>
+
+              </Box>
             </Box>
 
             {/* Content */}
             <Box>
-                {activeTab === PROFILE_TABS.Posts && (
-                  <Box>
-                    {transformedPosts.length === 0 ? (
-                      <Box
-                        sx={{
-                          textAlign: "center",
-                          py: 8,
-                          color: "#666",
-                        }}
-                      >
-                        <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                          {t("noPostsFound") || "No posts found"}
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: "#999" }}>
-                          This profile hasn't shared any posts yet.
-                        </Typography>
-                      </Box>
-                    ) : (
-                      <PostFeedGrid
-                        posts={transformedPosts}
-                        isLoading={false}
-                        fetchNextPage={() => {}}
-                        hasNextPage={false}
-                        isFetchingNextPage={false}
-                        onPostClick={() => {}}
-                      />
-                    )}
-                  </Box>
-                )}
-                {activeTab === PROFILE_TABS.Services && (
-                  <Box>
-                    {services.length === 0 ? (
-                      <Box
-                        sx={{
-                          textAlign: "center",
-                          py: 8,
-                          color: "#666",
-                        }}
-                      >
-                        <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                          {t("noServicesFound") || "No services found"}
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: "#999" }}>
-                          This profile hasn't added any services yet.
-                        </Typography>
-                      </Box>
-                    ) : (
-                      <Grid container spacing={2}>
-                        {services.map((service: Service, index: number) => (
-                          <Grid
-                            size={{ xs: 12, sm: 5 }}
-                            key={`${service.service_id}-${index}`}
-                          >
-                            <ServiceCard service={service as any} />
-                          </Grid>
-                        ))}
-                      </Grid>
-                    )}
-                  </Box>
-                )}
+              {activeTab === PROFILE_TABS.Posts && (
+                <Box>
+                  {transformedPosts.length === 0 ? (
+                    <Box
+                      sx={{
+                        textAlign: "center",
+                        py: 8,
+                        color: "#666",
+                      }}
+                    >
+                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                        {t("noPostsFound") || "No posts found"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: "#999" }}>
+                        This profile hasn't shared any posts yet.
+                      </Typography>
+                    </Box>
+                  ) : (
+                    <PostFeedGrid
+                      posts={transformedPosts}
+                      isLoading={false}
+                      fetchNextPage={() => { }}
+                      hasNextPage={false}
+                      isFetchingNextPage={false}
+                      onPostClick={() => { }}
+                    />
+                  )}
+                </Box>
+              )}
+              {activeTab === PROFILE_TABS.Services && (
+                <Box>
+                  {services.length === 0 ? (
+                    <Box
+                      sx={{
+                        textAlign: "center",
+                        py: 8,
+                        color: "#666",
+                      }}
+                    >
+                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                        {t("noServicesFound") || "No services found"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: "#999" }}>
+                        This profile hasn't added any services yet.
+                      </Typography>
+                    </Box>
+                  ) : (
+                    <Grid container spacing={2}>
+                      {services.map((service: Service, index: number) => (
+                        <Grid
+                          size={{ xs: 12, sm: 5 }}
+                          key={`${service.service_id}-${index}`}
+                        >
+                          <ServiceCard service={service as any} />
+                        </Grid>
+                      ))}
+                    </Grid>
+                  )}
+                </Box>
+              )}
+            </Box>
+
+            {/* Contact Us & Map Section */}
+            <Box sx={{ mt: 8, display: "flex", flexDirection: "column", gap: 6 }}>
+              {/* Map Section */}
+              <Box>
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5, color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }}>
+                    {profile.first_name || "Provider"}&apos;s Location
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT }}>
+                    Explore where we are located and plan your visit.
+                  </Typography>
+                </Box>
+                <ProviderMapSection
+                  latitude={profile.default_address?.latitude}
+                  longitude={profile.default_address?.longitude}
+                  providerImage={profile.profile_pic}
+                  address={getLocationString()}
+                />
               </Box>
+
+              {/* Contact Section */}
+              <Box>
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5, color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }}>
+                    Contact {profile.first_name} {profile.last_name}
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT }}>
+                    Ready to get started? Send us a message directly.
+                  </Typography>
+                </Box>
+                <ContactUsSection />
+              </Box>
+            </Box>
           </Grid>
         </Grid>
       </Container>
@@ -766,7 +782,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
           sx: {
             bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
             minWidth: 220,
-            mt: 1,  
+            mt: 1,
             borderRadius: 2,
             boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
             border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
@@ -849,7 +865,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
           {snackbarMessage}
         </Alert>
       </Snackbar>
-    </Box>
+    </Box >
   );
 };
 

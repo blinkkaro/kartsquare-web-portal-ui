@@ -58,6 +58,8 @@ interface NavActionsProps {
   onNotificationToggle: () => void;
 }
 
+import { useSocket } from "@/contexts/SocketContext";
+
 const NavActions: React.FC<NavActionsProps> = ({
   isAuthenticated,
   isMobile,
@@ -71,6 +73,8 @@ const NavActions: React.FC<NavActionsProps> = ({
   onNotificationToggle,
 }) => {
   const profile = secureStorage.getItem("user_details");
+  const { unreadCount } = useSocket();
+
   if (isAuthenticated) {
     return (
       <ActionsContainer>
@@ -105,7 +109,7 @@ const NavActions: React.FC<NavActionsProps> = ({
 
         {/* Notifications */}
         <StyledIconButton size="small" aria-label="notifications" onClick={onNotificationToggle}>
-          <Badge badgeContent={0} color="error">
+          <Badge badgeContent={unreadCount} color="error">
             <Image
               src={
                 mode === "dark" ? "/icons/darkThemwBell.svg" : "/icons/bell.svg"

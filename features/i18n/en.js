@@ -902,4 +902,5 @@ export const english = {
   shareOnTwitter: "Share on Twitter",
   shareOnWhatsApp: "Share on WhatsApp",
   shareViaEmail: "Share via Email",
+  getInTouch: "Get in Touch",
 };
