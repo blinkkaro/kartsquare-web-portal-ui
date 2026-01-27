@@ -924,4 +924,7 @@ export const english = {
   yes_cancel: "Yes, Cancel Booking",
   no_keep_booking: "No, Keep Booking",
   near: "Near",
+  no_upcoming_bookings: "No upcoming bookings",
+  no_upcoming_bookings_desc: "You have no upcoming bookings.",
+  no_reviews_yet_desc: "You have no reviews yet.",
 };

@@ -73,9 +73,8 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
   };
 
   const isLoading = !isLoaded || isGeoLoading || isServicesLoading;
-  const error = loadError || geoError || servicesError;
 
-  if (isLoading || error) {
+  if (isLoading) {
     return (
       <Box
         onClick={handleMapClick}
@@ -91,7 +90,7 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
         }}
       >
         <Typography variant="body2" color="text.secondary">
-          {error ? t("errorLoadingMap") : t("loadingMap")}
+          {t("loadingMap")}
         </Typography>
       </Box>
     );
@@ -118,7 +117,7 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
         center={
           coordinates?.latitude && coordinates?.longitude
             ? { lat: coordinates.latitude, lng: coordinates.longitude }
-            : { lat: 0, lng: 0 }
+            : { lat: 26.9167, lng: 75.7833 }
         }
         options={mapOptions}
       >

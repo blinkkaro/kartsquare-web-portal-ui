@@ -669,7 +669,10 @@ export type TranslationKey =
   | "cancel_booking_description"
   | "yes_cancel"
   | "no_keep_booking"
-  | "near";
+  | "near"
+  | "no_upcoming_bookings"
+  | "no_upcoming_bookings_desc"
+  | "no_reviews_yet_desc";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

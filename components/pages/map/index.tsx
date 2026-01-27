@@ -183,11 +183,6 @@ const MapView: React.FC = () => {
   const isLoading =
     !isLoaded || isGeoLoading || (isServicesLoading && !servicesData); // Allow interactions while refetching for search
 
-  if (loadError || geoError || servicesError) {
-    // Basic error handling for now
-    console.error("Map Error", loadError, geoError, servicesError);
-  }
-
   if (isLoading) {
     return (
       <Box
@@ -219,7 +214,7 @@ const MapView: React.FC = () => {
           mapCenter ||
           (coordinates?.latitude && coordinates?.longitude
             ? { lat: coordinates.latitude, lng: coordinates.longitude }
-            : { lat: 0, lng: 0 })
+            : { lat: 26.9167, lng: 75.7833 })
         }
         options={mapOptions}
       >

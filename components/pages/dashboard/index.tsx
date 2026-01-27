@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Box, Card, Grid, Typography, useTheme } from "@mui/material";
+import { Box, Grid, Typography, useTheme } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useTranslate } from "@/hooks/useTranslate";
 import { COLORS } from "@/constants/colors";
@@ -10,11 +10,10 @@ import { getUserRole } from "@/utils/auth";
 import MetricCards from "./components/MetricCards";
 import RevenueChart from "./components/RevenueChart";
 import UpcomingBookings from "./components/UpcomingBookings";
+import LatestReviews from "./components/LatestReviews"; // Add this
 import UpcomingEvents from "./components/UpcomingEvents";
 import RecentTransactions from "./components/RecentTransactions";
-import ReviewCard from "./components/ReviewCard";
 import { useProviderDashboard } from "@/hooks/useProviderDashboard";
-import BookingStatusCard from "@/components/common/BookingStatusCard";
 import ProviderBookingDetailsDrawer from "../provider/bookings/ProviderBookingDetailsDrawer";
 
 function DashboardView() {
@@ -22,7 +21,6 @@ function DashboardView() {
   const router = useRouter();
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
-
 
   const {
     providerDashboardData,
@@ -96,117 +94,15 @@ function DashboardView() {
         <Grid size={{ xs: 12, lg: 4 }}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             {/* Upcoming Bookings */}
-            {/* <UpcomingBookings bookings={providerDashboardData?.upcoming_bookings || []} /> */}
-
-            {providerDashboardData?.upcoming_bookings &&
-              providerDashboardData.upcoming_bookings.length > 0 && (
-                <Box
-                  sx={{
-                    borderRadius: "12px",
-                    p: 2,
-                    bgcolor: isDark
-                      ? COLORS.BACKGROUND.PAPER_DARK
-                      : COLORS.WHITE,
-                    border: `1px solid ${
-                      isDark
-                        ? COLORS.BORDER.DEFAULT_DARK
-                        : COLORS.BORDER.DEFAULT_LIGHT
-                    }`,
-                    boxShadow: isDark
-                      ? "0px 2px 8px rgba(0, 0, 0, 0.2)"
-                      : "0px 2px 8px rgba(0, 0, 0, 0.05)",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      mb: 2,
-                    }}
-                  >
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontWeight: 600,
-                        color: isDark
-                          ? COLORS.TEXT.PRIMARY_DARK
-                          : COLORS.TEXT.PRIMARY_LIGHT,
-                      }}
-                    >
-                      {t("upcomingBookings")}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: COLORS.PRIMARY_PURPLE,
-                        cursor: "pointer",
-                        fontWeight: 500,
-                        "&:hover": {
-                          textDecoration: "underline",
-                        },
-                      }}
-                      onClick={() => router.push("/spr/bookings")}
-                    >
-                      {t("seeall")}
-                    </Typography>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 2,
-                    }}
-                  >
-                    {providerDashboardData.upcoming_bookings.map((booking) => (
-                      <BookingStatusCard
-                        key={booking.booking_id}
-                        booking={{
-                          booking_id: booking.booking_id,
-                          currency: booking.currency,
-                          name: booking.service_name,
-                          image: booking.image_urls[0] || "",
-                          status: booking.status,
-                          price: booking.price,
-                          time: booking.schedule_at,
-                          service_address: booking.service_address
-                        }}
-                        isProvider={true}
-                        showStatus={false}
-                      />
-                    ))}
-                  </Box>
-                </Box>
-              )}
+            {/* Upcoming Bookings */}
+            <UpcomingBookings
+              bookings={providerDashboardData?.upcoming_bookings || []}
+            />
 
             {/* Latest Review */}
-            {providerDashboardData?.latest_reviews &&
-              providerDashboardData.latest_reviews.length > 0 && (
-                <Card
-                  sx={{
-                    borderRadius: "12px",
-                    bgcolor: isDark
-                      ? COLORS.BACKGROUND.PAPER_DARK
-                      : COLORS.WHITE,
-                    border: `1px solid ${
-                      isDark
-                        ? COLORS.BORDER.DEFAULT_DARK
-                        : COLORS.BORDER.DEFAULT_LIGHT
-                    }`,
-                    boxShadow: isDark
-                      ? "0px 2px 8px rgba(0, 0, 0, 0.2)"
-                      : "0px 2px 8px rgba(0, 0, 0, 0.05)",
-                    p: 2,
-                  }}
-                >
-                  <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                    {t("latestReviews")}
-                  </Typography>
-                  {providerDashboardData.latest_reviews.map((review, index) => (
-                    <ReviewCard key={index} review={review} />
-                  ))}
-                </Card>
-              )}
+            <LatestReviews
+              reviews={providerDashboardData?.latest_reviews || []}
+            />
 
             {/* Upcoming Events
             <UpcomingEvents /> */}
