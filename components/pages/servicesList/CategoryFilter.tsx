@@ -34,12 +34,13 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     return (
         <Box sx={{
             display: "flex",
-            gap: { xs: 1, sm: 1.5 },
+            gap: 1,
             mb: { xs: 2, sm: 4 },
             overflowX: "auto",
             pb: 1,
             WebkitOverflowScrolling: "touch",
-            scrollbarWidth: "thin",
+            scrollWidth: "none",
+            // scrollbarWidth: "thin",
             "&::-webkit-scrollbar": {
                 height: "6px",
             },
@@ -47,6 +48,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                 bgcolor: isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT,
                 borderRadius: "3px",
             }
+            
         }}>
             {loading ? (
                 <CircularProgress size={24} />

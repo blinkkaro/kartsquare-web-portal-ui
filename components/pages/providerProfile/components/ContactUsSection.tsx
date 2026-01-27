@@ -11,6 +11,7 @@ import Button from "@/components/common/Button";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { Send, Person, Phone, Message as MessageIcon } from "@mui/icons-material";
+import { profile } from "console";
 
 const MotionGrid = motion(Grid) as any;
 const MotionBox = motion(Box) as any;
@@ -34,7 +35,7 @@ type ContactFormValues = {
     message: string;
 };
 
-const ContactUsSection = () => {
+const ContactUsSection = ({ profile }: any) => {
     const theme = useTheme();
     const { t } = useTranslate();
     const isDark = theme.palette.mode === "dark";
@@ -62,21 +63,15 @@ const ContactUsSection = () => {
     };
 
     const containerVariants = {
-        hidden: { opacity: 0, y: 50 },
+        hidden: { opacity: 0, y: 30 },
         visible: {
             opacity: 1,
             y: 0,
             transition: {
                 duration: 0.6,
                 ease: "easeOut",
-                staggerChildren: 0.1
             }
         },
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
     };
 
     return (
@@ -86,118 +81,146 @@ const ContactUsSection = () => {
             viewport={{ once: true, margin: "-100px" }}
             variants={containerVariants}
             sx={{
-                bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE,
+                bgcolor: isDark ? "rgba(255, 255, 255, 0.03)" : COLORS.WHITE,
                 borderRadius: 4,
-                p: { xs: 3, md: 5 },
-                boxShadow: isDark
-                    ? "0 10px 40px rgba(0,0,0,0.4)"
-                    : "0 10px 40px rgba(94, 24, 233, 0.08)",
-                border: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "rgba(94, 24, 233, 0.05)"}`,
-                position: "relative",
                 overflow: "hidden",
+                border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.04)"}`,
+                boxShadow: isDark
+                    ? "0 4px 24px rgba(0,0,0,0.4)"
+                    : "0 10px 40px rgba(0,0,0,0.05)",
+                position: "relative",
             }}
         >
-            {/* Decorative Background Elements */}
-            <Box
-                sx={{
-                    position: "absolute",
-                    top: -50,
-                    right: -50,
-                    width: 200,
-                    height: 200,
-                    borderRadius: "50%",
-                    background: `radial-gradient(circle, ${COLORS.PRIMARY_PURPLE}20 0%, transparent 70%)`,
-                    pointerEvents: "none",
-                }}
-            />
+            <Grid container>
+                {/* Left Side - Info / Visual */}
+                <Grid size={{ xs: 12, md: 5 }} sx={{
+                    position: "relative",
+                    bgcolor: COLORS.PRIMARY_PURPLE,
+                    p: 4,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    color: COLORS.WHITE,
+                    overflow: "hidden"
+                }}>
+                    {/* Abstract Shapes */}
+                    <Box sx={{
+                        position: "absolute",
+                        top: -50,
+                        left: -50,
+                        width: 150,
+                        height: 150,
+                        borderRadius: "50%",
+                        bgcolor: "rgba(255,255,255,0.1)",
+                    }} />
+                    <Box sx={{
+                        position: "absolute",
+                        bottom: -30,
+                        right: -30,
+                        width: 100,
+                        height: 100,
+                        borderRadius: "50%",
+                        bgcolor: "rgba(255,255,255,0.1)",
+                    }} />
 
-            <Box component={motion.div} variants={itemVariants} sx={{ mb: 4, textAlign: "center" }}>
-                <Typography
-                    variant="h4"
-                    sx={{
-                        fontWeight: 800,
-                        mb: 1,
-                        background: `linear-gradient(45deg, ${COLORS.PRIMARY_PURPLE}, ${COLORS.PRIMARY_BLUE})`,
-                        backgroundClip: "text",
-                        textFillColor: "transparent",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                    }}
-                >
-                    {t("getInTouch" as any) || "Get in Touch"}
-                </Typography>
-                <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{ maxWidth: 600, mx: "auto" }}
-                >
-                    Have a question or want to book a service? Send us a message directly!
-                </Typography>
-            </Box>
+                    <Box sx={{ position: "relative", zIndex: 1 }}>
+                        <Typography variant="h4" sx={{ fontWeight: 800, mb: 2 }}>
+                            {t("getInTouch") || "Get in Touch"}
+                        </Typography>
+                        <Typography variant="body1" sx={{ opacity: 0.9, mb: 4, lineHeight: 1.6 }}>
+                            Have a question or want to book a service? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+                        </Typography>
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <Grid container spacing={3}>
-                    <MotionGrid size={{ xs: 12, md: 6 }} variants={itemVariants}>
-                        <Input
-                            name="firstName"
-                            control={control}
-                            label={t("firstName") || "First Name"}
-                            // placeholder="John"
-                            // startIcon={<Person sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-                            sx={{ bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#FAFAFA" }}
-                        />
-                    </MotionGrid>
-                    <MotionGrid size={{ xs: 12, md: 6 }} variants={itemVariants}>
-                        <Input
-                            name="lastName"
-                            control={control}
-                            label={t("lastName") || "Last Name"}
-                            placeholder="Doe"
-                            // startIcon={<Person sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-                            sx={{ bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#FAFAFA" }}
-                        />
-                    </MotionGrid>
-                    <MotionGrid size={{ xs: 12 }} variants={itemVariants}>
-                        <Input
-                            name="phoneNumber"
-                            control={control}
-                            label={t("phoneNumber") || "Phone Number"}
-                            placeholder="9876543210"
-                            // startIcon={<Phone sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-                            sx={{ bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#FAFAFA" }}
-                        />
-                    </MotionGrid>
-                    <MotionGrid size={{ xs: 12 }} variants={itemVariants}>
-                        <Input
-                            name="message"
-                            control={control}
-                            label={t("message") || "Message"}
-                            placeholder="Type your message here..."
-                            multiline
-                            minRows={4}
-                            // startIcon={<MessageIcon sx={{ color: COLORS.PRIMARY_PURPLE, transform: "translateY(-12px)" }} />}
-                            sx={{ bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#FAFAFA" }}
-                        />
-                    </MotionGrid>
-                    <MotionGrid size={{ xs: 12 }} variants={itemVariants} sx={{ display: "flex", justifyContent: "flex-end" }}>
-                        <Button
-                            type="submit"
-                            isLoading={isSubmitting}
-                            variant="contained"
-                            endIcon={<Send />}
-                            sx={{
-                                px: 5,
-                                py: 1.5,
-                                borderRadius: "12px",
-                                fontSize: "1rem",
-                                boxShadow: `0 8px 20px ${COLORS.PRIMARY_PURPLE}40`,
-                            }}
-                        >
-                            {t("sendMessage") || "Send Message"}
-                        </Button>
-                    </MotionGrid>
+                        <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                            <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <MessageIcon sx={{ fontSize: 20 }} />
+                            </Box>
+                            <Box>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Chat with us</Typography>
+                                <Typography variant="subtitle2" sx={{ opacity: 0.9, fontWeight: 900 }}>@{profile?.email}</Typography>
+                            </Box>
+                        </Box>
+                        <Box sx={{ display: "flex", gap: 2 }}>
+                            <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <Phone sx={{ fontSize: 20 }} />
+                            </Box>
+                            <Box>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Call us</Typography>
+                                <Typography variant="subtitle2" sx={{ opacity: 0.9, fontWeight: 900 }}>+{profile?.phone_number}</Typography>
+                            </Box>
+                        </Box>
+                    </Box>
                 </Grid>
-            </form>
+
+                {/* Right Side - Form */}
+                <Grid size={{ xs: 12, md: 7 }} sx={{ p: { xs: 3, md: 5 } }}>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <Grid container spacing={3}>
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <Input
+                                    name="firstName"
+                                    control={control}
+                                    label={t("firstName") || "First Name"}
+                                    placeholder="John"
+                                    sx={{ bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#f8f9fa" }}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <Input
+                                    name="lastName"
+                                    control={control}
+                                    label={t("lastName") || "Last Name"}
+                                    placeholder="Doe"
+                                    sx={{ bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#f8f9fa" }}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12 }}>
+                                <Input
+                                    name="phoneNumber"
+                                    control={control}
+                                    label={t("phoneNumber") || "Phone Number"}
+                                    placeholder="+91 98765 43210"
+                                    sx={{ bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#f8f9fa" }}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12 }}>
+                                <Input
+                                    name="message"
+                                    control={control}
+                                    label={t("message") || "Message"}
+                                    placeholder="Tell us how we can help..."
+                                    multiline
+                                    minRows={4}
+                                    sx={{ bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#f8f9fa" }}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12 }}>
+                                <Button
+                                    type="submit"
+                                    isLoading={isSubmitting}
+                                    fullWidth
+                                    variant="contained"
+                                    sx={{
+                                        py: 1.5,
+                                        borderRadius: "8px",
+                                        fontWeight: 700,
+                                        fontSize: "1rem",
+                                        textTransform: "none",
+                                        bgcolor: COLORS.PRIMARY_PURPLE,
+                                        boxShadow: "0 4px 14px rgba(94, 24, 233, 0.4)",
+                                        "&:hover": {
+                                            bgcolor: COLORS.PURPLE_HOVER,
+                                            boxShadow: "0 6px 20px rgba(94, 24, 233, 0.6)",
+                                        }
+                                    }}
+                                >
+                                    {t("sendMessage") || "Send Message"}
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </form>
+                </Grid>
+            </Grid>
         </MotionBox>
     );
 };

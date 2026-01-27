@@ -3,10 +3,10 @@
 import React, { useState } from "react";
 import {
   Box,
+  Button,
   Container,
   Avatar,
   Typography,
-  Button,
   IconButton,
   useTheme,
   CircularProgress,
@@ -33,11 +33,15 @@ import {
   Favorite,
   People,
   BusinessCenter,
+  Verified,
 } from "@mui/icons-material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { COLORS } from "@/constants/colors";
-import { useProviderProfileByUsername, useFollowProvider } from "@/hooks/useProviderProfile";
+import {
+  useProviderProfileByUsername,
+  useFollowProvider,
+} from "@/hooks/useProviderProfile";
 import { useTranslate } from "@/hooks/useTranslate";
 import ProfileTabs from "@/components/common/ProfileDrawer/components/ProfileTabs";
 import ServiceCard from "@/components/ServiceCard";
@@ -57,23 +61,34 @@ interface ProviderProfilePageProps {
 const PROFILE_TABS = {
   Posts: "Posts",
   Services: "Services",
-}
+};
 
-const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) => {
+const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
+  username,
+}) => {
   const router = useRouter();
   const theme = useTheme();
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
 
+
   const [activeTab, setActiveTab] = useState(PROFILE_TABS.Services);
-  const [shareMenuAnchor, setShareMenuAnchor] = useState<null | HTMLElement>(null);
+  const [shareMenuAnchor, setShareMenuAnchor] = useState<null | HTMLElement>(
+    null,
+  );
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [isBioExpanded, setIsBioExpanded] = useState(false);
 
-  const { data: profileData, isLoading, error } = useProviderProfileByUsername(username);
+  const {
+    data: profileData,
+    isLoading,
+    error,
+  } = useProviderProfileByUsername(username);
   const profile = profileData?.profile;
   const services = profileData?.services || [];
   const posts = profileData?.posts || [];
+
 
   const followMutation = useFollowProvider(profile?.id || "");
 
@@ -112,7 +127,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
   const handleSocialShare = (platform: string) => {
     const url = encodeURIComponent(getProfileUrl());
     const text = encodeURIComponent(
-      `Check out ${profile?.first_name} ${profile?.last_name}'s profile on Kartsquare!`
+      `Check out ${profile?.first_name} ${profile?.last_name}'s profile on Kartsquare!`,
     );
 
     let shareUrl = "";
@@ -146,7 +161,9 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
   // Transform posts to match the expected format (media_urls as string)
   const transformedPosts: Posts[] = posts.map((post: any) => ({
     ...post,
-    media_urls: Array.isArray(post.media_urls) ? post.media_urls[0] : post.media_urls,
+    media_urls: Array.isArray(post.media_urls)
+      ? post.media_urls[0]
+      : post.media_urls,
   }));
 
   const StatRow = ({ icon, label, value, iconColor }: { icon: React.ReactElement, label: string, value: string | number, iconColor: string }) => (
@@ -192,6 +209,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
           {label}
         </Typography>
       </Box>
+
 
       <Typography
         variant="body1"
@@ -246,7 +264,9 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
         // bgcolor: isDark
         //   ? COLORS.BACKGROUND.PRIMARY_DARK
         //   : "#f5f5f5",
-        backgroundColor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
+        backgroundColor: isDark
+          ? COLORS.BACKGROUND.PRIMARY_DARK
+          : COLORS.BACKGROUND.PRIMARY_LIGHT,
       }}
     >
       {/* Full Width Banner */}
@@ -301,7 +321,10 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
         </Container>
       </Box>
 
-      <Container maxWidth="xl" sx={{ mt: { xs: -8, md: -12 }, position: "relative", zIndex: 1, pb: 4 }}>
+      <Container
+        maxWidth="xl"
+        sx={{ mt: { xs: -8, md: -12 }, position: "relative", zIndex: 1, pb: 4 }}
+      >
         <Grid container spacing={3}>
           {/* Left Sidebar - Profile Details (No Box) */}
           <Grid size={{ xs: 12, md: 4 }}>
@@ -351,6 +374,8 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
                 >
                   {`@${profile?.username || "-"}`}
                 </Typography>
+
+                {/* Bio Section with Truncation */}
                 <Typography
                   variant="body2"
                   color="text.secondary"
@@ -360,7 +385,56 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
                     fontSize: "0.875rem",
                   }}
                 >
-                  {profile.bio || UserRole.SERVICE_PROVIDER}
+                  {(() => {
+                    const bioText = profile.bio || UserRole.SERVICE_PROVIDER;
+                    const words = bioText.split(" ");
+                    const WORD_LIMIT = 10;
+                    const isLongBio = words.length > WORD_LIMIT;
+
+                    if (!isLongBio || isBioExpanded) {
+                      return (
+                        <>
+                          {bioText}
+                          {isLongBio && (
+                            <Typography
+                              component="span"
+                              onClick={() => setIsBioExpanded(false)}
+                              sx={{
+                                color: COLORS.PRIMARY_PURPLE,
+                                cursor: "pointer",
+                                ml: 0.5,
+                                fontWeight: 700,
+                                fontSize: "0.80rem",
+                                "&:hover": { textDecoration: "underline" },
+                              }}
+                            >
+                              Show Less
+                            </Typography>
+                          )}
+                        </>
+                      );
+                    }
+
+                    return (
+                      <>
+                        {words.slice(0, WORD_LIMIT).join(" ")}...
+                        <Typography
+                          component="span"
+                          onClick={() => setIsBioExpanded(true)}
+                          sx={{
+                            color: COLORS.PRIMARY_PURPLE,
+                            cursor: "pointer",
+                            ml: 0.5,
+                            fontWeight: 700,
+                            fontSize: "0.80rem",
+                            "&:hover": { textDecoration: "underline" },
+                          }}
+                        >
+                          Read More
+                        </Typography>
+                      </>
+                    );
+                  })()}
                 </Typography>
 
               </Box>
@@ -521,6 +595,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
                   iconColor={COLORS.PRIMARY_BLUE}
                 />
 
+
                 <StatRow
                   icon={<BusinessCenter />}
                   label={t("services")}
@@ -624,51 +699,53 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
               }}
             >
               <Box sx={{ display: "flex", gap: 4 }}>
-                <Box
-                  onClick={() => handleTabChange("Services")}
-                  sx={{
-                    py: 2,
-                    cursor: "pointer",
-                    position: "relative",
-                    borderBottom: activeTab === "Services" ? `2px solid ${COLORS.PRIMARY_PURPLE}` : "2px solid transparent",
-                    mb: -1,
-                  }}
-                >
-                  <Typography
-                    variant="body1"
+                <Box sx={{ display: "flex", gap: 4 }}>
+                  <Box
+                    onClick={() => handleTabChange("Services")}
                     sx={{
-                      fontWeight: activeTab === "Services" ? 700 : 400,
-                      color: activeTab === "Services" ? theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT : theme.palette.mode === "dark" ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                      fontSize: "0.9375rem",
-                      textTransform: "none",
+                      py: 2,
+                      cursor: "pointer",
+                      position: "relative",
+                      borderBottom: activeTab === "Services" ? `2px solid ${COLORS.PRIMARY_PURPLE}` : "2px solid transparent",
+                      mb: -1,
                     }}
                   >
-                    {t("services")}
-                  </Typography>
-                </Box>
-                <Box
-                  onClick={() => handleTabChange(PROFILE_TABS.Posts)}
-                  sx={{
-                    py: 2,
-                    cursor: "pointer",
-                    position: "relative",
-                    borderBottom: activeTab === PROFILE_TABS.Posts ? `2px solid ${COLORS.PRIMARY_PURPLE}` : "2px solid transparent",
-                    mb: -1,
-                  }}
-                >
-                  <Typography
-                    variant="body1"
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontWeight: activeTab === "Services" ? 700 : 400,
+                        color: activeTab === "Services" ? theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT : theme.palette.mode === "dark" ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                        fontSize: "1.5rem",
+                        textTransform: "none",
+                      }}
+                    >
+                      {t("services")}
+                    </Typography>
+                  </Box>
+                  <Box
+                    onClick={() => handleTabChange(PROFILE_TABS.Posts)}
                     sx={{
-                      fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 400,
-                      color: activeTab === "Posts" ? theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT : theme.palette.mode === "dark" ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                      fontSize: "0.9375rem",
-                      textTransform: "none",
+                      py: 2,
+                      cursor: "pointer",
+                      position: "relative",
+                      borderBottom: activeTab === PROFILE_TABS.Posts ? `2px solid ${COLORS.PRIMARY_PURPLE}` : "2px solid transparent",
+                      mb: -1,
                     }}
                   >
-                    {t("posts")}
-                  </Typography>
-                </Box>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 400,
+                        color: activeTab === "Posts" ? theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT : theme.palette.mode === "dark" ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                        fontSize: "1.5rem",
+                        textTransform: "none",
+                      }}
+                    >
+                      {t("posts")}
+                    </Typography>
+                  </Box>
 
+                </Box>
               </Box>
             </Box>
 
@@ -739,12 +816,31 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
             {/* Contact Us & Map Section */}
             <Box sx={{ mt: 8, display: "flex", flexDirection: "column", gap: 6 }}>
               {/* Map Section */}
+              {/* Map Section */}
               <Box>
-                <Box sx={{ mb: 3 }}>
-                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5, color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }}>
-                    {profile.first_name || "Provider"}&apos;s Location
-                  </Typography>
-                  <Typography variant="body1" sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT }}>
+                <Box sx={{ mb: 4, textAlign: "center" }}>
+                  <Box sx={{ display: "inline-block", position: "relative", mb: 1 }}>
+                    <Typography variant="h4" sx={{
+                      fontWeight: 800,
+                      color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                      position: "relative",
+                      pb: 1.5,
+                      "&::after": {
+                        content: '""',
+                        position: "absolute",
+                        bottom: 0,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        width: "60px",
+                        height: "4px",
+                        bgcolor: COLORS.PRIMARY_PURPLE,
+                        borderRadius: "4px"
+                      }
+                    }}>
+                      {"Location"}
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1" sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT, mt: 1 }}>
                     Explore where we are located and plan your visit.
                   </Typography>
                 </Box>
@@ -758,15 +854,33 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
 
               {/* Contact Section */}
               <Box>
-                <Box sx={{ mb: 3 }}>
-                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5, color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }}>
-                    Contact {profile.first_name} {profile.last_name}
-                  </Typography>
-                  <Typography variant="body1" sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT }}>
+                <Box sx={{ mb: 4, textAlign: "center" }}>
+                  <Box sx={{ display: "inline-block", position: "relative", mb: 1 }}>
+                    <Typography variant="h4" sx={{
+                      fontWeight: 800,
+                      color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                      position: "relative",
+                      pb: 1.5,
+                      "&::after": {
+                        content: '""',
+                        position: "absolute",
+                        bottom: 0,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        width: "60px",
+                        height: "4px",
+                        bgcolor: COLORS.PRIMARY_PURPLE,
+                        borderRadius: "4px"
+                      }
+                    }}>
+                      {t("contactUs") || "Contact Us"}
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1" sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT, mt: 1 }}>
                     Ready to get started? Send us a message directly.
                   </Typography>
                 </Box>
-                <ContactUsSection />
+                <ContactUsSection profile={profile} />
               </Box>
             </Box>
           </Grid>
@@ -780,7 +894,9 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
         onClose={handleShareClose}
         PaperProps={{
           sx: {
-            bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
+            bgcolor: isDark
+              ? COLORS.BACKGROUND.PRIMARY_DARK
+              : COLORS.BACKGROUND.PRIMARY_LIGHT,
             minWidth: 220,
             mt: 1,
             borderRadius: 2,

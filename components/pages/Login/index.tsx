@@ -2,6 +2,7 @@
 
 import LoginForm from "./components/LoginForm";
 import { useRouter, useSearchParams } from "next/navigation";
+import NextLink from "next/link";
 import AuthCarouselWrapper, {
   CarouselItem,
 } from "@/components/auth/authCarouselWrapper";
@@ -12,6 +13,7 @@ import { handleRegistrationStepNavigation } from "@/helper/registrationNavigatio
 import { useAppDispatch } from "@/store/hooks";
 import { loginUser } from "@/features/ui/authSlice";
 import { useTranslate } from "@/hooks/useTranslate";
+import { Box, Link } from "@mui/material";
 
 export default function LoginView() {
   const router = useRouter();
@@ -93,6 +95,32 @@ export default function LoginView() {
       showBackButton={true}
       backButtonAction={handleBack}
     >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: 1,
+          mb: { xs: 2, sm: 3 },
+          mt: { xs: 6, lg: 8 },
+        }}
+      >
+        <Link
+          component={NextLink}
+          href="/"
+          style={{
+            textDecoration: "none",
+            color: "inherit",
+            fontWeight: 700,
+            borderBottom: "1px solid",
+          }}
+          sx={{
+            fontSize: { xs: "0.875rem", sm: "1rem" },
+          }}
+        >
+          {t("skip")}
+        </Link>
+      </Box>
       <LoginForm
         role={role || ""}
         onSubmit={OnSubmit}

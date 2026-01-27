@@ -29,6 +29,7 @@ export interface profileInterface {
   created_at: string;
   followers_count: number;
   following_count: number;
+  banner_image?: string;
 }
 
 interface pagination {

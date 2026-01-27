@@ -79,15 +79,15 @@ const ProviderMapSection: React.FC<ProviderMapSectionProps> = ({
             viewport={{ once: true, margin: "-100px" }}
             variants={containerVariants}
             sx={{
-                height: 400,
+                height: 450,
                 width: "100%",
                 borderRadius: 4,
                 overflow: "hidden",
                 position: "relative",
                 boxShadow: isDark
                     ? "0 10px 40px rgba(0,0,0,0.4)"
-                    : "0 10px 40px rgba(0,0,0,0.08)",
-                border: `4px solid ${COLORS.WHITE}`,
+                    : "0 20px 40px rgba(0,0,0,0.08)",
+                border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)"}`,
             }}
         >
             {!isLoaded || loadError ? (
