@@ -386,7 +386,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   }}
                 >
                   {(() => {
-                    const bioText = profile.bio || UserRole.SERVICE_PROVIDER;
+                    const bioText = profile.bio || "Service Provider";
                     const words = bioText.split(" ");
                     const WORD_LIMIT = 10;
                     const isLongBio = words.length > WORD_LIMIT;
