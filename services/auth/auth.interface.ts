@@ -55,6 +55,8 @@ export interface RegisterData {
   country: string;
   role: AppUserType;
   birth_date: string;
+  whatsapp_number?: string;
+  whatsapp_country_code?: string;
 }
 export interface preferences {
   icon: string;

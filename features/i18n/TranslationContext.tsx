@@ -63,6 +63,8 @@ export type TranslationKey =
   | "email_address"
   | "password"
   | "phone_number"
+  | "whatsapp_number"
+  | "same_as_phone"
   | "country"
   | "birth_date"
   | "gender"
@@ -71,6 +73,8 @@ export type TranslationKey =
   | "female"
   | "other"
   | "prefer_not_to_say"
+  | "select"
+  | "prefer"
   | "signup"
   | "skip"
   | "forgetPassword"
@@ -677,7 +681,12 @@ export type TranslationKey =
   | "no_upcoming_bookings"
   | "no_upcoming_bookings_desc"
   | "goBack"
-  | "no_reviews_yet_desc";
+  | "no_reviews_yet_desc"
+  | "roleRequired"
+  | "whatsappNumberRequired"
+  | "whatsappNumberLength"
+  | "whatsappNumberInvalid"
+  | "whatsappCountryCodeRequired";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

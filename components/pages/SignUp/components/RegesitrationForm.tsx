@@ -1,6 +1,14 @@
 "use client";
 import React, { useState, useRef } from "react";
-import { Grid, MenuItem, InputAdornment, Typography, Box } from "@mui/material";
+import {
+  Grid,
+  MenuItem,
+  InputAdornment,
+  Typography,
+  Box,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SignUpSchema, SignUpFormData } from "../signUpSchema";
@@ -24,14 +32,17 @@ import GoogleIcon from "@mui/icons-material/Google";
 interface RegistrationFormProps {
   onSubmit: (data: SignUpFormData) => void;
   loading: boolean;
+  role: AppUserType;
 }
 
 const RegistrationForm: React.FC<RegistrationFormProps> = ({
   onSubmit,
   loading,
+  role,
 }) => {
   const { t } = useTranslate();
   const [showPassword, setShowPassword] = useState(false);
+  const [isSameAsPhone, setIsSameAsPhone] = useState(false);
   const birthDateRef = useRef<HTMLInputElement>(null);
 
   // Calculate max date (13 years ago)
@@ -48,9 +59,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
     control,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<SignUpFormData>({
-    resolver: yupResolver(SignUpSchema(t)),
+    resolver: yupResolver(SignUpSchema(t, role)),
     defaultValues: {
       first_name: "",
       last_name: "",
@@ -60,14 +72,35 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       gender: undefined,
       country: "India",
       birth_date: maxDate,
+      role: role,
+      whatsapp_number: "",
+      whatsapp_country_code: "+91",
     },
   });
 
   const selectedCountryCode = watch("country_code");
   const gender = watch("gender");
+  const phoneNumber = watch("phone_number");
   const selectedCountry = countries.find(
     (c) => c.phone_code === selectedCountryCode,
   );
+
+  React.useEffect(() => {
+    if (isSameAsPhone) {
+      setValue("whatsapp_number", phoneNumber);
+    }
+  }, [isSameAsPhone, phoneNumber, setValue]);
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsSameAsPhone(event.target.checked);
+    if (event.target.checked) {
+      setValue("whatsapp_number", phoneNumber);
+    } else {
+      setValue("whatsapp_number", "");
+    }
+  };
+
+  const isServiceProvider = role === AppUserType.SERVICE_PROVIDER;
 
   return (
     <Box
@@ -136,6 +169,39 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             startIcon={<EmailIcon />}
           />
         </Grid>
+        {/* Password */}
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              mb: 1,
+              fontWeight: 500,
+              fontSize: { lg: "0.875rem", xl: "1rem" },
+            }}
+          >
+            {t("password")}*
+          </Typography>
+          <Input
+            name="password"
+            control={control}
+            type={showPassword ? "text" : "password"}
+            placeholder="********"
+            startIcon={<LockIcon />}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
 
         {/* Phone Number */}
         <Grid size={{ xs: 12, sm: 6 }}>
@@ -191,77 +257,91 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           </Box>
         </Grid>
 
-        {/* Password */}
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography
-            variant="body2"
-            sx={{
-              mb: 1,
-              fontWeight: 500,
-              fontSize: { lg: "0.875rem", xl: "1rem" },
-            }}
-          >
-            {t("password")}*
-          </Typography>
-          <Input
-            name="password"
-            control={control}
-            type={showPassword ? "text" : "password"}
-            placeholder="********"
-            startIcon={<LockIcon />}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-
-        {/* Country */}
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography
-            variant="body2"
-            sx={{
-              mb: 1,
-              fontWeight: 500,
-              fontSize: { lg: "0.875rem", xl: "1rem" },
-            }}
-          >
-            {t("country")}*
-          </Typography>
-          <Input
-            name="country"
-            control={control}
-            select
-            placeholder="Select Country"
-            SelectProps={{
-              renderValue: (selected: any) => {
-                const country = countries.find((c) => c.name === selected);
-                return (
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <span style={{ marginRight: 8 }}>{country?.flag}</span>
-                    {selected}
-                  </Box>
-                );
-              },
-            }}
-          >
-            {countries.map((option) => (
-              <MenuItem key={option.code} value={option.name}>
-                <span style={{ marginRight: 8 }}>{option.flag}</span>{" "}
-                {option.name}
-              </MenuItem>
-            ))}
-          </Input>
-        </Grid>
+        {/* WhatsApp Number (Service Provider Only) */}
+        {isServiceProvider && (
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 1,
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: 500,
+                  fontSize: { lg: "0.875rem", xl: "1rem" },
+                }}
+              >
+                {t("whatsapp_number")}*
+              </Typography>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isSameAsPhone}
+                    onChange={handleCheckboxChange}
+                    size="small"
+                    sx={{
+                      padding: 0,
+                      mr: 1,
+                    }}
+                  />
+                }
+                label={
+                  <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
+                    {t("same_as_phone")}
+                  </Typography>
+                }
+                sx={{ margin: 0 }}
+              />
+            </Box>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Box
+                sx={{
+                  width: { sm: "60px", lg: "75px", md: "85px" },
+                }}
+              >
+                <Input
+                  name="whatsapp_country_code"
+                  control={control}
+                  select
+                  InputProps={{
+                    readOnly: isSameAsPhone,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        {selectedCountry?.flag}
+                      </InputAdornment>
+                    ),
+                  }}
+                >
+                  {countries.map((option) => (
+                    <MenuItem key={option.code} value={option.phone_code}>
+                      {option.phone_code}
+                    </MenuItem>
+                  ))}
+                </Input>
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <Input
+                  name="whatsapp_number"
+                  control={control}
+                  placeholder="621 121221"
+                  type="tel"
+                  InputProps={{
+                    readOnly: isSameAsPhone,
+                  }}
+                  inputProps={{
+                    maxLength: 10,
+                    inputMode: "numeric",
+                    pattern: "[0-9]*",
+                  }}
+                />
+              </Box>
+            </Box>
+          </Grid>
+        )}
 
         {/* Birth Date */}
         <Grid size={{ xs: 12, sm: 6 }}>
@@ -292,51 +372,199 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           />
         </Grid>
 
-        {/* Gender */}
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography
-            variant="body2"
-            sx={{
-              mb: 1,
-              fontWeight: 500,
-              fontSize: { lg: "0.875rem", xl: "1rem" },
-            }}
-          >
-            {t("gender")}
-          </Typography>
-          <Input
-            name="gender"
-            control={control}
-            select
-            SelectProps={{
-              displayEmpty: true,
-              renderValue: (selected: any) => {
-                if (!selected) {
-                  return (
-                    <Typography color="textSecondary">
-                      {t("select_gender")}*
-                    </Typography>
-                  );
-                }
-                const genderOptions: Record<string, string> = {
-                  MALE: t("male"),
-                  FEMALE: t("female"),
-                  OTHER: t("other"),
-                  PREFER_NOT_TO_SAY: t("prefer_not_to_say"),
-                };
-                return genderOptions[selected] || selected;
-              },
-            }}
-            startIcon={gender === "MALE" ? <MaleIcon /> : <FemaleIcon />}
-          >
-            <MenuItem value="MALE">{t("male")}</MenuItem>
-            <MenuItem value="FEMALE">{t("female")}</MenuItem>
-            <MenuItem value="OTHER">{t("other")}</MenuItem>
-            <MenuItem value="PREFER_NOT_TO_SAY">
-              {t("prefer_not_to_say")}
-            </MenuItem>
-          </Input>
-        </Grid>
+        {!isServiceProvider && (
+          <>
+            {/* Country */}
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  mb: 1,
+                  fontWeight: 500,
+                  fontSize: { lg: "0.875rem", xl: "1rem" },
+                }}
+              >
+                {t("country")}*
+              </Typography>
+              <Input
+                name="country"
+                control={control}
+                select
+                placeholder="Select Country"
+                SelectProps={{
+                  renderValue: (selected: any) => {
+                    const country = countries.find((c) => c.name === selected);
+                    return (
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <span style={{ marginRight: 8 }}>{country?.flag}</span>
+                        {selected}
+                      </Box>
+                    );
+                  },
+                }}
+              >
+                {countries.map((option) => (
+                  <MenuItem key={option.code} value={option.name}>
+                    <span style={{ marginRight: 8 }}>{option.flag}</span>{" "}
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </Input>
+            </Grid>
+            {/* Gender */}
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  mb: 1,
+                  fontWeight: 500,
+                  fontSize: { lg: "0.875rem", xl: "1rem" },
+                }}
+              >
+                {t("gender")}
+              </Typography>
+              <Input
+                name="gender"
+                control={control}
+                select
+                SelectProps={{
+                  displayEmpty: true,
+                  renderValue: (selected: any) => {
+                    if (!selected) {
+                      return (
+                        <Typography color="textSecondary">
+                          {t("select_gender")}*
+                        </Typography>
+                      );
+                    }
+                    const genderOptions: Record<string, string> = {
+                      MALE: t("male"),
+                      FEMALE: t("female"),
+                      OTHER: t("other"),
+                      PREFER_NOT_TO_SAY: t("prefer_not_to_say"),
+                    };
+                    return genderOptions[selected] || selected;
+                  },
+                }}
+                startIcon={gender === "MALE" ? <MaleIcon /> : <FemaleIcon />}
+              >
+                <MenuItem value="MALE">{t("male")}</MenuItem>
+                <MenuItem value="FEMALE">{t("female")}</MenuItem>
+                <MenuItem value="OTHER">{t("other")}</MenuItem>
+                <MenuItem value="PREFER_NOT_TO_SAY">
+                  {t("prefer_not_to_say")}
+                </MenuItem>
+              </Input>
+            </Grid>
+          </>
+        )}
+
+        {isServiceProvider && (
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid container spacing={1}>
+              {/* Country */}
+              <Grid size={{ xs: 6 }}>
+                <Typography
+                  variant="body2"
+                  noWrap
+                  sx={{
+                    mb: 1,
+                    fontWeight: 500,
+                    fontSize: { lg: "0.875rem", xl: "1rem" },
+                  }}
+                >
+                  {t("country")}*
+                </Typography>
+                <Input
+                  name="country"
+                  control={control}
+                  select
+                  placeholder="Select"
+                  SelectProps={{
+                    renderValue: (selected: any) => {
+                      const country = countries.find(
+                        (c) => c.name === selected,
+                      );
+                      return (
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <span style={{ marginRight: 8 }}>
+                            {country?.flag}
+                          </span>
+                          <Box
+                            component="span"
+                            sx={{
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {selected}
+                          </Box>
+                        </Box>
+                      );
+                    },
+                  }}
+                >
+                  {countries.map((option) => (
+                    <MenuItem key={option.code} value={option.name}>
+                      <span style={{ marginRight: 8 }}>{option.flag}</span>{" "}
+                      {option.name}
+                    </MenuItem>
+                  ))}
+                </Input>
+              </Grid>
+              {/* Gender */}
+              <Grid size={{ xs: 6 }}>
+                <Typography
+                  variant="body2"
+                  noWrap
+                  sx={{
+                    mb: 1,
+                    fontWeight: 500,
+                    fontSize: { lg: "0.875rem", xl: "1rem" },
+                  }}
+                >
+                  {t("gender")}
+                </Typography>
+                <Input
+                  name="gender"
+                  control={control}
+                  select
+                  SelectProps={{
+                    displayEmpty: true,
+                    renderValue: (selected: any) => {
+                      if (!selected) {
+                        return (
+                          <Typography
+                            color="textSecondary"
+                            sx={{ fontSize: "0.8rem" }}
+                          >
+                            {t("select")}*
+                          </Typography>
+                        );
+                      }
+                      const genderOptions: Record<string, string> = {
+                        MALE: t("male"),
+                        FEMALE: t("female"),
+                        OTHER: t("other"),
+                        PREFER_NOT_TO_SAY: t("prefer"),
+                      };
+                      return genderOptions[selected] || selected;
+                    },
+                  }}
+                  startIcon={gender === "MALE" ? <MaleIcon /> : <FemaleIcon />}
+                >
+                  <MenuItem value="MALE">{t("male")}</MenuItem>
+                  <MenuItem value="FEMALE">{t("female")}</MenuItem>
+                  <MenuItem value="OTHER">{t("other")}</MenuItem>
+                  <MenuItem value="PREFER_NOT_TO_SAY">
+                    {t("prefer_not_to_say")}
+                  </MenuItem>
+                </Input>
+              </Grid>
+            </Grid>
+          </Grid>
+        )}
       </Grid>
       <Typography
         variant="body1"
@@ -378,22 +606,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         >
           {t("signup")}
         </Button>
-        {/* <Button
-          variant="contained"
-          startIcon={<GoogleIcon />}
-          sx={{
-            bgcolor: COLORS.DARK,
-            color: COLORS.WHITE,
-            textTransform: "none",
-            borderRadius: "50px",
-            "&:hover": {
-              bgcolor: COLORS.DARK,
-              opacity: 0.9,
-            },
-          }}
-        >
-          {t("continue_with_google")}
-        </Button> */}
       </Box>
     </Box>
   );
