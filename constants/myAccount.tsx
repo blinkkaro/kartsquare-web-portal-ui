@@ -15,6 +15,7 @@ import ListIcon from "@mui/icons-material/List";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import SecurityIcon from "@mui/icons-material/Security";
 import DescriptionIcon from "@mui/icons-material/Description";
+import BusinessIcon from "@mui/icons-material/Business";
 
 export interface myAccountNavInterface {
   label: string;
@@ -41,6 +42,11 @@ export const myAccountNav = (
         label: t("personalInfo"),
         href: "myAccount/personal-info",
         icon: <PersonIcon />,
+      },
+      {
+        label: t("businessInfo"),
+        href: "myAccount/myBusinessInfo",
+        icon: <BusinessIcon />,
       },
       {
         label: t("saved"),

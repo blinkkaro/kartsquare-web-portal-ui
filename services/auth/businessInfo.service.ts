@@ -3,6 +3,7 @@ import { API_ENDPOINTS } from "./apiEndPoint";
 import { verifyDocumentService } from "./verifyDocument.service";
 import { POST, GET, PUT } from "../api";
 import { itIT } from "@mui/x-date-pickers/locales";
+import { IBusinessInfo } from "./auth.interface";
 
 class BusinessInfoService {
   async addBusinessInfo(data: BusinessInfoFormData) {
@@ -32,10 +33,10 @@ class BusinessInfoService {
       throw new Error(errorMessage);
     }
   }
-  async getBusinessInfo() {
+  async getBusinessInfo():Promise<IBusinessInfo> {
     try {
-      const response = await GET(API_ENDPOINTS.GET_BUSINESS_INFO);
-      return response;
+      const response = await GET<IBusinessInfo>(API_ENDPOINTS.GET_BUSINESS_INFO);
+      return response.data;
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message ||

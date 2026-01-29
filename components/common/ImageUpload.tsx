@@ -13,8 +13,8 @@ import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 
 interface ImageUploadProps {
-  images: File[];
-  onChange: (files: File[]) => void;
+  images: (File | string)[];
+  onChange: (files: (File | string)[]) => void;
   maxImages?: number;
   error?: boolean;
   helperText?: string;
@@ -37,13 +37,23 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const [internalError, setInternalError] = useState<string>("");
 
   useEffect(() => {
-    // Generate previews for existing files
-    const newPreviews = images.map((file) => URL.createObjectURL(file));
+    // Generate previews for existing files and strings
+    const newPreviews = images.map((file) => {
+      if (typeof file === "string") {
+        return file;
+      }
+      return URL.createObjectURL(file);
+    });
     setImagePreviews(newPreviews);
 
     // Cleanup function
     return () => {
-      newPreviews.forEach((preview) => URL.revokeObjectURL(preview));
+      newPreviews.forEach((preview) => {
+        // Only revoke blob URLs, not remote URLs
+        if (preview.startsWith("blob:")) {
+          URL.revokeObjectURL(preview);
+        }
+      });
     };
   }, [images]);
 
@@ -208,12 +218,13 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         >
           {imagePreviews.map((preview, index) => (
             <Box
-              key={preview} // Using preview URL as key. If duplicate files, might be issue but URL.createObjectURL returns unique per call usually? No, for same file blob it might differ.
+              key={preview} // Using preview URL as key.
               sx={{
                 position: "relative",
                 paddingTop: "100%",
                 borderRadius: 1,
                 overflow: "hidden",
+                border: isDark ? "1px solid #333" : "1px solid #eee",
               }}
             >
               <Box

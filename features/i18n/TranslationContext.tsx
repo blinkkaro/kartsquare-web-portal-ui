@@ -704,6 +704,8 @@ export type TranslationKey =
   | "enterBusinessDescription"
   | "enterBusinessAddress"
   | "enterBusinessImages"
+  | "description"
+  | "editBusinessInfo"
   | "changeAddress"
   | "select_address";
 

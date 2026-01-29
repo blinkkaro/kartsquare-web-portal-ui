@@ -96,7 +96,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
   });
 
   const selectedAddressId = watch("address_id");
-  const businessImages = watch("business_images") as File[];
+  const businessImages = watch("business_images") as (File | string)[];
 
   const selectedAddress = addresses?.find(
     (addr: Address) => addr.id === selectedAddressId,
@@ -112,7 +112,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
         .slice(0, 1)
     : [];
 
-  const handleImageChange = (files: File[]) => {
+  const handleImageChange = (files: (File | string)[]) => {
     setValue("business_images", files, { shouldValidate: true });
   };
 

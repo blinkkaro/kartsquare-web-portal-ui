@@ -959,4 +959,6 @@ export const english = {
   enterBusinessAddress: "Enter Business Address",
   enterBusinessImages: "Enter Business Images",
   changeAddress: "Change Address",
+  description: "Description",
+  editBusinessInfo: "Edit Business Info",
 };
