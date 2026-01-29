@@ -117,6 +117,10 @@ const Nav = () => {
     setShowNotificationDrawer((prev) => !prev);
   };
 
+  const handleFreeListingClick = () => {
+    router.push("/freeListing");
+  };
+
   return (
     <>
       <StyledAppBar position="fixed" elevation={0}>
@@ -153,6 +157,7 @@ const Nav = () => {
               onLogin={handleLogin}
               loginText={t("login")}
               onNotificationToggle={toggleNotificationDrawer}
+              onFreeListingClick={handleFreeListingClick}
             />
           </Box>
 

@@ -677,7 +677,9 @@ export type TranslationKey =
   | "no_upcoming_bookings"
   | "no_upcoming_bookings_desc"
   | "goBack"
-  | "no_reviews_yet_desc";
+  | "no_reviews_yet_desc"
+  | "businessListing"
+  | "business";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
