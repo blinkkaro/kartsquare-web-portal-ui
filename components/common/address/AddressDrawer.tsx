@@ -100,7 +100,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
       open={open}
       onClose={onClose}
       title={mode === "add" ? t("addNewAddress") : t("editAddress")}
-      width={800}
+      width={600}
     >
       <Box sx={{ px: 3, pb: 3 }}>
         <ErrorMessage

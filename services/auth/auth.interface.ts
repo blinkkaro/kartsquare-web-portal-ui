@@ -84,3 +84,10 @@ export interface IWorkingHour {
   end_time: string;
   is_active: boolean;
 }
+
+export interface IBusinessInfo {
+  business_name: string;
+  description: string;
+  business_images: File[] | string[];
+  address_id: string;
+}

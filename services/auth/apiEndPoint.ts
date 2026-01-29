@@ -30,4 +30,7 @@ export const API_ENDPOINTS = {
   ADD_BULK_WORKING_HOURS: "/sp_schedule/providers/working-hours/bulk",
   UPDATE_PREFERENCES: "/auth/update-preferences",
   GET_USER_PREFERENCES: "/auth/get-user-preferences",
+  ADD_BUSINESS_INFO: "/auth/add-business-info",
+  GET_BUSINESS_INFO: "/auth/get-business-info",
+  UPDATE_BUSINESS_INFO: "/auth/update-business-info",
 };

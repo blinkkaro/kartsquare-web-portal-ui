@@ -1,16 +1,18 @@
 export enum UserRegisterSteps {
   REGISTERED = 1,
   EMAIL_VERIFIED = 2,
-  DOCUMENT_VERIFIED = 3,
-  SCHEDULE_ADDED = 4,
-  PREFERENCES_ADDED = 5,
-  COMPLETED = 6,
+  BUSINESS_INFO = 3,
+  DOCUMENT_VERIFIED = 4,
+  SCHEDULE_ADDED = 5,
+  PREFERENCES_ADDED = 6,
+  COMPLETED = 7,
 }
 
 import { AppUserType } from "@/services/auth/auth.interface";
 
 export type RegistrationStackParamList = {
   VerifyEmail: undefined;
+  BusinessInfo: undefined;
   UploadDocuments: undefined;
   ScheduleScreen: undefined;
   SetPreferences: undefined;
@@ -28,7 +30,8 @@ export const registrationStepMap: Record<AppUserType, UserFlowMap> = {
   },
   SERVICE_PROVIDER: {
     [UserRegisterSteps.REGISTERED]: "VerifyEmail",
-    [UserRegisterSteps.EMAIL_VERIFIED]: "UploadDocuments",
+    [UserRegisterSteps.EMAIL_VERIFIED]: "BusinessInfo",
+    [UserRegisterSteps.BUSINESS_INFO]: "UploadDocuments",
     [UserRegisterSteps.DOCUMENT_VERIFIED]: "ScheduleScreen",
     [UserRegisterSteps.SCHEDULE_ADDED]: "SetPreferences",
   },
@@ -49,12 +52,13 @@ export const registrationStepMap: Record<AppUserType, UserFlowMap> = {
  * Maps registration screen names to their corresponding route paths
  */
 export const getPathForScreen = (
-  screen: keyof RegistrationStackParamList | undefined
+  screen: keyof RegistrationStackParamList | undefined,
 ): string => {
   if (!screen) return "/";
 
   const screenToPathMap: Record<keyof RegistrationStackParamList, string> = {
     VerifyEmail: "/emailVerfication",
+    BusinessInfo: "/businessInfo",
     UploadDocuments: "/verifyDocuments",
     ScheduleScreen: "/schedule",
     SetPreferences: "/preferences",
