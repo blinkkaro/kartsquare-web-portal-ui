@@ -10,9 +10,9 @@ import { COLORS } from "@/constants/colors";
 
 interface AddressCardProps {
   address: Address;
-  onEdit: (address: Address) => void;
-  onDelete: (id: string) => void;
-  onSetDefault: (id: string) => void;
+  onEdit?: (address: Address) => void;
+  onDelete?: (id: string) => void;
+  onSetDefault?: (id: string) => void;
 }
 
 const AddressCard: React.FC<AddressCardProps> = ({
@@ -68,11 +68,12 @@ const AddressCard: React.FC<AddressCardProps> = ({
           {address.address_name}
         </Typography>
         <Box sx={{ display: "flex", gap: 0.5 }}>
-          <IconButton
-            size="small"
-            onClick={() => onEdit(address)}
-            sx={{
-              color: (theme) => theme.palette.text.secondary,
+          {onEdit && (
+            <IconButton
+              size="small"
+              onClick={() => onEdit(address)}
+              sx={{
+                color: (theme) => theme.palette.text.secondary,
               "&:hover": {
                 backgroundColor: COLORS.PURPLE_ALPHA_04,
               },
@@ -80,18 +81,21 @@ const AddressCard: React.FC<AddressCardProps> = ({
           >
             <EditIcon fontSize="small" />
           </IconButton>
-          <IconButton
-            size="small"
-            onClick={() => onDelete(address.id)}
-            sx={{
-              color: "#FF5252",
-              "&:hover": {
+          )}
+          {onDelete && (
+            <IconButton
+              size="small"
+              onClick={() => onDelete(address.id)}
+              sx={{
+                color: "#FF5252",
+                "&:hover": {
                 backgroundColor: "rgba(255, 82, 82, 0.1)",
               },
             }}
           >
             <DeleteIcon fontSize="small" />
           </IconButton>
+          )}
         </Box>
       </Box>
 
@@ -130,6 +134,7 @@ const AddressCard: React.FC<AddressCardProps> = ({
           </Typography>
         </Box>
       ) : (
+        onSetDefault && (
         <Button
           variant="outlined"
           size="small"
@@ -144,6 +149,7 @@ const AddressCard: React.FC<AddressCardProps> = ({
         >
           {t("setAsDefault")}
         </Button>
+        )
       )}
     </Box>
   );

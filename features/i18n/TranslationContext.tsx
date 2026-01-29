@@ -63,6 +63,8 @@ export type TranslationKey =
   | "email_address"
   | "password"
   | "phone_number"
+  | "whatsapp_number"
+  | "same_as_phone"
   | "country"
   | "birth_date"
   | "gender"
@@ -71,6 +73,8 @@ export type TranslationKey =
   | "female"
   | "other"
   | "prefer_not_to_say"
+  | "select"
+  | "prefer"
   | "signup"
   | "skip"
   | "forgetPassword"
@@ -654,7 +658,6 @@ export type TranslationKey =
   | "phoneMin"
   | "auth_required_title"
   | "auth_required_description"
-  
   | "getInTouch"
   | "viewProfile"
   | "shareProfile"
@@ -679,7 +682,34 @@ export type TranslationKey =
   | "goBack"
   | "no_reviews_yet_desc"
   | "businessListing"
-  | "business";
+  | "business"
+  | "roleRequired"
+  | "whatsappNumberRequired"
+  | "whatsappNumberLength"
+  | "whatsappNumberInvalid"
+  | "whatsappCountryCodeRequired"
+  | "businessInfo"
+  | "businessInfoSubtitle"
+  | "businessNameRequired"
+  | "businessDescriptionRequired"
+  | "businessAddressRequired"
+  | "businessImagesRequired"
+  | "businessImagesMin"
+  | "businessImagesMax"
+  | "maxImages"
+  | "maxImagesReachedAllowed"
+  | "businessName"
+  | "businessDescription"
+  | "businessAddress"
+  | "businessImages"
+  | "enterBusinessName"
+  | "enterBusinessDescription"
+  | "enterBusinessAddress"
+  | "enterBusinessImages"
+  | "description"
+  | "editBusinessInfo"
+  | "changeAddress"
+  | "select_address";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
@@ -738,7 +768,7 @@ const dictionaries: Record<"en", Record<TranslationKey, string>> = {
 interface TranslationContextType {
   locale: "en";
   setLocale: (locale: "en") => void;
-  t: (key: TranslationKey) => string;
+  t: (key: TranslationKey, params?: Record<string, string | number>) => string;
 }
 
 const TranslationContext = createContext<TranslationContextType | undefined>(
@@ -748,8 +778,17 @@ const TranslationContext = createContext<TranslationContextType | undefined>(
 export function TranslationProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<"en">("en");
 
-  const t = (key: TranslationKey): string => {
-    return dictionaries[locale][key] || key;
+  const t = (
+    key: TranslationKey,
+    params?: Record<string, string | number>,
+  ): string => {
+    let text = dictionaries[locale][key] || key;
+    if (params) {
+      Object.entries(params).forEach(([paramKey, value]) => {
+        text = text.replace(`{${paramKey}}`, String(value));
+      });
+    }
+    return text;
   };
 
   return (
