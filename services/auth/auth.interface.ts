@@ -55,6 +55,8 @@ export interface RegisterData {
   country: string;
   role: AppUserType;
   birth_date: string;
+  whatsapp_number?: string;
+  whatsapp_country_code?: string;
 }
 export interface preferences {
   icon: string;
@@ -81,4 +83,11 @@ export interface IWorkingHour {
   start_time: string;
   end_time: string;
   is_active: boolean;
+}
+
+export interface IBusinessInfo {
+  business_name: string;
+  description: string;
+  business_images: File[] | string[];
+  address_id: string;
 }

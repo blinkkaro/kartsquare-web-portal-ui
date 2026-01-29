@@ -19,7 +19,12 @@ function SignUpView() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const role = searchParams.get("role");
+  const roleParam = searchParams.get("role")?.toUpperCase();
+  const role: AppUserType = Object.values(AppUserType).includes(
+    roleParam as AppUserType,
+  )
+    ? (roleParam as AppUserType)
+    : AppUserType.CUSTOMER;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
@@ -27,9 +32,23 @@ function SignUpView() {
     try {
       setLoading(true);
       setError("");
-      const Role = role!.toString().toUpperCase();
 
-      await dispatch(registerUser({ ...data, role: Role as AppUserType })).unwrap();
+      const registerData = {
+        first_name: data.first_name,
+        last_name: data.last_name,
+        email: data.email,
+        phone_number: data.phone_number,
+        country_code: data.country_code,
+        password: data.password,
+        gender: data.gender,
+        country: data.country,
+        role: role,
+        birth_date: data.birth_date,
+        whatsapp_number: data.whatsapp_number || "",
+        whatsapp_country_code: data.whatsapp_country_code || "",
+      };
+
+      await dispatch(registerUser(registerData)).unwrap();
       // Redirect to email verification immediately after successful signup
       router.replace("/emailVerfication");
     } catch (error: any) {
@@ -68,7 +87,7 @@ function SignUpView() {
       </Box>
       <Title title={t("signUp")} subtitle={t("signUpSubtitle")} />
       <Error isVisible={!!error} error={error} />
-      <RegistrationForm onSubmit={OnSubmit} loading={loading} />
+      <RegistrationForm onSubmit={OnSubmit} loading={loading} role={role} />
       <Box
         sx={{
           mt: { xs: 3, sm: 4 },

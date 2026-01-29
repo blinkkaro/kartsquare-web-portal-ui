@@ -7,7 +7,7 @@ import { useTranslate } from "@/hooks/useTranslate";
 
 interface LabelsProps {
   label: string;
-  description: string;
+  description?: string;
   verified?: boolean;
 }
 
@@ -30,7 +30,20 @@ const Labels = ({ label, description, verified }: LabelsProps) => {
       >
         {label}
       </Typography>
-      <Typography
+      {description && (
+        <Typography
+          variant="body2"
+          sx={{
+            fontWeight: 500,
+            color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+            wordBreak: "break-word",
+            fontSize: { xs: "1rem", sm: "1.125rem", md: "1.25rem" },
+          }}
+        >
+          {description}
+        </Typography>
+      )}
+      {/* <Typography
         variant="h6"
         sx={{
           fontWeight: 500,
@@ -40,7 +53,7 @@ const Labels = ({ label, description, verified }: LabelsProps) => {
         }}
       >
         {description || "-"}
-      </Typography>
+      </Typography>  */}
       {verified && (
         <Box
           sx={{
