@@ -98,7 +98,7 @@ const Nav = () => {
   };
 
   const handleLogin = () => {
-    router.push("/selectRole");
+    router.push("/login?role=customer");
   };
 
   const handleThemeToggle = () => {

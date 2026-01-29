@@ -1,10 +1,14 @@
-import React from 'react'
-import FreeListingView from '@/components/pages/freeListing'
+import React from "react";
+import FreeListingView from "@/components/pages/freeListing";
+import MainLayout from "../mainLayout";
+import ListingView from "@/components/pages/leading/inde";
 
 function FreeListing() {
   return (
-    <FreeListingView />
-  )
+    <MainLayout>
+      <ListingView />
+    </MainLayout>
+  );
 }
 
-export default FreeListing
+export default FreeListing;
