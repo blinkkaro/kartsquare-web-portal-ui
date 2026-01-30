@@ -26,7 +26,7 @@ export const useLeadVerification = (leadId?: string | null) => {
         if (response.isRegistered) {
           router.push("/login?role=service_provider");
         } else {
-          router.push("/signUp?role=customer");
+          router.push("/signUp?role=service_provider");
         }
       }
     },
