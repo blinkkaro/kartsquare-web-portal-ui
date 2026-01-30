@@ -137,14 +137,16 @@ const ScheduleView = () => {
   };
 
   const handleBack = () => {
+    const role = secureStorage.getItem("role");
     secureStorage.removeItem("token");
     secureStorage.removeItem("refreshToken");
     secureStorage.removeItem("register_step");
     secureStorage.removeItem("role");
     secureStorage.removeItem("user_details");
 
+
     dispatch(logout());
-    router.back();
+    router.push(`/login?role=${role}`);
   };
 
   return (

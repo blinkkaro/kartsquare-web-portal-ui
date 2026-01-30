@@ -6,11 +6,11 @@ import {
   Container,
   Paper,
   Chip,
-  TextField,
   Button,
   useTheme,
+  CircularProgress,
+  MenuItem,
 } from "@mui/material";
-import Link from "next/link";
 import ShieldIcon from "@mui/icons-material/Shield";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -18,23 +18,59 @@ import { getHeroBenefits, getStatCards } from "./constants";
 import { COLORS } from "@/constants/colors";
 import Image from "next/image";
 import { useTranslate } from "@/hooks/useTranslate";
+import { useLeadVerification } from "@/hooks/useLeadVerification";
+import VerificationModal from "./VerificationModal";
+import { countries } from "../../SignUp/components/data";
+import ErrorMessage from "@/components/common/ErrorMessage";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import Input from "@/components/common/Input";
 
-interface HeroProps {
-  mobile: string;
-  setMobile: (value: string) => void;
-  termsChecked: boolean;
-  setTermsChecked: (value: boolean) => void;
-}
+const heroSchema = (t: any) =>
+  yup.object().shape({
+    phone_number: yup
+      .string()
+      .required(t("phoneNumberRequired"))
+      .length(10, t("phoneNumberLength"))
+      .matches(/^[0-9]+$/, t("phoneNumberInvalid")),
+    country_code: yup.string().required(t("countryCodeRequired")),
+  });
 
-const Hero: React.FC<HeroProps> = ({
-  mobile,
-  setMobile,
-  termsChecked,
-  setTermsChecked,
-}) => {
+type HeroFormData = {
+  phone_number: string;
+  country_code: string;
+};
+
+const Hero: React.FC = () => {
   const { t } = useTranslate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const {
+    loading,
+    isOtpOpen,
+    error,
+    handleCheckUser,
+    handleVerifyOtp,
+    closeOtpModal,
+  } = useLeadVerification();
+
+  const { control, handleSubmit } = useForm<HeroFormData>({
+    resolver: yupResolver(heroSchema(t)),
+    defaultValues: {
+      phone_number: "",
+      country_code: "+91",
+    },
+  });
+
+  const onSubmit = (data: HeroFormData) => {
+    handleCheckUser({
+      phone_number: data.phone_number,
+      country_code: data.country_code,
+      source: "WEB",
+      source_type: "SERVICE_PROVIDER",
+    });
+  };
 
   return (
     <Box
@@ -87,6 +123,8 @@ const Hero: React.FC<HeroProps> = ({
               {t("joinThousandsBusinessOwners")}
             </Typography>
 
+            <ErrorMessage isVisible={!!error} error={error || ""} />
+
             <Paper
               elevation={0}
               sx={{
@@ -110,6 +148,8 @@ const Hero: React.FC<HeroProps> = ({
                 {t("startIn30Seconds")}
               </Typography>
               <Box
+                component="form"
+                onSubmit={handleSubmit(onSubmit)}
                 sx={{
                   display: "flex",
                   flexWrap: "wrap",
@@ -122,59 +162,110 @@ const Hero: React.FC<HeroProps> = ({
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    border: `1px solid ${
-                      isDark
-                        ? COLORS.BORDER.DEFAULT_DARK
-                        : COLORS.BORDER.DEFAULT_LIGHT
-                    }`,
-                    borderRadius: 2,
+                    border: "none",
                     overflow: "hidden",
+
                     flex: "1 1 200px",
                     bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
+                    p: 0.5,
                   }}
                 >
                   <Box
                     sx={{
-                      px: 2,
-                      py: 1.5,
                       bgcolor: isDark
                         ? COLORS.PURPLE_ALPHA_10
                         : COLORS.PURPLE_ALPHA_04,
-                      display: "flex",
-                      alignItems: "center",
+                      borderRadius: 1.5,
+                      mr: 1,
                     }}
                   >
-                    <Typography
-                      variant="body2"
-                      fontWeight={600}
-                      color={
-                        isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"
-                      }
+                    <Input
+                      name="country_code"
+                      control={control}
+                      select
+                      variant="standard"
+                      InputProps={{
+                        disableUnderline: true,
+                        sx: {
+                          minWidth: 90,
+                          "& .MuiSelect-select": {
+                            py: 1.5,
+                            pl: 2,
+                            pr: "24px !important",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                            fontWeight: 600,
+                            fontSize: "0.875rem",
+                            color: isDark
+                              ? COLORS.TEXT.PRIMARY_DARK
+                              : COLORS.TEXT.PRIMARY_LIGHT,
+                          },
+                          "& .MuiSvgIcon-root": {
+                            color: isDark
+                              ? COLORS.TEXT.SECONDARY_DARK
+                              : "text.secondary",
+                          },
+                        },
+                      }}
                     >
-                      +91
-                    </Typography>
+                      {countries.map((country) => (
+                        <MenuItem key={country.code} value={country.phone_code}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
+                            <span>{country.flag}</span>
+                            <span>{country.phone_code}</span>
+                          </Box>
+                        </MenuItem>
+                      ))}
+                    </Input>
                   </Box>
-                  <TextField
-                    placeholder={t("yourMobileNumber")}
-                    value={mobile}
-                    onChange={(e) => setMobile(e.target.value)}
-                    variant="standard"
-                    InputProps={{
-                      disableUnderline: true,
-                      style: {
-                        color: isDark
-                          ? COLORS.TEXT.PRIMARY_DARK
-                          : COLORS.TEXT.PRIMARY_LIGHT,
-                      },
-                    }}
-                    sx={{ flex: 1, px: 2, minWidth: 140 }}
-                  />
+                  <Box sx={{ flex: 1 }}>
+                    <Input
+                      name="phone_number"
+                      control={control}
+                      placeholder={t("yourMobileNumber")}
+                      variant="standard"
+                      type="tel"
+                      inputMode="tel"
+                      inputProps={{
+                        maxLength: 10,
+                      }}
+                      InputProps={{
+                        disableUnderline: true,
+                        sx: {
+                          py: 0.5,
+                          px: 1,
+                          color: isDark
+                            ? COLORS.TEXT.PRIMARY_DARK
+                            : COLORS.TEXT.PRIMARY_LIGHT,
+                        },
+                      }}
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: "100%",
+                          marginTop: "3px",
+                        },
+                      }}
+                    />
+                  </Box>
                 </Paper>
                 <Button
                   variant="contained"
-                  endIcon={<ArrowForwardIcon />}
-                  href="/supplier/register"
-                  component={Link}
+                  type="submit"
+                  endIcon={
+                    loading ? (
+                      <CircularProgress size={20} color="inherit" />
+                    ) : (
+                      <ArrowForwardIcon />
+                    )
+                  }
+                  disabled={loading}
                   sx={{
                     bgcolor: COLORS.PRIMARY_PURPLE,
                     color: "white",
@@ -184,12 +275,21 @@ const Hero: React.FC<HeroProps> = ({
                     borderRadius: 2,
                     textTransform: "none",
                     boxShadow: "0 4px 14px rgba(94, 24, 233, 0.35)",
+                    height: "fit-content",
+                    alignSelf: "center",
                   }}
                 >
                   {t("getMyFreeListing")}
                 </Button>
               </Box>
             </Paper>
+
+            <VerificationModal
+              open={isOtpOpen}
+              onClose={closeOtpModal}
+              onVerify={handleVerifyOtp}
+              loading={loading}
+            />
 
             {getHeroBenefits(t).map((text: string, i: number) => (
               <Box

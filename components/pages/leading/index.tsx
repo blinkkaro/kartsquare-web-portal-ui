@@ -14,8 +14,6 @@ import { COLORS } from "../../../constants/colors";
 function ListingView() {
   const { t } = useTranslate();
   const theme = useTheme();
-  const [mobile, setMobile] = useState("");
-  const [termsChecked, setTermsChecked] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<string | false>("faq0");
 
   const handleFaqChange =
@@ -64,12 +62,7 @@ function ListingView() {
       </Container>
 
       {/* Hero Section — Business-owner friendly */}
-      <Hero
-        mobile={mobile}
-        setMobile={setMobile}
-        termsChecked={termsChecked}
-        setTermsChecked={setTermsChecked}
-      />
+      <Hero />
 
       {/* Success Stories — Relatable */}
       <SuccessStories />
