@@ -17,11 +17,13 @@ import {
   Verified,
   Bolt,
 } from "@mui/icons-material";
-import { COLORS} from "../constants/colors";
+import { COLORS } from "../constants/colors";
 import { Service, ServiceStatus } from "../services/serviceList/listInteraface";
 import { useRouter } from "next/navigation";
 import { getUserRole, getUserId, UserRole } from "../utils/auth";
 import { useTranslate } from "@/hooks/useTranslate";
+import { useDispatch } from "react-redux";
+import { closeDrawer } from "@/features/ui/profileDrawerSlice";
 
 interface ServiceCardProps {
   service: Service;
@@ -32,6 +34,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
   const router = useRouter();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { t } = useTranslate();
+  const dispatch = useDispatch();
 
   const isDark = theme.palette.mode === "dark";
 
@@ -60,6 +63,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
 
   const handleCardClick = () => {
     // If service provider viewing their own service, go to provider details page
+    dispatch(closeDrawer());
     if (isOwner) {
       router.push(`/spr/services/${service.service_id}`);
     } else {
@@ -219,7 +223,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
                 letterSpacing: "0.02em",
               }}
             >
-              {service.status === ServiceStatus.PENDING_APPROVAL ? t("waitingForApproval") : service.status.replace("_", " ").toLowerCase()}
+              {service.status === ServiceStatus.PENDING_APPROVAL
+                ? t("waitingForApproval")
+                : service.status.replace("_", " ").toLowerCase()}
             </Typography>
           </Box>
         )}
@@ -304,35 +310,47 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             >
               {service.provider_name.charAt(0).toUpperCase()}
             </Avatar>
-            <Typography
-              variant="caption"
-              sx={{
-                color: isDark
-                  ? COLORS.TEXT.SECONDARY_DARK
-                  : COLORS.TEXT.SECONDARY_LIGHT,
-                display: "flex",
-                alignItems: "center",
-                gap: 0.5,
-              }}
-            >
-              by{" "}
-              <Box
-                component="span"
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography
+                variant="caption"
                 sx={{
                   color: isDark
                     ? COLORS.TEXT.PRIMARY_DARK
                     : COLORS.TEXT.PRIMARY_LIGHT,
                   fontWeight: 600,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                  lineHeight: 1.2,
                 }}
               >
-                {service.provider_name}
-              </Box>
-              <Box
-                sx={{ color: "#1D4ED8", display: "flex", alignItems: "center" }}
-              >
-                <Verified sx={{ fontSize: "12px" }} />
-              </Box>
-            </Typography>
+                {service.business_name}
+                <Box
+                  component="span"
+                  sx={{
+                    color: "#1D4ED8",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <Verified sx={{ fontSize: "12px" }} />
+                </Box>
+              </Typography>
+              {
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: isDark
+                      ? COLORS.TEXT.SECONDARY_DARK
+                      : COLORS.TEXT.SECONDARY_LIGHT,
+                    fontSize: "0.7rem",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {t("by")} {service.provider_name}
+                </Typography>
+              }
+            </Box>
           </Box>
 
           {service.is_price_required && service.price !== null && (

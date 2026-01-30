@@ -203,7 +203,7 @@ const SuggestionSection = ({ title, items, onSeeAll }: SectionProps) => {
               >
                 {"name" in item
                   ? item.name
-                  : `${item.first_name} ${item.last_name}`}
+                  : item.business_name}
               </Typography>
               {"description" in item && item.description && (
                 <Typography
@@ -321,7 +321,7 @@ const TopSuggestions = () => {
                   key={item.id}
                   rank={index + 1}
                   image={item.profile_pic}
-                  name={`${item.first_name} ${item.last_name}`}
+                  name={item.business_name}
                   rating={item.rating}
                   bookings={parseInt(item.total_bookings)}
                   desc={`${item.city}, ${item.country}`}

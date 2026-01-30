@@ -50,6 +50,7 @@ interface User {
   first_name: string;
   last_name: string;
   profile_pic: string | null;
+  business_name: string;
 }
 
 interface Mention {

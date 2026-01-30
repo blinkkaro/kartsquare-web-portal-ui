@@ -961,4 +961,96 @@ export const english = {
   changeAddress: "Change Address",
   description: "Description",
   editBusinessInfo: "Edit Business Info",
+  // Leading Page
+  listYourBusiness: "List your business",
+  startIn30Seconds: "Start in 30 seconds",
+  yourMobileNumber: "Your mobile number",
+  getMyFreeListing: "Get my free listing",
+  agreeToTerms:
+    "By continuing, you agree to our Terms of Use, Privacy Policy & Infringement Policy",
+  freeForever: "Free forever • No credit card required",
+  growYourBusinessWith: "Grow your business with a ",
+  freeListing: "free listing",
+  joinThousandsBusinessOwners:
+    "Join thousands of business owners on kartsquare. Get discovered by customers who are already searching for you.",
+  heroBenefit1: "Get discovered by customers searching for your services",
+  heroBenefit2: "Manage reviews and respond to questions in one place",
+  heroBenefit3: "Showcase your services, photos, and business info",
+  statLabel1: "Businesses on platform",
+  statLabel2: "Happy customers",
+  statLabel3: "Searches every month",
+  successStoryTagline1: "More visibility, more clients",
+  successStoryTagline2: "Customers find me easily now",
+  successStoryTagline3: "My bookings have doubled",
+  roleAstrologer: "Astrologer",
+  roleTileDealer: "Tile Dealer",
+  roleMakeupArtist: "Makeup Artist",
+  step1Title: "Create your account",
+  step1Desc:
+    "Enter your mobile number — we’ll send a quick verification. No password needed to start.",
+  step2Title: "Add your business details",
+  step2Desc:
+    "Business name, address, hours, and photos. The more complete your profile, the better you rank.",
+  step3Title: "Verify documents",
+  step3Desc:
+    "Upload simple documents to verify your business. Verified profiles get 3x more trust.",
+  step4Title: "Choose your categories",
+  step4Desc:
+    "Pick the categories that match your business so customers can find you when they search.",
+  freeListingBenefit1: "Build trust with a verified business profile",
+  freeListingBenefit2: "Customers find you when they search for your services",
+  freeListingBenefit3: "Update your info anytime from your dashboard",
+  boostBenefit1: "Appear higher in search results for your category",
+  boostBenefit2: "Get customer leads via SMS, email, or app notifications",
+  boostBenefit3: "See insights and trends with a simple dashboard",
+  faq1Question: "How can I browse and purchase products on the app?",
+  faq1Answer:
+    "You can browse products by category or use the search bar to find specific items. To purchase, simply add items to your cart and proceed to checkout.",
+  faq2Question: "Can I book services along with shopping for products?",
+  faq2Answer:
+    "Yes, you can book services and shop for products in the same session.",
+  faq3Question: "How do I book a service appointment?",
+  faq3Answer:
+    "Navigate to the services section, choose your desired service, and follow the booking prompts to select a date and time.",
+  faq4Question:
+    "Is there a way to track my product orders and service bookings?",
+  faq4Answer:
+    "Yes, you can track your orders and bookings in the 'My Orders' and 'My Bookings' sections respectively.",
+  faq5Question:
+    "What payment methods are accepted for both products and services?",
+  faq5Answer: "We accept major credit cards, debit cards, and digital wallets.",
+  faq6Question: "Are there any discounts or promotions available?",
+  faq6Answer:
+    "Check the 'Offers' section for current discounts and promotions.",
+  faq7Question:
+    "What happens if I need to cancel or reschedule a service appointment?",
+  faq7Answer:
+    "You can cancel or reschedule through the 'My Bookings' section, subject to the cancellation policy.",
+  faq8Question: "Is my personal and payment information secure on the app?",
+  faq8Answer:
+    "Yes, we use industry-standard encryption to protect your personal and payment information.",
+  successStories: "Success stories",
+  hearFromOwners: "Hear from business owners like you",
+  seeHowOthers:
+    "See how other owners are getting more visibility and customers with a free listing.",
+  seeAllStories: "See all stories",
+  howItWorks: "How it works",
+  getFreeListingSteps: "Get your free listing in 4 simple steps",
+  takesLessThanMinutes:
+    "Takes less than 5 minutes. No technical skills needed.",
+  forBusinessOwners: "For business owners",
+  connectWithNewCustomers: "Connect with new customers & grow your business",
+  yourFreeListingPage: "Your free listing page",
+  oneProfileMoreVisibility: "One profile. More visibility. Zero cost.",
+  completeBusinessProfile:
+    "A complete business profile on kartsquare helps customers find and trust you. Update your details anytime from your dashboard.",
+  wantMoreLeads: "Want more leads?",
+  getMoreVisibility: "Get more visibility with promoted listing",
+  promoteListingDesc:
+    "Appear higher in search, get customer leads directly, and see simple insights — all optional, when you’re ready.",
+  getStartedFree: "Get started — it’s free",
+  commonQuestions: "Common questions",
+  gotAQuestion: "Got a question?",
+  quickAnswers: "Quick answers for business owners.",
+  by: "by",
 };

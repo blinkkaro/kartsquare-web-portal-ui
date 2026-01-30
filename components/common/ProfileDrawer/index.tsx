@@ -32,7 +32,7 @@ function ProfileDrawer() {
 
   const allPosts = postsData?.pages.flatMap((page) => page.posts) || [];
 
-  console.log("profile", profile);
+  // console.log("profile", profile);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);

@@ -57,7 +57,7 @@ export default function ProfileServices({ userId }: ProfileServicesProps) {
             size={{ xs: 12, sm: 6, md: 6 }}
             key={`${service.service_id}-${index}`}
           >
-            <ServiceCard service={service as any} />
+            <ServiceCard  service={service as any} />
           </Grid>
         ))}
       </Grid>

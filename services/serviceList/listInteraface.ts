@@ -59,6 +59,7 @@ export interface Service {
   };
   provider_image_url: string | null;
   is_following?: boolean;
+  business_name: string;
 }
 
 export interface ServiceListResponse {

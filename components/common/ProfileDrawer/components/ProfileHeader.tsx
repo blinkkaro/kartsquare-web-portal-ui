@@ -3,14 +3,15 @@ import { Avatar, Box, Typography, Button, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import { providerProfileInterface } from "@/services/profile/profileInterface";
 import ProfileStats from "./ProfileStats";
+import { useTranslate } from "@/hooks/useTranslate";
 
 interface ProfileHeaderProps {
   profile: providerProfileInterface;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
-
   const theme = useTheme();
+  const { t } = useTranslate();
   return (
     <Box
       sx={{
@@ -32,24 +33,34 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
           boxShadow: COLORS.SHADOW.DEFAULT,
         }}
       />
-      <Box sx={{ flex: 1, width: "100%", textAlign: { xs: "center", md: "left" } }}>
+      <Box
+        sx={{ flex: 1, width: "100%", textAlign: { xs: "center", md: "left" } }}
+      >
         <Typography
           variant="h6"
           sx={{
             fontWeight: "bold",
-            color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+            color:
+              theme.palette.mode === "dark"
+                ? COLORS.TEXT.PRIMARY_DARK
+                : COLORS.TEXT.PRIMARY_LIGHT,
             lineHeight: 1.2,
           }}
         >
-          {profile.first_name} {profile.last_name}
+          {profile.business_name }
         </Typography>
         <Typography
           variant="body2"
-          sx={{ color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT, mb: 1 }}
+          sx={{
+            color:
+              theme.palette.mode === "dark"
+                ? COLORS.TEXT.PRIMARY_DARK
+                : COLORS.TEXT.PRIMARY_LIGHT,
+            mb: 1,
+          }}
         >
-          {/* Fallback for job title as it's not in the interface */}
-          {profile.role.toString().replaceAll("_", " ")}
-        </Typography> 
+          {`${t("by")} ${profile.first_name} ${profile.last_name}`}
+        </Typography>
       </Box>
 
       <ProfileStats profile={profile} />

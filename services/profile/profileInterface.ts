@@ -30,6 +30,7 @@ export interface profileInterface {
   followers_count: number;
   following_count: number;
   banner_image?: string;
+  business_name: string;
 }
 
 interface pagination {
@@ -96,6 +97,7 @@ export interface providerProfileInterface {
   total_bookings: number | null;
   total_reviews: number | null;
   default_address?: DefaultAddress;
+  business_name: string;
 }
 
 export interface ProviderProfileByUsernameResponse {
