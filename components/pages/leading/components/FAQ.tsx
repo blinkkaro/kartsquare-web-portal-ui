@@ -6,10 +6,12 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  useTheme,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { LISTING, getFaqItems } from "./constants";
+import { getFaqItems } from "./constants";
 import { useTranslate } from "@/hooks/useTranslate";
+import { COLORS } from "@/constants/colors";
 
 interface FAQProps {
   expandedFaq: string | false;
@@ -20,14 +22,24 @@ interface FAQProps {
 
 const FAQ: React.FC<FAQProps> = ({ expandedFaq, handleFaqChange }) => {
   const { t } = useTranslate();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   return (
-    <Box sx={{ py: 8, bgcolor: LISTING.bgSoft }}>
+    <Box
+      sx={{
+        py: 8,
+        bgcolor: isDark
+          ? COLORS.BACKGROUND.PRIMARY_DARK
+          : COLORS.BACKGROUND.PAPER_LIGHT,
+      }}
+    >
       <Container maxWidth="md">
         <Box sx={{ textAlign: "center", mb: 4 }}>
           <Typography
             variant="overline"
             fontWeight={700}
-            color="text.secondary"
+            color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
             sx={{ letterSpacing: 1 }}
           >
             {t("commonQuestions")}
@@ -35,11 +47,20 @@ const FAQ: React.FC<FAQProps> = ({ expandedFaq, handleFaqChange }) => {
           <Typography
             variant="h4"
             fontWeight={700}
-            sx={{ mt: 1, color: LISTING.text }}
+            sx={{
+              mt: 1,
+              color: isDark
+                ? COLORS.TEXT.PRIMARY_DARK
+                : COLORS.TEXT.PRIMARY_LIGHT,
+            }}
           >
             {t("gotAQuestion")}
           </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>
+          <Typography
+            variant="body1"
+            color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
+            sx={{ mt: 0.5 }}
+          >
             {t("quickAnswers")}
           </Typography>
         </Box>
@@ -51,27 +72,38 @@ const FAQ: React.FC<FAQProps> = ({ expandedFaq, handleFaqChange }) => {
             sx={{
               mb: 1.5,
               boxShadow: "none",
-              border: `1px solid ${LISTING.border}`,
+              border: `1px solid ${
+                isDark
+                  ? COLORS.BORDER.DEFAULT_DARK
+                  : COLORS.BORDER.DEFAULT_LIGHT
+              }`,
               borderRadius: "12px !important",
-              bgcolor: "white",
+              bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
               "&:before": { display: "none" },
-              "&.Mui-expanded": { boxShadow: LISTING.cardShadow },
+              "&.Mui-expanded": {
+                boxShadow: isDark ? "none" : COLORS.SHADOW.DEFAULT,
+              },
             }}
           >
             <AccordionSummary
-              expandIcon={<ExpandMoreIcon sx={{ color: LISTING.primary }} />}
+              expandIcon={
+                <ExpandMoreIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />
+              }
               aria-controls={`faq${index}-content`}
               id={`faq${index}-header`}
               sx={{ "& .MuiAccordionSummary-content": { my: 1.5 } }}
             >
-              <Typography fontWeight={600} color="text.primary">
+              <Typography
+                fontWeight={600}
+                color={isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary"}
+              >
                 {faq.question}
               </Typography>
             </AccordionSummary>
             <AccordionDetails sx={{ pt: 0, pb: 2 }}>
               <Typography
                 variant="body2"
-                color="text.secondary"
+                color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
                 sx={{ lineHeight: 1.7 }}
               >
                 {faq.answer}

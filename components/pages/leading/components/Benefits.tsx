@@ -7,25 +7,31 @@ import {
   Paper,
   Chip,
   Button,
+  useTheme,
 } from "@mui/material";
 import Link from "next/link";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import { LISTING, getFreeListingBenefits, getBoostBenefits } from "./constants";
+import { getFreeListingBenefits, getBoostBenefits } from "./constants";
 import { useTranslate } from "@/hooks/useTranslate";
 import { COLORS } from "@/constants/colors";
 import Image from "next/image";
 
 const Benefits = () => {
   const { t } = useTranslate();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   return (
-    <Box sx={{ py: 8, bgcolor: "white" }}>
+    <Box
+      sx={{ py: 8, bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : "white" }}
+    >
       <Container maxWidth="xl">
         <Box sx={{ textAlign: "center", mb: 6 }}>
           <Typography
             variant="overline"
             fontWeight={700}
-            color="text.secondary"
+            color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
             sx={{ letterSpacing: 1 }}
           >
             {t("forBusinessOwners")}
@@ -33,7 +39,12 @@ const Benefits = () => {
           <Typography
             variant="h4"
             fontWeight={700}
-            sx={{ mt: 1, color: LISTING.text }}
+            sx={{
+              mt: 1,
+              color: isDark
+                ? COLORS.TEXT.PRIMARY_DARK
+                : COLORS.TEXT.PRIMARY_LIGHT,
+            }}
           >
             {t("connectWithNewCustomers")}
           </Typography>
@@ -48,10 +59,10 @@ const Benefits = () => {
                 height: 460,
                 position: "relative",
                 mx: "auto",
-                border: "12px solid #1a1a1a",
+                border: `12px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "#1a1a1a"}`,
                 borderRadius: "28px",
                 overflow: "hidden",
-                boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                boxShadow: isDark ? "none" : "0 20px 40px rgba(0,0,0,0.1)",
               }}
             >
               <Image
@@ -64,53 +75,12 @@ const Benefits = () => {
                 }}
               />
             </Box>
-            {/* <Box
-              sx={{
-                width: 260,
-                mx: "auto",
-                border: "12px solid #1a1a1a",
-                borderRadius: "28px",
-                overflow: "hidden",
-                boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
-              }}
-            >
-              <Box sx={{ height: 400, bgcolor: "#fafafa", p: 2 }}>
-                <Box sx={{ display: "flex", gap: 0.5, mb: 1.5 }}>
-                  <Box
-                    sx={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: "50%",
-                      bgcolor: "#e8e8e8",
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      flex: 1,
-                      height: 24,
-                      borderRadius: 2,
-                      bgcolor: "#e8e8e8",
-                    }}
-                  />
-                </Box>
-                <Box
-                  sx={{ height: 220, borderRadius: 2, bgcolor: "#e8e8e8" }}
-                />
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ mt: 1.5 }}
-                >
-                  Your business profile
-                </Typography>
-              </Box>
-            </Box> */}
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <Typography
               variant="overline"
               fontWeight={700}
-              color="text.secondary"
+              color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
               sx={{ letterSpacing: 1 }}
             >
               {t("yourFreeListingPage")}
@@ -118,11 +88,21 @@ const Benefits = () => {
             <Typography
               variant="h6"
               fontWeight={600}
-              sx={{ mt: 1, mb: 2, color: LISTING.text }}
+              sx={{
+                mt: 1,
+                mb: 2,
+                color: isDark
+                  ? COLORS.TEXT.PRIMARY_DARK
+                  : COLORS.TEXT.PRIMARY_LIGHT,
+              }}
             >
               {t("oneProfileMoreVisibility")}
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+            <Typography
+              variant="body1"
+              color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
+              sx={{ mb: 2 }}
+            >
               {t("completeBusinessProfile")}
             </Typography>
             {getFreeListingBenefits(t).map((text: string, i: number) => (
@@ -136,9 +116,12 @@ const Benefits = () => {
                 }}
               >
                 <CheckCircleIcon
-                  sx={{ color: LISTING.success, fontSize: 24, mt: 0.25 }}
+                  sx={{ color: COLORS.SUCCESS_GREEN, fontSize: 24, mt: 0.25 }}
                 />
-                <Typography variant="body2" color="text.primary">
+                <Typography
+                  variant="body2"
+                  color={isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary"}
+                >
                   {text}
                 </Typography>
               </Box>
@@ -152,7 +135,7 @@ const Benefits = () => {
             <Typography
               variant="overline"
               fontWeight={700}
-              color="text.secondary"
+              color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
               sx={{ letterSpacing: 1 }}
             >
               {t("wantMoreLeads")}
@@ -160,11 +143,21 @@ const Benefits = () => {
             <Typography
               variant="h6"
               fontWeight={600}
-              sx={{ mt: 1, mb: 2, color: LISTING.text }}
+              sx={{
+                mt: 1,
+                mb: 2,
+                color: isDark
+                  ? COLORS.TEXT.PRIMARY_DARK
+                  : COLORS.TEXT.PRIMARY_LIGHT,
+              }}
             >
               {t("getMoreVisibility")}
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+            <Typography
+              variant="body1"
+              color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
+              sx={{ mb: 2 }}
+            >
               {t("promoteListingDesc")}
             </Typography>
             {getBoostBenefits(t).map((text: string, i: number) => (
@@ -178,9 +171,12 @@ const Benefits = () => {
                 }}
               >
                 <CheckCircleIcon
-                  sx={{ color: LISTING.success, fontSize: 24, mt: 0.25 }}
+                  sx={{ color: COLORS.SUCCESS_GREEN, fontSize: 24, mt: 0.25 }}
                 />
-                <Typography variant="body2" color="text.primary">
+                <Typography
+                  variant="body2"
+                  color={isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary"}
+                >
                   {text}
                 </Typography>
               </Box>
@@ -192,7 +188,7 @@ const Benefits = () => {
               component={Link}
               sx={{
                 mt: 2,
-                bgcolor: LISTING.primary,
+                bgcolor: COLORS.PRIMARY_PURPLE,
                 "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
                 textTransform: "none",
                 fontWeight: 600,
@@ -211,10 +207,10 @@ const Benefits = () => {
                 height: 460,
                 mx: "auto",
                 position: "relative",
-                border: "12px solid #1a1a1a",
+                border: `12px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "#1a1a1a"}`,
                 borderRadius: "28px",
                 overflow: "hidden",
-                boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                boxShadow: isDark ? "none" : "0 20px 40px rgba(0,0,0,0.1)",
               }}
             >
               <Image
@@ -227,108 +223,6 @@ const Benefits = () => {
                 }}
               />
             </Box>
-            {/* <Box
-              sx={{
-                width: 260,
-                mx: "auto",
-                border: "12px solid #1a1a1a",
-                borderRadius: "28px",
-                overflow: "hidden",
-                boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
-              }}
-            >
-              <Box sx={{ height: 400, bgcolor: "#fafafa", p: 2 }}>
-                <Box sx={{ display: "flex", gap: 0.5, mb: 1.5 }}>
-                  <Box
-                    sx={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: "50%",
-                      bgcolor: "#e8e8e8",
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      flex: 1,
-                      height: 24,
-                      borderRadius: 2,
-                      bgcolor: "#e8e8e8",
-                    }}
-                  />
-                </Box>
-                <Paper
-                  elevation={0}
-                  sx={{
-                    p: 1.5,
-                    borderRadius: 2,
-                    border: `1px solid ${LISTING.border}`,
-                    mt: 1,
-                  }}
-                >
-                  <Box sx={{ display: "flex", gap: 0.5, mb: 1 }}>
-                    {[1, 2, 3].map((i) => (
-                      <Box
-                        key={i}
-                        sx={{
-                          flex: 1,
-                          height: 36,
-                          borderRadius: 1,
-                          bgcolor: "#e8e8e8",
-                        }}
-                      />
-                    ))}
-                  </Box>
-                  <Box sx={{ display: "flex", gap: 0.5, mb: 0.5 }}>
-                    <Chip
-                      label="Top rated"
-                      size="small"
-                      sx={{ bgcolor: LISTING.bgSoft, fontSize: "0.7rem" }}
-                    />
-                    <Chip
-                      label="Popular"
-                      size="small"
-                      sx={{
-                        bgcolor: LISTING.primaryLight,
-                        color: LISTING.primary,
-                        fontSize: "0.7rem",
-                      }}
-                    />
-                  </Box>
-                  <Typography variant="subtitle2" fontWeight={700}>
-                    Sample business
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 0.5,
-                      mt: 0.5,
-                    }}
-                  >
-                    <Chip
-                      label="4.1 ★"
-                      size="small"
-                      sx={{
-                        bgcolor: LISTING.success,
-                        color: "white",
-                        fontSize: "0.7rem",
-                      }}
-                    />
-                    <Typography variant="caption" color="text.secondary">
-                      9.1k ratings
-                    </Typography>
-                  </Box>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    display="block"
-                    sx={{ mt: 0.5 }}
-                  >
-                    Location • Price for two • Years in business
-                  </Typography>
-                </Paper>
-              </Box>
-            </Box> */}
           </Grid>
         </Grid>
       </Container>

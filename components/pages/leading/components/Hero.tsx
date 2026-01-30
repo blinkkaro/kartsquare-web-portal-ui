@@ -8,15 +8,13 @@ import {
   Chip,
   TextField,
   Button,
-  FormControlLabel,
-  Checkbox,
+  useTheme,
 } from "@mui/material";
 import Link from "next/link";
 import ShieldIcon from "@mui/icons-material/Shield";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import StarIcon from "@mui/icons-material/Star";
-import { LISTING, getHeroBenefits, getStatCards } from "./constants";
+import { getHeroBenefits, getStatCards } from "./constants";
 import { COLORS } from "@/constants/colors";
 import Image from "next/image";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -28,7 +26,6 @@ interface HeroProps {
   setTermsChecked: (value: boolean) => void;
 }
 
-
 const Hero: React.FC<HeroProps> = ({
   mobile,
   setMobile,
@@ -36,12 +33,15 @@ const Hero: React.FC<HeroProps> = ({
   setTermsChecked,
 }) => {
   const { t } = useTranslate();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   return (
     <Box
       sx={{
         py: { xs: 5, md: 10 },
         px: { xs: 2, md: 4 },
-        background: LISTING.gradient,
+        background: isDark ? COLORS.DARK_GRADIENT : COLORS.PURPLECYAN,
         borderRadius: { xs: 0, md: 4 },
         mx: { xs: 0, md: 2 },
       }}
@@ -55,10 +55,10 @@ const Hero: React.FC<HeroProps> = ({
               size="small"
               sx={{
                 mb: 2,
-                bgcolor: "white",
-                color: LISTING.primary,
+                bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
+                color: COLORS.PRIMARY_PURPLE,
                 fontWeight: 600,
-                "& .MuiChip-icon": { color: LISTING.primary },
+                "& .MuiChip-icon": { color: COLORS.PRIMARY_PURPLE },
               }}
             />
             <Typography
@@ -66,20 +66,22 @@ const Hero: React.FC<HeroProps> = ({
               component="h1"
               sx={{
                 fontWeight: 700,
-                color: LISTING.text,
+                color: isDark
+                  ? COLORS.TEXT.PRIMARY_DARK
+                  : COLORS.TEXT.PRIMARY_LIGHT,
                 lineHeight: 1.2,
                 mb: 1.5,
                 fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.5rem" },
               }}
             >
               {t("growYourBusinessWith")}{" "}
-              <Box component="span" sx={{ color: LISTING.primary }}>
+              <Box component="span" sx={{ color: COLORS.PRIMARY_PURPLE }}>
                 {t("freeListing")}
               </Box>
             </Typography>
             <Typography
               variant="h6"
-              color="text.secondary"
+              color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
               sx={{ mb: 3, fontWeight: 500 }}
             >
               {t("joinThousandsBusinessOwners")}
@@ -90,15 +92,19 @@ const Hero: React.FC<HeroProps> = ({
               sx={{
                 p: 2.5,
                 borderRadius: 3,
-                border: `1px solid ${LISTING.border}`,
-                bgcolor: "white",
-                boxShadow: LISTING.cardShadow,
+                border: `1px solid ${
+                  isDark
+                    ? COLORS.BORDER.DEFAULT_DARK
+                    : COLORS.BORDER.DEFAULT_LIGHT
+                }`,
+                bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
+                boxShadow: isDark ? "none" : COLORS.SHADOW.DEFAULT,
                 mb: 3,
               }}
             >
               <Typography
                 variant="subtitle2"
-                color="text.secondary"
+                color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
                 sx={{ mb: 1.5 }}
               >
                 {t("startIn30Seconds")}
@@ -116,18 +122,24 @@ const Hero: React.FC<HeroProps> = ({
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    border: `1px solid ${LISTING.border}`,
+                    border: `1px solid ${
+                      isDark
+                        ? COLORS.BORDER.DEFAULT_DARK
+                        : COLORS.BORDER.DEFAULT_LIGHT
+                    }`,
                     borderRadius: 2,
                     overflow: "hidden",
                     flex: "1 1 200px",
-                    bgcolor: "white",
+                    bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
                   }}
                 >
                   <Box
                     sx={{
                       px: 2,
                       py: 1.5,
-                      bgcolor: LISTING.bgSoft,
+                      bgcolor: isDark
+                        ? COLORS.PURPLE_ALPHA_10
+                        : COLORS.PURPLE_ALPHA_04,
                       display: "flex",
                       alignItems: "center",
                     }}
@@ -135,7 +147,9 @@ const Hero: React.FC<HeroProps> = ({
                     <Typography
                       variant="body2"
                       fontWeight={600}
-                      color="text.secondary"
+                      color={
+                        isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"
+                      }
                     >
                       +91
                     </Typography>
@@ -145,7 +159,14 @@ const Hero: React.FC<HeroProps> = ({
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
                     variant="standard"
-                    InputProps={{ disableUnderline: true }}
+                    InputProps={{
+                      disableUnderline: true,
+                      style: {
+                        color: isDark
+                          ? COLORS.TEXT.PRIMARY_DARK
+                          : COLORS.TEXT.PRIMARY_LIGHT,
+                      },
+                    }}
                     sx={{ flex: 1, px: 2, minWidth: 140 }}
                   />
                 </Paper>
@@ -155,7 +176,7 @@ const Hero: React.FC<HeroProps> = ({
                   href="/supplier/register"
                   component={Link}
                   sx={{
-                    bgcolor: LISTING.primary,
+                    bgcolor: COLORS.PRIMARY_PURPLE,
                     color: "white",
                     "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
                     px: 3,
@@ -181,11 +202,11 @@ const Hero: React.FC<HeroProps> = ({
                 }}
               >
                 <CheckCircleIcon
-                  sx={{ color: LISTING.success, fontSize: 24, mt: 0.25 }}
+                  sx={{ color: COLORS.SUCCESS_GREEN, fontSize: 24, mt: 0.25 }}
                 />
                 <Typography
                   variant="body1"
-                  color="text.primary"
+                  color={isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary"}
                   sx={{ fontWeight: 500 }}
                 >
                   {text}
@@ -209,10 +230,11 @@ const Hero: React.FC<HeroProps> = ({
                   width: 280,
                   height: 560,
                   position: "relative",
-                  border: "10px solid #1a1a1a",
+                  border: `10px solid ${
+                    isDark ? COLORS.BORDER.DEFAULT_DARK : "#1a1a1a"
+                  }`,
                   borderRadius: "32px",
                   overflow: "hidden",
-                  // boxShadow: "0 24px 48px rgba(0,0,0,0.12)",
                 }}
               >
                 <Image
@@ -222,124 +244,6 @@ const Hero: React.FC<HeroProps> = ({
                   style={{ objectFit: "cover", objectPosition: "center" }}
                 />
               </Box>
-              {/* <Box
-                sx={{
-                  width: 280,
-                  border: "14px solid #1a1a1a",
-                  borderRadius: "32px",
-                  overflow: "hidden",
-                  boxShadow: "0 24px 48px rgba(0,0,0,0.12)",
-                }}
-              >
-                <Box sx={{ height: 440, bgcolor: "#fafafa", p: 2 }}>
-                  <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
-                    <Box
-                      sx={{
-                        width: 28,
-                        height: 28,
-                        borderRadius: "50%",
-                        bgcolor: "#e8e8e8",
-                      }}
-                    />
-                    <Box
-                      sx={{
-                        flex: 1,
-                        height: 28,
-                        borderRadius: 2,
-                        bgcolor: "#e8e8e8",
-                      }}
-                    />
-                    <Box
-                      sx={{
-                        width: 28,
-                        height: 28,
-                        borderRadius: 2,
-                        bgcolor: "#e8e8e8",
-                      }}
-                    />
-                  </Box>
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      borderRadius: 2,
-                      border: `1px solid ${LISTING.border}`,
-                      bgcolor: "white",
-                      boxShadow: LISTING.cardShadow,
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        gap: 0.5,
-                        mb: 1,
-                        flexWrap: "wrap",
-                      }}
-                    >
-                      {["Verified", "Trusted", "Responsive"].map((b) => (
-                        <Chip
-                          key={b}
-                          label={b}
-                          size="small"
-                          sx={{
-                            bgcolor: LISTING.bgSoft,
-                            fontWeight: 600,
-                            fontSize: "0.7rem",
-                          }}
-                        />
-                      ))}
-                    </Box>
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight={700}
-                      color="text.primary"
-                    >
-                      Your business
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        mt: 1,
-                      }}
-                    >
-                      <Chip
-                        icon={
-                          <StarIcon
-                            sx={{ fontSize: 16, color: "white !important" }}
-                          />
-                        }
-                        label="4.8"
-                        size="small"
-                        sx={{
-                          bgcolor: LISTING.success,
-                          color: "white",
-                          fontWeight: 700,
-                        }}
-                      label={
-                  <Typography variant="caption" color="text.secondary">
-                    {t("agreeToTerms")}
-                  </Typography>
-                }  />
-                    </Box>
-                  </Paper>
-                  <Box sx={{ mt: 2 }}>
-                    {[1, 2, 3].map((i) => (
-                      <Box
-                        key={i}
-                        sx={{
-                          height: 10,
-                          borderRadius: 1,
-                          bgcolor: "#e8e8e8",
-                          width: "100%",
-                          mb: 1,
-                        }}
-                      />
-                    ))}
-                  </Box>
-                </Box>
-              </Box> */}
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 {getStatCards(t).map(({ value, label, icon: Icon, color }) => (
                   <Paper
@@ -349,21 +253,32 @@ const Hero: React.FC<HeroProps> = ({
                       p: 2,
                       borderRadius: 2,
                       minWidth: 160,
-                      borderLeft: `4px solid ${color}`,
-                      bgcolor: "white",
-                      boxShadow: LISTING.cardShadow,
-                      "&:hover": { boxShadow: LISTING.cardShadowHover },
+
+                      bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
+                      boxShadow: isDark ? "none" : COLORS.SHADOW.DEFAULT,
+                      "&:hover": {
+                        boxShadow: isDark ? "none" : "rgb(79 70 229 / 0.1)",
+                      },
+                      border: isDark
+                        ? `1px solid ${COLORS.BORDER.DEFAULT_DARK}`
+                        : undefined,
+                      borderLeft: `4px solid ${color}`, // restore left border
                     }}
                   >
                     <Icon sx={{ color, mb: 0.5 }} />
                     <Typography
                       variant="h6"
                       fontWeight={700}
-                      color="text.primary"
+                      color={isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary"}
                     >
                       {value}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography
+                      variant="body2"
+                      color={
+                        isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"
+                      }
+                    >
                       {label}
                     </Typography>
                   </Paper>

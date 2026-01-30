@@ -9,19 +9,6 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import CategoryIcon from "@mui/icons-material/Category";
 
-// Modern palette aligned with kartsquare
-export const LISTING = {
-  primary: COLORS.PRIMARY_PURPLE,
-  primaryLight: COLORS.PURPLE_ALPHA_10,
-  success: COLORS.SUCCESS_GREEN,
-  text: COLORS.TEXT.PRIMARY_LIGHT,
-  textMuted: COLORS.TEXT.SECONDARY_LIGHT,
-  bgSoft: COLORS.BACKGROUND.PAPER_LIGHT,
-  border: COLORS.BORDER.DEFAULT_LIGHT,
-  gradient: "linear-gradient(135deg, #f5f0ff 0%, #e8f4ff 50%, #f0f9ff 100%)",
-  cardShadow: "0 4px 24px rgba(94, 24, 233, 0.08)",
-  cardShadowHover: "0 8px 32px rgba(94, 24, 233, 0.12)",
-};
 
 export const getHeroBenefits = (t: any) => [
   t("heroBenefit1"),
@@ -34,19 +21,19 @@ export const getStatCards = (t: any) => [
     value: "10K+",
     label: t("statLabel1"),
     icon: BusinessIcon,
-    color: LISTING.primary,
+    color: COLORS.PRIMARY_PURPLE,
   },
   {
     value: "50K+",
     label: t("statLabel2"),
     icon: EmojiEmotionsIcon,
-    color: "#c2185b",
+    color: COLORS.SUCCESS_GREEN,
   },
   {
     value: "1M+",
     label: "Searches every month",
     icon: PeopleIcon,
-    color: "#1565c0",
+    color: COLORS.PRIMARY_BLUE,
   },
 ];
 

@@ -1,21 +1,34 @@
 import React from "react";
-import { Box, Typography, Container, Grid, Paper, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Container,
+  Grid,
+  Paper,
+  Button,
+  useTheme,
+} from "@mui/material";
 import Link from "next/link";
 import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
-import { LISTING, getSuccessStories } from "./constants";
+import { getSuccessStories } from "./constants";
 import { useTranslate } from "@/hooks/useTranslate";
 import { COLORS } from "@/constants/colors";
 
 const SuccessStories = () => {
   const { t } = useTranslate();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   return (
-    <Box sx={{ py: 8, bgcolor: "white" }}>
+    <Box
+      sx={{ py: 8, bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : "white" }}
+    >
       <Container maxWidth="xl">
         <Box sx={{ textAlign: "center", mb: 5 }}>
           <Typography
             variant="overline"
             fontWeight={700}
-            color="text.secondary"
+            color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
             sx={{ letterSpacing: 1 }}
           >
             {t("successStories")}
@@ -23,13 +36,18 @@ const SuccessStories = () => {
           <Typography
             variant="h4"
             fontWeight={700}
-            sx={{ mt: 1, color: LISTING.text }}
+            sx={{
+              mt: 1,
+              color: isDark
+                ? COLORS.TEXT.PRIMARY_DARK
+                : COLORS.TEXT.PRIMARY_LIGHT,
+            }}
           >
             {t("hearFromOwners")}
           </Typography>
           <Typography
             variant="body1"
-            color="text.secondary"
+            color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
             sx={{ mt: 1, maxWidth: 560, mx: "auto" }}
           >
             {t("seeHowOthers")}
@@ -43,19 +61,27 @@ const SuccessStories = () => {
                 sx={{
                   overflow: "hidden",
                   borderRadius: 3,
-                  border: `1px solid ${LISTING.border}`,
+                  border: `1px solid ${
+                    isDark
+                      ? COLORS.BORDER.DEFAULT_DARK
+                      : COLORS.BORDER.DEFAULT_LIGHT
+                  }`,
                   height: "100%",
+                  bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
                   transition: "box-shadow 0.2s ease, transform 0.2s ease",
                   "&:hover": {
-                    boxShadow: LISTING.cardShadowHover,
+                    boxShadow: isDark ? "none" : "rgb(79 70 229 / 0.1)",
                     transform: "translateY(-2px)",
+                    borderColor: COLORS.PURPLE_HOVER,
                   },
                 }}
               >
                 <Box
                   sx={{
                     aspectRatio: "1",
-                    bgcolor: LISTING.bgSoft,
+                    bgcolor: isDark
+                      ? COLORS.PURPLE_ALPHA_04
+                      : COLORS.PURPLE_ALPHA_10,
                     position: "relative",
                   }}
                 >
@@ -74,20 +100,22 @@ const SuccessStories = () => {
                   <Typography
                     fontWeight={700}
                     variant="subtitle1"
-                    color="text.primary"
+                    color={isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary"}
                   >
                     {person.name}
                   </Typography>
                   <Typography
                     variant="body2"
-                    color="text.secondary"
+                    color={
+                      isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"
+                    }
                     sx={{ mb: 0.5 }}
                   >
                     {person.role}
                   </Typography>
                   <Typography
                     variant="body2"
-                    color="primary.main"
+                    color={COLORS.PRIMARY_PURPLE}
                     fontWeight={600}
                   >
                     &ldquo;{person.tagline}&rdquo;
@@ -103,14 +131,16 @@ const SuccessStories = () => {
             href="/supplier/register"
             component={Link}
             sx={{
-              borderColor: LISTING.primary,
-              color: LISTING.primary,
+              borderColor: COLORS.PRIMARY_PURPLE,
+              color: COLORS.PRIMARY_PURPLE,
               textTransform: "none",
               fontWeight: 600,
               px: 4,
               "&:hover": {
                 borderColor: COLORS.PURPLE_HOVER,
-                bgcolor: LISTING.primaryLight,
+                bgcolor: isDark
+                  ? COLORS.PURPLE_ALPHA_10
+                  : COLORS.PURPLE_ALPHA_04,
               },
             }}
           >
