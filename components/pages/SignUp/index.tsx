@@ -3,7 +3,7 @@ import AuthWrapper from "@/components/auth/authWrapper";
 import Title from "@/components/auth/title";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { SignUpFormData } from "./signUpSchema";
 import { registerUser } from "@/features/ui/authSlice";
 import { AppUserType } from "@/services/auth/auth.interface";
@@ -13,6 +13,7 @@ import { Box, Link, Typography } from "@mui/material";
 import NextLink from "next/link";
 
 import { useAppDispatch } from "@/store/hooks";
+import { useLeadVerification } from "@/hooks/useLeadVerification";
 
 function SignUpView() {
   const { t } = useTranslate();
@@ -27,6 +28,42 @@ function SignUpView() {
     : AppUserType.CUSTOMER;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+
+  const [busLeadId, setBusLeadId] = useState<string | null>(null);
+  const { leadDetailsQuery } = useLeadVerification(busLeadId);
+  const [initialData, setInitialData] = useState<{
+    phone_number?: string;
+    country_code?: string;
+  }>({});
+
+  useEffect(() => {
+    if (role === AppUserType.SERVICE_PROVIDER) {
+      const busLeadId = sessionStorage.getItem("bus_lead_id");
+      if (!busLeadId) {
+        router.replace("/freeListing");
+        return;
+      }
+      setBusLeadId(busLeadId);
+    }
+  }, [role, router]);
+
+  useEffect(() => {
+    if (leadDetailsQuery.data) {
+      setInitialData({
+        phone_number: leadDetailsQuery.data.phone_number,
+        country_code: leadDetailsQuery.data.country_code,
+      });
+    }
+    if (leadDetailsQuery.isError) {
+      console.error("Failed to fetch lead info", leadDetailsQuery.error);
+      router.replace("/freeListing");
+    }
+  }, [
+    leadDetailsQuery.data,
+    leadDetailsQuery.isError,
+    leadDetailsQuery.error,
+    router,
+  ]);
 
   const OnSubmit = async (data: SignUpFormData) => {
     try {
@@ -87,7 +124,15 @@ function SignUpView() {
       </Box>
       <Title title={t("signUp")} subtitle={t("signUpSubtitle")} />
       <Error isVisible={!!error} error={error} />
-      <RegistrationForm onSubmit={OnSubmit} loading={loading} role={role} />
+      <RegistrationForm
+        onSubmit={OnSubmit}
+        loading={
+          loading ||
+          (role === AppUserType.SERVICE_PROVIDER && leadDetailsQuery.isLoading)
+        }
+        role={role}
+        initialData={initialData}
+      />
       <Box
         sx={{
           mt: { xs: 3, sm: 4 },

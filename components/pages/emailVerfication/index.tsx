@@ -113,6 +113,7 @@ function EmailVerificationView() {
   };
 
   const handleBack = () => {
+    const role = secureStorage.getItem("role");
     secureStorage.removeItem("token");
     secureStorage.removeItem("refreshToken");
     secureStorage.removeItem("register_step");
@@ -120,7 +121,7 @@ function EmailVerificationView() {
     secureStorage.removeItem("user_details");
 
     dispatch(logout());
-    router.back();
+    router.push(`/login?role=${role?.toLowerCase()}`);
   };
 
   const handleContinue = () => {

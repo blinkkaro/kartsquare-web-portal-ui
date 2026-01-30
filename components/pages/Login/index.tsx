@@ -86,7 +86,7 @@ export default function LoginView() {
   };
 
   const handleBack = () => {
-    router.push("/selectRole");
+    router.push("/");
   };
 
   return (

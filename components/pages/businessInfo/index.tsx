@@ -42,11 +42,16 @@ function BusinessInfoView() {
     }
   };
   const handleBack = () => {
+    const role = secureStorage.getItem("role");
     secureStorage.removeItem("token");
     secureStorage.removeItem("refreshToken");
+    secureStorage.removeItem("register_step");
+    secureStorage.removeItem("role");
+    secureStorage.removeItem("user_details");
+
 
     dispatch(logout());
-    router.back();
+    router.push(`/login?role=${role?.toLowerCase()}`);
   };
   return (
     <AuthWrapper>

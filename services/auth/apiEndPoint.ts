@@ -33,4 +33,7 @@ export const API_ENDPOINTS = {
   ADD_BUSINESS_INFO: "/auth/add-business-info",
   GET_BUSINESS_INFO: "/auth/get-business-info",
   UPDATE_BUSINESS_INFO: "/auth/update-business-info",
+  GET_NUMBER: (id: string) => `/auth/freeLead/getNumber/${id}`,
+  VERIFY_NUMBER: (id: string) => `/auth/freeLead/verify-otp/${id}`,
+  APPLY_FOR_FREE_LISTING: "/auth/freeLead/apply",
 };
