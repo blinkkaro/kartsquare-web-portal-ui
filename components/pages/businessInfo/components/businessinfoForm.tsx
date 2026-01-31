@@ -112,6 +112,14 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
         .slice(0, 1)
     : [];
 
+  useEffect(() => {
+    if (displayedAddresses.length > 0 && !selectedAddressId) {
+      setValue("address_id", displayedAddresses[0].id, {
+        shouldValidate: true,
+      });
+    }
+  }, [displayedAddresses, selectedAddressId, setValue]);
+
   const handleImageChange = (files: (File | string)[]) => {
     setValue("business_images", files, { shouldValidate: true });
   };

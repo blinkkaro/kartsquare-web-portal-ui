@@ -16,6 +16,7 @@ interface InputProps extends Omit<TextFieldProps, "name"> {
   label?: string; // Optional custom label handling if needed, though TextField has one
   startIcon?: ReactNode;
   endIcon?: ReactNode;
+  disableUnderline?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -33,7 +34,7 @@ const Input: React.FC<InputProps> = ({
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
+    event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     event.preventDefault();
   };
@@ -70,12 +71,12 @@ const Input: React.FC<InputProps> = ({
       control={control}
       render={({ field, fieldState: { error } }) => (
         <TextField
+          variant="outlined"
+          fullWidth
           {...field}
           value={field.value ?? ""}
           {...props}
           type={inputType}
-          fullWidth
-          variant="outlined"
           error={!!error}
           helperText={error?.message}
           InputProps={{

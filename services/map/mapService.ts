@@ -11,7 +11,7 @@ export const mapService = {
       // Use Google Maps JavaScript SDK Geocoder instead of REST API
       // This works with HTTP referrer-restricted API keys
       if (!window.google || !window.google.maps) {
-        console.error("Google Maps API not loaded");
+        // console.error("Google Maps API not loaded");
         return null;
       }
 
@@ -20,7 +20,7 @@ export const mapService = {
 
       return new Promise((resolve) => {
         geocoder.geocode({ location: latLng }, (results, status) => {
-          console.log("Reverse Geocoding Response:", { status, results });
+          // console.log("Reverse Geocoding Response:", { status, results });
           if (
             status === google.maps.GeocoderStatus.OK &&
             results &&
@@ -28,7 +28,7 @@ export const mapService = {
           ) {
             resolve(results[0]);
           } else {
-            console.error("Reverse Geocoding failed:", status);
+            // console.error("Reverse Geocoding failed:", status);
             resolve(null);
           }
         });
@@ -64,7 +64,7 @@ export const mapService = {
       }
       return [];
     } catch (error) {
-      console.error("Place Search Error:", error);
+      // console.error("Place Search Error:", error);
       return [];
     }
   },
@@ -88,7 +88,7 @@ export const mapService = {
       }
       return [];
     } catch (error) {
-      console.error("Nearby Place Search Error:", error);
+      // console.error("Nearby Place Search Error:", error);
       return [];
     }
   },
@@ -109,7 +109,7 @@ export const mapService = {
       }
       return null;
     } catch (error) {
-      console.error("Place Details Error:", error);
+      // console.error("Place Details Error:", error);
       return null;
     }
   },

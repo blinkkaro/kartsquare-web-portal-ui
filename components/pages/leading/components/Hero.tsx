@@ -84,7 +84,7 @@ const Hero: React.FC = () => {
     >
       <Container maxWidth="xl">
         <Grid container spacing={5} alignItems="center">
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 12, lg: 6 }}>
             <Chip
               icon={<ShieldIcon sx={{ fontSize: 18 }} />}
               label={t("freeForever")}
@@ -315,7 +315,7 @@ const Hero: React.FC = () => {
             ))}
           </Grid>
 
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 12, lg: 6 }}>
             <Box
               sx={{
                 display: { xs: "none", md: "flex" },
