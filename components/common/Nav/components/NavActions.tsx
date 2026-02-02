@@ -169,9 +169,29 @@ const NavActions: React.FC<NavActionsProps> = ({
       {(isMobile || isTablet) && (
         <StyledIconButton
           size="small"
-          aria-label="search"
+          aria-label="business listing"
           onClick={onFreeListingClick}
+          sx={{
+            position: "relative",
+          }}
         >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "2px",
+              right: "2px",
+              backgroundColor: "error.main",
+              color: "#fff",
+              fontSize: "0.45rem",
+              fontWeight: 700,
+              padding: "0px 3px",
+              borderRadius: "2px",
+              lineHeight: 1,
+              textTransform: "uppercase",
+            }}
+          >
+            {t("business")}
+          </Box>
           <Business />
         </StyledIconButton>
       )}
@@ -188,7 +208,7 @@ const NavActions: React.FC<NavActionsProps> = ({
           "&:hover .listing-text": {
             color: COLORS.PRIMARY_PURPLE,
           },
-          mb:"10px"
+          mb: "10px",
         }}
       >
         <Box

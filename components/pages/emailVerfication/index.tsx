@@ -121,7 +121,12 @@ function EmailVerificationView() {
     secureStorage.removeItem("user_details");
 
     dispatch(logout());
-    router.push(`/login?role=${role?.toLowerCase()}`);
+    if(role==="customer"){
+      router.push(`/login?role=customer`);
+    }else{
+      router.push(`/freeListing`);
+    }
+    
   };
 
   const handleContinue = () => {

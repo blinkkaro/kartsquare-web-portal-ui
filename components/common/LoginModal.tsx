@@ -34,7 +34,7 @@ function LoginModal() {
             variant="contained"
             fullWidth
             onClick={() => {
-              router.push("/selectRole");
+              router.push("/login?role=customer");
               dispatch(closeLoginModal());
             }}
             sx={{ borderRadius: "50px", py: 1.5 }}

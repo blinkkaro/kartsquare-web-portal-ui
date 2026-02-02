@@ -137,7 +137,7 @@ const ScheduleView = () => {
   };
 
   const handleBack = () => {
-    const role = secureStorage.getItem("role");
+    // const role = secureStorage.getItem("role");
     secureStorage.removeItem("token");
     secureStorage.removeItem("refreshToken");
     secureStorage.removeItem("register_step");
@@ -146,7 +146,7 @@ const ScheduleView = () => {
 
 
     dispatch(logout());
-    router.push(`/login?role=${role}`);
+    router.push(`/freeListing`);
   };
 
   return (
