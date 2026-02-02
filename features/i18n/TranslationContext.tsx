@@ -681,6 +681,8 @@ export type TranslationKey =
   | "no_upcoming_bookings_desc"
   | "goBack"
   | "no_reviews_yet_desc"
+  | "businessListing"
+  | "business"
   | "roleRequired"
   | "whatsappNumberRequired"
   | "whatsappNumberLength"
@@ -779,7 +781,8 @@ export type TranslationKey =
   | "commonQuestions"
   | "gotAQuestion"
   | "quickAnswers"
-  | "by";
+  | "by"
+  | "quickAnswers";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

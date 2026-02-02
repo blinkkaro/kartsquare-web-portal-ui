@@ -33,12 +33,17 @@ interface RegistrationFormProps {
   onSubmit: (data: SignUpFormData) => void;
   loading: boolean;
   role: AppUserType;
+  initialData?: {
+    phone_number?: string;
+    country_code?: string;
+  };
 }
 
 const RegistrationForm: React.FC<RegistrationFormProps> = ({
   onSubmit,
   loading,
   role,
+  initialData,
 }) => {
   const { t } = useTranslate();
   const [showPassword, setShowPassword] = useState(false);
@@ -67,8 +72,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       first_name: "",
       last_name: "",
       email: "",
-      phone_number: "",
-      country_code: "+91", // Default to India code
+      phone_number: initialData?.phone_number || "",
+      country_code: initialData?.country_code || "+91", // Default to India code
       gender: undefined,
       country: "India",
       birth_date: maxDate,
@@ -77,6 +82,15 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       whatsapp_country_code: "+91",
     },
   });
+
+  React.useEffect(() => {
+    if (initialData?.phone_number) {
+      setValue("phone_number", initialData.phone_number);
+    }
+    if (initialData?.country_code) {
+      setValue("country_code", initialData.country_code);
+    }
+  }, [initialData, setValue]);
 
   const selectedCountryCode = watch("country_code");
   const gender = watch("gender");
@@ -226,6 +240,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 name="country_code"
                 control={control}
                 select
+                disabled={!!initialData?.country_code}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -247,6 +262,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 control={control}
                 placeholder="621 121221"
                 type="tel"
+                InputProps={{
+                  readOnly: !!initialData?.phone_number,
+                }}
                 inputProps={{
                   maxLength: 10,
                   inputMode: "numeric",

@@ -98,7 +98,7 @@ const Nav = () => {
   };
 
   const handleLogin = () => {
-    router.push("/selectRole");
+    router.push("/login?role=customer");
   };
 
   const handleThemeToggle = () => {
@@ -115,6 +115,10 @@ const Nav = () => {
 
   const toggleNotificationDrawer = () => {
     setShowNotificationDrawer((prev) => !prev);
+  };
+
+  const handleFreeListingClick = () => {
+    router.push("/freeListing");
   };
 
   return (
@@ -153,6 +157,7 @@ const Nav = () => {
               onLogin={handleLogin}
               loginText={t("login")}
               onNotificationToggle={toggleNotificationDrawer}
+              onFreeListingClick={handleFreeListingClick}
             />
           </Box>
 
