@@ -780,6 +780,8 @@ export type TranslationKey =
   | "getStartedFree"
   | "commonQuestions"
   | "gotAQuestion"
+  | "quickAnswers"
+  | "by"
   | "quickAnswers";
 
 // Sample dictionaries

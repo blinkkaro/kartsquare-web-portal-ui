@@ -1055,4 +1055,5 @@ export const english = {
   commonQuestions: "Common questions",
   gotAQuestion: "Got a question?",
   quickAnswers: "Quick answers for business owners.",
+  by: "by",
 };

@@ -67,10 +67,10 @@ const PostCard = ({ post }: { post: Posts }) => {
                 border: "2px solid white",
               }}
               src={post.user.profile_pic || ""}
-              alt={post.user.first_name}
+              alt={post.user.business_name}
             />
             <Typography variant="body2" sx={{ fontWeight: 600 }}>
-              {post.user.first_name} {post.user.last_name}
+              {post.user.business_name}
             </Typography>
           </Box>
           {/* <Box

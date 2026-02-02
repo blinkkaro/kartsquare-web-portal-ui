@@ -7,6 +7,7 @@ export interface TopProvider {
   country: string;
   city: string;
   total_bookings: string;
+  business_name: string;
 }
 
 export interface TopService {
