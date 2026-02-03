@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Box,
   Container,
@@ -8,13 +8,12 @@ import {
   useTheme,
   Divider,
 } from "@mui/material";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Bookmark, Share } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import ServiceImageCarousel from "../../../ServiceImageCarousel";
 import ProviderInfoCard from "../../../ProviderInfoCard";
 import ServiceCard from "../../../ServiceCard";
-import { Service } from "../../../../services/serviceList/listInteraface";
 import { COLORS } from "../../../../constants/colors";
 import CustomerServiceBreadcrumb from "./CustomerServiceBreadcrumb";
 import CustomerServiceHeader from "./CustomerServiceHeader";
@@ -35,15 +34,20 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { secureStorage } from "@/helper/SecureStorage";
 import { useDispatch } from "react-redux";
 import { openLoginModal } from "@/features/ui/loginModalSlice";
+import RightDrawer from "@/components/common/RightDrawer";
+import ReviewDrawerContent from "./ReviewDrawerContent";
 
 const CustomerServiceDetails = () => {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const serviceId = params.id as string;
+  const actions = searchParams.get("action");
   const theme = useTheme();
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
   const dispatch = useDispatch();
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
   const reviewsPerPage = 5;
   const [descriptionDrawerOpen, setDescriptionDrawerOpen] = useState(false);
@@ -84,6 +88,17 @@ const CustomerServiceDetails = () => {
   const reviews = useMemo(() => {
     return reviewsData?.pages.flatMap((page) => page.reviews) || [];
   }, [reviewsData]);
+
+  useEffect(() => {
+    if (actions === "review") {
+      setReviewModalOpen(true);
+    }
+  }, [actions]);
+
+  const handleReviewSubmit = () => {
+    setReviewModalOpen(false);
+    router.push(`/services/${serviceId}`);
+  };
 
   const totalReviews = reviewsData?.pages[0]?.meta.total || 0;
 
@@ -351,6 +366,7 @@ const CustomerServiceDetails = () => {
                   reviewsLoading={reviewsLoading}
                   onLoadMore={handleLoadMore}
                   showLoadMore={hasNextPage || false}
+                  onAddReview={() => setReviewModalOpen(true)}
                 />
               </Box>
             </Box>
@@ -423,6 +439,14 @@ const CustomerServiceDetails = () => {
         onClose={() => setDescriptionDrawerOpen(false)}
         description={service.service_desc || ""}
       />
+      <RightDrawer
+        open={reviewModalOpen}
+        onClose={handleReviewSubmit}
+        width={500}
+        title="Review"
+      >
+        <ReviewDrawerContent service={service} onClose={handleReviewSubmit} />
+      </RightDrawer>
     </MainLayout>
   );
 };

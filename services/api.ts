@@ -8,6 +8,7 @@ import axios, {
 } from "axios";
 import { store } from "@/store/store";
 import { openLoginModal } from "@/features/ui/loginModalSlice";
+import { authService } from "./auth/auth.service";
 
 // Create Axios instance with default config
 
@@ -131,15 +132,9 @@ api.interceptors.response.use(
       try {
         const refreshToken = secureStorage.getItem("refreshToken");
         if (!refreshToken) {
-          // No refresh token, but don't redirect - just throw the error
-          // Let individual components handle authentication requirements
           throw error;
         }
 
-        // Import dynamically to avoid circular dependency
-        const { authService } = await import("./auth/auth.service");
-
-        // Call refresh token API
         const response = await authService.refreshToken(refreshToken);
 
         if (response.data && response.data.tokens) {

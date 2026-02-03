@@ -149,4 +149,5 @@ export interface BookingDetails {
   otp?: number;
   category_name?: string;
   contact_number?: string;
+  is_reviewed: boolean;
 }

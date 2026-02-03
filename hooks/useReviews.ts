@@ -15,7 +15,7 @@ export const useServiceReviews = (
     queryKey: ["service-reviews", serviceId, reviewsPerPage],
     queryFn: ({ pageParam = 1 }) =>
       reviewService.getReviews(
-        "SERVICE",
+        "service",
         serviceId,
         pageParam,
         reviewsPerPage

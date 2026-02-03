@@ -14,6 +14,7 @@ const BookingsTabs: React.FC<BookingsTabsProps> = ({ activeTab, onTabChange, cou
     const isDark = theme.palette.mode === "dark";
 
     const tabs = [
+        english.pending,
         english.upcoming,
         english.in_progress,
         english.completed,

@@ -14,6 +14,7 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { useQueryClient } from "@tanstack/react-query";
 import { bookingService } from "@/services/booking/bookingService";
 import ProviderBookingDetailsDrawer from "@/components/pages/provider/bookings/ProviderBookingDetailsDrawer";
+import BookingDetailsDrawer from "@/components/pages/bookings/BookingDetailsDrawer";
 import OtpDiaBox from "@/components/pages/dashboard/components/otpDiaBox";
 import WarningModel from "./WarningModel";
 import { service_address } from "@/services/providerDashboard/providerDashboard.interface";
@@ -133,45 +134,98 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
   const getActionButtons = () => {
     switch (booking.status) {
       case BookingStatus.ACTIVE:
-        return (
-          <Button
-            variant="contained"
-            // fullWidth
-            onClick={(e) => {
-              e.stopPropagation();
-              if (onActionClick) {
-                onActionClick(BookingStatus.COMPLETED, booking.booking_id);
-              } else {
-                handleUpdateStatus(booking.booking_id, BookingStatus.COMPLETED);
-              }
-            }}
-          >
-            {t("complete")}
-          </Button>
-        );
-      case BookingStatus.PENDING:
-        return (
-          <Box sx={{ display: "flex", gap: 1 }}>
+        if (isProvider) {
+          return (
             <Button
               variant="contained"
               // fullWidth
               onClick={(e) => {
                 e.stopPropagation();
                 if (onActionClick) {
-                  onActionClick(BookingStatus.CONFIRMED, booking.booking_id);
+                  onActionClick(BookingStatus.COMPLETED, booking.booking_id);
                 } else {
                   handleUpdateStatus(
                     booking.booking_id,
-                    BookingStatus.CONFIRMED,
+                    BookingStatus.COMPLETED,
                   );
                 }
               }}
             >
-              {t("confirm")}
+              {t("complete")}
             </Button>
+          );
+        } else {
+          return null;
+          // return (
+          //   <Button
+          //     variant="contained"
+          //     // fullWidth
+          //     onClick={(e) => {
+          //       e.stopPropagation();
+          //       if (onActionClick) {
+          //         onActionClick(BookingStatus.COMPLETED, booking.booking_id);
+          //       } else {
+          //         handleUpdateStatus(
+          //           booking.booking_id,
+          //           BookingStatus.COMPLETED,
+          //         );
+          //       }
+          //     }}
+          //   >
+          //     {t("complete")}
+          //   </Button>
+          // );
+        }
+
+      case BookingStatus.PENDING:
+        if (isProvider) {
+          return (
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Button
+                variant="contained"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onActionClick) {
+                    onActionClick(BookingStatus.CONFIRMED, booking.booking_id);
+                  } else {
+                    handleUpdateStatus(
+                      booking.booking_id,
+                      BookingStatus.CONFIRMED,
+                    );
+                  }
+                }}
+              >
+                {t("confirm")}
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onActionClick) {
+                    onActionClick(BookingStatus.CANCELLED, booking.booking_id);
+                  } else {
+                    setIsCancelDialogOpen(true);
+                  }
+                }}
+                sx={{
+                  textTransform: "none",
+                  py: 1,
+                  fontWeight: 600,
+                  "&:hover": {
+                    borderColor: COLORS.PRIMARY_PURPLE,
+                    bgcolor: COLORS.PURPLE_ALPHA_04,
+                  },
+                }}
+              >
+                {t("cancel")}
+              </Button>
+            </Box>
+          );
+        } else {
+          // Customer Pending View - Default to just Cancel
+          return (
             <Button
               variant="outlined"
-              // fullWidth
               onClick={(e) => {
                 e.stopPropagation();
                 if (onActionClick) {
@@ -192,65 +246,93 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
             >
               {t("cancel")}
             </Button>
-          </Box>
-        );
+          );
+        }
       case BookingStatus.CONFIRMED:
-        return (
-          <Box
-            sx={{
-              display: "flex",
-              gap: 1,
-              justifyContent: "flex-end",
-              alignItems: "center",
-            }}
-          >
-            <Button
-              variant="contained"
-              //   fullWidth
-              onClick={(e) => {
-                e.stopPropagation();
-                if (onActionClick) {
-                  onActionClick(BookingStatus.ACTIVE, booking.booking_id);
-                } else {
-                  setOpenOtpDialog(true);
-                }
-              }}
-            >
-              {t("start")}
-            </Button>
-            <Button
-              variant="outlined"
-              //   fullWidth
+        if (isProvider) {
+          return (
+            <Box
               sx={{
-                borderColor: isDark
-                  ? COLORS.BORDER.DEFAULT_DARK
-                  : COLORS.BORDER.DEFAULT_LIGHT,
-                color: isDark
-                  ? COLORS.TEXT.PRIMARY_DARK
-                  : COLORS.TEXT.PRIMARY_LIGHT,
-                textTransform: "none",
-                py: 1,
-                fontWeight: 600,
-                "&:hover": {
-                  borderColor: COLORS.PRIMARY_PURPLE,
-                  bgcolor: COLORS.PURPLE_ALPHA_04,
-                },
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (onActionClick) {
-                  onActionClick(BookingStatus.CANCELLED, booking.booking_id);
-                } else {
-                  setIsCancelDialogOpen(true);
-                }
+                display: "flex",
+                gap: 1,
+                justifyContent: "flex-end",
+                alignItems: "center",
               }}
             >
-              {t("cancel")}
-            </Button>
-          </Box>
-        );
+              <Button
+                variant="contained"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onActionClick) {
+                    onActionClick(BookingStatus.ACTIVE, booking.booking_id);
+                  } else {
+                    setOpenOtpDialog(true);
+                  }
+                }}
+              >
+                {t("start")}
+              </Button>
+              <Button
+                variant="outlined"
+                sx={{
+                  borderColor: isDark
+                    ? COLORS.BORDER.DEFAULT_DARK
+                    : COLORS.BORDER.DEFAULT_LIGHT,
+                  color: isDark
+                    ? COLORS.TEXT.PRIMARY_DARK
+                    : COLORS.TEXT.PRIMARY_LIGHT,
+                  textTransform: "none",
+                  py: 1,
+                  fontWeight: 600,
+                  "&:hover": {
+                    borderColor: COLORS.PRIMARY_PURPLE,
+                    bgcolor: COLORS.PURPLE_ALPHA_04,
+                  },
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onActionClick) {
+                    onActionClick(BookingStatus.CANCELLED, booking.booking_id);
+                  } else {
+                    setIsCancelDialogOpen(true);
+                  }
+                }}
+              >
+                {t("cancel")}
+              </Button>
+            </Box>
+          );
+        } else {
+          // Customer Confirmed (Upcoming) View
+          return (
+            <Box sx={{ display: "flex", gap: 1 }}>
+              {/* Reschedule button could go here if implemented, or just View Details */}
+              <Button
+                variant="outlined"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onActionClick) {
+                    onActionClick(BookingStatus.CANCELLED, booking.booking_id);
+                  } else {
+                    setIsCancelDialogOpen(true);
+                  }
+                }}
+                sx={{
+                  textTransform: "none",
+                  py: 1,
+                  fontWeight: 600,
+                  "&:hover": {
+                    borderColor: COLORS.PRIMARY_PURPLE,
+                    bgcolor: COLORS.PURPLE_ALPHA_04,
+                  },
+                }}
+              >
+                {t("cancel")}
+              </Button>
+            </Box>
+          );
+        }
       case BookingStatus.COMPLETED:
-        // No action buttons for completed
         return null;
       case BookingStatus.CANCELLED:
         // No action buttons for cancelled bookings
@@ -476,14 +558,30 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
           </Box>
           {getActionButtons()}
         </Box>
-
       </Box>
-        {/* Booking Details Drawer */}
+      {/* Booking Details Drawer */}
+      {isProvider ? (
         <ProviderBookingDetailsDrawer
           open={isDrawerOpen}
           onClose={() => setIsDrawerOpen(false)}
           booking_id={booking.booking_id}
         />
+      ) : (
+        <BookingDetailsDrawer
+          open={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          booking={
+            {
+              ...booking,
+              service_currency: booking.currency,
+              service_images: [booking.image],
+              service_price: booking.price,
+              booking_at: booking.time,
+              service_name: booking.name,
+            } as any
+          }
+        />
+      )}
       {/* OTP Dialog */}
       <OtpDiaBox
         openOtpDialog={openOtpDialog}

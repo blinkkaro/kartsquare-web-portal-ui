@@ -12,8 +12,17 @@ import {
   Dialog,
   Fade,
 } from "@mui/material";
-import { Close, ChatBubbleOutline, NearMe, CheckCircle } from "@mui/icons-material";
-import { UserBooking, BookingDetails } from "../../../services/booking/bookingInterface";
+import {
+  Close,
+  ChatBubbleOutline,
+  NearMe,
+  CheckCircle,
+} from "@mui/icons-material";
+import {
+  UserBooking,
+  BookingDetails,
+  BookingStatus,
+} from "../../../services/booking/bookingInterface";
 import { COLORS } from "../../../constants/colors";
 import { english } from "../../../features/i18n/en";
 import dayjs from "dayjs";
@@ -21,6 +30,7 @@ import RightDrawer from "../../common/RightDrawer";
 import { bookingDetailsService } from "../../../services/booking/bookingDetails";
 import { CircularProgress } from "@mui/material";
 import { Phone, CalendarToday, LocationOn } from "@mui/icons-material";
+import ReviewModal from "./ReviewModal";
 
 interface BookingDetailsDrawerProps {
   open: boolean;
@@ -38,6 +48,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
   const [booking, setBooking] = React.useState<BookingDetails | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [previewImage, setPreviewImage] = React.useState<string | null>(null);
+  const [reviewModalOpen, setReviewModalOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (open && initialBooking?.booking_id) {
@@ -59,17 +70,35 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
     }
   };
 
+   // Auto-open review modal logic
+  React.useEffect(() => {
+    console.log("Booking details:", booking);
+    if (booking && booking.status === BookingStatus.COMPLETED && !booking.is_reviewed) {
+      const timer = setTimeout(() => {
+        setReviewModalOpen(true);
+      }, 1000); // 1 second delay for better UX
+      console.log("Review modal opened");
+      return () => clearTimeout(timer);
+    }
+  }, [booking]);
+
   if (!initialBooking) return null;
 
   // Map status to colors
   const getStatusColor = (status: string) => {
     switch (status) {
-            case "PENDING": return { bg: "#FFFBEB", text: "#F59E0B" };
-            case "CONFIRMED": return { bg: "#ECFDF5", text: "#10B981" };
-            case "CANCELLED": return { bg: "#FEF2F2", text: "#EF4444" };
-            case "COMPLETED": return { bg: "#EFF6FF", text: "#3B82F6" };
-            case "ACTIVE": return { bg: "#EEF2FF", text: "#6366F1" };
-            default: return { bg: "#F3F4F6", text: "#6B7280" };
+      case "PENDING":
+        return { bg: "#FFFBEB", text: "#F59E0B" };
+      case "CONFIRMED":
+        return { bg: "#ECFDF5", text: "#10B981" };
+      case "CANCELLED":
+        return { bg: "#FEF2F2", text: "#EF4444" };
+      case "COMPLETED":
+        return { bg: "#EFF6FF", text: "#3B82F6" };
+      case "ACTIVE":
+        return { bg: "#EEF2FF", text: "#6366F1" };
+      default:
+        return { bg: "#F3F4F6", text: "#6B7280" };
     }
   };
 
@@ -86,7 +115,15 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
     >
       <Box sx={{ px: 4, pb: 4 }}>
         {loading ? (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', py: 10 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+              py: 10,
+            }}
+          >
             <CircularProgress />
           </Box>
         ) : (
@@ -734,6 +771,22 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
           )}
         </Box>
       </Dialog>
+
+      {/* Review Modal */}
+      <ReviewModal
+        id={currentBooking.service_id}
+        open={reviewModalOpen}
+        onClose={() => setReviewModalOpen(false)}
+        providerName={
+          currentBooking.provider_details?.first_name
+            ? `${currentBooking.provider_details?.first_name} ${currentBooking.provider_details?.last_name}`
+            : currentBooking.business_name
+        }
+        providerImage={
+          currentBooking.provider_details?.profile_pic || undefined
+        }
+        serviceName={currentBooking.service_name}
+      />
     </RightDrawer>
   );
 };

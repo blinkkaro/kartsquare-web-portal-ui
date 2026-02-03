@@ -782,7 +782,19 @@ export type TranslationKey =
   | "gotAQuestion"
   | "quickAnswers"
   | "by"
-  | "quickAnswers";
+  | "quickAnswers"
+  | "booking_completed"
+  | "how_was_your_experience"
+  | "for"
+  | "maybe_later"
+  | "rate_now"
+  | "write_review"
+  | "submit_review"
+  | "no_detailed_ratings_available"
+  | "collapse_review"
+  | "expand_review"
+  | "yes"
+  | "no";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
