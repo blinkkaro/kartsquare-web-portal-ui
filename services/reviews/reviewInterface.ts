@@ -18,6 +18,8 @@ export interface ReviewUser {
 }
 
 export interface Review {
+  user_name: any;
+  user_image_url: string | undefined;
   customer_review_id: string; // Mapped from review_question_id or actual ID
   user_id: string;
   review_event_type: review_type;
