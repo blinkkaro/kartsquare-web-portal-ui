@@ -171,6 +171,24 @@ class ServiceListService {
             throw error;
         }
     }
+
+    /**
+     * Update service status (ACTIVE/INACTIVE)
+     */
+    async toggleServiceStatus(serviceId: string, status: 'ACTIVE' | 'INACTIVE'): Promise<Service> {
+        try {
+            const response = await PUT<Service>(
+                `/services/${serviceId}/status`,
+                { status },
+                {},
+                true // requiresAuth = true
+            );
+            return response.data;
+        } catch (error) {
+            console.error("Error toggling service status:", error);
+            throw error;
+        }
+    }
 }
 
 export const serviceListService = new ServiceListService();

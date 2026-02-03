@@ -1,21 +1,24 @@
 "use client";
-import React, {
-  useState,
-  useCallback,
-  useMemo,
-  useEffect,
-  useRef,
-} from "react";
-import { Box, useTheme, IconButton, Avatar } from "@mui/material";
+import React, { useState, useCallback, useEffect, useRef } from "react";
+import {
+  Box,
+  useTheme,
+  IconButton,
+  Avatar,
+  TextField,
+  InputAdornment,
+  Typography,
+} from "@mui/material";
 import { GoogleMap, useJsApiLoader, OverlayView } from "@react-google-maps/api";
-import { Close, ChevronLeft, ChevronRight } from "@mui/icons-material";
-import { Service } from "@/services/profile/profileInterface";
+import { Close, ChevronLeft, ChevronRight, Search } from "@mui/icons-material";
+import { Service } from "@/services/serviceList/listInteraface";
 import { COLORS } from "@/constants/colors";
 import ServiceProviderCard from "./components/ServiceProviderCard";
-import { dummyServiceProviders } from "@/data/dummyServiceProviders";
 import { useAutoGeolocation } from "@/hooks/useGeolocation";
 import { secureStorage } from "@/helper/SecureStorage";
 import { useTranslate } from "@/hooks/useTranslate";
+import { useServicesList } from "@/hooks/useServicesList";
+import { useRouter } from "next/navigation";
 
 // Define libraries outside component to prevent recreation
 const LIBRARIES: "places"[] = ["places"];
@@ -23,7 +26,11 @@ const LIBRARIES: "places"[] = ["places"];
 const MapView: React.FC = () => {
   const theme = useTheme();
   const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const { coordinates } = useAutoGeolocation();
+  const {
+    coordinates,
+    isLoading: isGeoLoading,
+    error: geoError,
+  } = useAutoGeolocation();
   const [mapCenter, setMapCenter] = useState<{
     lat: number;
     lng: number;
@@ -31,7 +38,19 @@ const MapView: React.FC = () => {
   const [userProfile, setUserProfile] = useState<string | null>(null);
   const [mapZoom, setMapZoom] = useState(12);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const {t} = useTranslate()
+  const router = useRouter();
+  const { t } = useTranslate();
+
+  // Fetch services
+  const {
+    data: servicesData,
+    isLoading: isServicesLoading,
+    error: servicesError,
+  } = useServicesList({
+    limit: 10, // Fetch more for map view
+  });
+
+  const services = servicesData?.services || [];
 
   // Load user profile from localStorage
   useEffect(() => {
@@ -56,6 +75,8 @@ const MapView: React.FC = () => {
       });
     }
   }, [coordinates, mapCenter]);
+
+  // Update map center when services flow in if map center is not set (optional, or just stick to user location)
 
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
@@ -88,24 +109,38 @@ const MapView: React.FC = () => {
 
   const handleMarkerClick = useCallback((service: Service) => {
     setSelectedService(service);
-    setMapCenter({
-      lat: service.service_provider_latitude,
-      lng: service.service_provider_longitude,
-    });
-    setMapZoom(15); // Zoom in when marker is clicked
+    if (
+      service?.service_address?.latitude &&
+      service?.service_address?.longitude
+    ) {
+      setMapCenter({
+        lat: service.service_address.latitude,
+        lng: service.service_address.longitude,
+      });
+      setMapZoom(15); // Zoom in when marker is clicked
+    }
   }, []);
 
   const handleCardClick = useCallback((service: Service) => {
     setSelectedService(service);
-    setMapCenter({
-      lat: service.service_provider_latitude,
-      lng: service.service_provider_longitude,
-    });
-    setMapZoom(15); // Zoom in when card is clicked
+    if (
+      service?.service_address?.latitude &&
+      service?.service_address?.longitude
+    ) {
+      setMapCenter({
+        lat: service.service_address.latitude,
+        lng: service.service_address.longitude,
+      });
+      setMapZoom(15); // Zoom in when card is clicked
+    }
   }, []);
 
   const handleCloseCard = useCallback(() => {
     setSelectedService(null);
+  }, []);
+
+  const handleSelectedCardClick = useCallback((service: Service) => {
+    router.push(`/cus/service/${service.service_id}`);
   }, []);
 
   const handleScrollLeft = useCallback(() => {
@@ -145,24 +180,10 @@ const MapView: React.FC = () => {
     );
   }
 
-  if (loadError) {
-    return (
-      <Box
-        sx={{
-          width: "100%",
-          height: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          bgcolor: "#f5f5f5",
-        }}
-      >
-        <p style={{ color: COLORS.TEXT.SECONDARY_LIGHT }}>Error loading maps</p>
-      </Box>
-    );
-  }
+  const isLoading =
+    !isLoaded || isGeoLoading || (isServicesLoading && !servicesData); // Allow interactions while refetching for search
 
-  if (!isLoaded) {
+  if (isLoading) {
     return (
       <Box
         sx={{
@@ -193,92 +214,101 @@ const MapView: React.FC = () => {
           mapCenter ||
           (coordinates?.latitude && coordinates?.longitude
             ? { lat: coordinates.latitude, lng: coordinates.longitude }
-            : { lat: 0, lng: 0 })
+            : { lat: 26.9167, lng: 75.7833 })
         }
         options={mapOptions}
       >
         {/* Custom Markers for Service Providers */}
-        {dummyServiceProviders.map((service) => (
-          <OverlayView
-            key={service.id}
-            position={{
-              lat: service.service_provider_latitude,
-              lng: service.service_provider_longitude,
-            }}
-            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-          >
-            <Box
-              onClick={() => handleMarkerClick(service)}
-              sx={{
-                cursor: "pointer",
-                transform: "translate(-50%, -50%)",
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  transform: "translate(-50%, -50%) scale(1.1)",
-                },
-                position: "relative",
+        {services.map((service) =>
+          service?.service_address?.latitude &&
+          service?.service_address?.longitude ? (
+            <OverlayView
+              key={service.service_id}
+              position={{
+                lat: service.service_address.latitude || 0,
+                lng: service.service_address.longitude || 0,
               }}
+              mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
             >
-              {/* Pulsing ring for selected service */}
-              {selectedService?.id === service.id && (
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    width: "70px",
-                    height: "70px",
-                    borderRadius: "50%",
-                    backgroundColor: "rgba(138, 43, 226, 0.2)",
-                    animation: "pulse 2s infinite",
-                    "@keyframes pulse": {
-                      "0%": {
-                        transform: "translate(-50%, -50%) scale(1)",
-                        opacity: 1,
-                      },
-                      "100%": {
-                        transform: "translate(-50%, -50%) scale(1.5)",
-                        opacity: 0,
-                      },
-                    },
-                  }}
-                />
-              )}
               <Box
+                onClick={() => handleMarkerClick(service)}
                 sx={{
-                  width: selectedService?.id === service.id ? 56 : 48,
-                  height: selectedService?.id === service.id ? 56 : 48,
-                  borderRadius: "50%",
-                  border: `3px solid ${
-                    selectedService?.id === service.id
-                      ? COLORS.PRIMARY_PURPLE
-                      : "#ffffff"
-                  }`,
-                  boxShadow:
-                    selectedService?.id === service.id
-                      ? "0 4px 16px rgba(138, 43, 226, 0.5)"
-                      : "0 2px 8px rgba(0, 0, 0, 0.3)",
-                  overflow: "hidden",
-                  backgroundColor: "#fff",
+                  cursor: "pointer",
+                  transform: "translate(-50%, -50%)",
                   transition: "all 0.3s ease",
+                  "&:hover": {
+                    transform: "translate(-50%, -50%) scale(1.1)",
+                  },
+                  position: "relative",
                 }}
               >
-                <img
-                  src={
-                    service.provider_image_url || "https://i.pravatar.cc/150"
-                  }
-                  alt={service.provider_name}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
+                {/* Pulsing ring for selected service */}
+                {selectedService?.service_id === service.service_id && (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      width: "70px",
+                      height: "70px",
+                      borderRadius: "50%",
+                      backgroundColor: "rgba(138, 43, 226, 0.2)",
+                      animation: "pulse 2s infinite",
+                      "@keyframes pulse": {
+                        "0%": {
+                          transform: "translate(-50%, -50%) scale(1)",
+                          opacity: 1,
+                        },
+                        "100%": {
+                          transform: "translate(-50%, -50%) scale(1.5)",
+                          opacity: 0,
+                        },
+                      },
+                    }}
+                  />
+                )}
+                <Box
+                  sx={{
+                    width:
+                      selectedService?.service_id === service.service_id
+                        ? 56
+                        : 48,
+                    height:
+                      selectedService?.service_id === service.service_id
+                        ? 56
+                        : 48,
+                    borderRadius: "50%",
+                    border: `3px solid ${
+                      selectedService?.service_id === service.service_id
+                        ? COLORS.PRIMARY_PURPLE
+                        : "#ffffff"
+                    }`,
+                    boxShadow:
+                      selectedService?.service_id === service.service_id
+                        ? "0 4px 16px rgba(138, 43, 226, 0.5)"
+                        : "0 2px 8px rgba(0, 0, 0, 0.3)",
+                    overflow: "hidden",
+                    backgroundColor: "#fff",
+                    transition: "all 0.3s ease",
                   }}
-                />
+                >
+                  <img
+                    src={
+                      service.provider_image_url || "https://i.pravatar.cc/150"
+                    }
+                    alt={service.provider_name}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </Box>
               </Box>
-            </Box>
-          </OverlayView>
-        ))}
+            </OverlayView>
+          ) : null,
+        )}
 
         {/* User Location Marker */}
         {coordinates?.latitude && coordinates?.longitude && (
@@ -372,7 +402,9 @@ const MapView: React.FC = () => {
             zIndex: 2,
             "&:hover": {
               backgroundColor:
-                theme.palette.mode === "light" ? COLORS.WHITE : COLORS.BACKGROUND.PAPER_DARK,
+                theme.palette.mode === "light"
+                  ? COLORS.WHITE
+                  : COLORS.BACKGROUND.PAPER_DARK,
               boxShadow: `0 4px 12px ${COLORS.SHADOW.DEFAULT}`,
             },
           }}
@@ -395,20 +427,20 @@ const MapView: React.FC = () => {
             px: 6, // Padding for arrows
           }}
         >
-          {dummyServiceProviders.map((service) => (
+          {services.map((service) => (
             <Box
-              key={service.id}
+              key={service.service_id}
               sx={{
                 minWidth: "320px",
                 maxWidth: "320px",
                 border:
-                  selectedService?.id === service.id
+                  selectedService?.service_id === service.service_id
                     ? `2px solid ${COLORS.PRIMARY_PURPLE}`
                     : "2px solid transparent",
                 borderRadius: "14px",
                 transition: "all 0.3s ease",
                 boxShadow:
-                  selectedService?.id === service.id
+                  selectedService?.service_id === service.service_id
                     ? "0 4px 16px rgba(138, 43, 226, 0.3)"
                     : "none",
               }}
@@ -439,7 +471,9 @@ const MapView: React.FC = () => {
             zIndex: 2,
             "&:hover": {
               backgroundColor:
-                theme.palette.mode === "light" ? COLORS.WHITE : COLORS.BACKGROUND.PAPER_DARK,
+                theme.palette.mode === "light"
+                  ? COLORS.WHITE
+                  : COLORS.BACKGROUND.PAPER_DARK,
               boxShadow: `0 4px 12px ${COLORS.SHADOW.DEFAULT}`,
             },
           }}
@@ -460,6 +494,7 @@ const MapView: React.FC = () => {
             width: "90%",
             maxWidth: "400px",
           }}
+          onClick={handleCloseCard}
         >
           <Box sx={{ position: "relative" }}>
             <IconButton

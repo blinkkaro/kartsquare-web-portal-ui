@@ -3,7 +3,7 @@ import BlogView from "@/components/pages/blog";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Blog | KartSquare Portal",
+  title: "Blog | kartsquare Portal",
   description: "Read the latest blog posts",
 };
 

@@ -76,7 +76,7 @@ const ServicesTable: React.FC<ServicesTableProps> = ({ services, loading }) => {
   return (
     <Grid container spacing={3}>
       {services.map((service, i) => (
-        <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
+        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={i}>
           <ServiceCard service={service} />
         </Grid>
       ))}

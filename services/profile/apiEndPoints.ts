@@ -3,6 +3,7 @@ export const APIENDPOINTS = {
   UPDATE_USER_PROFILE: '/profile',
   DELETE_USER_PROFILE: '/profile/delete-account',
   GET_PROVIDER_PROFILE: (id: string) => `/profile/${id}`,
+  GET_PROVIDER_PROFILE_BY_USERNAME: (username: string) => `/profile/provider/${username}`,
   GET_PROVIDER_POSTS: (id: string, page?: number, limit?: number) =>
     `/profile/${id}/posts?page=${page}&limit=${limit}`,
   GET_PROVIDER_SERVICES: (id: string, page?: number, limit?: number) =>

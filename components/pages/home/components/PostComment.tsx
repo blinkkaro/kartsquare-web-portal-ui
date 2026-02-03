@@ -34,10 +34,15 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
   const addCommentMutation = useAddPostComment(post.id);
 
   const handleSubmitComment = async () => {
-    if (commentText.trim()) {
-      await addCommentMutation.mutateAsync(commentText);
-      setCommentText("");
+    try {
+      if (commentText.trim()) {
+        await addCommentMutation.mutateAsync(commentText);
+        setCommentText("");
+      }
+    } catch (error) {
+      onClose();
     }
+
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -100,12 +105,13 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
         {/* Right Side - Comments Section */}
         <Box
           sx={{
-            flex: { md: 1 },
+            flex: 1, // Changed from flex: { md: 1 } to flex: 1 to ensure it fills height on mobile
             display: "flex",
             flexDirection: "column",
             width: { xs: "100%", md: "auto" },
             maxWidth: { md: 500 },
             minWidth: { md: 400 },
+            height: "100%", // Explicitly set height to fill parent
           }}
         >
           {/* Header */}
@@ -114,7 +120,7 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              p: 2,
+              p: { xs: 1.5, sm: 2 }, // Reduced padding on mobile
               borderBottom: `1px solid ${
                 theme.palette.mode === "dark" ? "#333" : "#dbdbdb"
               }`,
@@ -204,7 +210,7 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
             sx={{
               flex: 1,
               overflowY: "auto",
-              p: 2,
+              p: { xs: 1.5, sm: 2 }, // Reduced padding on mobile
               "&::-webkit-scrollbar": {
                 width: "8px",
               },
@@ -360,8 +366,8 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
                   color: commentText.trim()
                     ? theme.palette.primary.main
                     : theme.palette.mode === "dark"
-                    ? COLORS.TEXT.SECONDARY_DARK
-                    : COLORS.TEXT.SECONDARY_LIGHT,
+                      ? COLORS.TEXT.SECONDARY_DARK
+                      : COLORS.TEXT.SECONDARY_LIGHT,
                 }}
               >
                 {addCommentMutation.isPending ? (

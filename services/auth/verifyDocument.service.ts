@@ -54,13 +54,13 @@ class VerifyDocumentService {
       if (uploadedUrls.length < 3) {
         throw new Error("Image upload did not return the required URLs.");
       }
-
+      console.log("uploadedUrls", uploadedUrls);
       const verificationPayload: Doc = {
         aadharNumber,
         frontImageUrl: uploadedUrls[0],
         backImageUrl: uploadedUrls[1],
-        profilePicUrl: uploadedUrls[2],
-        policeVerificationUrl: policeVerificationFile ? uploadedUrls[3] : "",
+        profilePic: uploadedUrls[2],
+        policeVerification: policeVerificationFile ? uploadedUrls[3] : "",
       };
 
       const response = await POST(

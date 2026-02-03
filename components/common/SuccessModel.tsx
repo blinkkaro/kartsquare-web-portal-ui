@@ -17,7 +17,7 @@ const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement<any, any>;
   },
-  ref: React.Ref<unknown>
+  ref: React.Ref<unknown>,
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -56,7 +56,7 @@ const SuccessModel: React.FC<SuccessModelProps> = ({
       PaperProps={{
         sx: {
           borderRadius: "24px",
-          padding: "2rem 5rem",
+          padding: { xs: "2rem 1.5rem", sm: "2rem 5rem" },
           maxWidth: "30rem",
           width: "100%",
           boxShadow: "0px 10px 40px rgba(0,0,0,0.1)",
@@ -100,7 +100,7 @@ const SuccessModel: React.FC<SuccessModelProps> = ({
               fontWeight: 700,
               color: "text.primary",
               lineHeight: 1.3,
-              fontSize: "1.8rem",
+              fontSize: { xs: "1.5rem", sm: "1.8rem" },
             }}
           >
             {title}
@@ -108,7 +108,12 @@ const SuccessModel: React.FC<SuccessModelProps> = ({
           {/* Decorative Underline - Visible by default for aesthetic accent */}
           {showUnderline && (
             <Box
-              sx={{ position: "relative", width: 200, height: 10, mt: -0.5 }}
+              sx={{
+                position: "relative",
+                width: { xs: 150, sm: 200 },
+                height: 10,
+                mt: -0.5,
+              }}
             >
               <Image
                 src="/underLine.svg"

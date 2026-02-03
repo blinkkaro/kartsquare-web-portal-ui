@@ -6,6 +6,7 @@ import {
   Event,
   ShoppingBag,
   Chat,
+  Dashboard,
 } from "@mui/icons-material";
 import { TranslationKey } from "@/features/i18n/TranslationContext";
 
@@ -22,7 +23,7 @@ export const getDesktopNavItems = (
   if (role === "SERVICE_PROVIDER") {
     return [
       { label: t("home"), href: "/" },
-      // { label: t("dashboard"), href: "/dashboard" },
+      { label: t("dashboard"), href: "/dashboard" },
       // { label: t("store"), href: "/store" },
       { label: t("services"), href: "/spr/servicesList" },
       // { label: t("events"), href: "/events" },
@@ -42,7 +43,7 @@ export const getDesktopNavItems = (
 
   return [
     { label: t("home"), href: "/" },
-    // { label: t("store"), href: "/store" },
+    { label: t("store"), href: "/store" },
     { label: t("services"), href: "/cus/servicesList" },
     // { label: t("events"), href: "/events" },
   ];
@@ -81,6 +82,9 @@ export const getMobileNavItems = (
       { label: t("bookings"), href: bookingsHref, icon: <ShoppingBag /> },
       // { label: t("chat"), href: "/chat", icon: <Chat /> }
     );
+    if(role === "SERVICE_PROVIDER") {
+      items.push({ label: t("dashboard"), href: "/dashboard", icon: <Dashboard /> });
+    }
   }
 
   return items;

@@ -16,6 +16,8 @@ import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { useAppDispatch } from "@/store/hooks";
 import { useTranslate } from "@/hooks/useTranslate";
 import Title from "@/components/auth/title";
+import { secureStorage } from "@/helper/SecureStorage";
+import { logout } from "@/features/ui/authSlice";
 
 const DAYS = [
   { name: "Sunday", value: 0 },
@@ -34,7 +36,7 @@ const ScheduleView = () => {
       start_time: "09:00",
       end_time: "17:00",
       is_active: false,
-    }))
+    })),
   );
   const [is24By7, setIs24By7] = useState(false);
   const [isSameTime, setIsSameTime] = useState(false);
@@ -55,7 +57,7 @@ const ScheduleView = () => {
           is_active: true,
           start_time: "00:00",
           end_time: "23:59",
-        }))
+        })),
       );
     }
   };
@@ -72,7 +74,7 @@ const ScheduleView = () => {
           start_time: source.start_time,
           end_time: source.end_time,
           is_active: true,
-        }))
+        })),
       );
     }
   };
@@ -98,7 +100,7 @@ const ScheduleView = () => {
   const handleTimeChange = (
     index: number,
     field: "start_time" | "end_time",
-    value: string
+    value: string,
   ) => {
     if (is24By7) return;
 
@@ -125,7 +127,7 @@ const ScheduleView = () => {
       handleRegistrationStepNavigation(
         dispatch,
         router,
-        UserRegisterSteps.SCHEDULE_ADDED
+        UserRegisterSteps.SCHEDULE_ADDED,
       );
     } catch (err: any) {
       setError(err.message || "Failed to save schedule");
@@ -134,14 +136,37 @@ const ScheduleView = () => {
     }
   };
 
+  const handleBack = () => {
+    // const role = secureStorage.getItem("role");
+    secureStorage.removeItem("token");
+    secureStorage.removeItem("refreshToken");
+    secureStorage.removeItem("register_step");
+    secureStorage.removeItem("role");
+    secureStorage.removeItem("user_details");
+
+
+    dispatch(logout());
+    router.push(`/freeListing`);
+  };
+
   return (
     <AuthWrapper>
       {/* Header */}
-      <Box sx={{ mb: 4, display: "flex", alignItems: "center", gap: 2 }}>
-        <BackButton />
+      <Box
+        sx={{
+          mb: { xs: 2, md: 4 },
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+        }}
+      >
+        <BackButton onClick={() => handleBack()} />
       </Box>
 
-      <Title title={t("setYourSchedule")} subtitle={t("defineYourAvailability")} />
+      <Title
+        title={t("setYourSchedule")}
+        subtitle={t("defineYourAvailability")}
+      />
 
       <ErrorMessage isVisible={!!error} error={error} />
 
@@ -188,10 +213,10 @@ const ScheduleView = () => {
         sx={{
           bgcolor: "background.paper",
           borderRadius: 2,
-          px: 2,
+          px: { xs: 1.5, md: 2 },
           pt: 1,
           pb: 1,
-          mb: 10,
+          mb: { xs: 12, md: 10 },
           boxShadow: "0px 4px 20px " + COLORS.SHADOW.DEFAULT,
         }}
       >
@@ -213,7 +238,6 @@ const ScheduleView = () => {
       </Box>
 
       {/* Footer Button */}
-
       <Button fullWidth onClick={onSave} isLoading={loading}>
         {t("saveAndContinue")}
       </Button>

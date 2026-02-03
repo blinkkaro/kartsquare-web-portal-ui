@@ -113,11 +113,20 @@ function EmailVerificationView() {
   };
 
   const handleBack = () => {
+    const role = secureStorage.getItem("role");
     secureStorage.removeItem("token");
     secureStorage.removeItem("refreshToken");
+    secureStorage.removeItem("register_step");
+    secureStorage.removeItem("role");
+    secureStorage.removeItem("user_details");
 
     dispatch(logout());
-    router.back();
+    if(role==="customer"){
+      router.push(`/login?role=customer`);
+    }else{
+      router.push(`/freeListing`);
+    }
+    
   };
 
   const handleContinue = () => {

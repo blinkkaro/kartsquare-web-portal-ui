@@ -3,7 +3,7 @@ import PersonalInfoView from "@/components/pages/personalInfo";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Personal Info | KartSquare Portal",
+  title: "Personal Info | kartsquare Portal",
   description: "View and edit your personal information",
 };
 

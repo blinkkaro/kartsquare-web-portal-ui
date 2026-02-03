@@ -88,7 +88,19 @@ export const useAddPostComment = (postId: string) => {
         context.previousComments.forEach(([key, data]) => {
           queryClient.setQueryData(key, data);
         });
+        
       }
+      queryClient.setQueriesData({ queryKey: ["posts"] }, (old: any) => {
+        if (!old?.posts) return old;
+        return {
+          ...old,
+          posts: old.posts.map((post: any) =>
+            post.id === postId
+              ? { ...post, comments_count: (post.comments_count || 0) - 1 }
+              : post
+          ),
+        };
+      });
     },
   });
 };
@@ -100,10 +112,16 @@ export const useLikePost = (postId: string) => {
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["posts"] });
       await queryClient.cancelQueries({ queryKey: ["providerPosts"] });
+      await queryClient.cancelQueries({
+        predicate: (query) => query.queryKey[0] === "providerProfileByUsername",
+      });
 
       const previousPosts = queryClient.getQueriesData({ queryKey: ["posts"] });
       const previousProviderPosts = queryClient.getQueriesData({
         queryKey: ["providerPosts"],
+      });
+      const previousProfileByUsername = queryClient.getQueriesData({
+        predicate: (query) => query.queryKey[0] === "providerProfileByUsername",
       });
 
       const updatePostInCache = (old: any) => {
@@ -153,10 +171,23 @@ export const useLikePost = (postId: string) => {
       queryClient.setQueriesData({ queryKey: ["posts"] }, updatePostInCache);
       queryClient.setQueriesData(
         { queryKey: ["providerPosts"] },
-        updatePostInCache
+        updatePostInCache,
       );
 
-      return { previousPosts, previousProviderPosts };
+      // Update providerProfileByUsername cache
+      queryClient.setQueriesData(
+        {
+          predicate: (query) =>
+            query.queryKey[0] === "providerProfileByUsername",
+        },
+        updatePostInCache,
+      );
+
+      return {
+        previousPosts,
+        previousProviderPosts,
+        previousProfileByUsername,
+      };
     },
     onSuccess: (data: any) => {
       if (data && typeof data.liked === "boolean") {
@@ -192,7 +223,14 @@ export const useLikePost = (postId: string) => {
         queryClient.setQueriesData({ queryKey: ["posts"] }, updateVerifyPost);
         queryClient.setQueriesData(
           { queryKey: ["providerPosts"] },
-          updateVerifyPost
+          updateVerifyPost,
+        );
+        queryClient.setQueriesData(
+          {
+            predicate: (query) =>
+              query.queryKey[0] === "providerProfileByUsername",
+          },
+          updateVerifyPost,
         );
       }
     },
@@ -204,6 +242,11 @@ export const useLikePost = (postId: string) => {
       }
       if (context?.previousProviderPosts) {
         context.previousProviderPosts.forEach(([key, data]) => {
+          queryClient.setQueryData(key, data);
+        });
+      }
+      if (context?.previousProfileByUsername) {
+        context.previousProfileByUsername.forEach(([key, data]) => {
           queryClient.setQueryData(key, data);
         });
       }

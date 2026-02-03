@@ -1,7 +1,9 @@
-import React from "react";
+import React, { use } from "react";
 import { Box, Typography, Card, CardContent, CardMedia } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 interface BlogCardProps {
+  id: string;
   image: string;
   date: string;
   title: string;
@@ -9,13 +11,16 @@ interface BlogCardProps {
 }
 
 const BlogCard: React.FC<BlogCardProps> = ({
+  id,
   image,
   date,
   title,
   description,
 }) => {
+  const router = useRouter();
   return (
     <Card
+      onClick={() => { router.push("/blogs/" + id) }}
       sx={{
         borderRadius: "16px",
         boxShadow: "none",
@@ -25,6 +30,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
         height: "100%",
         display: "flex",
         flexDirection: "column",
+        cursor: "pointer",
       }}
     >
       <Box

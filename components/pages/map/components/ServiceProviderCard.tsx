@@ -11,16 +11,14 @@ import {
   Rating,
   Chip,
 } from "@mui/material";
-import {
-  OpenInFull,
-  LocationOn,
-  Star,
-  PersonAdd,
-  PersonRemove,
-} from "@mui/icons-material";
-import { Service } from "@/services/profile/profileInterface";
+import { OpenInFull, Star, PersonAdd, PersonRemove } from "@mui/icons-material";
+import { calculateDistance } from "@/helper/helper";
+import { useAutoGeolocation } from "@/hooks/useGeolocation";
+import { LocationOn } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import { useRouter } from "next/navigation";
+import { useTranslate } from "@/hooks/useTranslate";
+import { Service } from "@/services/serviceList/listInteraface";
 
 interface ServiceProviderCardProps {
   service: Service;
@@ -40,6 +38,8 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
   const theme = useTheme();
   const router = useRouter();
   const isSmall = size === "small";
+  const { t } = useTranslate();
+  const { coordinates } = useAutoGeolocation();
 
   const handleCardClick = () => {
     if (onCardClick) {
@@ -62,6 +62,24 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
 
   const formatDistance = (radius: number) => {
     return `${radius}km`;
+  };
+
+  const getDistance = () => {
+    if (
+      coordinates?.latitude &&
+      coordinates?.longitude &&
+      service?.service_address?.latitude &&
+      service?.service_address?.longitude
+    ) {
+      const dist = calculateDistance(
+        coordinates.latitude,
+        coordinates.longitude,
+        service?.service_address?.latitude,
+        service?.service_address?.longitude,
+      );
+      return `${dist.toFixed(1)} km`;
+    }
+    return null;
   };
 
   return (
@@ -167,29 +185,46 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
                 mb: isSmall ? 0.5 : 1,
               }}
             >
-              <Rating
-                value={service.avg_service_rating}
-                precision={0.1}
-                size={isSmall ? "small" : "medium"}
-                readOnly
-                sx={{
-                  "& .MuiRating-iconFilled": {
-                    color: "#FFB800",
-                  },
-                }}
-              />
-              <Typography
-                variant="caption"
-                sx={{
-                  color:
-                    theme.palette.mode === "dark"
-                      ? COLORS.TEXT.SECONDARY_DARK
-                      : COLORS.TEXT.SECONDARY_LIGHT,
-                  fontWeight: 500,
-                }}
-              >
-                {service.avg_service_rating.toFixed(1)} ({service.review_count})
-              </Typography>
+              {service?.review_count && service?.review_count > 0 ? (
+                <>
+                  <Rating
+                    value={service.avg_service_rating}
+                    precision={0.1}
+                    size={isSmall ? "small" : "medium"}
+                    readOnly
+                    sx={{
+                      "& .MuiRating-iconFilled": {
+                        color: "#FFB800",
+                      },
+                    }}
+                  />
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color:
+                        theme.palette.mode === "dark"
+                          ? COLORS.TEXT.SECONDARY_DARK
+                          : COLORS.TEXT.SECONDARY_LIGHT,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {service.avg_service_rating} ({service.review_count})
+                  </Typography>
+                </>
+              ) : (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontWeight: 500,
+                    backgroundColor: COLORS.BACKGROUND.PAPER_DARK,
+                    color: COLORS.WHITE,
+                    borderRadius: "25px",
+                    padding: "2px 4px",
+                  }}
+                >
+                  {t("newServiceProvider")}
+                </Typography>
+              )}
             </Box>
 
             {/* Price and Distance */}
@@ -212,29 +247,31 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
                   height: isSmall ? 20 : 24,
                 }}
               />
-              <Box sx={{ display: "flex", alignItems: "center", gap: 0.3 }}>
-                <LocationOn
-                  sx={{
-                    fontSize: isSmall ? 14 : 16,
-                    color:
-                      theme.palette.mode === "dark"
-                        ? COLORS.TEXT.SECONDARY_DARK
-                        : COLORS.TEXT.SECONDARY_LIGHT,
-                  }}
-                />
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color:
-                      theme.palette.mode === "dark"
-                        ? COLORS.TEXT.SECONDARY_DARK
-                        : COLORS.TEXT.SECONDARY_LIGHT,
-                    fontSize: isSmall ? "0.7rem" : "0.75rem",
-                  }}
-                >
-                  {formatDistance(service.service_radius)}
-                </Typography>
-              </Box>
+              {getDistance() && (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.3 }}>
+                  <LocationOn
+                    sx={{
+                      fontSize: isSmall ? 14 : 16,
+                      color:
+                        theme.palette.mode === "dark"
+                          ? COLORS.TEXT.SECONDARY_DARK
+                          : COLORS.TEXT.SECONDARY_LIGHT,
+                    }}
+                  />
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color:
+                        theme.palette.mode === "dark"
+                          ? COLORS.TEXT.SECONDARY_DARK
+                          : COLORS.TEXT.SECONDARY_LIGHT,
+                      fontSize: isSmall ? "0.7rem" : "0.75rem",
+                    }}
+                  >
+                    {getDistance()}
+                  </Typography>
+                </Box>
+              )}
             </Box>
 
             {/* Category (only for large size) */}

@@ -39,10 +39,17 @@ const getDesignTokens = (mode: "light" | "dark"): ThemeOptions => ({
   },
   typography: {
     fontFamily: [
+      '"Poppins"',
+      '"Roboto"',
+      '"Nunito"',
+      '"Lato"',
+      '"Mulish"',
+      '"Rubik"',
+      '"Ubuntu"',
+      '"Fira Sans"',
       "-apple-system",
       "BlinkMacSystemFont",
       '"Segoe UI"',
-      "Roboto",
       '"Helvetica Neue"',
       "Arial",
       "sans-serif",

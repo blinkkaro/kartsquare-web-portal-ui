@@ -3,7 +3,7 @@ import MyScheduleView from "@/components/pages/mySchedule";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "My Schedule | KartSquare Portal",
+  title: "My Schedule | kartsquare Portal",
   description: "Manage your working hours and schedule",
 };
 

@@ -6,6 +6,7 @@ import ErrorMessage from "@/components/common/ErrorMessage";
 import { useTranslate } from "@/hooks/useTranslate";
 import { formatDateToString } from "@/helper/helper";
 import { useTermsAndConditions } from "@/hooks/useAppConfig";
+import MainLayout from "@/app/mainLayout";
 
 function TermsConditionsView() {
   const { t } = useTranslate();
@@ -35,7 +36,8 @@ function TermsConditionsView() {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
+<MainLayout>
+<Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
       <Title
         title={t("termsConditionsTitle")}
         subtitle={
@@ -145,6 +147,7 @@ function TermsConditionsView() {
         }}
       />
     </Container>
+</MainLayout>
   );
 }
 

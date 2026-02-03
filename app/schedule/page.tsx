@@ -2,7 +2,7 @@ import ScheduleView from "@/components/pages/Schedule";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Schedule | KartSquare Portal",
+  title: "Schedule | kartsquare Portal",
   description: "Manage your schedule",
 };
 

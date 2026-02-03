@@ -3,8 +3,8 @@ import HomeView from "@/components/pages/home";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Home | KartSquare Portal",
-  description: "Welcome to KartSquare Portal",
+  title: "Home | kartsquare Portal",
+  description: "Welcome to kartsquare Portal",
 };
 
 export default function Home() {

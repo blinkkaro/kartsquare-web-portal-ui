@@ -4,7 +4,7 @@ import MainLayout from "@/app/mainLayout";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Address | KartSquare Portal",
+  title: "Address | kartsquare Portal",
   description: "List of addresses saved by user",
 };
 

@@ -15,7 +15,6 @@ import {
   Paper,
 } from "@mui/material";
 import { Search, MyLocation, Place } from "@mui/icons-material";
-import { mapService } from "@/services/map/mapService";
 import { COLORS } from "@/constants/colors";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import { SearchResult } from "@/services/map/mapInterface";

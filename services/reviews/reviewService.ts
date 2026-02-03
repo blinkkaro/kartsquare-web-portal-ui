@@ -13,10 +13,11 @@ class ReviewService {
         limit: number = 10
     ): Promise<ReviewsResponse> {
         try {
+            console.log("Fetching reviews for event:", eventType, eventId);
             const response = await GET<any>(
                 REVIEW_API_ENDPOINTS.GET_REVIEWS(eventType, eventId),
                 { page, limit },
-                false // Public endpoint - anyone can view reviews
+                true // Public endpoint - anyone can view reviews
             );
 
             // Backend returns { reviews: data, meta } wrapped in ApiResponse.data

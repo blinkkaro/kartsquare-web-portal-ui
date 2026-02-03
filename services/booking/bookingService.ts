@@ -1,6 +1,7 @@
-import { GET, POST } from "../api";
+import { GET, POST, PATCH, PUT } from "../api";
 import { BOOKING_API_ENDPOINTS } from "./apiEndPoints";
 import { CreateBookingRequest, BookingResponse, UserBooking } from "./bookingInterface";
+import { bookingListingService } from "./bookingListing";
 
 class BookingService {
     /**
@@ -23,17 +24,29 @@ class BookingService {
 
     /**
      * Get all bookings for the current user
+     * @deprecated Use bookingListingService.getUserBookings() instead
      */
     async getUserBookings(): Promise<UserBooking[]> {
+        return bookingListingService.getUserBookings();
+    }
+
+    /**
+     * Update booking status
+     */
+    async updateBookingStatus(bookingId: string, status: string, otp?: string): Promise<any> {
         try {
-            const response = await GET<any>(
-                BOOKING_API_ENDPOINTS.GET_USER_BOOKINGS,
+            const body: any = { status };
+            if (otp) body.otp = otp;
+
+            const response = await PUT<any>(
+                BOOKING_API_ENDPOINTS.UPDATE_BOOKING_STATUS(bookingId),
+                body,
                 {},
-                true // Requires authentication
+                true
             );
-            return response.data || [];
+            return response.data;
         } catch (error) {
-            console.error("Error fetching user bookings:", error);
+            console.error("Error updating booking status:", error);
             throw error;
         }
     }

@@ -78,14 +78,14 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
               fontSize: isLargeScreen ? "4rem" : "3rem",
             }}
           >
-            KartSquare
+            kartsquare
           </Typography>
         </Box>
       </Grid>
 
       {/* Right Side (Form) */}
       <Grid size={{ xs: 12, lg: 6 }}>
-        <Box sx={{ position: "absolute", top: 24, right: 24 }}>
+        {/* <Box sx={{ position: "absolute", top: 24, right: 24 }}>
           <Select
             value={locale}
             onChange={handleLanguageChange}
@@ -98,7 +98,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
             <MenuItem value="es">🇪🇸 ES</MenuItem>
             <MenuItem value="hi">🇮🇳 HI</MenuItem>
           </Select>
-        </Box>
+        </Box> */}
         <Box
           sx={{
             background: {

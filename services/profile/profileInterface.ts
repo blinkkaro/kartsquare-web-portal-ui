@@ -1,8 +1,9 @@
 import { Posts } from "../post/postInterfaces";
+import { Service } from "../serviceList/listInteraface";
 
 export enum service_location_type {
-  USER_LOCATION = "USER_LOCATION",
-  PROVIDER_LOCATION = "PROVIDER_LOCATION",
+  USER_LOCATION = "at_customer",
+  PROVIDER_LOCATION = "at_provider",
 }
 
 export enum service_status_type {
@@ -11,44 +12,6 @@ export enum service_status_type {
   PENDING = "PENDING",
   APPROVED = "APPROVED",
 }
-export interface Service {
-  id: any;
-  service_id: string;
-  provider_id: string;
-  category_id: string;
-  sub_category_id?: string | undefined;
-  service_name: string;
-  service_desc: string | null;
-  image_urls: string[];
-  is_price_required: boolean;
-  price: number | null;
-  currency: string;
-  service_at_location: service_location_type;
-  visiting_charge: number | null;
-  service_provider_address_id: string;
-  service_radius: number;
-  has_service_duration: boolean;
-  service_duration: number | undefined;
-  have_slots: boolean;
-  avg_service_rating: number;
-  status: service_status_type;
-  created_at: Date;
-  updated_at: Date;
-  deleted_at: Date | null;
-  is_deleted: boolean;
-  review_count: number;
-
-  // Joined fields
-  provider_name: string;
-  category_name: string;
-  sub_category_name: string | null;
-  service_provider_address: string | null;
-  provider_image_url: string | null;
-  is_following: boolean;
-  service_provider_latitude: number;
-  service_provider_longitude: number;
-}
-
 export interface profileInterface {
   id: string;
   email: string;
@@ -62,9 +25,12 @@ export interface profileInterface {
   role: string;
   profile_pic?: string;
   bio?: string;
+  username?: string;
   created_at: string;
   followers_count: number;
   following_count: number;
+  banner_image?: string;
+  business_name: string;
 }
 
 interface pagination {
@@ -83,8 +49,30 @@ export interface providerServicesInterface {
   pagination: pagination;
 }
 
+export interface DefaultAddress {
+  id: string;
+  user_id: string;
+  address_name: string;
+  building_no: string | null;
+  floor: string | null;
+  address: string;
+  landmark: string | null;
+  pincode: string;
+  city_town: string;
+  state: string;
+  country: string;
+  is_default: boolean;
+  deleted_at: string | null;
+  created_at: string;
+  updated_at: string;
+  is_deleted: boolean;
+  latitude: number;
+  longitude: number;
+}
+
 export interface providerProfileInterface {
   id: string;
+  username: string;
   email: string;
   first_name: string;
   last_name: string;
@@ -95,6 +83,8 @@ export interface providerProfileInterface {
   gender: string;
   role: string;
   profile_pic: string;
+  banner_image?: string;
+  preferences?: string[];
   bio?: string;
   created_at: string;
   user_rating: number;
@@ -102,8 +92,16 @@ export interface providerProfileInterface {
   following_count: number;
   services_count: number;
   total_posts: string;
-  is_following: boolean;
-  follows_back: boolean;
-  total_bookings: number;
-  total_reviews: number;
+  is_following?: boolean;
+  follows_back?: boolean;
+  total_bookings: number | null;
+  total_reviews: number | null;
+  default_address?: DefaultAddress;
+  business_name: string;
+}
+
+export interface ProviderProfileByUsernameResponse {
+  profile: providerProfileInterface;
+  services: Service[];
+  posts: Posts[];
 }

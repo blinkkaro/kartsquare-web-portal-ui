@@ -15,7 +15,7 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { formatCount } from "@/helper/helper";
 import FollowListDrawer from "./followListDreawer";
 import { secureStorage } from "@/helper/SecureStorage";
-
+import { AppUserType } from "@/services/auth/auth.interface";
 
 function Profile({ profile }: { profile: profileInterface }) {
   const theme = useTheme();
@@ -25,9 +25,19 @@ function Profile({ profile }: { profile: profileInterface }) {
   const { t } = useTranslate();
   const handleOpen = () => setOpen((prev) => !prev);
   const role = secureStorage.getItem("role");
+  const [copied, setCopied] = useState(false);
 
   const handleDrawerClick = () => {
     setDrawerOpen((prev) => !prev);
+  };
+  const handleCopy = () => {
+    navigator.clipboard.writeText(
+      `${window.location.origin}/${profile?.username}`
+    );
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 3000);
   };
 
   return (
@@ -62,6 +72,7 @@ function Profile({ profile }: { profile: profileInterface }) {
           height: 200,
         }}
       />
+      
       <Box
         sx={{
           mt: -20,
@@ -128,25 +139,33 @@ function Profile({ profile }: { profile: profileInterface }) {
             {role === "SERVICE_PROVIDER" ? t("followers") : t("following")}
           </Button>
 
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-            <IconButton
-              sx={{
-                bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#F5F5F7",
-                //   transform: "scaleX(-1)", // Flipping the reply icon to look like the share arrow
-              }}
-            >
-              <Image
-                src={
-                  theme.palette.mode === "dark"
-                    ? `/icons/darkThemeShare.svg`
-                    : `/icons/share.svg`
-                }
-                width={24}
-                height={24}
-                alt="share"
-              />
-            </IconButton>
-          </Box>
+          {role === AppUserType.SERVICE_PROVIDER && (
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+              <IconButton
+                sx={{
+                  bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#F5F5F7",
+                  //   transform: "scaleX(-1)", // Flipping the reply icon to look like the share arrow
+                }}
+                onClick={handleCopy}
+              >
+                <Image
+                  src={
+                    theme.palette.mode === "dark"
+                      ? `/icons/darkThemeShare.svg`
+                      : `/icons/share.svg`
+                  }
+                  width={24}
+                  height={24}
+                  alt="share"
+                />
+              </IconButton>
+            </Box>
+          )}
+          {copied && (
+            <Typography variant="body2" sx={{ ml: 1 }}>
+              {t("copied")}!
+            </Typography>
+          )}
         </Box>
       </Box>
 

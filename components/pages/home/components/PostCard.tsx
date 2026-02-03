@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import {
   Avatar,
   Box,
@@ -24,6 +26,7 @@ const PostCard = ({ post }: { post: Posts }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const { t } = useTranslate();
+  const dispatch = useDispatch();
 
   const likeMutation = useLikePost(post.id);
 
@@ -52,7 +55,10 @@ const PostCard = ({ post }: { post: Posts }) => {
             p: 2,
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box
+            sx={{ display: "flex", alignItems: "center", gap: 1, cursor: "pointer" }}
+            onClick={() => dispatch(openDrawer({ userId: post.user_id }))}
+          >
             <Avatar
               sx={{
                 cursor: "pointer",
@@ -61,13 +67,13 @@ const PostCard = ({ post }: { post: Posts }) => {
                 border: "2px solid white",
               }}
               src={post.user.profile_pic || ""}
-              alt={post.user.first_name}
+              alt={post.user.business_name}
             />
             <Typography variant="body2" sx={{ fontWeight: 600 }}>
-              {post.user.first_name} {post.user.last_name}
+              {post.user.business_name}
             </Typography>
           </Box>
-          <Box
+          {/* <Box
             sx={{
               backgroundColor: "rgba(0, 0, 0, 0.5)",
               borderRadius: "50%",
@@ -85,7 +91,7 @@ const PostCard = ({ post }: { post: Posts }) => {
                 color: COLORS.TEXT.PRIMARY_DARK,
               }}
             />
-          </Box>
+          </Box> */}
         </Box>
         <Box
           sx={{
@@ -231,7 +237,7 @@ const PostCard = ({ post }: { post: Posts }) => {
             </Typography>
           )}
         </Box>
-        <Box sx={{ cursor: "pointer" }}>
+        {/* <Box sx={{ cursor: "pointer" }}>
           <Image
             src={
               theme.palette.mode === "dark"
@@ -242,7 +248,7 @@ const PostCard = ({ post }: { post: Posts }) => {
             width={25}
             height={25}
           />
-        </Box>
+        </Box> */}
         <Box
           sx={{
             cursor: "pointer",

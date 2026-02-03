@@ -30,7 +30,7 @@ interface VerifyDocumentFormInputs {
   frontImage: File | null;
   backImage: File | null;
   profilePic: File | null;
-  policeVerification: File | null;
+  policeVerification?: File | null;
 }
 
 function VerifyDocumentsView() {
@@ -73,12 +73,12 @@ function VerifyDocumentsView() {
           data.frontImage,
           data.backImage,
           data.profilePic,
-          data.policeVerification || undefined
+          data.policeVerification || undefined,
         );
         handleRegistrationStepNavigation(
           dispatch,
           router,
-          UserRegisterSteps.DOCUMENT_VERIFIED
+          UserRegisterSteps.DOCUMENT_VERIFIED,
         );
       }
     } catch (error: any) {
@@ -89,11 +89,16 @@ function VerifyDocumentsView() {
   };
 
   const handleBack = () => {
+    // const role = secureStorage.getItem("role");
     secureStorage.removeItem("token");
     secureStorage.removeItem("refreshToken");
+    secureStorage.removeItem("register_step");
+    secureStorage.removeItem("role");
+    secureStorage.removeItem("user_details");
+
 
     dispatch(logout());
-    router.back();
+    router.push(`/freeListing`);
   };
 
   const handleImageSelect = (field: string, file: File) => {

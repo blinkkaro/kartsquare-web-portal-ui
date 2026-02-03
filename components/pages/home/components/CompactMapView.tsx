@@ -4,10 +4,10 @@ import { Box, useTheme, IconButton, Typography } from "@mui/material";
 import { GoogleMap, useJsApiLoader, OverlayView } from "@react-google-maps/api";
 import { OpenInFull } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
-import { dummyServiceProviders } from "@/data/dummyServiceProviders";
 import { useRouter } from "next/navigation";
 import { useAutoGeolocation } from "@/hooks/useGeolocation";
 import { useTranslate } from "@/hooks/useTranslate";
+import { useServicesList } from "@/hooks/useServicesList";
 
 // Define libraries outside component to prevent recreation
 const LIBRARIES: "places"[] = ["places"];
@@ -22,8 +22,21 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
   const theme = useTheme();
   const router = useRouter();
   const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
-  const { coordinates, isLoading, error } = useAutoGeolocation();
+  const {
+    coordinates,
+    isLoading: isGeoLoading,
+    error: geoError,
+  } = useAutoGeolocation();
   const { t } = useTranslate();
+
+  // Fetch services using the new hook
+  const {
+    data: servicesData,
+    isLoading: isServicesLoading,
+    error: servicesError,
+  } = useServicesList({
+    limit: 10,
+  });
 
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
@@ -59,7 +72,9 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
     router.push("/map");
   };
 
-  if (loadError || !isLoaded || isLoading || error) {
+  const isLoading = !isLoaded || isGeoLoading || isServicesLoading;
+
+  if (isLoading) {
     return (
       <Box
         onClick={handleMapClick}
@@ -75,11 +90,13 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
         }}
       >
         <Typography variant="body2" color="text.secondary">
-          {loadError || error ? t("errorLoadingMap") : t("loadingMap")}
+          {t("loadingMap")}
         </Typography>
       </Box>
     );
   }
+
+  const services = servicesData?.services || [];
 
   return (
     <Box
@@ -100,55 +117,58 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
         center={
           coordinates?.latitude && coordinates?.longitude
             ? { lat: coordinates.latitude, lng: coordinates.longitude }
-            : { lat: 0, lng: 0 }
+            : { lat: 26.9167, lng: 75.7833 }
         }
         options={mapOptions}
       >
         {/* Custom Markers for Service Providers */}
-        {dummyServiceProviders.map((service) => (
-          <OverlayView
-            key={service.id}
-            position={{
-              lat: service.service_provider_latitude,
-              lng: service.service_provider_longitude,
-            }}
-            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-          >
-            <Box
-              onMouseEnter={() => setHoveredMarkerId(service.id)}
-              onMouseLeave={() => setHoveredMarkerId(null)}
-              sx={{
-                transform: "translate(-50%, -50%)",
-                transition: "all 0.3s ease",
+        {services.map((service) =>
+          service?.service_address?.latitude &&
+          service?.service_address?.longitude ? (
+            <OverlayView
+              key={service.service_id}
+              position={{
+                lat: service.service_address.latitude || 0,
+                lng: service.service_address.longitude || 0,
               }}
+              mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
             >
               <Box
+                onMouseEnter={() => setHoveredMarkerId(service.service_id)}
+                onMouseLeave={() => setHoveredMarkerId(null)}
                 sx={{
-                  width: hoveredMarkerId === service.id ? 44 : 36,
-                  height: hoveredMarkerId === service.id ? 44 : 36,
-                  borderRadius: "50%",
-                  border: `2px solid ${COLORS.PRIMARY_PURPLE}`,
-                  boxShadow: `0 2px 8px ${COLORS.SHADOW.DEFAULT}`,
-                  overflow: "hidden",
-                  backgroundColor: COLORS.WHITE,
+                  transform: "translate(-50%, -50%)",
                   transition: "all 0.3s ease",
                 }}
               >
-                <img
-                  src={
-                    service.provider_image_url || "https://i.pravatar.cc/150"
-                  }
-                  alt={service.provider_name}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
+                <Box
+                  sx={{
+                    width: hoveredMarkerId === service.service_id ? 44 : 36,
+                    height: hoveredMarkerId === service.service_id ? 44 : 36,
+                    borderRadius: "50%",
+                    border: `2px solid ${COLORS.PRIMARY_PURPLE}`,
+                    boxShadow: `0 2px 8px ${COLORS.SHADOW.DEFAULT}`,
+                    overflow: "hidden",
+                    backgroundColor: COLORS.WHITE,
+                    transition: "all 0.3s ease",
                   }}
-                />
+                >
+                  <img
+                    src={
+                      service.provider_image_url || "https://i.pravatar.cc/150"
+                    }
+                    alt={service.provider_name}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </Box>
               </Box>
-            </Box>
-          </OverlayView>
-        ))}
+            </OverlayView>
+          ) : null,
+        )}
 
         {/* User Location Marker */}
         {coordinates?.latitude && coordinates?.longitude && (

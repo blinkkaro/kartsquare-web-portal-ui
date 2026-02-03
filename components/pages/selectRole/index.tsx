@@ -5,30 +5,30 @@ import { rolesData } from "./components/data";
 import Link from "next/link";
 import { Box, Typography } from "@mui/material";
 import Image from "next/image";
-import AuthWrapper from "@/components/auth/authWrapper";
-import { COLORS } from "@/constants/colors";
+import AuthCarouselWrapper from "@/components/auth/authCarouselWrapper";
+import { useTranslate } from "@/hooks/useTranslate";
 
 function SelectRole() {
+  const { t } = useTranslate();
+  const carouselItems = [
+    {
+      image: "/auth/Home.JPG",
+      title: t("selectRoleHomeTitle"),
+      subtitle: t("selectRoleHomeSubtitle"),
+    },
+    {
+      image: "/auth/Home_Map.svg",
+      title: t("selectRoleMapTitle"),
+      subtitle: t("selectRoleMapSubtitle"),
+    },
+    {
+      image: "/auth/Bookings.svg",
+      title: t("selectRoleBookingTitle"),
+      subtitle: t("selectRoleBookingSubtitle"),
+    },
+  ];
   return (
-    <AuthWrapper>
-      <Box
-        sx={{
-          display: { xs: "flex", lg: "none" },
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          mb: "2rem",
-        }}
-      >
-        <Image src="/logo.svg" alt="auth" width={150} height={150} priority />
-        <Typography
-          variant="h4"
-          sx={{ fontWeight: 500, color: "text.primary" }}
-        >
-          KartSquare
-        </Typography>
-      </Box>
-
+    <AuthCarouselWrapper carouselItems={carouselItems}>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         {rolesData.map((role) => (
           <Link
@@ -40,7 +40,7 @@ function SelectRole() {
           </Link>
         ))}
       </Box>
-    </AuthWrapper>
+    </AuthCarouselWrapper>
   );
 }
 

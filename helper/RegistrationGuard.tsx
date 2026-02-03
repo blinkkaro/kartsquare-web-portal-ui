@@ -32,7 +32,7 @@ export default function RegistrationGuard({
   const [isChecking, setIsChecking] = useState(true);
 
   const { user, isAuthenticated: isAuthRedux } = useAppSelector(
-    (state) => state.auth
+    (state) => state.auth,
   );
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function RegistrationGuard({
       const isAuthenticated = !!token || isAuthRedux;
 
       const isRestrictedPath = RESTRICTED_AUTH_PATHS.some((path) =>
-        pathname.startsWith(path)
+        pathname.startsWith(path),
       );
 
       // --- SCENARIO 1: Authenticated user trying to access Auth pages ---

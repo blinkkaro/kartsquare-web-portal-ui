@@ -26,6 +26,7 @@ export interface User {
   is_Verified: boolean;
   register_step: number;
   profile_pic: string;
+  unread_notification_count?: number;
 }
 
 export interface AuthResponse {
@@ -54,6 +55,8 @@ export interface RegisterData {
   country: string;
   role: AppUserType;
   birth_date: string;
+  whatsapp_number?: string;
+  whatsapp_country_code?: string;
 }
 export interface preferences {
   icon: string;
@@ -67,8 +70,8 @@ export interface Doc {
   aadharNumber: string;
   frontImageUrl: string;
   backImageUrl: string;
-  profilePicUrl: string;
-  policeVerificationUrl: string;
+  profilePic: string; 
+  policeVerification: string;
 }
 
 export interface ImageUploadApiResponse {
@@ -80,4 +83,35 @@ export interface IWorkingHour {
   start_time: string;
   end_time: string;
   is_active: boolean;
+}
+
+export interface IBusinessInfo {
+  business_name: string;
+  description: string;
+  business_images: File[] | string[];
+  address_id: string;
+}
+
+export interface IFreeLeadParams {
+  country_code: string;
+  phone_number: string;
+  source: string;
+  source_type: string;
+}
+
+export interface IFreeLeadResponse{
+  bus_lead_id:string,
+  phone_number:string,
+  country_code:string,
+  status:string,
+  isRegistered:boolean,
+}
+
+export interface IFreeLeadNumberResponse{
+  bus_lead_id:string,
+  phone_number:string,
+  country_code:string,
+  status:string,
+  source:string,
+  source_type:string,
 }

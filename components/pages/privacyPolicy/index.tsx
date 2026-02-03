@@ -6,6 +6,7 @@ import { usePrivacyPolicy } from "@/hooks/useAppConfig";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import { useTranslate } from "@/hooks/useTranslate";
 import { formatDateToString } from "@/helper/helper";
+import MainLayout from "@/app/mainLayout";
 
 function PrivacyPolicyView() {
   const { t } = useTranslate();
@@ -35,7 +36,8 @@ function PrivacyPolicyView() {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
+  <MainLayout>
+      <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
       <Title
         title={t("privacyPolicytitle")}
         subtitle={
@@ -145,6 +147,7 @@ function PrivacyPolicyView() {
         }}
       />
     </Container>
+  </MainLayout>
   );
 }
 

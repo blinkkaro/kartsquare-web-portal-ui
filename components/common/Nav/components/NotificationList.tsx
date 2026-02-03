@@ -64,17 +64,24 @@ const getNotificationTypeDetails = (type: service_booking_events, t: any) => {
   }
 };
 
+import { useSocket } from "@/contexts/SocketContext";
+
 function NotificationList({ onClose }: { onClose: () => void }) {
-  const { data: notifications, isLoading } = getNotification();
+  const { notifications, markAllAsRead, markAsRead, refreshNotifications } = useSocket();
   const { t } = useTranslationContext();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+
+  // Refresh notifications on mount (drawer open)
+  React.useEffect(() => {
+    refreshNotifications();
+  }, [refreshNotifications]);
 
   // Sort notifications by date (newest first)
   const sortedNotifications = useMemo(() => {
     if (!notifications) return [];
     return [...notifications].sort(
-      (a, b) =>
+      (a: any, b: any) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
   }, [notifications]);
@@ -84,7 +91,7 @@ function NotificationList({ onClose }: { onClose: () => void }) {
   }, [notifications]);
 
   // Empty state
-  if (!isLoading && (!notifications || notifications.length === 0)) {
+  if (!notifications || notifications.length === 0) {
     return (
       <Box
         sx={{
@@ -147,21 +154,7 @@ function NotificationList({ onClose }: { onClose: () => void }) {
     );
   }
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "400px",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
+
 
   return (
     <Box
@@ -196,6 +189,7 @@ function NotificationList({ onClose }: { onClose: () => void }) {
           <Button
             size="small"
             startIcon={<DoneAll />}
+            onClick={() => markAllAsRead()}
             sx={{
               textTransform: "none",
               color: isDark ? COLORS.WHITE : COLORS.PRIMARY_PURPLE,
@@ -220,6 +214,7 @@ function NotificationList({ onClose }: { onClose: () => void }) {
           return (
             <React.Fragment key={notification.notification_id}>
               <Box
+                onClick={() => markAsRead(notification.notification_id)}
                 sx={{
                   px: 3,
                   py: 2,

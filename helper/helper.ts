@@ -1,3 +1,6 @@
+import { service_address } from "@/services/providerDashboard/providerDashboard.interface";
+import { TranslationKey } from "../features/i18n/TranslationContext";
+
 export const formatTime = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
   const secs = seconds % 60;
@@ -121,7 +124,7 @@ export const calculateDistance = (
   lat1: number,
   lon1: number,
   lat2: number,
-  lon2: number
+  lon2: number,
 ): number => {
   const R = 6371; // Radius of the Earth in kilometers
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -135,4 +138,64 @@ export const calculateDistance = (
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = R * c; // Distance in kilometers
   return distance;
+};
+
+export const formatStringTimeForReview = (timeStr: string | Date): string => {
+  const date = new Date(timeStr);
+  const formattedDate = formatDate(date);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const formattedHours = hours % 12;
+  const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+  return `${formattedDate} @ ${formattedHours}:${formattedMinutes} ${ampm}`;
+};
+
+// Helper function to truncate HTML content safely
+export const truncateHTML = (html: string, maxLength: number): string => {
+  // Create a temporary div to parse HTML
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
+  const textContent = tempDiv.textContent || tempDiv.innerText || "";
+
+  // If text content is within limit, return original HTML
+  if (textContent.length <= maxLength) {
+    return html;
+  }
+
+  // Otherwise, truncate the text content and return plain text with ellipsis
+  return textContent.slice(0, maxLength) + "...";
+};
+
+export const formatAddress = (
+  address: service_address,
+  t: (key: TranslationKey) => string,
+): string => {
+  const landmarkText = address.landmark
+    ? `${t("near")} ${address.landmark}`
+    : undefined;
+
+  const parts = [
+    address.building_no,
+    address.floor,
+    address.address,
+    landmarkText,
+    address.city_town,
+    address.state,
+    address.country,
+  ]
+    .filter((part) => part && part.trim().length > 0)
+    .map((part) => part!.trim());
+
+  let result = parts.join(", ");
+
+  if (address.pincode) {
+    result = result ? `${result} - ${address.pincode}` : `${address.pincode}`;
+  }
+
+  if (address.address) {
+    result += ` (${address.address})`;
+  }
+
+  return result;
 };
