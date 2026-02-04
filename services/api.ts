@@ -137,20 +137,20 @@ api.interceptors.response.use(
 
         const response = await authService.refreshToken(refreshToken);
 
-        if (response.data && response.data.tokens) {
-          secureStorage.setItem("token", response.data.tokens.access_token);
+        if (response.data) {
+          secureStorage.setItem("token", response.data.access_token);
           secureStorage.setItem(
             "refreshToken",
-            response.data.tokens.refresh_token,
+            response.data.refresh_token,
           );
 
           // Update header
           api.defaults.headers.common["Authorization"] =
-            `Bearer ${response.data.tokens.access_token}`;
+            `Bearer ${response.data.access_token}`;
           originalRequest.headers["Authorization"] =
-            `Bearer ${response.data.tokens.access_token}`;
+            `Bearer ${response.data.access_token}`;
 
-          processQueue(null, response.data.tokens.access_token);
+          processQueue(null, response.data.access_token);
 
           return api(originalRequest);
         } else {

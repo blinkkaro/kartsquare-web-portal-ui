@@ -1133,4 +1133,5 @@ export const english = {
   expand_review: "Expand Review",
   yes: "Yes",
   no: "No",
+  getQuote: "Get Quote",
 };

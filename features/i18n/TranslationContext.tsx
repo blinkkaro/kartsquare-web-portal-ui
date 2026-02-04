@@ -831,7 +831,8 @@ export type TranslationKey =
   | "collapse_review"
   | "expand_review"
   | "yes"
-  | "no";
+  | "no"
+  | "getQuote";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

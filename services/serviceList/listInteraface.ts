@@ -15,6 +15,12 @@ export enum ServiceLocationType {
   PROVIDER_LOCATION = "at_provider",
 }
 
+export enum PricingType {
+  SINGLE = "single",
+  CATALOG = "catalog",
+  MULTIPLE = "multiple",
+}
+
 export interface Service {
   review_count?: number;
   service_id: string;
@@ -60,6 +66,9 @@ export interface Service {
   provider_image_url: string | null;
   is_following?: boolean;
   business_name: string;
+  pricing_type: PricingType;
+  price_catalog_url?: string[];
+  price_items?: ServicePriceItem[];
 }
 
 export interface ServiceListResponse {
