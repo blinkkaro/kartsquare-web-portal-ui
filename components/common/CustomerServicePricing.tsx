@@ -17,7 +17,7 @@ import {
   ArrowBackIosNew,
   ArrowForwardIos,
 } from "@mui/icons-material";
-import { COLORS } from "../../../../constants/colors";
+import { COLORS } from "../../constants/colors";
 import {
   PricingType,
   ServicePriceItem,

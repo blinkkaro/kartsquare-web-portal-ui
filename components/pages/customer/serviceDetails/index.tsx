@@ -20,7 +20,7 @@ import CustomerServiceHeader from "./CustomerServiceHeader";
 import CustomerServiceInfo from "./CustomerServiceInfo";
 import CustomerServiceActions from "./CustomerServiceActions";
 import CustomerServiceDetailsGrid from "./CustomerServiceDetailsGrid";
-import CustomerServicePricing from "./CustomerServicePricing";
+import CustomerServicePricing from "../../../common/CustomerServicePricing";
 import DescriptionDialog from "../../provider/serviceDetails/DescriptionDialog";
 import ReviewsSection from "../../provider/serviceDetails/ReviewsSection";
 import ServiceLocation from "../../provider/serviceDetails/ServiceLocation";

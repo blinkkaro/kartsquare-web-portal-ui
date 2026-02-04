@@ -4,6 +4,7 @@ import { verifyDocumentService } from "@/services/auth/verifyDocument.service";
 import { getUserId } from "@/utils/auth";
 import { ServiceDetails } from "@/services/serviceDetails/serviceDetailsInterface";
 import { english } from "@/features/i18n/en";
+import { PricingType } from "@/services/serviceList/listInteraface";
 
 interface UseServiceFormProps {
   open: boolean;
@@ -105,7 +106,7 @@ export const useServiceForm = ({
   }, [editService, open, setSubcategories]);
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
+    const {files} = event.target;
     if (!files) return;
 
     const fileArray = Array.from(files);
@@ -140,7 +141,7 @@ export const useServiceForm = ({
   const handleCatalogFileSelect = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const files = event.target.files;
+    const {files} = event.target;
     if (!files?.length) return;
     const fileArray = Array.from(files);
     setPriceCatalogFiles((prev) => [...prev, ...fileArray]);
@@ -203,7 +204,7 @@ export const useServiceForm = ({
       setError(english.enter_service_name_error);
       isValid = false;
     }
-    if (pricingType === "single") {
+    if (pricingType === PricingType.SINGLE) {
       if (!price || parseFloat(price) <= 0) {
         newFieldErrors.price = english.enter_valid_price_error;
         isValid = false;
@@ -213,13 +214,11 @@ export const useServiceForm = ({
         isValid = false;
       }
     }
-    if (pricingType === "catalog") {
-      if (!priceCatalogFiles.length) {
-        newFieldErrors.catalog = english.price_catalog_required;
-        isValid = false;
-      }
+    if (pricingType === PricingType.CATALOG && !priceCatalogFiles.length) {
+      newFieldErrors.catalog = english.price_catalog_required;
+      isValid = false;
     }
-    if (pricingType === "multiple") {
+    if (pricingType === PricingType.MULTIPLE) {
       const validItems = priceItems.filter(
         (item) =>
           item.name.trim() &&
