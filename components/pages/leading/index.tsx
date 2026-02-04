@@ -9,11 +9,12 @@ import HowItWorks from "./components/HowItWorks";
 import Benefits from "./components/Benefits";
 import FAQ from "./components/FAQ";
 import { useTranslate } from "@/hooks/useTranslate";
-import { COLORS } from "../../../constants/colors";
+import { COLORS } from "@/constants/colors";
 
 function ListingView() {
   const { t } = useTranslate();
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const [expandedFaq, setExpandedFaq] = useState<string | false>("faq0");
 
   const handleFaqChange =
@@ -24,36 +25,38 @@ function ListingView() {
   return (
     <Box
       sx={{
-        bgcolor:
-          theme.palette.mode === "dark"
-            ? COLORS.BACKGROUND.PRIMARY_DARK
-            : COLORS.BACKGROUND.PRIMARY_LIGHT,
+        bgcolor: isDark
+          ? COLORS.BACKGROUND.PRIMARY_DARK
+          : COLORS.BACKGROUND.PRIMARY_LIGHT,
         minHeight: "100vh",
-        pb: 10,
+        pb: 0,
       }}
     >
-      {/* Breadcrumb */}
-      <Container maxWidth="xl">
+      {/* Breadcrumb — minimal, professional */}
+      <Container maxWidth="xl" sx={{ pt: { xs: 2, md: 3 }, pb: 0 }}>
         <Typography
           variant="body2"
-          color={
-            theme.palette.mode === "dark"
+          component="nav"
+          aria-label="Breadcrumb"
+          sx={{
+            color: isDark
               ? COLORS.TEXT.SECONDARY_DARK
-              : COLORS.TEXT.SECONDARY_LIGHT
-          }
-          sx={{ py: 2 }}
+              : COLORS.TEXT.SECONDARY_LIGHT,
+            "& a": {
+              color: "inherit",
+              textDecoration: "none",
+              transition: "color 0.2s ease",
+              "&:hover": { color: COLORS.PRIMARY_PURPLE },
+            },
+          }}
         >
-          <Link href="/" style={{ color: "inherit", textDecoration: "none" }}>
-            {t("home")}
-          </Link>
+          <Link href="/">{t("home")}</Link>
           {" / "}
           <Box
             component="span"
             fontWeight={600}
             color={
-              theme.palette.mode === "dark"
-                ? COLORS.TEXT.PRIMARY_DARK
-                : COLORS.TEXT.PRIMARY_LIGHT
+              isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT
             }
           >
             {t("listYourBusiness")}
@@ -61,19 +64,19 @@ function ListingView() {
         </Typography>
       </Container>
 
-      {/* Hero Section — Business-owner friendly */}
+      {/* Hero — Register your business */}
       <Hero />
 
-      {/* Success Stories — Relatable */}
-      <SuccessStories />
-
-      {/* 3 Simple Steps — Easy to understand */}
-      <HowItWorks />
-
-      {/* Why list with us + Get more visibility */}
+      {/* Why register — Benefits first for conversion */}
       <Benefits />
 
-      {/* FAQ — Easy to scan */}
+      {/* How it works — Clear steps */}
+      <HowItWorks />
+
+      {/* Social proof */}
+      <SuccessStories />
+
+      {/* FAQ */}
       <FAQ expandedFaq={expandedFaq} handleFaqChange={handleFaqChange} />
     </Box>
   );

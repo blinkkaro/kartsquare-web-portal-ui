@@ -167,7 +167,7 @@ export default function LoginForm({
           sx={{ fontSize: { lg: "0.875rem", xl: "1rem" } }}
         >
           {t("no_account")}
-          <Link href={`/signUp?role=${role}`}>
+          <Link href={`/signup?role=${role}`}>
             <Typography
               component="span"
               sx={{

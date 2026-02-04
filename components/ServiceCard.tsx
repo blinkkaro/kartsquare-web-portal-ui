@@ -353,7 +353,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             </Box>
           </Box>
 
-          {service.is_price_required && service.price !== null && (
+          {service.is_price_required ? (
             <Typography
               variant="subtitle1"
               fontWeight="bold"
@@ -372,7 +372,27 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
               >
                 {service.currency}
               </Typography>
-              {service.price.toFixed(2)}
+              {service.price}
+            </Typography>
+          ) : (
+            <Typography
+              variant="subtitle1"
+              fontWeight="bold"
+              sx={{ color: COLORS.PRIMARY_PURPLE }}
+            >
+              <Typography
+                variant="body2"
+                component="span"
+                sx={{
+                  color: isDark
+                    ? COLORS.TEXT.SECONDARY_DARK
+                    : COLORS.TEXT.SECONDARY_LIGHT,
+                  mr: 0.5,
+                  fontSize: "0.85rem",
+                }}
+              >
+                {t("getQuote")}
+              </Typography>
             </Typography>
           )}
         </Box>

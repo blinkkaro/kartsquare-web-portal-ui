@@ -20,6 +20,7 @@ import CustomerServiceHeader from "./CustomerServiceHeader";
 import CustomerServiceInfo from "./CustomerServiceInfo";
 import CustomerServiceActions from "./CustomerServiceActions";
 import CustomerServiceDetailsGrid from "./CustomerServiceDetailsGrid";
+import CustomerServicePricing from "../../../common/CustomerServicePricing";
 import DescriptionDialog from "../../provider/serviceDetails/DescriptionDialog";
 import ReviewsSection from "../../provider/serviceDetails/ReviewsSection";
 import ServiceLocation from "../../provider/serviceDetails/ServiceLocation";
@@ -199,6 +200,12 @@ const CustomerServiceDetails = () => {
                 images={images}
                 serviceName={service.service_name || ""}
               />
+              <CustomerServicePricing
+                pricingType={service.pricing_type}
+                priceCatalogUrls={service.price_catalog_url}
+                priceItems={service.price_items}
+                currency={service.currency}
+              />
             </Box>
 
             <Box
@@ -212,6 +219,7 @@ const CustomerServiceDetails = () => {
             >
               <Box sx={{ py: 2 }}>
                 <CustomerServiceHeader
+                  isPriceRequired={service.is_price_required}
                   price={service.price || 0}
                   currency={service.currency || "INR"}
                   categoryName={service.category_name || ""}
