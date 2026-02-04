@@ -98,6 +98,13 @@ export interface CategoryListResponse {
   categories: Category[];
 }
 
+/** Single price item when pricing_type is "multiple" */
+export interface ServicePriceItem {
+  service_name: string;
+  price: number;
+  service_desc: string;
+}
+
 export interface ServiceCreateRequest {
   provider_id: string;
   category_id: string;
@@ -116,4 +123,10 @@ export interface ServiceCreateRequest {
   service_duration?: number;
   have_slots: boolean;
   status?: ServiceStatus;
+  /** How pricing is provided: single (default), catalog file(s), or multiple items */
+  pricing_type?: "single" | "catalog" | "multiple";
+  /** URLs of uploaded price catalog files (PDF/image). Single string or array when pricing_type is "catalog" */
+  price_catalog_url?: string | string[];
+  /** List of service/price/description when pricing_type is "multiple" */
+  price_items?: ServicePriceItem[];
 }

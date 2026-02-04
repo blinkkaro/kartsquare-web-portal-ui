@@ -21,6 +21,8 @@ interface ServiceBasicInfoProps {
     onDescriptionChange: (value: string) => void;
     categoriesLoading: boolean;
     subcategoriesLoading: boolean;
+    /** When "single", show price and description. When "catalog" or "multiple", hide them (handled by ServicePricingOptions). */
+    pricingType?: "single" | "catalog" | "multiple";
 }
 
 const ServiceBasicInfo = ({
@@ -38,7 +40,10 @@ const ServiceBasicInfo = ({
     onDescriptionChange,
     categoriesLoading,
     subcategoriesLoading,
+    pricingType = "single",
 }: ServiceBasicInfoProps) => {
+    const showSinglePriceFields = pricingType === "single";
+
     return (
         <>
             {/* Category */}
@@ -103,41 +108,46 @@ const ServiceBasicInfo = ({
                 />
             </Box>
 
-            {/* Price */}
-            <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>
-                    {english.price_inr}
-                    <span style={{ color: COLORS.SECONDARY_ORANGE }}>*</span>
-                </Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    value={price}
-                    onChange={(e) => {
-                        const val = e.target.value.replace(/[^0-9.]/g, '');
-                        if (val === '' || (parseFloat(val) <= 10000 && (val.match(/\./g) || []).length <= 1)) {
-                            onPriceChange(val);
-                        }
-                    }}
-                    placeholder={english.enter_price}
-                />
-            </Box>
+            {showSinglePriceFields && (
+                <>
+                    {/* Price — only when pricing type is single */}
+                    <Box sx={{ mb: 2 }}>
+                        <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>
+                            {english.price_inr}
+                            <span style={{ color: COLORS.SECONDARY_ORANGE }}>*</span>
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            value={price}
+                            onChange={(e) => {
+                                const val = e.target.value.replace(/[^0-9.]/g, '');
+                                if (val === '' || (parseFloat(val) <= 10000 && (val.match(/\./g) || []).length <= 1)) {
+                                    onPriceChange(val);
+                                }
+                            }}
+                            placeholder={english.enter_price}
+                        />
+                    </Box>
 
-            {/* Description */}
-            <Box sx={{ mb: 3 }}>
-                <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>
-                    {english.description}
-                    <span style={{ color: COLORS.SECONDARY_ORANGE }}>*</span>
-                </Typography>
-                <TextField
-                    fullWidth
-                    multiline
-                    rows={4}
-                    value={description}
-                    onChange={(e) => onDescriptionChange(e.target.value)}
-                    placeholder={english.write_here}
-                />
-            </Box>
+                    {/* Description — only when pricing type is single */}
+                    <Box sx={{ mb: 3 }}>
+                        <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>
+                            {english.description}
+                            <span style={{ color: COLORS.SECONDARY_ORANGE }}>*</span>
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            multiline
+                            rows={4}
+                            value={description}
+                            onChange={(e) => onDescriptionChange(e.target.value)}
+                            placeholder={english.write_here}
+                        />
+                    </Box>
+                </>
+            )}
+            {!showSinglePriceFields && <Box sx={{ mb: 2 }} />}
         </>
     );
 };

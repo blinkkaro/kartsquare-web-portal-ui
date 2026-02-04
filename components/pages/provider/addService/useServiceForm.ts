@@ -35,6 +35,14 @@ export const useServiceForm = ({
     const [serviceRadius, setServiceRadius] = useState("5");
     const [haveSlots, setHaveSlots] = useState(false);
 
+    // Pricing type: single (default), catalog (upload file(s)), or multiple (list of items)
+    type PricingType = "single" | "catalog" | "multiple";
+    const [pricingType, setPricingType] = useState<PricingType>("single");
+    const [priceCatalogFiles, setPriceCatalogFiles] = useState<File[]>([]);
+    const [priceItems, setPriceItems] = useState<Array<{ name: string; price: string; description: string }>>([
+        { name: "", price: "", description: "" },
+    ]);
+
     // Images state
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
     const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -124,6 +132,39 @@ export const useServiceForm = ({
         setImagePreviews(newPreviews);
     };
 
+    const handleCatalogFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (!files?.length) return;
+        const fileArray = Array.from(files);
+        setPriceCatalogFiles((prev) => [...prev, ...fileArray]);
+        event.target.value = "";
+    };
+
+    const removeCatalogFile = (index: number) => {
+        setPriceCatalogFiles((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    const clearPriceCatalog = () => {
+        setPriceCatalogFiles([]);
+    };
+
+    const addPriceItem = () => {
+        setPriceItems((prev) => [...prev, { name: "", price: "", description: "" }]);
+    };
+
+    const removePriceItem = (index: number) => {
+        if (priceItems.length <= 1) return;
+        setPriceItems((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    const updatePriceItem = (index: number, field: "name" | "price" | "description", value: string) => {
+        setPriceItems((prev) => {
+            const next = [...prev];
+            next[index] = { ...next[index], [field]: value };
+            return next;
+        });
+    };
+
     const validateForm = (): boolean => {
         if (!categoryId) {
             setError(english.select_category_error);
@@ -137,13 +178,28 @@ export const useServiceForm = ({
             setError(english.enter_service_name_error);
             return false;
         }
-        if (!price || parseFloat(price) <= 0) {
-            setError(english.enter_valid_price_error);
-            return false;
+        if (pricingType === "single") {
+            if (!price || parseFloat(price) <= 0) {
+                setError(english.enter_valid_price_error);
+                return false;
+            }
+            if (!description.trim()) {
+                setError(english.enter_description_error);
+                return false;
+            }
         }
-        if (!description.trim()) {
-            setError(english.enter_description_error);
-            return false;
+        if (pricingType === "catalog") {
+            if (!priceCatalogFiles.length) {
+                setError(english.price_catalog_required);
+                return false;
+            }
+        }
+        if (pricingType === "multiple") {
+            const validItems = priceItems.filter((item) => item.name.trim() && item.price && parseFloat(item.price) > 0 && item.description.trim());
+            if (validItems.length === 0) {
+                setError(english.at_least_one_price_item);
+                return false;
+            }
         }
         if (!editService && selectedImages.length === 0) {
             setError(english.upload_image_error);
@@ -179,6 +235,13 @@ export const useServiceForm = ({
                 uploadedUrls = imagePreviews;
             }
 
+            let priceCatalogUrls: string[] = [];
+            if (pricingType === "catalog" && priceCatalogFiles.length > 0) {
+                setUploadingImages(true);
+                priceCatalogUrls = await verifyDocumentService.uploadImages(priceCatalogFiles);
+                setUploadingImages(false);
+            }
+
             const totalMinutes =
                 parseInt(days || "0") * 24 * 60 +
                 parseInt(hours || "0") * 60 +
@@ -190,15 +253,26 @@ export const useServiceForm = ({
                 return;
             }
 
+            let finalServiceName = serviceName;
+            let finalPrice = parseFloat(price) || 0;
+            let finalDesc = description;
+            const validPriceItems = priceItems.filter((item) => item.name.trim() && item.price && parseFloat(item.price) > 0 && item.description.trim());
+
+            if (pricingType === "multiple" && validPriceItems.length > 0) {
+                finalServiceName = validPriceItems[0].name.trim();
+                finalPrice = parseFloat(validPriceItems[0].price);
+                finalDesc = validPriceItems[0].description.trim();
+            }
+
             const requestData: any = {
                 provider_id: userId,
                 category_id: categoryId,
                 sub_category_id: subcategoryId,
-                service_name: serviceName,
-                service_desc: description,
+                service_name: finalServiceName,
+                service_desc: finalDesc,
                 image_urls: uploadedUrls,
                 is_price_required: true,
-                price: parseFloat(price),
+                price: finalPrice,
                 currency: "INR",
                 service_at_location: locationType,
                 service_provider_address_id: selectedAddressId,
@@ -206,7 +280,19 @@ export const useServiceForm = ({
                 has_service_duration: totalMinutes > 0,
                 service_duration: totalMinutes > 0 ? totalMinutes : undefined,
                 have_slots: haveSlots,
+                pricing_type: pricingType,
             };
+
+            if (pricingType === "catalog" && priceCatalogUrls.length > 0) {
+                requestData.price_catalog_url = priceCatalogUrls.length === 1 ? priceCatalogUrls[0] : priceCatalogUrls;
+            }
+            if (pricingType === "multiple" && validPriceItems.length > 0) {
+                requestData.price_items = validPriceItems.map((item) => ({
+                    service_name: item.name.trim(),
+                    price: parseFloat(item.price),
+                    service_desc: item.description.trim(),
+                }));
+            }
 
             if (locationType === "at_customer") {
                 requestData.visiting_charge = parseFloat(visitingCharge);
@@ -244,6 +330,9 @@ export const useServiceForm = ({
         setSelectedAddressId("");
         setServiceRadius("5");
         setHaveSlots(false);
+        setPricingType("single");
+        setPriceCatalogFiles([]);
+        setPriceItems([{ name: "", price: "", description: "" }]);
         setSelectedImages([]);
         setImagePreviews([]);
         setError("");
@@ -277,6 +366,18 @@ export const useServiceForm = ({
         setServiceRadius,
         haveSlots,
         setHaveSlots,
+        // Pricing options
+        pricingType,
+        setPricingType,
+        priceCatalogFiles,
+        priceCatalogFileNames: priceCatalogFiles.map((f) => f.name),
+        handleCatalogFileSelect,
+        removeCatalogFile,
+        clearPriceCatalog,
+        priceItems,
+        addPriceItem,
+        removePriceItem,
+        updatePriceItem,
         // Images
         selectedImages,
         imagePreviews,

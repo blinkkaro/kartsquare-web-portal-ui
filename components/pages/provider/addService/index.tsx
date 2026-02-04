@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import { Box, Typography, Button, CircularProgress, useTheme } from "@mui/material";
+import { Box, Typography, Button, CircularProgress, Paper, useTheme } from "@mui/material";
 import RightDrawer from "@/components/common/RightDrawer";
 import { ServiceDetails } from "@/services/serviceDetails/serviceDetailsInterface";
 import { COLORS } from "@/constants/colors";
@@ -9,6 +9,7 @@ import { useServiceData } from "./useServiceData";
 import { useServiceForm } from "./useServiceForm";
 import ServiceImageUpload from "./ServiceImageUpload";
 import ServiceBasicInfo from "./ServiceBasicInfo";
+import ServicePricingOptions from "./ServicePricingOptions";
 import ServiceDuration from "./ServiceDuration";
 import ServiceLocation from "./ServiceLocation";
 
@@ -71,6 +72,16 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
         setServiceRadius,
         haveSlots,
         setHaveSlots,
+        pricingType,
+        setPricingType,
+        priceCatalogFileNames,
+        handleCatalogFileSelect,
+        removeCatalogFile,
+        clearPriceCatalog,
+        priceItems,
+        addPriceItem,
+        removePriceItem,
+        updatePriceItem,
         selectedImages,
         imagePreviews,
         handleImageSelect,
@@ -119,81 +130,143 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
             open={open}
             onClose={onClose}
             title={editService ? english.edit_service : english.add_service}
-            width={600}
+            width={620}
         >
-            <Box sx={{ px: 3, pb: 3 }}>
+            <Box sx={{ px: { xs: 2, sm: 3 }, pb: 3, pt: 1 }}>
                 {error && (
-                    <Box
+                    <Paper
+                        elevation={0}
                         sx={{
-                            bgcolor: isDark ? "rgba(255, 255, 255, 0.05)" : "white",
+                            bgcolor: isDark ? "rgba(211, 47, 47, 0.08)" : "rgba(211, 47, 47, 0.06)",
                             color: "error.main",
                             p: 2,
-                            borderRadius: "12px",
+                            borderRadius: 2,
                             mb: 2,
-                            border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(211, 47, 47, 0.2)"}`,
+                            border: `1px solid ${isDark ? "rgba(211, 47, 47, 0.3)" : "rgba(211, 47, 47, 0.2)"}`,
                         }}
                     >
                         <Typography variant="body2">{error}</Typography>
-                    </Box>
+                    </Paper>
                 )}
 
                 {/* Service Info Section */}
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                    {english.service_info}
-                </Typography>
+                <Paper
+                    elevation={0}
+                    sx={{
+                        p: 2.5,
+                        mb: 2.5,
+                        borderRadius: 2,
+                        border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+                        bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                    }}
+                >
+                    <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
+                        {english.service_info}
+                    </Typography>
+                    <ServiceImageUpload
+                        selectedImages={selectedImages}
+                        imagePreviews={imagePreviews}
+                        onImageSelect={handleImageSelect}
+                        onRemoveImage={handleRemoveImage}
+                    />
+                    <ServiceBasicInfo
+                        categories={categories}
+                        categoryId={categoryId}
+                        onCategoryChange={setCategoryId}
+                        subcategories={subcategories}
+                        subcategoryId={subcategoryId}
+                        onSubcategoryChange={setSubcategoryId}
+                        serviceName={serviceName}
+                        onServiceNameChange={setServiceName}
+                        price={price}
+                        onPriceChange={setPrice}
+                        description={description}
+                        onDescriptionChange={setDescription}
+                        categoriesLoading={categoriesLoading}
+                        subcategoriesLoading={subcategoriesLoading}
+                        pricingType={pricingType}
+                    />
+                </Paper>
 
-                {/* Image Upload */}
-                <ServiceImageUpload
-                    selectedImages={selectedImages}
-                    imagePreviews={imagePreviews}
-                    onImageSelect={handleImageSelect}
-                    onRemoveImage={handleRemoveImage}
-                />
-
-                {/* Basic Info */}
-                <ServiceBasicInfo
-                    categories={categories}
-                    categoryId={categoryId}
-                    onCategoryChange={setCategoryId}
-                    subcategories={subcategories}
-                    subcategoryId={subcategoryId}
-                    onSubcategoryChange={setSubcategoryId}
-                    serviceName={serviceName}
-                    onServiceNameChange={setServiceName}
-                    price={price}
-                    onPriceChange={setPrice}
-                    description={description}
-                    onDescriptionChange={setDescription}
-                    categoriesLoading={categoriesLoading}
-                    subcategoriesLoading={subcategoriesLoading}
-                />
+                {/* Pricing Options */}
+                <Paper
+                    elevation={0}
+                    sx={{
+                        p: 2.5,
+                        mb: 2.5,
+                        borderRadius: 2,
+                        border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+                        bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                    }}
+                >
+                    <ServicePricingOptions
+                        pricingType={pricingType}
+                        onPricingTypeChange={setPricingType}
+                        priceCatalogFileNames={priceCatalogFileNames}
+                        onCatalogFileSelect={handleCatalogFileSelect}
+                        onRemoveCatalogFile={removeCatalogFile}
+                        onClearCatalog={clearPriceCatalog}
+                        priceItems={priceItems}
+                        onAddPriceItem={addPriceItem}
+                        onRemovePriceItem={removePriceItem}
+                        onUpdatePriceItem={updatePriceItem}
+                    />
+                </Paper>
 
                 {/* Duration */}
-                <ServiceDuration
-                    days={days}
-                    onDaysChange={setDays}
-                    hours={hours}
-                    onHoursChange={setHours}
-                    minutes={minutes}
-                    onMinutesChange={setMinutes}
-                    haveSlots={haveSlots}
-                    onHaveSlotsChange={setHaveSlots}
-                />
+                <Paper
+                    elevation={0}
+                    sx={{
+                        p: 2.5,
+                        mb: 2.5,
+                        borderRadius: 2,
+                        border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+                        bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                    }}
+                >
+                    <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
+                        {english.service_duration}
+                    </Typography>
+                    <ServiceDuration
+                        days={days}
+                        onDaysChange={setDays}
+                        hours={hours}
+                        onHoursChange={setHours}
+                        minutes={minutes}
+                        onMinutesChange={setMinutes}
+                        haveSlots={haveSlots}
+                        onHaveSlotsChange={setHaveSlots}
+                    />
+                </Paper>
 
                 {/* Location */}
-                <ServiceLocation
-                    locationType={locationType}
-                    onLocationTypeChange={setLocationType}
-                    addresses={addresses}
-                    selectedAddressId={selectedAddressId}
-                    onAddressSelect={setSelectedAddressId}
-                    visitingCharge={visitingCharge}
-                    onVisitingChargeChange={setVisitingCharge}
-                    serviceRadius={serviceRadius}
-                    onServiceRadiusChange={setServiceRadius}
-                    addressesLoading={addressesLoading}
-                    onAddressAdded={handleAddressAdded}
-                />
+                <Paper
+                    elevation={0}
+                    sx={{
+                        p: 2.5,
+                        mb: 2.5,
+                        borderRadius: 2,
+                        border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+                        bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                    }}
+                >
+                    <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
+                        {english.service_location}
+                    </Typography>
+                    <ServiceLocation
+                        locationType={locationType}
+                        onLocationTypeChange={setLocationType}
+                        addresses={addresses}
+                        selectedAddressId={selectedAddressId}
+                        onAddressSelect={setSelectedAddressId}
+                        visitingCharge={visitingCharge}
+                        onVisitingChargeChange={setVisitingCharge}
+                        serviceRadius={serviceRadius}
+                        onServiceRadiusChange={setServiceRadius}
+                        addressesLoading={addressesLoading}
+                        onAddressAdded={handleAddressAdded}
+                    />
+                </Paper>
 
                 {/* Submit Button */}
                 <Button
@@ -205,11 +278,14 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
                         bgcolor: COLORS.PRIMARY_PURPLE,
                         color: "white",
                         py: 1.5,
-                        borderRadius: "12px",
+                        borderRadius: 2,
                         textTransform: "none",
                         fontWeight: 600,
+                        fontSize: "0.9375rem",
+                        boxShadow: "0 4px 14px rgba(94, 24, 233, 0.35)",
                         "&:hover": {
                             bgcolor: COLORS.PURPLE_HOVER,
+                            boxShadow: "0 6px 20px rgba(94, 24, 233, 0.4)",
                         },
                     }}
                 >
