@@ -42,6 +42,7 @@ export const useServiceForm = ({
   type PricingType = "single" | "catalog" | "multiple";
   const [pricingType, setPricingType] = useState<PricingType>("single");
   const [priceCatalogFiles, setPriceCatalogFiles] = useState<File[]>([]);
+  const [existingCatalogUrls, setExistingCatalogUrls] = useState<string[]>([]);
   const [priceItems, setPriceItems] = useState<
     Array<{ name: string; price: string; description: string }>
   >([{ name: "", price: "", description: "" }]);
@@ -99,6 +100,27 @@ export const useServiceForm = ({
         if (editService.sub_category_id) {
           setSubcategoryId(editService.sub_category_id);
         }
+
+        if (editService.pricing_type) {
+          setPricingType(editService.pricing_type);
+        }
+
+        if (
+          editService.price_catalog_url &&
+          editService.price_catalog_url.length > 0
+        ) {
+          setExistingCatalogUrls(editService.price_catalog_url);
+        }
+
+        if (editService.price_items && editService.price_items.length > 0) {
+          setPriceItems(
+            editService.price_items.map((item) => ({
+              name: item.service_name,
+              price: item.price.toString(),
+              description: item.service_desc,
+            })),
+          );
+        }
       }
     };
 
@@ -106,7 +128,7 @@ export const useServiceForm = ({
   }, [editService, open, setSubcategories]);
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const {files} = event.target;
+    const { files } = event.target;
     if (!files) return;
 
     const fileArray = Array.from(files);
@@ -141,7 +163,7 @@ export const useServiceForm = ({
   const handleCatalogFileSelect = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const {files} = event.target;
+    const { files } = event.target;
     if (!files?.length) return;
     const fileArray = Array.from(files);
     setPriceCatalogFiles((prev) => [...prev, ...fileArray]);
@@ -162,6 +184,11 @@ export const useServiceForm = ({
 
   const clearPriceCatalog = () => {
     setPriceCatalogFiles([]);
+    setExistingCatalogUrls([]);
+  };
+
+  const removeExistingCatalogUrl = (index: number) => {
+    setExistingCatalogUrls((prev) => prev.filter((_, i) => i !== index));
   };
 
   const addPriceItem = () => {
@@ -214,7 +241,11 @@ export const useServiceForm = ({
         isValid = false;
       }
     }
-    if (pricingType === PricingType.CATALOG && !priceCatalogFiles.length) {
+    if (
+      pricingType === PricingType.CATALOG &&
+      !priceCatalogFiles.length &&
+      !existingCatalogUrls.length
+    ) {
       newFieldErrors.catalog = english.price_catalog_required;
       isValid = false;
     }
@@ -271,11 +302,12 @@ export const useServiceForm = ({
         uploadedUrls = imagePreviews;
       }
 
-      let priceCatalogUrls: string[] = [];
+      let priceCatalogUrls: string[] = [...existingCatalogUrls];
       if (pricingType === "catalog" && priceCatalogFiles.length > 0) {
         setUploadingImages(true);
-        priceCatalogUrls =
+        const newUrls =
           await verifyDocumentService.uploadImages(priceCatalogFiles);
+        priceCatalogUrls = [...priceCatalogUrls, ...newUrls];
         setUploadingImages(false);
       }
 
@@ -325,6 +357,10 @@ export const useServiceForm = ({
         have_slots: haveSlots,
         pricing_type: pricingType,
       };
+
+      if (pricingType === "catalog") {
+        requestData.price_catalog_url = priceCatalogUrls;
+      }
 
       if (pricingType === "catalog" && priceCatalogUrls.length > 0) {
         requestData.price_catalog_url = priceCatalogUrls;
@@ -388,6 +424,7 @@ export const useServiceForm = ({
     setSelectedImages([]);
     setImagePreviews([]);
     setImagePreviews([]);
+    setExistingCatalogUrls([]);
     setError("");
     setFieldErrors({});
   };
@@ -428,6 +465,8 @@ export const useServiceForm = ({
     handleCatalogFileSelect,
     removeCatalogFile,
     clearPriceCatalog,
+    existingCatalogUrls,
+    removeExistingCatalogUrl,
     priceItems,
     addPriceItem,
     removePriceItem,

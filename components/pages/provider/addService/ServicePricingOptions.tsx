@@ -30,6 +30,8 @@ interface ServicePricingOptionsProps {
   priceCatalogFileNames: string[];
   onCatalogFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onRemoveCatalogFile: (index: number) => void;
+  existingCatalogUrls?: string[];
+  onRemoveExistingCatalogUrl?: (index: number) => void;
   onClearCatalog: () => void;
   priceItems: Array<{ name: string; price: string; description: string }>;
   onAddPriceItem: () => void;
@@ -50,6 +52,8 @@ const ServicePricingOptions: React.FC<ServicePricingOptionsProps> = ({
   priceCatalogFileNames,
   onCatalogFileSelect,
   onRemoveCatalogFile,
+  existingCatalogUrls = [],
+  onRemoveExistingCatalogUrl,
   onClearCatalog,
   priceItems,
   onAddPriceItem,
@@ -349,18 +353,87 @@ const ServicePricingOptions: React.FC<ServicePricingOptionsProps> = ({
                     </Box>
                   ))}
                 </Box>
-                <Button
-                  size="small"
-                  onClick={onClearCatalog}
-                  sx={{
-                    alignSelf: "flex-start",
-                    color: "text.secondary",
-                    textTransform: "none",
-                  }}
-                >
-                  {english.clear_all_catalog}
-                </Button>
               </>
+            )}
+
+            {existingCatalogUrls.length > 0 && (
+              <>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ mt: 1, display: "block" }}
+                >
+                  {"Existing Files"}
+                </Typography>
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                  {existingCatalogUrls.map((url, index) => (
+                    <Box
+                      key={`existing-${index}`}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0.5,
+                        px: 1.5,
+                        py: 0.75,
+                        borderRadius: 1,
+                        bgcolor: isDark
+                          ? COLORS.BACKGROUND.PRIMARY_DARK
+                          : "white",
+                        border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+                      }}
+                    >
+                      <Box
+                        component="img"
+                        src={url}
+                        alt="Catalog"
+                        sx={{
+                          width: 24,
+                          height: 24,
+                          objectFit: "cover",
+                          borderRadius: 0.5,
+                        }}
+                      />
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                          maxWidth: 180,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {`File ${index + 1}`}
+                      </Typography>
+                      {onRemoveExistingCatalogUrl && (
+                        <IconButton
+                          size="small"
+                          onClick={() => onRemoveExistingCatalogUrl(index)}
+                          color="error"
+                          aria-label="Remove existing item"
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      )}
+                    </Box>
+                  ))}
+                </Box>
+              </>
+            )}
+
+            {(priceCatalogFileNames.length > 0 ||
+              existingCatalogUrls.length > 0) && (
+              <Button
+                size="small"
+                onClick={onClearCatalog}
+                sx={{
+                  alignSelf: "flex-start",
+                  color: "text.secondary",
+                  textTransform: "none",
+                }}
+              >
+                {english.clear_all_catalog}
+              </Button>
             )}
           </Box>
         </Paper>

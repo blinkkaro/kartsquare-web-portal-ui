@@ -85,6 +85,8 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
     handleCatalogFileSelect,
     removeCatalogFile,
     clearPriceCatalog,
+    existingCatalogUrls,
+    removeExistingCatalogUrl,
     priceItems,
     addPriceItem,
     removePriceItem,
@@ -217,6 +219,8 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
             priceCatalogFileNames={priceCatalogFileNames}
             onCatalogFileSelect={handleCatalogFileSelect}
             onRemoveCatalogFile={removeCatalogFile}
+            existingCatalogUrls={existingCatalogUrls}
+            onRemoveExistingCatalogUrl={removeExistingCatalogUrl}
             onClearCatalog={clearPriceCatalog}
             priceItems={priceItems}
             onAddPriceItem={addPriceItem}

@@ -43,6 +43,19 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
+  const headerText = () => (
+    <Typography
+      variant="subtitle1"
+      fontWeight={700}
+      sx={{
+        mb: 2,
+        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+      }}
+    >
+      {t("priceCatalog")}
+    </Typography>
+  );
+
   if (pricingType === PricingType.SINGLE) {
     return null;
   }
@@ -54,18 +67,7 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
   ) {
     return (
       <Box sx={{ mt: 3 }}>
-        <Typography
-          variant="subtitle1"
-          fontWeight={700}
-          sx={{
-            mb: 2,
-            color: isDark
-              ? COLORS.TEXT.PRIMARY_DARK
-              : COLORS.TEXT.PRIMARY_LIGHT,
-          }}
-        >
-          Price Catalog
-        </Typography>
+        {headerText()}
 
         <Box
           sx={{
@@ -211,19 +213,8 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
   ) {
     return (
       <Box sx={{ mt: 3 }}>
-        <Typography
-          variant="subtitle1"
-          fontWeight={700}
-          sx={{
-            mb: 2,
-            color: isDark
-              ? COLORS.TEXT.PRIMARY_DARK
-              : COLORS.TEXT.PRIMARY_LIGHT,
-          }}
-        >
-          Service Options
-        </Typography>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          {headerText()}
           {priceItems.map((item, index) => (
             <Paper
               key={index}

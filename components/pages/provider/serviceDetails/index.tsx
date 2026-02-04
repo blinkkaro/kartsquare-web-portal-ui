@@ -237,6 +237,7 @@ const ProviderServiceDetails = () => {
                   price={service.price || 0}
                   currency={service.currency || "INR"}
                   categoryName={service.category_name || ""}
+                  isPriceRequired={service.is_price_required}
                 />
               </Box>
 

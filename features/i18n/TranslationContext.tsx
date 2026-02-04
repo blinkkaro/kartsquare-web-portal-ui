@@ -832,7 +832,8 @@ export type TranslationKey =
   | "expand_review"
   | "yes"
   | "no"
-  | "getQuote";
+  | "getQuote"
+  | "priceCatalog";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

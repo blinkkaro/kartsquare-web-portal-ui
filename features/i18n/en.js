@@ -1134,4 +1134,5 @@ export const english = {
   yes: "Yes",
   no: "No",
   getQuote: "Get Quote",
+  priceCatalog: "Price Catalog",
 };
