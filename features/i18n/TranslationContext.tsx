@@ -727,6 +727,8 @@ export type TranslationKey =
   | "whatsappCountryCodeRequired"
   | "businessInfo"
   | "businessInfoSubtitle"
+  | "businessDetails"
+  | "bankDetails"
   | "businessNameRequired"
   | "businessDescriptionRequired"
   | "businessAddressRequired"

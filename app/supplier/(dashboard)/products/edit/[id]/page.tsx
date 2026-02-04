@@ -81,7 +81,7 @@ const EditProductPage = () => {
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} md={8}>
+                    <Grid size={{ xs: 12, md: 8 }}>
                         <Box mb={2}>
                             <Input name="name" control={control} label={t("productName")} placeholder="Product Name" />
                         </Box>
@@ -100,7 +100,7 @@ const EditProductPage = () => {
                         </Box>
                     </Grid>
 
-                    <Grid item xs={12} md={4}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <Box mb={2}>
                             <Input name="price" control={control} label={t("productPrice")} type="number" placeholder="0.00" />
                         </Box>

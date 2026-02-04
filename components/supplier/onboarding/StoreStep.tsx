@@ -16,6 +16,12 @@ interface StoreStepProps {
     onBack: () => void;
 }
 
+/** Backend may return contact_preferences as an object */
+interface BackendStoreData {
+    contact_preferences?: Record<string, unknown> | unknown[];
+    [key: string]: unknown;
+}
+
 const StoreStep: React.FC<StoreStepProps> = ({ onBack }) => {
     const router = useRouter();
     const { t } = useTranslate();
@@ -50,19 +56,21 @@ const StoreStep: React.FC<StoreStepProps> = ({ onBack }) => {
     useEffect(() => {
         if (storeData?.data) {
             // Transform contact_preferences object to array for UI
-            const backendData = { ...storeData.data };
-            if (backendData.contact_preferences && typeof backendData.contact_preferences === 'object') {
+            const backendData: BackendStoreData = { ...storeData.data } as BackendStoreData;
+            const prefsObj = backendData.contact_preferences;
+            if (prefsObj && typeof prefsObj === 'object' && !Array.isArray(prefsObj)) {
                 const prefs: string[] = [];
-                if (backendData.contact_preferences.show_phone) prefs.push('show_phone');
-                if (backendData.contact_preferences.show_whatsapp) prefs.push('show_whatsapp');
-                if (backendData.contact_preferences.allow_calls) prefs.push('allow_calls');
-                if (backendData.contact_preferences.allow_chat) prefs.push('allow_chat');
-                if (backendData.contact_preferences.enquiry_only) prefs.push('enquiry_only');
+                const obj = prefsObj as Record<string, unknown>;
+                if (obj.show_phone) prefs.push('show_phone');
+                if (obj.show_whatsapp) prefs.push('show_whatsapp');
+                if (obj.allow_calls) prefs.push('allow_calls');
+                if (obj.allow_chat) prefs.push('allow_chat');
+                if (obj.enquiry_only) prefs.push('enquiry_only');
                 backendData.contact_preferences = prefs;
             } else {
                 backendData.contact_preferences = [];
             }
-            reset(backendData);
+            reset(backendData as Parameters<typeof reset>[0]);
         }
     }, [storeData, reset]);
 
@@ -113,10 +121,12 @@ const StoreStep: React.FC<StoreStepProps> = ({ onBack }) => {
                             options={STORE_CATEGORIES}
                             value={Array.isArray(value) ? value : []}
                             onChange={(_, newValue) => onChange(newValue)}
-                            renderTags={(value: readonly string[], getTagProps) =>
-                                value.map((option: string, index: number) => (
-                                    <Chip variant="outlined" label={option} {...getTagProps({ index })} key={option} />
-                                ))
+                            renderTags={(value, getTagProps) =>
+                                value.map((option, index) =>
+                                    option != null ? (
+                                        <Chip variant="outlined" label={option} {...getTagProps({ index })} key={option} />
+                                    ) : null
+                                )
                             }
                             renderInput={(params) => (
                                 <TextField
@@ -139,10 +149,12 @@ const StoreStep: React.FC<StoreStepProps> = ({ onBack }) => {
                             options={OPERATING_LOCATIONS}
                             value={Array.isArray(value) ? value : []}
                             onChange={(_, newValue) => onChange(newValue)}
-                            renderTags={(value: readonly string[], getTagProps) =>
-                                value.map((option: string, index: number) => (
-                                    <Chip variant="outlined" label={option} {...getTagProps({ index })} key={option} />
-                                ))
+                            renderTags={(value, getTagProps) =>
+                                value.map((option, index) =>
+                                    option != null ? (
+                                        <Chip variant="outlined" label={option} {...getTagProps({ index })} key={option} />
+                                    ) : null
+                                )
                             }
                             renderInput={(params) => (
                                 <TextField
@@ -161,7 +173,10 @@ const StoreStep: React.FC<StoreStepProps> = ({ onBack }) => {
                     <ImageUpload
                         maxImages={1}
                         onUploadComplete={(urls) => setValue("logo_url", urls[0] || "")}
-                        existingUrls={watch("logo_url") ? [watch("logo_url")] : []}
+                        existingUrls={((): string[] => {
+                                const url = watch("logo_url");
+                                return typeof url === "string" ? [url] : [];
+                            })()}
                         label=""
                     />
                 </Box>
@@ -171,7 +186,10 @@ const StoreStep: React.FC<StoreStepProps> = ({ onBack }) => {
                     <ImageUpload
                         maxImages={1}
                         onUploadComplete={(urls) => setValue("banner_url", urls[0] || "")}
-                        existingUrls={watch("banner_url") ? [watch("banner_url")] : []}
+                        existingUrls={((): string[] => {
+                                const url = watch("banner_url");
+                                return typeof url === "string" ? [url] : [];
+                            })()}
                         label=""
                     />
                 </Box>
