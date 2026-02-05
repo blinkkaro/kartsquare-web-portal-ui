@@ -412,7 +412,7 @@ export const english = {
   kartAiGreeting:
     "Hi there! I’m Kart AI, your personal AI assistant. Let’s get you the perfect service.",
   find: "Find a",
-  neatMyArea: "neat my area",
+  neatMyArea: "near my area",
   ai_thinking: "Searching for services...",
   ai_services_found: "Here are the services I found for you:",
   ai_error_message: "Something went wrong. Please try again.",
@@ -1114,6 +1114,8 @@ export const english = {
   getFreeListingSteps: "Get your free listing in 4 simple steps",
   takesLessThanMinutes:
     "Takes less than 5 minutes. No technical skills needed.",
+  step: "Step",
+  done: "Done",
   forBusinessOwners: "For business owners",
   connectWithNewCustomers: "Connect with new customers & grow your business",
   yourFreeListingPage: "Your free listing page",

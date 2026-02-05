@@ -165,6 +165,16 @@ const NavActions: React.FC<NavActionsProps> = ({
 
   return (
     <ActionsContainer>
+      <style>{`
+        @keyframes businessBadgePulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.35); transform: scale(1); }
+          50% { box-shadow: 0 0 12px 2px rgba(211, 47, 47, 0.25); transform: scale(1.03); }
+        }
+        @keyframes businessBadgeSplash {
+          0%, 100% { opacity: 0.6; transform: scale(1); }
+          50% { opacity: 0.9; transform: scale(1.08); }
+        }
+      `}</style>
       {/* Free Listing Button */}
       {(isMobile || isTablet) && (
         <StyledIconButton
@@ -185,9 +195,10 @@ const NavActions: React.FC<NavActionsProps> = ({
               fontSize: "0.45rem",
               fontWeight: 700,
               padding: "0px 3px",
-              borderRadius: "2px",
+              borderRadius: "4px",
               lineHeight: 1,
               textTransform: "uppercase",
+              animation: "businessBadgePulse 2s ease-in-out infinite",
             }}
           >
             {t("business")}
@@ -212,16 +223,29 @@ const NavActions: React.FC<NavActionsProps> = ({
         }}
       >
         <Box
+          className="business-listing-badge"
           sx={{
-            backgroundColor: "error.main", // Red color like in the image
+            backgroundColor: "error.main",
             color: "#fff",
             fontSize: "0.55rem",
             fontWeight: 700,
-            padding: "0px 4px",
-            borderRadius: "2px",
+            padding: "0px 5px",
+            borderRadius: "4px",
             lineHeight: 1.2,
             mb: "2px",
             textTransform: "uppercase",
+            position: "relative",
+            boxShadow: "0 0 0 0 rgba(211, 47, 47, 0.4)",
+            animation: "businessBadgePulse 2s ease-in-out infinite",
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              inset: -2,
+              borderRadius: "6px",
+              border: "1px solid rgba(211, 47, 47, 0.35)",
+              animation: "businessBadgeSplash 2s ease-in-out infinite",
+              pointerEvents: "none",
+            },
           }}
         >
           {t("business")}

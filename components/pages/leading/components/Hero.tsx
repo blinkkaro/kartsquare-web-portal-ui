@@ -10,6 +10,7 @@ import {
   useTheme,
   CircularProgress,
   MenuItem,
+  keyframes,
 } from "@mui/material";
 import ShieldIcon from "@mui/icons-material/Shield";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -41,6 +42,16 @@ type HeroFormData = {
   phone_number: string;
   country_code: string;
 };
+
+const chipPulse = keyframes`
+  0%, 100% { box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 0 rgba(94, 24, 233, 0.25); }
+  50% { box-shadow: 0 2px 8px rgba(94, 24, 233, 0.15), 0 0 0 6px rgba(94, 24, 233, 0); }
+`;
+
+const formGlow = keyframes`
+  0%, 100% { opacity: 0.6; filter: blur(20px); transform: scale(1); }
+  50% { opacity: 1; filter: blur(24px); transform: scale(1.05); }
+`;
 
 const Hero: React.FC = () => {
   const { t } = useTranslate();
@@ -113,6 +124,7 @@ const Hero: React.FC = () => {
                 boxShadow: isDark ? "none" : "0 1px 3px rgba(0,0,0,0.06)",
                 border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.12)"}`,
                 "& .MuiChip-icon": { color: COLORS.PRIMARY_PURPLE },
+                animation: isDark ? "none" : `${chipPulse} 2.5s ease-in-out infinite`,
               }}
             />
             <Typography
@@ -167,9 +179,32 @@ const Hero: React.FC = () => {
 
             <ErrorMessage isVisible={!!error} error={error || ""} />
 
+            <Box
+              sx={{
+                position: "relative",
+                mb: 3,
+                "&::before": isDark
+                  ? {}
+                  : {
+                      content: '""',
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      width: "120%",
+                      height: "140%",
+                      transform: "translate(-50%, -50%)",
+                      background: "radial-gradient(ellipse, rgba(94, 24, 233, 0.15) 0%, transparent 65%)",
+                      animation: `${formGlow} 4s ease-in-out infinite`,
+                      pointerEvents: "none",
+                      zIndex: 0,
+                    },
+              }}
+            >
             <Paper
               elevation={0}
               sx={{
+                position: "relative",
+                zIndex: 1,
                 p: 3,
                 borderRadius: 3,
                 border: `1px solid ${
@@ -180,8 +215,14 @@ const Hero: React.FC = () => {
                 bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
                 boxShadow: isDark
                   ? "none"
-                  : "0 4px 24px rgba(94, 24, 233, 0.08), 0 1px 3px rgba(0,0,0,0.04)",
-                mb: 3,
+                  : "0 4px 24px rgba(94, 24, 233, 0.08), 0 1px 3px rgba(0,0,0,0.04), 0 0 40px rgba(94, 24, 233, 0.06)",
+                transition: "box-shadow 0.3s ease, border-color 0.3s ease",
+                "&:focus-within": {
+                  boxShadow: isDark
+                    ? "none"
+                    : "0 8px 32px rgba(94, 24, 233, 0.12), 0 0 60px rgba(94, 24, 233, 0.08)",
+                  borderColor: "rgba(94, 24, 233, 0.25)",
+                },
               }}
             >
               <Typography
@@ -324,10 +365,6 @@ const Hero: React.FC = () => {
                   sx={{
                     bgcolor: COLORS.PRIMARY_PURPLE,
                     color: "white",
-                    "&:hover": {
-                      bgcolor: COLORS.PURPLE_HOVER,
-                      boxShadow: "0 6px 20px rgba(94, 24, 233, 0.4)",
-                    },
                     px: 3.5,
                     py: 1.5,
                     minHeight: 52,
@@ -335,14 +372,20 @@ const Hero: React.FC = () => {
                     textTransform: "none",
                     fontWeight: 600,
                     fontSize: "0.9375rem",
-                    boxShadow: "0 4px 14px rgba(94, 24, 233, 0.35)",
-                    transition: "all 0.2s ease",
+                    boxShadow: "0 4px 14px rgba(94, 24, 233, 0.35), 0 0 24px rgba(94, 24, 233, 0.2)",
+                    transition: "all 0.25s ease",
+                    "&:hover": {
+                      bgcolor: COLORS.PURPLE_HOVER,
+                      boxShadow: "0 6px 24px rgba(94, 24, 233, 0.45), 0 0 40px rgba(94, 24, 233, 0.25)",
+                      transform: "translateY(-1px)",
+                    },
                   }}
                 >
                   {t("getMyFreeListing")}
                 </Button>
               </Box>
             </Paper>
+            </Box>
 
             <VerificationModal
               open={isOtpOpen}

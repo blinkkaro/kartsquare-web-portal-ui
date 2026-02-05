@@ -16,7 +16,7 @@ const AdvertisementSlider = () => {
   const theme = useTheme();
 
   return (
-    <Box sx={{ my: 3 }}>
+    <Box >
       <Swiper
         modules={[Autoplay, Pagination]}
         slidesPerView={1}
@@ -32,7 +32,7 @@ const AdvertisementSlider = () => {
             <Box
               sx={{
                 width: "100%",
-                height: { xs: 160, sm: 220, md: 260 },
+                height: { xs: 160, sm: 220, md: 220 },
                 borderRadius: 3,
                 overflow: "hidden",
                 cursor: "pointer",
@@ -49,7 +49,8 @@ const AdvertisementSlider = () => {
                 sx={{
                   width: "100%",
                   height: "100%",
-                  objectFit: "cover",
+                  objectFit: "inherit",
+                  display: "block",
                 }}
               />
             </Box>

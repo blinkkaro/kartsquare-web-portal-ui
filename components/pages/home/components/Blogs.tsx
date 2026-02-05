@@ -32,16 +32,17 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
         display: "flex",
         gap: 2,
         p: 1.5,
+        boxShadow: "none",
         mb: 2,
+        ":hover": {
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+        },
         backgroundColor:
           theme.palette.mode === "dark"
             ? COLORS.BACKGROUND.PRIMARY_DARK
             : COLORS.BACKGROUND.PRIMARY_LIGHT,
-        borderRadius: 2,
-        boxShadow:
-          theme.palette.mode === "dark"
-            ? "0 4px 12px rgba(0,0,0,0.6)"
-            : "0 4px 12px rgba(0,0,0,0.15)",
+
+
       }}
     >
       {/* Blog Image */}
@@ -51,6 +52,7 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
           height: 80,
           flexShrink: 0,
           borderRadius: 2,
+          boxShadow: "none",
           overflow: "hidden",
         }}
       >
@@ -68,7 +70,7 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
 
       {/* Blog Content */}
       <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 0.5 }}>
-        <Typography
+        {/* <Typography
           variant="caption"
           sx={{
             color:
@@ -79,7 +81,7 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
           }}
         >
           {blog.date}
-        </Typography>
+        </Typography> */}
         <Typography
           variant="subtitle2"
           sx={{
@@ -91,15 +93,14 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
             fontSize: "0.9rem",
             lineHeight: 1.2,
             display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
+
             overflow: "hidden",
             textOverflow: "ellipsis",
           }}
         >
           {blog.title}
         </Typography>
-        <Typography
+        {/* <Typography
           variant="body2"
           sx={{
             color:
@@ -117,7 +118,7 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
           }}
         >
           {blog.description}
-        </Typography>
+        </Typography> */}
         <Link
           href={`/blogs/${blog.id}`}
           passHref
@@ -133,8 +134,8 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
               "&:hover": {
                 textDecoration: "underline",
               },
-              pb: 2,
-              borderBottom: `1px solid #757575`,
+              // pb: 2,
+              // borderBottom: `1px solid rgb(172, 171, 171)`,
             }}
           >
             {t("readmore")}
@@ -160,10 +161,7 @@ const Blogs = () => {
           theme.palette.mode === "dark"
             ? COLORS.BACKGROUND.PRIMARY_DARK
             : COLORS.BACKGROUND.PRIMARY_LIGHT,
-        boxShadow:
-          theme.palette.mode === "dark"
-            ? "0 4px 12px rgba(0,0,0,0.6)"
-            : "0 4px 12px rgba(0,0,0,0.15)",
+        boxShadow: "none",
       }}
     >
       {/* Header */}
@@ -183,20 +181,20 @@ const Blogs = () => {
       </Typography>
 
       {/* Blog Cards */}
-      <Box>
-        {blogs.slice(0, 2).map((blog) => (
-          <BlogCard
-            key={blog.id}
-            blog={{
-              id: blog.id,
-              image: blog.coverImage,
-              date: blog.date,
-              title: blog.title,
-              description: blog.description,
-            }}
-          />
-        ))}
-      </Box>
+      {/* <Box> */}
+      {blogs.slice(0, 2).map((blog) => (
+        <BlogCard
+          key={blog.id}
+          blog={{
+            id: blog.id,
+            image: blog.coverImage,
+            date: blog.date,
+            title: blog.title,
+            description: blog.description,
+          }}
+        />
+      ))}
+      {/* </Box> */}
 
       {/* See All Button */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
@@ -208,17 +206,13 @@ const Blogs = () => {
             px: 2,
             py: 1,
             textTransform: "none",
-            borderColor:
-              theme.palette.mode === "dark"
-                ? COLORS.TEXT.SECONDARY_DARK
-                : COLORS.TEXT.SECONDARY_LIGHT,
+
             color:
               theme.palette.mode === "dark"
                 ? COLORS.TEXT.PRIMARY_DARK
                 : COLORS.TEXT.PRIMARY_LIGHT,
             "&:hover": {
-              borderColor: theme.palette.primary.main,
-              backgroundColor: "rgba(0, 0, 0, 0.05)",
+              backgroundColor: COLORS.PURPLE_ALPHA_04,
             },
           }}
         >

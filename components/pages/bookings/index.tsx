@@ -181,13 +181,12 @@ const BookingsPage = () => {
                     : isDark
                       ? COLORS.TEXT.SECONDARY_DARK
                       : COLORS.TEXT.SECONDARY_LIGHT,
-                border: `1px solid ${
-                  viewMode === "table"
+                border: `1px solid ${viewMode === "table"
                     ? COLORS.PRIMARY_PURPLE
                     : isDark
                       ? COLORS.BORDER.DEFAULT_DARK
                       : COLORS.BORDER.DEFAULT_LIGHT
-                }`,
+                  }`,
                 borderRadius: "8px",
                 "&:hover": {
                   bgcolor: isDark
@@ -214,13 +213,12 @@ const BookingsPage = () => {
                     : isDark
                       ? COLORS.TEXT.SECONDARY_DARK
                       : COLORS.TEXT.SECONDARY_LIGHT,
-                border: `1px solid ${
-                  viewMode === "card"
+                border: `1px solid ${viewMode === "card"
                     ? COLORS.PRIMARY_PURPLE
                     : isDark
                       ? COLORS.BORDER.DEFAULT_DARK
                       : COLORS.BORDER.DEFAULT_LIGHT
-                }`,
+                  }`,
                 borderRadius: "8px",
                 "&:hover": {
                   bgcolor: isDark
@@ -299,39 +297,39 @@ const BookingsPage = () => {
               {/* Card View - Always shown on mobile, shown on desktop when card mode is active */}
               {(viewMode === "card" ||
                 (typeof window !== "undefined" && window.innerWidth < 900)) && (
-                <Box
-                  sx={{
-                    display: {
-                      xs: "block",
-                      md: viewMode === "card" ? "block" : "none",
-                    },
-                  }}
-                >
                   <Box
                     sx={{
-                      display: "grid",
-                      gridTemplateColumns: {
-                        xs: "1fr",
-                        sm: "repeat(2, 1fr)",
-                        md: "repeat(3, 1fr)",
+                      display: {
+                        xs: "block",
+                        md: viewMode === "card" ? "block" : "none",
                       },
-                      gap: 2,
                     }}
                   >
-                    {filteredBookings.map((booking) => (
-                      <BookingStatusCard
-                        key={booking.booking_id}
-                        booking={{
-                          booking_id: booking.booking_id,
-                          currency: booking.currency,
-                          name: booking.service_name,
-                          image:
-                            booking.service_images?.[0] || "/placeholder.png",
-                          status: booking.status,
-                          price: booking.service_price,
-                          time: booking.booking_at,
-                          service_address: booking.booking_address
-                            ? {
+                    <Box
+                      sx={{
+                        display: "grid",
+                        gridTemplateColumns: {
+                          xs: "1fr",
+                          sm: "repeat(2, 1fr)",
+                          md: "repeat(3, 1fr)",
+                        },
+                        gap: 2,
+                      }}
+                    >
+                      {filteredBookings?.map((booking) => (
+                        <BookingStatusCard
+                          key={booking.booking_id}
+                          booking={{
+                            booking_id: booking.booking_id,
+                            currency: booking.currency,
+                            name: booking.service_name,
+                            image:
+                              booking.service_images?.[0] || "/placeholder.png",
+                            status: booking.status,
+                            price: booking.service_price,
+                            time: booking.booking_at,
+                            service_address: booking.booking_address
+                              ? {
                                 address: booking.booking_address.address,
                                 city_town: booking.booking_address.cityTown,
                                 state: booking.booking_address.state,
@@ -345,7 +343,7 @@ const BookingsPage = () => {
                                   "0",
                                 landmark: booking.booking_address.landmark,
                               }
-                            : {
+                              : {
                                 address: "",
                                 city_town: "",
                                 state: "",
@@ -354,14 +352,14 @@ const BookingsPage = () => {
                                 latitude: "0",
                                 longitude: "0",
                               },
-                        }}
-                        isProvider={false}
+                          }}
+                          isProvider={false}
                         // onClick={() => handleViewDetails(booking)}
-                      />
-                    ))}
+                        />
+                      ))}
+                    </Box>
                   </Box>
-                </Box>
-              )}
+                )}
             </>
           )}
         </Container>

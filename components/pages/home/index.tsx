@@ -97,8 +97,8 @@ function HomeView() {
             }}
           >
             <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              <TopSuggestions />
               <AdvertisementSlider />
+              <TopSuggestions />
             </Box>
           </Grid>
         )}

@@ -96,10 +96,10 @@ const Benefits = () => {
                 }}
               >
                 <Image
-                  src="/userProfile.png"
+                  src="/businessProfile.png"
                   alt="Business profile on platform"
                   fill
-                  style={{ objectFit: "cover", objectPosition: "center top" }}
+                  style={{ objectFit: "contain", objectPosition: "center top" }}
                 />
               </Box>
               <Box sx={{ p: { xs: 2.5, md: 3 } }}>
@@ -307,7 +307,7 @@ const Benefits = () => {
             >
               <Box sx={{ width: "100%", height: { xs: 280, sm: 360 }, position: "relative" }}>
                 <Image
-                  src="/service.png"
+                  src="/serviceProfile.png"
                   alt="Promoted listing"
                   fill
                   style={{ objectFit: "cover", objectPosition: "center" }}

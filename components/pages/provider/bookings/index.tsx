@@ -62,11 +62,11 @@ const ProviderBookingsPage = () => {
 
   const tabCounts = useMemo(() => {
     return [
-      bookings.filter((b) => b.status === "PENDING").length,
-      bookings.filter((b) => b.status === "CONFIRMED").length,
-      bookings.filter((b) => b.status === "ACTIVE").length,
-      bookings.filter((b) => b.status === "COMPLETED").length,
-      bookings.filter((b) => b.status === "CANCELLED").length,
+      bookings?.filter((b) => b.status === "PENDING").length,
+      bookings?.filter((b) => b.status === "CONFIRMED").length,
+      bookings?.filter((b) => b.status === "ACTIVE").length,
+      bookings?.filter((b) => b.status === "COMPLETED").length,
+      bookings?.filter((b) => b.status === "CANCELLED").length,
     ];
   }, [bookings]);
 
@@ -77,20 +77,20 @@ const ProviderBookingsPage = () => {
     // Filter by status
     const currentTab = tabs[activeTab];
     if (currentTab === t("pending")) {
-      filtered = bookings.filter((b) => b.status === "PENDING");
+      filtered = bookings?.filter((b) => b.status === "PENDING");
     } else if (currentTab === t("upcoming")) {
-      filtered = bookings.filter((b) => b.status === "CONFIRMED");
+      filtered = bookings?.filter((b) => b.status === "CONFIRMED");
     } else if (currentTab === t("in_progress")) {
-      filtered = bookings.filter((b) => b.status === "ACTIVE");
+      filtered = bookings?.filter((b) => b.status === "ACTIVE");
     } else if (currentTab === t("completed")) {
-      filtered = bookings.filter((b) => b.status === "COMPLETED");
+      filtered = bookings?.filter((b) => b.status === "COMPLETED");
     } else if (currentTab === t("cancelled")) {
-      filtered = bookings.filter((b) => b.status === "CANCELLED");
+      filtered = bookings?.filter((b) => b.status === "CANCELLED");
     }
 
     // Filter by search query
     if (searchQuery) {
-      filtered = filtered.filter(
+      filtered = filtered?.filter(
         (b) =>
           b.service_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           b.booking_id.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -167,13 +167,12 @@ const ProviderBookingsPage = () => {
                     : isDark
                       ? COLORS.TEXT.SECONDARY_DARK
                       : COLORS.TEXT.SECONDARY_LIGHT,
-                border: `1px solid ${
-                  viewMode === "table"
-                    ? COLORS.PRIMARY_PURPLE
-                    : isDark
-                      ? COLORS.BORDER.DEFAULT_DARK
-                      : COLORS.BORDER.DEFAULT_LIGHT
-                }`,
+                border: `1px solid ${viewMode === "table"
+                  ? COLORS.PRIMARY_PURPLE
+                  : isDark
+                    ? COLORS.BORDER.DEFAULT_DARK
+                    : COLORS.BORDER.DEFAULT_LIGHT
+                  }`,
                 borderRadius: "8px",
                 "&:hover": {
                   bgcolor: isDark
@@ -200,13 +199,12 @@ const ProviderBookingsPage = () => {
                     : isDark
                       ? COLORS.TEXT.SECONDARY_DARK
                       : COLORS.TEXT.SECONDARY_LIGHT,
-                border: `1px solid ${
-                  viewMode === "card"
-                    ? COLORS.PRIMARY_PURPLE
-                    : isDark
-                      ? COLORS.BORDER.DEFAULT_DARK
-                      : COLORS.BORDER.DEFAULT_LIGHT
-                }`,
+                border: `1px solid ${viewMode === "card"
+                  ? COLORS.PRIMARY_PURPLE
+                  : isDark
+                    ? COLORS.BORDER.DEFAULT_DARK
+                    : COLORS.BORDER.DEFAULT_LIGHT
+                  }`,
                 borderRadius: "8px",
                 "&:hover": {
                   bgcolor: isDark
@@ -225,7 +223,7 @@ const ProviderBookingsPage = () => {
             <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
               <CircularProgress />
             </Box>
-          ) : filteredBookings.length === 0 ? (
+          ) : filteredBookings?.length === 0 ? (
             <EmptyState
               titleKey="no_bookings_found"
               descriptionKey="no_bookings_found_description"
@@ -275,39 +273,39 @@ const ProviderBookingsPage = () => {
               {/* Card View - Always shown on mobile, shown on desktop when card mode is active */}
               {(viewMode === "card" ||
                 (typeof window !== "undefined" && window.innerWidth < 900)) && (
-                <Box
-                  sx={{
-                    display: {
-                      xs: "block",
-                      md: viewMode === "card" ? "block" : "none",
-                    },
-                  }}
-                >
                   <Box
                     sx={{
-                      display: "grid",
-                      gridTemplateColumns: {
-                        xs: "1fr",
-                        sm: "repeat(2, 1fr)",
-                        md: "repeat(3, 1fr)",
+                      display: {
+                        xs: "block",
+                        md: viewMode === "card" ? "block" : "none",
                       },
-                      gap: 2,
                     }}
                   >
-                    {filteredBookings.map((booking) => (
-                      <BookingStatusCard
-                        key={booking.booking_id}
-                        booking={{
-                          booking_id: booking.booking_id,
-                          currency: booking.currency,
-                          name: booking.service_name,
-                          image:
-                            booking.service_images?.[0] || "/placeholder.png",
-                          status: booking.status,
-                          price: booking.service_price,
-                          time: booking.booking_at,
-                          service_address: booking.booking_address
-                            ? {
+                    <Box
+                      sx={{
+                        display: "grid",
+                        gridTemplateColumns: {
+                          xs: "1fr",
+                          sm: "repeat(2, 1fr)",
+                          md: "repeat(3, 1fr)",
+                        },
+                        gap: 2,
+                      }}
+                    >
+                      {filteredBookings?.map((booking) => (
+                        <BookingStatusCard
+                          key={booking.booking_id}
+                          booking={{
+                            booking_id: booking.booking_id,
+                            currency: booking.currency,
+                            name: booking.service_name,
+                            image:
+                              booking.service_images?.[0] || "/placeholder.png",
+                            status: booking.status,
+                            price: booking.service_price,
+                            time: booking.booking_at,
+                            service_address: booking.booking_address
+                              ? {
                                 address: booking.booking_address.address,
                                 city_town: booking.booking_address.cityTown,
                                 state: booking.booking_address.state,
@@ -321,7 +319,7 @@ const ProviderBookingsPage = () => {
                                   "0",
                                 landmark: booking.booking_address.landmark,
                               }
-                            : {
+                              : {
                                 address: "",
                                 city_town: "",
                                 state: "",
@@ -330,13 +328,13 @@ const ProviderBookingsPage = () => {
                                 latitude: "0",
                                 longitude: "0",
                               },
-                        }}
-                        isProvider={true}
-                      />
-                    ))}
+                          }}
+                          isProvider={true}
+                        />
+                      ))}
+                    </Box>
                   </Box>
-                </Box>
-              )}
+                )}
             </>
           )}
         </Container>

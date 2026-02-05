@@ -812,6 +812,8 @@ export type TranslationKey =
   | "howItWorks"
   | "getFreeListingSteps"
   | "takesLessThanMinutes"
+  | "step"
+  | "done"
   | "forBusinessOwners"
   | "connectWithNewCustomers"
   | "yourFreeListingPage"
