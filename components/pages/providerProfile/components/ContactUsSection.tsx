@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Box, Typography, Grid, useTheme } from "@mui/material";
+import { Box, Typography, Grid, useTheme, useMediaQuery } from "@mui/material";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -10,10 +10,8 @@ import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
-import { Send, Person, Phone, Message as MessageIcon } from "@mui/icons-material";
-import { profile } from "console";
+import { Message as MessageIcon, Phone } from "@mui/icons-material";
 
-const MotionGrid = motion(Grid) as any;
 const MotionBox = motion(Box) as any;
 
 // Validation Schema
@@ -39,6 +37,7 @@ const ContactUsSection = ({ profile }: any) => {
     const theme = useTheme();
     const { t } = useTranslate();
     const isDark = theme.palette.mode === "dark";
+    const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
     const {
         control,
@@ -92,70 +91,74 @@ const ContactUsSection = ({ profile }: any) => {
             }}
         >
             <Grid container>
-                {/* Left Side - Info / Visual */}
-                <Grid size={{ xs: 12, md: 5 }} sx={{
-                    position: "relative",
-                    bgcolor: COLORS.PRIMARY_PURPLE,
-                    p: 4,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    color: COLORS.WHITE,
-                    overflow: "hidden"
-                }}>
-                    {/* Abstract Shapes */}
-                    <Box sx={{
-                        position: "absolute",
-                        top: -50,
-                        left: -50,
-                        width: 150,
-                        height: 150,
-                        borderRadius: "50%",
-                        bgcolor: "rgba(255,255,255,0.1)",
-                    }} />
-                    <Box sx={{
-                        position: "absolute",
-                        bottom: -30,
-                        right: -30,
-                        width: 100,
-                        height: 100,
-                        borderRadius: "50%",
-                        bgcolor: "rgba(255,255,255,0.1)",
-                    }} />
+                {/* Left Side - Info / Visual — hidden on mobile to save height */}
+                {!isMobile && (
+                    <Grid size={{ xs: 0, md: 5 }} sx={{
+                        position: "relative",
+                        bgcolor: COLORS.PRIMARY_PURPLE,
+                        p: 4,
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        color: COLORS.WHITE,
+                        overflow: "hidden"
+                    }}>
+                        <Box sx={{
+                            position: "absolute",
+                            top: -50,
+                            left: -50,
+                            width: 150,
+                            height: 150,
+                            borderRadius: "50%",
+                            bgcolor: "rgba(255,255,255,0.1)",
+                        }} />
+                        <Box sx={{
+                            position: "absolute",
+                            bottom: -30,
+                            right: -30,
+                            width: 100,
+                            height: 100,
+                            borderRadius: "50%",
+                            bgcolor: "rgba(255,255,255,0.1)",
+                        }} />
+                        <Box sx={{ position: "relative", zIndex: 1 }}>
+                            <Typography variant="h4" sx={{ fontWeight: 800, mb: 2 }}>
+                                {t("getInTouch") || "Get in Touch"}
+                            </Typography>
+                            <Typography variant="body1" sx={{ opacity: 0.9, mb: 4, lineHeight: 1.6 }}>
+                                Have a question or want to book a service? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
+                            </Typography>
+                            <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                                <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <MessageIcon sx={{ fontSize: 20 }} />
+                                </Box>
+                                <Box>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Chat with us</Typography>
+                                    <Typography variant="subtitle2" sx={{ opacity: 0.9, fontWeight: 500 }}>{profile?.email}</Typography>
+                                </Box>
+                            </Box>
+                            <Box sx={{ display: "flex", gap: 2 }}>
+                                <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <Phone sx={{ fontSize: 20 }} />
+                                </Box>
+                                <Box>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Call us</Typography>
+                                    <Typography variant="subtitle2" sx={{ opacity: 0.9, fontWeight: 500 }}>{profile?.country_code} {profile?.phone_number}</Typography>
+                                </Box>
+                            </Box>
+                        </Box>
+                    </Grid>
+                )}
 
-                    <Box sx={{ position: "relative", zIndex: 1 }}>
-                        <Typography variant="h4" sx={{ fontWeight: 800, mb: 2 }}>
+                {/* Form — full width on mobile, compact spacing and message rows */}
+                <Grid size={{ xs: 12, md: 7 }} sx={{ p: { xs: 2, sm: 2.5, md: 5 } }}>
+                    {isMobile && (
+                        <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2, color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }}>
                             {t("getInTouch") || "Get in Touch"}
                         </Typography>
-                        <Typography variant="body1" sx={{ opacity: 0.9, mb: 4, lineHeight: 1.6 }}>
-                            Have a question or want to book a service? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
-                        </Typography>
-
-                        <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-                            <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                <MessageIcon sx={{ fontSize: 20 }} />
-                            </Box>
-                            <Box>
-                                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Chat with us</Typography>
-                                <Typography variant="subtitle2" sx={{ opacity: 0.9, fontWeight: 900 }}>@{profile?.email}</Typography>
-                            </Box>
-                        </Box>
-                        <Box sx={{ display: "flex", gap: 2 }}>
-                            <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                <Phone sx={{ fontSize: 20 }} />
-                            </Box>
-                            <Box>
-                                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Call us</Typography>
-                                <Typography variant="subtitle2" sx={{ opacity: 0.9, fontWeight: 900 }}>+{profile?.phone_number}</Typography>
-                            </Box>
-                        </Box>
-                    </Box>
-                </Grid>
-
-                {/* Right Side - Form */}
-                <Grid size={{ xs: 12, md: 7 }} sx={{ p: { xs: 3, md: 5 } }}>
+                    )}
                     <form onSubmit={handleSubmit(onSubmit)}>
-                        <Grid container spacing={3}>
+                        <Grid container spacing={isMobile ? 2 : 3}>
                             <Grid size={{ xs: 12, md: 6 }}>
                                 <Input
                                     name="firstName"
@@ -190,7 +193,7 @@ const ContactUsSection = ({ profile }: any) => {
                                     label={t("message") || "Message"}
                                     placeholder="Tell us how we can help..."
                                     multiline
-                                    minRows={4}
+                                    minRows={isMobile ? 2 : 4}
                                     sx={{ bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#f8f9fa" }}
                                 />
                             </Grid>
@@ -201,10 +204,10 @@ const ContactUsSection = ({ profile }: any) => {
                                     fullWidth
                                     variant="contained"
                                     sx={{
-                                        py: 1.5,
+                                        py: isMobile ? 1.25 : 1.5,
                                         borderRadius: "8px",
                                         fontWeight: 700,
-                                        fontSize: "1rem",
+                                        fontSize: isMobile ? "0.9375rem" : "1rem",
                                         textTransform: "none",
                                         bgcolor: COLORS.PRIMARY_PURPLE,
                                         boxShadow: "0 4px 14px rgba(94, 24, 233, 0.4)",

@@ -55,9 +55,9 @@ const ServiceLocation = ({
 
     return (
         <>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+            {/* <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
                 {english.service_location}
-            </Typography>
+            </Typography> */}
             <FormControl component="fieldset" sx={{ mb: 2 }}>
                 <RadioGroup
                     value={locationType}

@@ -1,6 +1,7 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
-import { Box, Container, CircularProgress, useTheme } from "@mui/material";
+import { Box, Container, CircularProgress, Paper, useTheme } from "@mui/material";
 import MainLayout from "@/app/mainLayout";
 import { serviceListService } from "../../../services/serviceList/serviceListService";
 import { Service, Category } from "../../../services/serviceList/listInteraface";
@@ -15,6 +16,8 @@ import { useCategories } from "@/hooks/useCategories";
 const ListOfServices = () => {
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark";
+    const surfaceBg = isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT;
+    const borderColor = isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT;
 
     // State
     const [services, setServices] = useState<Service[]>([]);
@@ -77,34 +80,46 @@ const ListOfServices = () => {
         <MainLayout>
             <Box
                 sx={{
-                    bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                    bgcolor: surfaceBg,
                     minHeight: "100vh",
-                    pt: { xs: 2, sm: 4, md: 10 },
-                    pb: { xs: 2, sm: 3, md: 4 },
+                    pt: { xs: 2, sm: 4, md: 6 },
+                    pb: { xs: 3, sm: 4, md: 5 },
                     px: { xs: 1, sm: 2 },
                 }}
             >
                 <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
-                    {/* Header Section */}
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: { xs: "column", sm: "row" },
-                        justifyContent: "space-between",
-                        alignItems: { xs: "flex-start", sm: "center" },
-                        mb: { xs: 2, sm: 3 },
-                        gap: { xs: 2, sm: 2 },
-                    }}>
-                        <ServicesHeader />
-                        <Box sx={{ width: { xs: "100%", sm: "auto" }, flex: { xs: 1, sm: "none" } }}>
-                            <ServicesSearchBar
-                                searchInput={searchInput}
-                                onSearchChange={setSearchInput}
-                                onSearchSubmit={handleSearchSubmit}
-                            />
+                    {/* Header + Search in a card */}
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            p: { xs: 2, sm: 3 },
+                            mb: { xs: 2, sm: 3 },
+                            borderRadius: 3,
+                            border: `1px solid ${borderColor}`,
+                            bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.WHITE,
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: { xs: "column", sm: "row" },
+                                justifyContent: "space-between",
+                                alignItems: { xs: "stretch", sm: "center" },
+                                gap: 2,
+                            }}
+                        >
+                            <ServicesHeader />
+                            <Box sx={{ width: { xs: "100%", sm: "auto" }, flexShrink: 0 }}>
+                                <ServicesSearchBar
+                                    searchInput={searchInput}
+                                    onSearchChange={setSearchInput}
+                                    onSearchSubmit={handleSearchSubmit}
+                                />
+                            </Box>
                         </Box>
-                    </Box>
+                    </Paper>
 
-                    {/* Categories Bar */}
+                    {/* Categories */}
                     <CategoryFilter
                         categories={categories}
                         selectedCategory={selectedCategory}
@@ -114,8 +129,8 @@ const ListOfServices = () => {
 
                     {/* Loading State */}
                     {loading ? (
-                        <Box sx={{ display: "flex", justifyContent: "center", py: { xs: 4, sm: 8 } }}>
-                            <CircularProgress size={isDark ? 40 : 40} />
+                        <Box sx={{ display: "flex", justifyContent: "center", py: { xs: 6, sm: 10 } }}>
+                            <CircularProgress size={44} sx={{ color: COLORS.PRIMARY_PURPLE }} />
                         </Box>
                     ) : (
                         <>

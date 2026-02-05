@@ -3,19 +3,16 @@ import {
   Box,
   Typography,
   Paper,
-  Divider,
-  Button,
   useTheme,
-  Chip,
   Dialog,
   IconButton,
 } from "@mui/material";
 import {
   Description,
-  Download,
   Close,
   ArrowBackIosNew,
   ArrowForwardIos,
+  RequestQuote,
 } from "@mui/icons-material";
 import { COLORS } from "../../constants/colors";
 import {
@@ -43,17 +40,53 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-  const headerText = () => (
-    <Typography
-      variant="subtitle1"
-      fontWeight={700}
+  const textPrimary = isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT;
+  const textSecondary = isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT;
+  const borderColor = isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)";
+
+  const renderSectionHeader = (subtitleKey: "price_catalog_subtitle" | "price_catalog_list_subtitle") => (
+    <Paper
+      elevation={0}
       sx={{
+        p: 2,
         mb: 2,
-        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+        borderRadius: 2,
+        border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+        bgcolor: isDark ? COLORS.PURPLE_ALPHA_10 : COLORS.PURPLE_ALPHA_04,
       }}
     >
-      {t("priceCatalog")}
-    </Typography>
+      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5 }}>
+        <Box
+          sx={{
+            width: 44,
+            height: 44,
+            borderRadius: 2,
+            bgcolor: COLORS.PRIMARY_PURPLE,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+          }}
+        >
+          <RequestQuote sx={{ color: COLORS.WHITE, fontSize: 24 }} />
+        </Box>
+        <Box>
+          <Typography
+            variant="subtitle1"
+            fontWeight={700}
+            sx={{ color: textPrimary, mb: 0.5, fontSize: "1.05rem" }}
+          >
+            {t("priceCatalog")}
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{ color: textSecondary, fontSize: "0.875rem", lineHeight: 1.4 }}
+          >
+            {t(subtitleKey)}
+          </Typography>
+        </Box>
+      </Box>
+    </Paper>
   );
 
   if (pricingType === PricingType.SINGLE) {
@@ -67,13 +100,23 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
   ) {
     return (
       <Box sx={{ mt: 3 }}>
-        {headerText()}
+        {renderSectionHeader("price_catalog_subtitle")}
 
+        <Typography
+          variant="caption"
+          sx={{
+            display: "block",
+            mb: 1.5,
+            color: textSecondary,
+            fontWeight: 500,
+          }}
+        >
+          {t("tap_to_view_full")}
+        </Typography>
         <Box
           sx={{
             display: "flex",
             gap: 2,
-
             flexWrap: "wrap",
           }}
         >
@@ -82,7 +125,7 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
               key={index}
               component="img"
               src={url}
-              alt={`Catalog ${index + 1}`}
+              alt={t("priceCatalog") + ` ${index + 1}`}
               onClick={() => {
                 setLightboxOpen(true);
                 setSelectedImageIndex(index);
@@ -91,11 +134,14 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
                 width: "10rem",
                 height: "10rem",
                 borderRadius: 2,
-                border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"}`,
+                border: `2px solid ${borderColor}`,
                 objectFit: "cover",
                 cursor: "pointer",
+                transition: "all 0.2s ease",
                 "&:hover": {
-                  opacity: 0.8,
+                  opacity: 0.9,
+                  borderColor: COLORS.PRIMARY_PURPLE,
+                  boxShadow: `0 4px 12px ${COLORS.PURPLE_ALPHA_20}`,
                 },
               }}
             />
@@ -213,8 +259,8 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
   ) {
     return (
       <Box sx={{ mt: 3 }}>
+        {renderSectionHeader("price_catalog_list_subtitle")}
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {headerText()}
           {priceItems.map((item, index) => (
             <Paper
               key={index}
@@ -224,30 +270,35 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
                 bgcolor: isDark
                   ? "transparent"
                   : COLORS.BACKGROUND.SECONDARY_LIGHT,
-                borderColor: isDark
-                  ? "rgba(255, 255, 255, 0.12)"
-                  : "rgba(0, 0, 0, 0.08)",
+                borderLeft: `4px solid ${COLORS.PRIMARY_PURPLE}`,
+                borderColor: borderColor,
                 borderRadius: 2,
+                transition: "box-shadow 0.2s ease",
+                "&:hover": {
+                  boxShadow: isDark
+                    ? "0 2px 12px rgba(0,0,0,0.2)"
+                    : `0 2px 12px ${COLORS.PURPLE_ALPHA_10}`,
+                },
               }}
             >
               <Box
-                sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
+                sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: item.service_desc ? 1 : 0, gap: 1 }}
               >
                 <Typography
                   variant="subtitle2"
-                  fontWeight={600}
-                  sx={{
-                    color: isDark
-                      ? COLORS.TEXT.PRIMARY_DARK
-                      : COLORS.TEXT.PRIMARY_LIGHT,
-                  }}
+                  fontWeight={700}
+                  sx={{ color: textPrimary, fontSize: "0.95rem" }}
                 >
                   {item.service_name}
                 </Typography>
                 <Typography
                   variant="subtitle2"
                   fontWeight={700}
-                  sx={{ color: COLORS.PRIMARY_PURPLE }}
+                  sx={{
+                    color: COLORS.PRIMARY_PURPLE,
+                    fontSize: "0.95rem",
+                    flexShrink: 0,
+                  }}
                 >
                   {currency} {item.price}
                 </Typography>
@@ -256,10 +307,9 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
                 <Typography
                   variant="body2"
                   sx={{
-                    color: isDark
-                      ? COLORS.TEXT.SECONDARY_DARK
-                      : COLORS.TEXT.SECONDARY_LIGHT,
+                    color: textSecondary,
                     fontSize: "0.875rem",
+                    lineHeight: 1.45,
                   }}
                 >
                   {item.service_desc}

@@ -413,6 +413,12 @@ export const english = {
     "Hi there! I’m Kart AI, your personal AI assistant. Let’s get you the perfect service.",
   find: "Find a",
   neatMyArea: "neat my area",
+  ai_thinking: "Searching for services...",
+  ai_services_found: "Here are the services I found for you:",
+  ai_error_message: "Something went wrong. Please try again.",
+  ai_try_asking: "Try asking",
+  ai_services_label: "Services we found",
+  ai_explore_categories: "Explore categories",
 
   // Supplier
   supplier_registration_title: "Supplier Registration",
@@ -779,9 +785,11 @@ export const english = {
   active: "Active",
   inactive: "Inactive",
   services_for_you: "Services for you",
+  services_for_you_subtitle: "Find trusted professionals for your needs",
   search_services_placeholder: "Search services...",
   all: "All",
   services_found: "service(s) found",
+  categories_label: "Categories",
   no_services_created: "You haven't created any services yet",
   create_first_service: "Create your first service to get started",
   adjust_filters: "Try adjusting your filters or search query",
@@ -1135,4 +1143,7 @@ export const english = {
   no: "No",
   getQuote: "Get Quote",
   priceCatalog: "Price Catalog",
+  price_catalog_subtitle: "View or download the provider's price list. Tap an image to view full size.",
+  price_catalog_list_subtitle: "Service-wise prices and descriptions from the provider.",
+  tap_to_view_full: "Tap to view full size",
 };

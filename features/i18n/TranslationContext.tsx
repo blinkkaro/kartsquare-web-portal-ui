@@ -364,10 +364,14 @@ export type TranslationKey =
   | "noLocationsFound"
   | "googleMapsApiKeyNotConfigured"
   | "services_for_you"
+  | "services_for_you_subtitle"
   | "all_categories"
   | "search_services_placeholder"
+  | "categories_label"
+  | "services_found"
   | "no_services_found"
   | "no_services_found_description"
+  | "adjust_filters"
   | "try_different_search"
   | "sendMessage"
   | "posts"
@@ -835,7 +839,16 @@ export type TranslationKey =
   | "yes"
   | "no"
   | "getQuote"
-  | "priceCatalog";
+  | "priceCatalog"
+  | "price_catalog_subtitle"
+  | "price_catalog_list_subtitle"
+  | "tap_to_view_full"
+  | "ai_thinking"
+  | "ai_services_found"
+  | "ai_error_message"
+  | "ai_try_asking"
+  | "ai_services_label"
+  | "ai_explore_categories";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
