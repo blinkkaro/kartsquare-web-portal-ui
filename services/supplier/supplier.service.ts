@@ -1,15 +1,16 @@
 import { GET, POST, PUT, DELETE, PATCH } from "../api";
 import { SUPPLIER_ENDPOINTS } from "./apiEndPoint";
+import { secureStorage } from "@/helper/SecureStorage";
 
 export interface SupplierProfile {
-  company_name: string;
+  business_name: string;
   contact_person: string;
   contact_number: string;
   email: string; // Read-only usually
-  website_url?: string;
+  website?: string;
   description?: string;
   business_type?: string;
-  founded_year?: string;
+  establishment_year?: number;
   employee_count?: string;
   logo_url?: string;
   banner_url?: string;
@@ -17,13 +18,20 @@ export interface SupplierProfile {
 
 export interface SupplierKyc {
   gst_number: string;
-  gst_certificate_url: string;
+  gst_state: string;
   pan_number: string;
-  pan_card_url: string;
+  owner_name: string;
+  owner_mobile: string;
+  owner_email: string;
   bank_account_number: string;
   ifsc_code: string;
   bank_name: string;
+  gst_certificate_url: string;
+  pan_card_url: string;
   cancelled_cheque_url: string;
+  id_proof_type: string;
+  id_proof_url: string;
+  address_proof_url: string;
 }
 
 export interface SupplierStore {
@@ -34,45 +42,53 @@ export interface SupplierStore {
   banner_url?: string;
   contact_email?: string;
   contact_phone?: string;
+  whatsapp_number?: string;
   address?: string;
   city?: string;
   state?: string;
   pincode?: string;
-  whatsapp_number?: string;
-  social_links?: any;
-  preferences?: {
-    show_email: boolean;
+  categories_served: string[];
+  operating_locations: string[];
+  contact_preferences: {
     show_phone: boolean;
     show_whatsapp: boolean;
+    allow_calls: boolean;
+    allow_chat: boolean;
+    enquiry_only: boolean;
   };
 }
 
 class SupplierService {
+  private getUserId() {
+    const user = secureStorage.getItem("user_details");
+    return user?.id;
+  }
+
   // Profile
   async getProfile() {
-    return GET(SUPPLIER_ENDPOINTS.PROFILE, {}, true);
+    return GET(SUPPLIER_ENDPOINTS.PROFILE, { userId: this.getUserId() }, true);
   }
 
   async updateProfile(data: Partial<SupplierProfile>) {
-    return POST(SUPPLIER_ENDPOINTS.PROFILE, data, {}, true);
+    return POST(SUPPLIER_ENDPOINTS.PROFILE, { ...data, userId: this.getUserId() }, {}, true);
   }
 
   // KYC
   async getKyc() {
-    return GET(SUPPLIER_ENDPOINTS.KYC, {}, true);
+    return GET(SUPPLIER_ENDPOINTS.KYC, { userId: this.getUserId() }, true);
   }
 
   async updateKyc(data: SupplierKyc) {
-    return POST(SUPPLIER_ENDPOINTS.KYC, data, {}, true);
+    return POST(SUPPLIER_ENDPOINTS.KYC, { ...data, userId: this.getUserId() }, {}, true);
   }
 
   // Store
   async getStore() {
-    return GET(SUPPLIER_ENDPOINTS.STORE, {}, true);
+    return GET(SUPPLIER_ENDPOINTS.STORE, { userId: this.getUserId() }, true);
   }
 
   async updateStore(data: Partial<SupplierStore>) {
-    return POST(SUPPLIER_ENDPOINTS.STORE, data, {}, true);
+    return POST(SUPPLIER_ENDPOINTS.STORE, { ...data, userId: this.getUserId() }, {}, true);
   }
 
   // Products
