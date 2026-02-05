@@ -48,7 +48,10 @@ const SuggestionSection = ({ title, items, onSeeAll }: SectionProps) => {
       sx={{
         p: 2,
         borderRadius: 4,
-        boxShadow: "none",
+        boxShadow:
+          theme.palette.mode === "dark"
+            ? "0 4px 12px rgba(0,0,0,0.6)"
+            : "0 4px 12px rgba(0,0,0,0.15)",
         backgroundColor:
           theme.palette.mode === "dark"
             ? COLORS.BACKGROUND.PRIMARY_DARK
@@ -201,9 +204,7 @@ const SuggestionSection = ({ title, items, onSeeAll }: SectionProps) => {
                   textOverflow: "ellipsis",
                 }}
               >
-                {"name" in item
-                  ? item.name
-                  : item.business_name}
+                {"name" in item ? item.name : item.business_name}
               </Typography>
               {"description" in item && item.description && (
                 <Typography

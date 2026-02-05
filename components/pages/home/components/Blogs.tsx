@@ -38,7 +38,10 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
             ? COLORS.BACKGROUND.PRIMARY_DARK
             : COLORS.BACKGROUND.PRIMARY_LIGHT,
         borderRadius: 2,
-        boxShadow: "none",
+        boxShadow:
+          theme.palette.mode === "dark"
+            ? "0 4px 12px rgba(0,0,0,0.6)"
+            : "0 4px 12px rgba(0,0,0,0.15)",
       }}
     >
       {/* Blog Image */}
@@ -123,7 +126,7 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
           <Typography
             variant="body2"
             sx={{
-              color: theme.palette.primary.main,
+              color: theme.palette.mode === "dark" ? "#BDBDBD" : "#757575",
               fontSize: "0.85rem",
               fontWeight: 500,
               cursor: "pointer",
@@ -131,7 +134,7 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
                 textDecoration: "underline",
               },
               pb: 2,
-              borderBottom: `1px solid ${COLORS.BORDER.DEFAULT_DARK}`,
+              borderBottom: `1px solid #757575`,
             }}
           >
             {t("readmore")}
@@ -157,6 +160,10 @@ const Blogs = () => {
           theme.palette.mode === "dark"
             ? COLORS.BACKGROUND.PRIMARY_DARK
             : COLORS.BACKGROUND.PRIMARY_LIGHT,
+        boxShadow:
+          theme.palette.mode === "dark"
+            ? "0 4px 12px rgba(0,0,0,0.6)"
+            : "0 4px 12px rgba(0,0,0,0.15)",
       }}
     >
       {/* Header */}

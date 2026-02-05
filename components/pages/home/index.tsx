@@ -18,6 +18,7 @@ import TopSuggestions from "./components/TopSuggestions";
 import { useGetStories } from "@/hooks/useStories";
 import CompactMapView from "./components/CompactMapView";
 import { Visibility } from "@/services/post/postInterfaces";
+import AdvertisementSlider from "./components/AdvertisementSlider";
 
 function HomeView() {
   const { data: posts, isLoading } = useGetPosts({
@@ -97,6 +98,7 @@ function HomeView() {
           >
             <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
               <TopSuggestions />
+              <AdvertisementSlider />
             </Box>
           </Grid>
         )}
