@@ -255,9 +255,13 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
             "&:hover": {
               bgcolor: COLORS.PURPLE_HOVER,
             },
+            "&.Mui-disabled": {
+              bgcolor: COLORS.PRIMARY_PURPLE,
+              color: "white", 
+            }
           }}
         >
-          {showPhoneNumber ? providerPhoneNumber : "Show Phone Number"}
+          {showPhoneNumber ? providerPhoneNumber : "Show Number"}
         </Button>
         <Button
           variant={"outlined"}
