@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { serviceListService } from "@/services/serviceList/serviceListService";
 import { ServiceFilters } from "@/services/serviceList/listInteraface";
 
@@ -23,5 +23,14 @@ export const useProviderServicesList = (search?: string, enabled: boolean = true
     staleTime: 1 * 60 * 1000, // 1 minute - services can change
     gcTime: 5 * 60 * 1000, // 5 minutes cache
     enabled, // Control when the query runs
+  });
+};
+
+/**
+ * Hook to increase phone number view count
+ */
+export const useIncreasePhoneNumberViewCount = (providerId: string) => {
+  return useMutation({
+    mutationFn: () => serviceListService.increasePhoneNumberViewCount(providerId),
   });
 };
