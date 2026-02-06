@@ -46,6 +46,7 @@ export interface Service {
   updated_at: string;
   deleted_at: string | null;
   is_deleted: boolean;
+  provider_phone_number: string;
 
   // Joined fields
   provider_name: string;
