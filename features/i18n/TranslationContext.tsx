@@ -64,7 +64,7 @@ export type TranslationKey =
   | "password"
   | "phone_number"
   | "whatsapp_number"
-  | "same_as_phone"
+  | "same_as_whatsapp"
   | "country"
   | "birth_date"
   | "gender"
@@ -756,7 +756,7 @@ export type TranslationKey =
   // Leading Page
   | "listYourBusiness"
   | "startIn30Seconds"
-  | "yourMobileNumber"
+  | "yourWhatsappNumber"
   | "getMyFreeListing"
   | "agreeToTerms"
   | "freeForever"

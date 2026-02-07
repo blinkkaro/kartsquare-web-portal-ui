@@ -25,7 +25,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClose }) => {
   };
 
   const handleViewProfile = () => {
-    router.push(`/profile/${profile.username}`);
+    router.push(`/in/${profile.username}`);
     onClose();
   };
 

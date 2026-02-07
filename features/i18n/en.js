@@ -60,7 +60,7 @@ export const english = {
   email_address: "Email Address",
   phone_number: "Phone Number",
   whatsapp_number: "WhatsApp Number",
-  same_as_phone: "Same as Phone Number",
+  same_as_whatsapp: "Same as WhatsApp",
   country: "Country",
   birth_date: "Birth Date",
   gender: "Gender",
@@ -1040,7 +1040,7 @@ export const english = {
   // Leading Page
   listYourBusiness: "List your business",
   startIn30Seconds: "Start in 30 seconds",
-  yourMobileNumber: "Your mobile number",
+  yourWhatsappNumber: "Your WhatsApp number",
   getMyFreeListing: "Get my free listing",
   agreeToTerms:
     "By continuing, you agree to our Terms of Use, Privacy Policy & Infringement Policy",
