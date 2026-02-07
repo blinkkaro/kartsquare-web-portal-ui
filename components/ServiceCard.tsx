@@ -43,8 +43,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
       : [
-          "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        ];
+        "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      ];
 
   const handlePrevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -308,7 +308,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
               src={service.provider_image_url || undefined}
               sx={{ width: 24, height: 24 }}
             >
-              {service.provider_name.charAt(0).toUpperCase()}
+              {service?.provider_name.charAt(0).toUpperCase()}
             </Avatar>
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Typography

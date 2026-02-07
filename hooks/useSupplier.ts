@@ -1,10 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supplierService, SupplierProfile, SupplierKyc, SupplierStore } from "@/services/supplier/supplier.service";
+import { secureStorage } from "@/helper/SecureStorage";
+
+import { ApiResponse } from "@/services/api";
 
 export const useSupplierProfile = () => {
-  return useQuery({
+  return useQuery<ApiResponse<SupplierProfile>>({
     queryKey: ["supplierProfile"],
     queryFn: () => supplierService.getProfile(),
+    staleTime: 0,
   });
 };
 
@@ -12,16 +16,23 @@ export const useUpdateSupplierProfile = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: Partial<SupplierProfile>) => supplierService.updateProfile(data),
-    onSuccess: () => {
+    onSuccess: (response: any) => {
+      if (response?.data?.user_id || response?.data?.id) {
+        const userId = response.data.user_id || response.data.id;
+        // If we have a response, update the stored user details
+        const existingUser = secureStorage.getItem("user_details") || {};
+        secureStorage.setItem("user_details", { ...existingUser, id: userId });
+      }
       queryClient.invalidateQueries({ queryKey: ["supplierProfile"] });
     },
   });
 };
 
 export const useSupplierKyc = () => {
-  return useQuery({
+  return useQuery<ApiResponse<SupplierKyc>>({
     queryKey: ["supplierKyc"],
     queryFn: () => supplierService.getKyc(),
+    staleTime: 0,
   });
 };
 
@@ -36,9 +47,10 @@ export const useUpdateSupplierKyc = () => {
 };
 
 export const useSupplierStore = () => {
-  return useQuery({
+  return useQuery<ApiResponse<SupplierStore>>({
     queryKey: ["supplierStore"],
     queryFn: () => supplierService.getStore(),
+    staleTime: 0,
   });
 };
 

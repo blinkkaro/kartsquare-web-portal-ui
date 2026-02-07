@@ -85,3 +85,21 @@ a {
         color-scheme: dark;
     }
 }
+
+/* Global Autofill Fix */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #f5f4fa inset !important;
+    -webkit-text-fill-color: #30263E !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+[data-theme='dark'] input:-webkit-autofill,
+[data-theme='dark'] input:-webkit-autofill:hover,
+[data-theme='dark'] input:-webkit-autofill:focus,
+[data-theme='dark'] input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #1e2930 inset !important;
+    -webkit-text-fill-color: #ffffff !important;
+}

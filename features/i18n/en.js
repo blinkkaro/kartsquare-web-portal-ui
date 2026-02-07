@@ -419,6 +419,7 @@ export const english = {
   ai_try_asking: "Try asking",
   ai_services_label: "Services we found",
   ai_explore_categories: "Explore categories",
+  neatMyArea: "neat my area",
 
   // Supplier
   supplier_registration_title: "Supplier Registration",

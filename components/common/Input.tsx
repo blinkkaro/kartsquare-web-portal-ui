@@ -48,7 +48,7 @@ const Input: React.FC<InputProps> = ({
 
   const defaultInputSx = {
     borderRadius: "12px",
-    bgcolor: "background.paper",
+    bgcolor: "transparent",
     "& input:-webkit-autofill": {
       WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset`,
       WebkitTextFillColor: theme.palette.text.primary,
