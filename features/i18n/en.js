@@ -750,7 +750,7 @@ export const english = {
   mark_as_complete: "Mark as complete",
   otp_verification: "OTP Verification",
   enter_otp_description:
-    "Please enter the OTP provided by the customer to start the service.",
+    "Enter the OTP sent to your WhatsApp number to register your business.",
   verify_and_start: "Verify & Start",
   no_bookings_found: "No bookings found",
   no_bookings_found_description:

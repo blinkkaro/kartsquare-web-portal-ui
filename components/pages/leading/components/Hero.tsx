@@ -484,9 +484,7 @@ const Hero: React.FC = () => {
                   width: 280,
                   height: 560,
                   position: "relative",
-                  border: `12px solid ${
-                    isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(0,0,0,0.08)"
-                  }`,
+                  border: `12px solid ${isDark ? "#0c1425" : "#0c1425d0"}`,
                   borderRadius: "28px",
                   overflow: "hidden",
                   boxShadow: isDark
