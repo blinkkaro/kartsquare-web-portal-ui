@@ -189,6 +189,23 @@ class ServiceListService {
             throw error;
         }
     }
+
+    /**
+     * Increase phone number view count
+     */
+    async increasePhoneNumberViewCount(providerId: string): Promise<void> {
+        try {
+            await PUT(
+                SERVICE_API_ENDPOINTS.INCREASE_PHONE_NUMBER(providerId),
+                {},
+                {},
+                true // requiresAuth = true
+            );
+        } catch (error) {
+            console.error("Error increasing phone number view count:", error);
+            throw error;
+        }
+    }
 }
 
 export const serviceListService = new ServiceListService();

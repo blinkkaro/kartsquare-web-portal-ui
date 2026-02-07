@@ -32,7 +32,7 @@ function Profile({ profile }: { profile: profileInterface }) {
   };
   const handleCopy = () => {
     navigator.clipboard.writeText(
-      `${window.location.origin}/${profile?.username}`
+      `${window.location.origin}/in/${profile?.username}`
     );
     setCopied(true);
     setTimeout(() => {

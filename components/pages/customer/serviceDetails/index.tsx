@@ -300,6 +300,7 @@ const CustomerServiceDetails = () => {
                   providerName={service.provider_name || ""}
                   providerImageUrl={service.provider_image_url || ""}
                   isHotSeller={true}
+                  providerPhoneNumber={service.provider_phone_number || ""}
                   businessName={service.business_name || ""}
                   isFollowing={service.is_following}
                 />
