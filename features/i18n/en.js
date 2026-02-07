@@ -1148,4 +1148,6 @@ export const english = {
   price_catalog_subtitle: "View or download the provider's price list. Tap an image to view full size.",
   price_catalog_list_subtitle: "Service-wise prices and descriptions from the provider.",
   tap_to_view_full: "Tap to view full size",
+  totalPhoneNumberViews: "Profile Impressions",
+  totalProfileViews: "Phone Impressions",
 };

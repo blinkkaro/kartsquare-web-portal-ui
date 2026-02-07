@@ -850,7 +850,9 @@ export type TranslationKey =
   | "ai_error_message"
   | "ai_try_asking"
   | "ai_services_label"
-  | "ai_explore_categories";
+  | "ai_explore_categories"
+  | "totalPhoneNumberViews"
+  | "totalProfileViews";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

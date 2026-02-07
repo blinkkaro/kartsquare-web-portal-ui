@@ -93,6 +93,8 @@ function DashboardView() {
                   total_active_services: 0,
                   total_pending_bookings: 0,
                   total_completed_bookings: 0,
+                  total_phone_number_views: 0,
+                  total_profile_views: 0,
                 }
               }
             />
