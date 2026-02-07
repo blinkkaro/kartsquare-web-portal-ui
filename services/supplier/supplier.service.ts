@@ -14,6 +14,7 @@ export interface SupplierProfile {
   employee_count?: string;
   logo_url?: string;
   banner_url?: string;
+  register_step?: number;
 }
 
 export interface SupplierKyc {
@@ -66,29 +67,29 @@ class SupplierService {
 
   // Profile
   async getProfile() {
-    return GET(SUPPLIER_ENDPOINTS.PROFILE, { userId: this.getUserId() }, true);
+    return GET<SupplierProfile>(SUPPLIER_ENDPOINTS.PROFILE, { userId: this.getUserId() }, true);
   }
 
   async updateProfile(data: Partial<SupplierProfile>) {
-    return POST(SUPPLIER_ENDPOINTS.PROFILE, { ...data, userId: this.getUserId() }, {}, true);
+    return POST<SupplierProfile>(SUPPLIER_ENDPOINTS.PROFILE, { ...data, userId: this.getUserId() }, {}, true);
   }
 
   // KYC
   async getKyc() {
-    return GET(SUPPLIER_ENDPOINTS.KYC, { userId: this.getUserId() }, true);
+    return GET<SupplierKyc>(SUPPLIER_ENDPOINTS.KYC, { userId: this.getUserId() }, true);
   }
 
   async updateKyc(data: SupplierKyc) {
-    return POST(SUPPLIER_ENDPOINTS.KYC, { ...data, userId: this.getUserId() }, {}, true);
+    return POST<SupplierKyc>(SUPPLIER_ENDPOINTS.KYC, { ...data, userId: this.getUserId() }, {}, true);
   }
 
   // Store
   async getStore() {
-    return GET(SUPPLIER_ENDPOINTS.STORE, { userId: this.getUserId() }, true);
+    return GET<SupplierStore>(SUPPLIER_ENDPOINTS.STORE, { userId: this.getUserId() }, true);
   }
 
   async updateStore(data: Partial<SupplierStore>) {
-    return POST(SUPPLIER_ENDPOINTS.STORE, { ...data, userId: this.getUserId() }, {}, true);
+    return POST<SupplierStore>(SUPPLIER_ENDPOINTS.STORE, { ...data, userId: this.getUserId() }, {}, true);
   }
 
   // Products

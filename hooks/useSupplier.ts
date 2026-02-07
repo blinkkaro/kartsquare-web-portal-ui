@@ -2,8 +2,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supplierService, SupplierProfile, SupplierKyc, SupplierStore } from "@/services/supplier/supplier.service";
 import { secureStorage } from "@/helper/SecureStorage";
 
+import { ApiResponse } from "@/services/api";
+
 export const useSupplierProfile = () => {
-  return useQuery({
+  return useQuery<ApiResponse<SupplierProfile>>({
     queryKey: ["supplierProfile"],
     queryFn: () => supplierService.getProfile(),
     staleTime: 0,
@@ -27,7 +29,7 @@ export const useUpdateSupplierProfile = () => {
 };
 
 export const useSupplierKyc = () => {
-  return useQuery({
+  return useQuery<ApiResponse<SupplierKyc>>({
     queryKey: ["supplierKyc"],
     queryFn: () => supplierService.getKyc(),
     staleTime: 0,
@@ -45,7 +47,7 @@ export const useUpdateSupplierKyc = () => {
 };
 
 export const useSupplierStore = () => {
-  return useQuery({
+  return useQuery<ApiResponse<SupplierStore>>({
     queryKey: ["supplierStore"],
     queryFn: () => supplierService.getStore(),
     staleTime: 0,

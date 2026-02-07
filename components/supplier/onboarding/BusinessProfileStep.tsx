@@ -32,6 +32,7 @@ const BusinessProfileStep: React.FC<BusinessProfileStepProps> = ({ onNext }) => 
         city: yup.string().required("City is required"),
         state: yup.string().required("State is required"),
         pincode: yup.string().required("Pincode is required"),
+        email: yup.string().email("Invalid email").required("Email is required"),
     });
 
     const { control, handleSubmit, reset, formState: { errors } } = useForm({
@@ -104,6 +105,9 @@ const BusinessProfileStep: React.FC<BusinessProfileStepProps> = ({ onNext }) => 
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
                     <Input name="contact_number" control={control} label="Contact Number" placeholder="+91 9876543210" />
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                    <Input name="email" control={control} label="Email Address" placeholder="business@example.com" />
                 </Grid>
 
                 <Grid size={{ xs: 12, md: 6 }}>

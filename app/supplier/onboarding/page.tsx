@@ -7,6 +7,8 @@ import KycStep from "@/components/supplier/onboarding/KycStep";
 import StoreStep from "@/components/supplier/onboarding/StoreStep";
 import Image from "next/image";
 import { COLORS } from "@/constants/colors";
+import { useSupplierProfile } from "@/hooks/useSupplier";
+import { useEffect } from "react";
 
 const steps = ["Business Profile", "KYC Verification", "Store Setup"];
 
@@ -14,6 +16,20 @@ export default function SupplierOnboardingPage() {
     const [activeStep, setActiveStep] = useState(0);
     const theme = useTheme();
     const isLargeScreen = useMediaQuery(theme.breakpoints.up("xl"));
+    const { data: profileArgs } = useSupplierProfile();
+
+    useEffect(() => {
+        if (profileArgs?.data?.register_step) {
+            const step = profileArgs.data.register_step;
+            if (step === 7) {
+                setActiveStep(1); // Landing on KYC
+            } else if (step === 8 || step === 9) {
+                setActiveStep(2); // Landing on Store
+            } else if (step >= 10) {
+                setActiveStep(2); // Already done but keep on last step or redirect
+            }
+        }
+    }, [profileArgs]);
 
     const handleNext = () => {
         setActiveStep((prev) => prev + 1);
