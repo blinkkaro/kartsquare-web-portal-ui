@@ -24,7 +24,7 @@ export const getDesktopNavItems = (
     return [
       { label: t("home"), href: "/" },
       { label: t("dashboard"), href: "/dashboard" },
-      // { label: t("store"), href: "/store" },
+      { label: t("store"), href: "/store" },
       { label: t("services"), href: "/spr/servicesList" },
       // { label: t("events"), href: "/events" },
       { label: t("bookings"), href: "/spr/bookings" },
@@ -34,7 +34,7 @@ export const getDesktopNavItems = (
   if (role === "CUSTOMER") {
     return [
       { label: t("home"), href: "/" },
-      // { label: t("store"), href: "/store" },
+      { label: t("store"), href: "/store" },
       { label: t("services"), href: "/cus/servicesList" },
       // { label: t("events"), href: "/events" },
       { label: t("bookings"), href: "/cus/bookings" },
@@ -63,8 +63,8 @@ export const getMobileNavItems = (
         label: t("services"),
         href: "/cus/servicesList",
         icon: <ArticleRounded />,
-      }
-      // { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
+      },
+      { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
       // { label: t("events"), href: "/events", icon: <Event /> }
     );
   } else {
@@ -77,13 +77,15 @@ export const getMobileNavItems = (
         href: "/cus/servicesList",
         icon: <ArticleRounded />,
       },
-      // { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
+      
       // { label: t("events"), href: "/events", icon: <Event /> },
       { label: t("bookings"), href: bookingsHref, icon: <ShoppingBag /> },
       // { label: t("chat"), href: "/chat", icon: <Chat /> }
     );
     if(role === "SERVICE_PROVIDER") {
       items.push({ label: t("dashboard"), href: "/dashboard", icon: <Dashboard /> });
+    }else{
+      items.push({ label: t("store"), href: "/store", icon: <LocalMallRounded /> });
     }
   }
 

@@ -1,0 +1,7 @@
+export const APIENDPOINT = {
+  GET_ACTIVE_ADVERTISEMENTS: "/advertise/active",
+  CREATE_ADVERTISEMENTS: "/advertise/",
+  UPDATE_ADVERTISEMENTS: (id: string) => `/advertise/${id}`,
+  DELETE_ADVERTISEMENTS: (id: string) => `/advertise/${id}`,
+  ADVERTIES_CLICKS: (id: string) => `/advertise/${id}/clicks`,
+};
