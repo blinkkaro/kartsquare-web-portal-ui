@@ -13,7 +13,7 @@ import { COLORS } from "@/constants/colors";
 const AdvertisementSlider = () => {
   const theme = useTheme();
   const router = useRouter();
-  const { data: ads, isLoading } = useActiveAdvertisements();
+  const { data: adsResponse, isLoading } = useActiveAdvertisements(5);
 
   const handleAdClick = async (advertiseId: string, serviceId: string) => {
     try {
@@ -28,12 +28,28 @@ const AdvertisementSlider = () => {
   if (isLoading) {
     return <Box>Loading...</Box>;
   }
-  if (!ads || ads.length === 0) {
+  if (!adsResponse || !adsResponse.ads || adsResponse.ads.length === 0) {
     return null;
   }
 
+  const { ads } = adsResponse;
+
   return (
-    <Box>
+    <Box
+      sx={{
+        "& .swiper-pagination-bullet": {
+          backgroundColor: "rgba(255, 255, 255, 0.5)",
+          border: "2px solid white",
+          opacity: 1,
+          width: "10px",
+          height: "10px",
+        },
+        "& .swiper-pagination-bullet-active": {
+          backgroundColor: "white",
+          border: "2px solid white",
+        },
+      }}
+    >
       <Swiper
         modules={[Autoplay, Pagination]}
         slidesPerView={1}

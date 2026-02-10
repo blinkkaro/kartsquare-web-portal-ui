@@ -81,7 +81,7 @@ export interface AdvertiseProviderAd {
   deleted_by?: string;
   service_name: string;
 }
-interface pagination {
+export interface pagination {
   total: number;
   page: number;
   limit: number;

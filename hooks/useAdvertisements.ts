@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
 import { advertiseService } from "@/services/advertise/advertiseServies";
 import {
   ProviderAdFilters,
@@ -22,13 +27,32 @@ export const useProviderAdvertisements = (
   });
 };
 
-export const useActiveAdvertisements = (enabled: boolean = true) => {
+export const useActiveAdvertisements = (limit: number = 5) => {
   return useQuery({
-    queryKey: ["active-advertisements"],
-    queryFn: () => advertiseService.getActiveAdvertisements(),
+    queryKey: ["active-advertisements", limit],
+    queryFn: () => advertiseService.getActiveAdvertisements(limit),
     staleTime: 2 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
-    enabled,
+  });
+};
+
+export const useGetInfiniteAds = (limit: number = 5) => {
+  return useInfiniteQuery({
+    queryKey: ["active-advertisements-infinite", limit],
+    queryFn: ({ pageParam = 1 }) =>
+      advertiseService.getActiveAdvertisements(limit, pageParam),
+    getNextPageParam: (lastPage, allPages) => {
+      if (
+        lastPage.pagination &&
+        lastPage.pagination.page < lastPage.pagination.total
+      ) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
+    staleTime: 2 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };
 

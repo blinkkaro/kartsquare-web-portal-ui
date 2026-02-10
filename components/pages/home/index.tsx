@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import {
   Box,
   Typography,
@@ -8,28 +8,132 @@ import {
   useTheme,
   Grid,
   useMediaQuery,
+  CircularProgress,
 } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import StoriesSection from "./components/StoriesSection";
 import PostCard from "./components/PostCard";
-import { useGetPosts } from "@/hooks/usePosts";
+import AdCard from "./components/AdCard";
+import { useGetInfinitePosts } from "@/hooks/usePosts";
+import { useGetInfiniteAds } from "@/hooks/useAdvertisements";
 import Blogs from "./components/Blogs";
 import TopSuggestions from "./components/TopSuggestions";
 import { useGetStories } from "@/hooks/useStories";
 import CompactMapView from "./components/CompactMapView";
-import { Visibility } from "@/services/post/postInterfaces";
+import { Posts, Visibility } from "@/services/post/postInterfaces";
 import AdvertisementSlider from "./components/AdvertisementSlider";
+import { AdvertiseActiveAd } from "@/services/advertise/advertise.intreface";
 
 function HomeView() {
-  const { data: posts, isLoading } = useGetPosts({
+  const {
+    data: postsData,
+    isLoading: postsLoading,
+    fetchNextPage: fetchNextPosts,
+    hasNextPage: hasNextPosts,
+    isFetchingNextPage: isFetchingNextPosts,
+  } = useGetInfinitePosts({
     limit: 10,
     visibility: Visibility.PUBLIC,
   });
+
+  const {
+    data: adsData,
+    isLoading: adsLoading,
+    fetchNextPage: fetchNextAds,
+    hasNextPage: hasNextAds,
+    isFetchingNextPage: isFetchingNextAds,
+  } = useGetInfiniteAds(5);
+
   const { data: stories, isLoading: storiesLoading } = useGetStories({
     page: 1,
     limit: 10,
   });
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
+
+  // Ref for the loader element at the bottom
+  const loaderRef = useRef<HTMLDivElement>(null);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    if (!loaderRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+        if (
+          target.isIntersecting &&
+          !isFetchingNextPosts &&
+          !isFetchingNextAds
+        ) {
+          if (hasNextPosts) {
+            fetchNextPosts();
+          }
+          if (hasNextAds) {
+            fetchNextAds();
+          }
+        }
+      },
+      {
+        root: null,
+        rootMargin: "100px",
+        threshold: 0.1,
+      },
+    );
+
+    observer.observe(loaderRef.current);
+
+    return () => {
+      if (loaderRef.current) {
+        observer.unobserve(loaderRef.current);
+      }
+    };
+  }, [
+    hasNextPosts,
+    hasNextAds,
+    isFetchingNextPosts,
+    isFetchingNextAds,
+    fetchNextPosts,
+    fetchNextAds,
+  ]);
+
+  // Flatten all posts and ads from all pages
+  const allPosts = postsData?.pages.flatMap((page) => page.posts) || [];
+  const allAds = adsData?.pages.flatMap((page) => page.ads) || [];
+
+  // Merge posts and ads with random placement (5-15 posts apart)
+  const mergedFeed = useMemo(() => {
+    if (allPosts.length === 0) return [];
+
+    const feed: Array<{
+      type: "post" | "ad";
+      data: Posts | AdvertiseActiveAd;
+      key: string;
+    }> = [];
+    let adIndex = 0;
+    let nextAdPosition = Math.floor(Math.random() * 11) + 5; // Random between 5-15
+
+    allPosts.forEach((post, index) => {
+      // Add post
+      feed.push({ type: "post", data: post, key: `post-${post.id}` });
+
+      // Check if we should insert an ad
+      if (index + 1 === nextAdPosition && adIndex < allAds.length) {
+        feed.push({
+          type: "ad",
+          data: allAds[adIndex],
+          key: `ad-${allAds[adIndex].advertise_id}`,
+        });
+        adIndex++;
+        // Calculate next ad position (5-15 posts from current position)
+        nextAdPosition = index + 1 + Math.floor(Math.random() * 11) + 5;
+      }
+    });
+
+    return feed;
+  }, [allPosts, allAds]);
+
+  const isLoading = postsLoading || adsLoading;
+  const isFetchingNext = isFetchingNextPosts || isFetchingNextAds;
 
   return (
     <Box sx={{ position: "relative", maxHeight: "100vh" }}>
@@ -77,11 +181,30 @@ function HomeView() {
               <CompactMapView height="300px" />
             </Box>
 
-            {/* Posts Feed */}
-            {posts &&
-              posts.posts.map((post: any) => (
-                <PostCard post={post} key={post.id} />
-              ))}
+            {/* Merged Posts & Ads Feed */}
+            {mergedFeed.map((item) =>
+              item.type === "post" ? (
+                <PostCard post={item.data as Posts} key={item.key} />
+              ) : (
+                <AdCard ad={item.data as AdvertiseActiveAd} key={item.key} />
+              ),
+            )}
+
+            {/* Loading Indicator */}
+            {(isLoading || isFetchingNext) && (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  padding: 3,
+                }}
+              >
+                <CircularProgress />
+              </Box>
+            )}
+
+            {/* Intersection Observer Target */}
+            <div ref={loaderRef} style={{ height: "20px" }} />
           </Box>
         </Grid>
 

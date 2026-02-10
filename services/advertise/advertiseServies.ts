@@ -7,17 +7,29 @@ import {
   AdvertiseProviderAdPagination,
   AdvertiseUpdate,
   ProviderAdFilters,
+  pagination
 } from "./advertise.intreface";
 import { DELETE, GET, POST, PUT } from "../api";
 import { verifyDocumentService } from "../auth/verifyDocument.service";
 
 class AdvertiseService {
-  async getActiveAdvertisements(): Promise<AdvertiseActiveAd[]> {
+  async getActiveAdvertisements(
+    limit: number = 5,
+    page?: number,
+  ): Promise<{ ads: AdvertiseActiveAd[]; pagination?: pagination }> {
     try {
-      const response = await GET<AdvertiseActiveAd[]>(
-        APIENDPOINT.GET_ACTIVE_ADVERTISEMENTS,
-      );
-      console.log(response.data);
+      const params = new URLSearchParams({
+        limit: limit.toString(),
+      });
+
+      if (page) {
+        params.append("page", page.toString());
+      }
+
+      const response = await GET<{
+        ads: AdvertiseActiveAd[];
+        hasNextPage?: boolean;
+      }>(`${APIENDPOINT.GET_ACTIVE_ADVERTISEMENTS}?${params.toString()}`);
       return response.data;
     } catch (error) {
       throw error;
