@@ -243,14 +243,18 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
           sx={{
             borderRadius: "10px",
             textTransform: "none",
-            borderColor: COLORS.BORDER.DEFAULT_DARK,
-            color: COLORS.PRIMARY_PURPLE,
+            borderColor: isDark
+              ? COLORS.ACCENT_BLUE_DARK
+              : COLORS.BORDER.DEFAULT_DARK,
+            color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
             fontWeight: 700,
             px: 2,
             bgcolor: "transparent",
             "&:hover": {
-              borderColor: COLORS.PRIMARY_PURPLE,
-              bgcolor: COLORS.PRIMARY_PURPLE,
+              borderColor: isDark
+                ? COLORS.ACCENT_BLUE_DARK
+                : COLORS.PRIMARY_PURPLE,
+              bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
               color: "white",
             },
           }}

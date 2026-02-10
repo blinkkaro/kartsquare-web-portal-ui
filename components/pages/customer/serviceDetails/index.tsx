@@ -169,11 +169,21 @@ const CustomerServiceDetails = () => {
             : COLORS.BACKGROUND.SECONDARY_LIGHT,
           minHeight: "100vh",
           pt: { xs: 2, sm: 4, md: 10 },
-          pb: { xs: 2, sm: 3, md: 4 },
-          px: { xs: 1, sm: 2 },
+          pb: { xs: 8, sm: 8, md: 4 },
+          px: { xs: 0.5, sm: 1, md: 2 },
+          width: "100%",
+          maxWidth: "100%",
+          overflowX: "hidden",
         }}
       >
-        <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
+        <Container
+          maxWidth="xl"
+          sx={{
+            px: { xs: 1, sm: 2, md: 3 },
+            width: "100%",
+            maxWidth: "100%",
+          }}
+        >
           <CustomerServiceBreadcrumb serviceName={service.service_name || ""} />
 
           <Box
@@ -186,6 +196,8 @@ const CustomerServiceDetails = () => {
               },
               gap: { xs: 2, sm: 3, md: 4 },
               alignItems: "start",
+              width: "100%",
+              maxWidth: "100%",
             }}
           >
             <Box
@@ -193,6 +205,9 @@ const CustomerServiceDetails = () => {
                 position: { xs: "static", md: "sticky" },
                 top: { md: 80 },
                 order: { xs: 1, md: 1 },
+                width: "100%",
+                maxWidth: "100%",
+                overflow: "hidden",
               }}
             >
               <ServiceImageCarousel
@@ -206,8 +221,11 @@ const CustomerServiceDetails = () => {
                 order: { xs: 2, md: 2 },
                 bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "white",
                 borderRadius: "16px",
-                p: { xs: 2, sm: 3 },
+                p: { xs: 1.5, sm: 2.5, md: 3 },
                 border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.04)"}`,
+                width: "100%",
+                maxWidth: "100%",
+                overflow: "hidden",
               }}
             >
               <Box sx={{ py: 2 }}>
@@ -381,6 +399,8 @@ const CustomerServiceDetails = () => {
                 order: { xs: 3, md: 3 },
                 pt: { xs: 0, lg: 1 },
                 mb: { xs: 2, lg: 0 },
+                width: { xs: "100%", lg: "auto" },
+                maxWidth: { xs: "100%", lg: "auto" },
               }}
             >
               <IconButton

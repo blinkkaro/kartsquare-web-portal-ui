@@ -10,6 +10,9 @@ export const COLORS = {
   PURPLE_ALPHA_30: "rgba(94, 24, 233, 0.3)",
   SECONDARY_ORANGE: "#f97316",
   PRIMARY_BLUE: "#3b82f6",
+  // Light accent for dark mode highlights
+  ACCENT_BLUE_DARK: "#8248f7",
+  ACCENT_BLUE_BG_DARK: "rgba(168, 85, 247, 0.12)",
 
   // Gradient
   PURPLECYAN: "linear-gradient(135deg, #c2edff 0%, #eedaff 100%)",
@@ -65,9 +68,8 @@ export const COLORS = {
   WHITE: "#ffffff",
   BLACK: "#000000",
   DARK: "#30263e",
-  LIGHT_GRAY:"#f9f8fc",
+  LIGHT_GRAY: "#f9f8fc",
   SUCCESS_GREEN: "#33cf4d",
-  
 
   // Switch Colors
   SWITCH: {

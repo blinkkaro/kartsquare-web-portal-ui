@@ -357,7 +357,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             <Typography
               variant="subtitle1"
               fontWeight="bold"
-              sx={{ color: COLORS.PRIMARY_PURPLE }}
+              sx={{
+                color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+              }}
             >
               <Typography
                 variant="body2"
@@ -394,7 +396,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
               fontWeight: 800,
               fontSize: "1rem",
               lineHeight: 1.2,
-              color: COLORS.PRIMARY_PURPLE,
+              color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
             }}
           >
             {service.service_name}
