@@ -119,9 +119,7 @@ const AdForm: React.FC<AdFormProps> = ({
     const newErrors: Record<string, string> = {};
 
     if (!formData.service_id) newErrors.service_id = "Service is required";
-    if (!formData.title?.trim()) newErrors.title = "Title is required";
-    if (!formData.description?.trim())
-      newErrors.description = "Description is required";
+    // Title and description are now optional
     if (!formData.image_url) newErrors.image_url = "Image is required";
     if (!formData.start_at) newErrors.start_at = "Start date is required";
     if (!formData.expires_at) newErrors.expires_at = "End date is required";
@@ -209,7 +207,7 @@ const AdForm: React.FC<AdFormProps> = ({
           onChange={(e) => handleChange("service_id", e.target.value)}
           error={!!errors.service_id}
           helperText={errors.service_id}
-          disabled={isEditMode || isSubmitting}
+          disabled={isSubmitting}
           fullWidth
           sx={{
             "& .MuiOutlinedInput-root": {
@@ -229,7 +227,7 @@ const AdForm: React.FC<AdFormProps> = ({
 
         {/* Title */}
         <TextField
-          label="Advertisement Title"
+          label="Advertisement Title (Optional)"
           value={formData.title}
           onChange={(e) => handleChange("title", e.target.value)}
           error={!!errors.title}
@@ -245,7 +243,7 @@ const AdForm: React.FC<AdFormProps> = ({
 
         {/* Description */}
         <TextField
-          label="Description"
+          label="Description (Optional)"
           value={formData.description}
           onChange={(e) => handleChange("description", e.target.value)}
           error={!!errors.description}
@@ -260,6 +258,47 @@ const AdForm: React.FC<AdFormProps> = ({
             },
           }}
         />
+
+        {/* Rejection Reason - Only show if status is rejected */}
+        {isEditMode &&
+          adData?.ad_status === "rejected" &&
+          adData?.ad_reject_reason && (
+            <Box
+              sx={{
+                bgcolor: isDark
+                  ? "rgba(239, 68, 68, 0.1)"
+                  : "rgba(239, 68, 68, 0.05)",
+                border: "1px solid rgba(239, 68, 68, 0.3)",
+                borderRadius: "12px",
+                p: 2,
+              }}
+            >
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  color: "#EF4444",
+                  fontWeight: 600,
+                  mb: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                }}
+              >
+                ⚠️ Rejection Reason
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: isDark
+                    ? COLORS.TEXT.PRIMARY_DARK
+                    : COLORS.TEXT.PRIMARY_LIGHT,
+                  lineHeight: 1.6,
+                }}
+              >
+                {adData.ad_reject_reason}
+              </Typography>
+            </Box>
+          )}
 
         {/* Image Upload */}
         <Box>
