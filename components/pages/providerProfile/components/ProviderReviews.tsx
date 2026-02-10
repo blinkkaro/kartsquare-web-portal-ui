@@ -52,27 +52,29 @@ const MOCK_REVIEWS = [
     },
 ];
 
-const ProviderReviews: React.FC<{ providerName: string }> = ({ providerName }) => {
+const ProviderReviews: React.FC<{ providerName: string; hideTitle?: boolean }> = ({ providerName, hideTitle = false }) => {
     const theme = useTheme();
     const { t } = useTranslate();
     const isDark = theme.palette.mode === "dark";
 
     return (
-        <Box sx={{ mt: 4 }}>
-            <Typography
-                variant="h6"
-                sx={{
-                    fontWeight: 700,
-                    mb: 2,
-                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                }}
-            >
-                <Verified sx={{ color: COLORS.PRIMARY_BLUE }} />
-                {t("reviews" as any) + " of " + providerName || "Recent Reviews"}
-            </Typography>
+        <Box sx={{ mt: hideTitle ? 0 : 4 }}>
+            {!hideTitle && (
+                <Typography
+                    variant="h6"
+                    sx={{
+                        fontWeight: 700,
+                        mb: 2,
+                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                    }}
+                >
+                    <Verified sx={{ color: COLORS.PRIMARY_BLUE }} />
+                    {t("reviews" as any) + " of " + providerName || "Recent Reviews"}
+                </Typography>
+            )}
 
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 {MOCK_REVIEWS.map((review, index) => (

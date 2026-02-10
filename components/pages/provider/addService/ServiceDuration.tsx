@@ -27,9 +27,9 @@ const ServiceDuration = ({
 }: ServiceDurationProps) => {
     return (
         <>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+            {/* <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
                 {english.service_duration}
-            </Typography>
+            </Typography> */}
             <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
                 <Box sx={{ flex: 1 }}>
                     <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>

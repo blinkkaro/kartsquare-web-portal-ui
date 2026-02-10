@@ -10,6 +10,7 @@ import {
   useTheme,
   CircularProgress,
   MenuItem,
+  keyframes,
 } from "@mui/material";
 import ShieldIcon from "@mui/icons-material/Shield";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -41,6 +42,16 @@ type HeroFormData = {
   phone_number: string;
   country_code: string;
 };
+
+const chipPulse = keyframes`
+  0%, 100% { box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 0 rgba(94, 24, 233, 0.25); }
+  50% { box-shadow: 0 2px 8px rgba(94, 24, 233, 0.15), 0 0 0 6px rgba(94, 24, 233, 0); }
+`;
+
+const formGlow = keyframes`
+  0%, 100% { opacity: 0.6; filter: blur(20px); transform: scale(1); }
+  50% { opacity: 1; filter: blur(24px); transform: scale(1.05); }
+`;
 
 const Hero: React.FC = () => {
   const { t } = useTranslate();
@@ -75,15 +86,31 @@ const Hero: React.FC = () => {
   return (
     <Box
       sx={{
-        py: { xs: 5, md: 10 },
+        py: { xs: 6, sm: 8, md: 10 },
         px: { xs: 2, md: 4 },
-        background: isDark ? COLORS.DARK_GRADIENT : COLORS.PURPLECYAN,
-        borderRadius: { xs: 0, md: 4 },
-        mx: { xs: 0, md: 2 },
+        background: isDark
+          ? COLORS.DARK_GRADIENT
+          : "linear-gradient(160deg, #f8f6ff 0%, #eef4ff 50%, #f5f0ff 100%)",
+        borderRadius: { xs: 0, md: 0 },
+        mx: 0,
+        position: "relative",
+        overflow: "hidden",
+        "&::before": isDark
+          ? {}
+          : {
+              content: '""',
+              position: "absolute",
+              top: "-40%",
+              right: "-20%",
+              width: "60%",
+              height: "80%",
+              background: "radial-gradient(circle, rgba(94, 24, 233, 0.06) 0%, transparent 70%)",
+              pointerEvents: "none",
+            },
       }}
     >
-      <Container maxWidth="xl">
-        <Grid container spacing={5} alignItems="center">
+      <Container maxWidth="xl" sx={{ position: "relative" }}>
+        <Grid container spacing={{ xs: 4, lg: 6 }} alignItems="center">
           <Grid size={{ xs: 12, lg: 6 }}>
             <Chip
               icon={<ShieldIcon sx={{ fontSize: 18 }} />}
@@ -94,7 +121,10 @@ const Hero: React.FC = () => {
                 bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
                 color: COLORS.PRIMARY_PURPLE,
                 fontWeight: 600,
+                boxShadow: isDark ? "none" : "0 1px 3px rgba(0,0,0,0.06)",
+                border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.12)"}`,
                 "& .MuiChip-icon": { color: COLORS.PRIMARY_PURPLE },
+                animation: isDark ? "none" : `${chipPulse} 2.5s ease-in-out infinite`,
               }}
             />
             <Typography
@@ -105,45 +135,100 @@ const Hero: React.FC = () => {
                 color: isDark
                   ? COLORS.TEXT.PRIMARY_DARK
                   : COLORS.TEXT.PRIMARY_LIGHT,
-                lineHeight: 1.2,
+                lineHeight: 1.15,
                 mb: 1.5,
-                fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.5rem" },
+                letterSpacing: "-0.02em",
+                fontSize: { xs: "1.875rem", sm: "2.25rem", md: "2.75rem" },
               }}
             >
               {t("growYourBusinessWith")}{" "}
-              <Box component="span" sx={{ color: COLORS.PRIMARY_PURPLE }}>
+              <Box
+                component="span"
+                sx={{
+                  color: COLORS.PRIMARY_PURPLE,
+                  position: "relative",
+                  "&::after": {
+                    content: '""',
+                    position: "absolute",
+                    bottom: 2,
+                    left: 0,
+                    right: 0,
+                    height: 6,
+                    background: "rgba(94, 24, 233, 0.2)",
+                    borderRadius: 1,
+                    zIndex: -1,
+                  },
+                }}
+              >
                 {t("freeListing")}
               </Box>
             </Typography>
             <Typography
               variant="h6"
               color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
-              sx={{ mb: 3, fontWeight: 500 }}
+              sx={{
+                mb: 3,
+                fontWeight: 500,
+                fontSize: "1rem",
+                lineHeight: 1.6,
+                maxWidth: 480,
+              }}
             >
               {t("joinThousandsBusinessOwners")}
             </Typography>
 
             <ErrorMessage isVisible={!!error} error={error || ""} />
 
+            <Box
+              sx={{
+                position: "relative",
+                mb: 3,
+                "&::before": isDark
+                  ? {}
+                  : {
+                      content: '""',
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      width: "120%",
+                      height: "140%",
+                      transform: "translate(-50%, -50%)",
+                      background: "radial-gradient(ellipse, rgba(94, 24, 233, 0.15) 0%, transparent 65%)",
+                      animation: `${formGlow} 4s ease-in-out infinite`,
+                      pointerEvents: "none",
+                      zIndex: 0,
+                    },
+              }}
+            >
             <Paper
               elevation={0}
               sx={{
-                p: 2.5,
+                position: "relative",
+                zIndex: 1,
+                p: 3,
                 borderRadius: 3,
                 border: `1px solid ${
                   isDark
                     ? COLORS.BORDER.DEFAULT_DARK
-                    : COLORS.BORDER.DEFAULT_LIGHT
+                    : "rgba(94, 24, 233, 0.12)"
                 }`,
                 bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-                boxShadow: isDark ? "none" : COLORS.SHADOW.DEFAULT,
-                mb: 3,
+                boxShadow: isDark
+                  ? "none"
+                  : "0 4px 24px rgba(94, 24, 233, 0.08), 0 1px 3px rgba(0,0,0,0.04), 0 0 40px rgba(94, 24, 233, 0.06)",
+                transition: "box-shadow 0.3s ease, border-color 0.3s ease",
+                "&:focus-within": {
+                  boxShadow: isDark
+                    ? "none"
+                    : "0 8px 32px rgba(94, 24, 233, 0.12), 0 0 60px rgba(94, 24, 233, 0.08)",
+                  borderColor: "rgba(94, 24, 233, 0.25)",
+                },
               }}
             >
               <Typography
                 variant="subtitle2"
                 color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
-                sx={{ mb: 1.5 }}
+                sx={{ mb: 2, fontWeight: 600 }}
               >
                 {t("startIn30Seconds")}
               </Typography>
@@ -153,7 +238,7 @@ const Hero: React.FC = () => {
                 sx={{
                   display: "flex",
                   flexWrap: "wrap",
-                  gap: 1.5,
+                  gap: 2,
                   alignItems: "stretch",
                 }}
               >
@@ -162,12 +247,21 @@ const Hero: React.FC = () => {
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    border: "none",
+                    border: `1px solid ${
+                      isDark
+                        ? COLORS.BORDER.DEFAULT_DARK
+                        : "rgba(94, 24, 233, 0.15)"
+                    }`,
                     overflow: "hidden",
-
-                    flex: "1 1 200px",
+                    flex: "1 1 220px",
+                    minHeight: 52,
                     bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-                    p: 0.5,
+                    borderRadius: 2,
+                    transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+                    "&:focus-within": {
+                      borderColor: COLORS.PRIMARY_PURPLE,
+                      boxShadow: `0 0 0 3px ${COLORS.PURPLE_ALPHA_10}`,
+                    },
                   }}
                 >
                   <Box
@@ -175,8 +269,12 @@ const Hero: React.FC = () => {
                       bgcolor: isDark
                         ? COLORS.PURPLE_ALPHA_10
                         : COLORS.PURPLE_ALPHA_04,
-                      borderRadius: 1.5,
-                      mr: 1,
+                      borderRadius: 0,
+                      borderRight: `1px solid ${
+                        isDark
+                          ? COLORS.BORDER.DEFAULT_DARK
+                          : "rgba(94, 24, 233, 0.12)"
+                      }`,
                     }}
                   >
                     <Input
@@ -187,11 +285,11 @@ const Hero: React.FC = () => {
                       InputProps={{
                         disableUnderline: true,
                         sx: {
-                          minWidth: 90,
+                          minWidth: 96,
                           "& .MuiSelect-select": {
                             py: 1.5,
                             pl: 2,
-                            pr: "24px !important",
+                            pr: "28px !important",
                             display: "flex",
                             alignItems: "center",
                             gap: 0.5,
@@ -225,7 +323,7 @@ const Hero: React.FC = () => {
                       ))}
                     </Input>
                   </Box>
-                  <Box sx={{ flex: 1 }}>
+                  <Box sx={{ flex: 1, display: "flex", alignItems: "center", px: 1.5 }}>
                     <Input
                       name="phone_number"
                       control={control}
@@ -240,17 +338,15 @@ const Hero: React.FC = () => {
                         disableUnderline: true,
                         sx: {
                           py: 0.5,
-                          px: 1,
+                          px: 0.5,
                           color: isDark
                             ? COLORS.TEXT.PRIMARY_DARK
                             : COLORS.TEXT.PRIMARY_LIGHT,
+                          fontSize: "0.9375rem",
                         },
                       }}
                       sx={{
-                        "& .MuiInputBase-root": {
-                          height: "100%",
-                          marginTop: "3px",
-                        },
+                        "& .MuiInputBase-root": { height: "100%", marginTop: "2px" },
                       }}
                     />
                   </Box>
@@ -262,27 +358,34 @@ const Hero: React.FC = () => {
                     loading ? (
                       <CircularProgress size={20} color="inherit" />
                     ) : (
-                      <ArrowForwardIcon />
+                      <ArrowForwardIcon sx={{ fontSize: 20 }} />
                     )
                   }
                   disabled={loading}
                   sx={{
                     bgcolor: COLORS.PRIMARY_PURPLE,
                     color: "white",
-                    "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
-                    px: 3,
+                    px: 3.5,
                     py: 1.5,
+                    minHeight: 52,
                     borderRadius: 2,
                     textTransform: "none",
-                    boxShadow: "0 4px 14px rgba(94, 24, 233, 0.35)",
-                    height: "fit-content",
-                    alignSelf: "center",
+                    fontWeight: 600,
+                    fontSize: "0.9375rem",
+                    boxShadow: "0 4px 14px rgba(94, 24, 233, 0.35), 0 0 24px rgba(94, 24, 233, 0.2)",
+                    transition: "all 0.25s ease",
+                    "&:hover": {
+                      bgcolor: COLORS.PURPLE_HOVER,
+                      boxShadow: "0 6px 24px rgba(94, 24, 233, 0.45), 0 0 40px rgba(94, 24, 233, 0.25)",
+                      transform: "translateY(-1px)",
+                    },
                   }}
                 >
                   {t("getMyFreeListing")}
                 </Button>
               </Box>
             </Paper>
+            </Box>
 
             <VerificationModal
               open={isOtpOpen}
@@ -291,28 +394,43 @@ const Hero: React.FC = () => {
               loading={loading}
             />
 
-            {getHeroBenefits(t).map((text: string, i: number) => (
-              <Box
-                key={i}
-                sx={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 1.5,
-                  mb: 1.5,
-                }}
-              >
-                <CheckCircleIcon
-                  sx={{ color: COLORS.SUCCESS_GREEN, fontSize: 24, mt: 0.25 }}
-                />
-                <Typography
-                  variant="body1"
-                  color={isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary"}
-                  sx={{ fontWeight: 500 }}
+            <Box
+              component="ul"
+              sx={{
+                m: 0,
+                p: 0,
+                listStyle: "none",
+                display: "grid",
+                gap: 1.5,
+              }}
+            >
+              {getHeroBenefits(t).map((text: string, i: number) => (
+                <Box
+                  key={i}
+                  component="li"
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                  }}
                 >
-                  {text}
-                </Typography>
-              </Box>
-            ))}
+                  <CheckCircleIcon
+                    sx={{
+                      color: COLORS.SUCCESS_GREEN,
+                      fontSize: 22,
+                      flexShrink: 0,
+                    }}
+                  />
+                  <Typography
+                    variant="body1"
+                    color={isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary"}
+                    sx={{ fontWeight: 500, fontSize: "0.9375rem" }}
+                  >
+                    {text}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
           </Grid>
 
           <Grid size={{ xs: 12, lg: 6 }}>
@@ -321,7 +439,7 @@ const Hero: React.FC = () => {
                 display: { xs: "none", md: "flex" },
                 justifyContent: "center",
                 alignItems: "flex-start",
-                gap: 2,
+                gap: 3,
                 flexWrap: "wrap",
               }}
             >
@@ -330,11 +448,14 @@ const Hero: React.FC = () => {
                   width: 280,
                   height: 560,
                   position: "relative",
-                  border: `10px solid ${
-                    isDark ? COLORS.BORDER.DEFAULT_DARK : "#1a1a1a"
+                  border: `12px solid ${
+                    isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(0,0,0,0.08)"
                   }`,
-                  borderRadius: "32px",
+                  borderRadius: "28px",
                   overflow: "hidden",
+                  boxShadow: isDark
+                    ? "0 24px 48px rgba(0,0,0,0.3)"
+                    : "0 24px 48px rgba(94, 24, 233, 0.12), 0 8px 24px rgba(0,0,0,0.08)",
                 }}
               >
                 <Image
@@ -350,26 +471,32 @@ const Hero: React.FC = () => {
                     key={label}
                     elevation={0}
                     sx={{
-                      p: 2,
+                      p: 2.5,
                       borderRadius: 2,
-                      minWidth: 160,
-
+                      minWidth: 180,
                       bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-                      boxShadow: isDark ? "none" : COLORS.SHADOW.DEFAULT,
+                      border: `1px solid ${
+                        isDark
+                          ? COLORS.BORDER.DEFAULT_DARK
+                          : "rgba(94, 24, 233, 0.1)"
+                      }`,
+                      boxShadow: isDark ? "none" : "0 2px 12px rgba(0,0,0,0.04)",
+                      transition: "transform 0.2s ease, box-shadow 0.2s ease",
                       "&:hover": {
-                        boxShadow: isDark ? "none" : "rgb(79 70 229 / 0.1)",
+                        transform: "translateY(-2px)",
+                        boxShadow: isDark
+                          ? "none"
+                          : "0 8px 24px rgba(94, 24, 233, 0.1)",
                       },
-                      border: isDark
-                        ? `1px solid ${COLORS.BORDER.DEFAULT_DARK}`
-                        : undefined,
-                      borderLeft: `4px solid ${color}`, // restore left border
+                      borderLeft: `4px solid ${color}`,
                     }}
                   >
-                    <Icon sx={{ color, mb: 0.5 }} />
+                    <Icon sx={{ color, mb: 0.75, fontSize: 28 }} />
                     <Typography
-                      variant="h6"
+                      variant="h5"
                       fontWeight={700}
                       color={isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary"}
+                      sx={{ letterSpacing: "-0.02em" }}
                     >
                       {value}
                     </Typography>
@@ -378,6 +505,7 @@ const Hero: React.FC = () => {
                       color={
                         isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"
                       }
+                      sx={{ mt: 0.25 }}
                     >
                       {label}
                     </Typography>

@@ -48,7 +48,7 @@ export interface CustomAxiosInstance extends AxiosInstance {
 
 const api: CustomAxiosInstance = axios.create({
   baseURL:
-    process.env.NEXT_PUBLIC_API_URL || "https://congruous-princeton-unfestooned.ngrok-free.dev/api/v1", // Fallback to local
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1", // Fallback to local
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -137,20 +137,20 @@ api.interceptors.response.use(
 
         const response = await authService.refreshToken(refreshToken);
 
-        if (response.data && response.data.tokens) {
-          secureStorage.setItem("token", response.data.tokens.access_token);
+        if (response.data) {
+          secureStorage.setItem("token", response.data.access_token);
           secureStorage.setItem(
             "refreshToken",
-            response.data.tokens.refresh_token,
+            response.data.refresh_token,
           );
 
           // Update header
           api.defaults.headers.common["Authorization"] =
-            `Bearer ${response.data.tokens.access_token}`;
+            `Bearer ${response.data.access_token}`;
           originalRequest.headers["Authorization"] =
-            `Bearer ${response.data.tokens.access_token}`;
+            `Bearer ${response.data.access_token}`;
 
-          processQueue(null, response.data.tokens.access_token);
+          processQueue(null, response.data.access_token);
 
           return api(originalRequest);
         } else {

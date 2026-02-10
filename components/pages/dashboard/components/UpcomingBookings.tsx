@@ -26,9 +26,8 @@ const UpcomingBookings: React.FC<UpcomingBookingsProps> = ({
         borderRadius: "12px",
         p: 2,
         bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE,
-        border: `1px solid ${
-          isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
-        }`,
+        border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
+          }`,
         boxShadow: isDark
           ? "0px 2px 8px rgba(0, 0, 0, 0.2)"
           : "0px 2px 8px rgba(0, 0, 0, 0.05)",
@@ -76,7 +75,7 @@ const UpcomingBookings: React.FC<UpcomingBookingsProps> = ({
         }}
       >
         {bookings.length > 0 ? (
-          bookings.map((booking) => (
+          bookings?.map((booking) => (
             <BookingStatusCard
               key={booking.booking_id}
               booking={{

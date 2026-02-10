@@ -24,6 +24,13 @@ function ThemeWrapper({ children }: { children: React.ReactNode }) {
 
   const theme = useMemo(() => createCustomTheme(mode), [mode]);
 
+  // Sync mode with document body attribute for global CSS
+  useMemo(() => {
+    if (typeof document !== 'undefined') {
+      document.body.setAttribute('data-theme', mode);
+    }
+  }, [mode]);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

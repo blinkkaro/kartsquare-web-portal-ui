@@ -1,8 +1,11 @@
+"use client";
+
 import React from "react";
-import { Box, Chip, CircularProgress, useTheme } from "@mui/material";
+import { Box, Chip, CircularProgress, Typography, useTheme } from "@mui/material";
 import { Category } from "../../../services/serviceList/listInteraface";
 import { COLORS } from "../../../constants/colors";
-import { english } from "../../../features/i18n/en";
+import { useTranslate } from "@/hooks/useTranslate";
+import { Category as CategoryIcon } from "@mui/icons-material";
 
 interface CategoryFilterProps {
     categories: Category[];
@@ -11,7 +14,6 @@ interface CategoryFilterProps {
     onCategoryClick: (categoryId: string | null) => void;
 }
 
-// Category icons mapping
 const getCategoryIcon = (categoryName: string) => {
     const name = categoryName.toLowerCase();
     if (name.includes("health")) return "🏥";
@@ -29,91 +31,105 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     onCategoryClick,
 }) => {
     const theme = useTheme();
+    const { t } = useTranslate();
     const isDark = theme.palette.mode === "dark";
+    const borderColor = isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT;
+    const chipBg = isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.WHITE;
+    const textPrimary = isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT;
+    const textSecondary = isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT;
 
     return (
-        <Box sx={{
-            display: "flex",
-            gap: 1,
-            mb: { xs: 2, sm: 4 },
-            overflowX: "auto",
-            pb: 1,
-            WebkitOverflowScrolling: "touch",
-            scrollWidth: "none",
-            // scrollbarWidth: "thin",
-            "&::-webkit-scrollbar": {
-                height: "6px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-                bgcolor: isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT,
-                borderRadius: "3px",
-            }
-            
-        }}>
-            {loading ? (
-                <CircularProgress size={24} />
-            ) : (
-                <>
-                    <Chip
-                        label={english.all_categories}
-                        onClick={() => onCategoryClick(null)}
-                        sx={{
-                            borderRadius: "20px",
-                            px: { xs: 1.5, sm: 2 },
-                            height: { xs: "32px", sm: "36px" },
-                            fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                            fontWeight: 500,
-                            cursor: "pointer",
-                            whiteSpace: "nowrap",
-                            bgcolor: selectedCategory === null
-                                ? COLORS.PRIMARY_PURPLE
-                                : (isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT),
-                            color: selectedCategory === null
-                                ? "white"
-                                : (isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT),
-                            border: `1px solid ${selectedCategory === null ? COLORS.PRIMARY_PURPLE : (isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT)}`,
-                            "&:hover": {
-                                bgcolor: selectedCategory === null
-                                    ? COLORS.PURPLE_HOVER
-                                    : (isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT),
-                            },
-                        }}
-                    />
-                    {categories.map((category) => (
+        <Box sx={{ mb: { xs: 2, sm: 3 } }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
+                <CategoryIcon sx={{ fontSize: 20, color: COLORS.PRIMARY_PURPLE }} />
+                <Typography
+                    variant="subtitle2"
+                    sx={{
+                        fontWeight: 700,
+                        color: textPrimary,
+                        fontSize: "0.8rem",
+                        textTransform: "uppercase",
+                        letterSpacing: 0.5,
+                    }}
+                >
+                    {t("categories_label")}
+                </Typography>
+            </Box>
+            <Box
+                sx={{
+                    display: "flex",
+                    gap: 1.25,
+                    overflowX: "auto",
+                    pb: 1.5,
+                    WebkitOverflowScrolling: "touch",
+                    "&::-webkit-scrollbar": { height: 6 },
+                    "&::-webkit-scrollbar-thumb": {
+                        bgcolor: borderColor,
+                        borderRadius: 3,
+                    },
+                }}
+            >
+                {loading ? (
+                    <Box sx={{ display: "flex", alignItems: "center", py: 1 }}>
+                        <CircularProgress size={28} sx={{ color: COLORS.PRIMARY_PURPLE }} />
+                    </Box>
+                ) : (
+                    <>
                         <Chip
-                            key={category.id}
-                            label={
-                                <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 0.25, sm: 0.5 } }}>
-                                    <span>{getCategoryIcon(category.name)}</span>
-                                    <span>{category.name}</span>
-                                </Box>
-                            }
-                            onClick={() => onCategoryClick(category.id)}
+                            label={t("all_categories")}
+                            onClick={() => onCategoryClick(null)}
                             sx={{
-                                borderRadius: "20px",
-                                px: { xs: 1.5, sm: 2 },
-                                height: { xs: "32px", sm: "36px" },
-                                fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                                fontWeight: 500,
+                                borderRadius: 3,
+                                px: 2,
+                                py: 1.25,
+                                height: "auto",
+                                fontSize: "0.8125rem",
+                                fontWeight: 600,
                                 cursor: "pointer",
                                 whiteSpace: "nowrap",
-                                bgcolor: selectedCategory === category.id
-                                    ? COLORS.PRIMARY_PURPLE
-                                    : (isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT),
-                                color: selectedCategory === category.id
-                                    ? "white"
-                                    : (isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT),
-                                border: `1px solid ${selectedCategory === category.id ? COLORS.PRIMARY_PURPLE : (isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT)}`,
+                                flexShrink: 0,
+                                bgcolor: selectedCategory === null ? COLORS.PRIMARY_PURPLE : chipBg,
+                                color: selectedCategory === null ? COLORS.WHITE : textPrimary,
+                                border: `1px solid ${selectedCategory === null ? COLORS.PRIMARY_PURPLE : borderColor}`,
                                 "&:hover": {
-                                    bgcolor: selectedCategory === category.id
-                                        ? COLORS.PURPLE_HOVER
-                                        : (isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT),
+                                    bgcolor: selectedCategory === null ? COLORS.PURPLE_HOVER : COLORS.PURPLE_ALPHA_04,
+                                    borderColor: COLORS.PRIMARY_PURPLE,
                                 },
                             }}
                         />
-                    ))}
-                </>
-            )}
+                        {categories.map((category) => {
+                            const isSelected = selectedCategory === category.id;
+                            return (
+                                <Chip
+                                    key={category.id}
+                                    icon={<Box component="span" sx={{ fontSize: "1rem" }}>{getCategoryIcon(category.name)}</Box>}
+                                    label={category.name}
+                                    onClick={() => onCategoryClick(category.id)}
+                                    sx={{
+                                        borderRadius: 3,
+                                        px: 2,
+                                        py: 1.25,
+                                        height: "auto",
+                                        fontSize: "0.8125rem",
+                                        fontWeight: 600,
+                                        cursor: "pointer",
+                                        whiteSpace: "nowrap",
+                                        flexShrink: 0,
+                                        bgcolor: isSelected ? COLORS.PRIMARY_PURPLE : chipBg,
+                                        color: isSelected ? COLORS.WHITE : textPrimary,
+                                        border: `1px solid ${isSelected ? COLORS.PRIMARY_PURPLE : borderColor}`,
+                                        "& .MuiChip-icon": { color: "inherit", ml: 1 },
+                                        "&:hover": {
+                                            bgcolor: isSelected ? COLORS.PURPLE_HOVER : COLORS.PURPLE_ALPHA_04,
+                                            borderColor: COLORS.PRIMARY_PURPLE,
+                                        },
+                                    }}
+                                />
+                            );
+                        })}
+                    </>
+                )}
+            </Box>
         </Box>
     );
 };

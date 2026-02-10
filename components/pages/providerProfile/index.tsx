@@ -9,6 +9,7 @@ import {
   Typography,
   IconButton,
   useTheme,
+  useMediaQuery,
   CircularProgress,
   Divider,
   Menu,
@@ -17,6 +18,9 @@ import {
   Alert,
   Grid,
   Link,
+  Paper,
+  Chip,
+  Collapse,
 } from "@mui/material";
 import {
   Share,
@@ -25,7 +29,6 @@ import {
   Twitter,
   WhatsApp,
   Email,
-  ArrowBack,
   LocationOn,
   Email as EmailIcon,
   Phone,
@@ -33,7 +36,10 @@ import {
   Favorite,
   People,
   BusinessCenter,
-  Verified,
+  Work as WorkIcon,
+  Article as ArticleIcon,
+  ExpandMore,
+  ExpandLess,
 } from "@mui/icons-material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -43,7 +49,6 @@ import {
   useFollowProvider,
 } from "@/hooks/useProviderProfile";
 import { useTranslate } from "@/hooks/useTranslate";
-import ProfileTabs from "@/components/common/ProfileDrawer/components/ProfileTabs";
 import ServiceCard from "@/components/ServiceCard";
 import PostFeedGrid from "@/components/pages/myAccount/components/post/PostFeedGrid";
 import { Posts } from "@/services/post/postInterfaces";
@@ -79,6 +84,8 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isBioExpanded, setIsBioExpanded] = useState(false);
+  const [reviewsExpanded, setReviewsExpanded] = useState(false);
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const {
     data: profileData,
@@ -166,31 +173,36 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
       : post.media_urls,
   }));
 
-  const StatRow = ({ icon, label, value, iconColor }: { icon: React.ReactElement, label: string, value: string | number, iconColor: string }) => (
+  const StatRow = ({
+    icon,
+    label,
+    value,
+    iconColor,
+    compact = false,
+  }: {
+    icon: React.ReactElement;
+    label: string;
+    value: string | number;
+    iconColor: string;
+    compact?: boolean;
+  }) => (
     <Box
       sx={{
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        px: 1,
-        py: 1.2,
+        px: compact ? 0.75 : 1,
+        py: compact ? 0.6 : 1.2,
         borderRadius: 2,
-        "&:not(:last-child)": {
-          mb: 1,
-        },
-
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: compact ? 0.75 : 1.2 }}>
         <Box
           component="span"
           sx={{
             display: "flex",
             alignItems: "center",
-            "& svg": {
-              fontSize: 18,
-              color: iconColor,
-            },
+            "& svg": { fontSize: compact ? 16 : 18, color: iconColor },
           }}
         >
           {icon}
@@ -199,27 +211,19 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
           variant="body2"
           sx={{
             fontWeight: 600,
-            fontSize: "0.85rem",
-            color:
-              theme.palette.mode === "dark"
-                ? COLORS.TEXT.PRIMARY_DARK
-                : COLORS.TEXT.PRIMARY_LIGHT,
+            fontSize: compact ? "0.8rem" : "0.85rem",
+            color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
           }}
         >
           {label}
         </Typography>
       </Box>
-
-
       <Typography
         variant="body1"
         sx={{
           fontWeight: 700,
-          fontSize: "0.95rem",
-          color:
-            theme.palette.mode === "dark"
-              ? COLORS.TEXT.PRIMARY_DARK
-              : COLORS.TEXT.PRIMARY_LIGHT,
+          fontSize: compact ? "0.875rem" : "0.95rem",
+          color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
         }}
       >
         {value}
@@ -257,494 +261,349 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
     return <ProfileNotFound />;
   }
 
+  const textPrimary = isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT;
+  const textSecondary = isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT;
+  const borderColorMui = isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT;
+  const cardBg = isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.WHITE;
+  const surfaceBg = isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT;
+
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        // bgcolor: isDark
-        //   ? COLORS.BACKGROUND.PRIMARY_DARK
-        //   : "#f5f5f5",
-        backgroundColor: isDark
-          ? COLORS.BACKGROUND.PRIMARY_DARK
-          : COLORS.BACKGROUND.PRIMARY_LIGHT,
-      }}
-    >
-      {/* Full Width Banner */}
+    <Box sx={{ minHeight: "100vh", backgroundColor: surfaceBg }}>
+      {/* Hero — business website style cover */}
       <Box
         sx={{
           position: "relative",
           width: "100%",
-          height: { xs: 200, md: 300 },
+          height: { xs: 220, sm: 280, md: 320 },
           overflow: "hidden",
           bgcolor: COLORS.PRIMARY_PURPLE,
         }}
       >
         {profile.banner_image ? (
-          <Image
-            src={profile.banner_image}
-            alt={`${profile.first_name} ${profile.last_name} banner`}
-            fill
-            style={{ objectFit: "contain" }}
-            priority
-          />
+          <>
+            <Image
+              src={profile.banner_image}
+              alt={`${profile.first_name} ${profile.last_name} — Business`}
+              fill
+              style={{ objectFit: "cover" }}
+              priority
+            />
+            <Box
+              sx={{
+                position: "absolute",
+                inset: 0,
+                background: `linear-gradient(to bottom, transparent 30%, ${isDark ? "rgba(23, 32, 35, 0.9)" : "rgba(0,0,0,0.5)"} 100%)`,
+              }}
+            />
+          </>
         ) : (
           <Box
             sx={{
               width: "100%",
               height: "100%",
-              background: `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE} 0%, ${COLORS.PURPLE_HOVER} 100%)`,
+              background: `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE} 0%, ${COLORS.PURPLE_HOVER} 50%, #2d1b69 100%)`,
             }}
           />
         )}
-        {/* Decorative icon in top-left */}
-        <Container maxWidth="xl">
-          <Box
-            sx={{
-              position: "absolute",
-              top: 16,
-              left: { xs: 16, md: 24 },
-              color: "rgba(255, 255, 255, 0.3)",
-              zIndex: 1,
-            }}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M3 12C3 12 6 9 12 9C18 9 21 12 21 12M3 12C3 12 6 15 12 15C18 15 21 12 21 12M3 12L21 12"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              <circle cx="9" cy="12" r="1" fill="currentColor" />
-              <circle cx="15" cy="12" r="1" fill="currentColor" />
-            </svg>
+        <Container maxWidth="xl" sx={{ position: "relative", height: "100%", display: "flex", alignItems: "flex-end", pb: 3 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Avatar
+              src={profile.profile_pic}
+              alt={`${profile.first_name} ${profile.last_name}`}
+              sx={{
+                width: { xs: 72, sm: 88 },
+                height: { xs: 72, sm: 88 },
+                border: `3px solid ${COLORS.WHITE}`,
+                boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+              }}
+            />
+            <Box>
+              <Typography
+                variant="h4"
+                sx={{
+                  fontWeight: 800,
+                  color: COLORS.WHITE,
+                  fontSize: { xs: "1.35rem", sm: "1.6rem", md: "1.75rem" },
+                  lineHeight: 1.2,
+                }}
+              >
+                {profile.first_name} {profile.last_name}
+              </Typography>
+              <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.9)", fontWeight: 600, fontSize: "0.875rem" }}>
+                @{profile?.username || "-"} · {t("services")} & {t("posts")}
+              </Typography>
+            </Box>
           </Box>
         </Container>
       </Box>
 
-      <Container
-        maxWidth="xl"
-        sx={{ mt: { xs: -8, md: -12 }, position: "relative", zIndex: 1, pb: 4 }}
-      >
+      <Container maxWidth="xl" sx={{ position: "relative", mt: -2, zIndex: 1, pb: 6 }}>
         <Grid container spacing={3}>
-          {/* Left Sidebar - Profile Details (No Box) */}
+          {/* Left Sidebar — Business card */}
           <Grid size={{ xs: 12, md: 4 }}>
-            <Box sx={{ position: "sticky", top: 100, alignSelf: "start" }}>
-              {/* Avatar - Overlapping Banner */}
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  // mt: { xs: -6, md: -8 },
-                  mb: 3,
-                }}
-              >
-                <Avatar
-                  src={profile.profile_pic}
-                  alt={`${profile.first_name} ${profile.last_name}`}
-                  sx={{
-                    width: { xs: 100, md: 120 },
-                    height: { xs: 100, md: 120 },
-                    border: `4px solid ${COLORS.WHITE}`,
-                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-                  }}
-                />
-              </Box>
-
-              {/* Name and Bio */}
-              <Box sx={{ textAlign: "center", mb: 3 }}>
+            <Paper
+              elevation={0}
+              sx={{
+                position: "sticky",
+                top: 100,
+                alignSelf: "start",
+                borderRadius: 3,
+                overflow: "hidden",
+                border: `1px solid ${borderColorMui}`,
+                bgcolor: cardBg,
+                boxShadow: isDark ? "0 4px 24px rgba(0,0,0,0.2)" : "0 4px 24px rgba(94, 24, 233, 0.06)",
+              }}
+            >
+              <Box sx={{ p: 3 }}>
+                {/* Business / provider name — prominent at top of card */}
                 <Typography
-                  variant="h5"
+                  variant="h6"
                   sx={{
-                    fontWeight: 800,
-                    color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                    fontWeight: 700,
+                    color: textPrimary,
+                    textAlign: "center",
                     mb: 1,
-                    fontSize: "1.5rem",
+                    fontSize: { xs: "1.1rem", sm: "1.2rem" },
+                    lineHeight: 1.3,
                   }}
                 >
                   {profile.first_name} {profile.last_name}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    mb: 1,
-                    color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                    fontSize: "0.875rem",
-                    fontWeight: 600,
-                  }}
-                >
-                  {`@${profile?.username || "-"}`}
-                </Typography>
-
-                {/* Bio Section with Truncation */}
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{
-                    fontWeight: 600,
-                    color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                    fontSize: "0.875rem",
-                  }}
-                >
+                <Box sx={{ textAlign: "center", mb: 2 }}>
+                  <Chip
+                    icon={<BusinessCenter sx={{ fontSize: 16 }} />}
+                    label={t("services")}
+                    size="small"
+                    sx={{
+                      mb: 1.5,
+                      fontWeight: 600,
+                      bgcolor: COLORS.PURPLE_ALPHA_10,
+                      color: COLORS.PRIMARY_PURPLE,
+                      border: `1px solid ${COLORS.PURPLE_ALPHA_20}`,
+                      "& .MuiChip-icon": { color: COLORS.PRIMARY_PURPLE },
+                    }}
+                  />
+                </Box>
+                <Typography variant="body2" sx={{ color: textSecondary, fontSize: "0.875rem", textAlign: "center", mb: 2 }}>
                   {(() => {
-                    const bioText = profile.bio || "Service Provider";
+                    const bioText = profile.bio || "Professional service provider on Kartsquare.";
                     const words = bioText.split(" ");
-                    const WORD_LIMIT = 10;
+                    const WORD_LIMIT = 12;
                     const isLongBio = words.length > WORD_LIMIT;
-
                     if (!isLongBio || isBioExpanded) {
                       return (
                         <>
                           {bioText}
                           {isLongBio && (
-                            <Typography
-                              component="span"
-                              onClick={() => setIsBioExpanded(false)}
-                              sx={{
-                                color: COLORS.PRIMARY_PURPLE,
-                                cursor: "pointer",
-                                ml: 0.5,
-                                fontWeight: 700,
-                                fontSize: "0.80rem",
-                                "&:hover": { textDecoration: "underline" },
-                              }}
-                            >
-                              Show Less
+                            <Typography component="span" onClick={() => setIsBioExpanded(false)} sx={{ color: COLORS.PRIMARY_PURPLE, cursor: "pointer", ml: 0.5, fontWeight: 600, fontSize: "0.8rem", "&:hover": { textDecoration: "underline" } }}>
+                              Show less
                             </Typography>
                           )}
                         </>
                       );
                     }
-
                     return (
                       <>
                         {words.slice(0, WORD_LIMIT).join(" ")}...
-                        <Typography
-                          component="span"
-                          onClick={() => setIsBioExpanded(true)}
-                          sx={{
-                            color: COLORS.PRIMARY_PURPLE,
-                            cursor: "pointer",
-                            ml: 0.5,
-                            fontWeight: 700,
-                            fontSize: "0.80rem",
-                            "&:hover": { textDecoration: "underline" },
-                          }}
-                        >
-                          Read More
+                        <Typography component="span" onClick={() => setIsBioExpanded(true)} sx={{ color: COLORS.PRIMARY_PURPLE, cursor: "pointer", ml: 0.5, fontWeight: 600, fontSize: "0.8rem", "&:hover": { textDecoration: "underline" } }}>
+                          Read more
                         </Typography>
                       </>
                     );
                   })()}
                 </Typography>
 
-              </Box>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mb: 2 }}>
+                  {profile.email && (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                      <EmailIcon sx={{ fontSize: 20, color: textSecondary }} />
+                      <Typography variant="body2" component={Link} href={`mailto:${profile.email}`} sx={{ color: textPrimary, textDecoration: "none", fontWeight: 500, fontSize: "0.875rem", "&:hover": { color: COLORS.PRIMARY_PURPLE } }}>
+                        {profile.email}
+                      </Typography>
+                    </Box>
+                  )}
+                  {getLocationString() && (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                      <LocationOn sx={{ fontSize: 20, color: textSecondary }} />
+                      <Typography variant="body2" sx={{ color: textPrimary, fontWeight: 500, fontSize: "0.875rem" }}>
+                        {getLocationString()}
+                      </Typography>
+                    </Box>
+                  )}
+                  {profile.phone_number && (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                      <Phone sx={{ fontSize: 20, color: textSecondary }} />
+                      <Typography variant="body2" sx={{ color: textPrimary, fontWeight: 500, fontSize: "0.875rem" }}>
+                        {profile.country_code} {profile.phone_number}
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
 
-              {/* Contact Information */}
-              <Box sx={{ mb: 3 }}>
-                {profile.email && (
-                  <Box
+                <Box sx={{ display: "flex", gap: 1.5, mb: 2 }}>
+                  <Button
+                    variant="contained"
+                    onClick={handleFollow}
+                    disabled={followMutation.isPending || !profile.id}
+                    fullWidth
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1.5,
-                      mb: 1.5,
-                      color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                    }}
-                  >
-                    <EmailIcon sx={{ fontSize: 18, color: "#999" }} />
-                    <Typography
-                      variant="body2"
-                      component={Link}
-                      href={`mailto:${profile.email}`}
-                      sx={{
-                        color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                        textDecoration: "none",
-                        fontWeight: 600,
-                        fontSize: "0.875rem",
-                        "&:hover": {
-                          color: COLORS.PRIMARY_PURPLE,
-                        },
-                      }}
-                    >
-                      {profile.email}
-                    </Typography>
-                  </Box>
-                )}
-                {getLocationString() && (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1.5,
-                      mb: 1.5,
-                      fontWeight: 600,
-                      color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                    }}
-                  >
-                    <LocationOn sx={{ fontSize: 18, color: "#999" }} />
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                        fontWeight: 600,
-                        fontSize: "0.875rem",
-                      }}
-                    >
-                      {getLocationString()}
-                    </Typography>
-                  </Box>
-                )}
-                {profile.phone_number && (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1.5,
-                      fontWeight: 600,
-                      color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                    }}
-                  >
-                    <Phone sx={{ fontSize: 18, color: "#999" }} />
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                        fontWeight: 600,
-                        fontSize: "0.875rem",
-                      }}
-                    >
-                      {profile.country_code} {profile.phone_number}
-                    </Typography>
-                  </Box>
-                )}
-              </Box>
-
-              {/* Action Buttons */}
-              <Box sx={{ display: "flex", gap: 1.5, mb: 3 }}>
-                <Button
-                  variant="contained"
-                  onClick={handleFollow}
-                  disabled={followMutation.isPending || !profile.id}
-                  fullWidth
-                  sx={{
-                    bgcolor: COLORS.PRIMARY_PURPLE,
-                    color: COLORS.WHITE,
-                    textTransform: "none",
-                    fontWeight: 600,
-                    py: 1.25,
-                    borderRadius: 2,
-                    fontSize: "0.9375rem",
-                    boxShadow: "none",
-                    "&:hover": {
-                      bgcolor: COLORS.PURPLE_HOVER,
-                      boxShadow: "0 4px 12px rgba(94, 24, 233, 0.3)",
-                    },
-                    "&.Mui-disabled": {
                       bgcolor: COLORS.PRIMARY_PURPLE,
-                      opacity: 0.6,
-                    },
-                  }}
-                >
-                  {/* {profile.is_following ? t("following") : t("follow")} */}
-                  Contact {profile?.first_name}
-                </Button>
-                <IconButton
-                  onClick={handleShareClick}
+                      color: COLORS.WHITE,
+                      textTransform: "none",
+                      fontWeight: 600,
+                      py: 1.25,
+                      borderRadius: 2,
+                      fontSize: "0.9375rem",
+                      boxShadow: "none",
+                      "&:hover": { bgcolor: COLORS.PURPLE_HOVER, boxShadow: "0 4px 12px rgba(94, 24, 233, 0.3)" },
+                      "&.Mui-disabled": { bgcolor: COLORS.PRIMARY_PURPLE, opacity: 0.6 },
+                    }}
+                  >
+                    Get in touch
+                  </Button>
+                  <IconButton
+                    onClick={handleShareClick}
+                    sx={{
+                      bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                      color: textPrimary,
+                      border: `1px solid ${borderColorMui}`,
+                      "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_10, borderColor: COLORS.PRIMARY_PURPLE },
+                    }}
+                  >
+                    <Share sx={{ fontSize: 20 }} />
+                  </IconButton>
+                </Box>
+
+                <Divider sx={{ my: 2, borderColor: borderColorMui }} />
+
+                {/* Stats — 2x2 grid on mobile to save height */}
+                <Box
                   sx={{
-                    bgcolor: "#f5f5f5",
-                    color: "#666",
-                    border: "1px solid #e0e0e0",
-                    "&:hover": {
-                      bgcolor: "#eeeeee",
-                    },
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr 1fr", md: "1fr" },
+                    gap: { xs: 1, md: 0.5 },
                   }}
                 >
-                  <Share sx={{ fontSize: 20 }} />
-                </IconButton>
-              </Box>
+                  <StatRow icon={<BusinessCenter />} label={t("services")} value={profile?.services_count || 0} iconColor={COLORS.PRIMARY_PURPLE} compact={isMobile} />
+                  <StatRow icon={<Visibility />} label={t("posts")} value={profile?.total_posts || 0} iconColor={textSecondary} compact={isMobile} />
+                  <StatRow icon={<Favorite />} label={t("followers") || "Followers"} value={profile?.followers_count || 0} iconColor={COLORS.SECONDARY_ORANGE} compact={isMobile} />
+                  <StatRow icon={<People />} label={t("following")} value={profile?.following_count || 0} iconColor={COLORS.PRIMARY_BLUE} compact={isMobile} />
+                </Box>
 
-              <Divider sx={{ my: 3, borderColor: "#e0e0e0" }} />
+                <Divider sx={{ my: 2, borderColor: borderColorMui }} />
 
-              {/* Statistics */}
-              <Box
-                sx={{
-                  mb: 3,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 0.5,
-                }}
-              >
-                <StatRow
-                  icon={<Visibility />}
-                  label={t("posts")}
-                  value={profile?.total_posts || 0}
-                  iconColor="#999"
-                />
-
-                <StatRow
-                  icon={<Favorite />}
-                  label={t("followers") || "Followers"}
-                  value={profile?.followers_count || 0}
-                  iconColor={COLORS.SECONDARY_ORANGE}
-                />
-
-                <StatRow
-                  icon={<People />}
-                  label={t("following")}
-                  value={profile.following_count || 0}
-                  iconColor={COLORS.PRIMARY_BLUE}
-                />
-
-
-                <StatRow
-                  icon={<BusinessCenter />}
-                  label={t("services")}
-                  value={profile.services_count || 0}
-                  iconColor={COLORS.PRIMARY_PURPLE}
-                />
-              </Box>
-
-              <Divider sx={{ my: 3, borderColor: "#e0e0e0" }} />
-
-              {/* Share Profile Section */}
-              <Box>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    fontWeight: 600,
-                    mb: 2,
-                    color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                    textTransform: "uppercase",
-                    letterSpacing: 0.5,
-                    fontSize: "0.75rem",
-                    display: "block",
-                  }}
-                >
-                  Share Profile
+                <Typography variant="caption" sx={{ fontWeight: 600, color: textSecondary, textTransform: "uppercase", letterSpacing: 0.5, fontSize: "0.7rem", display: "block", mb: 1 }}>
+                  Share this page
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                  <IconButton
-                    onClick={() => handleSocialShare("facebook")}
-                    sx={{
-                      bgcolor: "#f5f5f5",
-                      color: COLORS.PRIMARY_BLUE,
-                      width: 40,
-                      height: 40,
-                      "&:hover": {
-                        bgcolor: "rgba(24, 119, 242, 0.1)",
-                      },
-                    }}
-                  >
+                  <IconButton onClick={() => handleSocialShare("facebook")} sx={{ bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT, color: COLORS.PRIMARY_BLUE, width: 40, height: 40, border: `1px solid ${borderColorMui}`, "&:hover": { bgcolor: "rgba(24, 119, 242, 0.1)" } }}>
                     <Facebook sx={{ fontSize: 20 }} />
                   </IconButton>
-                  <IconButton
-                    onClick={() => handleSocialShare("twitter")}
-                    sx={{
-                      bgcolor: "#f5f5f5",
-                      color: COLORS.PRIMARY_BLUE,
-                      width: 40,
-                      height: 40,
-                      "&:hover": {
-                        bgcolor: "rgba(29, 161, 242, 0.1)",
-                      },
-                    }}
-                  >
+                  <IconButton onClick={() => handleSocialShare("twitter")} sx={{ bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT, color: COLORS.PRIMARY_BLUE, width: 40, height: 40, border: `1px solid ${borderColorMui}`, "&:hover": { bgcolor: "rgba(29, 161, 242, 0.1)" } }}>
                     <Twitter sx={{ fontSize: 20 }} />
                   </IconButton>
-                  <IconButton
-                    onClick={() => handleSocialShare("whatsapp")}
-                    sx={{
-                      bgcolor: "#f5f5f5",
-                      color: COLORS.SUCCESS_GREEN,
-                      width: 40,
-                      height: 40,
-                      "&:hover": {
-                        bgcolor: "rgba(37, 211, 102, 0.1)",
-                      },
-                    }}
-                  >
+                  <IconButton onClick={() => handleSocialShare("whatsapp")} sx={{ bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT, color: COLORS.SUCCESS_GREEN, width: 40, height: 40, border: `1px solid ${borderColorMui}`, "&:hover": { bgcolor: "rgba(37, 211, 102, 0.1)" } }}>
                     <WhatsApp sx={{ fontSize: 20 }} />
                   </IconButton>
-                  <IconButton
-                    onClick={handleCopyLink}
-                    sx={{
-                      bgcolor: "#f5f5f5",
-                      color: COLORS.PRIMARY_PURPLE,
-                      width: 40,
-                      height: 40,
-                      "&:hover": {
-                        bgcolor: COLORS.PURPLE_ALPHA_10,
-                      },
-                    }}
-                  >
+                  <IconButton onClick={handleCopyLink} sx={{ bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT, color: COLORS.PRIMARY_PURPLE, width: 40, height: 40, border: `1px solid ${borderColorMui}`, "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_10 } }}>
                     <ContentCopy sx={{ fontSize: 20 }} />
                   </IconButton>
                 </Box>
+
+                <Divider sx={{ my: 2, borderColor: borderColorMui }} />
+
+                {/* Reviews — collapsible on mobile */}
+                {isMobile ? (
+                  <Box>
+                    <Box
+                      onClick={() => setReviewsExpanded((prev) => !prev)}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        py: 1,
+                        cursor: "pointer",
+                        "&:hover": { opacity: 0.85 },
+                      }}
+                    >
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700, color: textPrimary }}>
+                        {t("reviews" as any)} of {profile?.first_name} {profile?.last_name}
+                      </Typography>
+                      <IconButton size="small" sx={{ color: textPrimary, p: 0.5 }}>
+                        {reviewsExpanded ? <ExpandLess /> : <ExpandMore />}
+                      </IconButton>
+                    </Box>
+                    <Collapse in={reviewsExpanded}>
+                      <ProviderReviews providerName={profile?.first_name + " " + profile?.last_name} hideTitle />
+                    </Collapse>
+                  </Box>
+                ) : (
+                  <ProviderReviews providerName={profile?.first_name + " " + profile?.last_name} />
+                )}
               </Box>
-
-              <Divider sx={{ my: 3, borderColor: "#e0e0e0" }} />
-
-              <ProviderReviews providerName={profile?.first_name + " " + profile?.last_name} />
-            </Box>
+            </Paper>
           </Grid>
 
-          {/* Right Column - Content (No Box) */}
+          {/* Right Column — Main content (business website sections) */}
           <Grid size={{ xs: 12, md: 8 }}>
-            {/* Custom Tabs */}
+            <Box sx={{ mt: { xs: 4, md: 6 }, mb: 3 }}>
+              <Typography variant="h5" sx={{ fontWeight: 700, color: textPrimary, mb: 0.5, fontSize: "1.35rem" }}>
+                Our {t("services")} &amp; {t("posts")}
+              </Typography>
+              <Typography variant="body2" sx={{ color: textSecondary, fontSize: "0.9rem" }}>
+                Explore what we offer and our latest updates.
+              </Typography>
+            </Box>
+
             <Box
               sx={{
-                mt: { xs: 6, md: 14 },
-                borderBottom: "1px solid #e0e0e0",
+                display: "inline-flex",
+                gap: 0,
+                p: 0.5,
+                borderRadius: 2,
+                bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
+                border: `1px solid ${borderColorMui}`,
                 mb: 3,
               }}
             >
-              <Box sx={{ display: "flex", gap: 4 }}>
-                <Box sx={{ display: "flex", gap: 4 }}>
-                  <Box
-                    onClick={() => handleTabChange("Services")}
-                    sx={{
-                      py: 2,
-                      cursor: "pointer",
-                      position: "relative",
-                      borderBottom: activeTab === "Services" ? `2px solid ${COLORS.PRIMARY_PURPLE}` : "2px solid transparent",
-                      mb: -1,
-                    }}
-                  >
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        fontWeight: activeTab === "Services" ? 700 : 400,
-                        color: activeTab === "Services" ? theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT : theme.palette.mode === "dark" ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                        fontSize: "1.5rem",
-                        textTransform: "none",
-                      }}
-                    >
-                      {t("services")}
-                    </Typography>
-                  </Box>
-                  <Box
-                    onClick={() => handleTabChange(PROFILE_TABS.Posts)}
-                    sx={{
-                      py: 2,
-                      cursor: "pointer",
-                      position: "relative",
-                      borderBottom: activeTab === PROFILE_TABS.Posts ? `2px solid ${COLORS.PRIMARY_PURPLE}` : "2px solid transparent",
-                      mb: -1,
-                    }}
-                  >
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 400,
-                        color: activeTab === "Posts" ? theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT : theme.palette.mode === "dark" ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                        fontSize: "1.5rem",
-                        textTransform: "none",
-                      }}
-                    >
-                      {t("posts")}
-                    </Typography>
-                  </Box>
-
+              <Box
+                onClick={() => handleTabChange("Services")}
+                sx={{
+                  px: 2.5,
+                  py: 1.25,
+                  borderRadius: 1.5,
+                  cursor: "pointer",
+                  bgcolor: activeTab === "Services" ? COLORS.PRIMARY_PURPLE : "transparent",
+                  color: activeTab === "Services" ? COLORS.WHITE : textSecondary,
+                  fontWeight: activeTab === "Services" ? 700 : 500,
+                  fontSize: "0.95rem",
+                  transition: "all 0.2s ease",
+                  "&:hover": { bgcolor: activeTab === "Services" ? COLORS.PURPLE_HOVER : (isDark ? COLORS.PURPLE_ALPHA_10 : COLORS.PURPLE_ALPHA_04) },
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <WorkIcon sx={{ fontSize: 20 }} />
+                  {t("services")}
+                </Box>
+              </Box>
+              <Box
+                onClick={() => handleTabChange(PROFILE_TABS.Posts)}
+                sx={{
+                  px: 2.5,
+                  py: 1.25,
+                  borderRadius: 1.5,
+                  cursor: "pointer",
+                  bgcolor: activeTab === PROFILE_TABS.Posts ? COLORS.PRIMARY_PURPLE : "transparent",
+                  color: activeTab === PROFILE_TABS.Posts ? COLORS.WHITE : textSecondary,
+                  fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 500,
+                  fontSize: "0.95rem",
+                  transition: "all 0.2s ease",
+                  "&:hover": { bgcolor: activeTab === PROFILE_TABS.Posts ? COLORS.PURPLE_HOVER : (isDark ? COLORS.PURPLE_ALPHA_10 : COLORS.PURPLE_ALPHA_04) },
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <ArticleIcon sx={{ fontSize: 20 }} />
+                  {t("posts")}
                 </Box>
               </Box>
             </Box>
@@ -754,20 +613,25 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
               {activeTab === PROFILE_TABS.Posts && (
                 <Box>
                   {transformedPosts.length === 0 ? (
-                    <Box
+                    <Paper
+                      elevation={0}
                       sx={{
                         textAlign: "center",
                         py: 8,
-                        color: "#666",
+                        px: 3,
+                        borderRadius: 3,
+                        border: `1px dashed ${borderColorMui}`,
+                        bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
                       }}
                     >
-                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                        {t("noPostsFound") || "No posts found"}
+                      <ArticleIcon sx={{ fontSize: 48, color: textSecondary, mb: 1.5, opacity: 0.7 }} />
+                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, color: textPrimary }}>
+                        {t("noPostsFound") || "No posts yet"}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: "#999" }}>
-                        This profile hasn't shared any posts yet.
+                      <Typography variant="body2" sx={{ color: textSecondary, maxWidth: 360, mx: "auto" }}>
+                        Updates and posts from this business will appear here.
                       </Typography>
-                    </Box>
+                    </Paper>
                   ) : (
                     <PostFeedGrid
                       posts={transformedPosts}
@@ -783,27 +647,29 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
               {activeTab === PROFILE_TABS.Services && (
                 <Box>
                   {services.length === 0 ? (
-                    <Box
+                    <Paper
+                      elevation={0}
                       sx={{
                         textAlign: "center",
                         py: 8,
-                        color: "#666",
+                        px: 3,
+                        borderRadius: 3,
+                        border: `1px dashed ${borderColorMui}`,
+                        bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
                       }}
                     >
-                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                        {t("noServicesFound") || "No services found"}
+                      <BusinessCenter sx={{ fontSize: 48, color: textSecondary, mb: 1.5, opacity: 0.7 }} />
+                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, color: textPrimary }}>
+                        {t("noServicesFound") || "No services yet"}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: "#999" }}>
-                        This profile hasn't added any services yet.
+                      <Typography variant="body2" sx={{ color: textSecondary, maxWidth: 360, mx: "auto" }}>
+                        Services offered by this provider will be listed here.
                       </Typography>
-                    </Box>
+                    </Paper>
                   ) : (
                     <Grid container spacing={2}>
                       {services.map((service: Service, index: number) => (
-                        <Grid
-                          size={{ xs: 12, sm: 5 }}
-                          key={`${service.service_id}-${index}`}
-                        >
+                        <Grid size={{ xs: 12, sm: 6, md: 4 }} key={`${service.service_id}-${index}`}>
                           <ServiceCard service={service as any} />
                         </Grid>
                       ))}
@@ -813,36 +679,30 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
               )}
             </Box>
 
-            {/* Contact Us & Map Section */}
-            <Box sx={{ mt: 8, display: "flex", flexDirection: "column", gap: 6 }}>
-              {/* Map Section */}
-              {/* Map Section */}
-              <Box>
-                <Box sx={{ mb: 4, textAlign: "center" }}>
-                  <Box sx={{ display: "inline-block", position: "relative", mb: 1 }}>
-                    <Typography variant="h4" sx={{
-                      fontWeight: 800,
-                      color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                      position: "relative",
-                      pb: 1.5,
-                      "&::after": {
-                        content: '""',
-                        position: "absolute",
-                        bottom: 0,
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        width: "60px",
-                        height: "4px",
-                        bgcolor: COLORS.PRIMARY_PURPLE,
-                        borderRadius: "4px"
-                      }
-                    }}>
-                      {"Location"}
+            {/* Location & Contact — business website sections, compact on mobile */}
+            <Box sx={{ mt: { xs: 5, md: 8 }, display: "flex", flexDirection: "column", gap: { xs: 4, md: 6 } }}>
+              <Paper
+                elevation={0}
+                sx={{
+                  p: { xs: 2, md: 3 },
+                  borderRadius: 3,
+                  border: `1px solid ${borderColorMui}`,
+                  bgcolor: cardBg,
+                  overflow: "hidden",
+                }}
+              >
+                <Box sx={{ mb: { xs: 2, md: 3 }, display: "flex", alignItems: "center", gap: 1.5 }}>
+                  <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: COLORS.PURPLE_ALPHA_10, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <LocationOn sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 24 }} />
+                  </Box>
+                  <Box>
+                    <Typography variant="h5" sx={{ fontWeight: 700, color: textPrimary, fontSize: { xs: "1.1rem", md: "1.25rem" } }}>
+                      Our location
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: textSecondary, display: { xs: "none", sm: "block" } }}>
+                      Find us on the map and plan your visit.
                     </Typography>
                   </Box>
-                  <Typography variant="body1" sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT, mt: 1 }}>
-                    Explore where we are located and plan your visit.
-                  </Typography>
                 </Box>
                 <ProviderMapSection
                   latitude={profile.default_address?.latitude}
@@ -850,38 +710,32 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   providerImage={profile.profile_pic}
                   address={getLocationString()}
                 />
-              </Box>
+              </Paper>
 
-              {/* Contact Section */}
-              <Box>
-                <Box sx={{ mb: 4, textAlign: "center" }}>
-                  <Box sx={{ display: "inline-block", position: "relative", mb: 1 }}>
-                    <Typography variant="h4" sx={{
-                      fontWeight: 800,
-                      color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                      position: "relative",
-                      pb: 1.5,
-                      "&::after": {
-                        content: '""',
-                        position: "absolute",
-                        bottom: 0,
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        width: "60px",
-                        height: "4px",
-                        bgcolor: COLORS.PRIMARY_PURPLE,
-                        borderRadius: "4px"
-                      }
-                    }}>
-                      {t("contactUs") || "Contact Us"}
+              <Paper
+                elevation={0}
+                sx={{
+                  p: { xs: 2, md: 3 },
+                  borderRadius: 3,
+                  border: `1px solid ${borderColorMui}`,
+                  bgcolor: cardBg,
+                }}
+              >
+                <Box sx={{ mb: { xs: 2, md: 3 }, display: "flex", alignItems: "center", gap: 1.5 }}>
+                  <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: COLORS.PURPLE_ALPHA_10, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <EmailIcon sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 24 }} />
+                  </Box>
+                  <Box>
+                    <Typography variant="h5" sx={{ fontWeight: 700, color: textPrimary, fontSize: { xs: "1.1rem", md: "1.25rem" } }}>
+                      {t("contactUs") || "Contact us"}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: textSecondary, display: { xs: "none", sm: "block" } }}>
+                      Get in touch — we&apos;ll respond as soon as we can.
                     </Typography>
                   </Box>
-                  <Typography variant="body1" sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT, mt: 1 }}>
-                    Ready to get started? Send us a message directly.
-                  </Typography>
                 </Box>
                 <ContactUsSection profile={profile} />
-              </Box>
+              </Paper>
             </Box>
           </Grid>
         </Grid>
@@ -975,7 +829,8 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
           sx={{
             width: "100%",
             borderRadius: 2,
-            bgcolor: COLORS.WHITE,
+            bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.WHITE,
+            border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
           }}
         >
           {snackbarMessage}

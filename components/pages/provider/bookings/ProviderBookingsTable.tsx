@@ -64,7 +64,7 @@ const ProviderBookingsTable: React.FC<ProviderBookingsTableProps> = ({ bookings,
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {bookings.map((booking, index) => (
+                    {bookings?.map((booking, index) => (
                         <TableRow
                             key={booking.booking_id}
                             sx={{

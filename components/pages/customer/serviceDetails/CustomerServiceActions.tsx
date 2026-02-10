@@ -54,7 +54,7 @@ const CustomerServiceActions = ({
           /* bgcolor: COLORS.PRIMARY_PURPLE,
           color: "white", */
           bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-          color: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : "white",
+          color: "white",
           borderRadius: "30px",
           px: 3,
           py: 1.2,

@@ -59,6 +59,33 @@ class AuthService {
       // Swallow error - logout should proceed regardless
     }
   }
+  async verifyOtp(data: { email: string; otp: string }) {
+    try {
+      const response = await POST<AuthResponse>(
+        API_ENDPOINTS.VERIFY_OTP,
+        data,
+        {},
+        false
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async resendOtp(email: string) {
+    try {
+      const response = await POST<any>(
+        API_ENDPOINTS.RESEND_OTP,
+        { email },
+        {},
+        false
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export const authService = new AuthService();

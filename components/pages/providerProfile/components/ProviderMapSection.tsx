@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme, useMediaQuery } from "@mui/material";
 import { GoogleMap, useJsApiLoader, OverlayView } from "@react-google-maps/api";
 import { motion } from "framer-motion";
 import { COLORS } from "@/constants/colors";
@@ -28,7 +28,11 @@ const ProviderMapSection: React.FC<ProviderMapSectionProps> = ({
     const theme = useTheme();
     const { t } = useTranslate();
     const isDark = theme.palette.mode === "dark";
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const isTablet = useMediaQuery(theme.breakpoints.down("md"));
     const [hovered, setHovered] = useState(false);
+
+    const mapHeight = isMobile ? 220 : isTablet ? 300 : 450;
 
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
@@ -79,7 +83,7 @@ const ProviderMapSection: React.FC<ProviderMapSectionProps> = ({
             viewport={{ once: true, margin: "-100px" }}
             variants={containerVariants}
             sx={{
-                height: 450,
+                height: mapHeight,
                 width: "100%",
                 borderRadius: 4,
                 overflow: "hidden",

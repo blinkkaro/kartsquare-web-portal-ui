@@ -3,10 +3,11 @@ import { Box, Avatar, Typography, Button, Chip, useTheme } from "@mui/material";
 import { useFollowUser, useUnfollowUser } from "@/hooks/useFollow";
 import { getUserId } from "@/utils/auth";
 import { openLoginModal } from "@/features/ui/loginModalSlice";
-import { Person, PersonAdd, Message, CheckCircle } from "@mui/icons-material";
+import { Person, PersonAdd, Message, CheckCircle, Call } from "@mui/icons-material";
 import { COLORS } from "../constants/colors";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
+import { useIncreasePhoneNumberViewCount } from "@/hooks/useServicesList";
 
 interface ProviderInfoCardProps {
   providerId: string;
@@ -15,6 +16,7 @@ interface ProviderInfoCardProps {
   isHotSeller?: boolean;
   businessName?: string;
   isFollowing?: boolean;
+  providerPhoneNumber?: string;
 }
 
 const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
@@ -24,12 +26,16 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
   isHotSeller = false,
   businessName,
   isFollowing = false,
+  providerPhoneNumber,
 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const dispatch = useDispatch();
   const currentUserId = getUserId();
   const [following, setFollowing] = React.useState(isFollowing);
+  const [showPhoneNumber, setShowPhoneNumber] = React.useState(false);
+  const increasePhoneNumberViewCountMutation =
+    useIncreasePhoneNumberViewCount(providerId);
 
   React.useEffect(() => {
     setFollowing(isFollowing);
@@ -54,6 +60,11 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
         onSuccess: () => setFollowing(true),
       });
     }
+  };
+
+  const handleShowPhoneNumber = () => {
+    setShowPhoneNumber(true);
+    increasePhoneNumberViewCountMutation.mutate();
   };
 
   const isLoading = followMutation.isPending || unfollowMutation.isPending;
@@ -208,7 +219,7 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
       </Box>
 
       <Box sx={{ display: "flex", gap: 1, width: { xs: "100%", sm: "auto" } }}>
-        <Button
+        {/* <Button
           variant="contained"
           fullWidth
           size="small"
@@ -226,6 +237,31 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
           }}
         >
           Message
+        </Button> */}
+        <Button
+          variant="contained"
+          fullWidth
+          size="small"
+          startIcon={<Call sx={{ fontSize: "1rem !important" }} />}
+          onClick={handleShowPhoneNumber}
+          disabled={showPhoneNumber}
+          sx={{
+            borderRadius: "10px",
+            textTransform: "none",
+            bgcolor: COLORS.PRIMARY_PURPLE,
+            color: "white",
+            fontWeight: 700,
+            px: 2,
+            "&:hover": {
+              bgcolor: COLORS.PURPLE_HOVER,
+            },
+            "&.Mui-disabled": {
+              bgcolor: COLORS.PRIMARY_PURPLE,
+              color: "white", 
+            }
+          }}
+        >
+          {showPhoneNumber ? providerPhoneNumber : "Show Number"}
         </Button>
         <Button
           variant={"outlined"}

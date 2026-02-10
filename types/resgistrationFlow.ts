@@ -16,6 +16,7 @@ export type RegistrationStackParamList = {
   UploadDocuments: undefined;
   ScheduleScreen: undefined;
   SetPreferences: undefined;
+  SupplierOnboarding: undefined;
 };
 
 type UserFlowMap = Partial<
@@ -37,7 +38,7 @@ export const registrationStepMap: Record<AppUserType, UserFlowMap> = {
   },
   SUPPLIER: {
     [UserRegisterSteps.REGISTERED]: "VerifyEmail",
-    [UserRegisterSteps.EMAIL_VERIFIED]: "UploadDocuments",
+    [UserRegisterSteps.EMAIL_VERIFIED]: "SupplierOnboarding",
     [UserRegisterSteps.DOCUMENT_VERIFIED]: "ScheduleScreen",
     [UserRegisterSteps.SCHEDULE_ADDED]: "SetPreferences",
   },
@@ -62,6 +63,7 @@ export const getPathForScreen = (
     UploadDocuments: "/verifyDocuments",
     ScheduleScreen: "/schedule",
     SetPreferences: "/preferences",
+    SupplierOnboarding: "/supplier/onboarding",
   };
 
   return screenToPathMap[screen] || "/";

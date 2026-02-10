@@ -43,8 +43,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
       : [
-          "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        ];
+        "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      ];
 
   const handlePrevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -305,10 +305,10 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Avatar
-              src={service.provider_image_url || undefined}
+              src={service.provider_image_url}
               sx={{ width: 24, height: 24 }}
             >
-              {service.provider_name.charAt(0).toUpperCase()}
+              {/* {service?.provider_name.charAt(0).toUpperCase()} */}
             </Avatar>
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Typography
@@ -353,7 +353,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             </Box>
           </Box>
 
-          {service.is_price_required && service.price !== null && (
+          {service.is_price_required ? (
             <Typography
               variant="subtitle1"
               fontWeight="bold"
@@ -374,7 +374,27 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
               >
                 {service.currency}
               </Typography>
-              {service.price.toFixed(2)}
+              {service.price}
+            </Typography>
+          ) : (
+            <Typography
+              variant="subtitle1"
+              fontWeight="bold"
+              sx={{ color: COLORS.PRIMARY_PURPLE }}
+            >
+              <Typography
+                variant="body2"
+                component="span"
+                sx={{
+                  color: isDark
+                    ? COLORS.TEXT.SECONDARY_DARK
+                    : COLORS.TEXT.SECONDARY_LIGHT,
+                  mr: 0.5,
+                  fontSize: "0.85rem",
+                }}
+              >
+                {t("getQuote")}
+              </Typography>
             </Typography>
           )}
         </Box>
