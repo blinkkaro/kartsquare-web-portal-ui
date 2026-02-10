@@ -41,6 +41,7 @@ export interface AdvertiseUpdate {
   image_url?: string;
   start_at?: Date;
   expires_at?: Date;
+  status?: ad_status_type;
 }
 
 export interface AdvertiseFilters {

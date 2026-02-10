@@ -194,7 +194,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onEdit, onDelete }) => {
             overflow: "hidden",
           }}
         >
-          {ad.title || "Untitled Advertisement"}
+          {ad.title || t("untitled_advertisement")}
         </Typography>
 
         {/* Description */}
@@ -214,7 +214,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onEdit, onDelete }) => {
             minHeight: "2.24rem",
           }}
         >
-          {ad.description || "No description available"}
+          {ad.description || t("no_description_available")}
         </Typography>
 
         {/* Metrics Row */}
@@ -244,7 +244,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onEdit, onDelete }) => {
                 fontWeight: 600,
               }}
             >
-              {ad.impressions_count} views
+              {ad.impressions_count} {t("ad_views")}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
@@ -265,7 +265,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onEdit, onDelete }) => {
                 fontWeight: 600,
               }}
             >
-              {ad.clicks_count} clicks
+              {ad.clicks_count} {t("ad_clicks")}
             </Typography>
           </Box>
         </Box>
@@ -319,7 +319,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onEdit, onDelete }) => {
                 fontWeight: 600,
               }}
             >
-              Rejection Reason: {ad.ad_reject_reason}
+              {t("ad_rejection_reason")} {ad.ad_reject_reason}
             </Typography>
           </Box>
         )}

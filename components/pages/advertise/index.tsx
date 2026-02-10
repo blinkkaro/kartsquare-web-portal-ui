@@ -183,7 +183,7 @@ function AdvertiseView() {
             },
           }}
         >
-          Create Ad
+          {t("create_ad")}
         </Button>
       </Box>
 
@@ -218,11 +218,9 @@ function AdvertiseView() {
       {isError && (
         <EmptyState
           titleKey="error"
-          title="Error Loading Advertisements"
+          title={t("error_loading_advertisements")}
           descriptionKey="errorLoadingAds"
-          description={
-            error?.message || "Failed to load advertisements. Please try again."
-          }
+          description={error?.message || t("error_loading_ads_description")}
           variant="notFound"
           minHeight={400}
         />
@@ -232,9 +230,9 @@ function AdvertiseView() {
       {!isLoading && !isError && ads.length === 0 && (
         <EmptyState
           titleKey="noAdvertisements"
-          title="No Advertisements Yet"
+          title={t("no_advertisements_yet")}
           descriptionKey="noAdvertisementsDesc"
-          description="Create your first ad to promote your services and reach more customers"
+          description={t("no_advertisements_description")}
           icon={
             <Box
               sx={{
@@ -277,7 +275,7 @@ function AdvertiseView() {
                 },
               }}
             >
-              Create Your First Ad
+              {t("create_your_first_ad")}
             </Button>
           }
         />
@@ -346,8 +344,10 @@ function AdvertiseView() {
       <WarningModel
         open={deleteDialogOpen}
         onClose={handleCancelDelete}
-        title="Delete Advertisement?"
-        description={`Are you sure you want to delete "${adToDelete?.title || "this advertisement"}"? This action cannot be undone.`}
+        title={t("delete_advertisement")}
+        description={t("delete_ad_confirmation", {
+          title: adToDelete?.title || t("this_advertisement"),
+        })}
         ActionsButtons={
           <Box sx={{ display: "flex", gap: 2, width: "100%", mt: 2 }}>
             <Button
@@ -371,7 +371,7 @@ function AdvertiseView() {
                 },
               }}
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button
               fullWidth
@@ -395,7 +395,7 @@ function AdvertiseView() {
               {deleteMutation.isPending ? (
                 <CircularProgress size={20} sx={{ color: COLORS.WHITE }} />
               ) : (
-                "Delete"
+                t("delete")
               )}
             </Button>
           </Box>
@@ -406,7 +406,9 @@ function AdvertiseView() {
       <RightDrawer
         open={drawerOpen}
         onClose={handleCloseDrawer}
-        title={editingAdId ? "Edit Advertisement" : "Create Advertisement"}
+        title={
+          editingAdId ? t("edit_advertisement") : t("create_advertisement")
+        }
         width={800}
       >
         <AdForm

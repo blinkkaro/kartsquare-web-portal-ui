@@ -60,8 +60,13 @@ export const useCreateAdvertisement = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: AdvertiseCreate) =>
-      advertiseService.createAdvertise(data),
+    mutationFn: ({
+      data,
+      imageFile,
+    }: {
+      data: Omit<AdvertiseCreate, "image_url">;
+      imageFile: File;
+    }) => advertiseService.createAdvertise(data, imageFile),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["provider-advertisements"],
@@ -74,14 +79,19 @@ export const useUpdateAdvertisement = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: AdvertiseUpdate) =>
-      advertiseService.updateAdvertise(data),
+    mutationFn: ({
+      data,
+      imageFile,
+    }: {
+      data: Omit<AdvertiseUpdate, "image_url">;
+      imageFile?: File;
+    }) => advertiseService.updateAdvertise(data, imageFile),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["provider-advertisements"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["advertisement", variables.advertise_id],
+        queryKey: ["advertisement", variables.data.advertise_id],
       });
     },
   });

@@ -47,22 +47,22 @@ const AdFilters: React.FC<AdFiltersProps> = ({
   const statusOptions = [
     {
       value: ad_status_type.PENDING,
-      label: "Pending",
+      label: t("ad_status_pending"),
       color: "hsl(45deg 100% 51% / 71%)",
     },
     {
       value: ad_status_type.ACTIVE,
-      label: "Active",
+      label: t("ad_status_active"),
       color: "hsl(142deg 99.14% 41.59% / 71%)",
     },
     {
       value: ad_status_type.INACTIVE,
-      label: "Inactive",
+      label: t("ad_status_inactive"),
       color: "hsl(0deg 100% 50% / 71%)",
     },
     {
       value: ad_status_type.REJECTED,
-      label: "Rejected",
+      label: t("ad_status_rejected"),
       color: "hsl(0deg 84% 60% / 71%)",
     },
   ];
@@ -95,7 +95,7 @@ const AdFilters: React.FC<AdFiltersProps> = ({
               letterSpacing: 0.5,
             }}
           >
-            Filters
+            {t("filters")}
           </Typography>
         </Box>
         {hasActiveFilters && (
@@ -113,7 +113,7 @@ const AdFilters: React.FC<AdFiltersProps> = ({
               },
             }}
           >
-            Clear Filters
+            {t("clear_filters")}
           </Button>
         )}
       </Box>
@@ -141,14 +141,14 @@ const AdFilters: React.FC<AdFiltersProps> = ({
             },
           }}
         >
-          <InputLabel>Category</InputLabel>
+          <InputLabel>{t("category")}</InputLabel>
           <Select
             value={selectedCategory}
-            label="Category"
+            label={t("category")}
             onChange={(e) => onCategoryChange(e.target.value)}
           >
             <MenuItem value="">
-              <em>All Categories</em>
+              <em>{t("all_categories")}</em>
             </MenuItem>
             {categories.map((category) => (
               <MenuItem key={category.id} value={category.id}>
@@ -172,14 +172,14 @@ const AdFilters: React.FC<AdFiltersProps> = ({
             },
           }}
         >
-          <InputLabel>Service</InputLabel>
+          <InputLabel>{t("ad_form_service")}</InputLabel>
           <Select
             value={selectedService}
-            label="Service"
+            label={t("ad_form_service")}
             onChange={(e) => onServiceChange(e.target.value)}
           >
             <MenuItem value="">
-              <em>All Services</em>
+              <em>{t("all_services")}</em>
             </MenuItem>
             {services.map((service) => (
               <MenuItem key={service.service_id} value={service.service_id}>
@@ -204,7 +204,7 @@ const AdFilters: React.FC<AdFiltersProps> = ({
             display: "block",
           }}
         >
-          Status
+          {t("status")}
         </Typography>
         <Box
           sx={{
@@ -214,7 +214,7 @@ const AdFilters: React.FC<AdFiltersProps> = ({
           }}
         >
           <Chip
-            label="All"
+            label={t("ad_status_all")}
             onClick={() => onStatusChange("")}
             sx={{
               borderRadius: "8px",

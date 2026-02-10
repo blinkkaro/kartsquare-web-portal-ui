@@ -1,6 +1,7 @@
 import { APIENDPOINT } from "./apiEndPoint";
 import {
   Advertise,
+  AdvertiseActiveAd,
   AdvertiseCreate,
   AdvertiseDetails,
   AdvertiseProviderAdPagination,
@@ -8,65 +9,150 @@ import {
   ProviderAdFilters,
 } from "./advertise.intreface";
 import { DELETE, GET, POST, PUT } from "../api";
+import { verifyDocumentService } from "../auth/verifyDocument.service";
 
 class AdvertiseService {
-  async getActiveAdvertisements() {
-    const response = await GET(APIENDPOINT.GET_ACTIVE_ADVERTISEMENTS);
-    return response.data;
+  async getActiveAdvertisements(): Promise<AdvertiseActiveAd[]> {
+    try {
+      const response = await GET<AdvertiseActiveAd[]>(
+        APIENDPOINT.GET_ACTIVE_ADVERTISEMENTS,
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
-  async createAdvertise(advertise: AdvertiseCreate): Promise<Advertise> {
-    const response = await POST<Advertise>(
-      APIENDPOINT.CREATE_ADVERTISEMENTS,
-      advertise,
-    );
-    return response.data;
+  async createAdvertise(
+    advertise: Omit<AdvertiseCreate, "image_url">,
+    imageFile: File,
+  ): Promise<Advertise> {
+    try {
+      // Upload the image and get the URL
+      const uploadedUrls = await verifyDocumentService.uploadImages([
+        imageFile,
+      ]);
+
+      if (uploadedUrls.length === 0) {
+        throw new Error("Failed to upload advertisement image.");
+      }
+
+      const advertiseData: AdvertiseCreate = {
+        ...advertise,
+        image_url: uploadedUrls[0],
+      };
+
+      const response = await POST<Advertise>(
+        APIENDPOINT.CREATE_ADVERTISEMENTS,
+        advertiseData,
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
-  async updateAdvertise(advertise: AdvertiseUpdate): Promise<AdvertiseDetails> {
-    const response = await PUT<AdvertiseDetails>(
-      APIENDPOINT.UPDATE_ADVERTISEMENTS(advertise.advertise_id),
-      advertise,
-    );
-    return response.data;
+  async updateAdvertise(
+    advertise: Omit<AdvertiseUpdate, "image_url">,
+    imageFile?: File,
+  ): Promise<AdvertiseDetails> {
+    try {
+      let advertiseData: AdvertiseUpdate = {
+        ...advertise,
+      };
+
+      if (imageFile) {
+        const uploadedUrls = await verifyDocumentService.uploadImages([
+          imageFile,
+        ]);
+
+        if (uploadedUrls.length === 0) {
+          throw new Error("Failed to upload advertisement image.");
+        }
+
+        advertiseData.image_url = uploadedUrls[0];
+      }
+
+      const response = await PUT<AdvertiseDetails>(
+        APIENDPOINT.UPDATE_ADVERTISEMENTS(advertise.advertise_id),
+        advertiseData,
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
   async deleteAdvertise(advertise_id: string): Promise<boolean> {
-    const response = await DELETE(
-      APIENDPOINT.DELETE_ADVERTISEMENTS(advertise_id),
-    );
-    return response.success;
+    try {
+      const response = await DELETE(
+        APIENDPOINT.DELETE_ADVERTISEMENTS(advertise_id),
+      );
+      return response.success;
+    } catch (error) {
+      throw error;
+    }
   }
-  async addAdvertiseClicks(advertise_id: string): Promise<boolean> {
-    const response = await POST(APIENDPOINT.ADVERTIES_CLICKS(advertise_id), {});
-    return response.success;
+  async AdvertiseClicked(advertise_id: string): Promise<boolean> {
+    try {
+      const response = await POST(
+        APIENDPOINT.ADVERTIES_CLICKS(advertise_id),
+        {},
+      );
+      return response.success;
+    } catch (error) {
+      throw error;
+    }
   }
   async getProviderAdvertisements(
     filters: ProviderAdFilters,
   ): Promise<AdvertiseProviderAdPagination> {
-    const baseUrl = APIENDPOINT.GET_PROVIDER_ADVERTISEMENTS;
-    const queryParams = new URLSearchParams({
-      page: filters.page?.toString() || "1",
-      limit: filters.limit?.toString() || "10",
-    });
-    if (filters.category_id) {
-      queryParams.set("category_id", filters.category_id);
+    try {
+      const baseUrl = APIENDPOINT.GET_PROVIDER_ADVERTISEMENTS;
+      const queryParams = new URLSearchParams({
+        page: filters.page?.toString() || "1",
+        limit: filters.limit?.toString() || "10",
+      });
+      if (filters.category_id) {
+        queryParams.set("category_id", filters.category_id);
+      }
+      if (filters.service_id) {
+        queryParams.set("service_id", filters.service_id);
+      }
+      if (filters.status) {
+        queryParams.set("status", filters.status);
+      }
+      const response = await GET<AdvertiseProviderAdPagination>(
+        `${baseUrl}?${queryParams.toString()}`,
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
     }
-    if (filters.service_id) {
-      queryParams.set("service_id", filters.service_id);
-    }
-    if (filters.status) {
-      queryParams.set("status", filters.status);
-    }
-    const response = await GET<AdvertiseProviderAdPagination>(
-      `${baseUrl}?${queryParams.toString()}`,
-    );
-    return response.data;
   }
   async getAdvertisementsById(id: string): Promise<AdvertiseDetails> {
-    const response = await GET<AdvertiseDetails>(
-      APIENDPOINT.GET_ADVERTISEMENTS_BY_ID(id),
-      {},
-      true
-    );
-    return response.data;
+    try {
+      const response = await GET<AdvertiseDetails>(
+        APIENDPOINT.GET_ADVERTISEMENTS_BY_ID(id),
+        {},
+        true,
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async updateAdvertiseStatus(
+    advertise_id: string,
+    status: string,
+  ): Promise<AdvertiseDetails> {
+    try {
+      const response = await PUT<AdvertiseDetails>(
+        APIENDPOINT.UPDATE_ADVERTISEMENT_STATUS(advertise_id),
+        { status },
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
 }
 
