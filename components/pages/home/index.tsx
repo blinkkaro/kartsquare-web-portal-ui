@@ -23,6 +23,7 @@ import CompactMapView from "./components/CompactMapView";
 import { Posts, Visibility } from "@/services/post/postInterfaces";
 import AdvertisementSlider from "./components/AdvertisementSlider";
 import { AdvertiseActiveAd } from "@/services/advertise/advertise.intreface";
+import { seededRandom } from "@/helper/helper";
 
 function HomeView() {
   const {
@@ -110,7 +111,8 @@ function HomeView() {
       key: string;
     }> = [];
     let adIndex = 0;
-    let nextAdPosition = Math.floor(Math.random() * 11) + 5; // Random between 5-15
+    const rng = seededRandom(12345); // Fixed seed for deterministic placement
+    let nextAdPosition = Math.floor(rng() * 11) + 5; // seededRandom returns 0-1 like Math.random()
 
     allPosts.forEach((post, index) => {
       // Add post
@@ -125,7 +127,7 @@ function HomeView() {
         });
         adIndex++;
         // Calculate next ad position (5-15 posts from current position)
-        nextAdPosition = index + 1 + Math.floor(Math.random() * 11) + 5;
+        nextAdPosition = index + 1 + Math.floor(rng() * 11) + 5;
       }
     });
 
