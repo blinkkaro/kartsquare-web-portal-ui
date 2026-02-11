@@ -423,7 +423,8 @@ export const english = {
 
   // Supplier
   supplier_registration_title: "Supplier Registration",
-  supplier_registration_subtitle: "Join our B2B marketplace and grow your business",
+  supplier_registration_subtitle:
+    "Join our B2B marketplace and grow your business",
   register_as_supplier: "Register as Supplier",
   settings: "Settings",
   profile: "Profile",
@@ -876,7 +877,8 @@ export const english = {
   clear_all_catalog: "Clear all",
   service_name_label: "Service name",
   price_label: "Price (INR)",
-  at_least_one_price_item: "Add at least one service with price and description",
+  at_least_one_price_item:
+    "Add at least one service with price and description",
   price_catalog_required: "Please upload a price catalog file",
   // Customer Service Details
   services: "Services",
@@ -1146,7 +1148,15 @@ export const english = {
   no: "No",
   getQuote: "Get Quote",
   priceCatalog: "Price Catalog",
-  price_catalog_subtitle: "View or download the provider's price list. Tap an image to view full size.",
-  price_catalog_list_subtitle: "Service-wise prices and descriptions from the provider.",
+  price_catalog_subtitle:
+    "View or download the provider's price list. Tap an image to view full size.",
+  price_catalog_list_subtitle:
+    "Service-wise prices and descriptions from the provider.",
   tap_to_view_full: "Tap to view full size",
+  messageIsTooShort: "Message is too short",
+  // Contact form additional
+  messageSentSuccessfully: "Message Sent Successfully",
+  messageSentDescription:
+    "Thank you for contacting us. We will get back to you shortly.",
+  close: "Close",
 };
