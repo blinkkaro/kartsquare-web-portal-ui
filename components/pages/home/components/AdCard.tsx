@@ -12,6 +12,8 @@ import { AdvertiseActiveAd } from "@/services/advertise/advertise.intreface";
 import { COLORS } from "@/constants/colors";
 import { useRouter } from "next/navigation";
 import { advertiseService } from "@/services/advertise/advertiseServies";
+import { openDrawer } from "@/features/ui/profileDrawerSlice";
+import { useDispatch } from "react-redux";
 
 interface AdCardProps {
   ad: AdvertiseActiveAd;
@@ -20,6 +22,7 @@ interface AdCardProps {
 const AdCard = ({ ad }: AdCardProps) => {
   const theme = useTheme();
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const handleAdClick = async () => {
     try {
@@ -35,12 +38,35 @@ const AdCard = ({ ad }: AdCardProps) => {
     <Card sx={{ boxShadow: "none", background: "transparent" }}>
       <Box
         sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          cursor: "pointer",
+          m: 2,
+        }}
+        onClick={() => dispatch(openDrawer({ userId: ad.provider_id }))}
+      >
+        <Avatar
+          sx={{
+            cursor: "pointer",
+            width: 40,
+            height: 40,
+            border: "2px solid white",
+          }}
+          src={ad.provider_profile_url || ""}
+          alt={ad.provider_business_name}
+        />
+        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+          {ad.provider_business_name}
+        </Typography>
+      </Box>
+      <Box
+        sx={{
           flex: { md: 1 },
           minWidth: { md: 0 },
           borderRadius: 5,
         }}
       >
-
         {/* Ad Image */}
         <Box
           onClick={handleAdClick}

@@ -60,6 +60,8 @@ export interface AdvertiseActiveAd {
   title?: string;
   description?: string;
   image_url: string;
+  provider_profile_url: string;
+  provider_business_name: string;
 }
 
 // Interface for provider ads (provider dashboard)

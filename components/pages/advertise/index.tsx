@@ -26,12 +26,10 @@ import EmptyState from "@/components/common/EmptyState";
 import WarningModel from "@/components/common/WarningModel";
 import RightDrawer from "@/components/common/RightDrawer";
 import AdForm from "./components/AdForm";
-import { useRouter } from "next/navigation";
 
 function AdvertiseView() {
   const { t } = useTranslate();
   const theme = useTheme();
-  const router = useRouter();
   const isDark = theme.palette.mode === "dark";
 
   // Filter states

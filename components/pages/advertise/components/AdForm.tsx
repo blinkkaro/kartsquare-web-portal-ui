@@ -26,6 +26,7 @@ import {
 } from "@/services/advertise/advertise.intreface";
 import { CloudUpload } from "@mui/icons-material";
 import { useTranslate } from "@/hooks/useTranslate";
+import ErrorMessage from "@/components/common/ErrorMessage";
 
 interface AdFormProps {
   advertiseId?: string;
@@ -42,6 +43,7 @@ const AdForm: React.FC<AdFormProps> = ({
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
   const isEditMode = !!advertiseId;
+  const [error, setError] = useState<string>("");
 
   // Hooks
   const { data: servicesData } = useProviderServicesList();
@@ -71,16 +73,9 @@ const AdForm: React.FC<AdFormProps> = ({
 
   // Load ad data for edit mode
   useEffect(() => {
-    console.log("Edit mode:", isEditMode, "Ad data:", adData);
     if (isEditMode && adData) {
-      console.log("Loading ad data into form:", adData);
-
-      // Convert UTC dates to local datetime-local format
-      // The API returns UTC dates, but datetime-local input expects local time
-      // We need to display the UTC time as-is without timezone conversion
       const formatDateForInput = (date: Date) => {
         const d = new Date(date);
-        // Get the ISO string and remove the 'Z' to treat it as local time
         return d.toISOString().slice(0, 16);
       };
 
@@ -153,7 +148,7 @@ const AdForm: React.FC<AdFormProps> = ({
 
   const handleSubmit = async () => {
     if (!validate()) return;
-
+    setError("");
     try {
       const createUTCDate = (dateTimeString: string) => {
         const [datePart, timePart] = dateTimeString.split("T");
@@ -193,7 +188,12 @@ const AdForm: React.FC<AdFormProps> = ({
         });
       }
       onSuccess();
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to save advertisement";
+      setError(errorMessage);
       console.error("Failed to save advertisement:", error);
     }
   };
@@ -219,6 +219,8 @@ const AdForm: React.FC<AdFormProps> = ({
   return (
     <Box sx={{ p: 3 }}>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+        {/* Error Message */}
+        <ErrorMessage error={error} isVisible={!!error} />
         {/* Service Selection */}
         <TextField
           select
