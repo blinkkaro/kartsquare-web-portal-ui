@@ -111,3 +111,15 @@ export const useUpdateTestimonial = () => {
     },
   });
 };
+
+export const useGetAllTestimonials = (
+  providerId: string,
+  enabled: boolean = true,
+) => {
+  return useQuery({
+    queryKey: ["all-testimonials", providerId],
+    queryFn: () => reviewService.getAllTestimonials(providerId),
+    enabled: enabled && !!providerId,
+    staleTime: 5 * 60 * 1000,
+  });
+};

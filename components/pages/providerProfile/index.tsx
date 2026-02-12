@@ -76,7 +76,6 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
 
-
   const [activeTab, setActiveTab] = useState(PROFILE_TABS.Services);
   const [shareMenuAnchor, setShareMenuAnchor] = useState<null | HTMLElement>(
     null,
@@ -95,7 +94,6 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
   const profile = profileData?.profile;
   const services = profileData?.services || [];
   const posts = profileData?.posts || [];
-
 
   const followMutation = useFollowProvider(profile?.id || "");
 
@@ -230,7 +228,6 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
       </Typography>
     </Box>
   );
-
 
   // Format location from default_address
   const getLocationString = () => {
@@ -423,7 +420,9 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     </Box>
                   )}
                   {getLocationString() && (
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
+                    >
                       <LocationOn sx={{ fontSize: 20, color: textSecondary }} />
                       <Typography variant="body2" sx={{ color: textPrimary, fontWeight: 500, fontSize: "0.875rem" }}>
                         {getLocationString()}
@@ -431,9 +430,18 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     </Box>
                   )}
                   {profile.phone_number && (
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
+                    >
                       <Phone sx={{ fontSize: 20, color: textSecondary }} />
-                      <Typography variant="body2" sx={{ color: textPrimary, fontWeight: 500, fontSize: "0.875rem" }}>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: textPrimary,
+                          fontWeight: 500,
+                          fontSize: "0.875rem",
+                        }}
+                      >
                         {profile.country_code} {profile.phone_number}
                       </Typography>
                     </Box>
@@ -455,8 +463,14 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       borderRadius: 2,
                       fontSize: "0.9375rem",
                       boxShadow: "none",
-                      "&:hover": { bgcolor: COLORS.PURPLE_HOVER, boxShadow: "0 4px 12px rgba(94, 24, 233, 0.3)" },
-                      "&.Mui-disabled": { bgcolor: COLORS.PRIMARY_PURPLE, opacity: 0.6 },
+                      "&:hover": {
+                        bgcolor: COLORS.PURPLE_HOVER,
+                        boxShadow: "0 4px 12px rgba(94, 24, 233, 0.3)",
+                      },
+                      "&.Mui-disabled": {
+                        bgcolor: COLORS.PRIMARY_PURPLE,
+                        opacity: 0.6,
+                      },
                     }}
                   >
                     Get in touch
@@ -464,10 +478,15 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   <IconButton
                     onClick={handleShareClick}
                     sx={{
-                      bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                      bgcolor: isDark
+                        ? COLORS.BACKGROUND.PRIMARY_DARK
+                        : COLORS.BACKGROUND.SECONDARY_LIGHT,
                       color: textPrimary,
                       border: `1px solid ${borderColorMui}`,
-                      "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_10, borderColor: COLORS.PRIMARY_PURPLE },
+                      "&:hover": {
+                        bgcolor: COLORS.PURPLE_ALPHA_10,
+                        borderColor: COLORS.PRIMARY_PURPLE,
+                      },
                     }}
                   >
                     <Share sx={{ fontSize: 20 }} />
@@ -484,28 +503,111 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     gap: { xs: 1, md: 0.5 },
                   }}
                 >
-                  <StatRow icon={<BusinessCenter />} label={t("services")} value={profile?.services_count || 0} iconColor={COLORS.PRIMARY_PURPLE} compact={isMobile} />
-                  <StatRow icon={<Visibility />} label={t("posts")} value={profile?.total_posts || 0} iconColor={textSecondary} compact={isMobile} />
-                  <StatRow icon={<Favorite />} label={t("followers") || "Followers"} value={profile?.followers_count || 0} iconColor={COLORS.SECONDARY_ORANGE} compact={isMobile} />
-                  <StatRow icon={<People />} label={t("following")} value={profile?.following_count || 0} iconColor={COLORS.PRIMARY_BLUE} compact={isMobile} />
+                  <StatRow
+                    icon={<BusinessCenter />}
+                    label={t("services")}
+                    value={profile?.services_count || 0}
+                    iconColor={COLORS.PRIMARY_PURPLE}
+                    compact={isMobile}
+                  />
+                  <StatRow
+                    icon={<Visibility />}
+                    label={t("posts")}
+                    value={profile?.total_posts || 0}
+                    iconColor={textSecondary}
+                    compact={isMobile}
+                  />
+                  <StatRow
+                    icon={<Favorite />}
+                    label={t("followers") || "Followers"}
+                    value={profile?.followers_count || 0}
+                    iconColor={COLORS.SECONDARY_ORANGE}
+                    compact={isMobile}
+                  />
+                  <StatRow
+                    icon={<People />}
+                    label={t("following")}
+                    value={profile?.following_count || 0}
+                    iconColor={COLORS.PRIMARY_BLUE}
+                    compact={isMobile}
+                  />
                 </Box>
 
                 <Divider sx={{ my: 2, borderColor: borderColorMui }} />
 
-                <Typography variant="caption" sx={{ fontWeight: 600, color: textSecondary, textTransform: "uppercase", letterSpacing: 0.5, fontSize: "0.7rem", display: "block", mb: 1 }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontWeight: 600,
+                    color: textSecondary,
+                    textTransform: "uppercase",
+                    letterSpacing: 0.5,
+                    fontSize: "0.7rem",
+                    display: "block",
+                    mb: 1,
+                  }}
+                >
                   Share this page
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                  <IconButton onClick={() => handleSocialShare("facebook")} sx={{ bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT, color: COLORS.PRIMARY_BLUE, width: 40, height: 40, border: `1px solid ${borderColorMui}`, "&:hover": { bgcolor: "rgba(24, 119, 242, 0.1)" } }}>
+                  <IconButton
+                    onClick={() => handleSocialShare("facebook")}
+                    sx={{
+                      bgcolor: isDark
+                        ? COLORS.BACKGROUND.PRIMARY_DARK
+                        : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                      color: COLORS.PRIMARY_BLUE,
+                      width: 40,
+                      height: 40,
+                      border: `1px solid ${borderColorMui}`,
+                      "&:hover": { bgcolor: "rgba(24, 119, 242, 0.1)" },
+                    }}
+                  >
                     <Facebook sx={{ fontSize: 20 }} />
                   </IconButton>
-                  <IconButton onClick={() => handleSocialShare("twitter")} sx={{ bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT, color: COLORS.PRIMARY_BLUE, width: 40, height: 40, border: `1px solid ${borderColorMui}`, "&:hover": { bgcolor: "rgba(29, 161, 242, 0.1)" } }}>
+                  <IconButton
+                    onClick={() => handleSocialShare("twitter")}
+                    sx={{
+                      bgcolor: isDark
+                        ? COLORS.BACKGROUND.PRIMARY_DARK
+                        : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                      color: COLORS.PRIMARY_BLUE,
+                      width: 40,
+                      height: 40,
+                      border: `1px solid ${borderColorMui}`,
+                      "&:hover": { bgcolor: "rgba(29, 161, 242, 0.1)" },
+                    }}
+                  >
                     <Twitter sx={{ fontSize: 20 }} />
                   </IconButton>
-                  <IconButton onClick={() => handleSocialShare("whatsapp")} sx={{ bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT, color: COLORS.SUCCESS_GREEN, width: 40, height: 40, border: `1px solid ${borderColorMui}`, "&:hover": { bgcolor: "rgba(37, 211, 102, 0.1)" } }}>
+                  <IconButton
+                    onClick={() => handleSocialShare("whatsapp")}
+                    sx={{
+                      bgcolor: isDark
+                        ? COLORS.BACKGROUND.PRIMARY_DARK
+                        : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                      color: COLORS.SUCCESS_GREEN,
+                      width: 40,
+                      height: 40,
+                      border: `1px solid ${borderColorMui}`,
+                      "&:hover": { bgcolor: "rgba(37, 211, 102, 0.1)" },
+                    }}
+                  >
                     <WhatsApp sx={{ fontSize: 20 }} />
                   </IconButton>
-                  <IconButton onClick={handleCopyLink} sx={{ bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT, color: COLORS.PRIMARY_PURPLE, width: 40, height: 40, border: `1px solid ${borderColorMui}`, "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_10 } }}>
+                  <IconButton
+                    onClick={handleCopyLink}
+                    sx={{
+                      bgcolor: isDark
+                        ? COLORS.BACKGROUND.PRIMARY_DARK
+                        : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                      color: COLORS.PRIMARY_PURPLE,
+                      width: 40,
+                      height: 40,
+                      border: `1px solid ${borderColorMui}`,
+                      "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_10 },
+                    }}
+                  >
                     <ContentCopy sx={{ fontSize: 20 }} />
                   </IconButton>
                 </Box>
@@ -526,19 +628,37 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                         "&:hover": { opacity: 0.85 },
                       }}
                     >
-                      <Typography variant="subtitle2" sx={{ fontWeight: 700, color: textPrimary }}>
-                        {t("reviews" as any)} of {profile?.first_name} {profile?.last_name}
+                      <Typography
+                        variant="subtitle2"
+                        sx={{ fontWeight: 700, color: textPrimary }}
+                      >
+                        {t("reviews" as any)} of {profile?.first_name}{" "}
+                        {profile?.last_name}
                       </Typography>
-                      <IconButton size="small" sx={{ color: textPrimary, p: 0.5 }}>
+                      <IconButton
+                        size="small"
+                        sx={{ color: textPrimary, p: 0.5 }}
+                      >
                         {reviewsExpanded ? <ExpandLess /> : <ExpandMore />}
                       </IconButton>
                     </Box>
                     <Collapse in={reviewsExpanded}>
-                      <ProviderReviews providerName={profile?.first_name + " " + profile?.last_name} hideTitle />
+                      <ProviderReviews
+                        providerId={profile?.id || ""}
+                        providerName={
+                          profile?.first_name + " " + profile?.last_name
+                        }
+                        hideTitle
+                      />
                     </Collapse>
                   </Box>
                 ) : (
-                  <ProviderReviews providerName={profile?.first_name + " " + profile?.last_name} />
+                  <ProviderReviews
+                    providerId={profile?.id || ""}
+                    providerName={
+                      profile?.first_name + " " + profile?.last_name
+                    }
+                  />
                 )}
               </Box>
             </Paper>
@@ -547,10 +667,21 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
           {/* Right Column — Main content (business website sections) */}
           <Grid size={{ xs: 12, md: 8 }}>
             <Box sx={{ mt: { xs: 4, md: 6 }, mb: 3 }}>
-              <Typography variant="h5" sx={{ fontWeight: 700, color: textPrimary, mb: 0.5, fontSize: "1.35rem" }}>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 700,
+                  color: textPrimary,
+                  mb: 0.5,
+                  fontSize: "1.35rem",
+                }}
+              >
                 Our {t("services")} &amp; {t("posts")}
               </Typography>
-              <Typography variant="body2" sx={{ color: textSecondary, fontSize: "0.9rem" }}>
+              <Typography
+                variant="body2"
+                sx={{ color: textSecondary, fontSize: "0.9rem" }}
+              >
                 Explore what we offer and our latest updates.
               </Typography>
             </Box>
@@ -561,7 +692,9 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                 gap: 0,
                 p: 0.5,
                 borderRadius: 2,
-                bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
+                bgcolor: isDark
+                  ? COLORS.BACKGROUND.SECONDARY_DARK
+                  : COLORS.BACKGROUND.PAPER_LIGHT,
                 border: `1px solid ${borderColorMui}`,
                 mb: 3,
               }}
@@ -573,12 +706,23 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   py: 1.25,
                   borderRadius: 1.5,
                   cursor: "pointer",
-                  bgcolor: activeTab === "Services" ? COLORS.PRIMARY_PURPLE : "transparent",
-                  color: activeTab === "Services" ? COLORS.WHITE : textSecondary,
+                  bgcolor:
+                    activeTab === "Services"
+                      ? COLORS.PRIMARY_PURPLE
+                      : "transparent",
+                  color:
+                    activeTab === "Services" ? COLORS.WHITE : textSecondary,
                   fontWeight: activeTab === "Services" ? 700 : 500,
                   fontSize: "0.95rem",
                   transition: "all 0.2s ease",
-                  "&:hover": { bgcolor: activeTab === "Services" ? COLORS.PURPLE_HOVER : (isDark ? COLORS.PURPLE_ALPHA_10 : COLORS.PURPLE_ALPHA_04) },
+                  "&:hover": {
+                    bgcolor:
+                      activeTab === "Services"
+                        ? COLORS.PURPLE_HOVER
+                        : isDark
+                          ? COLORS.PURPLE_ALPHA_10
+                          : COLORS.PURPLE_ALPHA_04,
+                  },
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -593,12 +737,25 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   py: 1.25,
                   borderRadius: 1.5,
                   cursor: "pointer",
-                  bgcolor: activeTab === PROFILE_TABS.Posts ? COLORS.PRIMARY_PURPLE : "transparent",
-                  color: activeTab === PROFILE_TABS.Posts ? COLORS.WHITE : textSecondary,
+                  bgcolor:
+                    activeTab === PROFILE_TABS.Posts
+                      ? COLORS.PRIMARY_PURPLE
+                      : "transparent",
+                  color:
+                    activeTab === PROFILE_TABS.Posts
+                      ? COLORS.WHITE
+                      : textSecondary,
                   fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 500,
                   fontSize: "0.95rem",
                   transition: "all 0.2s ease",
-                  "&:hover": { bgcolor: activeTab === PROFILE_TABS.Posts ? COLORS.PURPLE_HOVER : (isDark ? COLORS.PURPLE_ALPHA_10 : COLORS.PURPLE_ALPHA_04) },
+                  "&:hover": {
+                    bgcolor:
+                      activeTab === PROFILE_TABS.Posts
+                        ? COLORS.PURPLE_HOVER
+                        : isDark
+                          ? COLORS.PURPLE_ALPHA_10
+                          : COLORS.PURPLE_ALPHA_04,
+                  },
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -621,14 +778,29 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                         px: 3,
                         borderRadius: 3,
                         border: `1px dashed ${borderColorMui}`,
-                        bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
+                        bgcolor: isDark
+                          ? COLORS.BACKGROUND.SECONDARY_DARK
+                          : COLORS.BACKGROUND.PAPER_LIGHT,
                       }}
                     >
-                      <ArticleIcon sx={{ fontSize: 48, color: textSecondary, mb: 1.5, opacity: 0.7 }} />
-                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, color: textPrimary }}>
+                      <ArticleIcon
+                        sx={{
+                          fontSize: 48,
+                          color: textSecondary,
+                          mb: 1.5,
+                          opacity: 0.7,
+                        }}
+                      />
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: 600, mb: 1, color: textPrimary }}
+                      >
                         {t("noPostsFound") || "No posts yet"}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: textSecondary, maxWidth: 360, mx: "auto" }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: textSecondary, maxWidth: 360, mx: "auto" }}
+                      >
                         Updates and posts from this business will appear here.
                       </Typography>
                     </Paper>
@@ -636,10 +808,10 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     <PostFeedGrid
                       posts={transformedPosts}
                       isLoading={false}
-                      fetchNextPage={() => { }}
+                      fetchNextPage={() => {}}
                       hasNextPage={false}
                       isFetchingNextPage={false}
-                      onPostClick={() => { }}
+                      onPostClick={() => {}}
                     />
                   )}
                 </Box>
@@ -655,21 +827,39 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                         px: 3,
                         borderRadius: 3,
                         border: `1px dashed ${borderColorMui}`,
-                        bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
+                        bgcolor: isDark
+                          ? COLORS.BACKGROUND.SECONDARY_DARK
+                          : COLORS.BACKGROUND.PAPER_LIGHT,
                       }}
                     >
-                      <BusinessCenter sx={{ fontSize: 48, color: textSecondary, mb: 1.5, opacity: 0.7 }} />
-                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, color: textPrimary }}>
+                      <BusinessCenter
+                        sx={{
+                          fontSize: 48,
+                          color: textSecondary,
+                          mb: 1.5,
+                          opacity: 0.7,
+                        }}
+                      />
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: 600, mb: 1, color: textPrimary }}
+                      >
                         {t("noServicesFound") || "No services yet"}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: textSecondary, maxWidth: 360, mx: "auto" }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: textSecondary, maxWidth: 360, mx: "auto" }}
+                      >
                         Services offered by this provider will be listed here.
                       </Typography>
                     </Paper>
                   ) : (
                     <Grid container spacing={2}>
                       {services.map((service: Service, index: number) => (
-                        <Grid size={{ xs: 12, sm: 6, md: 4 }} key={`${service.service_id}-${index}`}>
+                        <Grid
+                          size={{ xs: 12, sm: 6, md: 4 }}
+                          key={`${service.service_id}-${index}`}
+                        >
                           <ServiceCard service={service as any} />
                         </Grid>
                       ))}
@@ -680,7 +870,14 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
             </Box>
 
             {/* Location & Contact — business website sections, compact on mobile */}
-            <Box sx={{ mt: { xs: 5, md: 8 }, display: "flex", flexDirection: "column", gap: { xs: 4, md: 6 } }}>
+            <Box
+              sx={{
+                mt: { xs: 5, md: 8 },
+                display: "flex",
+                flexDirection: "column",
+                gap: { xs: 4, md: 6 },
+              }}
+            >
               <Paper
                 elevation={0}
                 sx={{
@@ -691,15 +888,47 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   overflow: "hidden",
                 }}
               >
-                <Box sx={{ mb: { xs: 2, md: 3 }, display: "flex", alignItems: "center", gap: 1.5 }}>
-                  <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: COLORS.PURPLE_ALPHA_10, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <LocationOn sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 24 }} />
+                <Box
+                  sx={{
+                    mb: { xs: 2, md: 3 },
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 2,
+                      bgcolor: COLORS.PURPLE_ALPHA_10,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <LocationOn
+                      sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 24 }}
+                    />
                   </Box>
                   <Box>
-                    <Typography variant="h5" sx={{ fontWeight: 700, color: textPrimary, fontSize: { xs: "1.1rem", md: "1.25rem" } }}>
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        fontWeight: 700,
+                        color: textPrimary,
+                        fontSize: { xs: "1.1rem", md: "1.25rem" },
+                      }}
+                    >
                       Our location
                     </Typography>
-                    <Typography variant="body2" sx={{ color: textSecondary, display: { xs: "none", sm: "block" } }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: textSecondary,
+                        display: { xs: "none", sm: "block" },
+                      }}
+                    >
                       Find us on the map and plan your visit.
                     </Typography>
                   </Box>
@@ -721,15 +950,47 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   bgcolor: cardBg,
                 }}
               >
-                <Box sx={{ mb: { xs: 2, md: 3 }, display: "flex", alignItems: "center", gap: 1.5 }}>
-                  <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: COLORS.PURPLE_ALPHA_10, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <EmailIcon sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 24 }} />
+                <Box
+                  sx={{
+                    mb: { xs: 2, md: 3 },
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 2,
+                      bgcolor: COLORS.PURPLE_ALPHA_10,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <EmailIcon
+                      sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 24 }}
+                    />
                   </Box>
                   <Box>
-                    <Typography variant="h5" sx={{ fontWeight: 700, color: textPrimary, fontSize: { xs: "1.1rem", md: "1.25rem" } }}>
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        fontWeight: 700,
+                        color: textPrimary,
+                        fontSize: { xs: "1.1rem", md: "1.25rem" },
+                      }}
+                    >
                       {t("contactUs") || "Contact us"}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: textSecondary, display: { xs: "none", sm: "block" } }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: textSecondary,
+                        display: { xs: "none", sm: "block" },
+                      }}
+                    >
                       Get in touch — we&apos;ll respond as soon as we can.
                     </Typography>
                   </Box>
@@ -836,7 +1097,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
           {snackbarMessage}
         </Alert>
       </Snackbar>
-    </Box >
+    </Box>
   );
 };
 

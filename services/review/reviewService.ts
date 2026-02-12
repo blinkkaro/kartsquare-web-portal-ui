@@ -104,11 +104,13 @@ class ReviewService {
   async getAllTestimonials(providerId: string): Promise<Review[]> {
     try {
       const response = await GET<Review[]>(APIENDPOINT.GET_ALL_TESTIMONIALS(providerId));
+      console.log(response);
       if (response.status === "success") {
         return response.data;
       }
       throw new Error(response.message);
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
