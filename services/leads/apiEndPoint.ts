@@ -1,4 +1,3 @@
 export const API_ENDPOINTS = {
-    CREATE_LEAD: "/leads",
-    
+    CREATE_LEAD: "/leads",    
 }

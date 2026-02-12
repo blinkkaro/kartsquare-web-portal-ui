@@ -1174,4 +1174,8 @@ export const english = {
     "Thank you for contacting us. We will get back to you shortly.",
   close: "Close",
   myReviews: "My Reviews",
+  leads: "Leads",
+  latest_leads: "Latest Leads",
+  no_leads_yet: "No Leads Yet",
+  no_leads_desc: "No leads found",
 };

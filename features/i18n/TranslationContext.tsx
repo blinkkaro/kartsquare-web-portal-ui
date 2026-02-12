@@ -866,7 +866,10 @@ export type TranslationKey =
   | "messageSentSuccessfully"
   | "messageSentDescription"
   | "close"
-  | "myReviews";
+  | "myReviews"
+  | "latest_leads"
+  | "no_leads_yet"
+  | "no_leads_desc";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

@@ -19,8 +19,11 @@ class LeadService {
   ): Promise<GetLeadsResponse> {
     try {
       const response = await GET<GetLeadsResponse>(
-        `${API_ENDPOINTS.CREATE_LEAD}?page=${page}&limit=${limit}&search=${search}`,
+        `${API_ENDPOINTS.CREATE_LEAD}?page=${page}&limit=${limit}&search=${search || ""}`,
+        {},
+        true,
       );
+      console.log(response.data);
       return response.data;
     } catch (error) {
       throw error;
