@@ -4,7 +4,7 @@ import React from "react";
 import { Card, Typography, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
-import ReviewCard from "./ReviewCard";
+import ReviewCard from "../../../common/ReviewCard";
 import EmptyState from "@/components/common/EmptyState";
 
 interface LatestReviewsProps {

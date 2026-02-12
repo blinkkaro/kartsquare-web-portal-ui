@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import {
   Box,
@@ -28,9 +29,15 @@ import { useTranslate } from "@/hooks/useTranslate";
 
 interface ReviewCardProps {
   review: Review & { service_name?: string };
+  isHighlighted?: boolean;
+  onClick?: () => void;
 }
 
-const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
+const ReviewCard: React.FC<ReviewCardProps> = ({
+  review,
+  isHighlighted,
+  onClick,
+}) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { t } = useTranslate();
@@ -78,7 +85,8 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
   const defaultExpanded = !hasTextReviews && !hasManyNonTextReviews;
   const [expanded, setExpanded] = useState(defaultExpanded);
 
-  const handleExpandClick = () => {
+  const handleExpandClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setExpanded(!expanded);
   };
 
@@ -134,11 +142,33 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
 
   return (
     <Box
+      onClick={onClick}
       sx={{
         borderRadius: "12px",
         boxShadow: "none",
         border: "none",
         mb: 2,
+        cursor: onClick ? "pointer" : "default",
+        bgcolor: isHighlighted
+          ? isDark
+            ? "rgba(76, 175, 80, 0.1)"
+            : "rgba(76, 175, 80, 0.05)"
+          : "background.paper", // Ensure base background for non-highlighted
+        outline: isHighlighted
+          ? `1px solid ${COLORS.SUCCESS_GREEN}`
+          : undefined,
+        position: "relative",
+        transition: "all 0.2s ease",
+        "&:hover": onClick
+          ? {
+              boxShadow: theme.shadows[2],
+              bgcolor: isHighlighted
+                ? isDark
+                  ? "rgba(76, 175, 80, 0.2)"
+                  : "rgba(76, 175, 80, 0.1)"
+                : undefined,
+            }
+          : undefined,
       }}
     >
       <CardContent sx={{ p: 2 }}>

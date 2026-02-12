@@ -1,6 +1,7 @@
 import { DELETE, GET, POST, PUT } from "../api";
 import { APIENDPOINT } from "./reviewApiEndPoint";
 import {
+  Review,
   ReviewQuestions,
   ReviewResponse,
   reviewCreateParams,
@@ -77,6 +78,32 @@ class ReviewService {
       const response = await GET<ReviewQuestions[]>(
         APIENDPOINT.GET_REVIEW_QUESTIONS(category_id, subcategory_id),
       );
+      if (response.status === "success") {
+        return response.data;
+      }
+      throw new Error(response.message);
+    } catch (error) {
+      throw error;
+    }
+  }
+  async updateTestimonial(review_id: string, data: reviewUpdateParams) {
+    try {
+      const response = await PUT<ReviewResponse>(
+        APIENDPOINT.UPDATE_TESTIMONIAL(review_id),
+        data,
+      );
+      if (response.status === "success") {
+        return response.data;
+      }
+      throw new Error(response.message);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+  async getAllTestimonials(providerId: string): Promise<Review[]> {
+    try {
+      const response = await GET<Review[]>(APIENDPOINT.GET_ALL_TESTIMONIALS(providerId));
       if (response.status === "success") {
         return response.data;
       }

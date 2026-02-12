@@ -91,3 +91,23 @@ export const useDeleteReview = () => {
     },
   });
 };
+
+export const useUpdateTestimonial = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      reviewId,
+      data,
+    }: {
+      reviewId: string;
+      data: reviewUpdateParams & { is_testimonial?: boolean };
+    }) => reviewService.updateTestimonial(reviewId, data),
+    onSuccess: (_, variables) => {
+      // Invalidate specific queries if needed, or general reviews
+      queryClient.invalidateQueries({
+        queryKey: ["reviews"],
+      });
+    },
+  });
+};

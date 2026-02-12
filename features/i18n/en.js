@@ -1088,6 +1088,20 @@ export const english = {
   faq2Question: "Can I book services along with shopping for products?",
   faq2Answer:
     "Yes, you can book services and shop for products in the same session.",
+  faq4Answer: "Yes, you can upgrade your plan at any time.",
+  faq5Question: "How do I get paid?",
+  faq5Answer: "Payments are processed securely and sent to your bank account.",
+  failed_to_load_services: "Failed to load services",
+  failed_to_load_reviews: "Failed to load reviews",
+  added_to_testimonials: "Added to testimonials",
+  removed_from_testimonials: "Removed from testimonials",
+  failed_to_update_testimonial: "Failed to update testimonial",
+  testimonials: "Testimonials",
+  no_testimonials_selected: "No testimonials selected",
+  all_reviews: "All Reviews",
+  load_more: "Load More",
+  no_reviews_available: "No reviews available",
+  testimonial: "Testimonial",
   faq3Question: "How do I book a service appointment?",
   faq3Answer:
     "Navigate to the services section, choose your desired service, and follow the booking prompts to select a date and time.",
@@ -1159,4 +1173,5 @@ export const english = {
   messageSentDescription:
     "Thank you for contacting us. We will get back to you shortly.",
   close: "Close",
+  myReviews: "My Reviews",
 };

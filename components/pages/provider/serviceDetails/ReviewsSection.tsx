@@ -8,7 +8,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { Star, RateReview } from "@mui/icons-material";
-import ReviewCard from "@/components/pages/dashboard/components/ReviewCard";
+import ReviewCard from "@/components/common/ReviewCard";
 import { Review } from "../../../../services/reviews/reviewInterface";
 import { COLORS } from "../../../../constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";

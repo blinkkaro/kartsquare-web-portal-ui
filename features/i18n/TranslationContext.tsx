@@ -753,6 +753,17 @@ export type TranslationKey =
   | "editBusinessInfo"
   | "changeAddress"
   | "select_address"
+  | "failed_to_load_services"
+  | "failed_to_load_reviews"
+  | "added_to_testimonials"
+  | "removed_from_testimonials"
+  | "failed_to_update_testimonial"
+  | "testimonials"
+  | "no_testimonials_selected"
+  | "all_reviews"
+  | "load_more"
+  | "no_reviews_available"
+  | "testimonial"
   // Leading Page
   | "listYourBusiness"
   | "startIn30Seconds"
@@ -854,7 +865,8 @@ export type TranslationKey =
   | "messageIsTooShort"
   | "messageSentSuccessfully"
   | "messageSentDescription"
-  | "close";
+  | "close"
+  | "myReviews";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
