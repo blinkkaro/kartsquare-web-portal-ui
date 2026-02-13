@@ -32,37 +32,7 @@ function ListingView() {
         pb: 0,
       }}
     >
-      {/* Breadcrumb — minimal, professional */}
-      <Container maxWidth="xl" sx={{ pt: { xs: 2, md: 3 }, pb: 0 }}>
-        <Typography
-          variant="body2"
-          component="nav"
-          aria-label="Breadcrumb"
-          sx={{
-            color: isDark
-              ? COLORS.TEXT.SECONDARY_DARK
-              : COLORS.TEXT.SECONDARY_LIGHT,
-            "& a": {
-              color: "inherit",
-              textDecoration: "none",
-              transition: "color 0.2s ease",
-              "&:hover": { color: COLORS.PRIMARY_PURPLE },
-            },
-          }}
-        >
-          <Link href="/">{t("home")}</Link>
-          {" / "}
-          <Box
-            component="span"
-            fontWeight={600}
-            color={
-              isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT
-            }
-          >
-            {t("listYourBusiness")}
-          </Box>
-        </Typography>
-      </Container>
+      
 
       {/* Hero — Register your business */}
       <Hero />

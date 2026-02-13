@@ -93,24 +93,24 @@ export interface IBusinessInfo {
 }
 
 export interface IFreeLeadParams {
-  country_code: string;
-  phone_number: string;
+  whatsapp_country_code: string;
+  whatsapp_number: string;
   source: string;
   source_type: string;
 }
 
 export interface IFreeLeadResponse{
   bus_lead_id:string,
-  phone_number:string,
-  country_code:string,
+  whatsapp_number:string,
+  whatsapp_country_code:string,
   status:string,
   isRegistered:boolean,
 }
 
 export interface IFreeLeadNumberResponse{
   bus_lead_id:string,
-  phone_number:string,
-  country_code:string,
+  whatsapp_number:string,
+  whatsapp_country_code:string,
   status:string,
   source:string,
   source_type:string,

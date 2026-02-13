@@ -60,7 +60,7 @@ export const english = {
   email_address: "Email Address",
   phone_number: "Phone Number",
   whatsapp_number: "WhatsApp Number",
-  same_as_phone: "Same as Phone Number",
+  same_as_whatsapp: "Same as WhatsApp",
   country: "Country",
   birth_date: "Birth Date",
   gender: "Gender",
@@ -752,7 +752,7 @@ export const english = {
   mark_as_complete: "Mark as complete",
   otp_verification: "OTP Verification",
   enter_otp_description:
-    "Please enter the OTP provided by the customer to start the service.",
+    "Enter the OTP sent to your WhatsApp number to register your business.",
   verify_and_start: "Verify & Start",
   no_bookings_found: "No bookings found",
   no_bookings_found_description:
@@ -1043,7 +1043,7 @@ export const english = {
   // Leading Page
   listYourBusiness: "List your business",
   startIn30Seconds: "Start in 30 seconds",
-  yourMobileNumber: "Your mobile number",
+  yourWhatsappNumber: "Your WhatsApp number",
   getMyFreeListing: "Get my free listing",
   agreeToTerms:
     "By continuing, you agree to our Terms of Use, Privacy Policy & Infringement Policy",
@@ -1153,6 +1153,8 @@ export const english = {
   price_catalog_list_subtitle:
     "Service-wise prices and descriptions from the provider.",
   tap_to_view_full: "Tap to view full size",
+  totalPhoneNumberViews: "Profile Impressions",
+  totalProfileViews: "Phone Impressions",
   advertisement: "Advertisement",
 
   // Advertise Page
