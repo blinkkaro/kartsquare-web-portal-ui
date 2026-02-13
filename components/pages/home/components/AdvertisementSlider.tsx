@@ -41,6 +41,7 @@ const AdvertisementSlider = () => {
           backgroundColor: "rgba(255, 255, 255, 0.5)",
           border: "2px solid white",
           opacity: 1,
+          my: 3,
           width: "10px",
           height: "10px",
         },
@@ -66,7 +67,7 @@ const AdvertisementSlider = () => {
               onClick={() => handleAdClick(ad.advertise_id, ad.service_id)}
               sx={{
                 width: "100%",
-                height: { xs: 160, sm: 220, md: 220 },
+                height: { xs: 160, sm: 220, md: 260 },
                 borderRadius: 3,
                 overflow: "hidden",
                 cursor: "pointer",
@@ -118,6 +119,7 @@ const AdvertisementSlider = () => {
                   width: "100%",
                   height: "100%",
                   maxHeight: "100%",
+                  objectFit: "cover",
                   position: "relative",
                   zIndex: 1,
                 }}

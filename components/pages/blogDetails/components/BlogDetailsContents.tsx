@@ -5,7 +5,15 @@ const BlogDetailsContent: React.FC<{ blog: any }> = ({ blog }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   return (
-    <Container maxWidth="md" sx={{ py: 4 , backgroundColor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT }}>
+    <Container
+      maxWidth="md"
+      sx={{
+        py: 4,
+        backgroundColor: isDark
+          ? COLORS.BACKGROUND.PRIMARY_DARK
+          : COLORS.BACKGROUND.SECONDARY_LIGHT,
+      }}
+    >
       {/* Hero Section */}
       <Box sx={{ position: "relative", mb: 4 }}>
         <img
@@ -70,6 +78,40 @@ const BlogDetailsContent: React.FC<{ blog: any }> = ({ blog }) => {
         }}
       >
         <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+
+        {/* Article End Author Strip */}
+        <Box
+          sx={(theme) => ({
+            mt: 6,
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            p: 2.5,
+            borderRadius: 3,
+
+            backgroundColor: theme.palette.background.paper,
+
+            border: `1px solid ${
+              theme.palette.mode === "dark"
+                ? "rgba(255,255,255,0.08)"
+                : "rgba(0,0,0,0.06)"
+            }`,
+          })}
+        >
+          <Avatar
+            sx={{
+              bgcolor: theme.palette.primary.main,
+              width: 40,
+              height: 40,
+              fontWeight: 600,
+            }}
+          >
+            K
+          </Avatar>
+          <Typography fontWeight={600}>
+            By Kartsquare Team • 15/1/2024
+          </Typography>
+        </Box>
       </Box>
     </Container>
   );
