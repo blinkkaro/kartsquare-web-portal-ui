@@ -32,8 +32,8 @@ function SignUpView() {
   const [busLeadId, setBusLeadId] = useState<string | null>(null);
   const { leadDetailsQuery } = useLeadVerification(busLeadId);
   const [initialData, setInitialData] = useState<{
-    phone_number?: string;
-    country_code?: string;
+    whatsapp_number?: string;
+    whatsapp_country_code?: string;
   }>({});
 
   useEffect(() => {
@@ -50,8 +50,9 @@ function SignUpView() {
   useEffect(() => {
     if (leadDetailsQuery.data) {
       setInitialData({
-        phone_number: leadDetailsQuery.data.phone_number,
-        country_code: leadDetailsQuery.data.country_code,
+        whatsapp_number: leadDetailsQuery.data.whatsapp_number || "",
+        whatsapp_country_code:
+          leadDetailsQuery.data.whatsapp_country_code || "",
       });
     }
     if (leadDetailsQuery.isError) {

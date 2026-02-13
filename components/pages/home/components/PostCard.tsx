@@ -137,6 +137,7 @@ const PostCard = ({ post }: { post: Posts }) => {
           <CardMedia
             component="img"
             image={post.media_urls}
+            loading="lazy"
             alt="Post Media"
             sx={{
               objectFit: "contain",

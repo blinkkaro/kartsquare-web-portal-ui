@@ -11,11 +11,21 @@ import {
 class PostServices {
   async getPosts({
     limit,
+    cursor,
     visibility,
   }: GetPostsParams): Promise<GetPostsResponse> {
     try {
+      const params = new URLSearchParams({
+        limit: limit.toString(),
+        visibility,
+      });
+
+      if (cursor) {
+        params.append("cursor", cursor);
+      }
+
       const response = await api.get<GetPostsResponse>(
-        `${API_ENDPOINTS.GET_POST}?limit=${limit}&visibility=${visibility}`,
+        `${API_ENDPOINTS.GET_POST}?${params.toString()}`,
       );
       if (response.status !== "success") {
         throw new Error(response.message || "Failed to fetch posts");
