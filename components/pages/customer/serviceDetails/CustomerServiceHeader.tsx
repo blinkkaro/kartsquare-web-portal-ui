@@ -25,6 +25,9 @@ const CustomerServiceHeader = ({
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { t } = useTranslate();
+  const accentColor = isDark
+    ? COLORS.ACCENT_BLUE_DARK
+    : COLORS.TEXT.PRIMARY_LIGHT;
 
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
@@ -46,9 +49,7 @@ const CustomerServiceHeader = ({
               variant="h5"
               sx={{
                 fontWeight: 700,
-                color: isDark
-                  ? COLORS.TEXT.PRIMARY_DARK
-                  : COLORS.TEXT.PRIMARY_LIGHT,
+                color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
               }}
             >
               {price?.toFixed(2) || "0.00"}

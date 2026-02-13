@@ -60,7 +60,7 @@ export const english = {
   email_address: "Email Address",
   phone_number: "Phone Number",
   whatsapp_number: "WhatsApp Number",
-  same_as_phone: "Same as Phone Number",
+  same_as_whatsapp: "Same as WhatsApp",
   country: "Country",
   birth_date: "Birth Date",
   gender: "Gender",
@@ -752,7 +752,7 @@ export const english = {
   mark_as_complete: "Mark as complete",
   otp_verification: "OTP Verification",
   enter_otp_description:
-    "Please enter the OTP provided by the customer to start the service.",
+    "Enter the OTP sent to your WhatsApp number to register your business.",
   verify_and_start: "Verify & Start",
   no_bookings_found: "No bookings found",
   no_bookings_found_description:
@@ -1043,7 +1043,7 @@ export const english = {
   // Leading Page
   listYourBusiness: "List your business",
   startIn30Seconds: "Start in 30 seconds",
-  yourMobileNumber: "Your mobile number",
+  yourWhatsappNumber: "Your WhatsApp number",
   getMyFreeListing: "Get my free listing",
   agreeToTerms:
     "By continuing, you agree to our Terms of Use, Privacy Policy & Infringement Policy",
@@ -1178,4 +1178,64 @@ export const english = {
   latest_leads: "Latest Leads",
   no_leads_yet: "No Leads Yet",
   no_leads_desc: "No leads found",
+  totalPhoneNumberViews: "Profile Impressions",
+  totalProfileViews: "Phone Impressions",
+  advertisement: "Advertisement",
+
+  // Advertise Page
+  create_ad: "Create Ad",
+  error_loading_advertisements: "Error Loading Advertisements",
+  error_loading_ads_description:
+    "Failed to load advertisements. Please try again.",
+  no_advertisements_yet: "No Advertisements Yet",
+  no_advertisements_description:
+    "Create your first ad to promote your services and reach more customers",
+  create_your_first_ad: "Create Your First Ad",
+  delete_advertisement: "Delete Advertisement?",
+  delete_ad_confirmation:
+    'Are you sure you want to delete "{title}"? This action cannot be undone.',
+  this_advertisement: "this advertisement",
+  edit_advertisement: "Edit Advertisement",
+  create_advertisement: "Create Advertisement",
+
+  // Ad Filters
+  filters: "Filters",
+  clear_filters: "Clear Filters",
+  all_categories: "All Categories",
+  all_services: "All Services",
+  ad_status_all: "All",
+  ad_status_pending: "Pending",
+  ad_status_active: "Active",
+  ad_status_inactive: "Inactive",
+  ad_status_rejected: "Rejected",
+
+  // Ad Card
+  untitled_advertisement: "Untitled Advertisement",
+  no_description_available: "No description available",
+  ad_views: "views",
+  ad_clicks: "clicks",
+  ad_rejection_reason: "Rejection Reason:",
+
+  // Ad Form
+  ad_form_service: "Service",
+  ad_form_select_service: "Select a service",
+  ad_form_title: "Advertisement Title (Optional)",
+  ad_form_description: "Description (Optional)",
+  ad_form_image: "Advertisement Image",
+  ad_form_start_date: "Start Date",
+  ad_form_end_date: "End Date",
+  ad_form_click_to_upload: "Click to upload image",
+  ad_form_rejection_reason_label: "⚠️ Rejection Reason",
+  ad_form_waiting_approval: "Waiting for Admin Approval",
+  ad_form_under_review:
+    "Your advertisement is under review. You'll be notified once it's approved.",
+  ad_form_advertisement_status: "Advertisement Status",
+  update_advertisement: "Update Advertisement",
+
+  // Ad Form Validation
+  ad_validation_service_required: "Service is required",
+  ad_validation_image_required: "Image is required",
+  ad_validation_start_date_required: "Start date is required",
+  ad_validation_end_date_required: "End date is required",
+  ad_validation_end_after_start: "End date must be after start date",
 };

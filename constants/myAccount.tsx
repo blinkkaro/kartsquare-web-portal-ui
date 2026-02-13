@@ -17,6 +17,7 @@ import SecurityIcon from "@mui/icons-material/Security";
 import DescriptionIcon from "@mui/icons-material/Description";
 import BusinessIcon from "@mui/icons-material/Business";
 import { RateReview } from "@mui/icons-material";
+import CampaignIcon from "@mui/icons-material/Campaign";
 
 export interface myAccountNavInterface {
   label: string;
@@ -78,6 +79,11 @@ export const myAccountNav = (
         label: t("reviews"),
         href: "myAccount/myReviews",
         icon: <RateReview />,
+      },
+      {
+        label: t("advertisement"),
+        href: "myAccount/advertise",
+        icon: <CampaignIcon />,
       },
       {
         label: t("logout"),

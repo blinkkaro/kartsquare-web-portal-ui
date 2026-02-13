@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
 import { secureStorage } from "@/helper/SecureStorage";
+import { AppUserType } from "@/services/auth/auth.interface";
 
 function EmailVerificationView() {
   const { t } = useTranslate();
@@ -121,7 +122,9 @@ function EmailVerificationView() {
     secureStorage.removeItem("user_details");
 
     dispatch(logout());
-    if(role==="customer"){
+    console.log(role);
+    
+    if(role===AppUserType.CUSTOMER){
       router.push(`/login?role=customer`);
     }else{
       router.push(`/freeListing`);
