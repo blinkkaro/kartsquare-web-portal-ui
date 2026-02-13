@@ -136,8 +136,7 @@ export const calculateDistance = (
       Math.sin(dLon / 2) *
       Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c; // Distance in kilometers
-  return distance;
+  return R * c; // Distance in kilometers
 };
 
 export const formatStringTimeForReview = (timeStr: string | Date): string => {
@@ -198,4 +197,17 @@ export const formatAddress = (
   }
 
   return result;
+};
+
+export const seededRandom = (seed: number) => {
+  let m = 0x80000000;
+  let a = 1103515245;
+  let c = 12345;
+
+  let state = seed || Math.floor(Math.random() * (m - 1));
+
+  return function () {
+    state = (a * state + c) % m;
+    return state / (m - 1);
+  };
 };

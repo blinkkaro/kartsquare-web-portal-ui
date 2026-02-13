@@ -34,8 +34,8 @@ const BackButton: React.FC<BackButtonProps> = ({ onClick, sx }) => {
         sx={{
           backgroundColor: theme.palette.mode === "dark" ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
           boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Soft shadow
-          width: "48px",
-          height: "48px",
+          width: { xs: "40px", sm: "48px" },
+          height: { xs: "40px", sm: "48px" },
           borderRadius: "50%",
           "&:hover": {
             backgroundColor: theme.palette.mode === "dark" ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT,

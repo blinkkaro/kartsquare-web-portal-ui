@@ -3,7 +3,13 @@ import { Box, Avatar, Typography, Button, Chip, useTheme } from "@mui/material";
 import { useFollowUser, useUnfollowUser } from "@/hooks/useFollow";
 import { getUserId } from "@/utils/auth";
 import { openLoginModal } from "@/features/ui/loginModalSlice";
-import { Person, PersonAdd, Message, CheckCircle, Call } from "@mui/icons-material";
+import {
+  Person,
+  PersonAdd,
+  Message,
+  CheckCircle,
+  Call,
+} from "@mui/icons-material";
 import { COLORS } from "../constants/colors";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
@@ -257,8 +263,8 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
             },
             "&.Mui-disabled": {
               bgcolor: COLORS.PRIMARY_PURPLE,
-              color: "white", 
-            }
+              color: "white",
+            },
           }}
         >
           {showPhoneNumber ? providerPhoneNumber : "Show Number"}

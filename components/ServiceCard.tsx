@@ -43,8 +43,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
       : [
-        "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      ];
+          "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        ];
 
   const handlePrevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
