@@ -11,6 +11,7 @@ import MetricCards from "./components/MetricCards";
 import RevenueChart from "./components/RevenueChart";
 import UpcomingBookings from "./components/UpcomingBookings";
 import LatestReviews from "./components/LatestReviews"; // Add this
+import LatestLeads from "./components/LatestLeads";
 import UpcomingEvents from "./components/UpcomingEvents";
 import RecentTransactions from "./components/RecentTransactions";
 import { useProviderDashboard } from "@/hooks/useProviderDashboard";
@@ -101,6 +102,9 @@ function DashboardView() {
 
             {/* Revenue Chart */}
             <RevenueChart chartData={providerDashboardChartData} />
+
+            {/* Latest Leads */}
+            <LatestLeads />
           </Box>
         </Grid>
 

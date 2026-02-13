@@ -16,6 +16,7 @@ import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import SecurityIcon from "@mui/icons-material/Security";
 import DescriptionIcon from "@mui/icons-material/Description";
 import BusinessIcon from "@mui/icons-material/Business";
+import { RateReview } from "@mui/icons-material";
 import CampaignIcon from "@mui/icons-material/Campaign";
 
 export interface myAccountNavInterface {
@@ -73,6 +74,11 @@ export const myAccountNav = (
         label: t("mySchedule"),
         href: "myAccount/mySchedule",
         icon: <CalendarMonthIcon />,
+      },
+      {
+        label: t("reviews"),
+        href: "myAccount/myReviews",
+        icon: <RateReview />,
       },
       {
         label: t("advertisement"),
