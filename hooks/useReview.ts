@@ -1,9 +1,16 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
 import { reviewService } from "@/services/review/reviewService";
 import {
   reviewCreateParams,
   reviewUpdateParams,
   review_type,
+  ReviewResponse,
 } from "@/services/review/reviewInterface";
 
 export const useReviewQuestions = (
@@ -22,14 +29,25 @@ export const useReviewQuestions = (
 export const useGetReviews = (
   event: review_type,
   review_event_id: string,
-  page: number = 1,
   limit: number = 10,
   enabled: boolean = true,
 ) => {
-  return useQuery({
-    queryKey: ["reviews", event, review_event_id, page, limit],
-    queryFn: () => reviewService.getReview(event, review_event_id, page, limit),
+  return useInfiniteQuery({
+    queryKey: ["reviews", event, review_event_id, limit],
+    queryFn: ({ pageParam }: { pageParam: unknown }) =>
+      reviewService.getReview(
+        event,
+        review_event_id,
+        pageParam as number,
+        limit,
+      ),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: ReviewResponse) => {
+      const { page, total_pages } = lastPage.meta;
+      return page < total_pages ? page + 1 : undefined;
+    },
     enabled: enabled && !!review_event_id,
+    placeholderData: keepPreviousData,
   });
 };
 

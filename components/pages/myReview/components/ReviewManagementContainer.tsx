@@ -18,8 +18,8 @@ const ReviewManagementContainer = () => {
   const [testimonials, setTestimonials] = useState<Review[]>([]);
 
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  // const [page, setPage] = useState(1); // Page is managed by infinite query
+  // const [hasMore, setHasMore] = useState(true); // Derived from hasNextPage
   const LIMIT = 10;
 
   // Use the hook for fetching reviews
@@ -27,10 +27,11 @@ const ReviewManagementContainer = () => {
     data: reviewsData,
     isLoading: isReviewsLoading,
     isRefetching: isReviewsRefetching,
+    fetchNextPage,
+    hasNextPage,
   } = useGetReviews(
     review_type.SERVICE,
     selectedServiceId,
-    page,
     LIMIT,
     !!selectedServiceId, // Only enable if selectedServiceId is set
   );
@@ -59,36 +60,23 @@ const ReviewManagementContainer = () => {
 
   // Handle Data Changes from Hook
   useEffect(() => {
-    if (reviewsData && reviewsData.reviews) {
-      if (page === 1) {
-        setReviews(reviewsData.reviews);
-      } else {
-        setReviews((prev) => {
-          // Avoid duplicates when appending
-          const newReviews = reviewsData.reviews.filter(
-            (newReview) =>
-              !prev.some(
-                (r) => r.customer_review_id === newReview.customer_review_id,
-              ),
-          );
-          return [...prev, ...newReviews];
-        });
-      }
-      setHasMore(reviewsData.meta.page < reviewsData.meta.total_pages);
+    if (reviewsData) {
+      const allReviews = reviewsData.pages.flatMap((page) => page.reviews);
+      setReviews(allReviews);
     }
-  }, [reviewsData, page]); // Depend on page to differentiate appending vs replacing
+  }, [reviewsData]);
 
   // Reset when service changes
   useEffect(() => {
     if (selectedServiceId) {
-      setPage(1);
+      // setPage(1); // No longer needed
       setReviews([]); // Clear lists to avoid mismatched data
     }
   }, [selectedServiceId]);
 
   const loadMoreReviews = () => {
-    if (hasMore && !isReviewsLoading && !isReviewsRefetching) {
-      setPage((prev) => prev + 1);
+    if (hasNextPage && !isReviewsLoading && !isReviewsRefetching) {
+      fetchNextPage();
     }
   };
 
@@ -171,7 +159,7 @@ const ReviewManagementContainer = () => {
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
           {t("testimonials")} ({testimonials.length})
         </Typography>
-        {isReviewsLoading && page === 1 ? ( // Show loading only on initial fetch
+        {isReviewsLoading && reviews.length === 0 ? ( // Show loading only on initial fetch
           <CircularProgress size={24} />
         ) : testimonials.length > 0 ? (
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
@@ -226,7 +214,7 @@ const ReviewManagementContainer = () => {
               ))}
             </Box>
 
-            {hasMore && (
+            {hasNextPage && (
               <Box sx={{ textAlign: "center", mt: 2 }}>
                 <Typography
                   variant="body2"
@@ -234,7 +222,8 @@ const ReviewManagementContainer = () => {
                   sx={{ cursor: "pointer", fontWeight: 600 }}
                   onClick={loadMoreReviews}
                 >
-                  {(isReviewsLoading || isReviewsRefetching) && page > 1 ? (
+                  {(isReviewsLoading || isReviewsRefetching) &&
+                  reviews.length > 0 ? (
                     <CircularProgress size={20} />
                   ) : (
                     t("load_more")
@@ -260,7 +249,7 @@ const ReviewManagementContainer = () => {
           )
         )}
 
-        {isReviewsLoading && page === 1 && (
+        {isReviewsLoading && reviews.length === 0 && (
           <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
             <CircularProgress />
           </Box>
