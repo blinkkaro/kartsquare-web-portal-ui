@@ -305,10 +305,10 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Avatar
-              src={service.provider_image_url || undefined}
+              src={service.provider_image_url}
               sx={{ width: 24, height: 24 }}
             >
-              {service.provider_name.charAt(0).toUpperCase()}
+              {/* {service?.provider_name.charAt(0).toUpperCase()} */}
             </Avatar>
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Typography

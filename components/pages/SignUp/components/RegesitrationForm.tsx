@@ -119,7 +119,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
     }
   };
 
-  const isServiceProvider = role === AppUserType.SERVICE_PROVIDER;
+  const isServiceProvider = true;
 
   return (
     <Box

@@ -64,7 +64,7 @@ export interface Service {
     latitude: number;
     longitude: number;
   };
-  provider_image_url: string | null;
+  provider_image_url: string;
   is_following?: boolean;
   business_name: string;
   pricing_type: PricingType;

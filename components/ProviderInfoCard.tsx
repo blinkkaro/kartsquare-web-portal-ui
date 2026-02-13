@@ -257,8 +257,8 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
             },
             "&.Mui-disabled": {
               bgcolor: COLORS.PRIMARY_PURPLE,
-              color: "white", 
-            }
+              color: "white",
+            },
           }}
         >
           {showPhoneNumber ? providerPhoneNumber : "Show Number"}
