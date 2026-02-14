@@ -37,7 +37,7 @@ function SignUpView() {
   }>({});
 
   useEffect(() => {
-    if (role === AppUserType.SERVICE_PROVIDER) {
+    if (role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER) {
       const busLeadId = sessionStorage.getItem("bus_lead_id");
       if (!busLeadId) {
         router.replace("/freeListing");
@@ -129,7 +129,9 @@ function SignUpView() {
         onSubmit={OnSubmit}
         loading={
           loading ||
-          (role === AppUserType.SERVICE_PROVIDER && leadDetailsQuery.isLoading)
+          ((role === AppUserType.SERVICE_PROVIDER ||
+            role === AppUserType.SUPPLIER) &&
+            leadDetailsQuery.isLoading)
         }
         role={role}
         initialData={initialData}

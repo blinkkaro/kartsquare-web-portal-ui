@@ -49,16 +49,8 @@ const SupplierGuard: React.FC<SupplierGuardProps> = ({ children, requireComplete
 
             // If we require complete (Dashboard access)
             if (requireComplete) {
-                // Assuming specific step number for completion. 
-                // Implementation Detail: Backend UserRegisterSteps enum values? 
-                // Let's assume checking if store is created is enough, or step >= X.
-                // If register_step < SUPPLIER_STORE_CREATED (which implies everything done)
-                // We should fetch latest profile to be sure? Or trust local storage?
-                // Ideally trust local but it might be stale.
-                // For now, let's assume if they are here, we authorize, BUT if they hit dashboard and data is missing, backend throws error?
-                // Better: Redirect to onboarding if we can detect incomplete.
-                // Let's assume if register_step is missing or low, go to onboarding.
-                if (user && user.register_step < 4) { // Hypothetical step 4 = Store Created
+                // For Suppliers, completion is step 11 (SUPPLIER_STORE_CREATED)
+                if (user && user.register_step < 11) {
                     router.replace("/supplier/onboarding");
                     return;
                 }

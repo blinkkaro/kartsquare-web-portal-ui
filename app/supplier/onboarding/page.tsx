@@ -9,6 +9,7 @@ import Image from "next/image";
 import { COLORS } from "@/constants/colors";
 import { useSupplierProfile } from "@/hooks/useSupplier";
 import { useEffect } from "react";
+import { UserRegisterSteps } from "@/types/resgistrationFlow";
 
 const steps = ["Business Profile", "KYC Verification", "Store Setup"];
 
@@ -21,12 +22,15 @@ export default function SupplierOnboardingPage() {
     useEffect(() => {
         if (profileArgs?.data?.register_step) {
             const step = profileArgs.data.register_step;
-            if (step === 7) {
+            if (step === UserRegisterSteps.SUPPLIER_PROFILE_COMPLETED) {
                 setActiveStep(1); // Landing on KYC
-            } else if (step === 8 || step === 9) {
+            } else if (
+                step === UserRegisterSteps.SUPPLIER_KYC_SUBMITTED ||
+                step === UserRegisterSteps.SUPPLIER_KYC_VERIFIED
+            ) {
                 setActiveStep(2); // Landing on Store
-            } else if (step >= 10) {
-                setActiveStep(2); // Already done but keep on last step or redirect
+            } else if (step >= UserRegisterSteps.SUPPLIER_STORE_CREATED) {
+                setActiveStep(2); // Already done
             }
         }
     }, [profileArgs]);
