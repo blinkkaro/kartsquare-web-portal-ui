@@ -96,7 +96,7 @@ const CustomerServiceDetailsGrid = ({
             letterSpacing: "0.05em",
           }}
         >
-          SLOTS
+          {english.time_slots_enabled.toUpperCase()}
         </Typography>
         <Typography
           variant="body2"
@@ -110,7 +110,9 @@ const CustomerServiceDetailsGrid = ({
               : "text.secondary",
           }}
         >
-          {haveSlots ? "Time Slots Available" : "Instant Booking"}
+          {haveSlots
+            ? english.time_slots_available
+            : english.instant_booking}
         </Typography>
       </Box>
     </Box>

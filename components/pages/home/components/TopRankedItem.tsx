@@ -22,6 +22,7 @@ const TopRankedItem: React.FC<TopRankedItemProps> = ({
   desc,
 }) => {
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   return (
     <Card
       sx={{
@@ -31,7 +32,9 @@ const TopRankedItem: React.FC<TopRankedItemProps> = ({
         mb: 2,
         borderRadius: 3,
         boxShadow: 1,
-        backgroundColor: COLORS.BACKGROUND.PRIMARY_LIGHT,
+        backgroundColor: isDark
+          ? COLORS.BACKGROUND.PAPER_DARK
+          : COLORS.BACKGROUND.PRIMARY_LIGHT,
       }}
     >
       {/* Rank */}
@@ -64,7 +67,16 @@ const TopRankedItem: React.FC<TopRankedItemProps> = ({
       />
       {/* Info */}
       <Box sx={{ flex: 1 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.5 }}>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            fontWeight: 700,
+            mb: 0.5,
+            color: isDark
+              ? COLORS.TEXT.PRIMARY_DARK
+              : COLORS.TEXT.PRIMARY_LIGHT,
+          }}
+        >
           {name}
         </Typography>
         <Box
@@ -77,11 +89,25 @@ const TopRankedItem: React.FC<TopRankedItemProps> = ({
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
             <Star sx={{ fontSize: 18, color: "#FFB400" }} />
-            <Typography sx={{ fontWeight: 600 }}>{rating}</Typography>
+            <Typography
+              sx={{
+                fontWeight: 600,
+                color: isDark
+                  ? COLORS.TEXT.PRIMARY_DARK
+                  : COLORS.TEXT.PRIMARY_LIGHT,
+              }}
+            >
+              {rating}
+            </Typography>
           </Box>
           {bookings && (
             <Typography
-              sx={{ fontSize: "0.9rem", color: COLORS.TEXT.SECONDARY_LIGHT }}
+              sx={{
+                fontSize: "0.9rem",
+                color: isDark
+                  ? COLORS.TEXT.SECONDARY_DARK
+                  : COLORS.TEXT.SECONDARY_LIGHT,
+              }}
             >
               {bookings} bookings
             </Typography>
@@ -89,7 +115,12 @@ const TopRankedItem: React.FC<TopRankedItemProps> = ({
         </Box>
         {desc && (
           <Typography
-            sx={{ fontSize: "0.85rem", color: COLORS.TEXT.SECONDARY_LIGHT }}
+            sx={{
+              fontSize: "0.85rem",
+              color: isDark
+                ? COLORS.TEXT.SECONDARY_DARK
+                : COLORS.TEXT.SECONDARY_LIGHT,
+            }}
             dangerouslySetInnerHTML={{
               __html: truncateHTML(desc, 40),
             }}

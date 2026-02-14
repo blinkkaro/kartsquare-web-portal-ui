@@ -70,10 +70,14 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
     }
   };
 
-   // Auto-open review modal logic
+  // Auto-open review modal logic
   React.useEffect(() => {
     console.log("Booking details:", booking);
-    if (booking && booking.status === BookingStatus.COMPLETED && !booking.is_reviewed) {
+    if (
+      booking &&
+      booking.status === BookingStatus.COMPLETED &&
+      !booking.is_reviewed
+    ) {
       const timer = setTimeout(() => {
         setReviewModalOpen(true);
       }, 1000); // 1 second delay for better UX
@@ -139,7 +143,13 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                 }}
               >
                 BOOKING ID:{" "}
-                <span style={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700 }}>
+                <span
+                  style={{
+                    color: COLORS.PRIMARY_PURPLE,
+                    fontWeight: 900,
+                    fontSize: "0.6em",
+                  }}
+                >
                   #{currentBooking.booking_id.toUpperCase()}
                 </span>
               </Typography>
@@ -445,9 +455,9 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                   </Typography>
                   <Typography
                     sx={{
-                      fontWeight: 900,
-                      fontSize: "1.2rem",
-                      color: isDark ? "white" : "#0F172A",
+                      fontWeight: 800,
+                      fontSize: "1rem",
+                      color: isDark ? "white" : "#1E293B",
                     }}
                   >
                     {currentBooking?.business_name}

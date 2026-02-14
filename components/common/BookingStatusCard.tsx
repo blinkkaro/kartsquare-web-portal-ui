@@ -130,6 +130,12 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
 
   const statusConfig = getStatusConfig(booking.status);
 
+  // For display, only show the last part of the booking id
+  const getDisplayBookingId = (id: string) => {
+    const parts = id?.split("-");
+    return parts?.length ? parts[parts.length - 1] : id;
+  };
+
   // Get action buttons based on status
   const getActionButtons = () => {
     switch (booking.status) {
@@ -392,7 +398,7 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
               fontWeight: 500,
             }}
           >
-            {t("id")}: {booking.booking_id}
+            {t("id")}: {getDisplayBookingId(booking.booking_id)}
           </Typography>
           {showStatus && (
             <Chip

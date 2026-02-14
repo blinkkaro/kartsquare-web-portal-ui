@@ -55,8 +55,6 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
   };
 
   const handleSubmit = () => {
-  
-
     const questionsAndAnswers: ReviewQuestionAnswer[] =
       data
         ?.map((q) => ({
@@ -75,11 +73,11 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
       },
       {
         onSuccess: () => {
-          toast.success("Review submitted successfully!");
+          toast.success(t("review_submitted_success"));
           onClose();
         },
         onError: (error: any) => {
-          toast.error(error.message || "Failed to submit review");
+          toast.error(error.message || t("review_submit_failed"));
         },
       },
     );
@@ -126,7 +124,7 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
               fullWidth
               multiline
               rows={3}
-              placeholder="Type your answer here..."
+              placeholder={t("review_answer_placeholder")}
               value={answers[q.review_question_id] || ""}
               onChange={(e) =>
                 handleAnswerChange(q.review_question_id, e.target.value)
@@ -155,8 +153,16 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
                   handleAnswerChange(q.review_question_id, e.target.value)
                 }
               >
-                <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
-                <FormControlLabel value="No" control={<Radio />} label="No" />
+                <FormControlLabel
+                  value="Yes"
+                  control={<Radio />}
+                  label={t("yes")}
+                />
+                <FormControlLabel
+                  value="No"
+                  control={<Radio />}
+                  label={t("no")}
+                />
               </RadioGroup>
             </FormControl>
           )}
