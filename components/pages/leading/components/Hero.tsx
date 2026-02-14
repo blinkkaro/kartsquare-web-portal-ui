@@ -11,6 +11,8 @@ import {
   CircularProgress,
   MenuItem,
   keyframes,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import ShieldIcon from "@mui/icons-material/Shield";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -57,6 +59,7 @@ const Hero: React.FC = () => {
   const { t } = useTranslate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const [role, setRole] = React.useState<"SERVICE_PROVIDER" | "SUPPLIER">("SERVICE_PROVIDER");
   const {
     loading,
     isOtpOpen,
@@ -74,12 +77,16 @@ const Hero: React.FC = () => {
     },
   });
 
+  const handleRoleChange = (event: React.SyntheticEvent, newValue: "SERVICE_PROVIDER" | "SUPPLIER") => {
+    setRole(newValue);
+  };
+
   const onSubmit = (data: HeroFormData) => {
     handleCheckUser({
       phone_number: data.phone_number,
       country_code: data.country_code,
       source: "WEB",
-      source_type: "SERVICE_PROVIDER",
+      source_type: role,
     });
   };
 
@@ -98,15 +105,15 @@ const Hero: React.FC = () => {
         "&::before": isDark
           ? {}
           : {
-              content: '""',
-              position: "absolute",
-              top: "-40%",
-              right: "-20%",
-              width: "60%",
-              height: "80%",
-              background: "radial-gradient(circle, rgba(94, 24, 233, 0.06) 0%, transparent 70%)",
-              pointerEvents: "none",
-            },
+            content: '""',
+            position: "absolute",
+            top: "-40%",
+            right: "-20%",
+            width: "60%",
+            height: "80%",
+            background: "radial-gradient(circle, rgba(94, 24, 233, 0.06) 0%, transparent 70%)",
+            pointerEvents: "none",
+          },
       }}
     >
       <Container maxWidth="xl" sx={{ position: "relative" }}>
@@ -186,205 +193,246 @@ const Hero: React.FC = () => {
                 "&::before": isDark
                   ? {}
                   : {
-                      content: '""',
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      width: "120%",
-                      height: "140%",
-                      transform: "translate(-50%, -50%)",
-                      background: "radial-gradient(ellipse, rgba(94, 24, 233, 0.15) 0%, transparent 65%)",
-                      animation: `${formGlow} 4s ease-in-out infinite`,
-                      pointerEvents: "none",
-                      zIndex: 0,
-                    },
+                    content: '""',
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    width: "120%",
+                    height: "140%",
+                    transform: "translate(-50%, -50%)",
+                    background: "radial-gradient(ellipse, rgba(94, 24, 233, 0.15) 0%, transparent 65%)",
+                    animation: `${formGlow} 4s ease-in-out infinite`,
+                    pointerEvents: "none",
+                    zIndex: 0,
+                  },
               }}
             >
-            <Paper
-              elevation={0}
-              sx={{
-                position: "relative",
-                zIndex: 1,
-                p: 3,
-                borderRadius: 3,
-                border: `1px solid ${
-                  isDark
+              <Paper
+                elevation={0}
+                sx={{
+                  position: "relative",
+                  zIndex: 1,
+                  p: 3,
+                  borderRadius: 3,
+                  border: `1px solid ${isDark
                     ? COLORS.BORDER.DEFAULT_DARK
                     : "rgba(94, 24, 233, 0.12)"
-                }`,
-                bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-                boxShadow: isDark
-                  ? "none"
-                  : "0 4px 24px rgba(94, 24, 233, 0.08), 0 1px 3px rgba(0,0,0,0.04), 0 0 40px rgba(94, 24, 233, 0.06)",
-                transition: "box-shadow 0.3s ease, border-color 0.3s ease",
-                "&:focus-within": {
+                    }`,
+                  bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
                   boxShadow: isDark
                     ? "none"
-                    : "0 8px 32px rgba(94, 24, 233, 0.12), 0 0 60px rgba(94, 24, 233, 0.08)",
-                  borderColor: "rgba(94, 24, 233, 0.25)",
-                },
-              }}
-            >
-              <Typography
-                variant="subtitle2"
-                color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
-                sx={{ mb: 2, fontWeight: 600 }}
-              >
-                {t("startIn30Seconds")}
-              </Typography>
-              <Box
-                component="form"
-                onSubmit={handleSubmit(onSubmit)}
-                sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: 2,
-                  alignItems: "stretch",
+                    : "0 4px 24px rgba(94, 24, 233, 0.08), 0 1px 3px rgba(0,0,0,0.04), 0 0 40px rgba(94, 24, 233, 0.06)",
+                  transition: "box-shadow 0.3s ease, border-color 0.3s ease",
+                  "&:focus-within": {
+                    boxShadow: isDark
+                      ? "none"
+                      : "0 8px 32px rgba(94, 24, 233, 0.12), 0 0 60px rgba(94, 24, 233, 0.08)",
+                    borderColor: "rgba(94, 24, 233, 0.25)",
+                  },
                 }}
               >
-                <Paper
-                  variant="outlined"
+                <Typography
+                  variant="subtitle2"
+                  color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
+                  sx={{ mb: 2, fontWeight: 600 }}
+                >
+                  {t("startIn30Seconds")}
+                </Typography>
+                <Tabs
+                  value={role}
+                  onChange={handleRoleChange}
+                  variant="fullWidth"
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    border: `1px solid ${
-                      isDark
-                        ? COLORS.BORDER.DEFAULT_DARK
-                        : "rgba(94, 24, 233, 0.15)"
-                    }`,
-                    overflow: "hidden",
-                    flex: "1 1 220px",
-                    minHeight: 52,
-                    bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-                    borderRadius: 2,
-                    transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-                    "&:focus-within": {
-                      borderColor: COLORS.PRIMARY_PURPLE,
-                      boxShadow: `0 0 0 3px ${COLORS.PURPLE_ALPHA_10}`,
+                    mb: 2.5,
+                    minHeight: 44,
+                    borderBottom: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.12)"}`,
+                    "& .MuiTabs-indicator": {
+                      backgroundColor: COLORS.PRIMARY_PURPLE,
+                      height: 3,
+                      borderRadius: "3px 3px 0 0",
                     },
                   }}
                 >
-                  <Box
+                  <Tab
+                    label={t("service_provider")}
+                    value="SERVICE_PROVIDER"
                     sx={{
-                      bgcolor: isDark
-                        ? COLORS.PURPLE_ALPHA_10
-                        : COLORS.PURPLE_ALPHA_04,
-                      borderRadius: 0,
-                      borderRight: `1px solid ${
-                        isDark
-                          ? COLORS.BORDER.DEFAULT_DARK
-                          : "rgba(94, 24, 233, 0.12)"
-                      }`,
+                      textTransform: "none",
+                      fontWeight: 600,
+                      fontSize: "0.875rem",
+                      minHeight: 44,
+                      color: role === "SERVICE_PROVIDER" ? COLORS.PRIMARY_PURPLE : "text.secondary",
+                      "&.Mui-selected": {
+                        color: COLORS.PRIMARY_PURPLE,
+                      },
+                    }}
+                  />
+                  <Tab
+                    label={t("supplier")}
+                    value="SUPPLIER"
+                    sx={{
+                      textTransform: "none",
+                      fontWeight: 600,
+                      fontSize: "0.875rem",
+                      minHeight: 44,
+                      color: role === "SUPPLIER" ? COLORS.PRIMARY_PURPLE : "text.secondary",
+                      "&.Mui-selected": {
+                        color: COLORS.PRIMARY_PURPLE,
+                      },
+                    }}
+                  />
+                </Tabs>
+                <Box
+                  component="form"
+                  onSubmit={handleSubmit(onSubmit)}
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 2,
+                    alignItems: "stretch",
+                  }}
+                >
+                  <Paper
+                    variant="outlined"
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      border: `1px solid ${isDark
+                        ? COLORS.BORDER.DEFAULT_DARK
+                        : "rgba(94, 24, 233, 0.15)"
+                        }`,
+                      overflow: "hidden",
+                      flex: "1 1 220px",
+                      minHeight: 52,
+                      bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
+                      borderRadius: 2,
+                      transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+                      "&:focus-within": {
+                        borderColor: COLORS.PRIMARY_PURPLE,
+                        boxShadow: `0 0 0 3px ${COLORS.PURPLE_ALPHA_10}`,
+                      },
                     }}
                   >
-                    <Input
-                      name="country_code"
-                      control={control}
-                      select
-                      variant="standard"
-                      InputProps={{
-                        disableUnderline: true,
-                        sx: {
-                          minWidth: 96,
-                          "& .MuiSelect-select": {
-                            py: 1.5,
-                            pl: 2,
-                            pr: "28px !important",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 0.5,
-                            fontWeight: 600,
-                            fontSize: "0.875rem",
+                    <Box
+                      sx={{
+                        bgcolor: isDark
+                          ? COLORS.PURPLE_ALPHA_10
+                          : COLORS.PURPLE_ALPHA_04,
+                        borderRadius: 0,
+                        borderRight: `1px solid ${isDark
+                          ? COLORS.BORDER.DEFAULT_DARK
+                          : "rgba(94, 24, 233, 0.12)"
+                          }`,
+                      }}
+                    >
+                      <Input
+                        name="country_code"
+                        control={control}
+                        select
+                        variant="standard"
+                        InputProps={{
+                          disableUnderline: true,
+                          sx: {
+                            minWidth: 96,
+                            "& .MuiSelect-select": {
+                              py: 1.5,
+                              pl: 2,
+                              pr: "28px !important",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 0.5,
+                              fontWeight: 600,
+                              fontSize: "0.875rem",
+                              color: isDark
+                                ? COLORS.TEXT.PRIMARY_DARK
+                                : COLORS.TEXT.PRIMARY_LIGHT,
+                            },
+                            "& .MuiSvgIcon-root": {
+                              color: isDark
+                                ? COLORS.TEXT.SECONDARY_DARK
+                                : "text.secondary",
+                            },
+                          },
+                        }}
+                      >
+                        {countries.map((country) => (
+                          <MenuItem key={country.code} value={country.phone_code}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                              }}
+                            >
+                              <span>{country.flag}</span>
+                              <span>{country.phone_code}</span>
+                            </Box>
+                          </MenuItem>
+                        ))}
+                      </Input>
+                    </Box>
+                    <Box sx={{ flex: 1, display: "flex", alignItems: "center", px: 1.5 }}>
+                      <Input
+                        name="phone_number"
+                        control={control}
+                        placeholder={t("yourMobileNumber")}
+                        variant="standard"
+                        type="tel"
+                        inputMode="tel"
+                        inputProps={{
+                          maxLength: 10,
+                        }}
+                        InputProps={{
+                          disableUnderline: true,
+                          sx: {
+                            py: 0.5,
+                            px: 0.5,
                             color: isDark
                               ? COLORS.TEXT.PRIMARY_DARK
                               : COLORS.TEXT.PRIMARY_LIGHT,
+                            fontSize: "0.9375rem",
                           },
-                          "& .MuiSvgIcon-root": {
-                            color: isDark
-                              ? COLORS.TEXT.SECONDARY_DARK
-                              : "text.secondary",
-                          },
-                        },
-                      }}
-                    >
-                      {countries.map((country) => (
-                        <MenuItem key={country.code} value={country.phone_code}>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 1,
-                            }}
-                          >
-                            <span>{country.flag}</span>
-                            <span>{country.phone_code}</span>
-                          </Box>
-                        </MenuItem>
-                      ))}
-                    </Input>
-                  </Box>
-                  <Box sx={{ flex: 1, display: "flex", alignItems: "center", px: 1.5 }}>
-                    <Input
-                      name="phone_number"
-                      control={control}
-                      placeholder={t("yourMobileNumber")}
-                      variant="standard"
-                      type="tel"
-                      inputMode="tel"
-                      inputProps={{
-                        maxLength: 10,
-                      }}
-                      InputProps={{
-                        disableUnderline: true,
-                        sx: {
-                          py: 0.5,
-                          px: 0.5,
-                          color: isDark
-                            ? COLORS.TEXT.PRIMARY_DARK
-                            : COLORS.TEXT.PRIMARY_LIGHT,
-                          fontSize: "0.9375rem",
-                        },
-                      }}
-                      sx={{
-                        "& .MuiInputBase-root": { height: "100%", marginTop: "2px" },
-                      }}
-                    />
-                  </Box>
-                </Paper>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  endIcon={
-                    loading ? (
-                      <CircularProgress size={20} color="inherit" />
-                    ) : (
-                      <ArrowForwardIcon sx={{ fontSize: 20 }} />
-                    )
-                  }
-                  disabled={loading}
-                  sx={{
-                    bgcolor: COLORS.PRIMARY_PURPLE,
-                    color: "white",
-                    px: 3.5,
-                    py: 1.5,
-                    minHeight: 52,
-                    borderRadius: 2,
-                    textTransform: "none",
-                    fontWeight: 600,
-                    fontSize: "0.9375rem",
-                    boxShadow: "0 4px 14px rgba(94, 24, 233, 0.35), 0 0 24px rgba(94, 24, 233, 0.2)",
-                    transition: "all 0.25s ease",
-                    "&:hover": {
-                      bgcolor: COLORS.PURPLE_HOVER,
-                      boxShadow: "0 6px 24px rgba(94, 24, 233, 0.45), 0 0 40px rgba(94, 24, 233, 0.25)",
-                      transform: "translateY(-1px)",
-                    },
-                  }}
-                >
-                  {t("getMyFreeListing")}
-                </Button>
-              </Box>
-            </Paper>
+                        }}
+                        sx={{
+                          "& .MuiInputBase-root": { height: "100%", marginTop: "2px" },
+                        }}
+                      />
+                    </Box>
+                  </Paper>
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    endIcon={
+                      loading ? (
+                        <CircularProgress size={20} color="inherit" />
+                      ) : (
+                        <ArrowForwardIcon sx={{ fontSize: 20 }} />
+                      )
+                    }
+                    disabled={loading}
+                    sx={{
+                      bgcolor: COLORS.PRIMARY_PURPLE,
+                      color: "white",
+                      px: 3.5,
+                      py: 1.5,
+                      minHeight: 52,
+                      borderRadius: 2,
+                      textTransform: "none",
+                      fontWeight: 600,
+                      fontSize: "0.9375rem",
+                      boxShadow: "0 4px 14px rgba(94, 24, 233, 0.35), 0 0 24px rgba(94, 24, 233, 0.2)",
+                      transition: "all 0.25s ease",
+                      "&:hover": {
+                        bgcolor: COLORS.PURPLE_HOVER,
+                        boxShadow: "0 6px 24px rgba(94, 24, 233, 0.45), 0 0 40px rgba(94, 24, 233, 0.25)",
+                        transform: "translateY(-1px)",
+                      },
+                    }}
+                  >
+                    {t("getMyFreeListing")}
+                  </Button>
+                </Box>
+              </Paper>
             </Box>
 
             <VerificationModal
@@ -448,9 +496,8 @@ const Hero: React.FC = () => {
                   width: 280,
                   height: 560,
                   position: "relative",
-                  border: `12px solid ${
-                    isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(0,0,0,0.08)"
-                  }`,
+                  border: `12px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(0,0,0,0.08)"
+                    }`,
                   borderRadius: "28px",
                   overflow: "hidden",
                   boxShadow: isDark
@@ -475,11 +522,10 @@ const Hero: React.FC = () => {
                       borderRadius: 2,
                       minWidth: 180,
                       bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-                      border: `1px solid ${
-                        isDark
-                          ? COLORS.BORDER.DEFAULT_DARK
-                          : "rgba(94, 24, 233, 0.1)"
-                      }`,
+                      border: `1px solid ${isDark
+                        ? COLORS.BORDER.DEFAULT_DARK
+                        : "rgba(94, 24, 233, 0.1)"
+                        }`,
                       boxShadow: isDark ? "none" : "0 2px 12px rgba(0,0,0,0.04)",
                       transition: "transform 0.2s ease, box-shadow 0.2s ease",
                       "&:hover": {
