@@ -420,7 +420,9 @@ export const english = {
   ai_try_asking: "Try asking",
   ai_services_label: "Services we found",
   ai_explore_categories: "Explore categories",
-  neatMyArea: "neat my area",
+  ai_voice_tap: "Tap to speak",
+  ai_voice_listening: "Listening...",
+  ai_voice_not_supported: "Voice input not supported in this browser",
 
   // Supplier
   supplier_registration_title: "Supplier Registration",
