@@ -48,6 +48,7 @@ export interface Review {
   updated_at: string;
   is_deleted: boolean;
   deleted_by: string | null;
+  is_testimonials: boolean; 
 }
 
 export interface meta {

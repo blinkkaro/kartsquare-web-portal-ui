@@ -11,6 +11,7 @@ import MetricCards from "./components/MetricCards";
 import RevenueChart from "./components/RevenueChart";
 import UpcomingBookings from "./components/UpcomingBookings";
 import LatestReviews from "./components/LatestReviews"; // Add this
+import LatestLeads from "./components/LatestLeads";
 import UpcomingEvents from "./components/UpcomingEvents";
 import RecentTransactions from "./components/RecentTransactions";
 import { useProviderDashboard } from "@/hooks/useProviderDashboard";
@@ -93,12 +94,17 @@ function DashboardView() {
                   total_active_services: 0,
                   total_pending_bookings: 0,
                   total_completed_bookings: 0,
+                  total_phone_number_views: 0,
+                  total_profile_views: 0,
                 }
               }
             />
 
             {/* Revenue Chart */}
             <RevenueChart chartData={providerDashboardChartData} />
+
+            {/* Latest Leads */}
+            <LatestLeads />
           </Box>
         </Grid>
 

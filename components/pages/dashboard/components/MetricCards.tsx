@@ -17,6 +17,8 @@ import {
   EventAvailable,
   PendingActions,
   AssignmentTurnedIn,
+  Person,
+  Call,
 } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -211,6 +213,16 @@ const MetricCards: React.FC<{ stats: ProviderDashboardResponse["stats"] }> = ({ 
       title: t("totalCompletedBookings"),
       value: stats.total_completed_bookings,
       icon: <AssignmentTurnedIn sx={{ fontSize: 24 }} />,
+    },
+    {
+      title: t("totalPhoneNumberViews"),
+      value: stats.total_phone_number_views,
+      icon: <Call sx={{ fontSize: 24 }} />,
+    },
+    {
+      title: t("totalProfileViews"),
+      value: stats.total_profile_views,
+      icon: <Person sx={{ fontSize: 24 }} />,
     },
   ];
 

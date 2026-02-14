@@ -43,8 +43,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
       : [
-        "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      ];
+          "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        ];
 
   const handlePrevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -305,10 +305,10 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Avatar
-              src={service.provider_image_url || undefined}
+              src={service.provider_image_url}
               sx={{ width: 24, height: 24 }}
             >
-              {service?.provider_name.charAt(0).toUpperCase()}
+              {/* {service?.provider_name.charAt(0).toUpperCase()} */}
             </Avatar>
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Typography
@@ -357,7 +357,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             <Typography
               variant="subtitle1"
               fontWeight="bold"
-              sx={{ color: COLORS.PRIMARY_PURPLE }}
+              sx={{
+                color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+              }}
             >
               <Typography
                 variant="body2"
@@ -414,7 +416,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
               fontWeight: 800,
               fontSize: "1rem",
               lineHeight: 1.2,
-              color: COLORS.PRIMARY_PURPLE,
+              color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
             }}
           >
             {service.service_name}

@@ -13,6 +13,7 @@ export enum PostType {
 export interface GetPostsParams {
   limit: number;
   visibility: Visibility;
+  cursor?: string;
 }
 export interface Posts {
   id: string;
@@ -43,6 +44,7 @@ export interface Posts {
 }
 export interface GetPostsResponse {
   posts: Posts[];
+  nextCursor: string;
 }
 
 interface User {

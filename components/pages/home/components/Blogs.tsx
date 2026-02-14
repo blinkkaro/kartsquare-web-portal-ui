@@ -32,7 +32,6 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
         display: "flex",
         gap: 2,
         p: 1.5,
-        boxShadow: "none",
         mb: 2,
         ":hover": {
           boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
@@ -41,8 +40,11 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
           theme.palette.mode === "dark"
             ? COLORS.BACKGROUND.PRIMARY_DARK
             : COLORS.BACKGROUND.PRIMARY_LIGHT,
-
-
+        borderRadius: 2,
+        boxShadow:
+          theme.palette.mode === "dark"
+            ? "0 4px 12px rgba(0,0,0,0.6)"
+            : "0 4px 12px rgba(0,0,0,0.15)",
       }}
     >
       {/* Blog Image */}
@@ -134,8 +136,8 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
               "&:hover": {
                 textDecoration: "underline",
               },
-              // pb: 2,
-              // borderBottom: `1px solid rgb(172, 171, 171)`,
+              pb: 2,
+              borderBottom: `1px solid #757575`,
             }}
           >
             {t("readmore")}
@@ -161,7 +163,10 @@ const Blogs = () => {
           theme.palette.mode === "dark"
             ? COLORS.BACKGROUND.PRIMARY_DARK
             : COLORS.BACKGROUND.PRIMARY_LIGHT,
-        boxShadow: "none",
+        boxShadow:
+          theme.palette.mode === "dark"
+            ? "0 4px 12px rgba(0,0,0,0.6)"
+            : "0 4px 12px rgba(0,0,0,0.15)",
       }}
     >
       {/* Header */}

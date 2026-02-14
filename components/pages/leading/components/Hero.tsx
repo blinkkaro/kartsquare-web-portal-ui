@@ -29,20 +29,21 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Input from "@/components/common/Input";
+import Link from "next/link";
 
 const heroSchema = (t: any) =>
   yup.object().shape({
-    phone_number: yup
+    whatsapp_number: yup
       .string()
       .required(t("phoneNumberRequired"))
       .length(10, t("phoneNumberLength"))
       .matches(/^[0-9]+$/, t("phoneNumberInvalid")),
-    country_code: yup.string().required(t("countryCodeRequired")),
+    whatsapp_country_code: yup.string().required(t("countryCodeRequired")),
   });
 
 type HeroFormData = {
-  phone_number: string;
-  country_code: string;
+  whatsapp_number: string;
+  whatsapp_country_code: string;
 };
 
 const chipPulse = keyframes`
@@ -72,8 +73,8 @@ const Hero: React.FC = () => {
   const { control, handleSubmit } = useForm<HeroFormData>({
     resolver: yupResolver(heroSchema(t)),
     defaultValues: {
-      phone_number: "",
-      country_code: "+91",
+      whatsapp_number: "",
+      whatsapp_country_code: "+91",
     },
   });
 
@@ -83,8 +84,8 @@ const Hero: React.FC = () => {
 
   const onSubmit = (data: HeroFormData) => {
     handleCheckUser({
-      phone_number: data.phone_number,
-      country_code: data.country_code,
+      whatsapp_number: data.whatsapp_number,
+      whatsapp_country_code: data.whatsapp_country_code,
       source: "WEB",
       source_type: role,
     });
@@ -105,17 +106,52 @@ const Hero: React.FC = () => {
         "&::before": isDark
           ? {}
           : {
-            content: '""',
-            position: "absolute",
-            top: "-40%",
-            right: "-20%",
-            width: "60%",
-            height: "80%",
-            background: "radial-gradient(circle, rgba(94, 24, 233, 0.06) 0%, transparent 70%)",
-            pointerEvents: "none",
-          },
+              content: '""',
+              position: "relative",
+              top: "-40%",
+              right: "-20%",
+              width: "60%",
+              height: "80%",
+              background: "radial-gradient(circle, rgba(94, 24, 233, 0.06) 0%, transparent 70%)",
+              pointerEvents: "none",
+            },
       }}
     >
+      {/* Breadcrumb — minimal, professional */}
+      <Container maxWidth="xl" sx={{ pt: { xs: 2, md: 3 }, pb: 0 }}>
+        <Typography
+          variant="body2"
+          component="nav"
+          aria-label="Breadcrumb"
+          sx={{
+            position: "absolute",
+            top: 20,
+            left: 50,
+            right: 0,
+            color: isDark
+              ? COLORS.TEXT.SECONDARY_DARK
+              : COLORS.TEXT.SECONDARY_LIGHT,
+            "& a": {
+              color: "inherit",
+              textDecoration: "none",
+              transition: "color 0.2s ease",
+              "&:hover": { color: COLORS.PRIMARY_PURPLE },
+            },
+          }}
+        >
+          <Link href="/">{t("home")}</Link>
+          {" / "}
+          <Box
+            component="span"
+            fontWeight={600}
+            color={
+              isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT
+            }
+          >
+            {t("listYourBusiness")}
+          </Box>
+        </Typography>
+      </Container>
       <Container maxWidth="xl" sx={{ position: "relative" }}>
         <Grid container spacing={{ xs: 4, lg: 6 }} alignItems="center">
           <Grid size={{ xs: 12, lg: 6 }}>
@@ -322,117 +358,117 @@ const Hero: React.FC = () => {
                         borderRight: `1px solid ${isDark
                           ? COLORS.BORDER.DEFAULT_DARK
                           : "rgba(94, 24, 233, 0.12)"
-                          }`,
-                      }}
-                    >
-                      <Input
-                        name="country_code"
-                        control={control}
-                        select
-                        variant="standard"
-                        InputProps={{
-                          disableUnderline: true,
-                          sx: {
-                            minWidth: 96,
-                            "& .MuiSelect-select": {
-                              py: 1.5,
-                              pl: 2,
-                              pr: "28px !important",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 0.5,
-                              fontWeight: 600,
-                              fontSize: "0.875rem",
-                              color: isDark
-                                ? COLORS.TEXT.PRIMARY_DARK
-                                : COLORS.TEXT.PRIMARY_LIGHT,
-                            },
-                            "& .MuiSvgIcon-root": {
-                              color: isDark
-                                ? COLORS.TEXT.SECONDARY_DARK
-                                : "text.secondary",
-                            },
-                          },
-                        }}
-                      >
-                        {countries.map((country) => (
-                          <MenuItem key={country.code} value={country.phone_code}>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 1,
-                              }}
-                            >
-                              <span>{country.flag}</span>
-                              <span>{country.phone_code}</span>
-                            </Box>
-                          </MenuItem>
-                        ))}
-                      </Input>
-                    </Box>
-                    <Box sx={{ flex: 1, display: "flex", alignItems: "center", px: 1.5 }}>
-                      <Input
-                        name="phone_number"
-                        control={control}
-                        placeholder={t("yourMobileNumber")}
-                        variant="standard"
-                        type="tel"
-                        inputMode="tel"
-                        inputProps={{
-                          maxLength: 10,
-                        }}
-                        InputProps={{
-                          disableUnderline: true,
-                          sx: {
-                            py: 0.5,
-                            px: 0.5,
+                      }`,
+                    }}
+                  >
+                    <Input
+                      name="whatsapp_country_code"
+                      control={control}
+                      select
+                      variant="standard"
+                      InputProps={{
+                        disableUnderline: true,
+                        sx: {
+                          minWidth: 96,
+                          "& .MuiSelect-select": {
+                            py: 1.5,
+                            pl: 2,
+                            pr: "28px !important",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                            fontWeight: 600,
+                            fontSize: "0.875rem",
                             color: isDark
                               ? COLORS.TEXT.PRIMARY_DARK
                               : COLORS.TEXT.PRIMARY_LIGHT,
-                            fontSize: "0.9375rem",
                           },
-                        }}
-                        sx={{
-                          "& .MuiInputBase-root": { height: "100%", marginTop: "2px" },
-                        }}
-                      />
-                    </Box>
-                  </Paper>
-                  <Button
-                    variant="contained"
-                    type="submit"
-                    endIcon={
-                      loading ? (
-                        <CircularProgress size={20} color="inherit" />
-                      ) : (
-                        <ArrowForwardIcon sx={{ fontSize: 20 }} />
-                      )
-                    }
-                    disabled={loading}
-                    sx={{
-                      bgcolor: COLORS.PRIMARY_PURPLE,
-                      color: "white",
-                      px: 3.5,
-                      py: 1.5,
-                      minHeight: 52,
-                      borderRadius: 2,
-                      textTransform: "none",
-                      fontWeight: 600,
-                      fontSize: "0.9375rem",
-                      boxShadow: "0 4px 14px rgba(94, 24, 233, 0.35), 0 0 24px rgba(94, 24, 233, 0.2)",
-                      transition: "all 0.25s ease",
-                      "&:hover": {
-                        bgcolor: COLORS.PURPLE_HOVER,
-                        boxShadow: "0 6px 24px rgba(94, 24, 233, 0.45), 0 0 40px rgba(94, 24, 233, 0.25)",
-                        transform: "translateY(-1px)",
-                      },
-                    }}
-                  >
-                    {t("getMyFreeListing")}
-                  </Button>
-                </Box>
-              </Paper>
+                          "& .MuiSvgIcon-root": {
+                            color: isDark
+                              ? COLORS.TEXT.SECONDARY_DARK
+                              : "text.secondary",
+                          },
+                        },
+                      }}
+                    >
+                      {countries.map((country) => (
+                        <MenuItem key={country.code} value={country.phone_code}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
+                            <span>{country.flag}</span>
+                            <span>{country.phone_code}</span>
+                          </Box>
+                        </MenuItem>
+                      ))}
+                    </Input>
+                  </Box>
+                  <Box sx={{ flex: 1, display: "flex", alignItems: "center", px: 1.5 }}>
+                    <Input
+                      name="whatsapp_number"
+                      control={control}
+                      placeholder={t("yourWhatsappNumber")}
+                      variant="standard"
+                      type="tel"
+                      inputMode="tel"
+                      inputProps={{
+                        maxLength: 10,
+                      }}
+                      InputProps={{
+                        disableUnderline: true,
+                        sx: {
+                          py: 0.5,
+                          px: 0.5,
+                          color: isDark
+                            ? COLORS.TEXT.PRIMARY_DARK
+                            : COLORS.TEXT.PRIMARY_LIGHT,
+                          fontSize: "0.9375rem",
+                        },
+                      }}
+                      sx={{
+                        "& .MuiInputBase-root": { height: "100%", marginTop: "2px" },
+                      }}
+                    />
+                  </Box>
+                </Paper>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  endIcon={
+                    loading ? (
+                      <CircularProgress size={20} color="inherit" />
+                    ) : (
+                      <ArrowForwardIcon sx={{ fontSize: 20 }} />
+                    )
+                  }
+                  disabled={loading}
+                  sx={{
+                    bgcolor: COLORS.PRIMARY_PURPLE,
+                    color: "white",
+                    px: 3.5,
+                    py: 1.5,
+                    minHeight: 52,
+                    borderRadius: 2,
+                    textTransform: "none",
+                    fontWeight: 600,
+                    fontSize: "0.9375rem",
+                    boxShadow: "0 4px 14px rgba(94, 24, 233, 0.35), 0 0 24px rgba(94, 24, 233, 0.2)",
+                    transition: "all 0.25s ease",
+                    "&:hover": {
+                      bgcolor: COLORS.PURPLE_HOVER,
+                      boxShadow: "0 6px 24px rgba(94, 24, 233, 0.45), 0 0 40px rgba(94, 24, 233, 0.25)",
+                      transform: "translateY(-1px)",
+                    },
+                  }}
+                >
+                  {t("getMyFreeListing")}
+                </Button>
+              </Box>
+            </Paper>
             </Box>
 
             <VerificationModal

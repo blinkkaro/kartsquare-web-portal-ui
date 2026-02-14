@@ -12,7 +12,6 @@ import { useParams, useRouter } from "next/navigation";
 import { Edit, Delete, Share } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import ServiceImageCarousel from "../../../ServiceImageCarousel";
-import { ServiceStatus } from "../../../../services/serviceList/listInteraface";
 import { COLORS } from "../../../../constants/colors";
 import AddServiceDrawer from "../addService";
 import { serviceListService } from "../../../../services/serviceList/serviceListService";
@@ -30,9 +29,10 @@ import ShareDialog from "./ShareDialog";
 import AdvancePayInfo from "./AdvancePayInfo";
 import MainLayout from "@/app/mainLayout";
 import { useServiceDetails } from "@/hooks/useServiceDetails";
-import { useServiceReviews } from "@/hooks/useReviews";
+import { useGetReviews } from "@/hooks/useReview";
 import { useQueryClient } from "@tanstack/react-query";
 import CustomerServicePricing from "@/components/common/CustomerServicePricing";
+import { review_type } from "@/services/providerDashboard/providerDashboard.interface";
 
 const ProviderServiceDetails = () => {
   const params = useParams();
@@ -63,7 +63,7 @@ const ProviderServiceDetails = () => {
     isLoading: reviewsLoading,
     fetchNextPage,
     hasNextPage,
-  } = useServiceReviews(serviceId, reviewsPerPage);
+  } = useGetReviews(review_type.SERVICE, serviceId, 1);
 
   // Flatten reviews from all pages
   const reviews = useMemo(() => {

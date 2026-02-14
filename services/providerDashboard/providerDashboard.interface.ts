@@ -48,6 +48,8 @@ export interface stats {
   total_bookings: number;
   total_pending_bookings: number;
   total_completed_bookings: number;
+  total_phone_number_views: number;
+  total_profile_views: number;
 }
 export interface service_address {
   address: string;

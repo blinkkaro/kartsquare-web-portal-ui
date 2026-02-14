@@ -136,8 +136,7 @@ export const calculateDistance = (
       Math.sin(dLon / 2) *
       Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c; // Distance in kilometers
-  return distance;
+  return R * c; // Distance in kilometers
 };
 
 export const formatStringTimeForReview = (timeStr: string | Date): string => {
@@ -146,7 +145,7 @@ export const formatStringTimeForReview = (timeStr: string | Date): string => {
   const hours = date.getHours();
   const minutes = date.getMinutes();
   const ampm = hours >= 12 ? "PM" : "AM";
-  const formattedHours = hours % 12;
+  const formattedHours = hours % 12 || 12; // Handle 0 as 12
   const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
   return `${formattedDate} @ ${formattedHours}:${formattedMinutes} ${ampm}`;
 };
@@ -198,4 +197,17 @@ export const formatAddress = (
   }
 
   return result;
+};
+
+export const seededRandom = (seed: number) => {
+  let m = 0x80000000;
+  let a = 1103515245;
+  let c = 12345;
+
+  let state = seed || Math.floor(Math.random() * (m - 1));
+
+  return function () {
+    state = (a * state + c) % m;
+    return state / (m - 1);
+  };
 };
