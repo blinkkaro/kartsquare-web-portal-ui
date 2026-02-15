@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { Box, Stepper, Step, StepLabel, Grid, Typography, useTheme, useMediaQuery } from "@mui/material";
 import Nav from "@/components/common/Nav";
-import BusinessProfileStep from "@/components/supplier/onboarding/BusinessProfileStep";
 import KycStep from "@/components/supplier/onboarding/KycStep";
 import StoreStep from "@/components/supplier/onboarding/StoreStep";
 import Image from "next/image";
@@ -11,7 +10,7 @@ import { useSupplierProfile } from "@/hooks/useSupplier";
 import { useEffect } from "react";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 
-const steps = ["Business Profile", "KYC Verification", "Store Setup"];
+const steps = ["Store Setup", "KYC Verification"];
 
 export default function SupplierOnboardingPage() {
     const [activeStep, setActiveStep] = useState(0);
@@ -22,15 +21,17 @@ export default function SupplierOnboardingPage() {
     useEffect(() => {
         if (profileArgs?.data?.register_step) {
             const step = profileArgs.data.register_step;
-            if (step === UserRegisterSteps.SUPPLIER_PROFILE_COMPLETED) {
-                setActiveStep(1); // Landing on KYC
-            } else if (
-                step === UserRegisterSteps.SUPPLIER_KYC_SUBMITTED ||
-                step === UserRegisterSteps.SUPPLIER_KYC_VERIFIED
-            ) {
-                setActiveStep(2); // Landing on Store
-            } else if (step >= UserRegisterSteps.SUPPLIER_STORE_CREATED) {
-                setActiveStep(2); // Already done
+
+            // If already completed or at a later step, we can stay at the last step or ideally the guard would have redirected
+            if (step === UserRegisterSteps.COMPLETED || step === 7) {
+                // Already done everything
+                return;
+            }
+
+            if (step >= UserRegisterSteps.SUPPLIER_STORE_CREATED) {
+                setActiveStep(1); // Done store, go to KYC
+            } else {
+                setActiveStep(0); // Start with Store
             }
         }
     }, [profileArgs]);
@@ -46,11 +47,9 @@ export default function SupplierOnboardingPage() {
     const getStepContent = (step: number) => {
         switch (step) {
             case 0:
-                return <BusinessProfileStep onNext={handleNext} />;
+                return <StoreStep onNext={handleNext} />;
             case 1:
-                return <KycStep onNext={handleNext} onBack={handleBack} />;
-            case 2:
-                return <StoreStep onBack={handleBack} />;
+                return <KycStep onBack={handleBack} />;
             default:
                 return "Unknown step";
         }
@@ -127,7 +126,7 @@ export default function SupplierOnboardingPage() {
                         <Stepper
                             activeStep={activeStep}
                             sx={{
-                                mb: 8,
+                                mb: 1.5,
                                 "& .MuiStepLabel-label": { mt: 1, fontWeight: 500 }
                             }}
                             alternativeLabel
@@ -138,7 +137,7 @@ export default function SupplierOnboardingPage() {
                                 </Step>
                             ))}
                         </Stepper>
-                        <Box sx={{ mt: 4 }}>
+                        <Box sx={{ mt: 0 }}>
                             {getStepContent(activeStep)}
                         </Box>
                     </Box>

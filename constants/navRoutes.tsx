@@ -72,6 +72,13 @@ export const getMobileNavItems = (
       // { label: t("events"), href: "/events", icon: <Event /> }
     );
   } else {
+    if (role === "SUPPLIER") {
+      return [
+        { label: t("home"), href: "/", icon: <HomeFilled /> },
+        { label: "My Store", href: "/store", icon: <LocalMallRounded /> },
+      ];
+    }
+
     const bookingsHref =
       role === UserRole.SERVICE_PROVIDER ? "/spr/bookings" : "/cus/bookings";
     items.push(
