@@ -46,6 +46,11 @@ export const registrationStepMap: Record<AppUserType, UserFlowMap> = {
   SUPPLIER: {
     [UserRegisterSteps.REGISTERED]: "VerifyEmail",
     [UserRegisterSteps.EMAIL_VERIFIED]: "SupplierOnboarding",
+    [UserRegisterSteps.BUSINESS_INFO]: "SupplierOnboarding",
+    [UserRegisterSteps.DOCUMENT_VERIFIED]: "SupplierOnboarding",
+    [UserRegisterSteps.SCHEDULE_ADDED]: "SupplierOnboarding",
+    [UserRegisterSteps.PREFERENCES_ADDED]: "SupplierOnboarding",
+    [UserRegisterSteps.COMPLETED]: "SupplierOnboarding",
     [UserRegisterSteps.SUPPLIER_PROFILE_COMPLETED]: "SupplierOnboarding",
     [UserRegisterSteps.SUPPLIER_KYC_SUBMITTED]: "SupplierOnboarding",
     [UserRegisterSteps.SUPPLIER_KYC_VERIFIED]: "SupplierOnboarding",

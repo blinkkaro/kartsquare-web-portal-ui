@@ -12,36 +12,41 @@ import {
     Divider,
     Checkbox,
     FormControlLabel,
+    useTheme,
+    Stack,
     Paper,
 } from "@mui/material";
 import {
-    Category,
+    Category as CategoryIcon,
     Apartment,
     Construction,
     Science,
     DirectionsCar,
     Checkroom,
     ElectricalServices,
+    Star,
+    FilterList,
 } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
+import { Category } from "@/services/store/store.service";
 
 interface CategorySidebarProps {
-    selectedCategory: string;
+    selectedCategory: string | null;
     onSelectCategory: (id: string) => void;
+    categories?: Category[];
+    searchQuery?: string;
 }
 
 const CategorySidebar: React.FC<CategorySidebarProps> = ({
     selectedCategory,
     onSelectCategory,
+    categories = [],
+    searchQuery = "",
 }) => {
-    const categories = [
-        { id: "all", name: "All Categories", icon: <Category /> },
-        { id: "electronics", name: "Electronics & Electrical", icon: <ElectricalServices /> },
-        { id: "machinery", name: "Industrial Machinery", icon: <Construction /> },
-        { id: "textiles", name: "Apparel & Textiles", icon: <Checkroom /> },
-        { id: "chemicals", name: "Chemicals & Dyes", icon: <Science /> },
-        { id: "automotive", name: "Automotive Parts", icon: <DirectionsCar /> },
-        { id: "building", name: "Building & Construction", icon: <Apartment /> },
+    const theme = useTheme();
+    const isDark = theme.palette.mode === "dark";
+    const defaultCategories = [
+        { id: "all", name: "All Categories", icon: <CategoryIcon /> },
     ];
 
     const businessTypes = [
@@ -51,31 +56,75 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
         "Exporter",
     ];
 
+    const priceRanges = [
+        "Under ₹500",
+        "₹500 - ₹1,000",
+        "₹1,000 - ₹5,000",
+        "₹5,000 - ₹10,000",
+        "Over ₹10,000"
+    ];
+
     return (
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{
+            width: "100%",
+            bgcolor: isDark ? "rgba(255,255,255,0.02)" : "#fcfdfe",
+            borderRadius: 6,
+            p: 3,
+            border: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "#f0f2f5"}`
+        }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <FilterList sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 22 }} />
+                    <Typography variant="h6" fontWeight={800} sx={{ letterSpacing: -0.5 }}>Filters</Typography>
+                </Box>
+                {(selectedCategory || searchQuery) && (
+                    <Typography
+                        variant="caption"
+                        onClick={() => onSelectCategory("all")}
+                        sx={{
+                            color: COLORS.PRIMARY_PURPLE,
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            '&:hover': { textDecoration: 'underline' }
+                        }}
+                    >
+                        Reset All
+                    </Typography>
+                )}
+            </Box>
+
             {/* Categories Section */}
-            <Paper elevation={0} sx={{ p: 2, mb: 2, border: "1px solid #e0e0e0" }}>
-                <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 2 }}>
+            <Box sx={{ mb: 5 }}>
+                <Typography variant="caption" sx={{ mb: 2, display: 'block', color: 'text.secondary', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1.5 }}>
                     Categories
                 </Typography>
                 <List disablePadding>
-                    {categories.map((item) => (
-                        <ListItem key={item.id} disablePadding sx={{ mb: 0.5 }}>
+                    {defaultCategories.concat(categories.map(cat => ({
+                        id: cat.product_category_id,
+                        name: cat.category_name,
+                        icon: <CategoryIcon sx={{ fontSize: 18 }} />
+                    }))).map((item) => (
+                        <ListItem key={item.id} disablePadding sx={{ mb: 0.2 }}>
                             <ListItemButton
                                 selected={selectedCategory === item.id}
                                 onClick={() => onSelectCategory(item.id)}
                                 sx={{
-                                    borderRadius: 1,
+                                    borderRadius: 3,
+                                    py: 1,
+                                    transition: 'all 0.2s',
                                     "&.Mui-selected": {
-                                        bgcolor: `${COLORS.PRIMARY_PURPLE}15`,
+                                        bgcolor: isDark ? "rgba(94, 24, 233, 0.15)" : `${COLORS.PRIMARY_PURPLE}08`,
                                         color: COLORS.PRIMARY_PURPLE,
-                                        "&:hover": { bgcolor: `${COLORS.PRIMARY_PURPLE}25` },
+                                        "&:hover": { bgcolor: isDark ? "rgba(94, 24, 233, 0.2)" : `${COLORS.PRIMARY_PURPLE}12` },
                                     },
+                                    "&:hover": {
+                                        bgcolor: isDark ? "rgba(255,255,255,0.02)" : "#f5f7fa"
+                                    }
                                 }}
                             >
                                 <ListItemIcon
                                     sx={{
-                                        minWidth: 36,
+                                        minWidth: 32,
                                         color: selectedCategory === item.id ? COLORS.PRIMARY_PURPLE : "text.secondary",
                                     }}
                                 >
@@ -85,39 +134,88 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
                                     primary={item.name}
                                     primaryTypographyProps={{
                                         variant: "body2",
-                                        fontWeight: selectedCategory === item.id ? 600 : 400,
+                                        fontWeight: selectedCategory === item.id ? 800 : 500,
+                                        fontSize: '0.85rem'
                                     }}
                                 />
                             </ListItemButton>
                         </ListItem>
                     ))}
                 </List>
-            </Paper>
+            </Box>
 
-            {/* Filters Section (Visual Only) */}
-            <Paper elevation={0} sx={{ p: 2, border: "1px solid #e0e0e0" }}>
-                <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 2 }}>
-                    Business Type
+            <Divider sx={{ mb: 4, opacity: 0.6 }} />
+
+            {/* Price Range Section */}
+            <Box sx={{ mb: 5 }}>
+                <Typography variant="caption" sx={{ mb: 2, display: 'block', color: 'text.secondary', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1.5 }}>
+                    Price Range
                 </Typography>
-                {businessTypes.map((type) => (
-                    <FormControlLabel
-                        key={type}
-                        control={<Checkbox size="small" />}
-                        label={<Typography variant="body2">{type}</Typography>}
-                        sx={{ display: "block", mb: 0.5 }}
-                    />
-                ))}
+                <Stack spacing={0.5}>
+                    {priceRanges.map((range) => (
+                        <FormControlLabel
+                            key={range}
+                            control={<Checkbox size="small" sx={{
+                                color: isDark ? "rgba(255,255,255,0.1)" : "#dee2e6",
+                                '&.Mui-checked': { color: COLORS.PRIMARY_PURPLE },
+                                '& .MuiSvgIcon-root': { fontSize: 20 }
+                            }} />}
+                            label={<Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.85rem', color: isDark ? "text.primary" : "#444" }}>{range}</Typography>}
+                            sx={{ m: 0, p: 0.5, borderRadius: 2, '&:hover': { bgcolor: isDark ? "rgba(255,255,255,0.02)" : "#f8f9fa" } }}
+                        />
+                    ))}
+                </Stack>
+            </Box>
 
-                <Divider sx={{ my: 2 }} />
+            <Divider sx={{ mb: 4, opacity: 0.6 }} />
 
-                <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 2 }}>
-                    GST Filter
+            {/* Business Type Section */}
+            <Box sx={{ mb: 5 }}>
+                <Typography variant="caption" sx={{ mb: 2, display: 'block', color: 'text.secondary', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1.5 }}>
+                    Expertise
                 </Typography>
-                <FormControlLabel
-                    control={<Checkbox size="small" />}
-                    label={<Typography variant="body2">GST Registered Only</Typography>}
-                />
-            </Paper>
+                <Stack spacing={0.5}>
+                    {businessTypes.map((type) => (
+                        <FormControlLabel
+                            key={type}
+                            control={<Checkbox size="small" sx={{
+                                color: isDark ? "rgba(255,255,255,0.1)" : "#dee2e6",
+                                '&.Mui-checked': { color: COLORS.PRIMARY_PURPLE }
+                            }} />}
+                            label={<Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.85rem', color: isDark ? "text.primary" : "#444" }}>{type}</Typography>}
+                            sx={{ m: 0, p: 0.5, borderRadius: 2, '&:hover': { bgcolor: isDark ? "rgba(255,255,255,0.02)" : "#f8f9fa" } }}
+                        />
+                    ))}
+                </Stack>
+            </Box>
+
+            <Divider sx={{ mb: 4, opacity: 0.6 }} />
+
+            {/* Rating Section */}
+            <Box>
+                <Typography variant="caption" sx={{ mb: 2, display: 'block', color: 'text.secondary', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1.5 }}>
+                    Review Rating
+                </Typography>
+                <Stack spacing={0.5}>
+                    {[4, 3, 2, 1].map((rating) => (
+                        <FormControlLabel
+                            key={rating}
+                            control={<Checkbox size="small" sx={{
+                                color: isDark ? "rgba(255,255,255,0.1)" : "#dee2e6",
+                                '&.Mui-checked': { color: COLORS.PRIMARY_PURPLE }
+                            }} />}
+                            label={
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '0.85rem' }}>{rating}.0+</Typography>
+                                    <Star sx={{ fontSize: 14, color: '#faaf00' }} />
+                                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>(Verified)</Typography>
+                                </Box>
+                            }
+                            sx={{ m: 0, p: 0.5, borderRadius: 2, '&:hover': { bgcolor: isDark ? "rgba(255,255,255,0.02)" : "#f8f9fa" } }}
+                        />
+                    ))}
+                </Stack>
+            </Box>
         </Box>
     );
 };

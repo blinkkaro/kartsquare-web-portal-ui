@@ -77,72 +77,82 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
         </Container>
       </Box>
 
-      <Container maxWidth="xl">
-        <Grid container spacing={4}>
-          {/* Left: Images (Sticky) */}
-          <Grid size={{ xs: 12, md: 4 }} sx={{ position: "relative" }}>
-            <Box sx={{ position: "sticky", top: 100 }}>
+      <Container maxWidth="xl" sx={{ pt: 4 }}>
+        <Grid container spacing={6}>
+          {/* Left: Images - High End Gallery Container */}
+          <Grid size={{ xs: 12, md: 5 }}>
+            <Box sx={{ position: "sticky", top: 120 }}>
               <Box
                 sx={{
                   width: "100%",
-                  height: { xs: 300, md: 450 },
-                  border: "1px solid #e0e0e0",
-                  borderRadius: 3,
+                  height: { xs: 350, md: 500 },
+                  borderRadius: 6,
                   overflow: "hidden",
-                  mb: 2,
+                  mb: 3,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  bgcolor: "#f8f9fa",
-                  position: "relative"
+                  bgcolor: "#fcfdfe",
+                  position: "relative",
+                  border: "1px solid #f0f0f0",
+                  transition: 'all 0.3s ease',
+                  '&:hover': { boxShadow: '0 24px 48px rgba(0,0,0,0.08)' }
                 }}
               >
                 <Box
                   component="img"
                   src={product.images[selectedImage]}
                   alt={product.name}
-                  sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", mixBlendMode: "multiply" }}
+                  sx={{ maxWidth: "85%", maxHeight: "85%", objectFit: "contain", mixBlendMode: "multiply" }}
                 />
+
                 {product.supplier.trustSeal && (
                   <Box sx={{
                     position: "absolute",
-                    top: 16,
-                    left: 16,
-                    bgcolor: "rgba(255, 255, 255, 0.95)",
-                    backdropFilter: "blur(4px)",
-                    px: 1.5,
-                    py: 0.75,
-                    borderRadius: 2,
+                    top: 24,
+                    left: 24,
+                    bgcolor: "rgba(255, 255, 255, 0.9)",
+                    backdropFilter: "blur(12px)",
+                    px: 2,
+                    py: 1,
+                    borderRadius: 3,
                     display: "flex",
                     alignItems: "center",
-                    gap: 0.5,
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)"
+                    gap: 1,
+                    boxShadow: "0 8px 16px rgba(0,0,0,0.06)",
+                    border: "1px solid rgba(0,0,0,0.03)"
                   }}>
-                    <Verified sx={{ fontSize: 18, color: COLORS.PRIMARY_PURPLE }} />
-                    <Typography variant="subtitle2" fontWeight={700} color={COLORS.PRIMARY_PURPLE}>Trusted Supplier</Typography>
+                    <Verified sx={{ fontSize: 20, color: COLORS.PRIMARY_PURPLE }} />
+                    <Typography variant="subtitle2" fontWeight={800} color={COLORS.PRIMARY_PURPLE} sx={{ letterSpacing: 0.5, textTransform: 'uppercase', fontSize: '0.7rem' }}>
+                      Verified Supplier
+                    </Typography>
                   </Box>
                 )}
               </Box>
-              <Stack direction="row" spacing={2} sx={{ overflowX: "auto", pb: 1 }}>
+
+              <Stack direction="row" spacing={2} sx={{ overflowX: "auto", pb: 2, '&::-webkit-scrollbar': { display: 'none' } }}>
                 {product.images.map((img, idx) => (
                   <Box
                     key={idx}
                     onClick={() => setSelectedImage(idx)}
                     sx={{
-                      width: 80,
-                      height: 80,
-                      border: selectedImage === idx ? `2px solid ${COLORS.PRIMARY_PURPLE}` : "1px solid #e0e0e0",
-                      borderRadius: 2,
+                      width: 90,
+                      height: 90,
+                      border: selectedImage === idx ? `2px solid ${COLORS.PRIMARY_PURPLE}` : "1px solid #eee",
+                      borderRadius: 4,
                       cursor: "pointer",
                       flexShrink: 0,
-                      p: 0.5,
-                      bgcolor: "#fff"
+                      p: 1,
+                      bgcolor: "#fff",
+                      transition: 'all 0.2s',
+                      transform: selectedImage === idx ? 'scale(1.05)' : 'scale(1)',
+                      boxShadow: selectedImage === idx ? `0 8px 16px ${COLORS.PRIMARY_PURPLE}20` : 'none'
                     }}
                   >
                     <Box
                       component="img"
                       src={img}
-                      sx={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 1 }}
+                      sx={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: 2 }}
                     />
                   </Box>
                 ))}
@@ -150,22 +160,40 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
             </Box>
           </Grid>
 
-          {/* Right: Details (Scrollable) */}
-          <Grid size={{ xs: 12, md: 8 }}>
-            <Box component={Paper} elevation={0} sx={{ p: { xs: 2, md: 4 }, borderRadius: 4, border: "1px solid #e0e0e0", display: "flex", flexDirection: "column", gap: 3 }}>
-              {/* Header Section */}
+          {/* Right: Details - High Hierarchy Content */}
+          <Grid size={{ xs: 12, md: 7 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 5 }}>
+              {/* Product Info Header */}
               <Box>
-                <Typography variant="h4" fontWeight={800} sx={{ mb: 1.5, color: "#1a1a2e", lineHeight: 1.3 }}>
+                <Typography variant="overline" sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 800, letterSpacing: 2, display: 'block', mb: 1 }}>
+                  {product.category}
+                </Typography>
+                <Typography variant="h3" fontWeight={900} sx={{ mb: 2, color: "#1a1a2e", lineHeight: 1.1, letterSpacing: '-0.02em' }}>
                   {product.name}
                 </Typography>
-                <Stack direction="row" alignItems="baseline" spacing={1} sx={{ mb: 2 }}>
-                  <Typography variant="h4" color={COLORS.PRIMARY_PURPLE} fontWeight={800}>
-                    {product.price}
+
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 4, gap: 2 }}>
+                  <Box sx={{
+                    bgcolor: COLORS.PURPLE_ALPHA_04,
+                    px: 3,
+                    py: 1.5,
+                    borderRadius: 4,
+                    display: 'flex',
+                    alignItems: 'baseline',
+                    gap: 1,
+                    border: `1px solid ${COLORS.PRIMARY_PURPLE}15`
+                  }}>
+                    <Typography variant="h3" color={COLORS.PRIMARY_PURPLE} fontWeight={900}>
+                      {product.price}
+                    </Typography>
+                    <Typography variant="h6" color="text.secondary" fontWeight={600}>
+                      / {product.unit}
+                    </Typography>
+                  </Box>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>
+                    + {product.gst} GST
                   </Typography>
-                  <Typography variant="h6" color="text.secondary" fontWeight={500}>
-                    / {product.unit} (plus {product.gst} GST)
-                  </Typography>
-                </Stack>
+                </Box>
 
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
                   <Button
@@ -175,15 +203,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
                     onClick={() => setInquiryOpen(true)}
                     sx={{
                       bgcolor: COLORS.PRIMARY_PURPLE,
-                      fontSize: "1.05rem",
-                      py: 1.5,
-                      px: 4,
-                      fontWeight: 700,
-                      borderRadius: 2,
-                      boxShadow: "0 8px 20px rgba(94, 24, 233, 0.25)",
-                      "&:hover": { bgcolor: COLORS.PURPLE_HOVER, transform: "translateY(-2px)", boxShadow: "0 10px 25px rgba(94, 24, 233, 0.35)" },
-                      transition: "all 0.2s",
-                      flex: 1
+                      fontSize: "1.1rem",
+                      py: 2.2,
+                      px: 5,
+                      fontWeight: 800,
+                      borderRadius: 4,
+                      boxShadow: `0 12px 24px ${COLORS.PRIMARY_PURPLE}30`,
+                      "&:hover": { bgcolor: COLORS.PURPLE_HOVER, transform: "translateY(-3px)", boxShadow: `0 16px 32px ${COLORS.PRIMARY_PURPLE}40` },
+                      transition: "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                      flex: 1.5
                     }}
                   >
                     Get Best Quote
@@ -195,88 +223,100 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
                     sx={{
                       borderColor: COLORS.PRIMARY_PURPLE,
                       color: COLORS.PRIMARY_PURPLE,
-                      fontSize: "1.05rem",
-                      py: 1.5,
-                      px: 4,
-                      fontWeight: 700,
-                      borderRadius: 2,
-                      "&:hover": { borderColor: COLORS.PURPLE_HOVER, bgcolor: COLORS.PURPLE_ALPHA_04 },
+                      fontSize: "1.1rem",
+                      py: 2.2,
+                      px: 5,
+                      fontWeight: 800,
+                      borderRadius: 4,
+                      borderWidth: 2,
+                      "&:hover": { borderWidth: 2, borderColor: COLORS.PURPLE_HOVER, bgcolor: COLORS.PURPLE_ALPHA_04 },
                       flex: 1
                     }}
                   >
-                    Call Supplier
+                    Talk to Us
                   </Button>
                 </Stack>
               </Box>
 
-              <Divider sx={{ borderStyle: "dashed" }} />
+              {/* Supplier Profile - Premium Widget */}
+              <Box sx={{
+                p: 4,
+                bgcolor: "#fcfdfe",
+                borderRadius: 6,
+                border: "1px solid #f0f3f6",
+                boxShadow: '0 12px 32px rgba(0,0,0,0.03)',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                <Box sx={{ position: 'absolute', top: 0, right: 0, width: 120, height: 120, background: `radial-gradient(circle at top right, ${COLORS.PRIMARY_PURPLE}10 0%, transparent 70%)` }} />
 
-              {/* Supplier Info Section (Integrated) */}
-              <Box sx={{ p: 3, bgcolor: "#fafafa", borderRadius: 3, border: "1px dashed #e0e0e0" }}>
-                <Stack direction={{ xs: "column", md: "row" }} alignItems={{ md: "center" }} justifyContent="space-between" spacing={2}>
-                  <Box>
-                    <Typography variant="caption" sx={{ textTransform: "uppercase", letterSpacing: 1, color: "text.secondary", fontWeight: 700, display: "block", mb: 0.5 }}>
-                      Sold By
-                    </Typography>
-                    <Typography variant="h6" fontWeight={700} sx={{ color: "#1a1a2e", mb: 0.5 }}>
+                <Stack direction={{ xs: "column", md: "row" }} spacing={4} alignItems="start">
+                  <Box sx={{ flex: 1 }}>
+                    <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+                      <Chip label="Manufacturer" size="small" sx={{ height: 20, bgcolor: COLORS.PURPLE_ALPHA_10, color: COLORS.PRIMARY_PURPLE, fontWeight: 800, fontSize: '0.6rem', borderRadius: 1 }} />
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <Star sx={{ fontSize: 16, color: "#faaf00" }} />
+                        <Typography variant="caption" fontWeight={800}>{product.supplier.rating}</Typography>
+                      </Box>
+                    </Stack>
+                    <Typography variant="h5" fontWeight={900} sx={{ color: "#1a1a2e", mb: 1.5 }}>
                       {product.supplier.name}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
-                      <LocationOn fontSize="small" sx={{ mr: 0.5, color: COLORS.SECONDARY_ORANGE }} /> {product.supplier.location}
+                    <Typography variant="body2" sx={{ display: "flex", alignItems: "center", color: "text.secondary", fontWeight: 500 }}>
+                      <LocationOn fontSize="small" sx={{ mr: 1, color: COLORS.SECONDARY_ORANGE }} /> {product.supplier.location}
                     </Typography>
                   </Box>
 
-                  <Stack spacing={0.5} sx={{ minWidth: 200 }}>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <Typography variant="body2" color="text.secondary">Response Rate</Typography>
-                      <Typography variant="body2" fontWeight={700} color={COLORS.PRIMARY_PURPLE}>{product.supplier.responseRate}</Typography>
-                    </Box>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <Typography variant="body2" color="text.secondary">Est. Year</Typography>
-                      <Typography variant="body2" fontWeight={700}>{product.supplier.yearEstablished}</Typography>
-                    </Box>
-                    {product.supplier.trustSeal && (
-                      <Chip
-                        icon={<Verified sx={{ fontSize: "16px !important" }} />}
-                        label="TrustSEAL Verified"
-                        size="small"
-                        sx={{ bgcolor: COLORS.PURPLE_ALPHA_10, color: COLORS.PRIMARY_PURPLE, fontWeight: 600, mt: 1, border: "none" }}
-                      />
-                    )}
-                  </Stack>
+                  <Box sx={{ minWidth: 220, p: 2, bgcolor: 'white', borderRadius: 4, border: '1px solid #f0f0f0' }}>
+                    <Stack spacing={1.5}>
+                      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                        <Typography variant="caption" color="text.secondary" fontWeight={600}>Responsive</Typography>
+                        <Typography variant="caption" fontWeight={800} color={COLORS.PRIMARY_PURPLE}>{product.supplier.responseRate}</Typography>
+                      </Box>
+                      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                        <Typography variant="caption" color="text.secondary" fontWeight={600}>GST Verified</Typography>
+                        <CheckCircle sx={{ fontSize: 14, color: "#00c853" }} />
+                      </Box>
+                      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                        <Typography variant="caption" color="text.secondary" fontWeight={600}>Est. Area</Typography>
+                        <Typography variant="caption" fontWeight={800}>5000+ sq.ft</Typography>
+                      </Box>
+                    </Stack>
+                  </Box>
                 </Stack>
-                <Divider sx={{ my: 2 }} />
-                <Typography variant="body2" color="text.secondary">
-                  <Box component="span" fontWeight={600} color="text.primary">Address: </Box>
-                  {product.supplier.address}
-                </Typography>
               </Box>
 
-              {/* Specs Section */}
+              {/* Tabs / Content Sections */}
               <Box>
-                <Typography variant="h6" fontWeight={700} sx={{ mb: 2, display: "flex", alignItems: "center" }}>
-                  Product Specifications
+                <Typography variant="h6" fontWeight={900} sx={{ mb: 3, color: '#1a1a2e', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  Technical Specifications
                 </Typography>
-                <TableContainer sx={{ border: "1px solid #f0f0f0", borderRadius: 2 }}>
-                  <Table>
-                    <TableBody>
-                      {Object.entries(product.specs).map(([key, value], index) => (
-                        <TableRow key={key} sx={{ bgcolor: index % 2 === 0 ? "#fafafa" : "white" }}>
-                          <TableCell sx={{ color: "text.secondary", fontWeight: 600, width: "35%", borderBottom: "1px solid #f0f0f0", py: 1.5 }}>{key}</TableCell>
-                          <TableCell sx={{ fontWeight: 500, color: "#333", borderBottom: "1px solid #f0f0f0", py: 1.5 }}>{value}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                <Grid container spacing={2}>
+                  {Object.entries(product.specs).map(([key, value], index) => (
+                    <Grid size={{ xs: 12, sm: 6 }} key={key}>
+                      <Box sx={{
+                        p: 2.5,
+                        borderRadius: 3,
+                        bgcolor: index % 2 === 0 ? "#f8f9fc" : "white",
+                        border: '1px solid #f0f0f0',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                      }}>
+                        <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 600 }}>{key}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 800, color: "#1a1a2e" }}>{value}</Typography>
+                      </Box>
+                    </Grid>
+                  ))}
+                </Grid>
               </Box>
 
               {/* Description Section */}
-              <Box>
-                <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
-                  Product Description
+              <Box sx={{ pb: 8 }}>
+                <Typography variant="h6" fontWeight={900} sx={{ mb: 3, color: '#1a1a2e' }}>
+                  Product Insights
                 </Typography>
-                <Typography variant="body1" sx={{ whiteSpace: "pre-line", color: "#444", lineHeight: 1.8 }}>
+                <Typography variant="body1" sx={{ whiteSpace: "pre-line", color: "#475569", lineHeight: 1.8, fontSize: '1.05rem', fontWeight: 500 }}>
                   {product.description}
                 </Typography>
               </Box>

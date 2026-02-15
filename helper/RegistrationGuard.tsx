@@ -81,10 +81,12 @@ export default function RegistrationGuard({
       }
 
       // If registration is fully complete, allow access
-      if (
+      const isCompleted =
         currentRegisterStep === UserRegisterSteps.COMPLETED ||
-        currentRegisterStep === UserRegisterSteps.PREFERENCES_ADDED
-      ) {
+        currentRegisterStep === UserRegisterSteps.PREFERENCES_ADDED ||
+        (currentRole === AppUserType.SUPPLIER && currentRegisterStep === UserRegisterSteps.SUPPLIER_STORE_CREATED);
+
+      if (isCompleted) {
         setIsChecking(false);
         return;
       }
@@ -97,10 +99,10 @@ export default function RegistrationGuard({
         const requiredPath = getPathForScreen(requiredScreen);
 
         // If a required path exists and we aren't there, redirect
-        if (requiredPath && pathname !== requiredPath) {
-          router.replace(requiredPath);
-          return;
-        }
+        // if (requiredPath && pathname !== requiredPath) {
+        //   router.replace(requiredPath);
+        //   return;
+        // }
       }
 
       // If we made it here, the user is allowed to see the current page

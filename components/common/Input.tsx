@@ -85,7 +85,7 @@ const Input: React.FC<InputProps> = ({
               <InputAdornment position="start" sx={{ mr: 0.5 }}>
                 {startIcon}
               </InputAdornment>
-            ) : null,
+            ) : InputProps?.startAdornment,
             endAdornment: isPassword ? (
               <InputAdornment position="end">
                 <IconButton
@@ -99,7 +99,7 @@ const Input: React.FC<InputProps> = ({
               </InputAdornment>
             ) : endIcon ? (
               <InputAdornment position="end">{endIcon}</InputAdornment>
-            ) : null,
+            ) : InputProps?.endAdornment,
             sx: {
               ...defaultInputSx,
               ...(typeof InputProps?.sx === "object" ? InputProps.sx : {}),
