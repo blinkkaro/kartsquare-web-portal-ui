@@ -919,7 +919,40 @@ export type TranslationKey =
   | "ad_validation_image_required"
   | "ad_validation_start_date_required"
   | "ad_validation_end_date_required"
-  | "ad_validation_end_after_start";
+  | "ad_validation_end_after_start"
+  // My Store
+  | "my_store"
+  | "addNewProduct"
+  | "basic_info"
+  | "product_name"
+  | "enter_product_name"
+  | "sku_no"
+  | "enter_sku_no"
+  | "select_category"
+  | "select_subcategory"
+  | "select_type"
+  | "select_brand"
+  | "other_specifications"
+  | "write_here"
+  | "price"
+  | "enter_price"
+  // Product Form Validation Keys
+  | "productCategoryRequired"
+  | "productSubCategoryRequired"
+  | "productNameRequired"
+  | "productSkuRequired"
+  | "productPriceRequired"
+  | "productCurrencyRequired"
+  | "productDescriptionRequired"
+  | "productImagesRequired"
+  | "productReturnableRequired"
+  // Product Form Label Keys
+  | "currency"
+  | "is_returnable"
+  | "select_currency"
+  | "returnable_product"
+  | "product_is_returnable"
+  | "enter_value";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

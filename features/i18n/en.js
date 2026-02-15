@@ -445,6 +445,24 @@ export const english = {
   productDescription: "Description",
   productImages: "Images",
   productStock: "Stock",
+
+  // Product Form Validation
+  productCategoryRequired: "Product category is required",
+  productSubCategoryRequired: "Product subcategory is required",
+  productNameRequired: "Product name is required",
+  productSkuRequired: "SKU number is required",
+  productPriceRequired: "Product price is required",
+  productCurrencyRequired: "Currency is required",
+  productDescriptionRequired: "Product description is required",
+  productImagesRequired: "At least one product image is required",
+  productReturnableRequired: "Please specify if product is returnable",
+
+  // Product Form Labels
+  currency: "Currency",
+  is_returnable: "Is Returnable",
+  select_currency: "Select Currency",
+  returnable_product: "Returnable Product",
+  product_is_returnable: "Check this if this product policy is not returnable",
   actions: "Actions",
   edit: "Edit",
   delete: "Delete",
@@ -1238,4 +1256,22 @@ export const english = {
   ad_validation_start_date_required: "Start date is required",
   ad_validation_end_date_required: "End date is required",
   ad_validation_end_after_start: "End date must be after start date",
+
+  // My Store
+  my_store: "My Store",
+  addNewProduct: "Add New Product",
+  basic_info: "Basic Info",
+  product_name: "Product Name",
+  enter_product_name: "Enter Product Name",
+  sku_no: "SKU No.",
+  enter_sku_no: "Enter SKU No.",
+  select_category: "Select category",
+  select_subcategory: "Select subcategory",
+  select_type: "Select type",
+  select_brand: "Select brand",
+  other_specifications: "Other Specifications",
+  write_here: "Write here...",
+  price: "Price",
+  enter_price: "Enter price",
+  enter_value: "Enter value",
 };
