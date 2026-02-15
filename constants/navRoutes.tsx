@@ -18,8 +18,8 @@ export interface NavItem {
 }
 
 export const getDesktopNavItems = (
-  role: UserRole | null,
-  t: (key: TranslationKey) => string,
+  role: UserRole | null | string,
+  t: (key: TranslationKey) => string
 ): NavItem[] => {
   switch (role) {
     case UserRole.SERVICE_PROVIDER:
@@ -56,7 +56,7 @@ export const getDesktopNavItems = (
 export const getMobileNavItems = (
   isAuthenticated: boolean,
   t: (key: TranslationKey) => string,
-  role?: string | null,
+  role?: string | null
 ): NavItem[] => {
   const items: NavItem[] = [];
 
@@ -68,7 +68,7 @@ export const getMobileNavItems = (
         href: "/cus/servicesList",
         icon: <ArticleRounded />,
       },
-      { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
+      { label: t("store"), href: "/store", icon: <LocalMallRounded /> }
       // { label: t("events"), href: "/events", icon: <Event /> }
     );
   } else {
@@ -83,7 +83,7 @@ export const getMobileNavItems = (
       },
 
       // { label: t("events"), href: "/events", icon: <Event /> },
-      { label: t("bookings"), href: bookingsHref, icon: <ShoppingBag /> },
+      { label: t("bookings"), href: bookingsHref, icon: <ShoppingBag /> }
       // { label: t("chat"), href: "/chat", icon: <Chat /> }
     );
     switch (role) {
