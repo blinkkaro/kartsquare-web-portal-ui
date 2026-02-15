@@ -61,6 +61,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
         categories_served: yup.array().of(yup.string()).min(1, "Select at least one category").required("Categories served is required"),
         operating_locations: yup.array().of(yup.string()).min(1, "Select at least one location").required("Operating locations is required"),
         contact_preferences: yup.array().of(yup.string()).optional(),
+        business_type: yup.string().required("Business type is required"),
     });
 
     const { control, handleSubmit, reset, setValue, watch, setError, formState: { errors } } = useForm({
@@ -71,6 +72,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
             contact_preferences: [],
             store_address_id: "",
             country_code: "+91",
+            business_type: "",
         }
     });
 
@@ -94,6 +96,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                 country_code: data.country_code
                     ? (data.country_code.startsWith("+") ? data.country_code : `+${data.country_code}`)
                     : "+91",
+                business_type: data.business_type || "",
             };
 
             // Mapping contact preferences from object to array for form
@@ -220,6 +223,22 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                     <Grid size={{ xs: 12 }}>
                         <Typography variant="body2" fontWeight="500" mb={1}>About Us</Typography>
                         <Input name="about_us" control={control} multiline rows={4} placeholder="Tell us more about your business..." />
+                    </Grid>
+
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <Typography variant="body2" fontWeight="500" mb={0.5}>Business Type*</Typography>
+                        <Input
+                            name="business_type"
+                            control={control}
+                            select
+                            placeholder="Select Business Type"
+                            startIcon={<BusinessOutlinedIcon fontSize="small" />}
+                        >
+                            <MenuItem value="Wholesaler">Wholesaler</MenuItem>
+                            <MenuItem value="Retailer">Retailer</MenuItem>
+                            <MenuItem value="Exporter">Exporter</MenuItem>
+                            <MenuItem value="Manufacturer">Manufacturer</MenuItem>
+                        </Input>
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 6 }}>

@@ -45,6 +45,29 @@ export interface ApiProduct {
     product_origin: string;
     is_available: boolean;
     specifications: Specification[] | null;
+    supplier?: {
+        gst_in?: string;
+        logo_url?: string;
+        store_name: string;
+        is_verified?: boolean;
+        user_rating?: number;
+        website_url?: string | null;
+        country_code?: string | null;
+        store_address?: {
+            floor?: string | null;
+            state?: string | null;
+            address?: string | null;
+            country?: string | null;
+            pincode?: string | null;
+            landmark?: string | null;
+            city_town?: string | null;
+            address_id?: string | null;
+            building_no?: string | null;
+        };
+        primary_mobile?: string;
+        establishment_year?: string;
+        verification_status?: string;
+    };
 }
 
 export interface ProductResponse {
@@ -68,5 +91,9 @@ export const storeService = {
 
     getProducts: async (filters: ProductFilters) => {
         return await POST<ProductResponse>("/store/products", filters, {}, false);
+    },
+
+    getProductDetails: async (productId: string) => {
+        return await GET<ApiProduct>(`/store/products/${productId}`, {}, false);
     }
 };

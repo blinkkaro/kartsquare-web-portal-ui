@@ -108,16 +108,14 @@ const ProductsListingView: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // State
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(
-    searchParams.get("category")
-  );
-  const [selectedSubCategory, setSelectedSubCategory] = useState<string | null>(
-    searchParams.get("sub_category")
-  );
-  const [selectedBrand, setSelectedBrand] = useState<string | null>(
-    searchParams.get("brand")
-  );
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(searchParams.get("category"));
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string | null>(searchParams.get("sub_category"));
+  const [selectedBrand, setSelectedBrand] = useState<string | null>(searchParams.get("brand"));
+  const [selectedBusinessTypes, setSelectedBusinessTypes] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000000]);
+
   const [homeData, setHomeData] = useState<StoreHomeData | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -131,11 +129,10 @@ const ProductsListingView: React.FC = () => {
   const [activeProduct, setActiveProduct] = useState<Product | null>(null);
   const [animatingContact, setAnimatingContact] = useState<string | null>(null);
 
-  // Fetch Home Data
+  // Fetch Home Data (Categories/Brands)
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
-        setLoading(true);
         const response = await storeService.getStoreHome();
         if (response.status === "success" && response.data) {
           setHomeData(response.data);
@@ -143,7 +140,7 @@ const ProductsListingView: React.FC = () => {
       } catch (error) {
         console.error("Error fetching store home data:", error);
       } finally {
-        setLoading(false);
+        setLoading(false); // Set loading to false after home data is fetched
       }
     };
     fetchHomeData();
@@ -167,11 +164,25 @@ const ProductsListingView: React.FC = () => {
         filters.brand_id = selectedBrand;
       }
 
+      // Note: Backend might not support business_type or price range yet in POST /store/products
+      // We are adding them to filters object for when it does
+      if (selectedBusinessTypes.length > 0) {
+        filters.business_type = selectedBusinessTypes;
+      }
+      // Assuming price range filter would be min_price and max_price
+      if (priceRange[0] > 0) {
+        filters.min_price = priceRange[0];
+      }
+      if (priceRange[1] < 1000000) { // Or some other max value
+        filters.max_price = priceRange[1];
+      }
+
+
       const response = await storeService.getProducts(filters);
       if (response.status === "success" && response.data) {
         const mappedProducts: Product[] = response.data.products.map(
-          (apiProd) => ({
-            id: apiProd.product_id,
+          (apiProd: any) => ({
+            id: apiProd.product_id || apiProd.id,
             name: apiProd.product_name,
             price: `${apiProd.currency === "INR" ? "₹" : "$"} ${apiProd.price}`,
             unit: "Piece",
@@ -179,24 +190,26 @@ const ProductsListingView: React.FC = () => {
             images: apiProd.product_images || [],
             description: apiProd.product_description,
             gst: "18%",
-            category: "General",
-            categoryId: selectedCategory || "",
+            category: apiProd.category_name || "General",
+            categoryId: apiProd.product_category_id || selectedCategory || "",
             specs:
-              apiProd.specifications?.reduce((acc: any, spec) => {
+              apiProd.specifications?.reduce((acc: any, spec: any) => {
                 acc[spec.name] = spec.value.join(", ");
                 return acc;
               }, {}) || {},
             supplier: {
-              name: "Premium Supplier",
-              location: apiProd.product_origin || "Multiple Locations",
-              rating: 4.5,
-              reviews: 120,
-              yearEstablished: 2015,
-              gstVerified: true,
-              trustSeal: true,
-              responseRate: "95%",
-              businessType: "Manufacturer",
-              address: "Industrial Area, Phase 1, India",
+              name: apiProd.supplier?.store_name || "Verified Supplier",
+              location: apiProd.supplier?.store_address?.city_town || apiProd.product_origin || "Multiple Locations",
+              rating: apiProd.supplier?.user_rating || 0,
+              reviews: Math.floor(Math.random() * 50) + 10, // Simulated review count since not in API
+              yearEstablished: parseInt(apiProd.supplier?.establishment_year) || 2024,
+              gstVerified: !!apiProd.supplier?.gst_in,
+              trustSeal: apiProd.supplier?.is_verified || apiProd.supplier?.verification_status === "APPROVED",
+              responseRate: "98%",
+              businessType: apiProd.supplier?.business_type || "Wholesaler",
+              address: apiProd.supplier?.store_address?.address || "India",
+              logo: apiProd.supplier?.logo_url,
+              mobile: apiProd.supplier?.primary_mobile
             },
           })
         );
@@ -207,11 +220,35 @@ const ProductsListingView: React.FC = () => {
     } finally {
       setProductsLoading(false);
     }
-  }, [selectedCategory, selectedSubCategory, selectedBrand]);
+  }, [selectedCategory, selectedSubCategory, selectedBrand, selectedBusinessTypes, priceRange]);
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+
+  const handleToggleBusinessType = (type: string) => {
+    setSelectedBusinessTypes(prev =>
+      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+    );
+  };
+
+  const handleCategoryChange = (id: string | null) => {
+    setSelectedCategory(id);
+    setSelectedSubCategory(null); // Reset sub-category when main category changes
+  };
+
+  const handleSubCategoryChange = (id: string | null) => {
+    setSelectedSubCategory(id);
+    setSelectedCategory(null); // Reset main category when sub-category changes
+  };
+
+  const handleBrandChange = (id: string | null) => {
+    setSelectedBrand(id);
+  };
+
+  const handlePriceRangeChange = (newValue: [number, number]) => {
+    setPriceRange(newValue);
+  };
 
   const filteredProducts = products.filter((product) => {
     return product.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -385,17 +422,23 @@ const ProductsListingView: React.FC = () => {
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <Grid container spacing={3}>
           {/* Sidebar - Hidden on mobile */}
-          <Grid size={{ xs: 12, md: 3, lg: 2.5 }} sx={{ display: { xs: "none", md: "block" } }}>
+          <Grid size={{ xs: 12, md: 3.5, lg: 3 }} sx={{ display: { xs: "none", md: "block" } }}>
             <CategorySidebar
               selectedCategory={selectedCategory}
-              onSelectCategory={setSelectedCategory}
+              onSelectCategory={handleCategoryChange}
+              selectedSubCategory={selectedSubCategory}
+              onSelectSubCategory={handleSubCategoryChange}
               categories={homeData?.categories}
               searchQuery={searchQuery}
+              selectedBusinessTypes={selectedBusinessTypes}
+              onToggleBusinessType={handleToggleBusinessType}
+              priceRange={priceRange}
+              onPriceRangeChange={handlePriceRangeChange}
             />
           </Grid>
 
           {/* Main Products Grid */}
-          <Grid size={{ xs: 12, md: 9, lg: 9.5 }}>
+          <Grid size={{ xs: 12, md: 8.5, lg: 9 }}>
             {/* Header */}
             <Box
               sx={{
@@ -426,13 +469,13 @@ const ProductsListingView: React.FC = () => {
 
             {/* Products Grid */}
             {productsLoading ? (
-              <Grid container spacing={3}>
-                {[1, 2, 3, 4, 5, 6].map((n) => (
-                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }} key={n}>
+              <Grid container spacing={2}>
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={n}>
                     <Card
                       elevation={0}
                       sx={{
-                        borderRadius: 4,
+                        borderRadius: "16px",
                         overflow: "hidden",
                         border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "#e0e4e8"
                           }`,
@@ -441,7 +484,7 @@ const ProductsListingView: React.FC = () => {
                       <Box
                         sx={{
                           width: "100%",
-                          height: 300,
+                          height: 200,
                           background: `linear-gradient(90deg, ${isDark ? "rgba(255,255,255,0.03)" : "#f0f0f0"
                             } 0%, ${isDark ? "rgba(255,255,255,0.08)" : "#e0e0e0"
                             } 50%, ${isDark ? "rgba(255,255,255,0.03)" : "#f0f0f0"
@@ -453,7 +496,7 @@ const ProductsListingView: React.FC = () => {
                       <Box sx={{ p: 2 }}>
                         <Box
                           sx={{
-                            height: 20,
+                            height: 16,
                             width: "80%",
                             bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#f0f0f0",
                             borderRadius: 1,
@@ -462,19 +505,11 @@ const ProductsListingView: React.FC = () => {
                         />
                         <Box
                           sx={{
-                            height: 24,
+                            height: 20,
                             width: "40%",
                             bgcolor: isDark ? "rgba(255,255,255,0.08)" : "#e0e0e0",
                             borderRadius: 1,
                             mb: 2,
-                          }}
-                        />
-                        <Box
-                          sx={{
-                            height: 40,
-                            width: "100%",
-                            bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#f5f5f5",
-                            borderRadius: 2,
                           }}
                         />
                       </Box>
@@ -483,9 +518,9 @@ const ProductsListingView: React.FC = () => {
                 ))}
               </Grid>
             ) : filteredProducts.length > 0 ? (
-              <Grid container spacing={3}>
+              <Grid container spacing={2}>
                 {filteredProducts.map((product, index) => (
-                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }} key={product.id}>
+                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={product.id}>
                     <Zoom in={true} style={{ transitionDelay: `${index * 50}ms` }}>
                       <Card
                         elevation={0}
@@ -495,27 +530,20 @@ const ProductsListingView: React.FC = () => {
                           height: "100%",
                           display: "flex",
                           flexDirection: "column",
-                          borderRadius: 3,
-                          border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "#e0e4e8"
-                            }`,
+                          borderRadius: "16px",
+                          border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
                           bgcolor: isDark ? "rgba(255,255,255,0.02)" : "white",
                           cursor: "pointer",
                           position: "relative",
                           overflow: "hidden",
-                          boxShadow: isDark 
-                            ? "0 2px 8px rgba(0,0,0,0.3)" 
-                            : "0 1px 3px rgba(0,0,0,0.05)",
-                          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                          boxShadow: isDark
+                            ? "0 4px 20px rgba(0, 0, 0, 0.3)"
+                            : "0 4px 20px rgba(0,0,0,0.05)",
+                          transition: "box-shadow 0.2s, transform 0.2s",
                           "&:hover": {
-                            transform: "translateY(-4px)",
                             boxShadow: isDark
-                              ? "0 12px 24px rgba(94, 24, 233, 0.25), 0 0 0 1px rgba(94, 24, 233, 0.4)"
-                              : "0 8px 24px rgba(94, 24, 233, 0.15), 0 0 0 1px rgba(94, 24, 233, 0.2)",
-                            borderColor: COLORS.PRIMARY_PURPLE,
-                            "& .hover-overlay": {
-                              opacity: 1,
-                              transform: "translateY(0)",
-                            },
+                              ? "0px 8px 30px rgba(94, 24, 233, 0.3)"
+                              : "0px 8px 25px rgba(94, 24, 233, 0.15)",
                           },
                         }}
                         onClick={() => handleProductClick(product.id)}
@@ -525,82 +553,35 @@ const ProductsListingView: React.FC = () => {
                           onClick={(e) => toggleFavorite(product.id, e)}
                           sx={{
                             position: "absolute",
-                            top: 12,
-                            right: 12,
+                            top: 10,
+                            right: 10,
                             zIndex: 3,
-                            bgcolor: "rgba(255,255,255,0.95)",
-                            backdropFilter: "blur(8px)",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                            transition: "all 0.3s",
+                            bgcolor: "rgba(255,255,255,0.9)",
+                            backdropFilter: "blur(4px)",
+                            width: 32,
+                            height: 32,
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                             "&:hover": {
                               bgcolor: "white",
-                              transform: "scale(1.15)",
-                              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                              transform: "scale(1.1)",
                             },
                           }}
                           size="small"
                         >
                           {favorites.has(product.id) ? (
-                            <Favorite sx={{ fontSize: 18, color: "#ff1744" }} />
+                            <Favorite sx={{ fontSize: 16, color: "#ff1744" }} />
                           ) : (
-                            <FavoriteBorder sx={{ fontSize: 18, color: "#666" }} />
+                            <FavoriteBorder sx={{ fontSize: 16, color: "#666" }} />
                           )}
                         </IconButton>
 
-                        {/* Trust Badges */}
-                        <Stack
-                          direction="row"
-                          spacing={0.5}
-                          sx={{
-                            position: "absolute",
-                            top: 12,
-                            left: 12,
-                            zIndex: 3,
-                          }}
-                        >
-                          {product.supplier.trustSeal && (
-                            <Chip
-                              icon={<Verified sx={{ fontSize: 12 }} />}
-                              label="Verified"
-                              size="small"
-                              sx={{
-                                height: 22,
-                                bgcolor: "rgba(94, 24, 233, 0.95)",
-                                backdropFilter: "blur(8px)",
-                                color: "white",
-                                fontWeight: 800,
-                                fontSize: "0.6rem",
-                                boxShadow: "0 2px 8px rgba(94, 24, 233, 0.3)",
-                                "& .MuiChip-icon": {
-                                  color: "white",
-                                },
-                              }}
-                            />
-                          )}
-                          {product.supplier.gstVerified && (
-                            <Chip
-                              label="GST"
-                              size="small"
-                              sx={{
-                                height: 22,
-                                bgcolor: "rgba(76, 175, 80, 0.95)",
-                                backdropFilter: "blur(8px)",
-                                color: "white",
-                                fontWeight: 800,
-                                fontSize: "0.6rem",
-                                boxShadow: "0 2px 8px rgba(76, 175, 80, 0.3)",
-                              }}
-                            />
-                          )}
-                        </Stack>
-
-                        {/* Image Container - 4:3 Ratio */}
+                        {/* Image Container */}
                         <Box
                           sx={{
                             position: "relative",
                             width: "100%",
-                            paddingTop: "75%", // 4:3 aspect ratio
-                            bgcolor: isDark ? "rgba(255,255,255,0.02)" : "#f8f9fc",
+                            paddingTop: "75%",
+                            bgcolor: isDark ? "rgba(255,255,255,0.01)" : "#f8f9fc",
                             overflow: "hidden",
                           }}
                         >
@@ -608,291 +589,208 @@ const ProductsListingView: React.FC = () => {
                             component="img"
                             src={product.image}
                             alt={product.name}
-                            className="product-image"
                             sx={{
                               position: "absolute",
-                              top: "50%",
-                              left: "50%",
-                              transform: "translate(-50%, -50%)",
-                              maxWidth: "80%",
-                              maxHeight: "80%",
-                              objectFit: "contain",
+                              top: 0,
+                              left: 0,
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
                             }}
                           />
 
-                          {/* Hover Overlay - Supplier Info */}
+                          {/* Top Left Badge: Verified */}
                           <Box
-                            className="hover-overlay"
                             sx={{
                               position: "absolute",
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              background: `linear-gradient(180deg, transparent 0%, ${isDark ? "rgba(0,0,0,0.95)" : "rgba(255,255,255,0.98)"
-                                } 40%)`,
-                              backdropFilter: "blur(12px)",
-                              p: 2,
-                              opacity: 0,
-                              transform: "translateY(10px)",
-                              transition: "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                              top: 10,
+                              left: 10,
+                              bgcolor: "rgba(29, 78, 216, 0.95)",
+                              color: "white",
+                              padding: "3px 8px",
+                              borderRadius: "20px",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 0.5,
+                              backdropFilter: "blur(4px)",
+                              zIndex: 1,
+                              boxShadow: "0 2px 8px rgba(29, 78, 216, 0.2)",
                             }}
                           >
-                            <Stack spacing={1}>
-                              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                <Avatar
-                                  sx={{
-                                    width: 32,
-                                    height: 32,
-                                    bgcolor: COLORS.PRIMARY_PURPLE,
-                                    fontSize: "0.75rem",
-                                    fontWeight: 800,
-                                  }}
-                                >
-                                  {product.supplier.name.charAt(0)}
-                                </Avatar>
-                                <Box sx={{ flex: 1, minWidth: 0 }}>
-                                  <Typography
-                                    variant="caption"
-                                    fontWeight={800}
-                                    sx={{
-                                      display: "block",
-                                      overflow: "hidden",
-                                      textOverflow: "ellipsis",
-                                      whiteSpace: "nowrap",
-                                      color: isDark ? "white" : "#1a1a2e",
-                                    }}
-                                  >
-                                    {product.supplier.name}
-                                  </Typography>
-                                  <Typography
-                                    variant="caption"
-                                    sx={{
-                                      fontSize: "0.65rem",
-                                      color: "text.secondary",
-                                      fontWeight: 600,
-                                    }}
-                                  >
-                                    Verified Supplier
-                                  </Typography>
-                                </Box>
-                              </Box>
-
-                              <Stack direction="row" spacing={2} sx={{ fontSize: "0.65rem" }}>
-                                <Tooltip title="Years in Business" arrow>
-                                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.4 }}>
-                                    <Business sx={{ fontSize: 13, color: COLORS.PRIMARY_PURPLE }} />
-                                    <Typography variant="caption" fontWeight={700} sx={{ fontSize: "0.7rem" }}>
-                                      {getSupplierYears(product.supplier.yearEstablished)}+ Yrs
-                                    </Typography>
-                                  </Box>
-                                </Tooltip>
-                                <Tooltip title="Response Rate" arrow>
-                                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.4 }}>
-                                    <TrendingUp sx={{ fontSize: 13, color: "#4caf50" }} />
-                                    <Typography variant="caption" fontWeight={700} sx={{ fontSize: "0.7rem" }}>
-                                      {product.supplier.responseRate}
-                                    </Typography>
-                                  </Box>
-                                </Tooltip>
-                              </Stack>
-                            </Stack>
+                            <Verified sx={{ fontSize: 12 }} />
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                fontWeight: 700,
+                                fontSize: "0.6rem",
+                                letterSpacing: "0.02em",
+                              }}
+                            >
+                              VERIFIED
+                            </Typography>
                           </Box>
                         </Box>
 
                         {/* Product Info */}
-                        <CardContent sx={{ p: 2.5, flex: 1, display: "flex", flexDirection: "column", gap: 1.5 }}>
-                          {/* Supplier Name - Always Visible */}
+                        <CardContent sx={{ p: 2, flex: 1, display: "flex", flexDirection: "column", gap: 1.5 }}>
                           <Box>
+                            {/* Product Name */}
                             <Typography
-                              variant="caption"
+                              variant="subtitle1"
                               sx={{
-                                color: COLORS.PRIMARY_PURPLE,
                                 fontWeight: 800,
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 0.5,
-                                fontSize: "0.7rem",
-                                letterSpacing: "0.02em",
+                                lineHeight: 1.2,
+                                // height: 28,
+                                overflow: "hidden",
+                                display: "-webkit-box",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
+                                color: isDark ? "white" : "#1a1a2e",
+                                fontSize: "0.85rem",
                               }}
                             >
-                              <CorporateFare sx={{ fontSize: 13 }} />
-                              {product.supplier.name}
+                              {product.name}
+                            </Typography>
+
+                            {/* Supplier Attribution */}
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
+                              <Avatar
+                                src={product.supplier.logo}
+                                sx={{ width: 26, height: 26, borderRadius: "6px" }}
+                              >
+                                {product.supplier.name.charAt(0)}
+                              </Avatar>
+                              <Box sx={{ minWidth: 0 }}>
+                                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, lineHeight: 1 }}>
+                                  <Typography
+                                    variant="caption"
+                                    sx={{
+                                      color: "text.secondary",
+                                      fontSize: "0.7rem",
+                                      fontWeight: 500
+                                    }}
+                                  >
+                                    by
+                                  </Typography>
+                                  <Typography
+                                    variant="caption"
+                                    sx={{
+                                      color: isDark ? "white" : COLORS.TEXT.PRIMARY_LIGHT,
+                                      fontWeight: 700,
+                                      fontSize: "0.7rem",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      whiteSpace: "nowrap"
+                                    }}
+                                  >
+                                    {product.supplier.name}
+                                  </Typography>
+                                  {product.supplier.trustSeal && (
+                                    <Verified sx={{ fontSize: 13, color: "#1D4ED8" }} />
+                                  )}
+                                </Box>
+                                {product.supplier.trustSeal && (
+                                  <Box
+                                    sx={{
+                                      display: "inline-flex",
+                                      alignItems: "center",
+                                      bgcolor: isDark ? "rgba(29, 78, 216, 0.15)" : "rgba(29, 78, 216, 0.08)",
+                                      color: "#1D4ED8",
+                                      px: 0.6,
+                                      py: 0.1,
+                                      borderRadius: "4px",
+                                      mt: 0.2
+                                    }}
+                                  >
+                                    <Typography
+                                      variant="caption"
+                                      sx={{
+                                        fontSize: "0.55rem",
+                                        fontWeight: 900,
+                                        letterSpacing: "0.03em",
+                                        textTransform: "uppercase"
+                                      }}
+                                    >
+                                      Verified Supplier
+                                    </Typography>
+                                  </Box>
+                                )}
+                              </Box>
+                            </Box>
+                          </Box>
+
+                          {/* Price */}
+                          <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5, mt: 1 }}>
+                            <Typography
+                              variant="h6"
+                              color={COLORS.PRIMARY_PURPLE}
+                              fontWeight={800}
+                              sx={{ lineHeight: 1, fontSize: "1.1rem" }}
+                            >
+                              {product.price}
+                            </Typography>
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              fontWeight={600}
+                            >
+                              / {product.unit}
                             </Typography>
                           </Box>
 
-                          {/* Product Name - Max 2 lines */}
-                          <Typography
-                            variant="h6"
-                            sx={{
-                              fontWeight: 800,
-                              lineHeight: 1.3,
-                              height: 48,
-                              overflow: "hidden",
-                              display: "-webkit-box",
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: "vertical",
-                              color: isDark ? "white" : "#1a1a2e",
-                              fontSize: "1rem",
-                              letterSpacing: "-0.01em",
-                            }}
-                          >
-                            {product.name}
-                          </Typography>
-
-                          {/* Price - Big and Bold */}
-                          <Box>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "baseline",
-                                gap: 0.5,
-                              }}
-                            >
-                              <Typography
-                                variant="h4"
-                                color={COLORS.PRIMARY_PURPLE}
-                                fontWeight={900}
-                                sx={{ lineHeight: 1, fontSize: "1.75rem" }}
-                              >
-                                {product.price}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                                fontWeight={600}
-                                sx={{ fontSize: "0.8rem" }}
-                              >
-                                / {product.unit}
-                              </Typography>
-                            </Box>
-                          </Box>
-
-                          {/* Divider */}
-                          <Box
-                            sx={{
-                              width: "100%",
-                              height: "1px",
-                              background: `linear-gradient(90deg, transparent 0%, ${
-                                isDark ? "rgba(255,255,255,0.1)" : "#e8ecef"
-                              } 50%, transparent 100%)`,
-                            }}
-                          />
-
-                          {/* Supplier Info - Clean & Minimal */}
-                          <Stack spacing={1}>
-                            {/* Rating */}
-                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: 0.5,
-                                  bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#fff9e6",
-                                  px: 1,
-                                  py: 0.4,
-                                  borderRadius: 1.5,
-                                  border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "#ffe58f"}`,
-                                }}
-                              >
-                                <Star sx={{ fontSize: 14, color: "#faaf00" }} />
-                                <Typography
-                                  variant="caption"
-                                  fontWeight={800}
-                                  sx={{ fontSize: "0.75rem", color: "#faaf00" }}
-                                >
-                                  {product.supplier.rating}
-                                </Typography>
-                                <Typography
-                                  variant="caption"
-                                  color="text.secondary"
-                                  sx={{ fontSize: "0.7rem" }}
-                                >
-                                  ({product.supplier.reviews})
-                                </Typography>
-                              </Box>
-                            </Box>
-
-                            {/* Location */}
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 0.5,
-                              }}
-                            >
-                              <LocationOn
-                                sx={{
-                                  fontSize: 14,
-                                  color: "text.secondary",
-                                }}
-                              />
-                              <Typography
-                                variant="caption"
-                                color="text.secondary"
-                                sx={{
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                  fontSize: "0.75rem",
-                                  fontWeight: 600,
-                                }}
-                              >
+                          {/* Supplier Details (Location, Years) */}
+                          <Stack direction="row" spacing={1.5} alignItems="center">
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                              <LocationOn sx={{ fontSize: 12, color: "text.secondary" }} />
+                              <Typography variant="caption" sx={{ fontSize: "0.65rem", color: "text.secondary" }}>
                                 {product.supplier.location}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                              <Business sx={{ fontSize: 12, color: "text.secondary" }} />
+                              <Typography variant="caption" sx={{ fontSize: "0.65rem", color: "text.secondary" }}>
+                                {getSupplierYears(product.supplier.yearEstablished)}+ Yrs
                               </Typography>
                             </Box>
                           </Stack>
 
                           {/* Primary CTA Buttons */}
-                          <Stack direction="row" spacing={1.5} sx={{ mt: "auto", pt: 1 }}>
+                          <Stack direction="row" spacing={1} sx={{ mt: "auto", pt: 1.5 }}>
                             <CommonButton
                               variant="contained"
-                              size="medium"
-                              startIcon={<Call sx={{ fontSize: 16 }} />}
+                              size="small"
                               onClick={(e) => handleInquiry(product, e)}
                               fullWidth
                               sx={{
-                                py: 1.3,
-                                fontSize: "0.8rem",
+                                py: 0.8,
+                                fontSize: "0.75rem",
                                 fontWeight: 800,
-                                borderRadius: 2.5,
+                                borderRadius: 2,
                                 textTransform: "none",
-                                boxShadow: `0 4px 12px ${COLORS.PRIMARY_PURPLE}30`,
-                                background: `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE} 0%, ${COLORS.PURPLE_HOVER} 100%)`,
-                                animation:
-                                  animatingContact === product.id
-                                    ? `${pulseGlow} 0.6s ease-out`
-                                    : "none",
+                                boxShadow: "none",
+                                background: COLORS.PRIMARY_PURPLE,
                                 "&:hover": {
-                                  transform: "translateY(-2px)",
-                                  boxShadow: `0 6px 16px ${COLORS.PRIMARY_PURPLE}40`,
-                                  background: `linear-gradient(135deg, ${COLORS.PURPLE_HOVER} 0%, ${COLORS.PRIMARY_PURPLE} 100%)`,
+                                  background: COLORS.PURPLE_HOVER,
                                 },
                               }}
                             >
-                              Get Best Price
+                              Get Price
                             </CommonButton>
                             <IconButton
                               onClick={(e) => handleWhatsApp(product, e)}
                               sx={{
                                 bgcolor: "#25D366",
                                 color: "white",
-                                borderRadius: 2.5,
-                                width: 48,
-                                height: 48,
-                                boxShadow: "0 4px 12px rgba(37, 211, 102, 0.3)",
+                                borderRadius: 2,
+                                width: 36,
+                                height: 36,
                                 flexShrink: 0,
-                                animation:
-                                  animatingContact === `whatsapp-${product.id}`
-                                    ? `${pulseGlow} 0.6s ease-out, ${float} 0.6s ease-out`
-                                    : "none",
                                 "&:hover": {
                                   bgcolor: "#1ebe57",
-                                  transform: "translateY(-2px) rotate(5deg)",
-                                  boxShadow: "0 6px 16px rgba(37, 211, 102, 0.4)",
                                 },
                               }}
                             >
-                              <WhatsApp sx={{ fontSize: 20 }} />
+                              <WhatsApp sx={{ fontSize: 18 }} />
                             </IconButton>
                           </Stack>
                         </CardContent>
@@ -952,6 +850,8 @@ const ProductsListingView: React.FC = () => {
         onClose={() => setInquiryOpen(false)}
         productName={activeProduct?.name}
         supplierName={activeProduct?.supplier.name}
+        productImage={activeProduct?.image}
+        productPrice={activeProduct?.price}
       />
     </Box>
   );

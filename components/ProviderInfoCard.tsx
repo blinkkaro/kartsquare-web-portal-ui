@@ -17,6 +17,7 @@ interface ProviderInfoCardProps {
   businessName?: string;
   isFollowing?: boolean;
   providerPhoneNumber?: string;
+  gstNumber?: string;
 }
 
 const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
@@ -27,6 +28,7 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
   businessName,
   isFollowing = false,
   providerPhoneNumber,
+  gstNumber,
 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -215,6 +217,22 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
           >
             Highly Responsive • Top Professional
           </Typography>
+          {gstNumber && (
+            <Typography
+              variant="caption"
+              sx={{
+                color: "#059669", // Success Green
+                fontWeight: 700,
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                mt: 0.5,
+              }}
+            >
+              <CheckCircle sx={{ fontSize: "14px" }} />
+              GST: {gstNumber}
+            </Typography>
+          )}
         </Box>
       </Box>
 

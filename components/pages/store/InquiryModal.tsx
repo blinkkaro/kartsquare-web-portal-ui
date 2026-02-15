@@ -21,6 +21,8 @@ interface InquiryModalProps {
     onClose: () => void;
     productName?: string;
     supplierName?: string;
+    productImage?: string;
+    productPrice?: string;
 }
 
 const InquiryModal: React.FC<InquiryModalProps> = ({
@@ -28,6 +30,8 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
     onClose,
     productName,
     supplierName,
+    productImage,
+    productPrice,
 }) => {
     const [form, setForm] = useState({
         name: "",
@@ -49,20 +53,51 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-            <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", bgcolor: COLORS.PRIMARY_PURPLE, color: "white" }}>
-                <Typography variant="h6" fontWeight={600}>
+            <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", bgcolor: COLORS.PRIMARY_PURPLE, color: "white", py: 1.5 }}>
+                <Typography variant="h6" fontWeight={700}>
                     Get Best Price
                 </Typography>
-                <IconButton onClick={onClose} sx={{ color: "white" }}>
+                <IconButton onClick={onClose} size="small" sx={{ color: "white" }}>
                     <Close />
                 </IconButton>
             </DialogTitle>
-            <DialogContent sx={{ mt: 2 }}>
+            <DialogContent sx={{ mt: 2, pb: 2 }}>
                 {productName && (
-                    <Box sx={{ mb: 3, p: 2, bgcolor: "#f5f5f5", borderRadius: 1, borderLeft: `4px solid ${COLORS.PRIMARY_PURPLE}` }}>
-                        <Typography variant="subtitle2" color="text.secondary">I am interested in:</Typography>
-                        <Typography variant="h6" fontWeight={600}>{productName}</Typography>
-                        {supplierName && <Typography variant="caption">Sold by: {supplierName}</Typography>}
+                    <Box
+                        sx={{
+                            mb: 3,
+                            p: 1.5,
+                            bgcolor: "rgba(94, 24, 233, 0.04)",
+                            borderRadius: 2,
+                            border: `1px solid rgba(94, 24, 233, 0.1)`,
+                            display: 'flex',
+                            gap: 2,
+                            alignItems: 'center'
+                        }}
+                    >
+                        {productImage && (
+                            <Box
+                                component="img"
+                                src={productImage}
+                                alt={productName}
+                                sx={{
+                                    width: 80,
+                                    height: 80,
+                                    borderRadius: 1,
+                                    objectFit: 'cover',
+                                    border: '1px solid #eee',
+                                    bgcolor: 'white'
+                                }}
+                            />
+                        )}
+                        <Box sx={{ flex: 1 }}>
+                            <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, display: 'block', mb: 0.2 }}>I AM INTERESTED IN:</Typography>
+                            <Typography variant="subtitle1" fontWeight={800} sx={{ color: '#1a1a2e', lineHeight: 1.2 }}>{productName}</Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                                {productPrice && <Typography variant="body2" fontWeight={800} color={COLORS.PRIMARY_PURPLE}>{productPrice}</Typography>}
+                                {supplierName && <Typography variant="caption" sx={{ color: 'text.secondary', bgcolor: 'rgba(0,0,0,0.05)', px: 0.8, borderRadius: 1 }}>{supplierName}</Typography>}
+                            </Box>
+                        </Box>
                     </Box>
                 )}
 

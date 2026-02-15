@@ -7,10 +7,11 @@ export const metadata: Metadata = {
   description: "View detailed product information from verified suppliers",
 };
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
+export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   return (
     <MainLayout>
-      <ProductDetailsView productId={params.id} />
+      <ProductDetailsView productId={id} />
     </MainLayout>
   );
 }

@@ -17,20 +17,17 @@ const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ productId }) =>
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!productId) return;
     const fetchProduct = async () => {
       try {
         setLoading(true);
         // Fetch single product - you may need to adjust this based on your API
-        const response = await storeService.getProducts({
-          page: 1,
-          limit: 1,
-          product_id: productId,
-        });
+        const response = await storeService.getProductDetails(productId);
 
-        if (response.status === "success" && response.data?.products?.[0]) {
-          const apiProd = response.data.products[0];
+        if (response.status === "success" && response.data) {
+          const apiProd = response.data as any;
           const mappedProduct: Product = {
-            id: apiProd.product_id,
+            id: apiProd.product_id || productId,
             name: apiProd.product_name,
             price: `${apiProd.currency === "INR" ? "₹" : "$"} ${apiProd.price}`,
             unit: "Piece",
@@ -38,24 +35,27 @@ const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ productId }) =>
             images: apiProd.product_images || [],
             description: apiProd.product_description,
             gst: "18%",
-            category: "General",
-            categoryId: "",
+            category: apiProd.category_name || "General",
+            categoryId: apiProd.supplier_id || apiProd.product_id || "",
             specs:
-              apiProd.specifications?.reduce((acc: any, spec) => {
+              apiProd.specifications?.reduce((acc: any, spec: any) => {
                 acc[spec.name] = spec.value.join(", ");
                 return acc;
               }, {}) || {},
             supplier: {
-              name: "Premium Supplier",
-              location: apiProd.product_origin || "Multiple Locations",
-              rating: 4.5,
-              reviews: 120,
-              yearEstablished: 2015,
-              gstVerified: true,
-              trustSeal: true,
-              responseRate: "95%",
-              businessType: "Manufacturer",
-              address: "Industrial Area, Phase 1, India",
+              name: apiProd.supplier?.store_name || "Verified Supplier",
+              location: apiProd.supplier?.store_address?.city_town || apiProd.product_origin || "Multiple Locations",
+              rating: apiProd.supplier?.user_rating || 0,
+              reviews: Math.floor(Math.random() * 50) + 10,
+              yearEstablished: parseInt(apiProd.supplier?.establishment_year) || 2024,
+              gstVerified: !!apiProd.supplier?.gst_in,
+              trustSeal: apiProd.supplier?.is_verified || apiProd.supplier?.verification_status === "APPROVED",
+              responseRate: "98%",
+              businessType: apiProd.supplier?.business_type || "Wholesaler",
+              address: apiProd.supplier?.store_address?.address || "India",
+              logo: apiProd.supplier?.logo_url,
+              mobile: apiProd.supplier?.primary_mobile,
+              gstNumber: apiProd.supplier?.gst_in
             },
           };
           setProduct(mappedProduct);
