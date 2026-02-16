@@ -120,7 +120,6 @@ function ManageProductView({ productId }: ManageProductViewProps) {
         sku_number: data.sku_number,
         product_category_id: data.product_category_id,
         product_sub_category_id: data.product_sub_category_id,
-        product_brand_id: data.product_brand_id,
         price: data.price,
         currency: data.currency,
         product_description: data.product_description,
@@ -128,6 +127,9 @@ function ManageProductView({ productId }: ManageProductViewProps) {
         is_returnable: data.is_returnable,
         product_origin: data.product_origin,
         specifications: transformedSpecs,
+        ...(data.product_brand_id && {
+          product_brand_id: data.product_brand_id,
+        }),
       };
       updateProduct(updatePayload, {
         onSuccess: () => {
@@ -140,7 +142,6 @@ function ManageProductView({ productId }: ManageProductViewProps) {
         sku_number: data.sku_number,
         product_category_id: data.product_category_id,
         product_sub_category_id: data.product_sub_category_id,
-        product_brand_id: data.product_brand_id,
         price: data.price,
         currency: data.currency,
         product_description: data.product_description,
@@ -149,6 +150,9 @@ function ManageProductView({ productId }: ManageProductViewProps) {
         specifications: transformedSpecs,
         is_available: true,
         product_origin: data.product_origin,
+        ...(data.product_brand_id && {
+          product_brand_id: data.product_brand_id,
+        }),
       };
       createProduct(createPayload, {
         onSuccess: () => {
@@ -167,13 +171,12 @@ function ManageProductView({ productId }: ManageProductViewProps) {
   }
 
   return (
-    <Box sx={{ p: 5, px:20 }}>
+    <Box sx={{ p: 5, px: 20 }}>
       <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
         mb={3}
-
       >
         <Typography variant="h5" fontWeight="bold">
           {productId ? t("edit_product") : t("add_new_product")}
