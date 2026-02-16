@@ -61,15 +61,17 @@ function HomeView() {
     const observer = new IntersectionObserver(
       (entries) => {
         const target = entries[0];
-        if (
-          target.isIntersecting &&
-          !isFetchingNextPosts &&
-          !isFetchingNextAds
-        ) {
-          if (hasNextPosts) {
+        if (target.isIntersecting) {
+          if (hasNextPosts && !isFetchingNextPosts) {
             fetchNextPosts();
           }
-          if (hasNextAds) {
+          // Only fetch more ads if we've used up most of our current pool
+          // and we're not already fetching.
+          if (
+            hasNextAds &&
+            !isFetchingNextAds &&
+            adIndexRef.current >= allAds.length - 2
+          ) {
             fetchNextAds();
           }
         }
@@ -101,6 +103,9 @@ function HomeView() {
   const allPosts = postsData?.pages.flatMap((page) => page.posts) || [];
   const allAds = adsData?.pages.flatMap((page) => page.ads) || [];
 
+  // Track how many ads have been placed
+  const adIndexRef = useRef(0);
+
   // Merge posts and ads with random placement (5-15 posts apart)
   const mergedFeed = useMemo(() => {
     if (allPosts.length === 0) return [];
@@ -131,6 +136,7 @@ function HomeView() {
       }
     });
 
+    adIndexRef.current = adIndex;
     return feed;
   }, [allPosts, allAds]);
 
@@ -222,7 +228,10 @@ function HomeView() {
             }}
           >
             <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              <AdvertisementSlider />
+              <AdvertisementSlider
+                ads={allAds.slice(0, 5)}
+                isLoading={adsLoading}
+              />
               <TopSuggestions />
             </Box>
           </Grid>

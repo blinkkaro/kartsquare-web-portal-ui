@@ -14,6 +14,7 @@ import {
   Typography,
   Chip,
   Avatar,
+  useTheme,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -23,6 +24,7 @@ import { ProductSummary } from "@/services/product/product.interface";
 import { COLORS } from "@/constants/colors";
 import EmptyState from "@/components/common/EmptyState";
 import { useTranslate } from "@/hooks/useTranslate";
+import { useRouter } from "next/navigation";
 
 interface ProductTableProps {
   products: ProductSummary[];
@@ -30,6 +32,9 @@ interface ProductTableProps {
   fetchNextPage: () => void;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
+  onDelete: (productId: string) => void;
+  onUpdateStatus: (productId: string, status: string) => void;
+  onUpdateAvailability: (productId: string, isAvailable: boolean) => void;
 }
 
 const ProductTable: React.FC<ProductTableProps> = ({
@@ -38,9 +43,15 @@ const ProductTable: React.FC<ProductTableProps> = ({
   fetchNextPage,
   hasNextPage,
   isFetchingNextPage,
+  onDelete,
+  onUpdateStatus,
+  onUpdateAvailability,
 }) => {
   const { t } = useTranslate();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const observerTarget = useRef(null);
+  const router = useRouter();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -73,6 +84,10 @@ const ProductTable: React.FC<ProductTableProps> = ({
     );
   }
 
+  const handleViewProduct = (productId: string) => {
+    router.push(`/sup/product/${productId}`);
+  };
+
   return (
     <TableContainer
       component={Paper}
@@ -88,47 +103,47 @@ const ProductTable: React.FC<ProductTableProps> = ({
             <TableCell
               sx={{ color: COLORS.TEXT.SECONDARY_LIGHT, fontWeight: 600 }}
             >
-              SKU ID
+              {t("skuId")}
             </TableCell>
             <TableCell
               sx={{ color: COLORS.TEXT.SECONDARY_LIGHT, fontWeight: 600 }}
             >
-              PRODUCT NAME
+              {t("productName")}
             </TableCell>
             <TableCell
               sx={{ color: COLORS.TEXT.SECONDARY_LIGHT, fontWeight: 600 }}
             >
-              CATEGORY
+              {t("category")}
             </TableCell>
             <TableCell
               sx={{ color: COLORS.TEXT.SECONDARY_LIGHT, fontWeight: 600 }}
             >
-              SUB CATEGORY
+              {t("subCategory")}
             </TableCell>
             <TableCell
               sx={{ color: COLORS.TEXT.SECONDARY_LIGHT, fontWeight: 600 }}
             >
-              STOCK AVAILABILITY
+              {t("stockAvailability")}
             </TableCell>
             <TableCell
               sx={{ color: COLORS.TEXT.SECONDARY_LIGHT, fontWeight: 600 }}
             >
-              PRICE
+              {t("price")}
             </TableCell>
             <TableCell
               sx={{ color: COLORS.TEXT.SECONDARY_LIGHT, fontWeight: 600 }}
             >
-              BRAND
+              {t("brand")}
             </TableCell>
             <TableCell
               sx={{ color: COLORS.TEXT.SECONDARY_LIGHT, fontWeight: 600 }}
             >
-              STATUS
+              {t("status")}
             </TableCell>
             <TableCell
               sx={{ color: COLORS.TEXT.SECONDARY_LIGHT, fontWeight: 600 }}
             >
-              ACTION
+              {t("action")}
             </TableCell>
           </TableRow>
         </TableHead>
@@ -138,9 +153,9 @@ const ProductTable: React.FC<ProductTableProps> = ({
               key={product.product_id}
               sx={{
                 "&:last-child td, &:last-child th": { border: 0 },
-                backgroundColor: COLORS.BACKGROUND.PRIMARY_LIGHT,
+                backgroundColor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
                 mb: 1,
-                borderBottom: "4px solid " + COLORS.BACKGROUND.SECONDARY_LIGHT,
+                borderBottom: "4px solid " + (isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT),
               }}
             >
               <TableCell>{product.sku_number || "N/A"}</TableCell>
@@ -158,35 +173,78 @@ const ProductTable: React.FC<ProductTableProps> = ({
               </TableCell>
               <TableCell>{product.category_name || "-"}</TableCell>
               <TableCell>{product.sub_category_name || "-"}</TableCell>
-              <TableCell>{product.is_available ? "Yes" : "No"}</TableCell>
+              <TableCell>
+                <Switch
+                  size="small"
+                  checked={product.is_available}
+                  onChange={(e) =>
+                    onUpdateAvailability(product.product_id, e.target.checked)
+                  }
+                  sx={{
+                    "& .MuiSwitch-switchBase.Mui-checked": {
+                      color: "#4CAF50",
+                    },
+                    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                      backgroundColor: "#4CAF50",
+                    },
+                  }}
+                />
+              </TableCell>
               <TableCell>{product.price}</TableCell>
               <TableCell sx={{ color: COLORS.PRIMARY_BLUE }}>
                 {product.brand_name || "-"}
               </TableCell>
               <TableCell>
-                <Chip
-                  label={product.product_status || "Active"}
-                  size="small"
-                  sx={{
-                    bgcolor:
-                      product.product_status === "active"
-                        ? "#e6f4ff"
-                        : "#fff1f0",
-                    color:
-                      product.product_status === "active"
-                        ? "#1677ff"
-                        : "#ff4d4f",
-                    fontWeight: 500,
-                  }}
-                />
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Switch
+                    size="small"
+                    checked={product.product_status === "active"}
+                    disabled={
+                      product.product_status !== "active" &&
+                      product.product_status !== "inactive"
+                    }
+                    onChange={(e) =>
+                      onUpdateStatus(
+                        product.product_id,
+                        e.target.checked ? "active" : "inactive",
+                      )
+                    }
+                  />
+                  <Chip
+                    label={product.product_status || "Active"}
+                    size="small"
+                    sx={{
+                      bgcolor:
+                        product.product_status === "active"
+                          ? COLORS.ACCENT_BLUE_BG_DARK
+                          : product.product_status === "rejected"
+                            ? "error.main"
+                            : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                      color:
+                        product.product_status === "active"
+                          ? COLORS.PRIMARY_BLUE
+                          : product.product_status === "rejected"
+                            ? COLORS.BACKGROUND.SECONDARY_LIGHT
+                            : COLORS.TEXT.SECONDARY_LIGHT,
+                      fontWeight: 500,
+                      textTransform: "capitalize",
+                    }}
+                  />
+                </Box>
               </TableCell>
               <TableCell>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   {/* <Switch size="small" checked={product.status === "active"} /> */}
-                  <IconButton size="small">
+                  <IconButton
+                    size="small"
+                    onClick={() => handleViewProduct(product.product_id)}
+                  >
                     <VisibilityIcon fontSize="small" />
                   </IconButton>
-                  <IconButton size="small">
+                  <IconButton
+                    size="small"
+                    onClick={() => onDelete(product.product_id)}
+                  >
                     <DeleteOutlineIcon fontSize="small" />
                   </IconButton>
                 </Box>
@@ -197,14 +255,13 @@ const ProductTable: React.FC<ProductTableProps> = ({
           {isFetchingNextPage && (
             <TableRow>
               <TableCell colSpan={11} align="center">
-                Loading more...
+                {t("loadingMore")}
               </TableCell>
             </TableRow>
           )}
           {!hasNextPage && !isLoading && products.length > 0 && (
             <TableRow>
-              <TableCell colSpan={11} align="center">
-              </TableCell>
+              <TableCell colSpan={11} align="center"></TableCell>
             </TableRow>
           )}
         </TableBody>

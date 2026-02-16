@@ -45,7 +45,7 @@ export interface ProductSpecificationValue {
   product_id?: string;
   user_id?: string;
   product_specifications_id: string;
-  product_specification_entered_value: string[];
+  product_specifications_entered_value: string[];
   product_specifications_value_type: string;
   is_deleted: boolean;
   created_at?: Date;
@@ -131,7 +131,7 @@ export interface ProductDetail extends Product {
     product_specifications_id: string;
     product_specifications_name: string;
     product_specifications_value_type: string;
-    product_specification_entered_value: string[];
+    product_specifications_entered_value: string[];
   }[];
 }
 

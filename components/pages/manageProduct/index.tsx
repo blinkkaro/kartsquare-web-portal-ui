@@ -61,6 +61,7 @@ function ManageProductView({ productId }: ManageProductViewProps) {
       product_images: [],
       is_returnable: false,
       specifications: [],
+      product_origin: "",
     },
   });
 
@@ -78,12 +79,13 @@ function ManageProductView({ productId }: ManageProductViewProps) {
         price: productData.price,
         currency: productData.currency || "INR",
         product_description: productData.product_description,
+        product_origin: productData.product_origin?.toUpperCase() || "",
         product_images: productData.product_images,
         is_returnable: productData.is_returnable || false,
         specifications: (productData.specifications || []).map((s) => ({
           product_specifications_id: s.product_specifications_id,
           product_specifications_entered_value:
-            s.product_specification_entered_value,
+            s.product_specifications_entered_value,
           product_specifications_value_type:
             s.product_specifications_value_type,
           product_specifications_name: s.product_specifications_name,
@@ -124,6 +126,7 @@ function ManageProductView({ productId }: ManageProductViewProps) {
         product_description: data.product_description,
         product_images: data.product_images,
         is_returnable: data.is_returnable,
+        product_origin: data.product_origin,
         specifications: transformedSpecs,
       };
       updateProduct(updatePayload, {
@@ -145,7 +148,7 @@ function ManageProductView({ productId }: ManageProductViewProps) {
         is_returnable: data.is_returnable,
         specifications: transformedSpecs,
         is_available: true,
-        product_origin: "India",
+        product_origin: data.product_origin,
       };
       createProduct(createPayload, {
         onSuccess: () => {
@@ -164,15 +167,16 @@ function ManageProductView({ productId }: ManageProductViewProps) {
   }
 
   return (
-    <Box sx={{ p: 5 }}>
+    <Box sx={{ p: 5, px:20 }}>
       <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
         mb={3}
+
       >
         <Typography variant="h5" fontWeight="bold">
-          {productId ? t("Edit Product" as any) : t("Add New Product" as any)}
+          {productId ? t("edit_product") : t("add_new_product")}
         </Typography>
       </Box>
 
@@ -214,8 +218,15 @@ function ManageProductView({ productId }: ManageProductViewProps) {
               variant="outlined"
               color="secondary"
               onClick={() => router.back()}
+              sx={{
+                border: `1px solid ${theme.palette.mode === "dark" ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE}`,
+                color:
+                  theme.palette.mode === "dark"
+                    ? COLORS.ACCENT_BLUE_DARK
+                    : COLORS.PRIMARY_PURPLE,
+              }}
             >
-              {t("Cancel" as any)}
+              {t("cancel")}
             </Button>
             <Button
               type="submit"
@@ -226,9 +237,9 @@ function ManageProductView({ productId }: ManageProductViewProps) {
               {isCreating || isUpdating ? (
                 <CircularProgress size={24} />
               ) : productId ? (
-                t("Update Product" as any)
+                t("update_product")
               ) : (
-                t("Save" as any)
+                t("save")
               )}
             </Button>
           </Box>
@@ -237,17 +248,15 @@ function ManageProductView({ productId }: ManageProductViewProps) {
 
       <SuccessModel
         open={showSuccessModal}
-        onClose={() => router.push("/supplier/manage-product")}
-        onAction={() => router.push("/supplier/manage-product")}
-        title={
-          productId ? t("Product Updated" as any) : t("Product Created" as any)
-        }
+        onClose={() => router.push("/sup/myStore")}
+        onAction={() => router.push("/sup/myStore")}
+        title={productId ? t("product_updated") : t("product_created")}
         description={
           productId
-            ? t("Your product has been updated successfully." as any)
-            : t("Your product has been created successfully." as any)
+            ? t("product_updated_successfully")
+            : t("product_created_successfully")
         }
-        actionLabel={t("Continue" as any)}
+        actionLabel={t("continue")}
       />
     </Box>
   );

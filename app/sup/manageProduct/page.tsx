@@ -7,12 +7,15 @@ export const metadata = {
   description: "Add new product and manage existing products",
 };
 
-const ManageProduct = () => {
+export default async function ManageProduct({
+  searchParams,
+}: {
+  searchParams: Promise<{ id: string }>;
+}) {
+  const { id } = await searchParams;
   return (
     <MainLayout>
-      <ManageProductView />
+      <ManageProductView productId={id} />
     </MainLayout>
   );
-};
-
-export default ManageProduct;
+}

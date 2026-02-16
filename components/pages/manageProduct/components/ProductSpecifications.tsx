@@ -11,6 +11,7 @@ import {
   TextField,
   useTheme,
   Slider,
+  InputLabel,
 } from "@mui/material";
 import { useFormContext, Controller } from "react-hook-form";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -31,40 +32,46 @@ const ProductSpecifications = () => {
   const subCategoryId = watch("product_sub_category_id");
   const { data: specifications } = useGetProductSpecifications(subCategoryId);
 
-  // Initialize specifications array when subcategory changes
+  // Initialize specifications array when subcategory changes or schema is fetched
   useEffect(() => {
-    if (
-      specifications &&
-      Array.isArray(specifications) &&
-      specifications.length > 0
-    ) {
-      const currentSpecs = watch("specifications") || [];
+    if (specifications && Array.isArray(specifications)) {
+      const currentFormSpecs = watch("specifications") || [];
 
       // Map through backend specifications to ensure metadata is present for all
-      const updatedSpecs = specifications.map((spec) => {
-        const existingSpec = currentSpecs.find(
-          (cs: any) =>
-            cs.product_specifications_id === spec.product_specifications_id,
+      const mergedSpecs = specifications.map((schemaSpec) => {
+        // Find if we already have a value for this spec in the form
+        const existingVal = currentFormSpecs.find(
+          (s: any) =>
+            s.product_specifications_id ===
+            schemaSpec.product_specifications_id,
         );
 
         return {
-          product_specifications_id: spec.product_specifications_id,
+          product_specifications_id: schemaSpec.product_specifications_id,
           product_specifications_entered_value:
-            existingSpec?.product_specifications_entered_value || [],
+            existingVal?.product_specifications_entered_value || [],
           product_specifications_value_type:
-            spec.product_specifications_option_type,
+            schemaSpec.product_specifications_option_type,
           product_specifications_is_required:
-            spec.product_specifications_is_required,
-          product_specifications_name: spec.product_specifications_name,
+            schemaSpec.product_specifications_is_required,
+          product_specifications_name: schemaSpec.product_specifications_name,
         };
       });
 
-      // Simple comparison to avoid infinite update loops
-      if (JSON.stringify(currentSpecs) !== JSON.stringify(updatedSpecs)) {
-        setValue("specifications", updatedSpecs);
+      // ONLY update if there's a meaningful change to avoid infinite loops
+      // We check if the IDs or the number of specs changed, or if we are initializing empty values
+      const currentIds = currentFormSpecs
+        .map((s: any) => s.product_specifications_id)
+        .join(",");
+      const newIds = mergedSpecs
+        .map((s: any) => s.product_specifications_id)
+        .join(",");
+
+      if (currentIds !== newIds || currentFormSpecs.length === 0) {
+        setValue("specifications", mergedSpecs);
       }
     }
-  }, [specifications, subCategoryId]);
+  }, [specifications, setValue, watch]); // Removed subCategoryId to focus on the data fetched for it
 
   if (
     !specifications ||
@@ -120,6 +127,7 @@ const ProductSpecifications = () => {
                           bgcolor: isDark
                             ? COLORS.BACKGROUND.PAPER_DARK
                             : COLORS.BACKGROUND.PRIMARY_LIGHT,
+                          height: "2.5rem",
                         },
                       }}
                     />
@@ -214,12 +222,16 @@ const ProductSpecifications = () => {
                             })
                           : null;
 
-                      const minValue = rangeValue?.min ?? 0;
-                      const maxValue = rangeValue?.max ?? 100;
-                      const currentValue =
-                        Array.isArray(field.value) && field.value[0]
-                          ? Number(field.value[0])
-                          : minValue;
+                      const minValue = Number(rangeValue?.min) || 0;
+                      const maxValue = Number(rangeValue?.max) || 100;
+                      const parsedValue = Number(
+                        Array.isArray(field.value)
+                          ? field.value[0]
+                          : field.value,
+                      );
+                      const currentValue = isNaN(parsedValue)
+                        ? minValue
+                        : parsedValue;
 
                       return (
                         <Box sx={{ px: 1 }}>
@@ -291,6 +303,18 @@ const ProductSpecifications = () => {
                           bgcolor: isDark
                             ? COLORS.BACKGROUND.PAPER_DARK
                             : COLORS.BACKGROUND.PRIMARY_LIGHT,
+                          height: "2.5rem",
+                          px: 2,
+                          "& .MuiInputBase-input": {
+                            paddingRight: "10px",
+                            colorScheme: isDark ? "dark" : "light",
+                          },
+                          "&::-webkit-calendar-picker-indicator": {
+                            cursor: "pointer",
+                            filter: isDark ? "invert(1)" : "none",
+                            position: "relative",
+                            right: "-8px",
+                          },
                         },
                       }}
                     />

@@ -53,17 +53,6 @@ const ProductCategorySelect = () => {
   const { data: subCategories, isLoading: isSubCategoriesLoading } =
     useGetSubCategories(categoryId, debouncedSubCategorySearch);
 
-  // Reset subcategory and brand when category changes
-  useEffect(() => {
-    setValue("product_sub_category_id", "");
-    setValue("product_brand_id", "");
-  }, [categoryId, setValue]);
-
-  // Reset brand when subcategory changes
-  useEffect(() => {
-    setValue("product_brand_id", "");
-  }, [subCategoryId, setValue]);
-
   return (
     <Box>
       <Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={3}>
@@ -84,6 +73,9 @@ const ProductCategorySelect = () => {
                 }
                 onChange={(_, newValue) => {
                   onChange(newValue?.product_category_id || "");
+                  // Manually reset dependent fields when category changes via UI
+                  setValue("product_sub_category_id", "");
+                  setValue("product_brand_id", "");
                 }}
                 onInputChange={(_, newInputValue) => {
                   setCategorySearch(newInputValue);
@@ -140,6 +132,8 @@ const ProductCategorySelect = () => {
                 }
                 onChange={(_, newValue) => {
                   onChange(newValue?.product_sub_category_id || "");
+                  // Manually reset dependent fields when sub-category changes via UI
+                  setValue("product_brand_id", "");
                 }}
                 onInputChange={(_, newInputValue) => {
                   setSubCategorySearch(newInputValue);

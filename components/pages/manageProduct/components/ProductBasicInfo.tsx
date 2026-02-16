@@ -1,9 +1,18 @@
 import React from "react";
-import { Box, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Typography,
+  useTheme,
+  Select,
+  MenuItem,
+  FormControl,
+  FormHelperText,
+} from "@mui/material";
 import Input from "@/components/common/Input";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, Controller } from "react-hook-form";
 import { useTranslate } from "@/hooks/useTranslate";
 import { COLORS } from "@/constants/colors";
+import { productOrigins } from "./data";
 
 const ProductBasicInfo = () => {
   const {
@@ -64,6 +73,48 @@ const ProductBasicInfo = () => {
                   : COLORS.BACKGROUND.PRIMARY_LIGHT,
               },
             }}
+          />
+        </Box>
+      </Box>
+
+      <Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={3} mt={3}>
+        <Box>
+          <Typography variant="subtitle2" mb={1} fontWeight={500}>
+            {t("product_origin") + "*"}
+          </Typography>
+          <Controller
+            name="product_origin"
+            control={control}
+            render={({ field }) => (
+              <FormControl fullWidth error={!!errors.product_origin}>
+                <Select
+                  {...field}
+                  value={field.value?.toUpperCase() || ""}
+                  sx={{
+                    boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.05)",
+                    borderRadius: "50rem",
+                    bgcolor: isDark
+                      ? COLORS.BACKGROUND.PAPER_DARK
+                      : COLORS.BACKGROUND.PRIMARY_LIGHT,
+                    height: "2.5rem",
+                    paddingY: 0,
+                  }}
+                  displayEmpty
+                >
+                  <MenuItem value="">{t("select_origin")}</MenuItem>
+                  {productOrigins.map((origin) => (
+                    <MenuItem key={origin} value={origin}>
+                      {origin}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {errors.product_origin && (
+                  <FormHelperText error>
+                    {errors.product_origin?.message as string}
+                  </FormHelperText>
+                )}
+              </FormControl>
+            )}
           />
         </Box>
       </Box>

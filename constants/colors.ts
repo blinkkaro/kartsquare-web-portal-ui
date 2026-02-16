@@ -79,4 +79,7 @@ export const COLORS = {
 
   // profile
   PROFILE_GRADIENT: "linear-gradient(135deg, #eddaff 25%, #e2e9ff 50%)",
+
+  // error
+  ERROR_RED: "#ff4d4f",
 };

@@ -1,4 +1,9 @@
-import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { productFilter } from "@/services/product/product.interface";
 import { productService } from "@/services/product/product.service";
 
@@ -52,14 +57,23 @@ export const useGetProductSpecifications = (subCategoryId: string) => {
 };
 
 export const useCreateProduct = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: productService.createProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["supplier-products"] });
+    },
   });
 };
 
 export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: productService.updateProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["supplier-products"] });
+      queryClient.invalidateQueries({ queryKey: ["product"] });
+    },
   });
 };
 
@@ -68,5 +82,24 @@ export const useGetProductById = (productId: string) => {
     queryKey: ["product", productId],
     queryFn: () => productService.getProductById(productId),
     enabled: !!productId,
+  });
+};
+
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (productId: string) => productService.deleteProduct(productId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["supplier-products"] });
+    },
+  });
+};
+export const useUpdateProductStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: productService.updateProductStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["supplier-products"] });
+    },
   });
 };

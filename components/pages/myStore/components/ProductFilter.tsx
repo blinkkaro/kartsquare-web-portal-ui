@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography, useTheme } from "@mui/material";
 import { useForm } from "react-hook-form";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
@@ -25,6 +25,8 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
       search: "",
     },
   });
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const router = useRouter();
   const { t } = useTranslate();
 
@@ -52,7 +54,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
         gap: 2,
         mb: 3,
         p: 2,
-        bgcolor: COLORS.BACKGROUND.PRIMARY_LIGHT,
+        bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
         borderRadius: "16px",
       }}
     >
@@ -62,7 +64,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
           component="span"
           sx={{
             bgcolor: COLORS.PURPLE_ALPHA_10,
-            color: COLORS.PRIMARY_PURPLE,
+            color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
             borderRadius: "8px",
             px: 1,
             fontSize: "0.8em",
@@ -82,7 +84,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "50px",
-                bgcolor: COLORS.BACKGROUND.SECONDARY_LIGHT,
+                bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
                 "& fieldset": { border: "none" },
               },
             }}

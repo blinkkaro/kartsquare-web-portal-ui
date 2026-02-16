@@ -42,10 +42,11 @@ export const productSchema = (t: TFunction) =>
     sku_number: yup.string().required(t("productSkuRequired")),
     price: yup.number().required(t("productPriceRequired")),
     currency: yup.string().required(t("productCurrencyRequired")),
-    product_description: yup.string().required(t("productDescriptionRequired")),
-    product_images: yup.array().required(t("productImagesRequired")).min(1, t("productImagesRequired")),
+    product_description: yup.string().required(t("productDescriptionRequired")).min(10, t("productDescriptionMin")),
+    product_images: yup.array().required(t("productImagesRequired")).min(1, t("productImagesMin")),
     is_returnable: yup.boolean().required(t("productReturnableRequired")),
     specifications: yup.array().of(productSpecificationSchema).optional(),
+    product_origin: yup.string().required(t("productOriginRequired")),    
   });
 
 export type ProductFormValues = yup.InferType<ReturnType<typeof productSchema>>;

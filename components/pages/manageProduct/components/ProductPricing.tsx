@@ -18,6 +18,7 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { useGetBrands } from "@/hooks/useProducts";
 import { Info, InfoOutline } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
+import { countries } from "./data";
 
 const ProductPricing = () => {
   const {
@@ -46,23 +47,6 @@ const ProductPricing = () => {
     subCategoryId,
     debouncedBrandSearch,
   );
-  const countries = [
-    {
-      currency: "INR",
-      name: "Indian Rupee",
-      flag: "₹",
-    },
-    {
-      currency: "USD",
-      name: "US Dollar",
-      flag: "$",
-    },
-    {
-      currency: "EUR",
-      name: "Euro",
-      flag: "€",
-    },
-  ];
 
   return (
     <Box>
@@ -79,6 +63,7 @@ const ProductPricing = () => {
               render={({ field }) => (
                 <Select
                   {...field}
+                  value={field.value || ""}
                   displayEmpty
                   error={!!errors.currency}
                   sx={{
