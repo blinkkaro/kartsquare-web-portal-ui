@@ -14,6 +14,7 @@ interface ProductDetailsViewProps {
 const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ productId }) => {
   const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
+  const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -42,6 +43,7 @@ const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ productId }) =>
                 acc[spec.name] = spec.value.join(", ");
                 return acc;
               }, {}) || {},
+            supplier_id: apiProd.supplier_id,
             supplier: {
               name: apiProd.supplier?.store_name || "Verified Supplier",
               location: apiProd.supplier?.store_address?.city_town || apiProd.product_origin || "Multiple Locations",
@@ -55,10 +57,46 @@ const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ productId }) =>
               address: apiProd.supplier?.store_address?.address || "India",
               logo: apiProd.supplier?.logo_url,
               mobile: apiProd.supplier?.primary_mobile,
-              gstNumber: apiProd.supplier?.gst_in
+              gstNumber: apiProd.supplier?.gst_in,
+              latitude: parseFloat(apiProd.supplier?.store_address?.lat) || 0,
+              longitude: parseFloat(apiProd.supplier?.store_address?.long) || 0,
+              id: apiProd.supplier_id,
             },
           };
           setProduct(mappedProduct);
+
+          // Map Similar Products
+          if (apiProd.similar_products && Array.isArray(apiProd.similar_products)) {
+            const mappedSimilar: Product[] = apiProd.similar_products.map((sim: any) => ({
+              id: sim.product_id,
+              name: sim.product_name,
+              price: `${sim.currency === "INR" ? "₹" : "$"} ${sim.price}`,
+              unit: "Piece",
+              image: sim.product_images?.[0] || "",
+              images: sim.product_images || [],
+              description: sim.product_description,
+              gst: "18%",
+              category: sim.category_name || "General",
+              categoryId: sim.product_category_id || "",
+              specs: {},
+              supplier: {
+                name: sim.supplier?.store_name || "Verified Supplier",
+                location: sim.supplier?.store_address?.city_town || "India",
+                rating: sim.supplier?.user_rating || 0,
+                reviews: 10,
+                yearEstablished: 2024,
+                gstVerified: !!sim.supplier?.gst_in,
+                trustSeal: sim.supplier?.is_verified || false,
+                responseRate: "95%",
+                businessType: "Wholesaler",
+                address: sim.supplier?.store_address?.address || "",
+                logo: sim.supplier?.logo_url,
+                id: sim.supplier_id || "",
+              },
+              supplier_id: sim.supplier_id || "",
+            }));
+            setSimilarProducts(mappedSimilar);
+          }
         }
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -89,7 +127,7 @@ const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ productId }) =>
     );
   }
 
-  return <ProductDetails product={product} onBack={handleBack} />;
+  return <ProductDetails product={product} onBack={handleBack} similarProducts={similarProducts} />;
 };
 
 export default ProductDetailsView;

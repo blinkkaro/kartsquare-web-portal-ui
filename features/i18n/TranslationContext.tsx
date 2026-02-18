@@ -1000,7 +1000,15 @@ export type TranslationKey =
   | "search_orders"
   | "pending"
   | "completed"
-  | "no_orders_found";
+  | "no_orders_found"
+  | "storeLocation"
+  | "yearEstablishedLabel"
+  | "responseRateLabel"
+  | "locationLabel"
+  | "newArrivals"
+  | "similarProductsDescription"
+  | "directions"
+  | "similar";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

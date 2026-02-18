@@ -87,229 +87,17 @@ export interface Product {
     logo?: string;
     mobile?: string;
     gstNumber?: string;
+    latitude?: number;
+    longitude?: number;
+    id?: string;
   };
+  supplier_id: string;
   specs: { [key: string]: string };
   description: string;
   gst: string;
   category: string;
   categoryId: string;
 }
-
-const DUMMY_PRODUCTS: Product[] = [
-  {
-    id: "hp-1",
-    name: "Industrial Centrifugal Pump 5HP",
-    price: "₹ 45,000",
-    unit: "Unit",
-    image:
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop",
-    images: [],
-    description:
-      "High performance centrifugal pump for industrial water supply.",
-    gst: "18%",
-    category: "Machinery",
-    categoryId: "1",
-    specs: { Power: "5HP", Flow: "500L/min" },
-    supplier: {
-      name: "AquaFlow Systems",
-      location: "Pune, Maharashtra",
-      rating: 4.8,
-      reviews: 120,
-      yearEstablished: 2010,
-      gstVerified: true,
-      trustSeal: true,
-      responseRate: "98%",
-      businessType: "Manufacturer",
-      address: "MIDC Chakan",
-    },
-  },
-  {
-    id: "hp-2",
-    name: "Mono-Crystalline Solar Panel 450W",
-    price: "₹ 12,500",
-    unit: "Panel",
-    image:
-      "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=800&auto=format&fit=crop",
-    images: [],
-    description:
-      "High-efficiency monocrystalline solar panels for commercial projects.",
-    gst: "5%",
-    category: "Electrical",
-    categoryId: "2",
-    specs: { Wattage: "450W", Efficiency: "21.5%" },
-    supplier: {
-      name: "GreenTech Energy",
-      location: "Ahmedabad, Gujarat",
-      rating: 4.7,
-      reviews: 340,
-      yearEstablished: 2015,
-      gstVerified: true,
-      trustSeal: true,
-      responseRate: "92%",
-      businessType: "Wholesaler",
-      address: "GIDC Vatva",
-    },
-  },
-  {
-    id: "hp-3",
-    name: "Heavy Duty Automatic Drill Press",
-    price: "₹ 88,000",
-    unit: "Unit",
-    image:
-      "https://images.unsplash.com/photo-1545693356-9da8b6680456?q=80&w=800&auto=format&fit=crop",
-    images: [],
-    description: "Vertical column drill press for precision industrial boring.",
-    gst: "18%",
-    category: "Tools",
-    categoryId: "3",
-    specs: { Speed: "2500RPM", Depth: "150mm" },
-    supplier: {
-      name: "Precision Tools Co.",
-      location: "Ludhiana, Punjab",
-      rating: 4.9,
-      reviews: 85,
-      yearEstablished: 2008,
-      gstVerified: true,
-      trustSeal: true,
-      responseRate: "95%",
-      businessType: "Manufacturer",
-      address: "Focal Point",
-    },
-  },
-  {
-    id: "hp-4",
-    name: "Commercial Warehouse Stacking Rack",
-    price: "₹ 1,200",
-    unit: "Set",
-    image:
-      "https://images.unsplash.com/photo-1586528116311-ad86d7c7ce80?q=80&w=800&auto=format&fit=crop",
-    images: [],
-    description:
-      "Modular heavy-duty steel racks for efficient warehouse storage.",
-    gst: "18%",
-    category: "Supplies",
-    categoryId: "4",
-    specs: { Load: "500kg/Shelf", Material: "Galvanized Steel" },
-    supplier: {
-      name: "Logistics Pro Solutions",
-      location: "Chennai, TN",
-      rating: 4.6,
-      reviews: 210,
-      yearEstablished: 2012,
-      gstVerified: true,
-      trustSeal: false,
-      responseRate: "89%",
-      businessType: "Wholesaler",
-      address: "Ambattur Estate",
-    },
-  },
-  {
-    id: "hp-5",
-    name: "Digital Hydraulic Flow Meter",
-    price: "₹ 15,800",
-    unit: "Piece",
-    image:
-      "https://images.unsplash.com/photo-1581093583449-80d009b0b4e2?q=80&w=800&auto=format&fit=crop",
-    images: [],
-    description:
-      "High-precision digital meter for monitoring hydraulic systems.",
-    gst: "18%",
-    category: "Electronics",
-    categoryId: "5",
-    specs: { Accuracy: "±0.5%", Pressure: "400 Bar" },
-    supplier: {
-      name: "Precision Controls",
-      location: "Bangalore, Karnataka",
-      rating: 4.9,
-      reviews: 92,
-      yearEstablished: 2018,
-      gstVerified: true,
-      trustSeal: true,
-      responseRate: "99%",
-      businessType: "Manufacturer",
-      address: "Peenya Industrial Area",
-    },
-  },
-  {
-    id: "hp-6",
-    name: "Portable Diesel Generator 5kVA",
-    price: "₹ 55,000",
-    unit: "Unit",
-    image:
-      "https://images.unsplash.com/photo-1620912189865-1e8a33da4c59?q=80&w=800&auto=format&fit=crop",
-    images: [],
-    description:
-      "Reliable backup power solution for small businesses and sites.",
-    gst: "18%",
-    category: "Machinery",
-    categoryId: "1",
-    specs: { Fuel: "Diesel", Output: "5kVA" },
-    supplier: {
-      name: "PowerSource Ltd",
-      location: "Gurgaon, Haryana",
-      rating: 4.5,
-      reviews: 156,
-      yearEstablished: 2005,
-      gstVerified: true,
-      trustSeal: true,
-      responseRate: "88%",
-      businessType: "Exporter",
-      address: "Udyog Vihar",
-    },
-  },
-  {
-    id: "hp-7",
-    name: "Industrial LED High Bay Light 150W",
-    price: "₹ 3,200",
-    unit: "Unit",
-    image:
-      "https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=800&auto=format&fit=crop",
-    images: [],
-    description: "Energy-efficient LED lighting for large factory floors.",
-    gst: "12%",
-    category: "Electrical",
-    categoryId: "2",
-    specs: { Lumens: "18000lm", Protection: "IP65" },
-    supplier: {
-      name: "BrightLite Industrial",
-      location: "Kolkata, WB",
-      rating: 4.7,
-      reviews: 230,
-      yearEstablished: 2014,
-      gstVerified: true,
-      trustSeal: false,
-      responseRate: "94%",
-      businessType: "Manufacturer",
-      address: "Salt Lake Sector V",
-    },
-  },
-  {
-    id: "hp-8",
-    name: "Stainless Steel Bolt Set (M12x50)",
-    price: "₹ 450",
-    unit: "Pack",
-    image:
-      "https://images.unsplash.com/photo-1542382257-80dedb725088?q=80&w=800&auto=format&fit=crop",
-    images: [],
-    description: "High-grade SS304 bolts for corrosion-resistant fastening.",
-    gst: "18%",
-    category: "Tools",
-    categoryId: "3",
-    specs: { Material: "SS304", Grade: "A2-70" },
-    supplier: {
-      name: "Fastener Hub",
-      location: "Mumbai, Maharashtra",
-      rating: 4.8,
-      reviews: 412,
-      yearEstablished: 1995,
-      gstVerified: true,
-      trustSeal: true,
-      responseRate: "96%",
-      businessType: "Wholesaler",
-      address: "Kalbadevi",
-    },
-  },
-];
 
 const StoreView: React.FC = () => {
   const theme = useTheme();
@@ -318,7 +106,7 @@ const StoreView: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [homeData, setHomeData] = useState<StoreHomeData | null>(null);
   const [featuredProducts, setFeaturedProducts] =
-    useState<Product[]>(DUMMY_PRODUCTS);
+    useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(false);
 
@@ -365,6 +153,7 @@ const StoreView: React.FC = () => {
             gst: "18%",
             category: "General",
             categoryId: p.product_category_id || "",
+            supplier_id: p.supplier_id || p.supplier?.store_id || p.supplier?.id || "",
             specs: {},
             supplier: {
               name: p.supplier?.store_name || "Verified Supplier",
@@ -377,6 +166,7 @@ const StoreView: React.FC = () => {
               responseRate: "95%",
               businessType: "Manufacturer",
               address: p.supplier?.store_address?.address || "",
+              id: p.supplier?.store_id || p.supplier?.id || "",
             },
           }));
           setFeaturedProducts(mapped);
@@ -808,109 +598,109 @@ const StoreView: React.FC = () => {
           <Grid container spacing={3}>
             {productsLoading
               ? [1, 2, 3, 4].map((n) => (
-                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={n}>
-                    <Box
-                      sx={{
-                        height: 350,
-                        bgcolor: "rgba(0,0,0,0.05)",
-                        borderRadius: 5,
-                      }}
-                    />
-                  </Grid>
-                ))
+                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={n}>
+                  <Box
+                    sx={{
+                      height: 350,
+                      bgcolor: "rgba(0,0,0,0.05)",
+                      borderRadius: 5,
+                    }}
+                  />
+                </Grid>
+              ))
               : featuredProducts.map((product) => (
-                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={product.id}>
-                    <Card
-                      elevation={0}
-                      onClick={() => handleProductClick(product.id)}
-                      sx={{
-                        borderRadius: 5,
-                        border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "#f0f2f5"}`,
-                        bgcolor: isDark ? "rgba(255, 255, 255, 0.02)" : "white",
-                        transition: "all 0.3s",
-                        cursor: "pointer",
-                        "&:hover": {
-                          transform: "translateY(-8px)",
-                          boxShadow: "0 20px 40px rgba(0,0,0,0.08)",
-                          borderColor: COLORS.PRIMARY_PURPLE,
-                        },
-                      }}
-                    >
-                      <Box sx={{ height: 220, overflow: "hidden", p: 2 }}>
-                        <Box
-                          component="img"
-                          src={product.image}
-                          alt={product.name}
-                          sx={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                            borderRadius: 4,
-                          }}
-                        />
-                      </Box>
-                      <CardContent sx={{ pt: 1, px: 3, pb: 3 }}>
+                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={product.id}>
+                  <Card
+                    elevation={0}
+                    onClick={() => handleProductClick(product.id)}
+                    sx={{
+                      borderRadius: 5,
+                      border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "#f0f2f5"}`,
+                      bgcolor: isDark ? "rgba(255, 255, 255, 0.02)" : "white",
+                      transition: "all 0.3s",
+                      cursor: "pointer",
+                      "&:hover": {
+                        transform: "translateY(-8px)",
+                        boxShadow: "0 20px 40px rgba(0,0,0,0.08)",
+                        borderColor: COLORS.PRIMARY_PURPLE,
+                      },
+                    }}
+                  >
+                    <Box sx={{ height: 220, overflow: "hidden", p: 2 }}>
+                      <Box
+                        component="img"
+                        src={product.image}
+                        alt={product.name}
+                        sx={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          borderRadius: 4,
+                        }}
+                      />
+                    </Box>
+                    <CardContent sx={{ pt: 1, px: 3, pb: 3 }}>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: COLORS.PRIMARY_PURPLE,
+                          fontWeight: 800,
+                          textTransform: "uppercase",
+                          letterSpacing: 1,
+                        }}
+                      >
+                        {product.supplier.businessType}
+                      </Typography>
+                      <Typography
+                        variant="subtitle1"
+                        fontWeight={800}
+                        noWrap
+                        sx={{ mt: 0.5, mb: 1 }}
+                      >
+                        {product.name}
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
                         <Typography
-                          variant="caption"
-                          sx={{
-                            color: COLORS.PRIMARY_PURPLE,
-                            fontWeight: 800,
-                            textTransform: "uppercase",
-                            letterSpacing: 1,
-                          }}
+                          variant="h6"
+                          fontWeight={900}
+                          color={
+                            isDark
+                              ? COLORS.ACCENT_BLUE_DARK
+                              : COLORS.PRIMARY_PURPLE
+                          }
                         >
-                          {product.supplier.businessType}
-                        </Typography>
-                        <Typography
-                          variant="subtitle1"
-                          fontWeight={800}
-                          noWrap
-                          sx={{ mt: 0.5, mb: 1 }}
-                        >
-                          {product.name}
+                          {product.price}
                         </Typography>
                         <Box
                           sx={{
                             display: "flex",
                             alignItems: "center",
-                            justifyContent: "space-between",
+                            gap: 0.5,
+                            bgcolor: "rgba(5, 150, 105, 0.08)",
+                            px: 1,
+                            py: 0.3,
+                            borderRadius: 1,
                           }}
                         >
+                          <Verified sx={{ fontSize: 14, color: "#059669" }} />
                           <Typography
-                            variant="h6"
-                            fontWeight={900}
-                            color={
-                              isDark
-                                ? COLORS.ACCENT_BLUE_DARK
-                                : COLORS.PRIMARY_PURPLE
-                            }
+                            variant="caption"
+                            sx={{ color: "#059669", fontWeight: 800 }}
                           >
-                            {product.price}
+                            Trusted
                           </Typography>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 0.5,
-                              bgcolor: "rgba(5, 150, 105, 0.08)",
-                              px: 1,
-                              py: 0.3,
-                              borderRadius: 1,
-                            }}
-                          >
-                            <Verified sx={{ fontSize: 14, color: "#059669" }} />
-                            <Typography
-                              variant="caption"
-                              sx={{ color: "#059669", fontWeight: 800 }}
-                            >
-                              Trusted
-                            </Typography>
-                          </Box>
                         </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
           </Grid>
         </Box>
 
@@ -955,159 +745,159 @@ const StoreView: React.FC = () => {
           <Grid container spacing={3}>
             {loading
               ? // Simple skeleton loader
-                [1, 2, 3, 4].map((n) => (
-                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={n}>
+              [1, 2, 3, 4].map((n) => (
+                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={n}>
+                  <Box
+                    sx={{
+                      height: 300,
+                      bgcolor: "rgba(0,0,0,0.05)",
+                      borderRadius: 3,
+                    }}
+                  />
+                </Grid>
+              ))
+              : homeData?.categories.map((cat) => (
+                <Grid
+                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                  key={cat.product_category_id}
+                >
+                  <Card
+                    elevation={0}
+                    sx={{
+                      height: "100%",
+                      borderRadius: 4,
+                      border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "#eef2f6"}`,
+                      bgcolor: isDark ? "rgba(255, 255, 255, 0.03)" : "white",
+                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                      cursor: "pointer",
+                      overflow: "hidden",
+                      "&:hover": {
+                        transform: "translateY(-10px)",
+                        boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                        borderColor: COLORS.PRIMARY_PURPLE,
+                        "& .cat-image": {
+                          transform: "scale(1.1)",
+                        },
+                        "& .arrow-icon": {
+                          transform: "translateX(5px)",
+                          color: COLORS.PRIMARY_PURPLE,
+                        },
+                      },
+                    }}
+                    onClick={() =>
+                      handleCategoryClick(cat.product_category_id)
+                    }
+                  >
                     <Box
                       sx={{
-                        height: 300,
-                        bgcolor: "rgba(0,0,0,0.05)",
-                        borderRadius: 3,
-                      }}
-                    />
-                  </Grid>
-                ))
-              : homeData?.categories.map((cat) => (
-                  <Grid
-                    size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
-                    key={cat.product_category_id}
-                  >
-                    <Card
-                      elevation={0}
-                      sx={{
-                        height: "100%",
-                        borderRadius: 4,
-                        border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "#eef2f6"}`,
-                        bgcolor: isDark ? "rgba(255, 255, 255, 0.03)" : "white",
-                        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                        cursor: "pointer",
+                        height: 200,
+                        p: 3,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        bgcolor: isDark
+                          ? "rgba(255, 255, 255, 0.02)"
+                          : "#f8f9fa",
                         overflow: "hidden",
-                        "&:hover": {
-                          transform: "translateY(-10px)",
-                          boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
-                          borderColor: COLORS.PRIMARY_PURPLE,
-                          "& .cat-image": {
-                            transform: "scale(1.1)",
-                          },
-                          "& .arrow-icon": {
-                            transform: "translateX(5px)",
-                            color: COLORS.PRIMARY_PURPLE,
-                          },
-                        },
                       }}
-                      onClick={() =>
-                        handleCategoryClick(cat.product_category_id)
-                      }
                     >
+                      <img
+                        src={cat.category_image}
+                        alt={cat.category_name}
+                        className="cat-image"
+                        style={{
+                          maxWidth: "100%",
+                          maxHeight: "100%",
+                          objectFit: "contain",
+                          transition: "transform 0.5s ease",
+                        }}
+                      />
+                    </Box>
+                    <CardContent sx={{ p: 3 }}>
                       <Box
                         sx={{
-                          height: 200,
-                          p: 3,
                           display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          bgcolor: isDark
-                            ? "rgba(255, 255, 255, 0.02)"
-                            : "#f8f9fa",
-                          overflow: "hidden",
+                          justifyContent: "space-between",
+                          alignItems: "flex-start",
+                          mb: 1,
                         }}
                       >
-                        <img
-                          src={cat.category_image}
-                          alt={cat.category_name}
-                          className="cat-image"
-                          style={{
-                            maxWidth: "100%",
-                            maxHeight: "100%",
-                            objectFit: "contain",
-                            transition: "transform 0.5s ease",
+                        <Typography
+                          variant="h6"
+                          fontWeight={700}
+                          sx={{
+                            flex: 1,
+                            pr: 1,
+                            color: isDark ? "text.primary" : "#1a1a2e",
+                          }}
+                        >
+                          {cat.category_name}
+                        </Typography>
+                        <KeyboardArrowRight
+                          className="arrow-icon"
+                          sx={{
+                            color: "text.disabled",
+                            transition: "all 0.3s",
                           }}
                         />
                       </Box>
-                      <CardContent sx={{ p: 3 }}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "flex-start",
-                            mb: 1,
-                          }}
-                        >
-                          <Typography
-                            variant="h6"
-                            fontWeight={700}
-                            sx={{
-                              flex: 1,
-                              pr: 1,
-                              color: isDark ? "text.primary" : "#1a1a2e",
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                          mb: 2,
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                          minHeight: 40,
+                        }}
+                      >
+                        {cat.category_des}
+                      </Typography>
+                      <Stack direction="row" flexWrap="wrap" gap={0.5}>
+                        {cat.sub_categories.slice(0, 2).map((sub) => (
+                          <Chip
+                            key={sub.product_sub_category_id}
+                            label={sub.sub_category_name}
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSubCategoryClick(
+                                sub.product_sub_category_id,
+                              );
                             }}
-                          >
-                            {cat.category_name}
-                          </Typography>
-                          <KeyboardArrowRight
-                            className="arrow-icon"
                             sx={{
-                              color: "text.disabled",
-                              transition: "all 0.3s",
+                              height: 24,
+                              fontSize: "0.7rem",
+                              bgcolor: isDark
+                                ? "rgba(255,255,255,0.05)"
+                                : "rgba(0,0,0,0.03)",
+                              fontWeight: 500,
+                              "&:hover": {
+                                bgcolor: COLORS.PRIMARY_PURPLE,
+                                color: "white",
+                              },
                             }}
                           />
-                        </Box>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{
-                            mb: 2,
-                            display: "-webkit-box",
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: "vertical",
-                            overflow: "hidden",
-                            minHeight: 40,
-                          }}
-                        >
-                          {cat.category_des}
-                        </Typography>
-                        <Stack direction="row" flexWrap="wrap" gap={0.5}>
-                          {cat.sub_categories.slice(0, 2).map((sub) => (
-                            <Chip
-                              key={sub.product_sub_category_id}
-                              label={sub.sub_category_name}
-                              size="small"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleSubCategoryClick(
-                                  sub.product_sub_category_id,
-                                );
-                              }}
-                              sx={{
-                                height: 24,
-                                fontSize: "0.7rem",
-                                bgcolor: isDark
-                                  ? "rgba(255,255,255,0.05)"
-                                  : "rgba(0,0,0,0.03)",
-                                fontWeight: 500,
-                                "&:hover": {
-                                  bgcolor: COLORS.PRIMARY_PURPLE,
-                                  color: "white",
-                                },
-                              }}
-                            />
-                          ))}
-                          {cat.sub_categories.length > 2 && (
-                            <Typography
-                              variant="caption"
-                              sx={{
-                                mt: 0.5,
-                                color: COLORS.PRIMARY_PURPLE,
-                                fontWeight: 600,
-                              }}
-                            >
-                              +{cat.sub_categories.length - 2} more
-                            </Typography>
-                          )}
-                        </Stack>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
+                        ))}
+                        {cat.sub_categories.length > 2 && (
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              mt: 0.5,
+                              color: COLORS.PRIMARY_PURPLE,
+                              fontWeight: 600,
+                            }}
+                          >
+                            +{cat.sub_categories.length - 2} more
+                          </Typography>
+                        )}
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
           </Grid>
         </Box>
 

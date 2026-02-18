@@ -12,6 +12,7 @@ import {
 import { Bookmark, Share } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { COLORS } from "../../../constants/colors";
+import { useTranslationContext } from "../../../features/i18n/TranslationContext";
 import InquiryModal from "./InquiryModal";
 import { Product } from "./index";
 import ProductDetailsBreadcrumb from "./ProductDetailsBreadcrumb";
@@ -22,19 +23,28 @@ import ProductDetailsSpecs from "./ProductDetailsSpecs";
 import ServiceImageCarousel from "../../ServiceImageCarousel";
 import ProviderInfoCard from "../../ProviderInfoCard";
 import DescriptionDrawer from "../provider/serviceDetails/DescriptionDialog";
+import ProductMap from "./ProductMap";
+import ProductCard from "./ProductCard";
 
 interface ProductDetailsProps {
   product: Product | null;
   onBack: () => void;
+  similarProducts?: Product[];
 }
 
-const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
+const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack, similarProducts = [] }) => {
+  const { t } = useTranslationContext();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [descriptionDrawerOpen, setDescriptionDrawerOpen] = useState(false);
+  const router = useRouter();
 
   if (!product) return null;
+
+  const handleProductClick = (productId: string) => {
+    router.push(`/store/product/${productId}`);
+  };
 
   return (
     <Box
@@ -64,7 +74,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
             alignItems: "start",
           }}
         >
-          {/* Left Column - Image Carousel */}
+          {/* Left Column - Image Carousel & Map */}
           <Box
             sx={{
               position: { xs: "static", md: "sticky" },
@@ -77,6 +87,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
               images={product.images}
               serviceName={product.name}
             />
+
+            {/* Map View */}
+            <Box sx={{ mt: 7 }}>
+              <ProductMap
+                latitude={product.supplier.latitude || 26.9124}
+                longitude={product.supplier.longitude || 75.7873}
+                storeName={product.supplier.name}
+              />
+            </Box>
           </Box>
 
           {/* Middle Column - Details */}
@@ -114,19 +133,19 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
               {/* Supplier Highlights Grid - IndiaMart Style */}
               <Box sx={{ mt: 3, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                 <Box sx={{ flex: '1 1 45%', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8f9fa', p: 1.5, borderRadius: 2, border: '1px solid rgba(0,0,0,0.03)' }}>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>YEAR ESTABLISHED</Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>{t("yearEstablishedLabel")}</Typography>
                   <Typography variant="body2" sx={{ fontWeight: 700 }}>{product.supplier.yearEstablished}</Typography>
                 </Box>
                 <Box sx={{ flex: '1 1 45%', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8f9fa', p: 1.5, borderRadius: 2, border: '1px solid rgba(0,0,0,0.03)' }}>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>BUSINESS TYPE</Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>{t("business_type").toUpperCase()}</Typography>
                   <Typography variant="body2" sx={{ fontWeight: 700 }}>{product.supplier.businessType}</Typography>
                 </Box>
                 <Box sx={{ flex: '1 1 45%', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8f9fa', p: 1.5, borderRadius: 2, border: '1px solid rgba(0,0,0,0.03)' }}>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>RESPONSE RATE</Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>{t("responseRateLabel")}</Typography>
                   <Typography variant="body2" sx={{ fontWeight: 700, color: COLORS.PRIMARY_PURPLE }}>{product.supplier.responseRate}</Typography>
                 </Box>
                 <Box sx={{ flex: '1 1 45%', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8f9fa', p: 1.5, borderRadius: 2, border: '1px solid rgba(0,0,0,0.03)' }}>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>LOCATION</Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>{t("locationLabel")}</Typography>
                   <Typography variant="body2" sx={{ fontWeight: 700 }}>{product.supplier.location}</Typography>
                 </Box>
               </Box>
@@ -220,16 +239,90 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
             </IconButton>
           </Box>
         </Box>
+
+        {/* Similar Products Section */}
+        {similarProducts.length > 0 && (
+          <Box sx={{ mt: 10, mb: 4 }}>
+            <Box sx={{ display: "flex", alignItems: "baseline", mb: 4, gap: 2 }}>
+              <Typography
+                variant="h4"
+                fontWeight={900}
+                sx={{
+                  color: isDark ? "text.primary" : "#1a1a2e",
+                  letterSpacing: "-0.5px",
+                  fontSize: { xs: "1.5rem", md: "2rem" },
+                  textTransform: "uppercase"
+                }}
+              >
+                {t("similar")} <span style={{ color: COLORS.PRIMARY_PURPLE }}>{t("products")}</span>
+              </Typography>
+              <Box
+                sx={{
+                  bgcolor: COLORS.PRIMARY_PURPLE,
+                  color: "white",
+                  px: 1.5,
+                  py: 0.5,
+                  borderRadius: "20px",
+                  fontSize: "0.7rem",
+                  fontWeight: 800,
+                  letterSpacing: "1px",
+                  display: { xs: "none", sm: "block" }
+                }}
+              >
+                {t("newArrivals")}
+              </Box>
+            </Box>
+
+            <Typography
+              variant="subtitle1"
+              sx={{
+                mb: 4,
+                mt: -3,
+                color: "text.secondary",
+                fontWeight: 500,
+                maxWidth: "600px"
+              }}
+            >
+              {t("similarProductsDescription")}
+            </Typography>
+
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "repeat(2, 1fr)",
+                  sm: "repeat(3, 1fr)",
+                  md: "repeat(4, 1fr)",
+                  lg: "repeat(5, 1fr)",
+                },
+                gap: { xs: 2, md: 3 },
+              }}
+            >
+              {similarProducts.map((simProduct, index) => (
+                <ProductCard
+                  key={simProduct.id}
+                  product={simProduct}
+                  index={index}
+                  onProductClick={handleProductClick}
+                  onInquiry={() => setInquiryOpen(true)}
+                  onWhatsApp={() => { }}
+                />
+              ))}
+            </Box>
+          </Box>
+        )}
       </Container>
 
-      <InquiryModal
+      {product && <InquiryModal
         open={inquiryOpen}
         onClose={() => setInquiryOpen(false)}
         productName={product.name}
         supplierName={product.supplier.name}
         productImage={product.image}
         productPrice={product.price}
-      />
+        supplierId={product?.supplier_id}
+        productId={product.id}
+      />}
       <DescriptionDrawer
         open={descriptionDrawerOpen}
         onClose={() => setDescriptionDrawerOpen(false)}

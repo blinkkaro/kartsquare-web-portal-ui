@@ -1329,4 +1329,14 @@ export const english = {
   pending: "Pending",
   completed: "Completed",
   no_orders_found: "No Orders Found",
+
+  // Product Details
+  storeLocation: "Store Location",
+  yearEstablishedLabel: "YEAR ESTABLISHED",
+  responseRateLabel: "RESPONSE RATE",
+  locationLabel: "LOCATION",
+  newArrivals: "NEW ARRIVALS",
+  similarProductsDescription: "Explore fresh styles and premium find from our top rated new brands",
+  directions: "Directions",
+  similar: "Similar",
 };

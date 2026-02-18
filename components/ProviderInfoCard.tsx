@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Avatar, Typography, Button, Chip, useTheme } from "@mui/material";
+import { Box, Avatar, Typography, Button, Chip, useTheme, Stack } from "@mui/material";
 import { useFollowUser, useUnfollowUser } from "@/hooks/useFollow";
 import { getUserId } from "@/utils/auth";
 import { openLoginModal } from "@/features/ui/loginModalSlice";
@@ -256,7 +256,7 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
         >
           Message
         </Button> */}
-        <Button
+        <Stack gap={2}> <Button
           variant="contained"
           fullWidth
           size="small"
@@ -281,40 +281,40 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
         >
           {showPhoneNumber ? providerPhoneNumber : "Show Number"}
         </Button>
-        <Button
-          variant={"outlined"}
-          fullWidth
-          size="small"
-          onClick={handleFollow}
-          disabled={isLoading}
-          startIcon={
-            following ? (
-              <Person sx={{ fontSize: "1rem !important" }} />
-            ) : (
-              <PersonAdd sx={{ fontSize: "1rem !important" }} />
-            )
-          }
-          sx={{
-            borderRadius: "10px",
-            textTransform: "none",
-            borderColor: isDark
-              ? COLORS.ACCENT_BLUE_DARK
-              : COLORS.BORDER.DEFAULT_DARK,
-            color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-            fontWeight: 700,
-            px: 2,
-            bgcolor: "transparent",
-            "&:hover": {
+          <Button
+            variant={"outlined"}
+            fullWidth
+            size="small"
+            onClick={handleFollow}
+            disabled={isLoading}
+            startIcon={
+              following ? (
+                <Person sx={{ fontSize: "1rem !important" }} />
+              ) : (
+                <PersonAdd sx={{ fontSize: "1rem !important" }} />
+              )
+            }
+            sx={{
+              borderRadius: "10px",
+              textTransform: "none",
               borderColor: isDark
                 ? COLORS.ACCENT_BLUE_DARK
-                : COLORS.PRIMARY_PURPLE,
-              bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-              color: "white",
-            },
-          }}
-        >
-          {following ? "Following" : "Follow"}
-        </Button>
+                : COLORS.BORDER.DEFAULT_DARK,
+              color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+              fontWeight: 700,
+              px: 2,
+              bgcolor: "transparent",
+              "&:hover": {
+                borderColor: isDark
+                  ? COLORS.ACCENT_BLUE_DARK
+                  : COLORS.PRIMARY_PURPLE,
+                bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+                color: "white",
+              },
+            }}
+          >
+            {following ? "Following" : "Follow"}
+          </Button></Stack>
       </Box>
     </Box>
   );
