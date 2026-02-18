@@ -11,6 +11,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { COLORS } from "@/constants/colors";
+import HomeBanner from "./components/HomeBanner";
+import FeaturedServiceCategories from "./components/FeaturedServiceCategories";
+import FeaturedProductCategories from "./components/FeaturedProductCategories";
 import StoriesSection from "./components/StoriesSection";
 import PostCard from "./components/PostCard";
 import AdCard from "./components/AdCard";
@@ -171,19 +174,37 @@ function HomeView() {
           }}
         >
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {/* Stories Section */}
-            <StoriesSection data={stories} isLoading={storiesLoading} />
+            {/* Banner Section */}
+            <HomeBanner />
+
+            {/* Featured Service Categories */}
+            <FeaturedServiceCategories />
+
+            {/* Featured Product Categories */}
+            <FeaturedProductCategories />
+
+            <Box sx={{ mt: 3 }}>
+              <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
+                Latest Stories
+              </Typography>
+              {/* Stories Section */}
+              <StoriesSection data={stories} isLoading={storiesLoading} />
+            </Box>
 
             {/* Compact Map - Mobile/Tablet View */}
             <Box
               sx={{
                 display: { lg: "none", md: "block" },
+                mt: 3
               }}
             >
               <CompactMapView height="300px" />
             </Box>
 
             {/* Merged Posts & Ads Feed */}
+            <Typography variant="h6" fontWeight="bold" sx={{ mt: 2, mb: 2 }}>
+              Trending Updates
+            </Typography>
             {mergedFeed.map((item) =>
               item.type === "post" ? (
                 <PostCard post={item.data as Posts} key={item.key} />
