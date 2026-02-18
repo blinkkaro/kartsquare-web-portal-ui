@@ -9,10 +9,10 @@ export enum UserRegisterSteps {
   COMPLETED = 7,                // User onboarding complete
 
   // Supplier-specific (starts AFTER normal completion)
-  SUPPLIER_PROFILE_COMPLETED = 8,
+  // SUPPLIER_PROFILE_COMPLETED = 8,
+  // SUPPLIER_KYC_SUBMITTED = 9,
+  SUPPLIER_STORE_CREATED = 8,
   SUPPLIER_KYC_SUBMITTED = 9,
-  SUPPLIER_KYC_VERIFIED = 10,
-  SUPPLIER_STORE_CREATED = 11,
 }
 
 import { AppUserType } from "@/services/auth/auth.interface";
@@ -46,14 +46,14 @@ export const registrationStepMap: Record<AppUserType, UserFlowMap> = {
   SUPPLIER: {
     [UserRegisterSteps.REGISTERED]: "VerifyEmail",
     [UserRegisterSteps.EMAIL_VERIFIED]: "SupplierOnboarding",
-    [UserRegisterSteps.BUSINESS_INFO]: "SupplierOnboarding",
-    [UserRegisterSteps.DOCUMENT_VERIFIED]: "SupplierOnboarding",
-    [UserRegisterSteps.SCHEDULE_ADDED]: "SupplierOnboarding",
-    [UserRegisterSteps.PREFERENCES_ADDED]: "SupplierOnboarding",
-    [UserRegisterSteps.COMPLETED]: "SupplierOnboarding",
-    [UserRegisterSteps.SUPPLIER_PROFILE_COMPLETED]: "SupplierOnboarding",
+    // [UserRegisterSteps.BUSINESS_INFO]: "SupplierOnboarding",
+    // [UserRegisterSteps.DOCUMENT_VERIFIED]: "SupplierOnboarding",
+    // [UserRegisterSteps.SCHEDULE_ADDED]: "SupplierOnboarding",
+    // [UserRegisterSteps.PREFERENCES_ADDED]: "SupplierOnboarding",
+    // [UserRegisterSteps.COMPLETED]: "SupplierOnboarding",
+    // [UserRegisterSteps.SUPPLIER_PROFILE_COMPLETED]: "SupplierOnboarding",
     [UserRegisterSteps.SUPPLIER_KYC_SUBMITTED]: "SupplierOnboarding",
-    [UserRegisterSteps.SUPPLIER_KYC_VERIFIED]: "SupplierOnboarding",
+    [UserRegisterSteps.SUPPLIER_STORE_CREATED]: "SupplierOnboarding",
   },
   INFLUENCER: {
     [UserRegisterSteps.REGISTERED]: "VerifyEmail",

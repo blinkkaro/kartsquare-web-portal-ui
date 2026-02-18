@@ -9,6 +9,7 @@ import { COLORS } from "@/constants/colors";
 import { useSupplierProfile } from "@/hooks/useSupplier";
 import { useEffect } from "react";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
+import { secureStorage } from "@/helper/SecureStorage";
 
 const steps = ["Store Setup", "KYC Verification"];
 
@@ -16,17 +17,19 @@ export default function SupplierOnboardingPage() {
     const [activeStep, setActiveStep] = useState(0);
     const theme = useTheme();
     const isLargeScreen = useMediaQuery(theme.breakpoints.up("xl"));
-    const { data: profileArgs } = useSupplierProfile();
+    // const { data: profileArgs } = useSupplierProfile();
+    const register_step = secureStorage.getItem("register_step");
 
     useEffect(() => {
-        if (profileArgs?.data?.register_step) {
-            const step = profileArgs.data.register_step;
+        if (register_step) {
+            const step = register_step;
 
-            // If already completed or at a later step, we can stay at the last step or ideally the guard would have redirected
-            if (step === UserRegisterSteps.COMPLETED || step === 7) {
-                // Already done everything
-                return;
-            }
+
+            // // If already completed or at a later step, we can stay at the last step or ideally the guard would have redirected
+            // if (step === UserRegisterSteps.COMPLETED || step === 7) {
+            //     // Already done everything
+            //     return;
+            // }
 
             if (step >= UserRegisterSteps.SUPPLIER_STORE_CREATED) {
                 setActiveStep(1); // Done store, go to KYC
@@ -34,7 +37,7 @@ export default function SupplierOnboardingPage() {
                 setActiveStep(0); // Start with Store
             }
         }
-    }, [profileArgs]);
+    }, [register_step]);
 
     const handleNext = () => {
         setActiveStep((prev) => prev + 1);
