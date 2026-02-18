@@ -102,91 +102,94 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: 1.5,
+              justifyContent: "space-between",
               mb: 0.5,
               flexWrap: "wrap",
+              gap: 1,
             }}
           >
-            <Typography
-              variant="subtitle1"
-              sx={{
-                fontWeight: 800,
-                color: isDark
-                  ? COLORS.TEXT.PRIMARY_DARK
-                  : COLORS.TEXT.PRIMARY_LIGHT,
-                lineHeight: 1.2,
-                fontSize: "1.1rem",
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                dispatch(openDrawer({ userId: providerId }));
-              }}
-            >
-              {businessName || providerName}
-            </Typography>
-
-            {/* Badges Row from Reference Image */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              {/* Verified Badge - Blue check + text */}
-              <Box
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flex: 1 }}>
+              <Typography
+                variant="subtitle1"
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 0.5,
-                  color: "#1D4ED8", // Professional Blue
                   fontWeight: 800,
-                  fontSize: "0.75rem",
-                  letterSpacing: "-0.01em",
+                  color: isDark
+                    ? COLORS.TEXT.PRIMARY_DARK
+                    : COLORS.TEXT.PRIMARY_LIGHT,
+                  lineHeight: 1.2,
+                  fontSize: "1.1rem",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  dispatch(openDrawer({ userId: providerId }));
                 }}
               >
-                <CheckCircle sx={{ fontSize: "15px" }} />
-                <Typography
-                  sx={{
-                    fontWeight: 900,
-                    fontSize: "0.75rem",
-                    fontStyle: "italic",
-                    fontFamily: "system-ui",
-                  }}
-                >
-                  Verified
-                </Typography>
-              </Box>
+                {businessName || providerName}
+              </Typography>
 
-              {/* Trust Badge - Styled like the image */}
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  bgcolor: "#FEF3C7",
-                  borderRadius: "4px",
-                  overflow: "hidden",
-                  border: "1px solid #FCD34D",
-                }}
-              >
+              {/* Badges moved to right side of company name */}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
+                {/* Verified Badge - Blue check + text */}
                 <Box
                   sx={{
-                    bgcolor: "#F59E0B",
-                    color: "white",
-                    px: 0.5,
-                    py: 0.1,
                     display: "flex",
                     alignItems: "center",
+                    gap: 0.4,
+                    color: "#1D4ED8", // Professional Blue
+                    fontWeight: 800,
+                    fontSize: "0.7rem",
+                    letterSpacing: "-0.01em",
                   }}
                 >
-                  <Typography sx={{ fontSize: "0.6rem", fontWeight: 900 }}>
-                    T
+                  <CheckCircle sx={{ fontSize: "13px" }} />
+                  <Typography
+                    sx={{
+                      fontWeight: 900,
+                      fontSize: "0.7rem",
+                      fontStyle: "italic",
+                      fontFamily: "system-ui",
+                    }}
+                  >
+                    Verified
                   </Typography>
                 </Box>
-                <Typography
+
+                {/* Trust Badge - Styled like the image */}
+                <Box
                   sx={{
-                    fontSize: "0.6rem",
-                    fontWeight: 900,
-                    px: 0.8,
-                    color: "#92400E",
+                    display: "flex",
+                    alignItems: "center",
+                    bgcolor: "#FEF3C7",
+                    borderRadius: "3px",
+                    overflow: "hidden",
+                    border: "1px solid #FCD34D",
                   }}
                 >
-                  Trust
-                </Typography>
+                  <Box
+                    sx={{
+                      bgcolor: "#F59E0B",
+                      color: "white",
+                      px: 0.4,
+                      py: 0.1,
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography sx={{ fontSize: "0.55rem", fontWeight: 900 }}>
+                      T
+                    </Typography>
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontSize: "0.55rem",
+                      fontWeight: 900,
+                      px: 0.6,
+                      color: "#92400E",
+                    }}
+                  >
+                    Trust
+                  </Typography>
+                </Box>
               </Box>
             </Box>
           </Box>
@@ -236,7 +239,7 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
         </Box>
       </Box>
 
-      <Box sx={{ display: "flex", gap: 1, width: { xs: "100%", sm: "auto" } }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1, width: { xs: "100%", sm: "auto" } }}>
         {/* <Button
           variant="contained"
           fullWidth

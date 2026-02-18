@@ -1,21 +1,35 @@
 "use client";
 import React from "react";
 import { Box, Button, useTheme } from "@mui/material";
-import { Assignment, Phone } from "@mui/icons-material";
+import { Assignment, Phone, WhatsApp } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 
 interface ProductDetailsActionsProps {
     onGetQuote: () => void;
     onTalkToUs: () => void;
+    supplierPhone?: string;
 }
 
 const ProductDetailsActions = ({
     onGetQuote,
     onTalkToUs,
+    supplierPhone,
 }: ProductDetailsActionsProps) => {
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark";
 
+     // WhatsApp click handler
+    const handleWhatsAppClick = () => {
+        if (supplierPhone) {
+            // Remove any non-digit characters and ensure proper format
+            const cleanPhone = supplierPhone.replace(/\D/g, '');
+            const whatsappUrl = `https://wa.me/${cleanPhone}`;
+            window.open(whatsappUrl, '_blank');
+        } else {
+            // Fallback to original onTalkToUs if no phone number
+            onTalkToUs();
+        }
+    };
     return (
         <Box sx={{ display: "flex", gap: 2, mb: 1, py: 1 }}>
             <Button
@@ -49,12 +63,12 @@ const ProductDetailsActions = ({
             <Button
                 variant="outlined"
                 fullWidth
-                onClick={onTalkToUs}
-                startIcon={<Phone sx={{ fontSize: "1.2rem !important" }} />}
+                onClick={handleWhatsAppClick}
+                startIcon={<WhatsApp sx={{ fontSize: "1.2rem !important" }} />}
                 sx={{
                     flex: 1,
-                    borderColor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-                    color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+                   borderColor: "#25D366",
+                    color: "#25D366",
                     borderRadius: "30px",
                     px: 3,
                     py: 1.2,
@@ -62,14 +76,14 @@ const ProductDetailsActions = ({
                     fontWeight: 700,
                     letterSpacing: "0.02em",
                     "&:hover": {
-                        borderColor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-                        bgcolor: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0,0,0,0.02)",
+                        borderColor: "#25D366",
+                        bgcolor: "rgba(37, 211, 102, 0.05)",
                         transform: "translateY(-1px)",
                     },
                     transition: "all 0.2s ease-in-out",
                 }}
             >
-                Talk to Us
+                WhatsApp
             </Button>
         </Box>
     );

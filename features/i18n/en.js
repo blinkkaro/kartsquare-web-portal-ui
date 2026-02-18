@@ -991,6 +991,15 @@ export const english = {
   messageMin: "Message must be at least 10 characters",
   countryCode: "Country code",
   phoneMin: "Phone number must be at least 10 digits",
+
+  // Supplier Quotation Validation
+  phoneNumberLength: "Mobile number must be exactly 10 digits",
+  phoneNumberDigitsOnly: "Mobile number must contain only digits",
+  quantityRequired: "Quantity is required",
+  quantityMin: "Quantity must be at least 1",
+  quantityTypeError: "Quantity must be a number",
+  detailsRequired: "Requirement details are required",
+  detailsMinLength: "Requirement details must be at least 10 characters",
   page_not_found: "Page Not Found",
   page_not_found_description: "The page you are looking for does not exist.",
   go_back_home: "Go Back Home",

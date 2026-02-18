@@ -47,6 +47,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { COLORS } from "@/constants/colors";
 import CategorySidebar from "./CategorySidebar";
 import InquiryModal from "./InquiryModal";
+import SubCategoryBar from "./SubCategoryBar";
 import { Product } from "./index";
 import { storeService, StoreHomeData } from "@/services/store/store.service";
 import CommonButton from "@/components/common/Button";
@@ -154,7 +155,7 @@ const ProductsListingView: React.FC = () => {
         page: 1,
         limit: 50,
         sort: "price_asc",
-      };
+      };;
 
       if (selectedSubCategory) {
         filters.sub_category_id = selectedSubCategory;
@@ -466,6 +467,13 @@ const ProductsListingView: React.FC = () => {
                 </Typography>
               </Box>
             </Box>
+
+            {/* Subcategory Bar */}
+            <SubCategoryBar
+              selectedCategory={selectedCategory}
+              selectedSubCategory={selectedSubCategory}
+              categories={homeData?.categories}
+            />
 
             {/* Products Grid */}
             {productsLoading ? (
@@ -852,6 +860,8 @@ const ProductsListingView: React.FC = () => {
         supplierName={activeProduct?.supplier.name}
         productImage={activeProduct?.image}
         productPrice={activeProduct?.price}
+        supplierId={activeProduct?.supplier?.mobile}
+        productId={activeProduct?.id}
       />
     </Box>
   );
