@@ -4,6 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAppSelector } from "@/store/hooks"; // Assuming auth state is here or use secureStorage
 import { secureStorage } from "@/helper/SecureStorage";
 import { AppUserType } from "@/services/auth/auth.interface";
+import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { CircularProgress, Box } from "@mui/material";
 
 interface SupplierGuardProps {
@@ -49,8 +50,14 @@ const SupplierGuard: React.FC<SupplierGuardProps> = ({ children, requireComplete
 
             // If we require complete (Dashboard access)
             if (requireComplete) {
-                // For Suppliers, completion is step 11 (SUPPLIER_STORE_CREATED)
-                if (user && user.register_step < 11) {
+                // For Suppliers, completion is step 11 (SUPPLIER_STORE_CREATED) or step 7 (COMPLETED)
+                const isComplete = user && (
+                    user.register_step === UserRegisterSteps.SUPPLIER_STORE_CREATED ||
+                    user.register_step === UserRegisterSteps.COMPLETED ||
+                    user.register_step === 7 // Fallback if enum not imported correctly in this file
+                );
+
+                if (!isComplete) {
                     router.replace("/supplier/onboarding");
                     return;
                 }

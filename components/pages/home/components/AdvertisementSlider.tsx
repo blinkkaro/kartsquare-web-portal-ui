@@ -10,10 +10,19 @@ import { useActiveAdvertisements } from "@/hooks/useAdvertisements";
 import { advertiseService } from "@/services/advertise/advertiseServies";
 import { COLORS } from "@/constants/colors";
 
-const AdvertisementSlider = () => {
+import { AdvertiseActiveAd } from "@/services/advertise/advertise.intreface";
+
+interface AdvertisementSliderProps {
+  ads: AdvertiseActiveAd[];
+  isLoading: boolean;
+}
+
+const AdvertisementSlider: React.FC<AdvertisementSliderProps> = ({
+  ads,
+  isLoading,
+}) => {
   const theme = useTheme();
   const router = useRouter();
-  const { data: adsResponse, isLoading } = useActiveAdvertisements(5);
 
   const handleAdClick = async (advertiseId: string, serviceId: string) => {
     try {
@@ -28,11 +37,9 @@ const AdvertisementSlider = () => {
   if (isLoading) {
     return <Box>Loading...</Box>;
   }
-  if (!adsResponse || !adsResponse.ads || adsResponse.ads.length === 0) {
+  if (!ads || ads.length === 0) {
     return null;
   }
-
-  const { ads } = adsResponse;
 
   return (
     <Box

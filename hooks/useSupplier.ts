@@ -40,8 +40,14 @@ export const useUpdateSupplierKyc = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: SupplierKyc) => supplierService.updateKyc(data),
-    onSuccess: () => {
+    onSuccess: (response: any) => {
+      if (response?.data?.register_step) {
+        secureStorage.setItem("register_step", response.data.register_step);
+        const existingUser = secureStorage.getItem("user_details") || {};
+        secureStorage.setItem("user_details", { ...existingUser, register_step: response.data.register_step });
+      }
       queryClient.invalidateQueries({ queryKey: ["supplierKyc"] });
+      queryClient.invalidateQueries({ queryKey: ["supplierProfile"] });
     },
   });
 };
@@ -58,8 +64,14 @@ export const useUpdateSupplierStore = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: Partial<SupplierStore>) => supplierService.updateStore(data),
-    onSuccess: () => {
+    onSuccess: (response: any) => {
+      if (response?.data?.register_step) {
+        secureStorage.setItem("register_step", response.data.register_step);
+        const existingUser = secureStorage.getItem("user_details") || {};
+        secureStorage.setItem("user_details", { ...existingUser, register_step: response.data.register_step });
+      }
       queryClient.invalidateQueries({ queryKey: ["supplierStore"] });
+      queryClient.invalidateQueries({ queryKey: ["supplierProfile"] });
     },
   });
 };

@@ -66,7 +66,7 @@ export default function LoginView() {
         if (
           registerStep === UserRegisterSteps.COMPLETED ||
           registerStep === UserRegisterSteps.PREFERENCES_ADDED ||
-          registerStep === UserRegisterSteps.SUPPLIER_STORE_CREATED
+          registerStep === UserRegisterSteps.SUPPLIER_KYC_SUBMITTED
         ) {
           router.replace("/");
           return;
