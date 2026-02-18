@@ -41,7 +41,9 @@ export const getDesktopNavItems = (
     case UserRole.SUPPLIER:
       return [
         { label: t("home"), href: "/" },
+        { label: t("dashboard"), href: "/dashboard" },
         { label: t("my_store"), href: "/sup/myStore" },
+        { label: t("orders"), href: "/sup/orders" },
       ];
     default:
       return [

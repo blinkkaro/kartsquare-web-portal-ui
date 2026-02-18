@@ -7,4 +7,6 @@ export const SUPPLIER_ENDPOINTS = {
   ENQUIRIES: "/supplier/enquiries",
   ENQUIRY_STATUS: (id: string) => `/supplier/enquiries/${id}/status`,
   DASHBOARD_METRICS: "/supplier/dashboard",
+  SUPPLIER_QUOTATIONS: "/supplier-quotations",
+  QUOTATION_VIEWED: (id: string) => `/supplier-quotations/${id}/viewed`,
 };

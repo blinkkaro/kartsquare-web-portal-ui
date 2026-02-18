@@ -75,10 +75,10 @@ const ProductTable: React.FC<ProductTableProps> = ({
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (!isLoading && products.length === 0) {
-    return (
+    return (  
       <EmptyState
-        titleKey="noProductsFound"
-        descriptionKey="noProductsFoundDescription"
+        titleKey={t("noProductsFound")}
+        descriptionKey={t("noProductsFoundDescription")}
         variant="notFound"
       />
     );

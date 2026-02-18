@@ -23,6 +23,8 @@ interface InquiryModalProps {
     supplierName?: string;
     productImage?: string;
     productPrice?: string;
+    supplierId?: string;
+    productId?: string;
 }
 
 const InquiryModal: React.FC<InquiryModalProps> = ({
@@ -32,6 +34,8 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
     supplierName,
     productImage,
     productPrice,
+    supplierId,
+    productId,
 }) => {
     const [form, setForm] = useState({
         name: "",

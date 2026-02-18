@@ -201,3 +201,35 @@ export interface ProductSpecificationResponse {
   specifications: ProductSpecification[];
   total: number;
 }
+
+export interface Product {
+  id: string;
+  name: string;
+  price: number;
+  unit: string;
+  image: string;
+  images: string[];
+  supplier: {
+    name: string;
+    location: string;
+    rating: number;
+    reviews: number;
+    yearEstablished: number;
+    gstVerified: boolean;
+    trustSeal: boolean;
+    responseRate: string;
+    businessType: string;
+    address: string;
+    logo?: string;
+    mobile?: string;
+    gstNumber?: string;
+  };
+  specs: { [key: string]: string };
+  description: string;
+  gst: string;
+  category: string;
+  categoryId: string;
+  supplierId: string;
+
+}
+

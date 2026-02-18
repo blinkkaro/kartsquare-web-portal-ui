@@ -987,7 +987,20 @@ export type TranslationKey =
   | "rejection_reason"
   | "specifications"
   | "in_stock"
-  | "out_of_stock";
+  | "out_of_stock"
+  | "noProductsFoundDescription"
+  | "view_details"
+  | "enquiry_details"
+  | "customer_name"
+  | "quantity"
+  | "time"
+  | "respond"
+  | "viewed"
+  | "my_orders"
+  | "search_orders"
+  | "pending"
+  | "completed"
+  | "no_orders_found";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
