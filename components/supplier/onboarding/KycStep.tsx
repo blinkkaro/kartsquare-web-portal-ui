@@ -39,9 +39,10 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 
 interface KycStepProps {
   onBack: () => void;
+  onNext?: () => void;
 }
 
-const KycStep: React.FC<KycStepProps> = ({ onBack }) => {
+const KycStep: React.FC<KycStepProps> = ({ onBack, onNext }) => {
   const { t } = useTranslate();
   const router = useRouter();
   const theme = useTheme();
@@ -177,7 +178,11 @@ const KycStep: React.FC<KycStepProps> = ({ onBack }) => {
         updateUser({ register_step: UserRegisterSteps.SUPPLIER_KYC_SUBMITTED }),
       );
 
-      router.push("/");
+      if (onNext) {
+        onNext();
+      } else {
+        router.push("/");
+      }
     } catch (error: any) {
       console.error("Failed to update KYC", error);
       if (error?.response?.data?.errors) {
