@@ -70,7 +70,7 @@ const UpcomingBookings: React.FC<UpcomingBookingsProps> = ({
           }}
           onClick={() =>
             router.push(
-              role === "SUPPLIER" ? "/supplier/quotations" : "/spr/bookings",
+              role === "SUPPLIER" ? "/sup/orders" : "/spr/bookings",
             )
           }
         >
