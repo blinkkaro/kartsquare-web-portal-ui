@@ -20,6 +20,15 @@ const RESTRICTED_AUTH_PATHS = [
   "/resetPassword",
 ];
 
+const ONBOARDING_PATHS = [
+  "/emailVerfication",
+  "/businessInfo",
+  "/verifyDocuments",
+  "/schedule",
+  "/preferences",
+  "/supplier/onboarding",
+];
+
 export default function RegistrationGuard({
   children,
 }: {
@@ -43,6 +52,10 @@ export default function RegistrationGuard({
       const isAuthenticated = !!token || isAuthRedux;
 
       const isRestrictedPath = RESTRICTED_AUTH_PATHS.some((path) =>
+        pathname.startsWith(path),
+      );
+
+      const isOnboardingPath = ONBOARDING_PATHS.some((path) =>
         pathname.startsWith(path),
       );
 
@@ -81,10 +94,19 @@ export default function RegistrationGuard({
       }
 
       // If registration is fully complete, allow access
-      if (
+      const isCompleted =
         currentRegisterStep === UserRegisterSteps.COMPLETED ||
-        currentRegisterStep === UserRegisterSteps.PREFERENCES_ADDED
-      ) {
+        currentRegisterStep === UserRegisterSteps.PREFERENCES_ADDED ||
+        (currentRole === AppUserType.SUPPLIER &&
+          currentRegisterStep === UserRegisterSteps.SUPPLIER_KYC_SUBMITTED);
+
+      // If already completed but on onboarding paths, redirect to home
+      if (isCompleted && isOnboardingPath) {
+        router.replace("/");
+        return;
+      }
+
+      if (isCompleted) {
         setIsChecking(false);
         return;
       }
@@ -96,8 +118,12 @@ export default function RegistrationGuard({
           roleMap[currentRegisterStep as UserRegisterSteps];
         const requiredPath = getPathForScreen(requiredScreen);
 
-        // If a required path exists and we aren't there, redirect
-        if (requiredPath && pathname !== requiredPath) {
+        // If a required path exists and we aren't there, redirect (Only for Supplier as requested)
+        if (
+          currentRole === AppUserType.SUPPLIER &&
+          requiredPath &&
+          pathname !== requiredPath
+        ) {
           router.replace(requiredPath);
           return;
         }

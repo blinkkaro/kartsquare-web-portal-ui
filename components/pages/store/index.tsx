@@ -17,6 +17,7 @@ import {
   Paper,
   Stack,
   Rating,
+  IconButton,
 } from "@mui/material";
 import {
   Search,
@@ -28,12 +29,41 @@ import {
   Business,
   CheckCircle,
   MoreVert,
+  ArrowForward,
+  KeyboardArrowRight,
+  ArrowBack,
+  Inventory,
+  Engineering,
+  Handyman,
+  ElectricBolt,
+  ThumbsUpDown,
+  Circle,
+  FormatQuote,
+  TrendingUp,
+  Public,
+  Store,
+  LocalShipping,
+  Message,
 } from "@mui/icons-material";
+import { useRouter, useSearchParams } from "next/navigation";
 import { COLORS } from "@/constants/colors";
 import CategorySidebar from "./CategorySidebar";
 import InquiryModal from "./InquiryModal";
 import ProductDetails from "./ProductDetails";
-import { useSearchParams, useRouter } from "next/navigation";
+import {
+  Category,
+  Brand,
+  storeService,
+  StoreHomeData,
+  ApiProduct,
+} from "@/services/store/store.service";
+import CommonButton from "@/components/common/Button";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper/modules";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/pagination";
 
 // Interface Definitions
 export interface Product {
@@ -50,15 +80,23 @@ export interface Product {
     reviews: number;
     yearEstablished: number;
     gstVerified: boolean;
-    trustSeal: boolean; // Similar to IndiaMART TrustSEAL
+    trustSeal: boolean;
     responseRate: string;
     businessType: string;
     address: string;
+    logo?: string;
+    mobile?: string;
+    gstNumber?: string;
+    latitude?: number;
+    longitude?: number;
+    id?: string;
   };
-  specs: { [key: string]: string }; // Important specs for the card
+  supplier_id: string;
+  specs: { [key: string]: string };
   description: string;
   gst: string;
   category: string;
+  categoryId: string;
 }
 
 const StoreView: React.FC = () => {
@@ -66,11 +104,12 @@ const StoreView: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isDark = theme.palette.mode === "dark";
-
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [viewMode, setViewMode] = useState<"store" | "product">("store");
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [homeData, setHomeData] = useState<StoreHomeData | null>(null);
+  const [featuredProducts, setFeaturedProducts] =
+    useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [productsLoading, setProductsLoading] = useState(false);
 
   useEffect(() => {
     const query = searchParams.get("q");
@@ -99,487 +138,1171 @@ const StoreView: React.FC = () => {
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [activeProduct, setActiveProduct] = useState<Product | null>(null);
 
-  // Mock Products Data (IndiaMART style)
-  const products: Product[] = [
+  // Fetch Home Data
+  React.useEffect(() => {
+    const fetchHomeData = async () => {
+      try {
+        setLoading(true);
+        const response = await storeService.getStoreHome();
+        if (response.status === "success" && response.data) {
+          setHomeData(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching store home data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchFeaturedProducts = async () => {
+      try {
+        setProductsLoading(true);
+        const response = await storeService.getProducts({ limit: 8 });
+        // Corrected path for products in the response
+        const products =
+          response.data?.products ||
+          (Array.isArray(response.data) ? response.data : []);
+
+        let mapped: Product[] = [];
+
+        if (products && products.length > 0) {
+          const mapped: Product[] = products.map((p: any) => ({
+            id: p.product_id,
+            name: p.product_name,
+            price: `${p.currency === "INR" ? "₹" : "$"} ${p.price}`,
+            unit: "Piece",
+            image: p.product_images?.[0] || "",
+            images: p.product_images || [],
+            description: p.product_description,
+            gst: "18%",
+            category: "General",
+            categoryId: p.product_category_id || "",
+            supplier_id: p.supplier_id || p.supplier?.store_id || p.supplier?.id || "",
+            specs: {},
+            supplier: {
+              name: p.supplier?.store_name || "Verified Supplier",
+              location: p.supplier?.store_address?.city_town || "India",
+              rating: p.supplier?.user_rating || 0,
+              reviews: 25,
+              yearEstablished: 2020,
+              gstVerified: !!p.supplier?.gst_in,
+              trustSeal: p.supplier?.is_verified || false,
+              responseRate: "95%",
+              businessType: "Manufacturer",
+              address: p.supplier?.store_address?.address || "",
+              id: p.supplier?.store_id || p.supplier?.id || "",
+            },
+          }));
+          setFeaturedProducts(mapped);
+        }
+      } catch (error) {
+        console.error("Error fetching featured products:", error);
+      } finally {
+        setProductsLoading(false);
+      }
+    };
+
+    fetchHomeData();
+    fetchFeaturedProducts();
+  }, []);
+
+  const bannerSlides = [
     {
-      id: "1",
-      name: "1121 Golden Sella Basmati Rice",
-      price: "₹ 65",
-      unit: "Kg",
-      image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=600&auto=format&fit=crop",
-      images: ["https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=600&auto=format&fit=crop"],
-      supplier: {
-        name: "Shri Ram Exports",
-        location: "Karnal, Haryana",
-        rating: 4.2,
-        reviews: 156,
-        yearEstablished: 2010,
-        gstVerified: true,
-        trustSeal: true,
-        responseRate: "92%",
-        businessType: "Exporter",
-        address: "Plot No. 45, Sector 28, Industrial Area, Karnal, Haryana - 132001",
-      },
-      specs: {
-        "Packaging Size": "25 Kg, 50 Kg",
-        "Type": "Golden Sella",
-        "Grain Length": "8.35 mm",
-        "Purity": "99.9%",
-      },
-      description: "High quality 1121 Golden Sella Basmati Rice for export. Double polished and sortex clean.",
-      gst: "5%",
-      category: "textiles", // Using textles just to map to something for now, ideally 'food'
+      title: "Premium Industrial Machinery",
+      subtitle: "High performance equipment for your manufacturing needs.",
+      tag: "EQUIPMENT EXCELLENCE",
+      image:
+        "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1470&auto=format&fit=crop",
+      buttonText: "Explore Machinery",
     },
     {
-      id: "2",
-      name: "Heavy Duty CNC Lathe Machine",
-      price: "₹ 4.5 Lakh",
-      unit: "Unit",
-      image: "https://images.unsplash.com/photo-1617575521317-d2974f3b56d2?q=80&w=600&auto=format&fit=crop",
-      images: ["https://images.unsplash.com/photo-1617575521317-d2974f3b56d2?q=80&w=600&auto=format&fit=crop"],
-      supplier: {
-        name: "Marvel Machine Tools",
-        location: "Rajkot, Gujarat",
-        rating: 4.5,
-        reviews: 42,
-        yearEstablished: 1998,
-        gstVerified: true,
-        trustSeal: true,
-        responseRate: "88%",
-        businessType: "Manufacturer",
-        address: "GIDC, Metoda, Rajkot, Gujarat - 360021",
-      },
-      specs: {
-        "Automation Grade": "Automatic",
-        "Max Swing Over Bed": "460 mm",
-        "Max Spindle Speed": "2000 RPM",
-        "Power Consumption": "5 HP",
-      },
-      description: "Industrial grade CNC Lathe Machine for precision turning operations. Comes with 1 year warranty and onsite support.",
-      gst: "18%",
-      category: "machinery",
+      title: "Global Logistics & Supplies",
+      subtitle: "Smart inventory solutions for efficient warehousing.",
+      tag: "WAREHOUSING PRO",
+      image:
+        "https://images.unsplash.com/photo-1586528116311-ad86d7c7ce80?q=80&w=1470&auto=format&fit=crop",
+      buttonText: "Browse Supplies",
     },
     {
-      id: "3",
-      name: "Cotton Lycra Fabric 220 GSM",
-      price: "₹ 240",
-      unit: "Kg",
-      image: "https://images.unsplash.com/photo-1620799140408-ed5341cd2431?q=80&w=600&auto=format&fit=crop",
-      images: ["https://images.unsplash.com/photo-1620799140408-ed5341cd2431?q=80&w=600&auto=format&fit=crop"],
-      supplier: {
-        name: "FabTex India",
-        location: "Surat, Gujarat",
-        rating: 4.0,
-        reviews: 215,
-        yearEstablished: 2015,
-        gstVerified: true,
-        trustSeal: false,
-        responseRate: "75%",
-        businessType: "Wholesaler",
-        address: "Ring Road, Surat, Gujarat - 395002",
-      },
-      specs: {
-        "Fabric": "Cotton Lycra",
-        "GSM": "200-250",
-        "Width": "58-60 Inch",
-        "Pattern": "Plain",
-      },
-      description: "Premium quality 4-way lycra cotton fabric suitable for leggings and t-shirts. Available in all colors.",
-      gst: "12%",
-      category: "textiles",
-    },
-    {
-      id: "4",
-      name: "Industrial Safety Shoes",
-      price: "₹ 450",
-      unit: "Pair",
-      image: "https://images.unsplash.com/photo-1605348532760-6753d5c43650?q=80&w=600&auto=format&fit=crop",
-      images: ["https://images.unsplash.com/photo-1605348532760-6753d5c43650?q=80&w=600&auto=format&fit=crop"],
-      supplier: {
-        name: "SafeGuard Industries",
-        location: "Kanpur, Uttar Pradesh",
-        rating: 3.8,
-        reviews: 89,
-        yearEstablished: 2018,
-        gstVerified: true,
-        trustSeal: false,
-        responseRate: "65%",
-        businessType: "Manufacturer",
-        address: "Jajmau, Kanpur, Uttar Pradesh - 208010",
-      },
-      specs: {
-        "Size": "6-11",
-        "Upper Material": "Leather",
-        "Sole": "PU Double Density",
-        "Toe Cap": "Steel",
-      },
-      description: "ISI marked industrial safety shoes with steel toe cap. Oil and acid resistant sole.",
-      gst: "18%",
-      category: "building",
-    },
-    {
-      id: "5",
-      name: "Solar Power Plant 5kW",
-      price: "₹ 2.5 Lakh",
-      unit: "Set",
-      image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=600&auto=format&fit=crop",
-      images: ["https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=600&auto=format&fit=crop"],
-      supplier: {
-        name: "Green Energy Solutions",
-        location: "Jaipur, Rajasthan",
-        rating: 4.8,
-        reviews: 312,
-        yearEstablished: 2012,
-        gstVerified: true,
-        trustSeal: true,
-        responseRate: "98%",
-        businessType: "Service Provider",
-        address: "Sitapura Industrial Area, Jaipur, Rajasthan - 302022",
-      },
-      specs: {
-        "Capacity": "5 kW",
-        "Type": "On Grid",
-        "Panel Type": "Mono PERC",
-        "Warranty": "25 Years",
-      },
-      description: "Complete 5kW solar power plant installation for home and office. Includes net metering support.",
-      gst: "12%",
-      category: "electronics",
+      title: "Advanced Electronics & Tech",
+      subtitle: "Cutting-edge components for your next technical project.",
+      tag: "TECH INNOVATION",
+      image:
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1470&auto=format&fit=crop",
+      buttonText: "Check Tech",
     },
   ];
 
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const handleCategoryClick = (categoryId: string) => {
+    router.push(`/store/products?category=${categoryId}`);
+  };
+
+  const handleSubCategoryClick = (subCategoryId: string) => {
+    router.push(`/store/products?sub_category=${subCategoryId}`);
+  };
+
+  const handleBrandClick = (brandId: string) => {
+    router.push(`/store/products?brand=${brandId}`);
+  };
 
   const handleProductClick = (productId: string) => {
-    setSelectedProductId(productId);
-    setViewMode("product");
+    router.push(`/store/product/${productId}`);
   };
-
-  const handleBackToStore = () => {
-    setViewMode("store");
-    setSelectedProductId(null);
-    // Optional: Clear search when going back? No, keep context.
-  };
-
-  const handleInquiry = (product: Product) => {
-    setActiveProduct(product);
-    setInquiryOpen(true);
-  };
-
-  const handleWhatsApp = (product: Product) => {
-    const message = `Hi, I found your listing for ${product.name} on KartSquare. I am interested to know more.`;
-    const whatsappUrl = `https://wa.me/919876543210?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank");
-  };
-
-  if (viewMode === "product" && selectedProductId) {
-    return (
-      <ProductDetails
-        product={products.find(p => p.id === selectedProductId) || null}
-        onBack={handleBackToStore}
-      />
-    );
-  }
 
   return (
-    <Box sx={{
-      bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
-      minHeight: "100vh"
-    }}>
-      {/* Top Search Bar Area */}
-      <Box sx={{
-        bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : "white",
-        py: 2,
-        borderBottom: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "#e0e0e0"}`
-      }}>
-        <Container maxWidth="xl">
-          <TextField
-            fullWidth
-            placeholder="Search for products, suppliers..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search sx={{ color: isDark ? "text.secondary" : "inherit" }} />
-                </InputAdornment>
-              ),
-              sx: {
-                borderRadius: 1,
-                bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "#f5f5f5",
-                color: isDark ? "text.primary" : "inherit",
-              }
+    <Box
+      sx={{
+        bgcolor: isDark
+          ? COLORS.BACKGROUND.PRIMARY_DARK
+          : COLORS.BACKGROUND.SECONDARY_LIGHT,
+        minHeight: "100vh",
+        pb: 8,
+      }}
+    >
+      <Container maxWidth="xl" sx={{ pt: 4 }}>
+        {/* Banner Section - Myntra style Carousel */}
+        <Box
+          sx={{
+            mb: 8,
+            borderRadius: "32px",
+            overflow: "hidden",
+            position: "relative",
+            "& .swiper-pagination-bullet": {
+              backgroundColor: "rgba(255, 255, 255, 0.5)",
+              opacity: 1,
+              width: "8px",
+              height: "8px",
+            },
+            "& .swiper-pagination-bullet-active": {
+              backgroundColor: "white",
+              width: "24px",
+              borderRadius: "4px",
+              transition: "all 0.3s ease",
+            },
+          }}
+        >
+          <Swiper
+            modules={[Autoplay, Pagination]}
+            slidesPerView={1}
+            loop
+            autoplay={{
+              delay: 5000,
+              disableOnInteraction: false,
             }}
-            size="small"
-            sx={{ maxWidth: 800 }}
-          />
-        </Container>
-      </Box>
-
-      <Container maxWidth="xl" sx={{ py: 3 }}>
-        <Grid container spacing={3}>
-          {/* Left Sidebar */}
-          <Grid size={{ xs: 12, md: 3, lg: 2.5 }} sx={{ display: { xs: "none", md: "block" } }}>
-            <CategorySidebar
-              selectedCategory={selectedCategory}
-              onSelectCategory={setSelectedCategory}
-            />
-          </Grid>
-
-          {/* Main Content */}
-          <Grid size={{ xs: 12, md: 9, lg: 9.5 }}>
-            <Box sx={{ mb: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <Typography variant="h6" fontWeight={700} color={isDark ? "text.primary" : "textPrimary"}>
-                {selectedCategory === "all" ? "All Products" : "Filtered Rules"}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {filteredProducts.length} Results found
-              </Typography>
-            </Box>
-
-            <Stack spacing={2}>
-              {filteredProducts.map((product) => (
-                <Card
-                  key={product.id}
+            pagination={{ clickable: true }}
+            style={{ borderRadius: "32px" }}
+          >
+            {bannerSlides.map((slide, index) => (
+              <SwiperSlide key={index}>
+                <Paper
                   elevation={0}
                   sx={{
+                    height: { xs: 220, md: 320 },
+                    position: "relative",
                     display: "flex",
-                    flexDirection: { xs: "column", sm: "row" },
-                    p: 2,
-                    border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "#e0e0e0"}`,
-                    borderRadius: 3,
-                    bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "white",
-                    transition: "all 0.3s ease",
+                    alignItems: "center",
+                    background: `#000`,
+                    overflow: "hidden",
+                  }}
+                >
+                  {/* Background Image with Overlay */}
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      backgroundImage: `url(${slide.image})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      "&::after": {
+                        content: '""',
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background:
+                          "linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)",
+                      },
+                    }}
+                  />
+
+                  <Box
+                    sx={{
+                      p: { xs: 4, md: 6 },
+                      color: "white",
+                      maxWidth: 700,
+                      position: "relative",
+                      zIndex: 10,
+                    }}
+                  >
+                    <Typography
+                      variant="overline"
+                      sx={{
+                        letterSpacing: 3,
+                        fontWeight: 900,
+                        opacity: 0.95,
+                        backgroundColor: `${COLORS.PRIMARY_PURPLE}dd`,
+                        px: 2,
+                        py: 0.8,
+                        borderRadius: "100px",
+                        fontSize: "0.75rem",
+                      }}
+                    >
+                      {slide.tag}
+                    </Typography>
+                    <Typography
+                      variant="h2"
+                      fontWeight={900}
+                      sx={{
+                        mt: 2,
+                        mb: 1,
+                        lineHeight: 1.1,
+                        fontSize: { xs: "1.75rem", md: "3.2rem" },
+                        letterSpacing: -1,
+                        textShadow: "0 2px 10px rgba(0,0,0,0.3)",
+                      }}
+                    >
+                      {slide.title}
+                    </Typography>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        mb: 3,
+                        opacity: 0.9,
+                        fontWeight: 500,
+                        fontSize: { xs: "0.9rem", md: "1.1rem" },
+                        maxWidth: 500,
+                      }}
+                    >
+                      {slide.subtitle}
+                    </Typography>
+                    <CommonButton
+                      variant="contained"
+                      sx={{
+                        bgcolor: "white",
+                        color: COLORS.PRIMARY_PURPLE,
+                        "&:hover": {
+                          bgcolor: "#f5f5f5",
+                          transform: "scale(1.02)",
+                        },
+                        px: 6,
+                        py: 1.5,
+                        fontWeight: 800,
+                        borderRadius: "14px",
+                        transition: "all 0.3s ease",
+                        boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
+                      }}
+                    >
+                      {slide.buttonText}
+                    </CommonButton>
+                  </Box>
+                </Paper>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </Box>
+
+        {/* Search Header - Refined */}
+        <Box sx={{ mb: 10, textAlign: "center" }}>
+          <Typography
+            variant="h4"
+            fontWeight={900}
+            sx={{
+              mb: 2,
+              color: isDark ? "text.primary" : "#0f172a",
+              letterSpacing: -1,
+              fontSize: { xs: "1.75rem", md: "2.8rem" },
+            }}
+          >
+            Search Across{" "}
+            <span style={{ color: COLORS.PRIMARY_PURPLE }}>Global Markets</span>
+          </Typography>
+          <Typography
+            variant="h6"
+            color="text.secondary"
+            fontWeight={500}
+            sx={{ mb: 5, opacity: 0.7, maxWidth: 600, mx: "auto" }}
+          >
+            Connect with trusted sellers for raw materials, machinery, and
+            finished goods instantly.
+          </Typography>
+
+          <Box sx={{ display: "flex", justifyContent: "center", px: 2 }}>
+            <TextField
+              fullWidth
+              placeholder="What would you like to source today?"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search
+                      sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 32, ml: 1 }}
+                    />
+                  </InputAdornment>
+                ),
+                sx: {
+                  borderRadius: "24px",
+                  bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "white",
+                  p: 1.5,
+                  fontSize: "1.25rem",
+                  fontWeight: 500,
+                  boxShadow: isDark
+                    ? "0 10px 40px rgba(0,0,0,0.3)"
+                    : "0 20px 60px rgba(15, 23, 42, 0.08)",
+                  border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.1)" : "#e2e8f0"}`,
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    borderColor: COLORS.PRIMARY_PURPLE,
+                  },
+                  "&:focus-within": {
+                    borderColor: COLORS.PRIMARY_PURPLE,
+                    boxShadow: `0 20px 60px ${COLORS.PRIMARY_PURPLE}20`,
+                  },
+                },
+              }}
+              sx={{ maxWidth: 850 }}
+            />
+          </Box>
+        </Box>
+
+        {/* Top Categories Static Section */}
+        <Box sx={{ mb: 10 }}>
+          <Box sx={{ mb: 4 }}>
+            <Typography
+              variant="h5"
+              fontWeight={800}
+              sx={{
+                color: isDark ? "text.primary" : "#30263E",
+                letterSpacing: -0.5,
+              }}
+            >
+              Top Industry Categories
+            </Typography>
+            <Typography variant="body2" color="text.secondary" fontWeight={500}>
+              Explore the most active business sectors
+            </Typography>
+          </Box>
+          <Grid container spacing={2}>
+            {(homeData?.categories || []).slice(0, 5).map((cat) => (
+              <Grid
+                size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}
+                key={cat.product_category_id}
+              >
+                <Paper
+                  elevation={0}
+                  onClick={() =>
+                    router.push(
+                      `/store/products?category=${cat.product_category_id}`,
+                    )
+                  }
+                  sx={{
+                    p: 3,
+                    borderRadius: 5,
+                    bgcolor: isDark ? "rgba(255,255,255,0.02)" : "white",
+                    border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "#f0f2f5"}`,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    textAlign: "center",
+                    cursor: "pointer",
+                    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
                     "&:hover": {
-                      transform: "translateY(-4px)",
-                      boxShadow: isDark ? "0 12px 24px -10px rgba(0, 0, 0, 0.5)" : "0 12px 24px -10px rgba(0, 0, 0, 0.15)",
+                      transform: "translateY(-10px)",
+                      boxShadow: `0 20px 40px rgba(94, 24, 233, 0.1)`,
                       borderColor: COLORS.PRIMARY_PURPLE,
+                      "& .cat-img-box": {
+                        transform: "scale(1.1)",
+                      },
                     },
                   }}
                 >
-                  {/* Image Section */}
                   <Box
                     sx={{
-                      width: { xs: "100%", sm: 240 },
-                      height: 240,
-                      flexShrink: 0,
+                      width: 70,
+                      height: 70,
+                      borderRadius: 4,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      bgcolor: isDark ? "rgba(255, 255, 255, 0.95)" : "#f4f6f8", // Kept light for better image visibility
-                      borderRadius: 2,
+                      bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#f8f9fc",
+                      mb: 2,
                       overflow: "hidden",
-                      cursor: "pointer",
-                      position: "relative",
                     }}
-                    onClick={() => handleProductClick(product.id)}
                   >
                     <Box
                       component="img"
-                      src={product.image}
-                      alt={product.name}
+                      className="cat-img-box"
+                      src={cat.category_image}
+                      alt={cat.category_name}
                       sx={{
-                        maxWidth: "90%",
-                        maxHeight: "90%",
-                        objectFit: "contain",
-                        mixBlendMode: "multiply"
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        transition: "transform 0.3s ease",
                       }}
                     />
-                    {product.supplier.trustSeal && (
-                      <Box sx={{
-                        position: "absolute",
-                        top: 12,
-                        left: 12,
-                        bgcolor: "rgba(255, 255, 255, 0.9)",
-                        backdropFilter: "blur(4px)",
-                        px: 1,
-                        py: 0.5,
-                        borderRadius: 1,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 0.5,
-                        boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
-                      }}>
-                        <Verified sx={{ fontSize: 16, color: COLORS.PRIMARY_PURPLE }} />
-                        <Typography variant="caption" fontWeight={700} color={COLORS.PRIMARY_PURPLE}>Trusted</Typography>
-                      </Box>
-                    )}
                   </Box>
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight={800}
+                    sx={{
+                      mb: 0.5,
+                      display: "-webkit-box",
+                      WebkitLineClamp: 1,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {cat.category_name}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "text.secondary", fontWeight: 600 }}
+                  >
+                    {cat.sub_categories?.length || 0} Departments
+                  </Typography>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
 
-                  {/* Content Section */}
-                  <Box sx={{ flex: 1, px: { xs: 0, sm: 3 }, py: { xs: 2, sm: 0 }, display: "flex", flexDirection: "column" }}>
-                    <Box sx={{ mb: 1 }}>
-                      <Typography
-                        variant="h6"
+        {/* Top Products Section */}
+        <Box
+          sx={{
+            mb: 12,
+            bgcolor: isDark
+              ? "rgba(94, 24, 233, 0.15)"
+              : "rgba(94, 24, 233, 0.07)",
+            p: { xs: 4, md: 8 },
+            borderRadius: 8,
+            border: `1px solid ${isDark ? "rgba(94, 24, 233, 0.25)" : "rgba(94, 24, 233, 0.12)"}`,
+            boxShadow: isDark ? "none" : "0 25px 90px rgba(94, 24, 233, 0.08)",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+              mb: 4,
+            }}
+          >
+            <Box>
+              <Typography
+                variant="h5"
+                fontWeight={800}
+                sx={{
+                  color: isDark ? "text.primary" : "#30263E",
+                  letterSpacing: -0.5,
+                }}
+              >
+                Handpicked Products
+              </Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                fontWeight={500}
+              >
+                Quality items from our most trusted partners
+              </Typography>
+            </Box>
+            <CommonButton
+              variant="outlined"
+              endIcon={<ArrowForward />}
+              sx={{ borderRadius: 2, fontWeight: 700 }}
+            >
+              View All Products
+            </CommonButton>
+          </Box>
+          <Grid container spacing={3}>
+            {productsLoading
+              ? [1, 2, 3, 4].map((n) => (
+                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={n}>
+                  <Box
+                    sx={{
+                      height: 350,
+                      bgcolor: "rgba(0,0,0,0.05)",
+                      borderRadius: 5,
+                    }}
+                  />
+                </Grid>
+              ))
+              : featuredProducts.map((product) => (
+                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={product.id}>
+                  <Card
+                    elevation={0}
+                    onClick={() => handleProductClick(product.id)}
+                    sx={{
+                      borderRadius: 5,
+                      border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "#f0f2f5"}`,
+                      bgcolor: isDark ? "rgba(255, 255, 255, 0.02)" : "white",
+                      transition: "all 0.3s",
+                      cursor: "pointer",
+                      "&:hover": {
+                        transform: "translateY(-8px)",
+                        boxShadow: "0 20px 40px rgba(0,0,0,0.08)",
+                        borderColor: COLORS.PRIMARY_PURPLE,
+                      },
+                    }}
+                  >
+                    <Box sx={{ height: 220, overflow: "hidden", p: 2 }}>
+                      <Box
+                        component="img"
+                        src={product.image}
+                        alt={product.name}
                         sx={{
-                          fontWeight: 700,
-                          color: isDark ? "text.primary" : "#1a1a2e",
-                          lineHeight: 1.3,
-                          mb: 1,
-                          cursor: "pointer",
-                          transition: "color 0.2s",
-                          "&:hover": { color: COLORS.PRIMARY_PURPLE },
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          borderRadius: 4,
                         }}
-                        onClick={() => handleProductClick(product.id)}
+                      />
+                    </Box>
+                    <CardContent sx={{ pt: 1, px: 3, pb: 3 }}>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: COLORS.PRIMARY_PURPLE,
+                          fontWeight: 800,
+                          textTransform: "uppercase",
+                          letterSpacing: 1,
+                        }}
+                      >
+                        {product.supplier.businessType}
+                      </Typography>
+                      <Typography
+                        variant="subtitle1"
+                        fontWeight={800}
+                        noWrap
+                        sx={{ mt: 0.5, mb: 1 }}
                       >
                         {product.name}
                       </Typography>
-
-                      <Stack direction="row" alignItems="baseline" spacing={1}>
-                        <Typography variant="h5" color={COLORS.PRIMARY_PURPLE} fontWeight={800}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Typography
+                          variant="h6"
+                          fontWeight={900}
+                          color={
+                            isDark
+                              ? COLORS.ACCENT_BLUE_DARK
+                              : COLORS.PRIMARY_PURPLE
+                          }
+                        >
                           {product.price}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary" fontWeight={500}>
-                          / {product.unit}
-                        </Typography>
-                      </Stack>
-                    </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                            bgcolor: "rgba(5, 150, 105, 0.08)",
+                            px: 1,
+                            py: 0.3,
+                            borderRadius: 1,
+                          }}
+                        >
+                          <Verified sx={{ fontSize: 14, color: "#059669" }} />
+                          <Typography
+                            variant="caption"
+                            sx={{ color: "#059669", fontWeight: 800 }}
+                          >
+                            Trusted
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+          </Grid>
+        </Box>
 
-                    <Divider sx={{ my: 1.5, borderStyle: "dashed", borderColor: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.12)" }} />
+        {/* Categories Grid Section */}
+        <Box sx={{ mb: 10 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+              mb: 4,
+            }}
+          >
+            <Box>
+              <Typography
+                variant="h5"
+                fontWeight={800}
+                sx={{
+                  color: isDark ? "text.primary" : "#30263E",
+                  letterSpacing: -0.5,
+                }}
+              >
+                All Categories
+              </Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                fontWeight={500}
+              >
+                Browse our complete inventory by department
+              </Typography>
+            </Box>
+            <CommonButton
+              variant="text"
+              endIcon={<ArrowForward />}
+              sx={{ fontWeight: 700 }}
+            >
+              Browse Everything
+            </CommonButton>
+          </Box>
 
-                    {/* Specs Table (Mini) */}
-                    <Box sx={{ mb: 2 }}>
-                      {Object.entries(product.specs).slice(0, 3).map(([key, value]) => (
-                        <Grid container key={key} sx={{ mb: 0.5 }}>
-                          <Grid size={{ xs: 5 }}>
-                            <Typography variant="body2" color="text.secondary">
-                              {key}
-                            </Typography>
-                          </Grid>
-                          <Grid size={{ xs: 7 }}>
-                            <Typography variant="body2" color={isDark ? "text.primary" : "text.primary"} fontWeight={500}>
-                              : {value}
-                            </Typography>
-                          </Grid>
-                        </Grid>
-                      ))}
-                    </Box>
-
-                    {/* Action Buttons */}
-                    <Box sx={{ mt: "auto", display: "flex", gap: 1.5 }}>
-                      <Button
-                        variant="contained"
-                        onClick={() => handleInquiry(product)}
-                        startIcon={<Call />}
-                        sx={{
-                          bgcolor: COLORS.PRIMARY_PURPLE,
-                          "&:hover": { bgcolor: COLORS.PURPLE_HOVER, boxShadow: "0 4px 12px rgba(94, 24, 233, 0.3)" },
-                          textTransform: "none",
-                          fontWeight: 600,
-                          flex: 1,
-                          borderRadius: 2
-                        }}
-                      >
-                        Contact Supplier
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        startIcon={<WhatsApp />}
-                        onClick={() => handleWhatsApp(product)}
-                        sx={{
-                          borderColor: "#25D366",
-                          color: "#25D366",
-                          "&:hover": { borderColor: "#128C7E", color: "#128C7E", bgcolor: "rgba(37, 211, 102, 0.08)" },
-                          minWidth: "auto",
-                          px: 2,
-                          borderRadius: 2
-                        }}
-                      >
-                        Chat
-                      </Button>
-                    </Box>
-                  </Box>
-
-                  {/* Right Supplier Section (Desktop) */}
+          <Grid container spacing={3}>
+            {loading
+              ? // Simple skeleton loader
+              [1, 2, 3, 4].map((n) => (
+                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={n}>
                   <Box
                     sx={{
-                      width: { xs: "100%", md: 260 },
-                      bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "#fafafa",
-                      borderRadius: 2,
-                      p: 2,
-                      display: "flex",
-                      flexDirection: "column",
-                      border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "#f0f0f0"}`
+                      height: 300,
+                      bgcolor: "rgba(0,0,0,0.05)",
+                      borderRadius: 3,
                     }}
+                  />
+                </Grid>
+              ))
+              : homeData?.categories.map((cat) => (
+                <Grid
+                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                  key={cat.product_category_id}
+                >
+                  <Card
+                    elevation={0}
+                    sx={{
+                      height: "100%",
+                      borderRadius: 4,
+                      border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "#eef2f6"}`,
+                      bgcolor: isDark ? "rgba(255, 255, 255, 0.03)" : "white",
+                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                      cursor: "pointer",
+                      overflow: "hidden",
+                      "&:hover": {
+                        transform: "translateY(-10px)",
+                        boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                        borderColor: COLORS.PRIMARY_PURPLE,
+                        "& .cat-image": {
+                          transform: "scale(1.1)",
+                        },
+                        "& .arrow-icon": {
+                          transform: "translateX(5px)",
+                          color: COLORS.PRIMARY_PURPLE,
+                        },
+                      },
+                    }}
+                    onClick={() =>
+                      handleCategoryClick(cat.product_category_id)
+                    }
                   >
-                    <Box sx={{ mb: 1 }}>
-                      <Typography variant="caption" sx={{ bgcolor: COLORS.PURPLE_ALPHA_10, color: COLORS.PRIMARY_PURPLE, px: 1, py: 0.5, borderRadius: 1, fontWeight: 600, fontSize: "0.7rem" }}>
-                        {product.supplier.businessType}
-                      </Typography>
-                    </Box>
-                    <Typography variant="subtitle1" fontWeight={700} sx={{ lineHeight: 1.2, mb: 0.5, color: isDark ? "text.primary" : "text.primary" }}>
-                      {product.supplier.name}
-                    </Typography>
-                    <Box sx={{ display: "flex", alignItems: "start", mb: 2 }}>
-                      <LocationOn sx={{ fontSize: 16, color: COLORS.SECONDARY_ORANGE, mr: 0.5, mt: 0.2 }} />
-                      <Typography variant="body2" color="text.secondary">
-                        {product.supplier.location}
-                      </Typography>
-                    </Box>
-
-                    <Stack spacing={1.5} sx={{ mb: "auto" }}>
-                      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                        <Typography variant="caption" color="text.secondary">Rating</Typography>
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <Typography variant="caption" fontWeight={700} sx={{ mr: 0.5, color: isDark ? "text.primary" : "text.primary" }}>{product.supplier.rating}</Typography>
-                          <Star sx={{ fontSize: 14, color: "#faaf00" }} />
-                        </Box>
-                      </Box>
-
-                      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                        <Typography variant="caption" color="text.secondary">Member Since</Typography>
-                        <Typography variant="caption" fontWeight={600} color={isDark ? "text.primary" : "text.primary"}>{product.supplier.yearEstablished}</Typography>
-                      </Box>
-
-                      {product.supplier.trustSeal && (
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                          <Verified sx={{ fontSize: 14, color: COLORS.PRIMARY_PURPLE }} />
-                          <Typography variant="caption" fontWeight={600} color={COLORS.PRIMARY_PURPLE}>Verified Supplier</Typography>
-                        </Box>
-                      )}
-
-                      <Box sx={{ mt: 1, p: 1, bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "#f8f9fa", borderRadius: 1, border: `1px dashed ${isDark ? "rgba(255, 255, 255, 0.1)" : "#e0e0e0"}` }}>
-                        <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.5, fontSize: "0.7rem" }}>
-                          Recent Activity
-                        </Typography>
-                        <Typography variant="caption" fontWeight={600} color={COLORS.PRIMARY_PURPLE}>
-                          {product.supplier.responseRate} Response Rate
-                        </Typography>
-                      </Box>
-                    </Stack>
-
-                    <Button
-                      fullWidth
-                      size="small"
-                      variant="text"
+                    <Box
                       sx={{
-                        mt: 2,
-                        bgcolor: COLORS.PURPLE_ALPHA_10,
-                        color: COLORS.PRIMARY_PURPLE,
-                        "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_20 }
+                        height: 200,
+                        p: 3,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        bgcolor: isDark
+                          ? "rgba(255, 255, 255, 0.02)"
+                          : "#f8f9fa",
+                        overflow: "hidden",
                       }}
                     >
-                      View Profile
-                    </Button>
+                      <img
+                        src={cat.category_image}
+                        alt={cat.category_name}
+                        className="cat-image"
+                        style={{
+                          maxWidth: "100%",
+                          maxHeight: "100%",
+                          objectFit: "contain",
+                          transition: "transform 0.5s ease",
+                        }}
+                      />
+                    </Box>
+                    <CardContent sx={{ p: 3 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "flex-start",
+                          mb: 1,
+                        }}
+                      >
+                        <Typography
+                          variant="h6"
+                          fontWeight={700}
+                          sx={{
+                            flex: 1,
+                            pr: 1,
+                            color: isDark ? "text.primary" : "#1a1a2e",
+                          }}
+                        >
+                          {cat.category_name}
+                        </Typography>
+                        <KeyboardArrowRight
+                          className="arrow-icon"
+                          sx={{
+                            color: "text.disabled",
+                            transition: "all 0.3s",
+                          }}
+                        />
+                      </Box>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                          mb: 2,
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                          minHeight: 40,
+                        }}
+                      >
+                        {cat.category_des}
+                      </Typography>
+                      <Stack direction="row" flexWrap="wrap" gap={0.5}>
+                        {cat.sub_categories.slice(0, 2).map((sub) => (
+                          <Chip
+                            key={sub.product_sub_category_id}
+                            label={sub.sub_category_name}
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSubCategoryClick(
+                                sub.product_sub_category_id,
+                              );
+                            }}
+                            sx={{
+                              height: 24,
+                              fontSize: "0.7rem",
+                              bgcolor: isDark
+                                ? "rgba(255,255,255,0.05)"
+                                : "rgba(0,0,0,0.03)",
+                              fontWeight: 500,
+                              "&:hover": {
+                                bgcolor: COLORS.PRIMARY_PURPLE,
+                                color: "white",
+                              },
+                            }}
+                          />
+                        ))}
+                        {cat.sub_categories.length > 2 && (
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              mt: 0.5,
+                              color: COLORS.PRIMARY_PURPLE,
+                              fontWeight: 600,
+                            }}
+                          >
+                            +{cat.sub_categories.length - 2} more
+                          </Typography>
+                        )}
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+          </Grid>
+        </Box>
+
+        {/* Recent Activity & Reviews Section - Premium UI Refresh */}
+        <Grid container spacing={6} sx={{ mt: 15, mb: 10 }}>
+          {/* Recent Activity */}
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 5 }}>
+              <Box
+                sx={{
+                  bgcolor: COLORS.PURPLE_ALPHA_10,
+                  p: 1.5,
+                  borderRadius: "16px",
+                  color: COLORS.PRIMARY_PURPLE,
+                  boxShadow: `0 8px 20px ${COLORS.PURPLE_ALPHA_20}`,
+                }}
+              >
+                <TrendingUp />
+              </Box>
+              <Box>
+                <Typography
+                  variant="h5"
+                  fontWeight={900}
+                  sx={{
+                    color: isDark ? "text.primary" : "#1e293b",
+                    letterSpacing: -0.5,
+                  }}
+                >
+                  Live Business Activity
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight={500}
+                >
+                  Real-time updates from our marketplace
+                </Typography>
+              </Box>
+            </Box>
+
+            <Box sx={{ position: "relative", pl: 1 }}>
+              {/* Timeline Connector Line */}
+              <Box
+                sx={{
+                  position: "absolute",
+                  left: 20,
+                  top: 0,
+                  bottom: 0,
+                  width: 2,
+                  bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#f1f5f9",
+                  borderRadius: 1,
+                }}
+              />
+
+              <Stack spacing={4}>
+                {[
+                  {
+                    text: "Rahul from Delhi",
+                    sub: "Inquired about Industrial Centrifugal Pump",
+                    time: "2 mins ago",
+                    type: "inquiry",
+                    icon: <Message sx={{ fontSize: 16 }} />,
+                    color: "#059669",
+                  },
+                  {
+                    text: "New Catalog Update",
+                    sub: "Brand 'Tata Steel' added 50+ new products",
+                    time: "1 hour ago",
+                    type: "update",
+                    icon: <Store sx={{ fontSize: 16 }} />,
+                    color: COLORS.PRIMARY_PURPLE,
+                  },
+                  {
+                    text: "Logistics Update",
+                    sub: "Global Logistics Pro joined as a Premier Supplier",
+                    time: "3 hours ago",
+                    type: "join",
+                    icon: <LocalShipping sx={{ fontSize: 16 }} />,
+                    color: "#0284c7",
+                  },
+                  {
+                    text: "International Trade",
+                    sub: "Export inquiry received for Solar Panels from Dubai",
+                    time: "5 hours ago",
+                    type: "export",
+                    icon: <Public sx={{ fontSize: 16 }} />,
+                    color: "#ea580c",
+                  },
+                ].map((activity, i) => (
+                  <Box
+                    key={i}
+                    sx={{
+                      display: "flex",
+                      gap: 3,
+                      position: "relative",
+                      transition: "all 0.3s",
+                      "&:hover": { transform: "translateX(8px)" },
+                    }}
+                  >
+                    {/* Activity Icon Circle */}
+                    <Box
+                      sx={{
+                        width: 42,
+                        height: 42,
+                        borderRadius: "50%",
+                        bgcolor: isDark ? "rgba(0,0,0,0.3)" : "white",
+                        border: `2px solid ${activity.color}`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: activity.color,
+                        zIndex: 2,
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                      }}
+                    >
+                      {activity.icon}
+                    </Box>
+
+                    <Box
+                      sx={{
+                        flex: 1,
+                        p: 2.5,
+                        borderRadius: "20px",
+                        bgcolor: isDark ? "rgba(255,255,255,0.02)" : "white",
+                        border: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "#f1f5f9"}`,
+                        boxShadow: isDark
+                          ? "none"
+                          : "0 10px 30px rgba(0,0,0,0.02)",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "flex-start",
+                          mb: 0.5,
+                        }}
+                      >
+                        <Typography
+                          variant="subtitle1"
+                          fontWeight={800}
+                          sx={{ color: isDark ? "text.primary" : "#1e293b" }}
+                        >
+                          {activity.text}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          sx={{ color: "text.secondary", fontWeight: 600 }}
+                        >
+                          {activity.time}
+                        </Typography>
+                      </Box>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: "text.secondary",
+                          fontWeight: 500,
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        {activity.sub}
+                      </Typography>
+                    </Box>
                   </Box>
+                ))}
+              </Stack>
+            </Box>
+          </Grid>
+
+          {/* Customer Reviews */}
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 5 }}>
+              <Box
+                sx={{
+                  bgcolor: COLORS.PURPLE_ALPHA_10,
+                  p: 1.5,
+                  borderRadius: "16px",
+                  color: COLORS.PRIMARY_PURPLE,
+                  boxShadow: `0 8px 20px ${COLORS.PURPLE_ALPHA_20}`,
+                }}
+              >
+                <ThumbsUpDown />
+              </Box>
+              <Box>
+                <Typography
+                  variant="h5"
+                  fontWeight={900}
+                  sx={{
+                    color: isDark ? "text.primary" : "#1e293b",
+                    letterSpacing: -0.5,
+                  }}
+                >
+                  Success Stories
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight={500}
+                >
+                  What our global partners say about us
+                </Typography>
+              </Box>
+            </Box>
+
+            <Stack spacing={4}>
+              {[
+                {
+                  name: "Amit Sharma",
+                  role: "Factory Owner, Jaipur",
+                  text: "Amazing platform for bulk sourcing. Found reliable suppliers for my factory in less than a day. The verification process is top-notch and builds real trust.",
+                  rating: 5,
+                  initial: "AS",
+                },
+                {
+                  name: "Priya Patel",
+                  role: "Procurement Head, Jaipur",
+                  text: "The verified supplier badge gives a lot of confidence for high-value orders. Highly recommended for those looking for quality machinery.",
+                  rating: 5,
+                  initial: "PP",
+                },
+                {
+                  name: "Vikram Singh",
+                  role: "Business Consultant, Jaipur",
+                  text: "Quick response from the inquiry team. The interface is very intuitive and much better than other platforms I've used previously for my clients.",
+                  rating: 4.5,
+                  initial: "VS",
+                },
+              ].map((review, i) => (
+                <Card
+                  key={i}
+                  elevation={0}
+                  sx={{
+                    p: 4,
+                    borderRadius: "24px",
+                    bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#ffffff",
+                    border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "#f1f5f9"}`,
+                    boxShadow: isDark ? "none" : "0 20px 50px rgba(0,0,0,0.03)",
+                    position: "relative",
+                    overflow: "visible",
+                  }}
+                >
+                  {/* Decorative Quote Icon */}
+                  <FormatQuote
+                    sx={{
+                      position: "absolute",
+                      top: -15,
+                      right: 30,
+                      fontSize: 50,
+                      color: COLORS.PURPLE_ALPHA_20,
+                      transform: "rotate(180deg)",
+                    }}
+                  />
+
+                  <Box sx={{ display: "flex", gap: 2.5, mb: 3 }}>
+                    <Box
+                      sx={{
+                        width: 54,
+                        height: 54,
+                        borderRadius: "16px",
+                        background: `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE} 0%, #a855f7 100%)`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "white",
+                        fontWeight: 800,
+                        boxShadow: "0 8px 16px rgba(94, 24, 233, 0.2)",
+                      }}
+                    >
+                      {review.initial}
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "flex-start",
+                        }}
+                      >
+                        <Typography
+                          variant="subtitle1"
+                          fontWeight={900}
+                          sx={{ color: isDark ? "text.primary" : "#1e293b" }}
+                        >
+                          {review.name}
+                        </Typography>
+                        <Rating
+                          value={review.rating}
+                          precision={0.5}
+                          readOnly
+                          size="small"
+                        />
+                      </Box>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        fontWeight={700}
+                        sx={{ letterSpacing: 0.5, textTransform: "uppercase" }}
+                      >
+                        {review.role}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: isDark ? "text.secondary" : "#64748b",
+                      lineHeight: 1.8,
+                      fontWeight: 500,
+                      fontStyle: "italic",
+                      position: "relative",
+                    }}
+                  >
+                    "{review.text}"
+                  </Typography>
                 </Card>
               ))}
             </Stack>
           </Grid>
         </Grid>
-      </Container>
 
-      {/* Reusable Inquiry Modal */}
-      <InquiryModal
-        open={inquiryOpen}
-        onClose={() => setInquiryOpen(false)}
-        productName={activeProduct?.name}
-        supplierName={activeProduct?.supplier.name}
-      />
+        {/* Brands Section - Restored */}
+        {!loading && homeData?.brands && homeData.brands.length > 0 && (
+          <Box sx={{ mt: 15, mb: 10 }}>
+            <Typography
+              variant="h5"
+              fontWeight={800}
+              sx={{ mb: 4, color: isDark ? "text.primary" : "#30263E" }}
+            >
+              Top Brands in Store
+            </Typography>
+            <Grid container spacing={3}>
+              {homeData.brands.map((brand) => (
+                <Grid
+                  size={{ xs: 6, sm: 4, md: 3, lg: 2 }}
+                  key={brand.product_brand_id}
+                >
+                  <Paper
+                    elevation={0}
+                    onClick={() => handleBrandClick(brand.product_brand_id)}
+                    sx={{
+                      p: 3,
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 3,
+                      border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "#eef2f6"}`,
+                      transition: "all 0.3s",
+                      cursor: "pointer",
+                      "&:hover": {
+                        transform: "translateY(-5px)",
+                        boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
+                        borderColor: COLORS.PRIMARY_PURPLE,
+                        bgcolor: isDark
+                          ? "rgba(255, 255, 255, 0.05)"
+                          : "rgba(94, 24, 233, 0.02)",
+                      },
+                    }}
+                  >
+                    <img
+                      src={brand.brand_image}
+                      alt={brand.brand_name}
+                      style={{
+                        width: "80%",
+                        height: 60,
+                        objectFit: "contain",
+                        marginBottom: 8,
+                      }}
+                    />
+                    <Typography variant="subtitle2" fontWeight={700}>
+                      {brand.brand_name}
+                    </Typography>
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        )}
+      </Container>
     </Box>
   );
 };

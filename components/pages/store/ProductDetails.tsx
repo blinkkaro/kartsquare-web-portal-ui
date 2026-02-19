@@ -5,291 +5,328 @@ import {
   Box,
   Container,
   Typography,
-  Grid,
-  Card,
-  Button,
-  IconButton,
   Divider,
-  Chip,
-  Breadcrumbs,
-  Link,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Paper,
+  IconButton,
+  useTheme,
 } from "@mui/material";
-import {
-  WhatsApp,
-  Email,
-  Phone,
-  ArrowBack,
-  Star,
-  Verified,
-  LocationOn,
-  Share,
-  FavoriteBorder,
-  CheckCircle,
-} from "@mui/icons-material";
+import { Bookmark, Share } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { COLORS } from "../../../constants/colors";
+import { useTranslationContext } from "../../../features/i18n/TranslationContext";
 import InquiryModal from "./InquiryModal";
 import { Product } from "./index";
+import ProductDetailsBreadcrumb from "./ProductDetailsBreadcrumb";
+import ProductDetailsHeader from "./ProductDetailsHeader";
+import ProductDetailsInfo from "./ProductDetailsInfo";
+import ProductDetailsActions from "./ProductDetailsActions";
+import ProductDetailsSpecs from "./ProductDetailsSpecs";
+import ServiceImageCarousel from "../../ServiceImageCarousel";
+import ProviderInfoCard from "../../ProviderInfoCard";
+import DescriptionDrawer from "../provider/serviceDetails/DescriptionDialog";
+import ProductMap from "./ProductMap";
+import ProductCard from "./ProductCard";
 
 interface ProductDetailsProps {
   product: Product | null;
   onBack: () => void;
+  similarProducts?: Product[];
 }
 
-const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
-  const router = useRouter();
+const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack, similarProducts = [] }) => {
+  const { t } = useTranslationContext();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const [inquiryOpen, setInquiryOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(0);
-
-  // Reset selected image when product changes
-  useEffect(() => {
-    setSelectedImage(0);
-  }, [product]);
+  const [descriptionDrawerOpen, setDescriptionDrawerOpen] = useState(false);
+  const router = useRouter();
 
   if (!product) return null;
 
-  return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#fff" }}>
-      {/* Top Bar / Breadcrumbs */}
-      <Box sx={{ borderBottom: "1px solid #eee", py: 2, mb: 4, bgcolor: "#f9fafb" }}>
-        <Container maxWidth="xl">
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <IconButton onClick={onBack} size="small">
-              <ArrowBack />
-            </IconButton>
-            <Breadcrumbs aria-label="breadcrumb">
-              <Link color="inherit" href="/" onClick={(e) => { e.preventDefault(); onBack(); }} sx={{ cursor: "pointer" }}>
-                Store
-              </Link>
-              <Link color="inherit" href="/" onClick={(e) => { e.preventDefault(); }} sx={{ cursor: "pointer" }}>
-                {product.category}
-              </Link>
-              <Typography color="text.primary">{product.name}</Typography>
-            </Breadcrumbs>
-          </Stack>
-        </Container>
-      </Box>
+  const handleProductClick = (productId: string) => {
+    router.push(`/store/product/${productId}`);
+  };
 
-      <Container maxWidth="xl">
-        <Grid container spacing={4}>
-          {/* Left: Images (Sticky) */}
-          <Grid size={{ xs: 12, md: 4 }} sx={{ position: "relative" }}>
-            <Box sx={{ position: "sticky", top: 100 }}>
-              <Box
+  return (
+    <Box
+      sx={{
+        bgcolor: isDark
+          ? COLORS.BACKGROUND.PRIMARY_DARK
+          : COLORS.BACKGROUND.SECONDARY_LIGHT,
+        minHeight: "100vh",
+        pt: { xs: 2, sm: 4, md: 4 },
+        pb: { xs: 8, sm: 8, md: 4 },
+        px: { xs: 0.5, sm: 1, md: 2 },
+        width: "100%",
+      }}
+    >
+      <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
+        <ProductDetailsBreadcrumb productName={product.name} />
+
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              md: "1fr 1fr",
+              lg: "1fr 1fr auto",
+            },
+            gap: { xs: 2, sm: 3, md: 4 },
+            alignItems: "start",
+          }}
+        >
+          {/* Left Column - Image Carousel & Map */}
+          <Box
+            sx={{
+              position: { xs: "static", md: "sticky" },
+              top: { md: 80 },
+              order: { xs: 1, md: 1 },
+              width: "100%",
+            }}
+          >
+            <ServiceImageCarousel
+              images={product.images}
+              serviceName={product.name}
+            />
+
+            {/* Map View */}
+            <Box sx={{ mt: 7 }}>
+              <ProductMap
+                latitude={product.supplier.latitude || 26.9124}
+                longitude={product.supplier.longitude || 75.7873}
+                storeName={product.supplier.name}
+              />
+            </Box>
+          </Box>
+
+          {/* Middle Column - Details */}
+          <Box
+            sx={{
+              order: { xs: 2, md: 2 },
+              bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "white",
+              borderRadius: "16px",
+              p: { xs: 1.5, sm: 2.5, md: 3 },
+              border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.04)"}`,
+              width: "100%",
+            }}
+          >
+            <Box sx={{ py: 2 }}>
+              <ProductDetailsHeader
+                price={product.price}
+                category={product.category}
+                gst={product.gst}
+              />
+            </Box>
+
+            <Divider sx={{ opacity: 0.6 }} />
+
+            <Box sx={{ py: 2 }}>
+              <ProductDetailsInfo
+                productName={product.name}
+                description={product.description}
+                onContinueReading={() => setDescriptionDrawerOpen(true)}
+                showContinueReading={
+                  !!(product.description && product.description.length > 50)
+                }
+                gstNumber={product.supplier.gstNumber}
+              />
+
+              {/* Supplier Highlights Grid - IndiaMart Style */}
+              <Box sx={{ mt: 3, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                <Box sx={{ flex: '1 1 45%', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8f9fa', p: 1.5, borderRadius: 2, border: '1px solid rgba(0,0,0,0.03)' }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>{t("yearEstablishedLabel")}</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>{product.supplier.yearEstablished}</Typography>
+                </Box>
+                <Box sx={{ flex: '1 1 45%', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8f9fa', p: 1.5, borderRadius: 2, border: '1px solid rgba(0,0,0,0.03)' }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>{t("business_type").toUpperCase()}</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>{product.supplier.businessType}</Typography>
+                </Box>
+                <Box sx={{ flex: '1 1 45%', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8f9fa', p: 1.5, borderRadius: 2, border: '1px solid rgba(0,0,0,0.03)' }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>{t("responseRateLabel")}</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 700, color: COLORS.PRIMARY_PURPLE }}>{product.supplier.responseRate}</Typography>
+                </Box>
+                <Box sx={{ flex: '1 1 45%', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8f9fa', p: 1.5, borderRadius: 2, border: '1px solid rgba(0,0,0,0.03)' }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>{t("locationLabel")}</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>{product.supplier.location}</Typography>
+                </Box>
+              </Box>
+            </Box>
+
+            <Divider sx={{ opacity: 0.6 }} />
+
+            <Box sx={{ py: 2 }}>
+              <ProductDetailsActions
+                onGetQuote={() => setInquiryOpen(true)}
+                onTalkToUs={() => {
+                  /* TODO: Implement Talk to Us */
+                }}
+              />
+            </Box>
+
+            <Divider sx={{ opacity: 0.6 }} />
+
+            <Box sx={{ py: 2 }}>
+              <ProductDetailsSpecs specs={product.specs} />
+            </Box>
+
+            <Divider sx={{ opacity: 0.6 }} />
+
+            <Box sx={{ py: 3 }}>
+              <ProviderInfoCard
+                providerId={product.categoryId}
+                providerName={product.supplier.name}
+                providerImageUrl={product.supplier.logo}
+                isHotSeller={true}
+                providerPhoneNumber={product.supplier.mobile}
+                businessName={product.supplier.name}
+                isFollowing={false}
+                gstNumber={product.supplier.gstNumber}
+              />
+            </Box>
+          </Box>
+
+          {/* Right Column - Icons */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "row", lg: "column" },
+              gap: { xs: 1, sm: 2 },
+              justifyContent: { xs: "flex-start", lg: "flex-start" },
+              order: { xs: 3, md: 3 },
+              pt: { xs: 0, lg: 1 },
+              mb: { xs: 2, lg: 0 },
+              width: { xs: "100%", lg: "auto" },
+            }}
+          >
+            <IconButton
+              sx={{
+                bgcolor: isDark
+                  ? "rgba(255, 255, 255, 0.08)"
+                  : "rgba(255, 255, 255, 0.9)",
+                border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"}`,
+                color: isDark
+                  ? COLORS.TEXT.PRIMARY_DARK
+                  : COLORS.TEXT.PRIMARY_LIGHT,
+                "&:hover": {
+                  bgcolor: isDark
+                    ? "rgba(255, 255, 255, 0.12)"
+                    : "rgba(255, 255, 255, 1)",
+                },
+                width: { xs: 40, sm: 44 },
+                height: { xs: 40, sm: 44 },
+              }}
+            >
+              <Bookmark fontSize="small" />
+            </IconButton>
+            <IconButton
+              sx={{
+                bgcolor: isDark
+                  ? "rgba(255, 255, 255, 0.08)"
+                  : "rgba(255, 255, 255, 0.9)",
+                border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"}`,
+                color: isDark
+                  ? COLORS.TEXT.PRIMARY_DARK
+                  : COLORS.TEXT.PRIMARY_LIGHT,
+                "&:hover": {
+                  bgcolor: isDark
+                    ? "rgba(255, 255, 255, 0.12)"
+                    : "rgba(255, 255, 255, 1)",
+                },
+                width: { xs: 40, sm: 44 },
+                height: { xs: 40, sm: 44 },
+              }}
+            >
+              <Share fontSize="small" />
+            </IconButton>
+          </Box>
+        </Box>
+
+        {/* Similar Products Section */}
+        {similarProducts.length > 0 && (
+          <Box sx={{ mt: 10, mb: 4 }}>
+            <Box sx={{ display: "flex", alignItems: "baseline", mb: 4, gap: 2 }}>
+              <Typography
+                variant="h4"
+                fontWeight={900}
                 sx={{
-                  width: "100%",
-                  height: { xs: 300, md: 450 },
-                  border: "1px solid #e0e0e0",
-                  borderRadius: 3,
-                  overflow: "hidden",
-                  mb: 2,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  bgcolor: "#f8f9fa",
-                  position: "relative"
+                  color: isDark ? "text.primary" : "#1a1a2e",
+                  letterSpacing: "-0.5px",
+                  fontSize: { xs: "1.5rem", md: "2rem" },
+                  textTransform: "uppercase"
                 }}
               >
-                <Box
-                  component="img"
-                  src={product.images[selectedImage]}
-                  alt={product.name}
-                  sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", mixBlendMode: "multiply" }}
+                {t("similar")} <span style={{ color: COLORS.PRIMARY_PURPLE }}>{t("products")}</span>
+              </Typography>
+              <Box
+                sx={{
+                  bgcolor: COLORS.PRIMARY_PURPLE,
+                  color: "white",
+                  px: 1.5,
+                  py: 0.5,
+                  borderRadius: "20px",
+                  fontSize: "0.7rem",
+                  fontWeight: 800,
+                  letterSpacing: "1px",
+                  display: { xs: "none", sm: "block" }
+                }}
+              >
+                {t("newArrivals")}
+              </Box>
+            </Box>
+
+            <Typography
+              variant="subtitle1"
+              sx={{
+                mb: 4,
+                mt: -3,
+                color: "text.secondary",
+                fontWeight: 500,
+                maxWidth: "600px"
+              }}
+            >
+              {t("similarProductsDescription")}
+            </Typography>
+
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "repeat(2, 1fr)",
+                  sm: "repeat(3, 1fr)",
+                  md: "repeat(4, 1fr)",
+                  lg: "repeat(5, 1fr)",
+                },
+                gap: { xs: 2, md: 3 },
+              }}
+            >
+              {similarProducts.map((simProduct, index) => (
+                <ProductCard
+                  key={simProduct.id}
+                  product={simProduct}
+                  index={index}
+                  onProductClick={handleProductClick}
+                  onInquiry={() => setInquiryOpen(true)}
+                  onWhatsApp={() => { }}
                 />
-                {product.supplier.trustSeal && (
-                  <Box sx={{
-                    position: "absolute",
-                    top: 16,
-                    left: 16,
-                    bgcolor: "rgba(255, 255, 255, 0.95)",
-                    backdropFilter: "blur(4px)",
-                    px: 1.5,
-                    py: 0.75,
-                    borderRadius: 2,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 0.5,
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)"
-                  }}>
-                    <Verified sx={{ fontSize: 18, color: COLORS.PRIMARY_PURPLE }} />
-                    <Typography variant="subtitle2" fontWeight={700} color={COLORS.PRIMARY_PURPLE}>Trusted Supplier</Typography>
-                  </Box>
-                )}
-              </Box>
-              <Stack direction="row" spacing={2} sx={{ overflowX: "auto", pb: 1 }}>
-                {product.images.map((img, idx) => (
-                  <Box
-                    key={idx}
-                    onClick={() => setSelectedImage(idx)}
-                    sx={{
-                      width: 80,
-                      height: 80,
-                      border: selectedImage === idx ? `2px solid ${COLORS.PRIMARY_PURPLE}` : "1px solid #e0e0e0",
-                      borderRadius: 2,
-                      cursor: "pointer",
-                      flexShrink: 0,
-                      p: 0.5,
-                      bgcolor: "#fff"
-                    }}
-                  >
-                    <Box
-                      component="img"
-                      src={img}
-                      sx={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 1 }}
-                    />
-                  </Box>
-                ))}
-              </Stack>
+              ))}
             </Box>
-          </Grid>
-
-          {/* Right: Details (Scrollable) */}
-          <Grid size={{ xs: 12, md: 8 }}>
-            <Box component={Paper} elevation={0} sx={{ p: { xs: 2, md: 4 }, borderRadius: 4, border: "1px solid #e0e0e0", display: "flex", flexDirection: "column", gap: 3 }}>
-              {/* Header Section */}
-              <Box>
-                <Typography variant="h4" fontWeight={800} sx={{ mb: 1.5, color: "#1a1a2e", lineHeight: 1.3 }}>
-                  {product.name}
-                </Typography>
-                <Stack direction="row" alignItems="baseline" spacing={1} sx={{ mb: 2 }}>
-                  <Typography variant="h4" color={COLORS.PRIMARY_PURPLE} fontWeight={800}>
-                    {product.price}
-                  </Typography>
-                  <Typography variant="h6" color="text.secondary" fontWeight={500}>
-                    / {product.unit} (plus {product.gst} GST)
-                  </Typography>
-                </Stack>
-
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                  <Button
-                    variant="contained"
-                    size="large"
-                    startIcon={<Email />}
-                    onClick={() => setInquiryOpen(true)}
-                    sx={{
-                      bgcolor: COLORS.PRIMARY_PURPLE,
-                      fontSize: "1.05rem",
-                      py: 1.5,
-                      px: 4,
-                      fontWeight: 700,
-                      borderRadius: 2,
-                      boxShadow: "0 8px 20px rgba(94, 24, 233, 0.25)",
-                      "&:hover": { bgcolor: COLORS.PURPLE_HOVER, transform: "translateY(-2px)", boxShadow: "0 10px 25px rgba(94, 24, 233, 0.35)" },
-                      transition: "all 0.2s",
-                      flex: 1
-                    }}
-                  >
-                    Get Best Quote
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    size="large"
-                    startIcon={<Phone />}
-                    sx={{
-                      borderColor: COLORS.PRIMARY_PURPLE,
-                      color: COLORS.PRIMARY_PURPLE,
-                      fontSize: "1.05rem",
-                      py: 1.5,
-                      px: 4,
-                      fontWeight: 700,
-                      borderRadius: 2,
-                      "&:hover": { borderColor: COLORS.PURPLE_HOVER, bgcolor: COLORS.PURPLE_ALPHA_04 },
-                      flex: 1
-                    }}
-                  >
-                    Call Supplier
-                  </Button>
-                </Stack>
-              </Box>
-
-              <Divider sx={{ borderStyle: "dashed" }} />
-
-              {/* Supplier Info Section (Integrated) */}
-              <Box sx={{ p: 3, bgcolor: "#fafafa", borderRadius: 3, border: "1px dashed #e0e0e0" }}>
-                <Stack direction={{ xs: "column", md: "row" }} alignItems={{ md: "center" }} justifyContent="space-between" spacing={2}>
-                  <Box>
-                    <Typography variant="caption" sx={{ textTransform: "uppercase", letterSpacing: 1, color: "text.secondary", fontWeight: 700, display: "block", mb: 0.5 }}>
-                      Sold By
-                    </Typography>
-                    <Typography variant="h6" fontWeight={700} sx={{ color: "#1a1a2e", mb: 0.5 }}>
-                      {product.supplier.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ display: "flex", alignItems: "center" }}>
-                      <LocationOn fontSize="small" sx={{ mr: 0.5, color: COLORS.SECONDARY_ORANGE }} /> {product.supplier.location}
-                    </Typography>
-                  </Box>
-
-                  <Stack spacing={0.5} sx={{ minWidth: 200 }}>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <Typography variant="body2" color="text.secondary">Response Rate</Typography>
-                      <Typography variant="body2" fontWeight={700} color={COLORS.PRIMARY_PURPLE}>{product.supplier.responseRate}</Typography>
-                    </Box>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <Typography variant="body2" color="text.secondary">Est. Year</Typography>
-                      <Typography variant="body2" fontWeight={700}>{product.supplier.yearEstablished}</Typography>
-                    </Box>
-                    {product.supplier.trustSeal && (
-                      <Chip
-                        icon={<Verified sx={{ fontSize: "16px !important" }} />}
-                        label="TrustSEAL Verified"
-                        size="small"
-                        sx={{ bgcolor: COLORS.PURPLE_ALPHA_10, color: COLORS.PRIMARY_PURPLE, fontWeight: 600, mt: 1, border: "none" }}
-                      />
-                    )}
-                  </Stack>
-                </Stack>
-                <Divider sx={{ my: 2 }} />
-                <Typography variant="body2" color="text.secondary">
-                  <Box component="span" fontWeight={600} color="text.primary">Address: </Box>
-                  {product.supplier.address}
-                </Typography>
-              </Box>
-
-              {/* Specs Section */}
-              <Box>
-                <Typography variant="h6" fontWeight={700} sx={{ mb: 2, display: "flex", alignItems: "center" }}>
-                  Product Specifications
-                </Typography>
-                <TableContainer sx={{ border: "1px solid #f0f0f0", borderRadius: 2 }}>
-                  <Table>
-                    <TableBody>
-                      {Object.entries(product.specs).map(([key, value], index) => (
-                        <TableRow key={key} sx={{ bgcolor: index % 2 === 0 ? "#fafafa" : "white" }}>
-                          <TableCell sx={{ color: "text.secondary", fontWeight: 600, width: "35%", borderBottom: "1px solid #f0f0f0", py: 1.5 }}>{key}</TableCell>
-                          <TableCell sx={{ fontWeight: 500, color: "#333", borderBottom: "1px solid #f0f0f0", py: 1.5 }}>{value}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Box>
-
-              {/* Description Section */}
-              <Box>
-                <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>
-                  Product Description
-                </Typography>
-                <Typography variant="body1" sx={{ whiteSpace: "pre-line", color: "#444", lineHeight: 1.8 }}>
-                  {product.description}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-        </Grid>
+          </Box>
+        )}
       </Container>
 
-      <InquiryModal
+      {product && <InquiryModal
         open={inquiryOpen}
         onClose={() => setInquiryOpen(false)}
         productName={product.name}
         supplierName={product.supplier.name}
+        productImage={product.image}
+        productPrice={product.price}
+        supplierId={product?.supplier_id}
+        productId={product.id}
+      />}
+      <DescriptionDrawer
+        open={descriptionDrawerOpen}
+        onClose={() => setDescriptionDrawerOpen(false)}
+        description={product.description || ""}
       />
     </Box>
   );

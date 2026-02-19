@@ -7,13 +7,16 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { useRouter } from "next/navigation";
 import BookingStatusCard from "@/components/common/BookingStatusCard";
 import EmptyState from "@/components/common/EmptyState";
+import SupplierQuotationCard from "@/components/common/supplierQuotations/SupplierQuotationCard";
 
 interface UpcomingBookingsProps {
-  bookings: any[]; // Using any for now to match index.tsx data structure, can refine with interface later if available
+  bookings: any[];
+  role?: "SERVICE_PROVIDER" | "SUPPLIER";
 }
 
 const UpcomingBookings: React.FC<UpcomingBookingsProps> = ({
   bookings = [],
+  role = "SERVICE_PROVIDER",
 }) => {
   const theme = useTheme();
   const { t } = useTranslate();
@@ -26,8 +29,9 @@ const UpcomingBookings: React.FC<UpcomingBookingsProps> = ({
         borderRadius: "12px",
         p: 2,
         bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE,
-        border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
-          }`,
+        border: `1px solid ${
+          isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
+        }`,
         boxShadow: isDark
           ? "0px 2px 8px rgba(0, 0, 0, 0.2)"
           : "0px 2px 8px rgba(0, 0, 0, 0.05)",
@@ -50,7 +54,9 @@ const UpcomingBookings: React.FC<UpcomingBookingsProps> = ({
               : COLORS.TEXT.PRIMARY_LIGHT,
           }}
         >
-          {t("upcomingBookings")}
+          {role === "SUPPLIER"
+            ? t("pendingEnquiries" as any)
+            : t("upcomingBookings")}
         </Typography>
         <Typography
           variant="body2"
@@ -62,7 +68,11 @@ const UpcomingBookings: React.FC<UpcomingBookingsProps> = ({
               textDecoration: "underline",
             },
           }}
-          onClick={() => router.push("/spr/bookings")}
+          onClick={() =>
+            router.push(
+              role === "SUPPLIER" ? "/sup/orders" : "/spr/bookings",
+            )
+          }
         >
           {t("seeall")}
         </Typography>
@@ -75,28 +85,41 @@ const UpcomingBookings: React.FC<UpcomingBookingsProps> = ({
         }}
       >
         {bookings.length > 0 ? (
-          bookings?.map((booking) => (
-            <BookingStatusCard
-              key={booking.booking_id}
-              booking={{
-                booking_id: booking.booking_id,
-                currency: booking.currency,
-                name: booking.service_name,
-                image: booking.image_urls[0] || "",
-                status: booking.status,
-                price: booking.price,
-                time: booking.schedule_at,
-                service_address: booking.service_address,
-              }}
-              isProvider={true}
-              showStatus={false}
-            />
-          ))
+          bookings?.map((item) =>
+            role === "SUPPLIER" ? (
+              <SupplierQuotationCard
+                key={item.supplier_quotation_id}
+                enquiry={item}
+              />
+            ) : (
+              <BookingStatusCard
+                key={item.booking_id}
+                booking={{
+                  booking_id: item.booking_id,
+                  currency: item.currency,
+                  name: item.service_name,
+                  image: item.image_urls?.[0] || "",
+                  status: item.status,
+                  price: item.price,
+                  time: item.schedule_at,
+                  service_address: item.service_address,
+                }}
+                isProvider={true}
+                showStatus={false}
+              />
+            ),
+          )
         ) : (
           <EmptyState
             titleKey=""
-            title={t("no_upcoming_bookings")}
-            description={t("no_upcoming_bookings_desc")}
+            title={
+              role === "SUPPLIER"
+                ? t("noEnquiriesFound" as any)
+                : t("no_upcoming_bookings")
+            }
+            description={
+              role === "SUPPLIER" ? "" : t("no_upcoming_bookings_desc")
+            }
             minHeight={200}
             iconSize={48}
           />
