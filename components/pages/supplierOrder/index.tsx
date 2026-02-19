@@ -11,7 +11,6 @@ import {
 import { useSupplierQuotations } from "@/hooks/useSupplierQuotations";
 import { COLORS } from "@/constants/colors";
 import OrderHeader from "./components/OrderHeader";
-import OrderTabs from "./components/OrderTabs";
 import OrderContent from "./components/OrderContent";
 import SupplierQuotationDetailsModal from "@/components/common/supplierQuotations/SupplierQuotationDetailsModal";
 import { SupplierQuotation } from "@/services/supplierDashboard/supplierDashoard.interface";
@@ -24,7 +23,6 @@ const SupplierOrderPage = () => {
   const isTablet = useMediaQuery(theme.breakpoints.down("lg"));
   const isDark = theme.palette.mode === "dark";
 
-  const [activeTab, setActiveTab] = useState(0); // 0 for Pending, 1 for Complete
   const [viewMode, setViewMode] = useState<"grid" | "list">(
     isMobile ? "grid" : "list",
   );
@@ -35,19 +33,11 @@ const SupplierOrderPage = () => {
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useSupplierQuotations({
-      is_viewed: activeTab === 1 ? (1 as any) : (0 as any),
       search: searchQuery,
       limit: 10,
     });
 
-  const quotations =
-    data?.pages
-      .flatMap((page) => page.quotations)
-      .filter((q) => {
-        const isViewed = Boolean(q.is_viewed);
-        const targetViewed = activeTab === 1;
-        return isViewed === targetViewed;
-      }) ?? [];
+  const quotations = data?.pages.flatMap((page) => page.quotations) ?? [];
 
   const loaderRef = useRef<HTMLDivElement>(null);
 
@@ -85,22 +75,20 @@ const SupplierOrderPage = () => {
   return (
     <Box
       sx={{
-        p: { xs: 2, md: 2 },
+        p: 3,
         bgcolor: isDark
-          ? COLORS.BACKGROUND.PRIMARY_DARK
+          ? COLORS.BACKGROUND.SECONDARY_DARK
           : COLORS.BACKGROUND.SECONDARY_LIGHT,
-        borderRadius: "12px",
+        minHeight: "100vh",
       }}
     >
       <OrderHeader
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
+        onSearch={setSearchQuery}
         viewMode={viewMode}
         onViewChange={setViewMode}
         isMobile={isMobile}
+        totalCount={data?.pages[0]?.pagination?.total || 0}
       />
-
-      <OrderTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       <OrderContent
         isLoading={isLoading}

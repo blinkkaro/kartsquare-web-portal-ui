@@ -19,7 +19,7 @@ export interface NavItem {
 
 export const getDesktopNavItems = (
   role: UserRole | null | string,
-  t: (key: TranslationKey) => string
+  t: (key: TranslationKey) => string,
 ): NavItem[] => {
   switch (role) {
     case UserRole.SERVICE_PROVIDER:
@@ -43,7 +43,7 @@ export const getDesktopNavItems = (
         { label: t("home"), href: "/" },
         { label: t("dashboard"), href: "/dashboard" },
         { label: t("my_store"), href: "/sup/myStore" },
-        { label: t("orders"), href: "/sup/orders" },
+        { label: t("enquiries"), href: "/sup/orders" },
       ];
     default:
       return [
@@ -58,7 +58,7 @@ export const getDesktopNavItems = (
 export const getMobileNavItems = (
   isAuthenticated: boolean,
   t: (key: TranslationKey) => string,
-  role?: string | null
+  role?: string | null,
 ): NavItem[] => {
   const items: NavItem[] = [];
 
@@ -70,14 +70,24 @@ export const getMobileNavItems = (
         href: "/cus/servicesList",
         icon: <ArticleRounded />,
       },
-      { label: t("store"), href: "/store", icon: <LocalMallRounded /> }
+      { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
       // { label: t("events"), href: "/events", icon: <Event /> }
     );
   } else {
-    if (role === "SUPPLIER") {
+    if (role === UserRole.SUPPLIER) {
       return [
         { label: t("home"), href: "/", icon: <HomeFilled /> },
-        { label: "My Store", href: "/store", icon: <LocalMallRounded /> },
+        { label: t("dashboard"), href: "/dashboard", icon: <Dashboard /> },
+        {
+          label: t("my_store"),
+          href: "/sup/myStore",
+          icon: <LocalMallRounded />,
+        },
+        {
+          label: t("enquiries"),
+          href: "/sup/orders",
+          icon: <ShoppingBag />,
+        },
       ];
     }
 
@@ -92,7 +102,7 @@ export const getMobileNavItems = (
       },
 
       // { label: t("events"), href: "/events", icon: <Event /> },
-      { label: t("bookings"), href: bookingsHref, icon: <ShoppingBag /> }
+      { label: t("bookings"), href: bookingsHref, icon: <ShoppingBag /> },
       // { label: t("chat"), href: "/chat", icon: <Chat /> }
     );
     switch (role) {
@@ -101,13 +111,6 @@ export const getMobileNavItems = (
           label: t("dashboard"),
           href: "/dashboard",
           icon: <Dashboard />,
-        });
-        break;
-      case UserRole.SUPPLIER:
-        items.push({
-          label: t("my_store"),
-          href: "/sup/myStore",
-          icon: <LocalMallRounded />,
         });
         break;
       default:
