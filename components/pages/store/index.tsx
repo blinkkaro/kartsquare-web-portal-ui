@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -33,6 +33,7 @@ import { COLORS } from "@/constants/colors";
 import CategorySidebar from "./CategorySidebar";
 import InquiryModal from "./InquiryModal";
 import ProductDetails from "./ProductDetails";
+import { useSearchParams, useRouter } from "next/navigation";
 
 // Interface Definitions
 export interface Product {
@@ -62,11 +63,37 @@ export interface Product {
 
 const StoreView: React.FC = () => {
   const theme = useTheme();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const isDark = theme.palette.mode === "dark";
-  const [searchQuery, setSearchQuery] = useState("");
+
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [viewMode, setViewMode] = useState<"store" | "product">("store");
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const query = searchParams.get("q");
+    if (query) {
+      setSearchQuery(query);
+    }
+  }, [searchParams]);
+
+  // Update URL when search query changes
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (searchQuery) {
+      params.set("q", searchQuery);
+    } else {
+      params.delete("q");
+    }
+    // Use replace to avoid cluttering history, but only if it's different
+    const currentQ = searchParams.get("q") || "";
+    if (currentQ !== searchQuery) {
+      router.replace(`/store?${params.toString()}`);
+    }
+  }, [searchQuery, router, searchParams]);
+
 
   // Inquiry State
   const [inquiryOpen, setInquiryOpen] = useState(false);
@@ -235,6 +262,7 @@ const StoreView: React.FC = () => {
   const handleBackToStore = () => {
     setViewMode("store");
     setSelectedProductId(null);
+    // Optional: Clear search when going back? No, keep context.
   };
 
   const handleInquiry = (product: Product) => {

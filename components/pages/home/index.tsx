@@ -81,7 +81,7 @@ function HomeView() {
         root: null,
         rootMargin: "100px",
         threshold: 0.1,
-      },
+      }
     );
 
     observer.observe(loaderRef.current);
@@ -175,42 +175,26 @@ function HomeView() {
         >
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             {/* Banner Section */}
-            <HomeBanner />
+            {/* <HomeBanner /> */}
 
-            {/* Featured Service Categories */}
-            <FeaturedServiceCategories />
-
-            {/* Featured Product Categories */}
-            <FeaturedProductCategories />
-
-            <Box sx={{ mt: 3 }}>
-              <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                Latest Stories
-              </Typography>
-              {/* Stories Section */}
-              <StoriesSection data={stories} isLoading={storiesLoading} />
-            </Box>
+            <StoriesSection data={stories} isLoading={storiesLoading} />
 
             {/* Compact Map - Mobile/Tablet View */}
             <Box
               sx={{
                 display: { lg: "none", md: "block" },
-                mt: 3
+                mt: 3,
               }}
             >
               <CompactMapView height="300px" />
             </Box>
 
-            {/* Merged Posts & Ads Feed */}
-            <Typography variant="h6" fontWeight="bold" sx={{ mt: 2, mb: 2 }}>
-              Trending Updates
-            </Typography>
             {mergedFeed.map((item) =>
               item.type === "post" ? (
                 <PostCard post={item.data as Posts} key={item.key} />
               ) : (
                 <AdCard ad={item.data as AdvertiseActiveAd} key={item.key} />
-              ),
+              )
             )}
 
             {/* Loading Indicator */}
