@@ -152,7 +152,7 @@ function DashboardView() {
             />
 
             {/* Latest Review */}
-            <LatestReviews reviews={latestReviews || []} />
+            <LatestReviews reviews={latestReviews || []} role={role as any} />
 
             {/* Upcoming Events
             <UpcomingEvents /> */}

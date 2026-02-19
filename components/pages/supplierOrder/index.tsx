@@ -22,7 +22,6 @@ const SupplierOrderPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const isTablet = useMediaQuery(theme.breakpoints.down("lg"));
-  const queryClient = useQueryClient();
   const isDark = theme.palette.mode === "dark";
 
   const [activeTab, setActiveTab] = useState(0); // 0 for Pending, 1 for Complete
@@ -44,7 +43,11 @@ const SupplierOrderPage = () => {
   const quotations =
     data?.pages
       .flatMap((page) => page.quotations)
-      .filter((q) => q.is_viewed === (activeTab === 1)) ?? [];
+      .filter((q) => {
+        const isViewed = Boolean(q.is_viewed);
+        const targetViewed = activeTab === 1;
+        return isViewed === targetViewed;
+      }) ?? [];
 
   const loaderRef = useRef<HTMLDivElement>(null);
 
@@ -77,21 +80,18 @@ const SupplierOrderPage = () => {
   const handleRowClick = async (quotation: SupplierQuotation) => {
     setSelectedQuotation(quotation);
     setIsModalOpen(true);
-
-    if (!quotation.is_viewed) {
-      try {
-        await supplierService.markQuotationViewed(
-          quotation.supplier_quotation_id,
-        );
-        queryClient.invalidateQueries({ queryKey: ["supplier-quotations"] });
-      } catch (error) {
-        console.error("Error marking quotation as viewed", error);
-      }
-    }
   };
 
   return (
-    <Box sx={{ p: { xs: 2, md: 2 }, bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT, borderRadius: "12px" }}>
+    <Box
+      sx={{
+        p: { xs: 2, md: 2 },
+        bgcolor: isDark
+          ? COLORS.BACKGROUND.PRIMARY_DARK
+          : COLORS.BACKGROUND.SECONDARY_LIGHT,
+        borderRadius: "12px",
+      }}
+    >
       <OrderHeader
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}

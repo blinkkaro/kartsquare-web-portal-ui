@@ -11,9 +11,10 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 interface LatestReviewsProps {
   reviews: any[]; // Using any to match usage, ideally should be Review[]
+  role: "SERVICE_PROVIDER" | "SUPPLIER";
 }
 
-const LatestReviews: React.FC<LatestReviewsProps> = ({ reviews = [] }) => {
+const LatestReviews: React.FC<LatestReviewsProps> = ({ reviews = [], role = "SERVICE_PROVIDER", }) => {
   const theme = useTheme();
   const { t } = useTranslate();
   const router = useRouter();
@@ -44,6 +45,7 @@ const LatestReviews: React.FC<LatestReviewsProps> = ({ reviews = [] }) => {
         <Typography variant="h6" sx={{ fontWeight: 600 }}>
           {t("latestReviews")}
         </Typography>
+        {role === "SERVICE_PROVIDER" && (
         <Typography
           variant="body2"
           sx={{
@@ -58,6 +60,7 @@ const LatestReviews: React.FC<LatestReviewsProps> = ({ reviews = [] }) => {
         >
           {t("seeall")}
         </Typography>
+      )}
       </Box>
       {reviews.length > 0 ? (
         reviews.map((review, index) => (

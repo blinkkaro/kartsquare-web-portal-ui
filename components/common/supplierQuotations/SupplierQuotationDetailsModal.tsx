@@ -46,7 +46,7 @@ const SupplierQuotationDetailsModal: React.FC<
     if (open && enquiry && !enquiry.is_viewed) {
       markViewed.mutate(enquiry.supplier_quotation_id);
     }
-  }, [open, enquiry, markViewed]);
+  }, [open]);
 
   if (!enquiry) return null;
 
