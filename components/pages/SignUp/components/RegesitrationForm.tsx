@@ -95,10 +95,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   const selectedCountryCode = watch("country_code");
   const whatsappCountryCode = watch("whatsapp_country_code");
   const gender = watch("gender");
-  const phoneNumber = watch("phone_number");
   const whatsappNumber = watch("whatsapp_number");
   const selectedCountry = countries.find(
     (c) => c.phone_code === selectedCountryCode,
+  );
+  const selectedWhatsappCountry = countries.find(
+    (c) => c.phone_code === whatsappCountryCode,
   );
 
   React.useEffect(() => {
@@ -119,7 +121,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
     }
   };
 
-  const isServiceProvider = true;
+  const isServiceProvider = role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER;
 
   return (
     <Box
@@ -240,7 +242,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
               {/* Country Code Selector */}
               <Box
                 sx={{
-                  width: { sm: "60px", lg: "75px", md: "85px" },
+                  width: { sm: "70px", lg: "95px", md: "105px" },
                 }}
               >
                 <Input
@@ -249,9 +251,15 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                   select
                   disabled={!!initialData?.whatsapp_country_code}
                   InputProps={{
+                    sx: {
+                      "& .MuiSelect-select": {
+                        paddingLeft: "8px !important",
+                        paddingRight: "24px !important",
+                      },
+                    },
                     startAdornment: (
-                      <InputAdornment position="start">
-                        {selectedCountry?.flag}
+                      <InputAdornment position="start" sx={{ mr: 0.5 }}>
+                        {selectedWhatsappCountry?.flag}
                       </InputAdornment>
                     ),
                   }}
@@ -302,31 +310,31 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
               {t("phone_number")}*
             </Typography>
             {isServiceProvider && (
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={isSameAsPhone}
-                  onChange={handleCheckboxChange}
-                  size="small"
-                  sx={{
-                    padding: 0,
-                    mr: 1,
-                  }}
-                />
-              }
-              label={
-                <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
-                  {t("same_as_whatsapp")}
-                </Typography>
-              }
-              sx={{ margin: 0 }}
-            />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isSameAsPhone}
+                    onChange={handleCheckboxChange}
+                    size="small"
+                    sx={{
+                      padding: 0,
+                      mr: 1,
+                    }}
+                  />
+                }
+                label={
+                  <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
+                    {t("same_as_whatsapp")}
+                  </Typography>
+                }
+                sx={{ margin: 0 }}
+              />
             )}
           </Box>
           <Box sx={{ display: "flex", gap: 1 }}>
             <Box
               sx={{
-                width: { sm: "60px", lg: "75px", md: "85px" },
+                width: { sm: "70px", lg: "95px", md: "105px" },
               }}
             >
               <Input
@@ -335,8 +343,17 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 select
                 InputProps={{
                   readOnly: isSameAsPhone,
+                  sx: {
+                    bgcolor: isSameAsPhone
+                      ? "rgba(0, 0, 0, 0.05)"
+                      : "transparent",
+                    "& .MuiSelect-select": {
+                      paddingLeft: "8px !important",
+                      paddingRight: "24px !important",
+                    },
+                  },
                   startAdornment: (
-                    <InputAdornment position="start">
+                    <InputAdornment position="start" sx={{ mr: 0.5 }}>
                       {selectedCountry?.flag}
                     </InputAdornment>
                   ),
@@ -357,6 +374,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 type="tel"
                 InputProps={{
                   readOnly: isSameAsPhone,
+                  sx: {
+                    bgcolor: isSameAsPhone
+                      ? "rgba(0, 0, 0, 0.05)"
+                      : "transparent",
+                  },
                 }}
                 inputProps={{
                   maxLength: 10,

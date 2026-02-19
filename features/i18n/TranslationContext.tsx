@@ -357,6 +357,7 @@ export type TranslationKey =
   | "captionMaxLength"
   | "maxImagesReached"
   | "invalidImageFormat"
+  | "imageSizeTooLarge"
   | "uploadingPost"
   | "removeImage"
   | "errorLoadingMap"

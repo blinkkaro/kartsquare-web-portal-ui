@@ -64,15 +64,23 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     handleFiles(Array.from(files));
   };
 
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
   const handleFiles = (newFiles: File[]) => {
     const currentCount = images.length;
     const validFiles: File[] = [];
     let hasError = false;
 
-    // Validate file types and count
+    // Validate file types, size and count
     for (const file of newFiles) {
       if (!file.type.match(/image\/(jpeg|jpg|png|gif)/)) {
         setInternalError(t("invalidImageFormat"));
+        hasError = true;
+        return;
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        setInternalError(t("imageSizeTooLarge"));
         hasError = true;
         return;
       }
