@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -45,7 +45,7 @@ import {
   LocalShipping,
   Message,
 } from "@mui/icons-material";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { COLORS } from "@/constants/colors";
 import CategorySidebar from "./CategorySidebar";
 import InquiryModal from "./InquiryModal";
@@ -101,14 +101,38 @@ export interface Product {
 
 const StoreView: React.FC = () => {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isDark = theme.palette.mode === "dark";
   const [searchQuery, setSearchQuery] = useState("");
   const [homeData, setHomeData] = useState<StoreHomeData | null>(null);
   const [featuredProducts, setFeaturedProducts] =
     useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(false);
+
+  useEffect(() => {
+    const query = searchParams.get("q");
+    if (query) {
+      setSearchQuery(query);
+    }
+  }, [searchParams]);
+
+  // Update URL when search query changes
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (searchQuery) {
+      params.set("q", searchQuery);
+    } else {
+      params.delete("q");
+    }
+    // Use replace to avoid cluttering history, but only if it's different
+    const currentQ = searchParams.get("q") || "";
+    if (currentQ !== searchQuery) {
+      router.replace(`/store?${params.toString()}`);
+    }
+  }, [searchQuery, router, searchParams]);
+
 
   // Inquiry State
   const [inquiryOpen, setInquiryOpen] = useState(false);

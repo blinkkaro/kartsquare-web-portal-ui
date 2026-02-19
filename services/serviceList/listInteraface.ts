@@ -70,6 +70,16 @@ export interface Service {
   pricing_type: PricingType;
   price_catalog_url?: string[];
   price_items?: ServicePriceItem[];
+  
+  // SEO Fields
+  slug?: string;
+  meta_title?: string;
+  meta_description?: string;
+  meta_keywords?: string;
+  og_title?: string;
+  og_description?: string;
+  og_image?: string;
+  structured_data?: any;
 }
 
 export interface ServiceListResponse {

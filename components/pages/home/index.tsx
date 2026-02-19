@@ -11,6 +11,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { COLORS } from "@/constants/colors";
+import HomeBanner from "./components/HomeBanner";
+import FeaturedServiceCategories from "./components/FeaturedServiceCategories";
+import FeaturedProductCategories from "./components/FeaturedProductCategories";
 import StoriesSection from "./components/StoriesSection";
 import PostCard from "./components/PostCard";
 import AdCard from "./components/AdCard";
@@ -80,7 +83,7 @@ function HomeView() {
         root: null,
         rootMargin: "100px",
         threshold: 0.1,
-      },
+      }
     );
 
     observer.observe(loaderRef.current);
@@ -177,25 +180,27 @@ function HomeView() {
           }}
         >
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {/* Stories Section */}
+            {/* Banner Section */}
+            {/* <HomeBanner /> */}
+
             <StoriesSection data={stories} isLoading={storiesLoading} />
 
             {/* Compact Map - Mobile/Tablet View */}
             <Box
               sx={{
                 display: { lg: "none", md: "block" },
+                mt: 3,
               }}
             >
               <CompactMapView height="300px" />
             </Box>
 
-            {/* Merged Posts & Ads Feed */}
             {mergedFeed.map((item) =>
               item.type === "post" ? (
                 <PostCard post={item.data as Posts} key={item.key} />
               ) : (
                 <AdCard ad={item.data as AdvertiseActiveAd} key={item.key} />
-              ),
+              )
             )}
 
             {/* Loading Indicator */}
