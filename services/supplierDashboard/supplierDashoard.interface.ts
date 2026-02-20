@@ -50,20 +50,20 @@ export interface stats {
 }
 
 export interface SupplierQuotation {
-  supplier_quotation_id?: string;
-  product_name?: string;
-  product_images?: string[];
+  supplier_quotation_id: string;
+  product_name: string;
+  product_images: string[];
   customer_name: string;
   country_code: string;
   phone_number: string;
   email: string;
   quantity: number;
-  price?: number;
-  currency?: string;
-  details?: string;
-  created_at?: string;
-  is_viewed?: boolean;
-  is_deleted?: boolean;
+  price: number;
+  currency: string;
+  details: string;
+  created_at: string;
+  is_viewed: boolean;
+  is_deleted: boolean;
   product_id: string;
   supplier_id: string;
 }

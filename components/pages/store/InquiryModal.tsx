@@ -21,7 +21,7 @@ import * as yup from "yup";
 import axios from "axios";
 import { COLORS } from "@/constants/colors";
 import { supplierService } from "@/services/supplier/supplier.service";
-import { SupplierQuotation } from "@/services/supplierDashboard/supplierDashoard.interface";
+import { CreateSupplierQuotation } from "@/services/supplier/supplier.interface";
 
 interface InquiryModalProps {
   open: boolean;
@@ -86,7 +86,7 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     setIsLoading(true);
     try {
-      const payload: SupplierQuotation = {
+      const payload: CreateSupplierQuotation = {
         phone_number: data.phone_number,
         customer_name: data.customer_name,
         email: data.email,
