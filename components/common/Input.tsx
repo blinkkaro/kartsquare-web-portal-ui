@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Controller, Control } from "react-hook-form";
+import { COLORS } from "@/constants/colors";
 
 interface InputProps extends Omit<TextFieldProps, "name"> {
   name: string;
@@ -85,7 +86,9 @@ const Input: React.FC<InputProps> = ({
               <InputAdornment position="start" sx={{ mr: 0.5 }}>
                 {startIcon}
               </InputAdornment>
-            ) : null,
+            ) : (
+              InputProps?.startAdornment
+            ),
             endAdornment: isPassword ? (
               <InputAdornment position="end">
                 <IconButton
@@ -99,7 +102,9 @@ const Input: React.FC<InputProps> = ({
               </InputAdornment>
             ) : endIcon ? (
               <InputAdornment position="end">{endIcon}</InputAdornment>
-            ) : null,
+            ) : (
+              InputProps?.endAdornment
+            ),
             sx: {
               ...defaultInputSx,
               ...(typeof InputProps?.sx === "object" ? InputProps.sx : {}),
@@ -112,6 +117,12 @@ const Input: React.FC<InputProps> = ({
                 transform: "translate(14px, -9px) scale(0.75)",
               },
             },
+            "& .MuiInputBase-input[type='date'], & .MuiInputBase-input[type='time'], & .MuiInputBase-input[type='datetime-local']":
+              {
+                colorScheme: theme.palette.mode === "dark" ? "dark" : "light",
+              },
+            bgcolor: COLORS.WHITE,
+            borderRadius: "12px",
             ...sx,
           }}
         />

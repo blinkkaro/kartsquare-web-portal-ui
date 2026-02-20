@@ -1,5 +1,13 @@
 import React from "react";
-import { Box, Avatar, Typography, Button, Chip, useTheme } from "@mui/material";
+import {
+  Box,
+  Avatar,
+  Typography,
+  Button,
+  Chip,
+  useTheme,
+  Stack,
+} from "@mui/material";
 import { useFollowUser, useUnfollowUser } from "@/hooks/useFollow";
 import { getUserId } from "@/utils/auth";
 import { openLoginModal } from "@/features/ui/loginModalSlice";
@@ -24,6 +32,7 @@ interface ProviderInfoCardProps {
   businessName?: string;
   isFollowing?: boolean;
   providerPhoneNumber?: string;
+  gstNumber?: string;
 }
 
 const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
@@ -34,6 +43,7 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
   businessName,
   isFollowing = false,
   providerPhoneNumber,
+  gstNumber,
 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -220,9 +230,25 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
               mb: 0.5,
             }}
           >
-              {english.highly_responsive ?? "Highly Responsive"} •{" "}
-              {english.top_professional ?? "Top Professional"}
+            {english.highly_responsive ?? "Highly Responsive"} •{" "}
+            {english.top_professional ?? "Top Professional"}
           </Typography>
+          {gstNumber && (
+            <Typography
+              variant="caption"
+              sx={{
+                color: "#059669", // Success Green
+                fontWeight: 700,
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                mt: 0.5,
+              }}
+            >
+              <CheckCircle sx={{ fontSize: "14px" }} />
+              GST: {gstNumber}
+            </Typography>
+          )}
         </Box>
       </Box>
 
@@ -246,81 +272,90 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
         >
           Message
         </Button> */}
-        <Button
-          variant="contained"
-          fullWidth
-          size="small"
-          startIcon={<Call sx={{ fontSize: "1rem !important" }} />}
-          onClick={handleShowPhoneNumber}
-          disabled={showPhoneNumber}
-          sx={{
-            borderRadius: "11px",
-            textTransform: "none",
-            bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-            color: "white",
-            fontWeight: 800,
-            letterSpacing: showPhoneNumber ? "0.06em" : "0.02em",
-            px: 3,
-            py: 1.1,
-            minWidth: 0,
-            whiteSpace: "nowrap",
-            boxShadow: `0 10px 20px ${
-              isDark
-                ? `${COLORS.ACCENT_BLUE_BG_DARK}40`
-                : `${COLORS.PRIMARY_PURPLE}40`
-            }`,
-            "&:hover": {
+        <Stack gap={2}>
+          {" "}
+          <Button
+            variant="contained"
+            fullWidth
+            size="small"
+            startIcon={<Call sx={{ fontSize: "1rem !important" }} />}
+            onClick={handleShowPhoneNumber}
+            disabled={showPhoneNumber}
+            sx={{
+              borderRadius: "11px",
+              textTransform: "none",
               bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-              transform: "translateY(-1px)",
-              boxShadow: `0 4px 12px ${
+              color: "white",
+              fontWeight: 800,
+              letterSpacing: showPhoneNumber ? "0.06em" : "0.02em",
+              px: 3,
+              py: 1.1,
+              minWidth: 0,
+              whiteSpace: "nowrap",
+              boxShadow: `0 10px 20px ${
                 isDark
                   ? `${COLORS.ACCENT_BLUE_BG_DARK}40`
                   : `${COLORS.PRIMARY_PURPLE}40`
               }`,
-            },
-            transition: "all 0.2s ease-in-out",
-            "&.Mui-disabled": {
-              bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-              color: "white",
-            },
-          }}
-        >
-          {showPhoneNumber ? providerPhoneNumber : english.show_number}
-        </Button>
-        <Button
-          variant={"outlined"}
-          fullWidth
-          size="small"
-          onClick={handleFollow}
-          disabled={isLoading}
-          startIcon={
-            following ? (
-              <Person sx={{ fontSize: "1rem !important" }} />
-            ) : (
-              <PersonAdd sx={{ fontSize: "1rem !important" }} />
-            )
-          }
-          sx={{
-            borderRadius: "10px",
-            textTransform: "none",
-            borderColor: isDark
-              ? COLORS.ACCENT_BLUE_DARK
-              : COLORS.BORDER.DEFAULT_DARK,
-            color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-            fontWeight: 700,
-            px: 2,
-            bgcolor: "transparent",
-            "&:hover": {
+              "&:hover": {
+                bgcolor: isDark
+                  ? COLORS.ACCENT_BLUE_DARK
+                  : COLORS.PRIMARY_PURPLE,
+                transform: "translateY(-1px)",
+                boxShadow: `0 4px 12px ${
+                  isDark
+                    ? `${COLORS.ACCENT_BLUE_BG_DARK}40`
+                    : `${COLORS.PRIMARY_PURPLE}40`
+                }`,
+              },
+              transition: "all 0.2s ease-in-out",
+              "&.Mui-disabled": {
+                bgcolor: isDark
+                  ? COLORS.ACCENT_BLUE_DARK
+                  : COLORS.PRIMARY_PURPLE,
+                color: "white",
+              },
+            }}
+          >
+            {showPhoneNumber ? providerPhoneNumber : english.show_number}
+          </Button>
+          <Button
+            variant={"outlined"}
+            fullWidth
+            size="small"
+            onClick={handleFollow}
+            disabled={isLoading}
+            startIcon={
+              following ? (
+                <Person sx={{ fontSize: "1rem !important" }} />
+              ) : (
+                <PersonAdd sx={{ fontSize: "1rem !important" }} />
+              )
+            }
+            sx={{
+              borderRadius: "10px",
+              textTransform: "none",
               borderColor: isDark
                 ? COLORS.ACCENT_BLUE_DARK
-                : COLORS.PRIMARY_PURPLE,
-              bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-              color: "white",
-            },
-          }}
-        >
-          {following ? english.following : english.follow}
-        </Button>
+                : COLORS.BORDER.DEFAULT_DARK,
+              color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+              fontWeight: 700,
+              px: 2,
+              bgcolor: "transparent",
+              "&:hover": {
+                borderColor: isDark
+                  ? COLORS.ACCENT_BLUE_DARK
+                  : COLORS.PRIMARY_PURPLE,
+                bgcolor: isDark
+                  ? COLORS.ACCENT_BLUE_DARK
+                  : COLORS.PRIMARY_PURPLE,
+                color: "white",
+              },
+            }}
+          >
+            {following ? "Following" : "Follow"}
+          </Button>
+        </Stack>
       </Box>
     </Box>
   );

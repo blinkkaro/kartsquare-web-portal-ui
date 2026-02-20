@@ -11,9 +11,11 @@ import MetricCards from "./components/MetricCards";
 import RevenueChart from "./components/RevenueChart";
 import UpcomingBookings from "./components/UpcomingBookings";
 import LatestReviews from "./components/LatestReviews"; // Add this
+import LatestLeads from "./components/LatestLeads";
 import UpcomingEvents from "./components/UpcomingEvents";
 import RecentTransactions from "./components/RecentTransactions";
 import { useProviderDashboard } from "@/hooks/useProviderDashboard";
+import { useSupplierDashboard } from "@/hooks/useSupplierDashboard";
 import ProviderBookingDetailsDrawer from "../provider/bookings/ProviderBookingDetailsDrawer";
 
 function DashboardView() {
@@ -21,17 +23,28 @@ function DashboardView() {
   const router = useRouter();
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
+  const role = getUserRole();
 
   const {
     providerDashboardData,
     providerDashboardChartData,
-    isLoading,
-    error,
-  } = useProviderDashboard();
+    isLoading: isProviderLoading,
+    error: providerError,
+  } = useProviderDashboard(role === "SERVICE_PROVIDER");
 
-  // Check if user is SERVICE_PROVIDER
+  const {
+    supplierDashboardData,
+    supplierDashboardChartData,
+    isLoading: isSupplierLoading,
+    error: supplierError,
+  } = useSupplierDashboard(role === "SUPPLIER");
+
+  const isLoading = role === "SUPPLIER" ? isSupplierLoading : isProviderLoading;
+  const error = role === "SUPPLIER" ? supplierError : providerError;
+
+  // Check if user is SERVICE_PROVIDER or SUPPLIER
   useEffect(() => {
-    const role = getUserRole();
+    const userRole = getUserRole();
     const token = secureStorage.getItem("token");
 
     if (!token) {
@@ -39,7 +52,7 @@ function DashboardView() {
       return;
     }
 
-    if (role !== "SERVICE_PROVIDER") {
+    if (userRole !== "SERVICE_PROVIDER" && userRole !== "SUPPLIER") {
       router.push("/");
       return;
     }
@@ -64,6 +77,23 @@ function DashboardView() {
     // );
   }
 
+  const stats =
+    role === "SUPPLIER"
+      ? supplierDashboardData?.stats
+      : providerDashboardData?.stats;
+  const chartData =
+    role === "SUPPLIER"
+      ? supplierDashboardChartData
+      : providerDashboardChartData;
+  const upcomingData =
+    role === "SUPPLIER"
+      ? supplierDashboardData?.pending_enquiries
+      : providerDashboardData?.upcoming_bookings;
+  const latestReviews =
+    role === "SUPPLIER"
+      ? supplierDashboardData?.latest_reviews
+      : providerDashboardData?.latest_reviews;
+
   return (
     <Box sx={{ py: { xs: 2, md: 3 }, mx: { xs: 2, md: 3, lg: 10, xl: 20 } }}>
       {/* Dashboard Title */}
@@ -86,35 +116,43 @@ function DashboardView() {
             {/* Metric Cards */}
             <MetricCards
               stats={
-                providerDashboardData?.stats || {
+                stats || {
                   total_bookings: 0,
                   followers: 0,
                   total_services: 0,
                   total_active_services: 0,
                   total_pending_bookings: 0,
                   total_completed_bookings: 0,
+                  total_phone_number_views: 0,
+                  total_profile_views: 0,
+                  total_enquiries: 0,
+                  total_active_products: 0,
+                  total_pending_enquiries: 0,
+                  total_completed_enquiries: 0,
                 }
               }
+              role={role as any}
             />
 
             {/* Revenue Chart */}
-            <RevenueChart chartData={providerDashboardChartData} />
+            <RevenueChart chartData={chartData} />
+
+            {/* Latest Leads - Only for Service Providers since Suppliers have enquiries */}
+            <LatestLeads />
           </Box>
         </Grid>
 
         {/* Right Column - Sidebar */}
         <Grid size={{ xs: 12, lg: 4 }}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {/* Upcoming Bookings */}
-            {/* Upcoming Bookings */}
+            {/* Upcoming Bookings / Enquiries */}
             <UpcomingBookings
-              bookings={providerDashboardData?.upcoming_bookings || []}
+              bookings={upcomingData || []}
+              role={role as any}
             />
 
             {/* Latest Review */}
-            <LatestReviews
-              reviews={providerDashboardData?.latest_reviews || []}
-            />
+            <LatestReviews reviews={latestReviews || []} role={role as any} />
 
             {/* Upcoming Events
             <UpcomingEvents /> */}

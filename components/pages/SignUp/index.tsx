@@ -32,12 +32,12 @@ function SignUpView() {
   const [busLeadId, setBusLeadId] = useState<string | null>(null);
   const { leadDetailsQuery } = useLeadVerification(busLeadId);
   const [initialData, setInitialData] = useState<{
-    phone_number?: string;
-    country_code?: string;
+    whatsapp_number?: string;
+    whatsapp_country_code?: string;
   }>({});
 
   useEffect(() => {
-    if (role === AppUserType.SERVICE_PROVIDER) {
+    if (role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER) {
       const busLeadId = sessionStorage.getItem("bus_lead_id");
       if (!busLeadId) {
         router.replace("/freeListing");
@@ -50,8 +50,9 @@ function SignUpView() {
   useEffect(() => {
     if (leadDetailsQuery.data) {
       setInitialData({
-        phone_number: leadDetailsQuery.data.phone_number,
-        country_code: leadDetailsQuery.data.country_code,
+        whatsapp_number: leadDetailsQuery.data.whatsapp_number || "",
+        whatsapp_country_code:
+          leadDetailsQuery.data.whatsapp_country_code || "",
       });
     }
     if (leadDetailsQuery.isError) {
@@ -128,7 +129,9 @@ function SignUpView() {
         onSubmit={OnSubmit}
         loading={
           loading ||
-          (role === AppUserType.SERVICE_PROVIDER && leadDetailsQuery.isLoading)
+          ((role === AppUserType.SERVICE_PROVIDER ||
+            role === AppUserType.SUPPLIER) &&
+            leadDetailsQuery.isLoading)
         }
         role={role}
         initialData={initialData}

@@ -9,6 +9,7 @@ import {
   Dashboard,
 } from "@mui/icons-material";
 import { TranslationKey } from "@/features/i18n/TranslationContext";
+import { UserRole } from "@/utils/auth";
 
 export interface NavItem {
   label: string;
@@ -17,42 +18,47 @@ export interface NavItem {
 }
 
 export const getDesktopNavItems = (
-  role: string | null,
-  t: (key: TranslationKey) => string
+  role: UserRole | null | string,
+  t: (key: TranslationKey) => string,
 ): NavItem[] => {
-  if (role === "SERVICE_PROVIDER") {
-    return [
-      { label: t("home"), href: "/" },
-      { label: t("dashboard"), href: "/dashboard" },
-      // { label: t("store"), href: "/store" },
-      { label: t("services"), href: "/spr/servicesList" },
-      // { label: t("events"), href: "/events" },
-      { label: t("bookings"), href: "/spr/bookings" },
-    ];
+  switch (role) {
+    case UserRole.SERVICE_PROVIDER:
+      return [
+        { label: t("home"), href: "/" },
+        { label: t("dashboard"), href: "/dashboard" },
+        // { label: t("store"), href: "/store" },
+        { label: t("services"), href: "/spr/servicesList" },
+        // { label: t("events"), href: "/events" },
+        { label: t("bookings"), href: "/spr/bookings" },
+      ];
+    case UserRole.CUSTOMER:
+      return [
+        { label: t("home"), href: "/" },
+        { label: t("store"), href: "/store" },
+        { label: t("services"), href: "/cus/servicesList" },
+        { label: t("bookings"), href: "/cus/bookings" },
+      ];
+    case UserRole.SUPPLIER:
+      return [
+        { label: t("home"), href: "/" },
+        { label: t("dashboard"), href: "/dashboard" },
+        { label: t("my_store"), href: "/sup/myStore" },
+        { label: t("enquiries"), href: "/sup/orders" },
+      ];
+    default:
+      return [
+        { label: t("home"), href: "/" },
+        { label: t("store"), href: "/store" },
+        { label: t("services"), href: "/cus/servicesList" },
+        // { label: t("events"), href: "/events" },
+      ];
   }
-
-  if (role === "CUSTOMER") {
-    return [
-      { label: t("home"), href: "/" },
-      // { label: t("store"), href: "/store" },
-      { label: t("services"), href: "/cus/servicesList" },
-      // { label: t("events"), href: "/events" },
-      { label: t("bookings"), href: "/cus/bookings" },
-    ];
-  }
-
-  return [
-    { label: t("home"), href: "/" },
-    { label: t("store"), href: "/store" },
-    { label: t("services"), href: "/cus/servicesList" },
-    // { label: t("events"), href: "/events" },
-  ];
 };
 
 export const getMobileNavItems = (
   isAuthenticated: boolean,
   t: (key: TranslationKey) => string,
-  role?: string | null
+  role?: string | null,
 ): NavItem[] => {
   const items: NavItem[] = [];
 
@@ -63,13 +69,30 @@ export const getMobileNavItems = (
         label: t("services"),
         href: "/cus/servicesList",
         icon: <ArticleRounded />,
-      }
-      // { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
+      },
+      { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
       // { label: t("events"), href: "/events", icon: <Event /> }
     );
   } else {
+    if (role === UserRole.SUPPLIER) {
+      return [
+        { label: t("home"), href: "/", icon: <HomeFilled /> },
+        { label: t("dashboard"), href: "/dashboard", icon: <Dashboard /> },
+        {
+          label: t("my_store"),
+          href: "/sup/myStore",
+          icon: <LocalMallRounded />,
+        },
+        {
+          label: t("enquiries"),
+          href: "/sup/orders",
+          icon: <ShoppingBag />,
+        },
+      ];
+    }
+
     const bookingsHref =
-      role === "SERVICE_PROVIDER" ? "/spr/bookings" : "/cus/bookings";
+      role === UserRole.SERVICE_PROVIDER ? "/spr/bookings" : "/cus/bookings";
     items.push(
       { label: t("home"), href: "/", icon: <HomeFilled /> },
       {
@@ -77,13 +100,26 @@ export const getMobileNavItems = (
         href: "/cus/servicesList",
         icon: <ArticleRounded />,
       },
-      // { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
+
       // { label: t("events"), href: "/events", icon: <Event /> },
       { label: t("bookings"), href: bookingsHref, icon: <ShoppingBag /> },
       // { label: t("chat"), href: "/chat", icon: <Chat /> }
     );
-    if(role === "SERVICE_PROVIDER") {
-      items.push({ label: t("dashboard"), href: "/dashboard", icon: <Dashboard /> });
+    switch (role) {
+      case UserRole.SERVICE_PROVIDER:
+        items.push({
+          label: t("dashboard"),
+          href: "/dashboard",
+          icon: <Dashboard />,
+        });
+        break;
+      default:
+        items.push({
+          label: t("store"),
+          href: "/store",
+          icon: <LocalMallRounded />,
+        });
+        break;
     }
   }
 

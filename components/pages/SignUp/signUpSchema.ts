@@ -32,7 +32,7 @@ export const SignUpSchema = (t: TFunction, role: AppUserType) =>
       .length(10, t("phoneNumberLength"))
       .matches(/^[0-9]+$/, t("phoneNumberInvalid")),
     whatsapp_number:
-      role === AppUserType.SERVICE_PROVIDER
+      role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER
         ? yup
             .string()
             .required(t("whatsappNumberRequired"))
@@ -40,7 +40,7 @@ export const SignUpSchema = (t: TFunction, role: AppUserType) =>
             .matches(/^[0-9]+$/, t("whatsappNumberInvalid"))
         : yup.string().notRequired(),
     whatsapp_country_code:
-      role === AppUserType.SERVICE_PROVIDER
+      role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER
         ? yup.string().required(t("whatsappCountryCodeRequired"))
         : yup.string().notRequired(),
     country_code: yup.string().required(t("countryCodeRequired")),

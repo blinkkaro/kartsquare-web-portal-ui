@@ -9,24 +9,33 @@ export const useLeadVerification = (leadId?: string | null) => {
   const [isOtpOpen, setIsOtpOpen] = useState(false);
   const [verificationId, setVerificationId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [currentSourceType, setCurrentSourceType] = useState<string>("SERVICE_PROVIDER");
   const router = useRouter();
 
+  const getRoleFromSourceType = (sourceType: string) => {
+    return sourceType === "SUPPLIER" ? "supplier" : "service_provider";
+  };
+
   const checkUserMutation = useMutation({
-    mutationFn: (params: IFreeLeadParams) =>
-      freeLeadService.applyForFreeListing(params),
+    mutationFn: (params: IFreeLeadParams) => {
+      setCurrentSourceType(params.source_type);
+      return freeLeadService.applyForFreeListing(params);
+    },
     onSuccess: (response) => {
       if (response?.bus_lead_id) {
         sessionStorage.setItem("bus_lead_id", response.bus_lead_id);
       }
+
+      const role = getRoleFromSourceType(currentSourceType);
 
       if (response.status !== "VERIFIED") {
         setVerificationId(response.bus_lead_id);
         setIsOtpOpen(true);
       } else {
         if (response.isRegistered) {
-          router.push("/login?role=service_provider");
+          router.push(`/login?role=${role}`);
         } else {
-          router.push("/signUp?role=service_provider");
+          router.push(`/signUp?role=${role}`);
         }
       }
     },
@@ -45,7 +54,8 @@ export const useLeadVerification = (leadId?: string | null) => {
       if (isVerified) {
         setIsOtpOpen(false);
         toast.success("Verification successful");
-        router.push("/signUp?role=service_provider");
+        const role = getRoleFromSourceType(currentSourceType);
+        router.push(`/signUp?role=${role}`);
       }
     },
     onError: (err: any) => {

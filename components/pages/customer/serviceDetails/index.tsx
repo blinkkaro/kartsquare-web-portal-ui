@@ -29,7 +29,7 @@ import {
   useServiceDetails,
   useProviderServices,
 } from "@/hooks/useServiceDetails";
-import { useServiceReviews } from "@/hooks/useReviews";
+import { useGetReviews } from "@/hooks/useReview";
 import EmptyState from "@/components/common/EmptyState";
 import { useTranslate } from "@/hooks/useTranslate";
 import { secureStorage } from "@/helper/SecureStorage";
@@ -37,6 +37,7 @@ import { useDispatch } from "react-redux";
 import { openLoginModal } from "@/features/ui/loginModalSlice";
 import RightDrawer from "@/components/common/RightDrawer";
 import ReviewDrawerContent from "./ReviewDrawerContent";
+import { review_type } from "@/services/providerDashboard/providerDashboard.interface";
 
 const CustomerServiceDetails = () => {
   const params = useParams();
@@ -49,8 +50,6 @@ const CustomerServiceDetails = () => {
   const isDark = theme.palette.mode === "dark";
   const dispatch = useDispatch();
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
-
-  const reviewsPerPage = 5;
   const [descriptionDrawerOpen, setDescriptionDrawerOpen] = useState(false);
 
   const handleBookNow = () => {
@@ -83,7 +82,7 @@ const CustomerServiceDetails = () => {
     isLoading: reviewsLoading,
     fetchNextPage,
     hasNextPage,
-  } = useServiceReviews(serviceId, reviewsPerPage);
+  } = useGetReviews(review_type.SERVICE, serviceId, 1);
 
   // Flatten reviews from all pages
   const reviews = useMemo(() => {

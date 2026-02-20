@@ -16,4 +16,6 @@ export const APIENDPOINT = {
     }
     return `/questions?category_id=${category_id}`;
   },
+  UPDATE_TESTIMONIAL: (review_id: string) => `/review/testimonials/${review_id}`,
+  GET_ALL_TESTIMONIALS: (providerId: string) => `/review/testimonials/${providerId}`,
 };

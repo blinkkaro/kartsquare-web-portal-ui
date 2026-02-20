@@ -98,6 +98,15 @@ export interface providerProfileInterface {
   total_reviews: number | null;
   default_address?: DefaultAddress;
   business_name: string;
+
+  // SEO Fields
+  meta_title?: string;
+  meta_description?: string;
+  meta_keywords?: string;
+  og_title?: string;
+  og_description?: string;
+  og_image?: string;
+  structured_data?: any;
 }
 
 export interface ProviderProfileByUsernameResponse {

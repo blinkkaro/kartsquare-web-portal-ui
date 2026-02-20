@@ -46,16 +46,16 @@ export default function LoginView() {
     try {
       setLoading(true);
       setError(null);
-      if (!role) {
-        setError("Role is missing. Please try again.");
-        setLoading(false);
-        return;
-      }
-      const Role = role.toString().toUpperCase();
+      // if (!role) {
+      //   setError("Role is missing. Please try again.");
+      //   setLoading(false);
+      //   return;
+      // }
+      // const Role = role.toString().toUpperCase();
 
       // Dispatch loginUser thunk
       const result = await dispatch(
-        loginUser({ ...data, role: Role }),
+        loginUser({ ...data }),
       ).unwrap();
 
       if (result) {
@@ -65,7 +65,8 @@ export default function LoginView() {
         // If registration is complete, go to home
         if (
           registerStep === UserRegisterSteps.COMPLETED ||
-          registerStep === UserRegisterSteps.PREFERENCES_ADDED
+          registerStep === UserRegisterSteps.PREFERENCES_ADDED ||
+          registerStep === UserRegisterSteps.SUPPLIER_KYC_SUBMITTED
         ) {
           router.replace("/");
           return;

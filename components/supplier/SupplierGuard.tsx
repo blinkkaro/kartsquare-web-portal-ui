@@ -4,6 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAppSelector } from "@/store/hooks"; // Assuming auth state is here or use secureStorage
 import { secureStorage } from "@/helper/SecureStorage";
 import { AppUserType } from "@/services/auth/auth.interface";
+import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { CircularProgress, Box } from "@mui/material";
 
 interface SupplierGuardProps {
@@ -49,16 +50,14 @@ const SupplierGuard: React.FC<SupplierGuardProps> = ({ children, requireComplete
 
             // If we require complete (Dashboard access)
             if (requireComplete) {
-                // Assuming specific step number for completion. 
-                // Implementation Detail: Backend UserRegisterSteps enum values? 
-                // Let's assume checking if store is created is enough, or step >= X.
-                // If register_step < SUPPLIER_STORE_CREATED (which implies everything done)
-                // We should fetch latest profile to be sure? Or trust local storage?
-                // Ideally trust local but it might be stale.
-                // For now, let's assume if they are here, we authorize, BUT if they hit dashboard and data is missing, backend throws error?
-                // Better: Redirect to onboarding if we can detect incomplete.
-                // Let's assume if register_step is missing or low, go to onboarding.
-                if (user && user.register_step < 4) { // Hypothetical step 4 = Store Created
+                // For Suppliers, completion is step 11 (SUPPLIER_STORE_CREATED) or step 7 (COMPLETED)
+                const isComplete = user && (
+                    user.register_step === UserRegisterSteps.SUPPLIER_STORE_CREATED ||
+                    user.register_step === UserRegisterSteps.COMPLETED ||
+                    user.register_step === 7 // Fallback if enum not imported correctly in this file
+                );
+
+                if (!isComplete) {
                     router.replace("/supplier/onboarding");
                     return;
                 }

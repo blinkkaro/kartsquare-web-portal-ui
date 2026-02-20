@@ -17,10 +17,13 @@ import {
   EventAvailable,
   PendingActions,
   AssignmentTurnedIn,
+  Person,
+  Call,
 } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { ProviderDashboardResponse } from "@/services/providerDashboard/providerDashboard.interface";
+import { SupplierDashboardResponse } from "@/services/supplierDashboard/supplierDashoard.interface";
 
 interface MetricCardProps {
   title: string;
@@ -47,7 +50,9 @@ const MetricCard: React.FC<MetricCardProps> = ({
       sx={{
         borderRadius: "12px",
         bgcolor: isHighlighted
-          ? COLORS.BLACK
+          ? isDark
+            ? COLORS.BLACK
+            : COLORS.BACKGROUND.SECONDARY_DARK
           : isDark
             ? COLORS.BACKGROUND.PAPER_DARK
             : COLORS.WHITE,
@@ -59,7 +64,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
               : COLORS.BORDER.DEFAULT_LIGHT
         }`,
         boxShadow: isHighlighted
-          ? "0px 4px 20px rgba(94, 24, 233, 0.3)"
+          ? "0px 4px 20px rgba(94, 24, 233, 0.16)"
           : isDark
             ? "0px 2px 8px rgba(0, 0, 0, 0.2)"
             : "0px 2px 8px rgba(0, 0, 0, 0.05)",
@@ -67,7 +72,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
         "&:hover": {
           transform: "translateY(-2px)",
           boxShadow: isHighlighted
-            ? "0px 6px 24px rgba(94, 24, 233, 0.4)"
+            ? "0px 6px 24px rgba(94, 24, 233, 0.03)"
             : isDark
               ? "0px 4px 12px rgba(0, 0, 0, 0.3)"
               : "0px 4px 12px rgba(0, 0, 0, 0.1)",
@@ -145,9 +150,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
                 display: "flex",
                 alignItems: "center",
                 gap: 0.5,
-                color: trend.isPositive
-                  ? COLORS.SUCCESS_GREEN
-                  : "#ef4444",
+                color: trend.isPositive ? COLORS.SUCCESS_GREEN : "#ef4444",
               }}
             >
               <TrendingUp
@@ -173,56 +176,116 @@ const MetricCard: React.FC<MetricCardProps> = ({
   );
 };
 
-const MetricCards: React.FC<{ stats: ProviderDashboardResponse["stats"] }> = ({ stats }) => {
+interface MetricCardsProps {
+  stats:
+    | ProviderDashboardResponse["stats"]
+    | SupplierDashboardResponse["stats"];
+  role?: "SERVICE_PROVIDER" | "SUPPLIER";
+}
+
+const MetricCards: React.FC<MetricCardsProps> = ({
+  stats,
+  role = "SERVICE_PROVIDER",
+}) => {
   const theme = useTheme();
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
 
-  // Mock data - will be replaced with API data
-  const metrics = [
+  const providerStats = stats as ProviderDashboardResponse["stats"];
+  const supplierStats = stats as SupplierDashboardResponse["stats"];
+
+  const providerMetrics = [
     {
       title: t("totalBookings"),
-      value: stats.total_bookings,
+      value: providerStats?.total_bookings || 0,
       icon: <BookOnline sx={{ fontSize: 24 }} />,
       isHighlighted: true,
     },
     {
       title: t("followers"),
-      value: stats.followers,
+      value: providerStats?.followers || 0,
       icon: <Group sx={{ fontSize: 24 }} />,
       isHighlighted: true,
     },
     {
       title: t("totalServices"),
-      value: stats.total_services,
+      value: providerStats?.total_services || 0,
       icon: <Inventory sx={{ fontSize: 24 }} />,
     },
     {
       title: t("totalActiveServices"),
-      value: stats.total_active_services,
+      value: providerStats?.total_active_services || 0,
       icon: <EventAvailable sx={{ fontSize: 24 }} />,
     },
     {
       title: t("totalPendingBookings"),
-      value: stats.total_pending_bookings,
+      value: providerStats?.total_pending_bookings || 0,
       icon: <PendingActions sx={{ fontSize: 24 }} />,
     },
     {
       title: t("totalCompletedBookings"),
-      value: stats.total_completed_bookings,
+      value: providerStats?.total_completed_bookings || 0,
       icon: <AssignmentTurnedIn sx={{ fontSize: 24 }} />,
+    },
+    {
+      title: t("totalPhoneNumberViews"),
+      value: providerStats?.total_phone_number_views || 0,
+      icon: <Call sx={{ fontSize: 24 }} />,
+    },
+    {
+      title: t("totalProfileViews"),
+      value: providerStats?.total_profile_views || 0,
+      icon: <Person sx={{ fontSize: 24 }} />,
     },
   ];
 
+  const supplierMetrics = [
+    {
+      title: t("totalEnquiries" as any),
+      value: supplierStats?.total_enquiries || 0,
+      icon: <BookOnline sx={{ fontSize: 24 }} />,
+      isHighlighted: true,
+    },
+    {
+      title: t("followers"),
+      value: supplierStats?.followers || 0,
+      icon: <Group sx={{ fontSize: 24 }} />,
+      isHighlighted: true,
+    },
+    {
+      title: t("totalActiveProducts" as any),
+      value: supplierStats?.total_active_products || 0,
+      icon: <Inventory sx={{ fontSize: 24 }} />,
+    },
+    {
+      title: t("pendingEnquiries" as any),
+      value: supplierStats?.total_pending_enquiries || 0,
+      icon: <PendingActions sx={{ fontSize: 24 }} />,
+    },
+    {
+      title: t("completedEnquiries" as any),
+      value: supplierStats?.total_completed_enquiries || 0,
+      icon: <AssignmentTurnedIn sx={{ fontSize: 24 }} />,
+    },
+    {
+      title: t("totalPhoneNumberViews"),
+      value: supplierStats?.total_phone_number_views || 0,
+      icon: <Call sx={{ fontSize: 24 }} />,
+    },
+    {
+      title: t("totalProfileViews"),
+      value: supplierStats?.total_profile_views || 0,
+      icon: <Person sx={{ fontSize: 24 }} />,
+    },
+  ];
+
+  const metrics = role === "SUPPLIER" ? supplierMetrics : providerMetrics;
+
   return (
     <Box>
-      
       <Grid container spacing={2}>
         {metrics.map((metric, index) => (
-          <Grid
-            size={{ xs: 6, sm: 3, md: 3, lg: 3 }}
-            key={index}
-          >
+          <Grid size={{ xs: 6, sm: 3, md: 3, lg: 3 }} key={index}>
             <MetricCard
               title={metric.title}
               value={metric.value}

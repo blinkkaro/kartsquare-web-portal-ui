@@ -1,12 +1,27 @@
 import { GetPostsParams } from "@/services/post/postInterfaces";
 import { postServices } from "@/services/post/postServices";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
 import { secureStorage } from "@/helper/SecureStorage";
 
 export const useGetPosts = (params: GetPostsParams) => {
   return useQuery({
-    queryKey: ["posts", params.visibility, params.limit],
+    queryKey: ["posts", params.visibility, params.limit, params.cursor],
     queryFn: () => postServices.getPosts(params),
+  });
+};
+
+export const useGetInfinitePosts = (params: Omit<GetPostsParams, "cursor">) => {
+  return useInfiniteQuery({
+    queryKey: ["posts", params.visibility, params.limit],
+    queryFn: ({ pageParam }) =>
+      postServices.getPosts({ ...params, cursor: pageParam }),
+    getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
+    initialPageParam: undefined as string | undefined,
   });
 };
 
@@ -61,7 +76,7 @@ export const useAddPostComment = (postId: string) => {
           posts: old.posts.map((post: any) =>
             post.id === postId
               ? { ...post, comments_count: (post.comments_count || 0) + 1 }
-              : post
+              : post,
           ),
         };
       });
@@ -75,7 +90,7 @@ export const useAddPostComment = (postId: string) => {
         if (!old?.comments) return old;
 
         const updatedComments = old.comments.map((c: any) =>
-          c.id === tempId ? { ...c, id: realId } : c
+          c.id === tempId ? { ...c, id: realId } : c,
         );
         return {
           ...old,
@@ -88,7 +103,6 @@ export const useAddPostComment = (postId: string) => {
         context.previousComments.forEach(([key, data]) => {
           queryClient.setQueryData(key, data);
         });
-        
       }
       queryClient.setQueriesData({ queryKey: ["posts"] }, (old: any) => {
         if (!old?.posts) return old;
@@ -97,7 +111,7 @@ export const useAddPostComment = (postId: string) => {
           posts: old.posts.map((post: any) =>
             post.id === postId
               ? { ...post, comments_count: (post.comments_count || 0) - 1 }
-              : post
+              : post,
           ),
         };
       });
