@@ -61,6 +61,15 @@ const CustomerServiceDetails = () => {
     }
   };
 
+  const handleWriteReview = () => {
+    const token = secureStorage.getItem("token");
+    if (!token) {
+      dispatch(openLoginModal());
+    } else {
+      setReviewModalOpen(true);
+    }
+  };
+
   // Use TanStack Query hooks - prevents duplicate API calls
   const {
     data: service,
@@ -392,12 +401,12 @@ const CustomerServiceDetails = () => {
                   reviewsLoading={reviewsLoading}
                   onLoadMore={handleLoadMore}
                   showLoadMore={hasNextPage || false}
-                  onAddReview={() => setReviewModalOpen(true)}
+                  onAddReview={handleWriteReview}
                 />
               </Box>
             </Box>
 
-            {/* Right Column - Action Buttons - Mobile: Horizontal, Desktop: Vertical (Synced with Provider) */}
+            {/* Right Column - Action Buttons - Mobile: Horizontal, Desktop: Vertical (Synced with Provider) 
             <Box
               sx={{
                 display: "flex",
@@ -413,8 +422,8 @@ const CustomerServiceDetails = () => {
             >
               <IconButton
                 onClick={() => {
-                  /* TODO: Implement save/bookmark */
-                }}
+                  /* TODO: Implement save/bookmark 
+                
                 sx={{
                   bgcolor: isDark
                     ? "rgba(255, 255, 255, 0.08)"
@@ -436,8 +445,7 @@ const CustomerServiceDetails = () => {
               </IconButton>
               <IconButton
                 onClick={() => {
-                  /* TODO: Implement share */
-                }}
+                  /* TODO: Implement share 
                 sx={{
                   bgcolor: isDark
                     ? "rgba(255, 255, 255, 0.08)"
@@ -457,7 +465,7 @@ const CustomerServiceDetails = () => {
               >
                 <Share fontSize="small" />
               </IconButton>
-            </Box>
+            </Box>*/}
           </Box>
         </Container>
       </Box>

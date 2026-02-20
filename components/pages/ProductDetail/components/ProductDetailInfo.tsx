@@ -71,7 +71,7 @@ const ProductDetailInfo: React.FC<ProductDetailInfoProps> = ({
             variant="h4"
             sx={{
               fontWeight: 800,
-              color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+              color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
               mt: 0.5,
             }}
           >

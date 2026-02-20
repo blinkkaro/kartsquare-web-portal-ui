@@ -89,6 +89,7 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({
             placeholder={t("search")}
             startIcon={<SearchIcon sx={{ color: "text.secondary" }} />}
             sx={{
+              width: isMobile ? "95%" : 300,
               "& .MuiOutlinedInput-root": {
                 borderRadius: "50px",
                 bgcolor: isDark
@@ -99,38 +100,43 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({
             }}
           />
         </Box>
-        <ToggleButtonGroup
-          value={viewMode}
-          exclusive
-          onChange={(_, nextView) => nextView && onViewChange(nextView)}
-          size="small"
-          sx={{
-            bgcolor: isDark
-              ? COLORS.BACKGROUND.SECONDARY_DARK
-              : COLORS.BACKGROUND.SECONDARY_LIGHT,
-            borderRadius: "12px",
-            p: 0.5,
-            "& .MuiToggleButton-root": {
-              border: "none",
-              borderRadius: "8px !important",
-              px: 1,
-              "&.Mui-selected": {
-                bgcolor: COLORS.PURPLE_ALPHA_10,
-                color: COLORS.PRIMARY_PURPLE,
-                "&:hover": {
+        {!isMobile && (
+          <ToggleButtonGroup
+            value={viewMode}
+            exclusive
+            onChange={(_, nextView) => nextView && onViewChange(nextView)}
+            size="small"
+            sx={{
+              bgcolor: isDark
+                ? COLORS.BACKGROUND.SECONDARY_DARK
+                : COLORS.BACKGROUND.SECONDARY_LIGHT,
+              borderRadius: "12px",
+              p: 0.5,
+              "& .MuiToggleButton-root": {
+                border: "none",
+                borderRadius: "8px !important",
+                px: 1,
+                "&.Mui-selected": {
                   bgcolor: COLORS.PURPLE_ALPHA_10,
+                  color: COLORS.PRIMARY_PURPLE,
+                  "&:hover": {
+                    bgcolor: COLORS.PURPLE_ALPHA_10,
+                  },
                 },
               },
-            },
-          }}
-        >
-          <ToggleButton value="list">
-            <List fontSize="small" />
-          </ToggleButton>
-          <ToggleButton value="grid">
-            <GridView fontSize="small" />
-          </ToggleButton>
-        </ToggleButtonGroup>
+            }}
+          >
+            <>
+              <ToggleButton value="list">
+                <List fontSize="small" />
+              </ToggleButton>
+
+              <ToggleButton value="grid">
+                <GridView fontSize="small" />
+              </ToggleButton>
+            </>
+          </ToggleButtonGroup>
+        )}
       </Stack>
     </Box>
     // <Box

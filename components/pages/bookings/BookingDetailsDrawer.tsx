@@ -701,7 +701,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
               >
                 Help & Support
               </Button>
-              <Button
+              {/* <Button
                 fullWidth
                 variant="contained"
                 sx={{
@@ -716,7 +716,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                 }}
               >
                 Reschedule
-              </Button>
+              </Button> */}
             </Box>
 
             <Box sx={{ mt: 4 }} />

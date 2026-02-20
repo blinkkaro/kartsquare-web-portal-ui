@@ -121,7 +121,7 @@ const Input: React.FC<InputProps> = ({
               {
                 colorScheme: theme.palette.mode === "dark" ? "dark" : "light",
               },
-            bgcolor: COLORS.WHITE,
+            bgcolor: theme.palette.mode === "dark" ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.WHITE,
             borderRadius: "12px",
             ...sx,
           }}

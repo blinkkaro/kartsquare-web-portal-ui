@@ -104,7 +104,7 @@ const AddPostDrawer: React.FC<AddPostDrawerProps> = ({ onClose }) => {
         <ImageUpload
           images={selectedFiles}
           onChange={(files) => setSelectedFiles(files as File[])}
-          maxImages={10}
+          maxImages={1}
           error={!!error && selectedFiles.length === 0}
           helperText={selectedFiles.length === 0 ? error : ""}
           title={t("selectImages")}
