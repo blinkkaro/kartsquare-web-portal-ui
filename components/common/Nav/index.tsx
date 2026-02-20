@@ -57,7 +57,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
     padding: "0.5rem 2rem",
   },
   [theme.breakpoints.up("xl")]: {
-    padding: "0.75rem 2rem",
+    padding: "1rem 12rem",
   },
 }));
 
