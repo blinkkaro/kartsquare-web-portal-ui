@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Controller, Control } from "react-hook-form";
+import { COLORS } from "@/constants/colors";
 
 interface InputProps extends Omit<TextFieldProps, "name"> {
   name: string;
@@ -120,6 +121,8 @@ const Input: React.FC<InputProps> = ({
               {
                 colorScheme: theme.palette.mode === "dark" ? "dark" : "light",
               },
+            bgcolor: COLORS.WHITE,
+            borderRadius: "12px",
             ...sx,
           }}
         />

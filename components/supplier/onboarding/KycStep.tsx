@@ -324,11 +324,11 @@ const KycStep: React.FC<KycStepProps> = ({ onBack, onNext }) => {
                       sx={{ height: 48 }}
                       InputProps={{
                         sx: { borderRadius: "12px", height: 48 },
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            {selectedCountry?.flag}
-                          </InputAdornment>
-                        ),
+                        // startAdornment: (
+                        //   <InputAdornment position="start">
+                        //     {selectedCountry?.flag}
+                        //   </InputAdornment>
+                        // ),
                       }}
                     >
                       {countries.map((option) => (

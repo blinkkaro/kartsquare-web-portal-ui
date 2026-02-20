@@ -60,7 +60,6 @@ const FeaturedProductCategories = () => {
                             transition: "transform 0.2s",
                             "&:hover": {
                                 transform: "translateY(-4px)",
-                                borderColor: COLORS.PRIMARY,
                             },
                         }}
                     >

@@ -35,6 +35,7 @@ const SupplierOrderTable: React.FC<SupplierOrderTableProps> = ({
     <TableContainer
       component={Paper}
       sx={{
+        maxHeight: "calc(100vh - 250px)",
         boxShadow: "none",
         backgroundColor: "transparent",
         backgroundImage: "none",
@@ -100,18 +101,13 @@ const SupplierOrderTable: React.FC<SupplierOrderTableProps> = ({
                 "&:last-child td, &:last-child th": { border: 0 },
                 backgroundColor: isDark
                   ? COLORS.BACKGROUND.PRIMARY_DARK
-                  : COLORS.BACKGROUND.PAPER_LIGHT,
-                transition: "background-color 0.2s ease",
-                "&:hover": {
-                  backgroundColor: isDark
-                    ? "rgba(255, 255, 255, 0.04)"
-                    : "rgba(0, 0, 0, 0.02)",
-                },
-                borderBottom: `1px solid ${
-                  isDark
-                    ? COLORS.BORDER.DEFAULT_DARK
-                    : COLORS.BORDER.DEFAULT_LIGHT
-                }`,
+                  : COLORS.BACKGROUND.PRIMARY_LIGHT,
+                mb: 1,
+                borderBottom:
+                  "4px solid " +
+                  (isDark
+                    ? COLORS.BACKGROUND.SECONDARY_DARK
+                    : COLORS.BACKGROUND.SECONDARY_LIGHT),
               }}
             >
               <TableCell>

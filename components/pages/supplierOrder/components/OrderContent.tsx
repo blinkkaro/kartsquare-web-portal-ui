@@ -60,7 +60,6 @@ const OrderContent: React.FC<OrderContentProps> = ({
         >
           <SupplierQuotationCard
             enquiry={quotation}
-            onClick={() => onRowClick(quotation)}
           />
         </Grid>
       ))}

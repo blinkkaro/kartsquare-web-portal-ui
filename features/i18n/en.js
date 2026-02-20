@@ -368,6 +368,7 @@ export const english = {
   maxImagesReached: "Maximum 10 images allowed",
   invalidImageFormat:
     "Invalid image format. Only JPG, PNG, and GIF are allowed",
+  imageSizeTooLarge: "Image size too large. Maximum size allowed is 5MB",
   uploadingPost: "Uploading post...",
   removeImage: "Remove image",
   errorLoadingMap: "Error loading map",
