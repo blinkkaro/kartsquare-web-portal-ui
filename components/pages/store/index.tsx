@@ -97,6 +97,8 @@ export interface Product {
   gst: string;
   category: string;
   categoryId: string;
+  whatsapp_number?: string;
+  whatsapp_country_code?: string;
 }
 
 const StoreView: React.FC = () => {
@@ -615,9 +617,10 @@ const StoreView: React.FC = () => {
               variant="outlined"
               endIcon={<ArrowForward />}
               sx={{ borderRadius: 2, fontWeight: 700 }}
+              onClick={() => router.push("/store/products")}
             >
               View All Products
-            </CommonButton>
+            </CommonButton> 
           </Box>
           <Grid container spacing={3}>
             {productsLoading
@@ -757,13 +760,13 @@ const StoreView: React.FC = () => {
                 Browse our complete inventory by department
               </Typography>
             </Box>
-            <CommonButton
+            {/* <CommonButton
               variant="text"
               endIcon={<ArrowForward />}
               sx={{ fontWeight: 700 }}
             >
               Browse Everything
-            </CommonButton>
+            </CommonButton> */}
           </Box>
 
           <Grid container spacing={3}>

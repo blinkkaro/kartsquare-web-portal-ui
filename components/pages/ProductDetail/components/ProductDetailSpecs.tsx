@@ -75,7 +75,7 @@ const ProductDetailSpecs: React.FC<ProductDetailSpecsProps> = ({
               variant="body2"
               sx={{
                 fontWeight: 600,
-                color: isAvailable ? COLORS.PRIMARY_PURPLE : "#FF4444",
+                color: isAvailable ? isDark? COLORS.ACCENT_BLUE_DARK: COLORS.PRIMARY_PURPLE :  "#FF4444",
               }}
             >
               {isAvailable ? t("in_stock") : t("out_of_stock")}

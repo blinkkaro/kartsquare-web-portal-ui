@@ -50,26 +50,26 @@ export const myAccountNav = (
         href: "myAccount/myBusinessInfo",
         icon: <BusinessIcon />,
       },
-      {
-        label: t("saved"),
-        href: "myAccount/saved",
-        icon: <BookmarkBorderIcon />,
-      },
-      {
-        label: t("blogs"),
-        href: "myAccount/blog",
-        icon: <ArticleOutlinedIcon />,
-      },
+      // {
+      //   label: t("saved"),
+      //   href: "myAccount/saved",
+      //   icon: <BookmarkBorderIcon />,
+      // },
+      // {
+      //   label: t("blogs"),
+      //   href: "myAccount/blog",
+      //   icon: <ArticleOutlinedIcon />,
+      // },
       {
         label: t("preferences"),
         href: "myAccount/myPreferences",
         icon: <TuneIcon />,
       },
-      {
-        label: t("myDocuments"),
-        href: "myAccount/myDocuments",
-        icon: <FolderSharedIcon />,
-      },
+      // {
+      //   label: t("myDocuments"),
+      //   href: "myAccount/myDocuments",
+      //   icon: <FolderSharedIcon />,
+      // },
       {
         label: t("mySchedule"),
         href: "myAccount/mySchedule",
@@ -100,16 +100,16 @@ export const myAccountNav = (
         href: "myAccount/personal-info",
         icon: <PersonIcon />,
       },
-      {
-        label: t("saved"),
-        href: "myAccount/saved",
-        icon: <BookmarkBorderIcon />,
-      },
-      {
-        label: t("blogs"),
-        href: "myAccount/blog",
-        icon: <ArticleOutlinedIcon />,
-      },
+      // {
+      //   label: t("saved"),
+      //   href: "myAccount/saved",
+      //   icon: <BookmarkBorderIcon />,
+      // },
+      // {
+      //   label: t("blogs"),
+      //   href: "myAccount/blog",
+      //   icon: <ArticleOutlinedIcon />,
+      // },
       {
         label: t("preferences"),
         href: "myAccount/myPreferences",

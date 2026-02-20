@@ -1,9 +1,7 @@
-import { pagination } from "../advertise/advertise.intreface";
 import { GET, POST, PUT, DELETE, PATCH } from "../api";
-import { SupplierQuotation } from "../supplierDashboard/supplierDashoard.interface";
 import { SUPPLIER_ENDPOINTS } from "./apiEndPoint";
 import { secureStorage } from "@/helper/SecureStorage";
-import { getQuotationsResponse } from "./supplier.interface";
+import { CreateSupplierQuotation, getQuotationsResponse } from "./supplier.interface";
 
 export interface SupplierProfile {
   business_name: string;
@@ -180,6 +178,10 @@ class SupplierService {
 
   async markQuotationViewed(id: string) {
     return PUT(SUPPLIER_ENDPOINTS.QUOTATION_VIEWED(id), {}, {}, true);
+  }
+
+  async createQuotation(data: CreateSupplierQuotation) {
+    return POST(SUPPLIER_ENDPOINTS.SUPPLIER_QUOTATIONS, data, {}, false);
   }
 }
 

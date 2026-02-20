@@ -32,6 +32,7 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
   service,
   onClose,
 }) => {
+  
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { t } = useTranslate();

@@ -47,8 +47,8 @@ const ProductDetailHeader: React.FC<ProductDetailHeaderProps> = ({
             fontWeight: 700,
             fontSize: { xs: "1.5rem", sm: "2rem" },
             color: isDark
-              ? COLORS.TEXT.PRIMARY_DARK
-              : COLORS.TEXT.PRIMARY_LIGHT,
+              ? COLORS.ACCENT_BLUE_DARK
+              : COLORS.PRIMARY_PURPLE,
           }}
         >
           {productName}

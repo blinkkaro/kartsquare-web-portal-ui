@@ -27,21 +27,17 @@ interface SectionProps {
   title: string;
   items: TopService[] | TopProvider[];
   onSeeAll: () => void;
+  onItemClick: (item: TopService | TopProvider) => void;
 }
 
-const SuggestionSection = ({ title, items, onSeeAll }: SectionProps) => {
+const SuggestionSection = ({
+  title,
+  items,
+  onSeeAll,
+  onItemClick,
+}: SectionProps) => {
   const theme = useTheme();
   const { t } = useTranslate();
-  const dispatch = useDispatch();
-  const router = useRouter();
-
-  const handleOnCardClick = (item: TopService | TopProvider) => {
-    if ("profile_pic" in item) {
-      dispatch(openDrawer({ userId: item.id }));
-    } else {
-      router.push(`/services/${item.id}`);
-    }
-  };
 
   return (
     <Card
@@ -117,7 +113,7 @@ const SuggestionSection = ({ title, items, onSeeAll }: SectionProps) => {
                 cursor: "pointer",
               }}
               onClick={(e) => {
-                handleOnCardClick(item);
+                onItemClick(item);
               }}
             >
               <Box
@@ -233,6 +229,16 @@ const TopSuggestions = () => {
   const { provider, servicer, isLoading } = useTopSuggestions("10");
   const { t } = useTranslate();
   const theme = useTheme();
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleOnCardClick = (item: TopService | TopProvider) => {
+    if ("profile_pic" in item) {
+      dispatch(openDrawer({ userId: item.id }));
+    } else {
+      router.push(`/services/${item.id}`);
+    }
+  };
 
   // Drawer state
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -296,6 +302,7 @@ const TopSuggestions = () => {
             title={t("topProviders")}
             items={provider || []}
             onSeeAll={() => handleSeeAll("provider")}
+            onItemClick={handleOnCardClick}
           />
         )}
         {servicer && (
@@ -303,6 +310,7 @@ const TopSuggestions = () => {
             title={t("topServices")}
             items={servicer || []}
             onSeeAll={() => handleSeeAll("service")}
+            onItemClick={handleOnCardClick}
           />
         )}
       </Box>
@@ -326,6 +334,7 @@ const TopSuggestions = () => {
                   rating={item.rating}
                   bookings={parseInt(item.total_bookings)}
                   desc={`${item.city}, ${item.country}`}
+                  onClick={() => handleOnCardClick(item)}
                 />
               ))}
           {drawerType === "service" &&
@@ -340,6 +349,7 @@ const TopSuggestions = () => {
                   name={item.name}
                   rating={item.rating}
                   desc={item.description}
+                  onClick={() => handleOnCardClick(item)}
                 />
               ))}
         </Box>

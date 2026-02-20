@@ -22,11 +22,64 @@ interface CategoryFilterProps {
 
 const getCategoryIcon = (categoryName: string) => {
   const name = categoryName.toLowerCase();
-  if (name.includes("health")) return "🏥";
-  if (name.includes("fitness")) return "💪";
-  if (name.includes("beauty")) return "💄";
+  if (name.includes("business") || name.includes("finance")) return "💼";
+  if (
+    name.includes("car") ||
+    name.includes("automotive") ||
+    name.includes("vehicle")
+  )
+    return "🚗";
+  if (
+    name.includes("event") ||
+    name.includes("entertainment") ||
+    name.includes("party")
+  )
+    return "🎭";
+  if (
+    name.includes("health") ||
+    name.includes("medical") ||
+    name.includes("wellness")
+  )
+    return "🩺";
+  if (
+    name.includes("it") ||
+    name.includes("software") ||
+    name.includes("tech") ||
+    name.includes("computer")
+  )
+    return "💻";
+  if (
+    name.includes("legal") ||
+    name.includes("compliance") ||
+    name.includes("law")
+  )
+    return "⚖️";
+  if (name.includes("lifestyle")) return "🏡";
+  if (name.includes("fitness") || name.includes("gym")) return "💪";
+  if (name.includes("beauty") || name.includes("salon") || name.includes("spa"))
+    return "💄";
   if (name.includes("sport")) return "⚽";
-  if (name.includes("fashion")) return "👗";
+  if (name.includes("fashion") || name.includes("clothing")) return "👗";
+  if (name.includes("cleaning")) return "🧹";
+  if (
+    name.includes("home") ||
+    name.includes("repair") ||
+    name.includes("maintenance")
+  )
+    return "🛠️";
+  if (
+    name.includes("education") ||
+    name.includes("learning") ||
+    name.includes("tutor")
+  )
+    return "🎓";
+  if (
+    name.includes("food") ||
+    name.includes("dining") ||
+    name.includes("restaurant")
+  )
+    return "🍴";
+  if (name.includes("travel") || name.includes("tour")) return "✈️";
   return "📋";
 };
 

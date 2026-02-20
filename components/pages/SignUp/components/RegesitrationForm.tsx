@@ -257,11 +257,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                         paddingRight: "24px !important",
                       },
                     },
-                    startAdornment: (
-                      <InputAdornment position="start" sx={{ mr: 0.5 }}>
-                        {selectedWhatsappCountry?.flag}
-                      </InputAdornment>
-                    ),
+                    // startAdornment: (
+                    //   <InputAdornment position="start" sx={{ mr: 0.5 }}>
+                    //     {selectedWhatsappCountry?.flag}
+                    //   </InputAdornment>
+                    // ),
                   }}
                 >
                   {countries.map((option) => (
@@ -352,11 +352,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                       paddingRight: "24px !important",
                     },
                   },
-                  startAdornment: (
-                    <InputAdornment position="start" sx={{ mr: 0.5 }}>
-                      {selectedCountry?.flag}
-                    </InputAdornment>
-                  ),
+                  // startAdornment: (
+                  //   <InputAdornment position="start" sx={{ mr: 0.5 }}>
+                  //     {selectedCountry?.flag}
+                  //   </InputAdornment>
+                  // ),
                 }}
               >
                 {countries.map((option) => (

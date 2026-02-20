@@ -119,7 +119,11 @@ const ReviewManagementContainer = () => {
                 : r,
             ),
           );
-          toast.error(t("failed_to_update_testimonial"));
+          const errorMessage =
+            error?.response?.data?.message ||
+            error?.message ||
+            t("failed_to_update_testimonial");
+          toast.error(errorMessage);
         },
       },
     );

@@ -11,6 +11,7 @@ interface TopRankedItemProps {
   rating: number;
   bookings?: number;
   desc?: string;
+  onClick?: () => void;
 }
 
 const TopRankedItem: React.FC<TopRankedItemProps> = ({
@@ -20,11 +21,13 @@ const TopRankedItem: React.FC<TopRankedItemProps> = ({
   rating,
   bookings,
   desc,
+  onClick,
 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   return (
     <Card
+      onClick={onClick}
       sx={{
         display: "flex",
         alignItems: "center",
@@ -32,9 +35,15 @@ const TopRankedItem: React.FC<TopRankedItemProps> = ({
         mb: 2,
         borderRadius: 3,
         boxShadow: 1,
+        cursor: onClick ? "pointer" : "default",
         backgroundColor: isDark
           ? COLORS.BACKGROUND.PAPER_DARK
           : COLORS.BACKGROUND.PRIMARY_LIGHT,
+        "&:hover": {
+          backgroundColor: isDark
+            ? "rgba(255, 255, 255, 0.05)"
+            : "rgba(0, 0, 0, 0.02)",
+        },
       }}
     >
       {/* Rank */}
