@@ -181,6 +181,10 @@ class SupplierService {
   async markQuotationViewed(id: string) {
     return PUT(SUPPLIER_ENDPOINTS.QUOTATION_VIEWED(id), {}, {}, true);
   }
+
+  async createQuotation(data: SupplierQuotation) {
+    return POST(SUPPLIER_ENDPOINTS.SUPPLIER_QUOTATIONS, data, {}, false);
+  }
 }
 
 export const supplierService = new SupplierService();

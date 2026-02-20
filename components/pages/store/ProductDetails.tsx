@@ -32,18 +32,50 @@ interface ProductDetailsProps {
   similarProducts?: Product[];
 }
 
-const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack, similarProducts = [] }) => {
+const ProductDetails: React.FC<ProductDetailsProps> = ({
+  product,
+  onBack,
+  similarProducts = [],
+}) => {
   const { t } = useTranslationContext();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [descriptionDrawerOpen, setDescriptionDrawerOpen] = useState(false);
+  const [activeProduct, setActiveProduct] = useState<Product | null>(product);
+  const [animatingContact, setAnimatingContact] = useState<string | null>(null);
   const router = useRouter();
 
   if (!product) return null;
 
   const handleProductClick = (productId: string) => {
     router.push(`/store/product/${productId}`);
+  };
+
+  const handleInquiry = (product: Product, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setAnimatingContact(product.id);
+    setTimeout(() => {
+      setActiveProduct(product);
+      setInquiryOpen(true);
+      setAnimatingContact(null);
+    }, 600);
+  };
+
+  const handleWhatsApp = (product: Product, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setAnimatingContact(`whatsapp-${product.id}`);
+    setTimeout(() => {
+      const cleanPhone =
+        `${product.whatsapp_country_code}${product.whatsapp_number}`.replace(
+          /\D/g,
+          "",
+        );
+      const message = `Hi, I found your listing for ${product.name} on KartSquare. I am interested to know more.`;
+      const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, "_blank");
+      setAnimatingContact(null);
+    }, 600);
   };
 
   return (
@@ -131,22 +163,101 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack, simila
               />
 
               {/* Supplier Highlights Grid - IndiaMart Style */}
-              <Box sx={{ mt: 3, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                <Box sx={{ flex: '1 1 45%', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8f9fa', p: 1.5, borderRadius: 2, border: '1px solid rgba(0,0,0,0.03)' }}>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>{t("yearEstablishedLabel")}</Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 700 }}>{product.supplier.yearEstablished}</Typography>
+              <Box sx={{ mt: 3, display: "flex", flexWrap: "wrap", gap: 2 }}>
+                <Box
+                  sx={{
+                    flex: "1 1 45%",
+                    bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#f8f9fa",
+                    p: 1.5,
+                    borderRadius: 2,
+                    border: "1px solid rgba(0,0,0,0.03)",
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "text.secondary",
+                      fontWeight: 600,
+                      display: "block",
+                    }}
+                  >
+                    {t("yearEstablishedLabel")}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                    {product.supplier.yearEstablished}
+                  </Typography>
                 </Box>
-                <Box sx={{ flex: '1 1 45%', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8f9fa', p: 1.5, borderRadius: 2, border: '1px solid rgba(0,0,0,0.03)' }}>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>{t("business_type").toUpperCase()}</Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 700 }}>{product.supplier.businessType}</Typography>
+                <Box
+                  sx={{
+                    flex: "1 1 45%",
+                    bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#f8f9fa",
+                    p: 1.5,
+                    borderRadius: 2,
+                    border: "1px solid rgba(0,0,0,0.03)",
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "text.secondary",
+                      fontWeight: 600,
+                      display: "block",
+                    }}
+                  >
+                    {t("business_type").toUpperCase()}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                    {product.supplier.businessType}
+                  </Typography>
                 </Box>
-                <Box sx={{ flex: '1 1 45%', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8f9fa', p: 1.5, borderRadius: 2, border: '1px solid rgba(0,0,0,0.03)' }}>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>{t("responseRateLabel")}</Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 700, color: COLORS.PRIMARY_PURPLE }}>{product.supplier.responseRate}</Typography>
+                <Box
+                  sx={{
+                    flex: "1 1 45%",
+                    bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#f8f9fa",
+                    p: 1.5,
+                    borderRadius: 2,
+                    border: "1px solid rgba(0,0,0,0.03)",
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "text.secondary",
+                      fontWeight: 600,
+                      display: "block",
+                    }}
+                  >
+                    {t("responseRateLabel")}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 700, color: COLORS.PRIMARY_PURPLE }}
+                  >
+                    {product.supplier.responseRate}
+                  </Typography>
                 </Box>
-                <Box sx={{ flex: '1 1 45%', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8f9fa', p: 1.5, borderRadius: 2, border: '1px solid rgba(0,0,0,0.03)' }}>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>{t("locationLabel")}</Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 700 }}>{product.supplier.location}</Typography>
+                <Box
+                  sx={{
+                    flex: "1 1 45%",
+                    bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#f8f9fa",
+                    p: 1.5,
+                    borderRadius: 2,
+                    border: "1px solid rgba(0,0,0,0.03)",
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "text.secondary",
+                      fontWeight: 600,
+                      display: "block",
+                    }}
+                  >
+                    {t("locationLabel")}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                    {product.supplier.location}
+                  </Typography>
                 </Box>
               </Box>
             </Box>
@@ -155,10 +266,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack, simila
 
             <Box sx={{ py: 2 }}>
               <ProductDetailsActions
-                onGetQuote={() => setInquiryOpen(true)}
-                onTalkToUs={() => {
-                  /* TODO: Implement Talk to Us */
-                }}
+                onGetQuote={(e) => handleInquiry(product, e)}
+                onWhatsApp={(e) => handleWhatsApp(product, e)}
+                isAnimatingInquiry={animatingContact === product.id}
+                isAnimatingWhatsApp={
+                  animatingContact === `whatsapp-${product.id}`
+                }
               />
             </Box>
 
@@ -185,7 +298,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack, simila
           </Box>
 
           {/* Right Column - Icons */}
-          <Box
+          {/* <Box
             sx={{
               display: "flex",
               flexDirection: { xs: "row", lg: "column" },
@@ -237,13 +350,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack, simila
             >
               <Share fontSize="small" />
             </IconButton>
-          </Box>
+          </Box> */}
         </Box>
 
         {/* Similar Products Section */}
         {similarProducts.length > 0 && (
           <Box sx={{ mt: 10, mb: 4 }}>
-            <Box sx={{ display: "flex", alignItems: "baseline", mb: 4, gap: 2 }}>
+            <Box
+              sx={{ display: "flex", alignItems: "baseline", mb: 4, gap: 2 }}
+            >
               <Typography
                 variant="h4"
                 fontWeight={900}
@@ -251,10 +366,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack, simila
                   color: isDark ? "text.primary" : "#1a1a2e",
                   letterSpacing: "-0.5px",
                   fontSize: { xs: "1.5rem", md: "2rem" },
-                  textTransform: "uppercase"
+                  textTransform: "uppercase",
                 }}
               >
-                {t("similar")} <span style={{ color: COLORS.PRIMARY_PURPLE }}>{t("products")}</span>
+                {t("similar")}{" "}
+                <span style={{ color: COLORS.PRIMARY_PURPLE }}>
+                  {t("products")}
+                </span>
               </Typography>
               <Box
                 sx={{
@@ -266,7 +384,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack, simila
                   fontSize: "0.7rem",
                   fontWeight: 800,
                   letterSpacing: "1px",
-                  display: { xs: "none", sm: "block" }
+                  display: { xs: "none", sm: "block" },
                 }}
               >
                 {t("newArrivals")}
@@ -280,7 +398,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack, simila
                 mt: -3,
                 color: "text.secondary",
                 fontWeight: 500,
-                maxWidth: "600px"
+                maxWidth: "600px",
               }}
             >
               {t("similarProductsDescription")}
@@ -304,8 +422,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack, simila
                   product={simProduct}
                   index={index}
                   onProductClick={handleProductClick}
-                  onInquiry={() => setInquiryOpen(true)}
-                  onWhatsApp={() => { }}
+                  onInquiry={handleInquiry}
+                  onWhatsApp={handleWhatsApp}
+                  // isAnimatingWhatsApp={
+                  //   animatingContact === `whatsapp-${simProduct.id}`
+                  // }
                 />
               ))}
             </Box>
@@ -313,16 +434,18 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack, simila
         )}
       </Container>
 
-      {product && <InquiryModal
-        open={inquiryOpen}
-        onClose={() => setInquiryOpen(false)}
-        productName={product.name}
-        supplierName={product.supplier.name}
-        productImage={product.image}
-        productPrice={product.price}
-        supplierId={product?.supplier_id}
-        productId={product.id}
-      />}
+      {activeProduct && (
+        <InquiryModal
+          open={inquiryOpen}
+          onClose={() => setInquiryOpen(false)}
+          productName={activeProduct.name}
+          supplierName={activeProduct.supplier.name}
+          productImage={activeProduct.image}
+          productPrice={activeProduct.price}
+          supplierId={activeProduct?.supplier_id}
+          productId={activeProduct.id}
+        />
+      )}
       <DescriptionDrawer
         open={descriptionDrawerOpen}
         onClose={() => setDescriptionDrawerOpen(false)}

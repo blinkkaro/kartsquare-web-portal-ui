@@ -110,12 +110,25 @@ const ProductsListingView: React.FC = () => {
   const searchParams = useSearchParams();
 
   // State
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(searchParams.get("category"));
-  const [selectedSubCategory, setSelectedSubCategory] = useState<string | null>(searchParams.get("sub_category"));
-  const [selectedBrand, setSelectedBrand] = useState<string | null>(searchParams.get("brand"));
-  const [selectedBusinessTypes, setSelectedBusinessTypes] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000000]);
+  const [searchQuery, setSearchQuery] = useState(
+    searchParams.get("search") || "",
+  );
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(
+    searchParams.get("category"),
+  );
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string | null>(
+    searchParams.get("sub_category"),
+  );
+  const [selectedBrand, setSelectedBrand] = useState<string | null>(
+    searchParams.get("brand"),
+  );
+  const [selectedBusinessTypes, setSelectedBusinessTypes] = useState<string[]>(
+    searchParams.get("business_types")?.split(",") || [],
+  );
+  const [priceRange, setPriceRange] = useState<[number, number]>([
+    Number(searchParams.get("min_price")) || 0,
+    Number(searchParams.get("max_price")) || 1000000,
+  ]);
 
   const [homeData, setHomeData] = useState<StoreHomeData | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -174,10 +187,10 @@ const ProductsListingView: React.FC = () => {
       if (priceRange[0] > 0) {
         filters.min_price = priceRange[0];
       }
-      if (priceRange[1] < 1000000) { // Or some other max value
+      if (priceRange[1] < 1000000) {
+        // Or some other max value
         filters.max_price = priceRange[1];
       }
-
 
       const response = await storeService.getProducts(filters);
       if (response.status === "success" && response.data) {
@@ -193,7 +206,11 @@ const ProductsListingView: React.FC = () => {
             gst: "18%",
             category: apiProd.category_name || "General",
             categoryId: apiProd.product_category_id || selectedCategory || "",
-            supplier_id: apiProd.supplier_id || apiProd.supplier?.store_id || apiProd.supplier?.id || "",
+            supplier_id:
+              apiProd.supplier_id ||
+              apiProd.supplier?.store_id ||
+              apiProd.supplier?.id ||
+              "",
             specs:
               apiProd.specifications?.reduce((acc: any, spec: any) => {
                 acc[spec.name] = spec.value.join(", ");
@@ -201,20 +218,26 @@ const ProductsListingView: React.FC = () => {
               }, {}) || {},
             supplier: {
               name: apiProd.supplier?.store_name || "Verified Supplier",
-              location: apiProd.supplier?.store_address?.city_town || apiProd.product_origin || "Multiple Locations",
+              location:
+                apiProd.supplier?.store_address?.city_town ||
+                apiProd.product_origin ||
+                "Multiple Locations",
               rating: apiProd.supplier?.user_rating || 0,
               reviews: Math.floor(Math.random() * 50) + 10, // Simulated review count since not in API
-              yearEstablished: parseInt(apiProd.supplier?.establishment_year) || 2024,
+              yearEstablished:
+                parseInt(apiProd.supplier?.establishment_year) || 2024,
               gstVerified: !!apiProd.supplier?.gst_in,
-              trustSeal: apiProd.supplier?.is_verified || apiProd.supplier?.verification_status === "APPROVED",
+              trustSeal:
+                apiProd.supplier?.is_verified ||
+                apiProd.supplier?.verification_status === "APPROVED",
               responseRate: "98%",
               businessType: apiProd.supplier?.business_type || "Wholesaler",
               address: apiProd.supplier?.store_address?.address || "India",
               logo: apiProd.supplier?.logo_url,
               mobile: apiProd.supplier?.primary_mobile,
-              id: apiProd.supplier?.store_id || apiProd.supplier?.id
+              id: apiProd.supplier?.store_id || apiProd.supplier?.id,
             },
-          })
+          }),
         );
         setProducts(mappedProducts);
       }
@@ -223,15 +246,47 @@ const ProductsListingView: React.FC = () => {
     } finally {
       setProductsLoading(false);
     }
-  }, [selectedCategory, selectedSubCategory, selectedBrand, selectedBusinessTypes, priceRange]);
+  }, [
+    selectedCategory,
+    selectedSubCategory,
+    selectedBrand,
+    selectedBusinessTypes,
+    priceRange,
+  ]);
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
+  // Sync state to URL
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (selectedCategory) params.set("category", selectedCategory);
+    if (selectedSubCategory) params.set("sub_category", selectedSubCategory);
+    if (selectedBrand) params.set("brand", selectedBrand);
+    if (searchQuery) params.set("search", searchQuery);
+    if (selectedBusinessTypes.length > 0)
+      params.set("business_types", selectedBusinessTypes.join(","));
+    if (priceRange[0] > 0) params.set("min_price", priceRange[0].toString());
+    if (priceRange[1] < 1000000)
+      params.set("max_price", priceRange[1].toString());
+
+    const queryString = params.toString();
+    const url = `/store/products${queryString ? `?${queryString}` : ""}`;
+    router.replace(url, { scroll: false });
+  }, [
+    selectedCategory,
+    selectedSubCategory,
+    selectedBrand,
+    searchQuery,
+    selectedBusinessTypes,
+    priceRange,
+    router,
+  ]);
+
   const handleToggleBusinessType = (type: string) => {
-    setSelectedBusinessTypes(prev =>
-      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+    setSelectedBusinessTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
     );
   };
 
@@ -279,10 +334,9 @@ const ProductsListingView: React.FC = () => {
     e.stopPropagation();
     setAnimatingContact(`whatsapp-${product.id}`);
     setTimeout(() => {
+      const cleanPhone = `${product.whatsapp_country_code}${product.whatsapp_number}`.replace(/\D/g, ''); 
       const message = `Hi, I found your listing for ${product.name} on KartSquare. I am interested to know more.`;
-      const whatsappUrl = `https://wa.me/919876543210?text=${encodeURIComponent(
-        message
-      )}`;
+      const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, "_blank");
       setAnimatingContact(null);
     }, 600);
@@ -319,7 +373,7 @@ const ProductsListingView: React.FC = () => {
     } else {
       return (
         homeData?.categories.find(
-          (c) => c.product_category_id === selectedCategory
+          (c) => c.product_category_id === selectedCategory,
         )?.category_name || "Products"
       );
     }
@@ -349,10 +403,13 @@ const ProductsListingView: React.FC = () => {
           position: "sticky",
           top: 0,
           zIndex: 100,
-          bgcolor: isDark ? "rgba(10, 10, 10, 0.95)" : "rgba(255, 255, 255, 0.95)",
+          bgcolor: isDark
+            ? "rgba(10, 10, 10, 0.95)"
+            : "rgba(255, 255, 255, 0.95)",
           backdropFilter: "blur(20px)",
-          borderBottom: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)"
-            }`,
+          borderBottom: `1px solid ${
+            isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)"
+          }`,
           boxShadow: isDark
             ? "0 4px 24px rgba(0,0,0,0.4)"
             : "0 4px 24px rgba(0,0,0,0.06)",
@@ -364,8 +421,9 @@ const ProductsListingView: React.FC = () => {
               onClick={handleBackToStore}
               sx={{
                 bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#f8f9fa",
-                border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "#e0e4e8"
-                  }`,
+                border: `1px solid ${
+                  isDark ? "rgba(255,255,255,0.1)" : "#e0e4e8"
+                }`,
                 borderRadius: 3,
                 transition: "all 0.3s",
                 "&:hover": {
@@ -393,8 +451,9 @@ const ProductsListingView: React.FC = () => {
                   sx: {
                     borderRadius: 4,
                     bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#f8f9fc",
-                    border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "#e0e4e8"
-                      }`,
+                    border: `1px solid ${
+                      isDark ? "rgba(255,255,255,0.1)" : "#e0e4e8"
+                    }`,
                     transition: "all 0.3s",
                     "&:focus-within": {
                       borderColor: COLORS.PRIMARY_PURPLE,
@@ -407,7 +466,7 @@ const ProductsListingView: React.FC = () => {
               />
             </Box>
 
-            <IconButton
+            {/* <IconButton
               onClick={(e) => setSortAnchor(e.currentTarget)}
               sx={{
                 bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#f8f9fa",
@@ -417,7 +476,7 @@ const ProductsListingView: React.FC = () => {
               }}
             >
               <Sort />
-            </IconButton>
+            </IconButton> */}
           </Stack>
         </Container>
       </Box>
@@ -425,7 +484,10 @@ const ProductsListingView: React.FC = () => {
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <Grid container spacing={3}>
           {/* Sidebar - Hidden on mobile */}
-          <Grid size={{ xs: 12, md: 3.5, lg: 3 }} sx={{ display: { xs: "none", md: "block" } }}>
+          <Grid
+            size={{ xs: 12, md: 3.5, lg: 3 }}
+            sx={{ display: { xs: "none", md: "block" } }}
+          >
             <CategorySidebar
               selectedCategory={selectedCategory}
               onSelectCategory={handleCategoryChange}
@@ -480,18 +542,22 @@ const ProductsListingView: React.FC = () => {
                       sx={{
                         borderRadius: "16px",
                         overflow: "hidden",
-                        border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "#e0e4e8"
-                          }`,
+                        border: `1px solid ${
+                          isDark ? "rgba(255,255,255,0.08)" : "#e0e4e8"
+                        }`,
                       }}
                     >
                       <Box
                         sx={{
                           width: "100%",
                           height: 200,
-                          background: `linear-gradient(90deg, ${isDark ? "rgba(255,255,255,0.03)" : "#f0f0f0"
-                            } 0%, ${isDark ? "rgba(255,255,255,0.08)" : "#e0e0e0"
-                            } 50%, ${isDark ? "rgba(255,255,255,0.03)" : "#f0f0f0"
-                            } 100%)`,
+                          background: `linear-gradient(90deg, ${
+                            isDark ? "rgba(255,255,255,0.03)" : "#f0f0f0"
+                          } 0%, ${
+                            isDark ? "rgba(255,255,255,0.08)" : "#e0e0e0"
+                          } 50%, ${
+                            isDark ? "rgba(255,255,255,0.03)" : "#f0f0f0"
+                          } 100%)`,
                           backgroundSize: "1000px 100%",
                           animation: `${shimmer} 2s infinite`,
                         }}
@@ -501,7 +567,9 @@ const ProductsListingView: React.FC = () => {
                           sx={{
                             height: 16,
                             width: "80%",
-                            bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#f0f0f0",
+                            bgcolor: isDark
+                              ? "rgba(255,255,255,0.05)"
+                              : "#f0f0f0",
                             borderRadius: 1,
                             mb: 1,
                           }}
@@ -510,7 +578,9 @@ const ProductsListingView: React.FC = () => {
                           sx={{
                             height: 20,
                             width: "40%",
-                            bgcolor: isDark ? "rgba(255,255,255,0.08)" : "#e0e0e0",
+                            bgcolor: isDark
+                              ? "rgba(255,255,255,0.08)"
+                              : "#e0e0e0",
                             borderRadius: 1,
                             mb: 2,
                           }}
@@ -535,7 +605,6 @@ const ProductsListingView: React.FC = () => {
                     />
                   </Grid>
                 ))}
-
               </Grid>
             ) : (
               <Box
@@ -553,7 +622,11 @@ const ProductsListingView: React.FC = () => {
                 >
                   No products found
                 </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  sx={{ mb: 3 }}
+                >
                   Try adjusting your filters or search terms
                 </Typography>
                 <CommonButton
@@ -576,8 +649,12 @@ const ProductsListingView: React.FC = () => {
         onClose={() => setSortAnchor(null)}
         TransitionComponent={Fade}
       >
-        <MenuItem onClick={() => setSortAnchor(null)}>Price: Low to High</MenuItem>
-        <MenuItem onClick={() => setSortAnchor(null)}>Price: High to Low</MenuItem>
+        <MenuItem onClick={() => setSortAnchor(null)}>
+          Price: Low to High
+        </MenuItem>
+        <MenuItem onClick={() => setSortAnchor(null)}>
+          Price: High to Low
+        </MenuItem>
         <MenuItem onClick={() => setSortAnchor(null)}>Newest First</MenuItem>
         <MenuItem onClick={() => setSortAnchor(null)}>Most Popular</MenuItem>
       </Menu>
