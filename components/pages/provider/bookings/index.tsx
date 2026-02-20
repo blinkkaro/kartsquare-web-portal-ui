@@ -124,16 +124,20 @@ const ProviderBookingsPage = () => {
           <Box
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", md: "row" },
               justifyContent: "space-between",
-              alignItems: "center",
+              alignItems: { xs: "stretch", md: "center" },
+              gap: { xs: 2, md: 0 },
               mb: 3,
             }}
           >
             <ProviderBookingsHeader />
-            <ProviderBookingsSearchBar
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-            />
+            <Box sx={{ width: { xs: "100%", md: "auto" } }}>
+              <ProviderBookingsSearchBar
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+              />
+            </Box>
           </Box>
 
           {/* Tabs */}

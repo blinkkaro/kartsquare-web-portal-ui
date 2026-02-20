@@ -79,6 +79,7 @@ const NavActions: React.FC<NavActionsProps> = ({
   const profile = secureStorage.getItem("user_details");
   const { unreadCount } = useSocket();
   const { t } = useTranslate();
+  const isDark = mode === "dark";
 
   if (isAuthenticated) {
     return (
@@ -305,12 +306,14 @@ const NavActions: React.FC<NavActionsProps> = ({
           borderRadius: "20px",
           textTransform: "none",
           fontWeight: 600,
-          borderColor: COLORS.PRIMARY_PURPLE,
-          color: COLORS.PRIMARY_PURPLE,
+          borderColor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+          color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
           minWidth: { xs: "auto", md: "64px" },
           padding: { xs: "4px 8px", md: "4px 10px" },
           "&:hover": {
-            borderColor: COLORS.PRIMARY_PURPLE,
+            borderColor: isDark
+              ? COLORS.ACCENT_BLUE_DARK
+              : COLORS.PRIMARY_PURPLE,
             backgroundColor: COLORS.PURPLE_ALPHA_10,
           },
         }}

@@ -1,10 +1,25 @@
 import React from "react";
-import { Box, Avatar, Typography, Button, Chip, useTheme, Stack } from "@mui/material";
+import {
+  Box,
+  Avatar,
+  Typography,
+  Button,
+  Chip,
+  useTheme,
+  Stack,
+} from "@mui/material";
 import { useFollowUser, useUnfollowUser } from "@/hooks/useFollow";
 import { getUserId } from "@/utils/auth";
 import { openLoginModal } from "@/features/ui/loginModalSlice";
-import { Person, PersonAdd, Message, CheckCircle, Call } from "@mui/icons-material";
+import {
+  Person,
+  PersonAdd,
+  Message,
+  CheckCircle,
+  Call,
+} from "@mui/icons-material";
 import { COLORS } from "../constants/colors";
+import { english } from "../features/i18n/en";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { useIncreasePhoneNumberViewCount } from "@/hooks/useServicesList";
@@ -148,7 +163,7 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
                     fontFamily: "system-ui",
                   }}
                 >
-                  Verified
+                  {english.verified}
                 </Typography>
               </Box>
 
@@ -215,7 +230,8 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
               mb: 0.5,
             }}
           >
-            Highly Responsive • Top Professional
+            {english.highly_responsive ?? "Highly Responsive"} •{" "}
+            {english.top_professional ?? "Top Professional"}
           </Typography>
           {gstNumber && (
             <Typography
@@ -256,31 +272,53 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
         >
           Message
         </Button> */}
-        <Stack gap={2}> <Button
-          variant="contained"
-          fullWidth
-          size="small"
-          startIcon={<Call sx={{ fontSize: "1rem !important" }} />}
-          onClick={handleShowPhoneNumber}
-          disabled={showPhoneNumber}
-          sx={{
-            borderRadius: "10px",
-            textTransform: "none",
-            bgcolor: COLORS.PRIMARY_PURPLE,
-            color: "white",
-            fontWeight: 700,
-            px: 2,
-            "&:hover": {
-              bgcolor: COLORS.PURPLE_HOVER,
-            },
-            "&.Mui-disabled": {
-              bgcolor: COLORS.PRIMARY_PURPLE,
+        <Stack gap={2}>
+          {" "}
+          <Button
+            variant="contained"
+            fullWidth
+            size="small"
+            startIcon={<Call sx={{ fontSize: "1rem !important" }} />}
+            onClick={handleShowPhoneNumber}
+            disabled={showPhoneNumber}
+            sx={{
+              borderRadius: "11px",
+              textTransform: "none",
+              bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
               color: "white",
-            },
-          }}
-        >
-          {showPhoneNumber ? providerPhoneNumber : "Show Number"}
-        </Button>
+              fontWeight: 800,
+              letterSpacing: showPhoneNumber ? "0.06em" : "0.02em",
+              px: 3,
+              py: 1.1,
+              minWidth: 0,
+              whiteSpace: "nowrap",
+              boxShadow: `0 10px 20px ${
+                isDark
+                  ? `${COLORS.ACCENT_BLUE_BG_DARK}40`
+                  : `${COLORS.PRIMARY_PURPLE}40`
+              }`,
+              "&:hover": {
+                bgcolor: isDark
+                  ? COLORS.ACCENT_BLUE_DARK
+                  : COLORS.PRIMARY_PURPLE,
+                transform: "translateY(-1px)",
+                boxShadow: `0 4px 12px ${
+                  isDark
+                    ? `${COLORS.ACCENT_BLUE_BG_DARK}40`
+                    : `${COLORS.PRIMARY_PURPLE}40`
+                }`,
+              },
+              transition: "all 0.2s ease-in-out",
+              "&.Mui-disabled": {
+                bgcolor: isDark
+                  ? COLORS.ACCENT_BLUE_DARK
+                  : COLORS.PRIMARY_PURPLE,
+                color: "white",
+              },
+            }}
+          >
+            {showPhoneNumber ? providerPhoneNumber : english.show_number}
+          </Button>
           <Button
             variant={"outlined"}
             fullWidth
@@ -308,13 +346,16 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
                 borderColor: isDark
                   ? COLORS.ACCENT_BLUE_DARK
                   : COLORS.PRIMARY_PURPLE,
-                bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+                bgcolor: isDark
+                  ? COLORS.ACCENT_BLUE_DARK
+                  : COLORS.PRIMARY_PURPLE,
                 color: "white",
               },
             }}
           >
             {following ? "Following" : "Follow"}
-          </Button></Stack>
+          </Button>
+        </Stack>
       </Box>
     </Box>
   );

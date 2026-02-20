@@ -69,7 +69,7 @@ const CustomerServiceInfo = ({
                 letterSpacing: "0.02em",
               }}
             >
-              Verified Service
+              {english.verified_service}
             </Typography>
           </Box>
 
@@ -95,7 +95,7 @@ const CustomerServiceInfo = ({
                 letterSpacing: "0.04em",
               }}
             >
-              HIGH SUCCESS RATE
+              {english.high_success_rate}
             </Typography>
           </Box>
         </Box>

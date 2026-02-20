@@ -22,13 +22,6 @@ const NavLink = styled(Link)(({ theme }) => ({
   fontSize: "0.875rem",
   fontWeight: 500,
   transition: "color 0.2s ease-in-out",
-  "&:hover": {
-    color: COLORS.PRIMARY_PURPLE,
-  },
-  "&.active": {
-    color: COLORS.PRIMARY_PURPLE,
-    fontWeight: 600,
-  },
 }));
 
 interface DesktopNavLinksProps {
@@ -42,6 +35,7 @@ const DesktopNavLinks: React.FC<DesktopNavLinksProps> = ({
   currentPath,
   mode,
 }) => {
+  const isDark = mode === "dark";
   return (
     <NavLinksContainer>
       {items.map((item) => (
@@ -55,10 +49,16 @@ const DesktopNavLinks: React.FC<DesktopNavLinksProps> = ({
             gap: "0.5rem",
             color:
               currentPath === item.href
-                ? COLORS.PRIMARY_PURPLE
-                : mode === "dark"
-                ? COLORS.TEXT.PRIMARY_DARK
-                : COLORS.TEXT.PRIMARY_LIGHT,
+                ? isDark
+                  ? COLORS.ACCENT_BLUE_DARK
+                  : COLORS.PRIMARY_PURPLE
+                : isDark
+                  ? COLORS.TEXT.PRIMARY_DARK
+                  : COLORS.TEXT.PRIMARY_LIGHT,
+            fontWeight: currentPath === item.href ? 600 : 500,
+            "&:hover": {
+              color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+            },
           }}
         >
           {item.label}

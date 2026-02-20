@@ -152,10 +152,17 @@ const ProviderBookingDetailsDrawer: React.FC<
                   color: "#94A3B8",
                   fontWeight: 700,
                   letterSpacing: "0.1em",
+                  whiteSpace: "nowrap",
                 }}
               >
                 BOOKING ID:{" "}
-                <span style={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700 }}>
+                <span
+                  style={{
+                    color: COLORS.PRIMARY_PURPLE,
+                    fontWeight: 900,
+                    fontSize: "0.6em",
+                  }}
+                >
                   #{currentBooking.booking_id.toUpperCase()}
                 </span>
               </Typography>
@@ -333,9 +340,9 @@ const ProviderBookingDetailsDrawer: React.FC<
                   </Typography>
                   <Typography
                     sx={{
-                      fontWeight: 900,
-                      fontSize: "1.2rem",
-                      color: isDark ? "white" : "#0F172A",
+                      fontWeight: 800,
+                      fontSize: "1rem",
+                      color: isDark ? "white" : "#1E293B",
                     }}
                   >
                     {`${booking.customer_details?.first_name || ""} ${booking.customer_details?.last_name || ""}`}
@@ -401,20 +408,18 @@ const ProviderBookingDetailsDrawer: React.FC<
                     sx={{ color: "#64748B", lineHeight: 1.8, fontWeight: 500 }}
                   >
                     {booking?.booking_address?.address}
-                    {(booking?.booking_address?.landmark) && (
+                    {booking?.booking_address?.landmark && (
                       <>
                         <br />
                         <span style={{ color: "#94A3B8", fontSize: "0.75rem" }}>
                           Landmark:
-                        </span>{" "}    
+                        </span>{" "}
                         {booking?.booking_address?.landmark}
                       </>
                     )}
                     <br />
-                    {booking?.booking_address?.cityTown}
-                    ,{" "}
-                    {booking?.booking_address?.state}{" "}
-                    —{" "}
+                    {booking?.booking_address?.cityTown},{" "}
+                    {booking?.booking_address?.state} —{" "}
                     {booking?.booking_address?.pincode}
                   </Typography>
                 </Box>

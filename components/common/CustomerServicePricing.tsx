@@ -40,11 +40,17 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-  const textPrimary = isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT;
-  const textSecondary = isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT;
+  const textPrimary = isDark
+    ? COLORS.TEXT.PRIMARY_DARK
+    : COLORS.TEXT.PRIMARY_LIGHT;
+  const textSecondary = isDark
+    ? COLORS.TEXT.SECONDARY_DARK
+    : COLORS.TEXT.SECONDARY_LIGHT;
   const borderColor = isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)";
 
-  const renderSectionHeader = (subtitleKey: "price_catalog_subtitle" | "price_catalog_list_subtitle") => (
+  const renderSectionHeader = (
+    subtitleKey: "price_catalog_subtitle" | "price_catalog_list_subtitle",
+  ) => (
     <Paper
       elevation={0}
       sx={{
@@ -61,7 +67,7 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
             width: 44,
             height: 44,
             borderRadius: 2,
-            bgcolor: COLORS.PRIMARY_PURPLE,
+            bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -282,7 +288,13 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
               }}
             >
               <Box
-                sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: item.service_desc ? 1 : 0, gap: 1 }}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  mb: item.service_desc ? 1 : 0,
+                  gap: 1,
+                }}
               >
                 <Typography
                   variant="subtitle2"

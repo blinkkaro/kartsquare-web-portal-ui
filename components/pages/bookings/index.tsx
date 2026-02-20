@@ -132,16 +132,20 @@ const BookingsPage = () => {
           <Box
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", md: "row" },
               justifyContent: "space-between",
-              alignItems: "center",
+              alignItems: { xs: "stretch", md: "center" },
+              gap: { xs: 2, md: 0 },
               mb: 3,
             }}
           >
             <BookingsHeader />
-            <BookingsSearchBar
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-            />
+            <Box sx={{ width: { xs: "100%", md: "auto" } }}>
+              <BookingsSearchBar
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+              />
+            </Box>
           </Box>
 
           {/* Tabs */}

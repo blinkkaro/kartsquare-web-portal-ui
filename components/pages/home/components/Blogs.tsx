@@ -182,7 +182,7 @@ const Blogs = () => {
           fontSize: "1.1rem",
         }}
       >
-        Latest Blogs
+        {t("home_latest_blogs_title")}
       </Typography>
 
       {/* Blog Cards */}

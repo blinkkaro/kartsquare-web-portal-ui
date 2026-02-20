@@ -38,7 +38,7 @@ const DescriptionDrawer = ({ open, onClose, description }: DescriptionDrawerProp
                         pb: 4
                     }}
                 >
-                    {description || "No description available"}
+                    {description || english.no_description_available}
                 </Typography>
             </Box>
         </RightDrawer>

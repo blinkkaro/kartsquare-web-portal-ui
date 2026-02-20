@@ -70,7 +70,7 @@ const ServiceDetailsInfo = ({
                     fontSize: { xs: "0.875rem", sm: "1rem" },
                 }}
             >
-                {serviceDesc || "No description available"}
+                {serviceDesc || english.no_description_available}
             </Typography>
 
             {/* Continue Reading Link */}

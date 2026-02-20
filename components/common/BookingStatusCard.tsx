@@ -130,6 +130,7 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
 
   const statusConfig = getStatusConfig(booking.status);
 
+
   // Get action buttons based on status
   const getActionButtons = () => {
     switch (booking.status) {

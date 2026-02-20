@@ -155,6 +155,7 @@ export const english = {
   personalInfo: "Personal Info.",
   saved: "Saved",
   blogs: "Blogs",
+  home_latest_blogs_title: "Latest Blogs",
   walletsRewards: "Wallets/Rewards",
   paymentMethods: "Payment Methods",
   myCoupons: "My coupons",
@@ -421,7 +422,9 @@ export const english = {
   ai_try_asking: "Try asking",
   ai_services_label: "Services we found",
   ai_explore_categories: "Explore categories",
-  neatMyArea: "neat my area",
+  ai_voice_tap: "Tap to speak",
+  ai_voice_listening: "Listening...",
+  ai_voice_not_supported: "Voice input not supported in this browser",
 
   // Supplier
   supplier_registration_title: "Supplier Registration",
@@ -1160,6 +1163,11 @@ export const english = {
   done: "Done",
   forBusinessOwners: "For business owners",
   connectWithNewCustomers: "Connect with new customers & grow your business",
+  highly_responsive: "Highly Responsive",
+  top_professional: "Top Professional",
+  verified_service: "Verified Service",
+  high_success_rate: "HIGH SUCCESS RATE",
+  show_number: "Show Number",
   yourFreeListingPage: "Your free listing page",
   oneProfileMoreVisibility: "One profile. More visibility. Zero cost.",
   completeBusinessProfile:
@@ -1192,6 +1200,12 @@ export const english = {
   price_catalog_list_subtitle:
     "Service-wise prices and descriptions from the provider.",
   tap_to_view_full: "Tap to view full size",
+  other_services: "Other Services",
+  time_slots_available: "Time Slots Available",
+  instant_booking: "Instant Booking",
+  review_submitted_success: "Review submitted successfully!",
+  review_submit_failed: "Failed to submit review",
+  review_answer_placeholder: "Type your answer here...",
   messageIsTooShort: "Message is too short",
   // Contact form additional
   messageSentSuccessfully: "Message Sent Successfully",

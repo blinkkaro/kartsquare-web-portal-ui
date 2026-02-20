@@ -337,7 +337,7 @@ const CustomerServiceDetails = () => {
                           : COLORS.TEXT.PRIMARY_LIGHT,
                       }}
                     >
-                      Other Services
+                      {t("other_services")}
                     </Typography>
                     <Box
                       sx={{
@@ -471,7 +471,7 @@ const CustomerServiceDetails = () => {
         open={reviewModalOpen}
         onClose={handleReviewSubmit}
         width={500}
-        title="Review"
+        title={t("write_review")}
       >
         <ReviewDrawerContent service={service} onClose={handleReviewSubmit} />
       </RightDrawer>

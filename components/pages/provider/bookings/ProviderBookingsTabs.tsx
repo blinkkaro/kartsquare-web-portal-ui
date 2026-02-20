@@ -24,20 +24,26 @@ const ProviderBookingsTabs: React.FC<ProviderBookingsTabsProps> = ({
             <Tabs
                 value={activeTab}
                 onChange={(e, newValue) => onTabChange(newValue)}
+                variant="scrollable"
+                scrollButtons="auto"
+                allowScrollButtonsMobile
                 sx={{
                     "& .MuiTabs-indicator": {
                         backgroundColor: COLORS.PRIMARY_PURPLE,
                         height: "3px",
                         borderRadius: "3px 3px 0 0"
                     },
+                    "& .MuiTabs-flexContainer": {
+                        gap: { xs: 1, sm: 2 }
+                    },
                     "& .MuiTab-root": {
                         textTransform: "none",
                         fontWeight: 600,
-                        fontSize: "0.95rem",
+                        fontSize: { xs: "0.85rem", sm: "0.9rem", md: "0.95rem" },
                         color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#6B7280",
-                        mr: 2,
-                        minWidth: 'auto',
-                        px: 1,
+                        minWidth: "max-content",
+                        px: { xs: 0.5, sm: 1 },
+                        py: { xs: 0.75, sm: 1 },
                         "&.Mui-selected": {
                             color: isDark ? "white" : "#111827",
                         },
@@ -48,7 +54,7 @@ const ProviderBookingsTabs: React.FC<ProviderBookingsTabsProps> = ({
                     <Tab
                         key={tab}
                         label={
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, whiteSpace: "nowrap" }}>
                                 {tab}
                                 {counts[index] !== undefined && (
                                     <Box
