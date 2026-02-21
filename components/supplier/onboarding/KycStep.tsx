@@ -11,10 +11,14 @@ import {
   Grid,
   useTheme,
   Paper,
-  InputAdornment,
   MenuItem,
   CircularProgress,
+  alpha,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import ImageUpload from "@/components/common/ImageUpload";
@@ -37,6 +41,16 @@ import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 
+// Section block: left accent, padding, rounded — consistent with StoreStep
+const formSectionStyle = (isDark: boolean) => ({
+  p: 2.5,
+  mb: 2.5,
+  borderRadius: 2,
+  border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+  borderLeft: `4px solid ${COLORS.PRIMARY_PURPLE}`,
+  bgcolor: isDark ? alpha(COLORS.PRIMARY_PURPLE, 0.03) : alpha(COLORS.PRIMARY_PURPLE, 0.02),
+});
+
 interface KycStepProps {
   onBack: () => void;
   onNext?: () => void;
@@ -52,37 +66,33 @@ const KycStep: React.FC<KycStepProps> = ({ onBack, onNext }) => {
   const dispatch = useAppDispatch();
   const [isUploading, setIsUploading] = React.useState(false);
 
-  const schema = yup.object().shape({
-    // GST Fields (Optional)
-    gst_in: yup.string().optional(),
-    gst_state: yup.string().optional(),
-    gst_certificate_url: yup.string().optional(),
-
-    // PAN & Identity (Required)
-    pan_number: yup
-      .string()
-      .required("PAN number is required")
-      .matches(
-        /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
-        "Invalid PAN card format (e.g. ABCDE1234F)",
-      ),
-    pan_card_url: yup.string().required("PAN card image is required"),
-    id_proof_type: yup.string().required("ID Proof type is required"),
-    id_proof_url: yup.string().required("ID proof image is required"),
-    address_proof_url: yup.string().required("Address proof image is required"),
-
-    // Owner Details (Required)
-    owner_name: yup.string().required("Owner name is required"),
-    owner_country_code: yup.string().required("Country code is required"),
-    owner_mobile: yup
-      .string()
-      .required("Owner mobile is required")
-      .matches(/^[0-9]{10}$/, "Mobile number must be 10 digits"),
-    owner_email: yup
-      .string()
-      .email("Invalid email")
-      .required("Owner email is required"),
-  });
+  const schema = React.useMemo(
+    () =>
+      yup.object().shape({
+        gst_in: yup.string().optional(),
+        gst_state: yup.string().optional(),
+        gst_certificate_url: yup.string().optional(),
+        pan_number: yup
+          .string()
+          .required(t("kyc_pan_required" as any))
+          .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, t("kyc_pan_invalid" as any)),
+        pan_card_url: yup.string().required(t("kyc_pan_image_required" as any)),
+        id_proof_type: yup.string().required(t("kyc_id_type_required" as any)),
+        id_proof_url: yup.string().required(t("kyc_id_image_required" as any)),
+        address_proof_url: yup.string().required(t("kyc_address_proof_required" as any)),
+        owner_name: yup.string().required(t("kyc_owner_name_required" as any)),
+        owner_country_code: yup.string().required(t("kyc_country_code_required" as any)),
+        owner_mobile: yup
+          .string()
+          .required(t("kyc_owner_mobile_required" as any))
+          .matches(/^[0-9]{10}$/, t("kyc_owner_mobile_digits" as any)),
+        owner_email: yup
+          .string()
+          .email(t("kyc_owner_email_invalid" as any))
+          .required(t("kyc_owner_email_required" as any)),
+      }),
+    [t],
+  );
 
   const {
     control,
@@ -99,11 +109,6 @@ const KycStep: React.FC<KycStepProps> = ({ onBack, onNext }) => {
       owner_country_code: "+91",
     },
   });
-
-  const selectedCountryCode = watch("owner_country_code");
-  const selectedCountry = countries.find(
-    (c) => c.phone_code === selectedCountryCode,
-  );
 
   useEffect(() => {
     if (kycData?.data) {
@@ -205,282 +210,239 @@ const KycStep: React.FC<KycStepProps> = ({ onBack, onNext }) => {
       <Paper
         elevation={0}
         sx={{
-          p: { xs: 3, md: 4 },
-          borderRadius: 4,
+          p: { xs: 2.5, md: 3 },
+          borderRadius: 3,
           border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
           bgcolor: isDark ? "background.paper" : "white",
-          boxShadow: isDark ? "none" : "0 8px 32px rgba(94, 24, 233, 0.04)",
+          boxShadow: isDark ? "none" : "0 4px 20px rgba(94, 24, 233, 0.06)",
         }}
       >
-        <Typography
-          variant="h5"
-          fontWeight="700"
-          mb={4}
-          sx={{ color: COLORS.PRIMARY_PURPLE }}
+        {/* Collapsible: Business Tax (GST) — number, state, certificate */}
+        <Accordion
+          defaultExpanded={false}
+          sx={{
+            mb: 2.5,
+            borderRadius: 2,
+            border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+            borderLeft: `4px solid ${COLORS.PRIMARY_PURPLE}`,
+            bgcolor: isDark ? alpha(COLORS.PRIMARY_PURPLE, 0.03) : alpha(COLORS.PRIMARY_PURPLE, 0.02),
+            "&:before": { display: "none" },
+            boxShadow: "none",
+          }}
         >
-          KYC Verification
-        </Typography>
-
-        <Grid container spacing={4}>
-          {/* GST & Tax Section */}
-          <Grid size={{ xs: 12 }}>
-            <Typography
-              variant="subtitle1"
-              fontWeight="600"
-              mb={2}
-              mt={1}
-              display="flex"
-              alignItems="center"
-              gap={1}
-            >
-              <BusinessOutlinedIcon fontSize="small" color="primary" /> Business
-              Tax Details
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+            sx={{
+              "& .MuiAccordionSummary-content": { alignItems: "center", gap: 1 },
+              py: 0.5,
+              minHeight: 48,
+            }}
+          >
+            <BusinessOutlinedIcon fontSize="small" sx={{ color: COLORS.PRIMARY_PURPLE }} />
+            <Typography variant="subtitle2" fontWeight={700} color={COLORS.PRIMARY_PURPLE}>
+              {t("kyc_section_gst" as any)} ({t("kyc_optional" as any)})
             </Typography>
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Typography variant="body2" fontWeight="500" mb={1}>
-              GST Number (Optional)
-            </Typography>
-            <Input
-              name="gst_in"
-              control={control}
-              placeholder="Enter GSTIN Number"
-              startIcon={<DescriptionOutlinedIcon fontSize="small" />}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Typography variant="body2" fontWeight="500" mb={1}>
-              GST State (Optional)
-            </Typography>
-            <Input
-              name="gst_state"
-              control={control}
-              placeholder="Enter Registered State"
-            />
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Typography variant="body2" fontWeight="500" mb={1}>
-              PAN Card Number*
-            </Typography>
-            <Input
-              name="pan_number"
-              control={control}
-              placeholder="ABCDE1234F"
-              startIcon={<BadgeOutlinedIcon fontSize="small" />}
-            />
-          </Grid>
-
-          {/* Owner Info Section */}
-          <Grid size={{ xs: 12 }}>
-            <Typography
-              variant="subtitle1"
-              fontWeight="600"
-              mb={2}
-              mt={3}
-              display="flex"
-              alignItems="center"
-              gap={1}
-            >
-              <PersonOutlineOutlinedIcon fontSize="small" color="primary" />{" "}
-              Owner Information
-            </Typography>
-          </Grid>
-
-          <Grid size={{ xs: 12 }}>
-            <Grid container spacing={3}>
+          </AccordionSummary>
+          <AccordionDetails sx={{ pt: 0, pb: 2, px: 2.5 }}>
+            <Grid container spacing={2.5}>
               <Grid size={{ xs: 12, md: 6 }}>
-                <Typography variant="body2" fontWeight="500" mb={1}>
-                  Owner Name*
+                <Typography variant="body2" fontWeight="500" mb={0.5}>
+                  {t("kyc_gst_number" as any)}
                 </Typography>
                 <Input
-                  name="owner_name"
+                  name="gst_in"
                   control={control}
-                  placeholder="Full Legal Name"
-                  startIcon={<PersonOutlineOutlinedIcon fontSize="small" />}
+                  placeholder={t("kyc_gst_number_placeholder" as any)}
+                  startIcon={<DescriptionOutlinedIcon fontSize="small" />}
                 />
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
-                <Typography variant="body2" fontWeight="500" mb={1}>
-                  Owner Email*
+                <Typography variant="body2" fontWeight="500" mb={0.5}>
+                  {t("kyc_gst_state" as any)}
                 </Typography>
                 <Input
-                  name="owner_email"
+                  name="gst_state"
                   control={control}
-                  placeholder="owner@business.com"
-                  startIcon={<EmailOutlinedIcon fontSize="small" />}
+                  placeholder={t("kyc_gst_state_placeholder" as any)}
                 />
               </Grid>
-              <Grid size={{ xs: 12, md: 7 }}>
-                <Typography variant="body2" fontWeight="500" mb={1}>
-                  Owner Mobile*
-                </Typography>
-                <Box sx={{ display: "flex", gap: 1.5 }}>
-                  <Box sx={{ width: { xs: "85px", md: "95px" } }}>
-                    <Input
-                      name="owner_country_code"
-                      control={control}
-                      select
-                      sx={{ height: 48 }}
-                      InputProps={{
-                        sx: { borderRadius: "12px", height: 48 },
-                        // startAdornment: (
-                        //   <InputAdornment position="start">
-                        //     {selectedCountry?.flag}
-                        //   </InputAdornment>
-                        // ),
-                      }}
-                    >
-                      {countries.map((option) => (
-                        <MenuItem key={option.code} value={option.phone_code}>
-                          {option.phone_code}
-                        </MenuItem>
-                      ))}
-                    </Input>
-                  </Box>
-                  <Box sx={{ flex: 1 }}>
-                    <Input
-                      name="owner_mobile"
-                      control={control}
-                      placeholder="91234 56789"
-                      startIcon={<PhoneOutlinedIcon fontSize="small" />}
-                      type="tel"
-                      sx={{ height: 48 }}
-                    />
-                  </Box>
-                </Box>
+              <Grid size={{ xs: 12 }}>
+                <ImageUpload
+                  title={`${t("kyc_gst_certificate" as any)} (${t("kyc_optional" as any)})`}
+                  images={
+                    watch("gst_certificate_url")
+                      ? [watch("gst_certificate_url") as string]
+                      : []
+                  }
+                  onChange={(files) =>
+                    handleImageChange(files, "gst_certificate_url")
+                  }
+                  maxImages={1}
+                  error={!!errors.gst_certificate_url}
+                  helperText={errors.gst_certificate_url?.message as string}
+                />
               </Grid>
             </Grid>
-          </Grid>
+          </AccordionDetails>
+        </Accordion>
 
-          {/* Documents Upload Section */}
-          <Grid size={{ xs: 12 }}>
-            <Typography
-              variant="subtitle1"
-              fontWeight="600"
-              mb={2}
-              mt={3}
-              display="flex"
-              alignItems="center"
-              gap={1}
-            >
-              <DescriptionOutlinedIcon fontSize="small" color="primary" />{" "}
-              Required Documents
-            </Typography>
+        {/* Section: PAN + Owner Information */}
+        <Box sx={formSectionStyle(isDark)}>
+          <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1, color: COLORS.PRIMARY_PURPLE }}>
+            <BadgeOutlinedIcon fontSize="small" /> {t("kyc_pan_number" as any)} & {t("kyc_section_owner" as any)}
+          </Typography>
+          <Grid container spacing={2.5}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Typography variant="body2" fontWeight="500" mb={0.5}>
+                {t("kyc_pan_number" as any)}*
+              </Typography>
+              <Input
+                name="pan_number"
+                control={control}
+                placeholder={t("kyc_pan_number_placeholder" as any)}
+                startIcon={<BadgeOutlinedIcon fontSize="small" />}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Typography variant="body2" fontWeight="500" mb={0.5}>
+                {t("kyc_owner_name" as any)}*
+              </Typography>
+              <Input
+                name="owner_name"
+                control={control}
+                placeholder={t("kyc_owner_name_placeholder" as any)}
+                startIcon={<PersonOutlineOutlinedIcon fontSize="small" />}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Typography variant="body2" fontWeight="500" mb={0.5}>
+                {t("kyc_owner_email" as any)}*
+              </Typography>
+              <Input
+                name="owner_email"
+                control={control}
+                placeholder={t("kyc_owner_email_placeholder" as any)}
+                startIcon={<EmailOutlinedIcon fontSize="small" />}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Typography variant="body2" fontWeight="500" mb={0.5}>
+                {t("kyc_owner_mobile" as any)}*
+              </Typography>
+              <Box sx={{ display: "flex", gap: 1.5 }}>
+                <Box sx={{ width: { xs: "85px", md: "95px" } }}>
+                  <Input
+                    name="owner_country_code"
+                    control={control}
+                    select
+                    InputProps={{
+                      sx: { borderRadius: "12px", height: 48 },
+                    }}
+                  >
+                    {countries.map((option) => (
+                      <MenuItem key={option.code} value={option.phone_code}>
+                        {option.phone_code}
+                      </MenuItem>
+                    ))}
+                  </Input>
+                </Box>
+                <Box sx={{ flex: 1 }}>
+                  <Input
+                    name="owner_mobile"
+                    control={control}
+                    placeholder={t("kyc_owner_mobile_placeholder" as any)}
+                    startIcon={<PhoneOutlinedIcon fontSize="small" />}
+                    type="tel"
+                    sx={{ height: 48 }}
+                  />
+                </Box>
+              </Box>
+            </Grid>
           </Grid>
+        </Box>
 
-          <Grid size={{ xs: 12, md: 6 }}>
-            <ImageUpload
-              title="GST Certificate (Optional)"
-              images={
-                watch("gst_certificate_url")
-                  ? [watch("gst_certificate_url") as string]
-                  : []
-              }
-              onChange={(files) =>
-                handleImageChange(files, "gst_certificate_url")
-              }
-              maxImages={1}
-              error={!!errors.gst_certificate_url}
-              helperText={errors.gst_certificate_url?.message as string}
-            />
+        {/* Section: Identity Verification (PAN card, ID proof, address proof) */}
+        <Box sx={formSectionStyle(isDark)}>
+          <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1, color: COLORS.PRIMARY_PURPLE }}>
+            <BadgeOutlinedIcon fontSize="small" /> {t("kyc_section_identity" as any)}
+          </Typography>
+          <Grid container spacing={2.5}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Typography variant="body2" fontWeight="500" mb={0.5}>
+                {t("kyc_id_proof_type" as any)}*
+              </Typography>
+              <Controller
+                name="id_proof_type"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <Autocomplete
+                    options={ID_PROOF_TYPES}
+                    value={value || ""}
+                    onChange={(_, newValue) => onChange(newValue)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        placeholder={t("kyc_id_proof_type_placeholder" as any)}
+                        error={!!errors.id_proof_type}
+                        helperText={errors.id_proof_type?.message as string}
+                        InputProps={{
+                          ...params.InputProps,
+                          sx: { borderRadius: "12px" },
+                        }}
+                      />
+                    )}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <ImageUpload
+                variant="document"
+                title={`${t("kyc_pan_card_image" as any)}*`}
+                hint={t("kyc_doc_hint_pan" as any)}
+                images={watch("pan_card_url") ? [watch("pan_card_url") as string] : []}
+                onChange={(files) => handleImageChange(files, "pan_card_url")}
+                maxImages={1}
+                error={!!errors.pan_card_url}
+                helperText={errors.pan_card_url?.message as string}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <ImageUpload
+                variant="document"
+                title={`${t("kyc_id_proof_image" as any)}*`}
+                hint={t("kyc_doc_hint_id" as any)}
+                images={watch("id_proof_url") ? [watch("id_proof_url") as string] : []}
+                onChange={(files) => handleImageChange(files, "id_proof_url")}
+                maxImages={1}
+                error={!!errors.id_proof_url}
+                helperText={errors.id_proof_url?.message as string}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <ImageUpload
+                variant="document"
+                title={`${t("kyc_address_proof_image" as any)}*`}
+                hint={t("kyc_doc_hint_address" as any)}
+                images={watch("address_proof_url") ? [watch("address_proof_url") as string] : []}
+                onChange={(files) => handleImageChange(files, "address_proof_url")}
+                maxImages={1}
+                error={!!errors.address_proof_url}
+                helperText={errors.address_proof_url?.message as string}
+              />
+            </Grid>
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <ImageUpload
-              title="PAN Card Image*"
-              images={
-                watch("pan_card_url") ? [watch("pan_card_url") as string] : []
-              }
-              onChange={(files) => handleImageChange(files, "pan_card_url")}
-              maxImages={1}
-              error={!!errors.pan_card_url}
-              helperText={errors.pan_card_url?.message as string}
-            />
-          </Grid>
-
-          {/* Identity Verification Section */}
-          <Grid size={{ xs: 12 }}>
-            <Typography
-              variant="subtitle1"
-              fontWeight="600"
-              mb={2}
-              mt={3}
-              display="flex"
-              alignItems="center"
-              gap={1}
-            >
-              <BadgeOutlinedIcon fontSize="small" color="primary" /> Identity
-              Verification
-            </Typography>
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Typography variant="body2" fontWeight="500" mb={1}>
-              Select ID Proof Type*
-            </Typography>
-            <Controller
-              name="id_proof_type"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <Autocomplete
-                  options={ID_PROOF_TYPES}
-                  value={value || ""}
-                  onChange={(_, newValue) => onChange(newValue)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      placeholder="Choose Document Type"
-                      error={!!errors.id_proof_type}
-                      helperText={errors.id_proof_type?.message as string}
-                      InputProps={{
-                        ...params.InputProps,
-                        sx: { borderRadius: "12px" },
-                      }}
-                    />
-                  )}
-                />
-              )}
-            />
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 6 }}>
-            <ImageUpload
-              title="ID Proof Image*"
-              images={
-                watch("id_proof_url") ? [watch("id_proof_url") as string] : []
-              }
-              onChange={(files) => handleImageChange(files, "id_proof_url")}
-              maxImages={1}
-              error={!!errors.id_proof_url}
-              helperText={errors.id_proof_url?.message as string}
-            />
-          </Grid>
-          <Grid size={{ xs: 12 }}>
-            <ImageUpload
-              title="Address Proof Image*"
-              images={
-                watch("address_proof_url")
-                  ? [watch("address_proof_url") as string]
-                  : []
-              }
-              onChange={(files) =>
-                handleImageChange(files, "address_proof_url")
-              }
-              maxImages={1}
-              error={!!errors.address_proof_url}
-              helperText={errors.address_proof_url?.message as string}
-            />
-          </Grid>
-        </Grid>
+        </Box>
 
         <Box
-          mt={10}
+          mt={4}
           display="flex"
           justifyContent="space-between"
           alignItems="center"
         >
           <Button
             variant="outlined"
+            type="button"
             onClick={onBack}
             sx={{ borderRadius: "50px", px: 4, height: 48 }}
           >
@@ -493,7 +455,7 @@ const KycStep: React.FC<KycStepProps> = ({ onBack, onNext }) => {
             size="large"
             sx={{
               borderRadius: "50px",
-              px: 10,
+              px: 2,
               height: 56,
               boxShadow: isDark
                 ? "none"
@@ -507,7 +469,7 @@ const KycStep: React.FC<KycStepProps> = ({ onBack, onNext }) => {
               transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
             }}
           >
-            Complete Registration
+            {t("kyc_complete_registration" as any)}
           </Button>
         </Box>
       </Paper>
