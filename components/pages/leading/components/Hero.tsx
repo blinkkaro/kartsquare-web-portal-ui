@@ -55,7 +55,9 @@ const Hero: React.FC = () => {
   const { t } = useTranslate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
-  const [role, setRole] = React.useState<"SERVICE_PROVIDER" | "SUPPLIER">("SERVICE_PROVIDER");
+  const [role, setRole] = React.useState<"SERVICE_PROVIDER" | "SUPPLIER">(
+    "SERVICE_PROVIDER",
+  );
   const {
     loading,
     isOtpOpen,
@@ -83,9 +85,21 @@ const Hero: React.FC = () => {
   };
 
   const features = [
-    { label: t("featureFree"), desc: t("featureFreeDesc"), Icon: CheckCircleIcon },
-    { label: t("featureEasy"), desc: t("featureEasyDesc"), Icon: SettingsOutlinedIcon },
-    { label: t("featurePersonalised"), desc: t("featurePersonalisedDesc"), Icon: Inventory2OutlinedIcon },
+    {
+      label: t("featureFree"),
+      desc: t("featureFreeDesc"),
+      Icon: CheckCircleIcon,
+    },
+    {
+      label: t("featureEasy"),
+      desc: t("featureEasyDesc"),
+      Icon: SettingsOutlinedIcon,
+    },
+    {
+      label: t("featurePersonalised"),
+      desc: t("featurePersonalisedDesc"),
+      Icon: Inventory2OutlinedIcon,
+    },
   ];
 
   const businessTypes = [
@@ -117,17 +131,17 @@ const Hero: React.FC = () => {
           : "linear-gradient(165deg, #fafaff 0%, #f5f0ff 35%, #faf8ff 100%)",
         position: "relative",
         overflow: "hidden",
-        "&::before":
-          isDark
-            ? {}
-            : {
+        "&::before": isDark
+          ? {}
+          : {
               content: '""',
               position: "absolute",
               top: "-30%",
               right: "-15%",
               width: "55%",
               height: "90%",
-              background: "radial-gradient(ellipse, rgba(94, 24, 233, 0.06) 0%, transparent 65%)",
+              background:
+                "radial-gradient(ellipse, rgba(94, 24, 233, 0.06) 0%, transparent 65%)",
               pointerEvents: "none",
             },
       }}
@@ -144,14 +158,28 @@ const Hero: React.FC = () => {
                 sx={{
                   display: "block",
                   mb: 2,
-                  color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                  color: isDark
+                    ? COLORS.TEXT.SECONDARY_DARK
+                    : COLORS.TEXT.SECONDARY_LIGHT,
                   fontSize: "0.8125rem",
-                  "& a": { color: "inherit", textDecoration: "none", "&:hover": { textDecoration: "underline" } },
+                  "& a": {
+                    color: "inherit",
+                    textDecoration: "none",
+                    "&:hover": { textDecoration: "underline" },
+                  },
                 }}
               >
                 <Link href="/">{t("home")}</Link>
                 {" / "}
-                <Box component="span" fontWeight={600} color={isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT}>
+                <Box
+                  component="span"
+                  fontWeight={600}
+                  color={
+                    isDark
+                      ? COLORS.TEXT.PRIMARY_DARK
+                      : COLORS.TEXT.PRIMARY_LIGHT
+                  }
+                >
                   {t("listYourBusiness")}
                 </Box>
               </Typography>
@@ -168,27 +196,33 @@ const Hero: React.FC = () => {
                   sx={{
                     fontFamily: "var(--font-heading)",
                     fontWeight: 800,
-                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                    lineHeight: 1.18,
-                    mb: 1.5,
-                    fontSize: { xs: "1.875rem", sm: "2.125rem", md: "2.5rem" },
-                    letterSpacing: "-0.025em",
+                    color: isDark
+                      ? COLORS.TEXT.PRIMARY_DARK
+                      : COLORS.TEXT.PRIMARY_LIGHT,
+                    lineHeight: { xs: 1.2, md: 1.18 },
+                    mb: { xs: 2, md: 2.5 },
+                    fontSize: { xs: "2.25rem", sm: "2.5rem", md: "3.25rem" },
+                    letterSpacing: "-0.03em",
                   }}
                 >
                   <Box component="span" sx={{ color: PURPLE }}>
                     {t("standOutHighlight")}
                   </Box>
+                  {" — "}
                   {t("standOutRest")}
                 </Typography>
                 <Typography
                   variant="body1"
                   sx={{
                     fontFamily: "var(--font-body)",
-                    fontWeight: 300,
-                    color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                    fontSize: "1.0625rem",
-                    lineHeight: 1.55,
-                    mb: 3,
+                    fontWeight: 400,
+                    color: isDark
+                      ? COLORS.TEXT.SECONDARY_DARK
+                      : COLORS.TEXT.SECONDARY_LIGHT,
+                    fontSize: { xs: "1rem", md: "1.125rem" },
+                    lineHeight: 1.6,
+                    mb: { xs: 4, md: 5 },
+                    opacity: 0.8,
                   }}
                 >
                   {t("standOutSubtext")}
@@ -220,7 +254,9 @@ const Hero: React.FC = () => {
                       sx={{
                         display: "block",
                         mb: 0.75,
-                        color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                        color: isDark
+                          ? COLORS.TEXT.SECONDARY_DARK
+                          : COLORS.TEXT.SECONDARY_LIGHT,
                         fontSize: "0.8125rem",
                         fontWeight: 500,
                       }}
@@ -230,9 +266,9 @@ const Hero: React.FC = () => {
                     <Box
                       sx={{
                         display: "flex",
-                        gap: 1,
+                        gap: 1.5,
                         alignItems: "stretch",
-                        flexWrap: "wrap",
+                        flexWrap: { xs: "nowrap", sm: "nowrap" },
                       }}
                     >
                       <Box
@@ -240,15 +276,19 @@ const Hero: React.FC = () => {
                           display: "flex",
                           alignItems: "center",
                           border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.15)"}`,
-                          borderRadius: 2,
+                          borderRadius: 2.5,
                           overflow: "hidden",
-                          bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "#fff",
-                          minHeight: 52,
+                          bgcolor: isDark
+                            ? COLORS.BACKGROUND.PAPER_DARK
+                            : "rgba(255,255,255,0.8)",
+                          minHeight: 56,
+                          width: { xs: 100, sm: 120 },
+                          flexShrink: 0,
                           "&:focus-within": {
                             borderColor: PURPLE,
-                            boxShadow: `0 0 0 3px ${PURPLE_ALPHA_04}`,
+                            boxShadow: `0 0 0 4px ${PURPLE_ALPHA_04}`,
                           },
-                          transition: "border-color 0.2s, box-shadow 0.2s",
+                          transition: "all 0.2s ease",
                         }}
                       >
                         <Input
@@ -259,21 +299,32 @@ const Hero: React.FC = () => {
                           InputProps={{
                             disableUnderline: true,
                             sx: {
-                              minWidth: 92,
+                              minWidth: "100%",
                               "& .MuiSelect-select": {
-                                py: 1.5,
+                                py: 2,
                                 pl: 2,
-                                pr: "32px !important",
-                                fontWeight: 500,
-                                fontSize: "1rem",
-                                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                                pr: "36px !important",
+                                fontWeight: 600,
+                                fontSize: "1.0625rem",
+                                color: isDark
+                                  ? COLORS.TEXT.PRIMARY_DARK
+                                  : COLORS.TEXT.PRIMARY_LIGHT,
                               },
                             },
                           }}
                         >
                           {countries.map((country) => (
-                            <MenuItem key={country.code} value={country.phone_code}>
-                              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                            <MenuItem
+                              key={country.code}
+                              value={country.phone_code}
+                            >
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 1,
+                                }}
+                              >
                                 <span>{country.flag}</span>
                                 <span>{country.phone_code}</span>
                               </Box>
@@ -288,15 +339,17 @@ const Hero: React.FC = () => {
                           display: "flex",
                           alignItems: "center",
                           border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.15)"}`,
-                          borderRadius: 2,
-                          px: 2,
-                          minHeight: 52,
-                          bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "#fff",
+                          borderRadius: 2.5,
+                          px: 2.5,
+                          minHeight: 56,
+                          bgcolor: isDark
+                            ? COLORS.BACKGROUND.PAPER_DARK
+                            : "rgba(255,255,255,0.8)",
                           "&:focus-within": {
                             borderColor: PURPLE,
-                            boxShadow: `0 0 0 3px ${PURPLE_ALPHA_04}`,
+                            boxShadow: `0 0 0 4px ${PURPLE_ALPHA_04}`,
                           },
-                          transition: "border-color 0.2s, box-shadow 0.2s",
+                          transition: "all 0.2s ease",
                         }}
                       >
                         <Input
@@ -310,9 +363,12 @@ const Hero: React.FC = () => {
                           InputProps={{
                             disableUnderline: true,
                             sx: {
-                              py: 0.5,
-                              color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                              fontSize: "1rem",
+                              py: 1,
+                              color: isDark
+                                ? COLORS.TEXT.PRIMARY_DARK
+                                : COLORS.TEXT.PRIMARY_LIGHT,
+                              fontSize: "1.0625rem",
+                              fontWeight: 500,
                             },
                           }}
                           sx={{ "& .MuiInputBase-root": { width: "100%" } }}
@@ -328,7 +384,9 @@ const Hero: React.FC = () => {
                       sx={{
                         display: "block",
                         mb: 1.25,
-                        color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                        color: isDark
+                          ? COLORS.TEXT.SECONDARY_DARK
+                          : COLORS.TEXT.SECONDARY_LIGHT,
                         fontSize: "0.8125rem",
                         fontWeight: 600,
                         letterSpacing: "0.02em",
@@ -338,9 +396,10 @@ const Hero: React.FC = () => {
                     </Typography>
                     <Box
                       sx={{
-                        display: "grid",
-                        gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                        display: "flex",
+                        flexDirection: "column",
                         gap: 1.5,
+                        width: "100%",
                       }}
                     >
                       {businessTypes.map((opt) => {
@@ -363,7 +422,9 @@ const Hero: React.FC = () => {
                               borderRadius: 2.5,
                               border: `1px solid ${isSelected ? "transparent" : isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.12)"}`,
                               bgcolor: isSelected
-                                ? (isDark ? "rgba(94, 24, 233, 0.12)" : "rgba(94, 24, 233, 0.06)")
+                                ? isDark
+                                  ? "rgba(94, 24, 233, 0.12)"
+                                  : "rgba(94, 24, 233, 0.06)"
                                 : isDark
                                   ? "rgba(255,255,255,0.03)"
                                   : "rgba(255,255,255,0.7)",
@@ -373,7 +434,9 @@ const Hero: React.FC = () => {
                               position: "relative",
                               overflow: "hidden",
                               boxShadow: isSelected
-                                ? (isDark ? "0 4px 20px rgba(94, 24, 233, 0.15)" : "0 4px 16px rgba(94, 24, 233, 0.08)")
+                                ? isDark
+                                  ? "0 4px 20px rgba(94, 24, 233, 0.15)"
+                                  : "0 4px 16px rgba(94, 24, 233, 0.08)"
                                 : "none",
                               "&::before": {
                                 content: '""',
@@ -381,14 +444,18 @@ const Hero: React.FC = () => {
                                 left: 0,
                                 top: 0,
                                 bottom: 0,
-                                width: isSelected ? 4 : 0,
+                                width: isSelected ? 5 : 0,
                                 bgcolor: PURPLE,
                                 borderRadius: "4px 0 0 4px",
-                                transition: "width 0.25s ease",
+                                transition: "all 0.25s ease",
                               },
                               "&:hover": {
-                                borderColor: isSelected ? "transparent" : PURPLE,
-                                bgcolor: isDark ? "rgba(94, 24, 233, 0.1)" : "rgba(94, 24, 233, 0.05)",
+                                borderColor: isSelected
+                                  ? "transparent"
+                                  : PURPLE,
+                                bgcolor: isDark
+                                  ? "rgba(94, 24, 233, 0.1)"
+                                  : "rgba(94, 24, 233, 0.05)",
                                 boxShadow: "0 4px 20px rgba(94, 24, 233, 0.1)",
                                 transform: "translateY(-1px)",
                               },
@@ -402,7 +469,15 @@ const Hero: React.FC = () => {
                                 gap: 1,
                               }}
                             >
-                              <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, flex: 1, minWidth: 0 }}>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 1.25,
+                                  flex: 1,
+                                  minWidth: 0,
+                                }}
+                              >
                                 <Box
                                   sx={{
                                     width: 44,
@@ -413,12 +488,19 @@ const Hero: React.FC = () => {
                                     justifyContent: "center",
                                     flexShrink: 0,
                                     bgcolor: isSelected
-                                      ? (isDark ? "rgba(94, 24, 233, 0.2)" : "rgba(94, 24, 233, 0.12)")
+                                      ? isDark
+                                        ? "rgba(94, 24, 233, 0.2)"
+                                        : "rgba(94, 24, 233, 0.12)"
                                       : isDark
                                         ? "rgba(255,255,255,0.06)"
                                         : "rgba(94, 24, 233, 0.06)",
-                                    color: isSelected ? PURPLE : (isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT),
-                                    transition: "background-color 0.25s ease, color 0.25s ease",
+                                    color: isSelected
+                                      ? PURPLE
+                                      : isDark
+                                        ? COLORS.TEXT.SECONDARY_DARK
+                                        : COLORS.TEXT.SECONDARY_LIGHT,
+                                    transition:
+                                      "background-color 0.25s ease, color 0.25s ease",
                                   }}
                                 >
                                   <Icon sx={{ fontSize: 24 }} />
@@ -427,7 +509,11 @@ const Hero: React.FC = () => {
                                   sx={{
                                     fontWeight: 700,
                                     fontSize: "1rem",
-                                    color: isSelected ? PURPLE : (isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT),
+                                    color: isSelected
+                                      ? PURPLE
+                                      : isDark
+                                        ? COLORS.TEXT.PRIMARY_DARK
+                                        : COLORS.TEXT.PRIMARY_LIGHT,
                                     fontFamily: "var(--font-heading)",
                                     transition: "color 0.25s ease",
                                   }}
@@ -450,7 +536,11 @@ const Hero: React.FC = () => {
                                   "& svg": { fontSize: 14, color: "#fff" },
                                 }}
                               >
-                                {isSelected && <CheckIcon sx={{ fontSize: 14, color: "#fff" }} />}
+                                {isSelected && (
+                                  <CheckIcon
+                                    sx={{ fontSize: 14, color: "#fff" }}
+                                  />
+                                )}
                               </Box>
                             </Box>
                             <Typography
@@ -458,7 +548,9 @@ const Hero: React.FC = () => {
                               sx={{
                                 fontSize: "0.8125rem",
                                 lineHeight: 1.4,
-                                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                                color: isDark
+                                  ? COLORS.TEXT.SECONDARY_DARK
+                                  : COLORS.TEXT.SECONDARY_LIGHT,
                                 display: "block",
                                 pl: 0.5,
                               }}
@@ -476,16 +568,22 @@ const Hero: React.FC = () => {
                     type="submit"
                     disabled={loading}
                     variant="contained"
-                    endIcon={loading ? <CircularProgress size={22} color="inherit" /> : <ArrowForwardIcon sx={{ fontSize: 22 }} />}
+                    endIcon={
+                      loading ? (
+                        <CircularProgress size={22} color="inherit" />
+                      ) : (
+                        <ArrowForwardIcon sx={{ fontSize: 22 }} />
+                      )
+                    }
                     sx={{
                       bgcolor: PURPLE,
                       color: "#fff",
                       py: 1.75,
                       px: 3,
-                      borderRadius: 2,
+                      borderRadius: "100px",
                       textTransform: "none",
                       fontWeight: 700,
-                      fontSize: "1.0625rem",
+                      fontSize: "1.125rem",
                       fontFamily: "var(--font-heading)",
                       boxShadow: `0 6px 20px ${PURPLE}50`,
                       "&:hover": {
@@ -502,8 +600,12 @@ const Hero: React.FC = () => {
                     variant="caption"
                     sx={{
                       textAlign: "center",
-                      color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                      fontSize: "0.8125rem",
+                      color: isDark
+                        ? COLORS.TEXT.SECONDARY_DARK
+                        : COLORS.TEXT.SECONDARY_LIGHT,
+                      fontSize: "0.875rem",
+                      mt: 1,
+                      opacity: 0.7,
                     }}
                   >
                     {t("freeForever")}
@@ -573,7 +675,6 @@ const Hero: React.FC = () => {
                       );
                     })}
                   </Box> */}
-
                 </Box>
               </motion.div>
             </Box>
@@ -651,131 +752,138 @@ const Hero: React.FC = () => {
                       alt="KartSquare app"
                       fill
                       sizes="360px"
-                      style={{ objectFit: "cover", objectPosition: "center top" }}
+                      style={{
+                        objectFit: "cover",
+                        objectPosition: "center top",
+                      }}
                       priority
                     />
                   </Box>
                 </motion.div>
 
                 {/* Floating stat cards with image strips */}
-                {getStatCards(t).map(({ value, label, icon: Icon, color: statColor }, i) => {
-                  const positions = [
-                    { top: "4%", right: "0%", rotate: 8, delay: 0.25 },
-                    { bottom: "8%", left: "-2%", rotate: -6, delay: 0.35 },
-                    { bottom: "12%", right: "2%", rotate: 5, delay: 0.45 },
-                  ];
-                  const pos = positions[i];
-                  const imagePositions: Record<number, string> = {
-                    0: "center 10%",
-                    1: "center 50%",
-                    2: "center 90%",
-                  };
-                  return (
-                    <motion.div
-                      key={label}
-                      initial={{ opacity: 0, y: 16, scale: 0.92 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ duration: 0.4, delay: pos.delay }}
-                      style={{
-                        position: "absolute",
-                        top: pos.top,
-                        bottom: pos.bottom,
-                        left: pos.left,
-                        right: pos.right,
-                        zIndex: i === 1 ? 3 : 1,
-                        transform: `rotate(${pos.rotate}deg)`,
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 120,
-                          borderRadius: 2.5,
-                          overflow: "hidden",
-                          background: isDark
-                            ? "rgba(255,255,255,0.06)"
-                            : "rgba(255,255,255,0.92)",
-                          border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.8)"}`,
-                          boxShadow: isDark
-                            ? "0 12px 32px rgba(0,0,0,0.3)"
-                            : "0 12px 32px rgba(94, 24, 233, 0.12), 0 4px 16px rgba(0,0,0,0.06)",
-                          backdropFilter: "blur(12px)",
+                {getStatCards(t).map(
+                  ({ value, label, icon: Icon, color: statColor }, i) => {
+                    const positions = [
+                      { top: "4%", right: "0%", rotate: 8, delay: 0.25 },
+                      { bottom: "8%", left: "-2%", rotate: -6, delay: 0.35 },
+                      { bottom: "12%", right: "2%", rotate: 5, delay: 0.45 },
+                    ];
+                    const pos = positions[i];
+                    const imagePositions: Record<number, string> = {
+                      0: "center 10%",
+                      1: "center 50%",
+                      2: "center 90%",
+                    };
+                    return (
+                      <motion.div
+                        key={label}
+                        initial={{ opacity: 0, y: 16, scale: 0.92 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ duration: 0.4, delay: pos.delay }}
+                        style={{
+                          position: "absolute",
+                          top: pos.top,
+                          bottom: pos.bottom,
+                          left: pos.left,
+                          right: pos.right,
+                          zIndex: i === 1 ? 3 : 1,
+                          transform: `rotate(${pos.rotate}deg)`,
                         }}
                       >
                         <Box
                           sx={{
-                            height: 44,
-                            position: "relative",
+                            width: 120,
+                            borderRadius: 2.5,
                             overflow: "hidden",
+                            background: isDark
+                              ? "rgba(255,255,255,0.06)"
+                              : "rgba(255,255,255,0.92)",
+                            border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.8)"}`,
+                            boxShadow: isDark
+                              ? "0 12px 32px rgba(0,0,0,0.3)"
+                              : "0 12px 32px rgba(94, 24, 233, 0.12), 0 4px 16px rgba(0,0,0,0.06)",
+                            backdropFilter: "blur(12px)",
                           }}
                         >
-                          <Image
-                            src="/auth/Home.JPG"
-                            alt=""
-                            fill
-                            sizes="120px"
-                            style={{
-                              objectFit: "cover",
-                              objectPosition: imagePositions[i],
-                            }}
-                          />
                           <Box
                             sx={{
-                              position: "absolute",
-                              inset: 0,
-                              background: isDark
-                                ? "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.5) 100%)"
-                                : "linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.85) 100%)",
-                            }}
-                          />
-                        </Box>
-                        <Box sx={{ p: 1.25, textAlign: "center" }}>
-                          <Box
-                            sx={{
-                              display: "inline-flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              width: 28,
-                              height: 28,
-                              borderRadius: "8px",
-                              bgcolor: `${statColor}20`,
-                              color: statColor,
-                              mb: 0.75,
+                              height: 44,
+                              position: "relative",
+                              overflow: "hidden",
                             }}
                           >
-                            <Icon sx={{ fontSize: 16 }} />
+                            <Image
+                              src="/auth/Home.JPG"
+                              alt=""
+                              fill
+                              sizes="120px"
+                              style={{
+                                objectFit: "cover",
+                                objectPosition: imagePositions[i],
+                              }}
+                            />
+                            <Box
+                              sx={{
+                                position: "absolute",
+                                inset: 0,
+                                background: isDark
+                                  ? "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.5) 100%)"
+                                  : "linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.85) 100%)",
+                              }}
+                            />
                           </Box>
-                          <Typography
-                            fontWeight={800}
-                            sx={{
-                              fontSize: "1.125rem",
-                              lineHeight: 1.2,
-                              letterSpacing: "-0.02em",
-                              color: statColor,
-                              fontFamily: "var(--font-heading)",
-                            }}
-                          >
-                            {value}
-                          </Typography>
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              display: "block",
-                              color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                              fontSize: "0.5625rem",
-                              lineHeight: 1.3,
-                              fontWeight: 600,
-                              textTransform: "uppercase",
-                              letterSpacing: "0.06em",
-                              mt: 0.25,
-                            }}
-                          >
-                            {label}
-                          </Typography>
+                          <Box sx={{ p: 1.25, textAlign: "center" }}>
+                            <Box
+                              sx={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: 28,
+                                height: 28,
+                                borderRadius: "8px",
+                                bgcolor: `${statColor}20`,
+                                color: statColor,
+                                mb: 0.75,
+                              }}
+                            >
+                              <Icon sx={{ fontSize: 16 }} />
+                            </Box>
+                            <Typography
+                              fontWeight={800}
+                              sx={{
+                                fontSize: "1.125rem",
+                                lineHeight: 1.2,
+                                letterSpacing: "-0.02em",
+                                color: statColor,
+                                fontFamily: "var(--font-heading)",
+                              }}
+                            >
+                              {value}
+                            </Typography>
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                display: "block",
+                                color: isDark
+                                  ? COLORS.TEXT.SECONDARY_DARK
+                                  : COLORS.TEXT.SECONDARY_LIGHT,
+                                fontSize: "0.5625rem",
+                                lineHeight: 1.3,
+                                fontWeight: 600,
+                                textTransform: "uppercase",
+                                letterSpacing: "0.06em",
+                                mt: 0.25,
+                              }}
+                            >
+                              {label}
+                            </Typography>
+                          </Box>
                         </Box>
-                      </Box>
-                    </motion.div>
-                  );
-                })}
+                      </motion.div>
+                    );
+                  },
+                )}
 
                 {/* Second smaller screen for depth */}
                 <motion.div
@@ -811,7 +919,10 @@ const Hero: React.FC = () => {
                       alt=""
                       fill
                       sizes="100px"
-                      style={{ objectFit: "cover", objectPosition: "center 70%" }}
+                      style={{
+                        objectFit: "cover",
+                        objectPosition: "center 70%",
+                      }}
                     />
                   </Box>
                 </motion.div>

@@ -32,7 +32,7 @@ export const handleRegistrationStepNavigation = (
   const roleMap = registrationStepMap[role as AppUserType];
   if (!roleMap) {
     console.error("No role map found for role:", role);
-    router.replace("/");
+    // router.replace("/");
     return;
   }
 
@@ -43,6 +43,6 @@ export const handleRegistrationStepNavigation = (
   if(nextPath){
     setTimeout(() => {
       router.push(nextPath);
-    }, 3000);
+    }, 200);
   }
 };
