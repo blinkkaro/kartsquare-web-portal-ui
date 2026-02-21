@@ -33,6 +33,7 @@ import { useGetReviews } from "@/hooks/useReview";
 import { useQueryClient } from "@tanstack/react-query";
 import CustomerServicePricing from "@/components/common/CustomerServicePricing";
 import { review_type } from "@/services/providerDashboard/providerDashboard.interface";
+import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
 
 const ProviderServiceDetails = () => {
   const params = useParams();
@@ -165,8 +166,8 @@ const ProviderServiceDetails = () => {
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
       : [
-          "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        ];
+        "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      ];
 
   return (
     <MainLayout>
@@ -212,13 +213,21 @@ const ProviderServiceDetails = () => {
                 serviceName={service.service_name}
               />
               <Box sx={{ py: 2 }}>
-            <CustomerServicePricing
-              pricingType={service.pricing_type}
-              priceCatalogUrls={service.price_catalog_url}
-              priceItems={service.price_items}
-              currency={service.currency}
-            />
-          </Box>
+                <CustomerServicePricing
+                  pricingType={service.pricing_type}
+                  priceCatalogUrls={service.price_catalog_url}
+                  priceItems={service.price_items}
+                  currency={service.currency}
+                />
+                <Box sx={{ mt: 2 }}> {service.service_address?.latitude && service.service_address?.longitude && (
+                  <ServiceDetailsMap
+                    latitude={service.service_address.latitude}
+                    longitude={service.service_address.longitude}
+                    providerName={service.provider_name || ""}
+                  />
+                )}
+                </Box>
+              </Box>
             </Box>
 
             {/* Middle Column - All Content */}

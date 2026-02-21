@@ -8,10 +8,10 @@ import {
   Avatar,
   IconButton,
   useTheme,
-  Rating,
   Chip,
 } from "@mui/material";
-import { OpenInFull, Star, PersonAdd, PersonRemove } from "@mui/icons-material";
+import { motion } from "framer-motion";
+import { OpenInFull, Star, Verified, HomeRepairService } from "@mui/icons-material";
 import { calculateDistance } from "@/helper/helper";
 import { useAutoGeolocation } from "@/hooks/useGeolocation";
 import { LocationOn } from "@mui/icons-material";
@@ -25,14 +25,18 @@ interface ServiceProviderCardProps {
   size?: "small" | "large";
   onExpandClick?: () => void;
   showExpandIcon?: boolean;
+  selected?: boolean;
   onCardClick?: (service: Service) => void;
 }
+
+const MotionCard = motion(Card);
 
 const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
   service,
   size = "large",
   onExpandClick,
   showExpandIcon = true,
+  selected = false,
   onCardClick,
 }) => {
   const theme = useTheme();
@@ -43,10 +47,8 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
 
   const handleCardClick = () => {
     if (onCardClick) {
-      // Use custom click handler if provided
       onCardClick(service);
     } else {
-      // Default behavior: navigate to service provider profile
       router.push(`/profile/${service.provider_id}`);
     }
   };
@@ -58,10 +60,6 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
     } else {
       router.push("/map");
     }
-  };
-
-  const formatDistance = (radius: number) => {
-    return `${radius}km`;
   };
 
   const getDistance = () => {
@@ -82,44 +80,73 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
     return null;
   };
 
+  const accentColor = COLORS.PRIMARY_PURPLE;
+
   return (
-    <Card
+    <MotionCard
       onClick={handleCardClick}
+      whileHover={{ y: -6, scale: 1.01 }}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
       sx={{
         cursor: "pointer",
-        borderRadius: "12px",
+        borderRadius: "20px",
         backgroundColor:
           theme.palette.mode === "dark"
             ? COLORS.BACKGROUND.PAPER_DARK
             : COLORS.WHITE,
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-        transition: "all 0.3s ease",
+        boxShadow: selected
+          ? `0 20px 40px -12px ${accentColor}30, 0 8px 16px -8px ${accentColor}20`
+          : "0 10px 30px -10px rgba(0, 0, 0, 0.12), 0 4px 10px -5px rgba(0, 0, 0, 0.04)",
+        border: selected ? `2px solid ${accentColor}` : "1px solid rgba(0,0,0,0.04)",
+        transition: "box-shadow 0.3s ease, border-color 0.3s ease",
         "&:hover": {
-          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.15)",
-          transform: "translateY(-2px)",
+          boxShadow: `0 20px 40px -12px ${accentColor}25, 0 8px 16px -8px ${accentColor}15`,
+          borderColor: `${accentColor}40`,
         },
-        width: isSmall ? "280px" : "100%",
-        minWidth: isSmall ? "280px" : "auto",
+        width: isSmall ? "260px" : "100%",
+        minWidth: isSmall ? "260px" : "auto",
+        height: isSmall ? "125px" : "auto",
+        overflow: "hidden",
+        position: "relative",
       }}
     >
-      <CardContent
-        sx={{ p: isSmall ? 1.5 : 2, "&:last-child": { pb: isSmall ? 1.5 : 2 } }}
-      >
-        <Box sx={{ display: "flex", gap: isSmall ? 1.5 : 2 }}>
-          {/* Provider Avatar */}
-          <Avatar
-            src={service.provider_image_url || undefined}
-            alt={service.provider_name}
-            sx={{
-              width: isSmall ? 48 : 64,
-              height: isSmall ? 48 : 64,
-              border: `2px solid ${COLORS.PRIMARY_PURPLE}`,
-            }}
-          />
+      <Box
+        sx={{
+          height: "4px",
+          width: "100%",
+          background: `linear-gradient(90deg, ${accentColor} 0%, ${accentColor}80 100%)`,
+          opacity: 0.8,
+        }}
+      />
 
-          {/* Content */}
+      <CardContent
+        sx={{ p: isSmall ? 1.5 : 2.5, "&:last-child": { pb: isSmall ? 1.5 : 2.5 } }}
+      >
+        <Box sx={{ display: "flex", gap: 1.5 }}>
+          <Box sx={{ position: "relative" }}>
+            <Box
+              sx={{
+                padding: "2px",
+                borderRadius: "50%",
+                background: `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}40 100%)`,
+                boxShadow: `0 4px 10px ${accentColor}25`,
+              }}
+            >
+              <Avatar
+                src={service.provider_image_url || undefined}
+                alt={service.provider_name}
+                sx={{
+                  width: isSmall ? 48 : 72,
+                  height: isSmall ? 48 : 72,
+                  border: `2px solid ${theme.palette.mode === "dark" ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE}`,
+                }}
+              />
+            </Box>
+          </Box>
+
           <Box sx={{ flex: 1, minWidth: 0 }}>
-            {/* Header with expand icon */}
             <Box
               sx={{
                 display: "flex",
@@ -130,9 +157,10 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
             >
               <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Typography
-                  variant={isSmall ? "body2" : "subtitle1"}
+                  variant={isSmall ? "subtitle2" : "h6"}
                   sx={{
-                    fontWeight: 600,
+                    fontWeight: 800,
+                    lineHeight: 1.2,
                     color:
                       theme.palette.mode === "dark"
                         ? COLORS.TEXT.PRIMARY_DARK
@@ -144,128 +172,134 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
                 >
                   {service.service_name}
                 </Typography>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color:
-                      theme.palette.mode === "dark"
-                        ? COLORS.TEXT.SECONDARY_DARK
-                        : COLORS.TEXT.SECONDARY_LIGHT,
-                    display: "block",
-                  }}
-                >
-                  {service.provider_name}
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.25 }}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontWeight: 600,
+                      color: accentColor,
+                      fontSize: "0.75rem",
+                    }}
+                  >
+                    {service.provider_name}
+                  </Typography>
+                  <Verified sx={{ fontSize: 14, color: COLORS.PRIMARY_BLUE }} />
+                </Box>
               </Box>
 
-              {/* Expand Icon (only for small size) */}
               {isSmall && showExpandIcon && (
                 <IconButton
                   size="small"
                   onClick={handleExpandIconClick}
                   sx={{
                     ml: 1,
-                    color: COLORS.PRIMARY_PURPLE,
+                    color: accentColor,
+                    bgcolor: `${accentColor}10`,
                     "&:hover": {
-                      backgroundColor: COLORS.PURPLE_ALPHA_10,
+                      backgroundColor: `${accentColor}20`,
                     },
                   }}
                 >
-                  <OpenInFull fontSize="small" />
+                  <OpenInFull sx={{ fontSize: 16 }} />
                 </IconButton>
               )}
             </Box>
 
-            {/* Rating and Reviews */}
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 0.5,
-                mb: isSmall ? 0.5 : 1,
-              }}
-            >
-              {service?.review_count && service?.review_count > 0 ? (
-                <>
-                  <Rating
-                    value={service.avg_service_rating}
-                    precision={0.1}
-                    size={isSmall ? "small" : "medium"}
-                    readOnly
-                    sx={{
-                      "& .MuiRating-iconFilled": {
-                        color: "#FFB800",
-                      },
-                    }}
-                  />
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color:
-                        theme.palette.mode === "dark"
-                          ? COLORS.TEXT.SECONDARY_DARK
-                          : COLORS.TEXT.SECONDARY_LIGHT,
-                      fontWeight: 500,
-                    }}
-                  >
-                    {service.avg_service_rating} ({service.review_count})
-                  </Typography>
-                </>
-              ) : (
-                <Typography
-                  variant="caption"
-                  sx={{
-                    fontWeight: 500,
-                    backgroundColor: COLORS.BACKGROUND.PAPER_DARK,
-                    color: COLORS.WHITE,
-                    borderRadius: "25px",
-                    padding: "2px 4px",
-                  }}
-                >
-                  {t("newServiceProvider")}
-                </Typography>
-              )}
-            </Box>
-
-            {/* Price and Distance */}
             <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
                 gap: 1,
-                flexWrap: "wrap",
+                mb: 1.5,
+                mt: 1,
               }}
             >
-              <Chip
-                label={service.currency + " " + service.price}
-                size="small"
-                sx={{
-                  backgroundColor: COLORS.PRIMARY_PURPLE,
-                  color: COLORS.WHITE,
-                  fontWeight: 600,
-                  fontSize: isSmall ? "0.7rem" : "0.75rem",
-                  height: isSmall ? 20 : 24,
-                }}
-              />
-              {getDistance() && (
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.3 }}>
-                  <LocationOn
+              {service?.review_count && service?.review_count > 0 ? (
+                <>
+                  <Box
                     sx={{
-                      fontSize: isSmall ? 14 : 16,
-                      color:
-                        theme.palette.mode === "dark"
-                          ? COLORS.TEXT.SECONDARY_DARK
-                          : COLORS.TEXT.SECONDARY_LIGHT,
+                      display: "flex",
+                      alignItems: "center",
+                      bgcolor: "#FFB80015",
+                      px: 0.75,
+                      py: 0.25,
+                      borderRadius: "6px",
                     }}
-                  />
+                  >
+                    <Star sx={{ fontSize: 14, color: "#FFB800", mr: 0.25 }} />
+                    <Typography
+                      variant="caption"
+                      sx={{ fontWeight: 700, color: "#B88600" }}
+                    >
+                      {service.avg_service_rating}
+                    </Typography>
+                  </Box>
                   <Typography
                     variant="caption"
                     sx={{
-                      color:
-                        theme.palette.mode === "dark"
-                          ? COLORS.TEXT.SECONDARY_DARK
-                          : COLORS.TEXT.SECONDARY_LIGHT,
-                      fontSize: isSmall ? "0.7rem" : "0.75rem",
+                      color: COLORS.TEXT.SECONDARY_LIGHT,
+                      fontWeight: 500,
+                    }}
+                  >
+                    ({service.review_count} {t("reviews")})
+                  </Typography>
+                </>
+              ) : (
+                <Chip
+                  label={t("newServiceProvider")}
+                  size="small"
+                  sx={{
+                    height: 20,
+                    fontSize: "0.65rem",
+                    fontWeight: 700,
+                    bgcolor: "rgba(0,0,0,0.05)",
+                    color: COLORS.TEXT.SECONDARY_LIGHT,
+                    borderRadius: "6px",
+                  }}
+                />
+              )}
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                gap: 1,
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ fontWeight: 800, color: COLORS.TEXT.PRIMARY_LIGHT }}
+                >
+                  {service.currency} {service.price}
+                </Typography>
+                <Typography variant="caption" sx={{ color: COLORS.TEXT.SECONDARY_LIGHT }}>
+                  / hr
+                </Typography>
+              </Box>
+
+              {getDistance() && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    bgcolor: "rgba(0,0,0,0.03)",
+                    px: 1,
+                    py: 0.25,
+                    borderRadius: "20px",
+                  }}
+                >
+                  <LocationOn sx={{ fontSize: 14, color: COLORS.TEXT.SECONDARY_LIGHT }} />
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontWeight: 600,
+                      color: COLORS.TEXT.SECONDARY_LIGHT,
+                      fontSize: "0.7rem",
                     }}
                   >
                     {getDistance()}
@@ -274,27 +308,31 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
               )}
             </Box>
 
-            {/* Category (only for large size) */}
             {!isSmall && (
-              <Typography
-                variant="caption"
-                sx={{
-                  color:
-                    theme.palette.mode === "dark"
-                      ? COLORS.TEXT.SECONDARY_DARK
-                      : COLORS.TEXT.SECONDARY_LIGHT,
-                  display: "block",
-                  mt: 0.5,
-                }}
-              >
-                {service.category_name}
-                {service.sub_category_name && ` • ${service.sub_category_name}`}
-              </Typography>
+              <Box sx={{ mt: 1.5, pt: 1.5, borderTop: "1px dashed rgba(0,0,0,0.08)" }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: COLORS.TEXT.SECONDARY_LIGHT,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    fontWeight: 500,
+                  }}
+                >
+                  <HomeRepairService sx={{ fontSize: 14, opacity: 0.6 }} />
+                  {service.category_name}
+                  {service.sub_category_name && (
+                    <Box component="span" sx={{ opacity: 0.4 }}> • </Box>
+                  )}
+                  {service.sub_category_name}
+                </Typography>
+              </Box>
             )}
           </Box>
         </Box>
       </CardContent>
-    </Card>
+    </MotionCard>
   );
 };
 

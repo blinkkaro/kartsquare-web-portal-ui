@@ -644,6 +644,7 @@ export type TranslationKey =
   | "load_more_reviews"
   | "service_not_found"
   | "service_location"
+  | "service_provider_location"
   | "loading"
   | "my_services"
   | "service_description"

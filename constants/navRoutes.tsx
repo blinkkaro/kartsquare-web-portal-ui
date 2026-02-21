@@ -1,4 +1,3 @@
-import React from "react";
 import {
   HomeFilled,
   ArticleRounded,
@@ -7,6 +6,7 @@ import {
   ShoppingBag,
   Chat,
   Dashboard,
+  HomeRepairService,
 } from "@mui/icons-material";
 import { TranslationKey } from "@/features/i18n/TranslationContext";
 import { UserRole } from "@/utils/auth";
@@ -24,33 +24,58 @@ export const getDesktopNavItems = (
   switch (role) {
     case UserRole.SERVICE_PROVIDER:
       return [
-        { label: t("home"), href: "/" },
-        { label: t("dashboard"), href: "/dashboard" },
-        // { label: t("store"), href: "/store" },
-        { label: t("services"), href: "/spr/servicesList" },
-        // { label: t("events"), href: "/events" },
-        { label: t("bookings"), href: "/spr/bookings" },
+        { label: t("home"), href: "/", icon: <HomeFilled sx={{ fontSize: 18 }} /> },
+        { label: t("dashboard"), href: "/dashboard", icon: <Dashboard sx={{ fontSize: 18 }} /> },
+        {
+          label: t("services"),
+          href: "/spr/servicesList",
+          icon: <HomeRepairService sx={{ fontSize: 18 }} />,
+        },
+        {
+          label: t("bookings"),
+          href: "/spr/bookings",
+          icon: <Event sx={{ fontSize: 18 }} />,
+        },
       ];
     case UserRole.CUSTOMER:
       return [
-        { label: t("home"), href: "/" },
-        { label: t("store"), href: "/store" },
-        { label: t("services"), href: "/cus/servicesList" },
-        { label: t("bookings"), href: "/cus/bookings" },
+        { label: t("home"), href: "/", icon: <HomeFilled sx={{ fontSize: 18 }} /> },
+        { label: t("store"), href: "/store", icon: <ShoppingBag sx={{ fontSize: 18 }} /> },
+        {
+          label: t("services"),
+          href: "/cus/servicesList",
+          icon: <HomeRepairService sx={{ fontSize: 18 }} />,
+        },
+        {
+          label: t("bookings"),
+          href: "/cus/bookings",
+          icon: <Event sx={{ fontSize: 18 }} />,
+        },
       ];
     case UserRole.SUPPLIER:
       return [
-        { label: t("home"), href: "/" },
-        { label: t("dashboard"), href: "/dashboard" },
-        { label: t("my_store"), href: "/sup/myStore" },
-        { label: t("enquiries"), href: "/sup/orders" },
+        { label: t("home"), href: "/", icon: <HomeFilled sx={{ fontSize: 18 }} /> },
+        { label: t("dashboard"), href: "/dashboard", icon: <Dashboard sx={{ fontSize: 18 }} /> },
+        {
+          label: t("my_store"),
+          href: "/sup/myStore",
+          icon: <ShoppingBag sx={{ fontSize: 18 }} />,
+        },
+        {
+          label: t("enquiries"),
+          href: "/sup/orders",
+          icon: <Chat sx={{ fontSize: 18 }} />,
+        },
       ];
     default:
       return [
-        { label: t("home"), href: "/" },
-        { label: t("store"), href: "/store" },
-        { label: t("services"), href: "/cus/servicesList" },
-        // { label: t("events"), href: "/events" },
+        { label: t("home"), href: "/", icon: <HomeFilled sx={{ fontSize: 18 }} /> },
+        { label: t("store"), href: "/store", icon: <ShoppingBag sx={{ fontSize: 18 }} /> },
+        {
+          label: t("services"),
+          href: "/cus/servicesList",
+          icon: <HomeRepairService sx={{ fontSize: 18 }} />,
+        },
       ];
   }
 };

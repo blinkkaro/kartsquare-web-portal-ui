@@ -73,9 +73,9 @@ const BlogCard: React.FC<BlogCardProps> = ({
             display: "-webkit-box",
             overflow: "hidden",
             WebkitBoxOrient: "vertical",
-            WebkitLineClamp: 2,
+            // WebkitLineClamp: 2,
             fontSize: "0.8rem",
-            lineHeight: 1.4,
+            // lineHeight: 1.4,
           }}
         >
           {description}
