@@ -1,9 +1,14 @@
 "use client";
 
 import React from "react";
-import { motion, useInView } from "framer-motion";
+import {
+  motion,
+  useInView,
+  Variants,
+  TargetAndTransition,
+} from "framer-motion";
 
-const defaultEase = [0.25, 0.46, 0.45, 0.94];
+const defaultEase = [0.25, 0.46, 0.45, 0.94] as const;
 const defaultDuration = 0.65;
 
 interface ScrollRevealProps {
@@ -15,7 +20,12 @@ interface ScrollRevealProps {
   amount?: number;
 }
 
-const variants = {
+type ScrollVariant = {
+  hidden: TargetAndTransition;
+  visible: TargetAndTransition;
+};
+
+const variants: Record<string, ScrollVariant> = {
   fadeUp: {
     hidden: { opacity: 0, y: 48 },
     visible: {
@@ -68,11 +78,13 @@ export function ScrollReveal({
   const isInView = useInView(ref, { once: true, margin: "-60px", amount });
 
   const variantConfig = variants[variant];
+
   const visibleTransition =
     typeof variantConfig.visible.transition === "object"
       ? { ...variantConfig.visible.transition, delay }
       : { duration: defaultDuration, delay };
-  const visibleWithDelay = {
+
+  const visibleWithDelay: TargetAndTransition = {
     ...variantConfig.visible,
     transition: visibleTransition,
   };
