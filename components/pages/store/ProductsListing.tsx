@@ -291,13 +291,12 @@ const ProductsListingView: React.FC = () => {
   };
 
   const handleCategoryChange = (id: string | null) => {
-    setSelectedCategory(id);
+    setSelectedCategory((prev) => (prev === id ? null : id));
     setSelectedSubCategory(null); // Reset sub-category when main category changes
   };
 
   const handleSubCategoryChange = (id: string | null) => {
     setSelectedSubCategory(id);
-    setSelectedCategory(null); // Reset main category when sub-category changes
   };
 
   const handleBrandChange = (id: string | null) => {
@@ -334,7 +333,11 @@ const ProductsListingView: React.FC = () => {
     e.stopPropagation();
     setAnimatingContact(`whatsapp-${product.id}`);
     setTimeout(() => {
-      const cleanPhone = `${product.whatsapp_country_code}${product.whatsapp_number}`.replace(/\D/g, ''); 
+      const cleanPhone =
+        `${product.whatsapp_country_code}${product.whatsapp_number}`.replace(
+          /\D/g,
+          "",
+        );
       const message = `Hi, I found your listing for ${product.name} on KartSquare. I am interested to know more.`;
       const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, "_blank");
