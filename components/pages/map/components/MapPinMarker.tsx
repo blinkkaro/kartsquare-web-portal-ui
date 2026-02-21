@@ -1,12 +1,12 @@
 "use client";
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import { Storefront, BuildOutlined, NorthEast } from "@mui/icons-material";
+import { ShoppingBag, HomeRepairService, NorthEast } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 
-const PIN_BUBBLE_SIZE = 36;
-const PIN_POINT_HEIGHT = 12;
-const PIN_WIDTH = 32;
+const PIN_BUBBLE_SIZE = 42;
+const PIN_POINT_HEIGHT = 14;
+const PIN_WIDTH = 36;
 
 export interface MapPinMarkerProps {
   type: "service" | "store";
@@ -31,10 +31,10 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
   directionsUrl,
   size = "default",
 }) => {
-  const Icon = type === "store" ? Storefront : BuildOutlined;
-  const bubbleSize = size === "compact" ? 28 : PIN_BUBBLE_SIZE;
-  const pointHeight = size === "compact" ? 10 : PIN_POINT_HEIGHT;
-  const pinWidth = size === "compact" ? 26 : PIN_WIDTH;
+  const Icon = type === "store" ? ShoppingBag : HomeRepairService;
+  const bubbleSize = size === "compact" ? 32 : PIN_BUBBLE_SIZE;
+  const pointHeight = size === "compact" ? 12 : PIN_POINT_HEIGHT;
+  const pinWidth = size === "compact" ? 30 : PIN_WIDTH;
 
   const handleDirections = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -53,7 +53,8 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
         alignItems: "center",
         transform: "translate(-50%, -100%)",
         transition: "transform 0.2s ease",
-        "&:hover": onClick ? { transform: "translate(-50%, -100%) scale(1.05)" } : {},
+        "&:hover": onClick ? { transform: "translate(-50%, -100%) scale(1.1)" } : {},
+        zIndex: selected ? 100 : 1,
       }}
     >
       {/* Pulse ring when selected — centered on pin bubble */}
@@ -64,15 +65,15 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
             bottom: pointHeight + bubbleSize / 2,
             left: "50%",
             transform: "translate(-50%, 50%)",
-            width: bubbleSize + 20,
-            height: bubbleSize + 20,
+            width: bubbleSize + 24,
+            height: bubbleSize + 24,
             borderRadius: "50%",
-            bgcolor: `${color}35`,
+            bgcolor: `${color}40`,
             animation: "pinPulse 2s ease-out infinite",
             pointerEvents: "none",
             "@keyframes pinPulse": {
               "0%": { transform: "translate(-50%, 50%) scale(1)", opacity: 1 },
-              "100%": { transform: "translate(-50%, 50%) scale(1.5)", opacity: 0 },
+              "100%": { transform: "translate(-50%, 50%) scale(1.6)", opacity: 0 },
             },
           }}
         />
@@ -83,32 +84,44 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
         <Box
           onClick={(e) => e.stopPropagation()}
           sx={{
-            mb: 0.75,
-            minWidth: 140,
-            maxWidth: 200,
+            mb: 1,
+            minWidth: 160,
+            maxWidth: 220,
             px: 1.5,
             py: 1.25,
-            borderRadius: 2,
+            borderRadius: 2.5,
             bgcolor: COLORS.WHITE,
-            boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-            border: `1px solid ${color}20`,
+            boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
+            border: `1.5px solid ${color}30`,
             display: "flex",
             alignItems: "center",
-            gap: 1.25,
+            gap: 1.5,
+            position: "relative",
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              bottom: -8,
+              left: "50%",
+              transform: "translateX(-50%)",
+              borderLeft: "8px solid transparent",
+              borderRight: "8px solid transparent",
+              borderTop: `8px solid ${COLORS.WHITE}`,
+            }
           }}
         >
           <Box
             sx={{
-              width: 36,
-              height: 36,
-              borderRadius: 1.5,
-              bgcolor: `${color}18`,
+              width: 40,
+              height: 40,
+              borderRadius: 2,
+              bgcolor: `${color}15`,
               color: color,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               flexShrink: 0,
               overflow: "hidden",
+              border: `1px solid ${color}20`,
             }}
           >
             {imageUrl ? (
@@ -119,18 +132,19 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
                 sx={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
             ) : (
-              <Icon sx={{ fontSize: 20 }} />
+              <Icon sx={{ fontSize: 22 }} />
             )}
           </Box>
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography
               variant="body2"
               sx={{
-                fontWeight: 700,
+                fontWeight: 800,
                 color: COLORS.TEXT.PRIMARY_LIGHT,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
+                fontSize: "0.85rem",
               }}
             >
               {name}
@@ -143,20 +157,20 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
                 sx={{
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: 0.25,
-                  mt: 0.25,
+                  gap: 0.5,
+                  mt: 0.5,
                   p: 0,
                   border: "none",
                   background: "none",
                   cursor: "pointer",
                   color: color,
-                  fontWeight: 600,
-                  fontSize: "0.75rem",
+                  fontWeight: 700,
+                  fontSize: "0.7rem",
                   "&:hover": { textDecoration: "underline" },
                 }}
               >
                 Directions
-                <NorthEast sx={{ fontSize: 14 }} />
+                <NorthEast sx={{ fontSize: 12 }} />
               </Box>
             )}
           </Box>
@@ -169,7 +183,7 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.25))",
+          filter: "drop-shadow(0 4px 10px rgba(0,0,0,0.3))",
         }}
       >
         {/* Bubble (circle) */}
@@ -178,25 +192,61 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
             width: bubbleSize,
             height: bubbleSize,
             borderRadius: "50%",
-            border: `2px solid ${COLORS.WHITE}`,
+            border: `3px solid ${COLORS.WHITE}`,
             bgcolor: color,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            overflow: "hidden",
+            position: "relative",
+            overflow: "visible",
             flexShrink: 0,
+            boxShadow: `0 0 0 1px ${color}40`, // Subtle outer ring
           }}
         >
           {imageUrl ? (
             <Box
-              component="img"
-              src={imageUrl}
-              alt={name}
-              sx={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
+              sx={{
+                width: "100%",
+                height: "100%",
+                borderRadius: "50%",
+                overflow: "hidden",
+                bgcolor: COLORS.WHITE,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Box
+                component="img"
+                src={imageUrl}
+                alt={name}
+                sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            </Box>
           ) : (
-            <Icon sx={{ fontSize: size === "compact" ? 16 : 20, color: COLORS.WHITE }} />
+            <Icon sx={{ fontSize: size === "compact" ? 18 : 24, color: COLORS.WHITE }} />
           )}
+
+          {/* Type Badge Overlay */}
+          <Box
+            sx={{
+              position: "absolute",
+              top: -8,
+              right: -8,
+              width: 24,
+              height: 24,
+              borderRadius: "50%",
+              bgcolor: color,
+              border: `2px solid ${COLORS.WHITE}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 4px 8px rgba(0,0,0,0.4)",
+              zIndex: 10,
+            }}
+          >
+            <Icon sx={{ fontSize: 13, color: COLORS.WHITE }} />
+          </Box>
         </Box>
         {/* Point (triangle) */}
         <Box
@@ -206,7 +256,19 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
             borderLeft: `${pinWidth / 2}px solid transparent`,
             borderRight: `${pinWidth / 2}px solid transparent`,
             borderTop: `${pointHeight}px solid ${color}`,
-            mt: -0.5,
+            mt: -0.25,
+            position: "relative",
+            zIndex: 1,
+            // Inline glow effect for the triangle tip
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              top: -pointHeight,
+              left: -pinWidth / 2,
+              width: pinWidth,
+              height: 2,
+              bgcolor: color,
+            }
           }}
         />
       </Box>

@@ -61,6 +61,7 @@ const DesktopNavLinks: React.FC<DesktopNavLinksProps> = ({
             },
           }}
         >
+          {item.icon}
           {item.label}
         </NavLink>
       ))}

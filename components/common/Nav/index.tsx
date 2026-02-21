@@ -130,13 +130,13 @@ const Nav = () => {
           <Box sx={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
             <NavLogo isMobile={isMobile} mode={mode} />
 
-            {!isMobile && !isTablet && (
+            {/* {!isMobile && !isTablet && (
               <SearchBar
                 search={search}
                 onSearchChange={handleSearchChange}
                 placeholder={t("search")}
               />
-            )}
+            )} */}
           </Box>
 
           {/* Right Section: Navigation Links and Actions */}

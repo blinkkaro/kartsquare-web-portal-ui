@@ -39,7 +39,7 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
         backgroundColor:
           theme.palette.mode === "dark"
             ? COLORS.BACKGROUND.PRIMARY_DARK
-            : COLORS.BACKGROUND.PRIMARY_LIGHT,
+            : COLORS.LIGHT_GRAY,
         borderRadius: 2,
         boxShadow:
           theme.palette.mode === "dark"
@@ -137,7 +137,7 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
                 textDecoration: "underline",
               },
               pb: 2,
-              borderBottom: `1px solid #757575`,
+              // borderBottom: `1px solid #757575`,
             }}
           >
             {t("readmore")}

@@ -11,7 +11,7 @@ import {
   Chip,
 } from "@mui/material";
 import { GoogleMap, useJsApiLoader, OverlayView } from "@react-google-maps/api";
-import { ChevronLeft, ChevronRight, BuildOutlined, Storefront } from "@mui/icons-material";
+import { ChevronLeft, ChevronRight, HomeRepairService, ShoppingBag } from "@mui/icons-material";
 import { Service } from "@/services/serviceList/listInteraface";
 import { COLORS } from "@/constants/colors";
 import ServiceProviderCard from "./components/ServiceProviderCard";
@@ -360,11 +360,11 @@ const MapView: React.FC = () => {
             <Typography variant="body2" sx={{ mr: 0.5 }}>All</Typography>
           </ToggleButton>
           <ToggleButton value="services">
-            <BuildOutlined sx={{ fontSize: 18, mr: 0.5 }} />
+            <HomeRepairService sx={{ fontSize: 18, mr: 0.5 }} />
             <Typography variant="body2">Services</Typography>
           </ToggleButton>
           <ToggleButton value="stores">
-            <Storefront sx={{ fontSize: 18, mr: 0.5 }} />
+            <ShoppingBag sx={{ fontSize: 18, mr: 0.5 }} />
             <Typography variant="body2">Stores</Typography>
           </ToggleButton>
         </ToggleButtonGroup>
@@ -418,21 +418,9 @@ const MapView: React.FC = () => {
                 key={service.service_id}
                 sx={{
                   position: "relative",
-                  minWidth: 320,
-                  maxWidth: 320,
-                  border:
-                    selectedItem?.type === "service" &&
-                      selectedItem.data.service_id === service.service_id
-                      ? `2px solid ${SERVICE_COLOR}`
-                      : "2px solid transparent",
-                  borderRadius: "14px",
-                  transition: "all 0.3s ease",
-                  boxShadow:
-                    selectedItem?.type === "service" &&
-                      selectedItem.data.service_id === service.service_id
-                      ? `0 4px 16px ${SERVICE_COLOR}40`
-                      : "none",
-                  overflow: "hidden",
+                  minWidth: 280,
+                  maxWidth: 280,
+                  py: 1, // Space for the hover lift
                 }}
               >
                 <Chip
@@ -440,26 +428,28 @@ const MapView: React.FC = () => {
                   size="small"
                   sx={{
                     position: "absolute",
-                    top: 8,
-                    left: 8,
-                    zIndex: 1,
-                    height: 22,
-                    fontWeight: 600,
-                    fontSize: "0.7rem",
+                    top: 10,
+                    left: 10,
+                    zIndex: 2,
+                    height: 20,
+                    fontWeight: 700,
+                    fontSize: "0.6rem",
                     bgcolor: SERVICE_COLOR,
                     color: COLORS.WHITE,
-                    border: `1px solid ${COLORS.WHITE}`,
-                    "& .MuiChip-label": { px: 1 },
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                    border: `1px solid ${COLORS.WHITE}40`,
                   }}
                 />
-                <Box sx={{ pt: 3.5 }}>
-                  <ServiceProviderCard
-                    service={service as unknown as Service}
-                    size="large"
-                    showExpandIcon={false}
-                    onCardClick={handleServiceCardClick}
-                  />
-                </Box>
+                <ServiceProviderCard
+                  service={service as unknown as Service}
+                  size="small"
+                  showExpandIcon={false}
+                  selected={
+                    selectedItem?.type === "service" &&
+                    selectedItem.data.service_id === service.service_id
+                  }
+                  onCardClick={handleServiceCardClick}
+                />
               </Box>
             ))}
           {(filter === "all" || filter === "stores") &&
@@ -468,21 +458,9 @@ const MapView: React.FC = () => {
                 key={store.supplier_id}
                 sx={{
                   position: "relative",
-                  minWidth: 320,
-                  maxWidth: 320,
-                  border:
-                    selectedItem?.type === "store" &&
-                      selectedItem.data.supplier_id === store.supplier_id
-                      ? `2px solid ${STORE_COLOR}`
-                      : "2px solid transparent",
-                  borderRadius: "14px",
-                  transition: "all 0.3s ease",
-                  boxShadow:
-                    selectedItem?.type === "store" &&
-                      selectedItem.data.supplier_id === store.supplier_id
-                      ? `0 4px 16px ${STORE_COLOR}40`
-                      : "none",
-                  overflow: "hidden",
+                  minWidth: 280,
+                  maxWidth: 280,
+                  py: 1, // Space for the hover lift
                 }}
               >
                 <Chip
@@ -490,29 +468,27 @@ const MapView: React.FC = () => {
                   size="small"
                   sx={{
                     position: "absolute",
-                    top: 8,
-                    left: 8,
-                    zIndex: 1,
-                    height: 22,
-                    fontWeight: 600,
-                    fontSize: "0.7rem",
+                    top: 10,
+                    left: 10,
+                    zIndex: 2,
+                    height: 20,
+                    fontWeight: 700,
+                    fontSize: "0.6rem",
                     bgcolor: STORE_COLOR,
                     color: COLORS.WHITE,
-                    border: `1px solid ${COLORS.WHITE}`,
-                    "& .MuiChip-label": { px: 1 },
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                    border: `1px solid ${COLORS.WHITE}40`,
                   }}
                 />
-                <Box sx={{ pt: 3.5 }}>
-                  <StoreCard
-                    store={store}
-                    size="large"
-                    selected={
-                      selectedItem?.type === "store" &&
-                      selectedItem.data.supplier_id === store.supplier_id
-                    }
-                    onCardClick={handleStoreCardClick}
-                  />
-                </Box>
+                <StoreCard
+                  store={store}
+                  size="small"
+                  selected={
+                    selectedItem?.type === "store" &&
+                    selectedItem.data.supplier_id === store.supplier_id
+                  }
+                  onCardClick={handleStoreCardClick}
+                />
               </Box>
             ))}
         </Box>

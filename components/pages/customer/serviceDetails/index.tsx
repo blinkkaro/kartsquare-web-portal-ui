@@ -38,6 +38,7 @@ import { openLoginModal } from "@/features/ui/loginModalSlice";
 import RightDrawer from "@/components/common/RightDrawer";
 import ReviewDrawerContent from "./ReviewDrawerContent";
 import { review_type } from "@/services/providerDashboard/providerDashboard.interface";
+import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
 
 const CustomerServiceDetails = () => {
   const params = useParams();
@@ -166,8 +167,8 @@ const CustomerServiceDetails = () => {
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
       : [
-          "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        ];
+        "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      ];
 
   return (
     <MainLayout>
@@ -212,7 +213,6 @@ const CustomerServiceDetails = () => {
             <Box
               sx={{
                 position: { xs: "static", md: "sticky" },
-                top: { md: 80 },
                 order: { xs: 1, md: 1 },
                 width: "100%",
                 maxWidth: "100%",
@@ -229,6 +229,13 @@ const CustomerServiceDetails = () => {
                 priceItems={service.price_items}
                 currency={service.currency}
               />
+              {service.service_address?.latitude && service.service_address?.longitude && (
+                <ServiceDetailsMap
+                  latitude={service.service_address.latitude}
+                  longitude={service.service_address.longitude}
+                  providerName={service.provider_name || ""}
+                />
+              )}
             </Box>
 
             <Box
