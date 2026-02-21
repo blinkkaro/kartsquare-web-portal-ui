@@ -453,7 +453,7 @@ const MapView: React.FC = () => {
                   }}
                 />
                 <Box sx={{ pt: 3.5 }}>
-                    <ServiceProviderCard
+                  <ServiceProviderCard
                     service={service as unknown as Service}
                     size="large"
                     showExpandIcon={false}
@@ -503,7 +503,7 @@ const MapView: React.FC = () => {
                   }}
                 />
                 <Box sx={{ pt: 3.5 }}>
-                    <StoreCard
+                  <StoreCard
                     store={store}
                     size="large"
                     selected={
