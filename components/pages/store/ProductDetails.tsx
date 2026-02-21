@@ -293,6 +293,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 businessName={product.supplier.name}
                 isFollowing={false}
                 gstNumber={product.supplier.gstNumber}
+                disableDrawer={true}
               />
             </Box>
           </Box>

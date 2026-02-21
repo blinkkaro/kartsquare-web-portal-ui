@@ -111,7 +111,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
 
   const getProfileUrl = () => {
     if (typeof window !== "undefined") {
-      return `${window.location.origin}/${username}`;
+      return `${window.location.origin}/in/${username}`;
     }
     return "";
   };

@@ -33,6 +33,7 @@ interface ProviderInfoCardProps {
   isFollowing?: boolean;
   providerPhoneNumber?: string;
   gstNumber?: string;
+  disableDrawer?: boolean;
 }
 
 const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
@@ -44,6 +45,7 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
   isFollowing = false,
   providerPhoneNumber,
   gstNumber,
+  disableDrawer = false,
 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -131,10 +133,12 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
                   : COLORS.TEXT.PRIMARY_LIGHT,
                 lineHeight: 1.2,
                 fontSize: "1.1rem",
-                cursor: "pointer",
+                cursor: disableDrawer ? "default" : "pointer",
               }}
               onClick={() => {
-                dispatch(openDrawer({ userId: providerId }));
+                if (!disableDrawer) {
+                  dispatch(openDrawer({ userId: providerId }));
+                }
               }}
             >
               {businessName || providerName}
