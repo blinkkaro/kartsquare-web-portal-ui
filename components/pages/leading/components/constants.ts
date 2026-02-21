@@ -39,55 +39,50 @@ export const getStatCards = (t: any) => [
 
 export const getSuccessStories = (t: any) => [
   {
-    name: "Ashim Kumar Mondal",
-    role: t("roleAstrologer"),
+    name: "Ramesh Gupta",
+    role: t("roleTailor"),
     tagline: t("successStoryTagline1"),
     image:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=60",
   },
   {
-    name: "Rajesh Chhabria",
-    role: t("roleTileDealer"),
+    name: "Priya Sharma",
+    role: t("roleKiranaOwner"),
     tagline: t("successStoryTagline2"),
     image:
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&auto=format&fit=crop&q=60",
   },
   {
-    name: "Varshini",
-    role: t("roleMakeupArtist"),
+    name: "Vikram Singh",
+    role: t("roleElectrician"),
     tagline: t("successStoryTagline3"),
     image:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&auto=format&fit=crop&q=60",
   },
 ];
 
 import FactCheckIcon from "@mui/icons-material/FactCheck";
 
+// Google-style 3 steps: Claim, Personalise, Manage
 export const getSteps = (t: any) => [
   {
-    step: 1,
-    title: t("step1Title"),
-    desc: t("step1Desc"),
+    step: "one",
+    title: t("stepClaim"),
+    desc: t("stepClaimDesc"),
     Icon: LaptopIcon,
   },
   {
-    step: 2,
-    title: t("step2Title"),
-    desc: t("step2Desc"),
+    step: "two",
+    title: t("stepPersonalise"),
+    desc: t("stepPersonaliseDesc"),
     Icon: StorefrontIcon,
     subIcons: [PlaceIcon, StorefrontIcon, ScheduleIcon, PhotoCameraIcon],
   },
   {
-    step: 3,
-    title: t("step3Title"),
-    desc: t("step3Desc"),
+    step: "three",
+    title: t("stepManage"),
+    desc: t("stepManageDesc"),
     Icon: FactCheckIcon,
-  },
-  {
-    step: 4,
-    title: t("step4Title"),
-    desc: t("step4Desc"),
-    Icon: CategoryIcon,
   },
 ];
 
@@ -104,36 +99,8 @@ export const getBoostBenefits = (t: any) => [
 ];
 
 export const getFaqItems = (t: any) => [
-  {
-    question: t("faq1Question"),
-    answer: t("faq1Answer"),
-  },
-  {
-    question: t("faq2Question"),
-    answer: t("faq2Answer"),
-  },
-  {
-    question: t("faq3Question"),
-    answer: t("faq3Answer"),
-  },
-  {
-    question: t("faq4Question"),
-    answer: t("faq4Answer"),
-  },
-  {
-    question: t("faq5Question"),
-    answer: t("faq5Answer"),
-  },
-  {
-    question: t("faq6Question"),
-    answer: t("faq6Answer"),
-  },
-  {
-    question: t("faq7Question"),
-    answer: t("faq7Answer"),
-  },
-  {
-    question: t("faq8Question"),
-    answer: t("faq8Answer"),
-  },
+  { question: t("faq1Question"), answer: t("faq1Answer") },
+  { question: t("faq2Question"), answer: t("faq2Answer") },
+  { question: t("faq3Question"), answer: t("faq3Answer") },
+  { question: t("faq4Question"), answer: t("faq4Answer") },
 ];

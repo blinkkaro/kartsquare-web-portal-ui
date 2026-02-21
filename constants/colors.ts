@@ -10,6 +10,11 @@ export const COLORS = {
   PURPLE_ALPHA_30: "rgba(94, 24, 233, 0.3)",
   SECONDARY_ORANGE: "#f97316",
   PRIMARY_BLUE: "#3b82f6",
+  // Google Business Profile–style (free listing page)
+  BUSINESS_PROFILE_BLUE: "#1a73e8",
+  BUSINESS_PROFILE_BLUE_HOVER: "#1557b0",
+  BUSINESS_PROFILE_BLUE_ALPHA: "rgba(26, 115, 232, 0.08)",
+  BUSINESS_PROFILE_BG: "#f8f9fa",
   // Light accent for dark mode highlights
   ACCENT_BLUE_DARK: "#8248f7",
   ACCENT_BLUE_BG_DARK: "rgba(168, 85, 247, 0.12)",

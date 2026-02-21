@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Funnel+Display:wght@300..800&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Oswald:wght@200..700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 
 :root {
     /* Gradient colors */
@@ -37,6 +37,30 @@
     /* 540px */
     --spacing-8xl: 87.5rem;
     /* 1400px */
+
+    /* Premium display font for business listing & headings (H1 weight 800) */
+    --font-heading: "Plus Jakarta Sans", "Inter", "Poppins", system-ui, sans-serif;
+    /* Body: high-end contrast — weight 300 for body */
+    --font-body: "Inter", "Plus Jakarta Sans", system-ui, sans-serif;
+    /* Electric violet gradient for borders/glow */
+    --gradient-border: linear-gradient(135deg, rgba(94, 24, 233, 0.4) 0%, rgba(94, 24, 233, 0.1) 50%, rgba(94, 24, 233, 0.4) 100%);
+    --gradient-border-dark: linear-gradient(135deg, rgba(148, 99, 255, 0.25) 0%, rgba(94, 24, 233, 0.1) 50%, rgba(148, 99, 255, 0.25) 100%);
+}
+
+/* Listing page: heading underline reveal */
+@keyframes heading-underline {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+
+@keyframes heading-fade-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
 }
 
 @keyframes slide {
