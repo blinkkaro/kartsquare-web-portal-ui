@@ -2,19 +2,23 @@ import React, { useState } from "react";
 import { Box, Tabs, Tab, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
+import { AppUserType } from "@/services/auth/auth.interface";
 
 interface ProfileTabsProps {
   onTabChange: (tab: string) => void;
+  role: AppUserType;
 }
 
-const ProfileTabs: React.FC<ProfileTabsProps> = ({ onTabChange }) => {
+const ProfileTabs: React.FC<ProfileTabsProps> = ({ onTabChange, role }) => {
   const [value, setValue] = useState(0);
   const { t } = useTranslate();
   const theme = useTheme();
 
+  const isSupplier = role === AppUserType.SUPPLIER;
+  const tabs = isSupplier ? ["Products"] : ["Posts", "Services"];
+
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
-    const tabs = ["Posts", "Services", "Stores"];
     onTabChange(tabs[newValue]);
   };
 
@@ -61,9 +65,9 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ onTabChange }) => {
           },
         }}
       >
-        <Tab label={t("posts")} />
-        <Tab label={t("services")} />
-        {/* <Tab label="Stores" /> */}
+        {tabs.map((tab) => (
+          <Tab key={tab} label={t(tab.toLowerCase() as any)} />
+        ))}
       </Tabs>
     </Box>
   );

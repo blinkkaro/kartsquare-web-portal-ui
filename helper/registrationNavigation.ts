@@ -43,6 +43,6 @@ export const handleRegistrationStepNavigation = (
   if(nextPath){
     setTimeout(() => {
       router.push(nextPath);
-    }, 300);
+    }, 3000);
   }
 };

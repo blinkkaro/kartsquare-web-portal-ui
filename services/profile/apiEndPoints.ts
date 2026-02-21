@@ -8,4 +8,5 @@ export const APIENDPOINTS = {
     `/profile/${id}/posts?page=${page}&limit=${limit}`,
   GET_PROVIDER_SERVICES: (id: string, page?: number, limit?: number) =>
     `/profile/${id}/services?page=${page}&limit=${limit}`,
+  GET_SUPPLIER_PROFILE: (id: string) => `/profile/supplier/${id}`,
 };

@@ -74,6 +74,7 @@ export interface Product {
   image: string;
   images: string[];
   supplier: {
+    username?: string;
     name: string;
     location: string;
     rating: number;

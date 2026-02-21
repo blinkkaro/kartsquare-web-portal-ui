@@ -58,6 +58,14 @@ import ContactUsSection from "./components/ContactUsSection";
 import ProviderMapSection from "./components/ProviderMapSection";
 import ProfileNotFound from "./components/ProfileNotFound";
 import ProviderReviews from "./components/ProviderReviews";
+import { AppUserType } from "@/services/auth/auth.interface";
+import {
+  ISupplierProfile,
+  ISupplierProfileResponse,
+  ProductListItem,
+} from "@/services/profile/profileInterface";
+import ProfileProducts from "../../common/ProfileDrawer/components/ProfileProducts";
+import { Product } from "../store";
 
 interface ProviderProfilePageProps {
   username: string;
@@ -66,6 +74,7 @@ interface ProviderProfilePageProps {
 const PROFILE_TABS = {
   Posts: "Posts",
   Services: "Services",
+  Products: "Products",
 };
 
 const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
@@ -91,11 +100,28 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
     isLoading,
     error,
   } = useProviderProfileByUsername(username);
+
+  const isSupplier = profileData?.profile?.role === AppUserType.SUPPLIER;
   const profile = profileData?.profile;
-  const services = profileData?.services || [];
-  const posts = profileData?.posts || [];
+
+  // Type-safe data extraction
+  const services =
+    profileData && "services" in profileData ? profileData.services : [];
+  const posts = profileData && "posts" in profileData ? profileData.posts : [];
+  const products =
+    profileData && "products" in profileData ? profileData.products : [];
 
   const followMutation = useFollowProvider(profile?.id || "");
+
+  React.useEffect(() => {
+    if (profileData) {
+      if (isSupplier) {
+        setActiveTab(PROFILE_TABS.Products);
+      } else {
+        setActiveTab(PROFILE_TABS.Services);
+      }
+    }
+  }, [profileData, isSupplier]);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -194,7 +220,13 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
         borderRadius: 2,
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center", gap: compact ? 0.75 : 1.2 }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: compact ? 0.75 : 1.2,
+        }}
+      >
         <Box
           component="span"
           sx={{
@@ -210,7 +242,10 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
           sx={{
             fontWeight: 600,
             fontSize: compact ? "0.8rem" : "0.85rem",
-            color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+            color:
+              theme.palette.mode === "dark"
+                ? COLORS.TEXT.PRIMARY_DARK
+                : COLORS.TEXT.PRIMARY_LIGHT,
           }}
         >
           {label}
@@ -221,7 +256,10 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
         sx={{
           fontWeight: 700,
           fontSize: compact ? "0.875rem" : "0.95rem",
-          color: theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+          color:
+            theme.palette.mode === "dark"
+              ? COLORS.TEXT.PRIMARY_DARK
+              : COLORS.TEXT.PRIMARY_LIGHT,
         }}
       >
         {value}
@@ -233,7 +271,14 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
   const getLocationString = () => {
     if (profile?.default_address) {
       const addr = profile.default_address;
-      const parts = [addr.building_no, addr.address, addr.city_town, addr.pincode, addr.state, addr.country].filter(Boolean);
+      const parts = [
+        addr.building_no,
+        addr.address,
+        addr.city_town,
+        addr.pincode,
+        addr.state,
+        addr.country,
+      ].filter(Boolean);
       return parts.join(", ");
     }
     return profile?.country || "";
@@ -258,11 +303,19 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
     return <ProfileNotFound />;
   }
 
-  const textPrimary = isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT;
-  const textSecondary = isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT;
-  const borderColorMui = isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT;
+  const textPrimary = isDark
+    ? COLORS.TEXT.PRIMARY_DARK
+    : COLORS.TEXT.PRIMARY_LIGHT;
+  const textSecondary = isDark
+    ? COLORS.TEXT.SECONDARY_DARK
+    : COLORS.TEXT.SECONDARY_LIGHT;
+  const borderColorMui = isDark
+    ? COLORS.BORDER.DEFAULT_DARK
+    : COLORS.BORDER.DEFAULT_LIGHT;
   const cardBg = isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.WHITE;
-  const surfaceBg = isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT;
+  const surfaceBg = isDark
+    ? COLORS.BACKGROUND.PRIMARY_DARK
+    : COLORS.BACKGROUND.SECONDARY_LIGHT;
 
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: surfaceBg }}>
@@ -302,11 +355,28 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
             }}
           />
         )}
-        <Container maxWidth="xl" sx={{ position: "relative", height: "100%", display: "flex", alignItems: "flex-end", pb: 3 }}>
+        <Container
+          maxWidth="xl"
+          sx={{
+            position: "relative",
+            height: "100%",
+            display: "flex",
+            alignItems: "flex-end",
+            pb: 3,
+          }}
+        >
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Avatar
-              src={profile.profile_pic}
-              alt={`${profile.first_name} ${profile.last_name}`}
+              src={
+                isSupplier
+                  ? (profile as ISupplierProfile).logo_url
+                  : profile.profile_pic
+              }
+              alt={
+                isSupplier
+                  ? (profile as ISupplierProfile).store_name
+                  : `${profile.first_name} ${profile.last_name}`
+              }
               sx={{
                 width: { xs: 72, sm: 88 },
                 height: { xs: 72, sm: 88 },
@@ -324,17 +394,32 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   lineHeight: 1.2,
                 }}
               >
-                {profile.first_name} {profile.last_name}
+                {isSupplier
+                  ? (profile as ISupplierProfile).store_name
+                  : `${profile.first_name} ${profile.last_name}`}
               </Typography>
-              <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.9)", fontWeight: 600, fontSize: "0.875rem" }}>
-                @{profile?.username || "-"} · {t("services")} & {t("posts")}
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "rgba(255,255,255,0.9)",
+                  fontWeight: 600,
+                  fontSize: "0.875rem",
+                }}
+              >
+                @{profile?.username || "-"} ·{" "}
+                {isSupplier
+                  ? `${t("products")}`
+                  : `${t("services")} & ${t("posts")}`}
               </Typography>
             </Box>
           </Box>
         </Container>
       </Box>
 
-      <Container maxWidth="xl" sx={{ position: "relative", mt: -2, zIndex: 1, pb: 6 }}>
+      <Container
+        maxWidth="xl"
+        sx={{ position: "relative", mt: -2, zIndex: 1, pb: 6 }}
+      >
         <Grid container spacing={3}>
           {/* Left Sidebar — Business card */}
           <Grid size={{ xs: 12, md: 4 }}>
@@ -348,7 +433,9 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                 overflow: "hidden",
                 border: `1px solid ${borderColorMui}`,
                 bgcolor: cardBg,
-                boxShadow: isDark ? "0 4px 24px rgba(0,0,0,0.2)" : "0 4px 24px rgba(94, 24, 233, 0.06)",
+                boxShadow: isDark
+                  ? "0 4px 24px rgba(0,0,0,0.2)"
+                  : "0 4px 24px rgba(94, 24, 233, 0.06)",
               }}
             >
               <Box sx={{ p: 3 }}>
@@ -364,12 +451,14 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     lineHeight: 1.3,
                   }}
                 >
-                  {profile.first_name} {profile.last_name}
+                  {isSupplier
+                    ? (profile as ISupplierProfile).store_name
+                    : `${profile.first_name} ${profile.last_name}`}
                 </Typography>
                 <Box sx={{ textAlign: "center", mb: 2 }}>
                   <Chip
                     icon={<BusinessCenter sx={{ fontSize: 16 }} />}
-                    label={t("services")}
+                    label={isSupplier ? t("products") : t("services")}
                     size="small"
                     sx={{
                       mb: 1.5,
@@ -381,9 +470,22 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     }}
                   />
                 </Box>
-                <Typography variant="body2" sx={{ color: textSecondary, fontSize: "0.875rem", textAlign: "center", mb: 2 }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: textSecondary,
+                    fontSize: "0.875rem",
+                    textAlign: "center",
+                    mb: 2,
+                  }}
+                >
                   {(() => {
-                    const bioText = profile.bio || "Professional service provider on Kartsquare.";
+                    const bioText =
+                      profile.bio ||
+                      (isSupplier
+                        ? (profile as ISupplierProfile).description
+                        : "") ||
+                      "Professional service provider on Kartsquare.";
                     const words = bioText.split(" ");
                     const WORD_LIMIT = 12;
                     const isLongBio = words.length > WORD_LIMIT;
@@ -392,7 +494,18 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                         <>
                           {bioText}
                           {isLongBio && (
-                            <Typography component="span" onClick={() => setIsBioExpanded(false)} sx={{ color: COLORS.PRIMARY_PURPLE, cursor: "pointer", ml: 0.5, fontWeight: 600, fontSize: "0.8rem", "&:hover": { textDecoration: "underline" } }}>
+                            <Typography
+                              component="span"
+                              onClick={() => setIsBioExpanded(false)}
+                              sx={{
+                                color: COLORS.PRIMARY_PURPLE,
+                                cursor: "pointer",
+                                ml: 0.5,
+                                fontWeight: 600,
+                                fontSize: "0.8rem",
+                                "&:hover": { textDecoration: "underline" },
+                              }}
+                            >
                               Show less
                             </Typography>
                           )}
@@ -402,7 +515,18 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     return (
                       <>
                         {words.slice(0, WORD_LIMIT).join(" ")}...
-                        <Typography component="span" onClick={() => setIsBioExpanded(true)} sx={{ color: COLORS.PRIMARY_PURPLE, cursor: "pointer", ml: 0.5, fontWeight: 600, fontSize: "0.8rem", "&:hover": { textDecoration: "underline" } }}>
+                        <Typography
+                          component="span"
+                          onClick={() => setIsBioExpanded(true)}
+                          sx={{
+                            color: COLORS.PRIMARY_PURPLE,
+                            cursor: "pointer",
+                            ml: 0.5,
+                            fontWeight: 600,
+                            fontSize: "0.8rem",
+                            "&:hover": { textDecoration: "underline" },
+                          }}
+                        >
                           Read more
                         </Typography>
                       </>
@@ -410,11 +534,31 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   })()}
                 </Typography>
 
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mb: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 1.5,
+                    mb: 2,
+                  }}
+                >
                   {profile.email && (
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
+                    >
                       <EmailIcon sx={{ fontSize: 20, color: textSecondary }} />
-                      <Typography variant="body2" component={Link} href={`mailto:${profile.email}`} sx={{ color: textPrimary, textDecoration: "none", fontWeight: 500, fontSize: "0.875rem", "&:hover": { color: COLORS.PRIMARY_PURPLE } }}>
+                      <Typography
+                        variant="body2"
+                        component={Link}
+                        href={`mailto:${profile.email}`}
+                        sx={{
+                          color: textPrimary,
+                          textDecoration: "none",
+                          fontWeight: 500,
+                          fontSize: "0.875rem",
+                          "&:hover": { color: COLORS.PRIMARY_PURPLE },
+                        }}
+                      >
                         {profile.email}
                       </Typography>
                     </Box>
@@ -424,7 +568,14 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
                     >
                       <LocationOn sx={{ fontSize: 20, color: textSecondary }} />
-                      <Typography variant="body2" sx={{ color: textPrimary, fontWeight: 500, fontSize: "0.875rem" }}>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: textPrimary,
+                          fontWeight: 500,
+                          fontSize: "0.875rem",
+                        }}
+                      >
                         {getLocationString()}
                       </Typography>
                     </Box>
@@ -503,20 +654,32 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     gap: { xs: 1, md: 0.5 },
                   }}
                 >
-                  <StatRow
-                    icon={<BusinessCenter />}
-                    label={t("services")}
-                    value={profile?.services_count || 0}
-                    iconColor={COLORS.PRIMARY_PURPLE}
-                    compact={isMobile}
-                  />
-                  <StatRow
-                    icon={<Visibility />}
-                    label={t("posts")}
-                    value={profile?.total_posts || 0}
-                    iconColor={textSecondary}
-                    compact={isMobile}
-                  />
+                  {isSupplier ? (
+                    <StatRow
+                      icon={<BusinessCenter />}
+                      label={t("products")}
+                      value={(profile as ISupplierProfile).products_count || 0}
+                      iconColor={COLORS.PRIMARY_PURPLE}
+                      compact={isMobile}
+                    />
+                  ) : (
+                    <StatRow
+                      icon={<BusinessCenter />}
+                      label={t("services")}
+                      value={(profile as any)?.services_count || 0}
+                      iconColor={COLORS.PRIMARY_PURPLE}
+                      compact={isMobile}
+                    />
+                  )}
+                  {!isSupplier && (
+                    <StatRow
+                      icon={<Visibility />}
+                      label={t("posts")}
+                      value={(profile as any)?.total_posts || 0}
+                      iconColor={textSecondary}
+                      compact={isMobile}
+                    />
+                  )}
                   <StatRow
                     icon={<Favorite />}
                     label={t("followers") || "Followers"}
@@ -676,13 +839,17 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   fontSize: "1.35rem",
                 }}
               >
-                Our {t("services")} &amp; {t("posts")}
+                {isSupplier
+                  ? `Our ${t("products")}`
+                  : `Our ${t("services")} & ${t("posts")}`}
               </Typography>
               <Typography
                 variant="body2"
                 sx={{ color: textSecondary, fontSize: "0.9rem" }}
               >
-                Explore what we offer and our latest updates.
+                {isSupplier
+                  ? "Explore our range of quality products."
+                  : "Explore what we offer and our latest updates."}
               </Typography>
             </Box>
 
@@ -699,75 +866,118 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                 mb: 3,
               }}
             >
-              <Box
-                onClick={() => handleTabChange("Services")}
-                sx={{
-                  px: 2.5,
-                  py: 1.25,
-                  borderRadius: 1.5,
-                  cursor: "pointer",
-                  bgcolor:
-                    activeTab === "Services"
-                      ? COLORS.PRIMARY_PURPLE
-                      : "transparent",
-                  color:
-                    activeTab === "Services" ? COLORS.WHITE : textSecondary,
-                  fontWeight: activeTab === "Services" ? 700 : 500,
-                  fontSize: "0.95rem",
-                  transition: "all 0.2s ease",
-                  "&:hover": {
+              {isSupplier ? (
+                <Box
+                  onClick={() => handleTabChange(PROFILE_TABS.Products)}
+                  sx={{
+                    px: 2.5,
+                    py: 1.25,
+                    borderRadius: 1.5,
+                    cursor: "pointer",
                     bgcolor:
-                      activeTab === "Services"
-                        ? COLORS.PURPLE_HOVER
-                        : isDark
-                          ? COLORS.PURPLE_ALPHA_10
-                          : COLORS.PURPLE_ALPHA_04,
-                  },
-                }}
-              >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <WorkIcon sx={{ fontSize: 20 }} />
-                  {t("services")}
+                      activeTab === PROFILE_TABS.Products
+                        ? COLORS.PRIMARY_PURPLE
+                        : "transparent",
+                    color:
+                      activeTab === PROFILE_TABS.Products
+                        ? COLORS.WHITE
+                        : textSecondary,
+                    fontWeight: activeTab === PROFILE_TABS.Products ? 700 : 500,
+                    fontSize: "0.95rem",
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      bgcolor:
+                        activeTab === PROFILE_TABS.Products
+                          ? COLORS.PURPLE_HOVER
+                          : isDark
+                            ? COLORS.PURPLE_ALPHA_10
+                            : COLORS.PURPLE_ALPHA_04,
+                    },
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <WorkIcon sx={{ fontSize: 20 }} />
+                    {t("products")}
+                  </Box>
                 </Box>
-              </Box>
-              <Box
-                onClick={() => handleTabChange(PROFILE_TABS.Posts)}
-                sx={{
-                  px: 2.5,
-                  py: 1.25,
-                  borderRadius: 1.5,
-                  cursor: "pointer",
-                  bgcolor:
-                    activeTab === PROFILE_TABS.Posts
-                      ? COLORS.PRIMARY_PURPLE
-                      : "transparent",
-                  color:
-                    activeTab === PROFILE_TABS.Posts
-                      ? COLORS.WHITE
-                      : textSecondary,
-                  fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 500,
-                  fontSize: "0.95rem",
-                  transition: "all 0.2s ease",
-                  "&:hover": {
-                    bgcolor:
-                      activeTab === PROFILE_TABS.Posts
-                        ? COLORS.PURPLE_HOVER
-                        : isDark
-                          ? COLORS.PURPLE_ALPHA_10
-                          : COLORS.PURPLE_ALPHA_04,
-                  },
-                }}
-              >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <ArticleIcon sx={{ fontSize: 20 }} />
-                  {t("posts")}
-                </Box>
-              </Box>
+              ) : (
+                <>
+                  <Box
+                    onClick={() => handleTabChange(PROFILE_TABS.Services)}
+                    sx={{
+                      px: 2.5,
+                      py: 1.25,
+                      borderRadius: 1.5,
+                      cursor: "pointer",
+                      bgcolor:
+                        activeTab === PROFILE_TABS.Services
+                          ? COLORS.PRIMARY_PURPLE
+                          : "transparent",
+                      color:
+                        activeTab === PROFILE_TABS.Services
+                          ? COLORS.WHITE
+                          : textSecondary,
+                      fontWeight:
+                        activeTab === PROFILE_TABS.Services ? 700 : 500,
+                      fontSize: "0.95rem",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        bgcolor:
+                          activeTab === PROFILE_TABS.Services
+                            ? COLORS.PURPLE_HOVER
+                            : isDark
+                              ? COLORS.PURPLE_ALPHA_10
+                              : COLORS.PURPLE_ALPHA_04,
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <WorkIcon sx={{ fontSize: 20 }} />
+                      {t("services")}
+                    </Box>
+                  </Box>
+                  <Box
+                    onClick={() => handleTabChange(PROFILE_TABS.Posts)}
+                    sx={{
+                      px: 2.5,
+                      py: 1.25,
+                      borderRadius: 1.5,
+                      cursor: "pointer",
+                      bgcolor:
+                        activeTab === PROFILE_TABS.Posts
+                          ? COLORS.PRIMARY_PURPLE
+                          : "transparent",
+                      color:
+                        activeTab === PROFILE_TABS.Posts
+                          ? COLORS.WHITE
+                          : textSecondary,
+                      fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 500,
+                      fontSize: "0.95rem",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        bgcolor:
+                          activeTab === PROFILE_TABS.Posts
+                            ? COLORS.PURPLE_HOVER
+                            : isDark
+                              ? COLORS.PURPLE_ALPHA_10
+                              : COLORS.PURPLE_ALPHA_04,
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <ArticleIcon sx={{ fontSize: 20 }} />
+                      {t("posts")}
+                    </Box>
+                  </Box>
+                </>
+              )}
             </Box>
 
-            {/* Content */}
             <Box>
-              {activeTab === PROFILE_TABS.Posts && (
+              {activeTab === PROFILE_TABS.Products && isSupplier && (
+                <ProfileProducts products={products} isLoading={isLoading} />
+              )}
+              {activeTab === PROFILE_TABS.Posts && !isSupplier && (
                 <Box>
                   {transformedPosts.length === 0 ? (
                     <Paper
@@ -816,7 +1026,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   )}
                 </Box>
               )}
-              {activeTab === PROFILE_TABS.Services && (
+              {activeTab === PROFILE_TABS.Services && !isSupplier && (
                 <Box>
                   {services.length === 0 ? (
                     <Paper

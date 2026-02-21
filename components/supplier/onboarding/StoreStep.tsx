@@ -742,11 +742,11 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                         select
                         InputProps={{
                           sx: { borderRadius: "12px", height: 48 },
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              {selectedCountry?.flag}
-                            </InputAdornment>
-                          ),
+                          // startAdornment: (
+                          //   <InputAdornment position="start">
+                          //     {selectedCountry?.flag}
+                          //   </InputAdornment>
+                          // ),
                         }}
                       >
                         {countries.map((option) => (

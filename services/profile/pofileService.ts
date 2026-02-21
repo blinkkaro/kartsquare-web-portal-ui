@@ -7,6 +7,7 @@ import {
   providerProfileInterface,
   providerServicesInterface,
   ProviderProfileByUsernameResponse,
+  ISupplierProfileResponse,
 } from "./profileInterface";
 
 class ProfileService {
@@ -137,6 +138,37 @@ class ProfileService {
       return response.data;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async getSupplierProfile(
+    username: string,
+  ): Promise<ISupplierProfileResponse> {
+    try {
+      const response = await GET<ISupplierProfileResponse>(
+        APIENDPOINTS.GET_SUPPLIER_PROFILE(username),
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getUnifiedProfileByUsername(
+    username: string,
+  ): Promise<ProviderProfileByUsernameResponse | ISupplierProfileResponse> {
+    try {
+      // First try provider
+      const providerData = await this.getProviderProfileByUsername(username);
+      if (providerData && providerData.profile) return providerData;
+      throw new Error("Provider not found");
+    } catch (error) {
+      // Then try supplier
+      try {
+        return await this.getSupplierProfile(username);
+      } catch (supplierError) {
+        throw error; // Throw the original error or a unified one
+      }
     }
   }
 }

@@ -5,6 +5,7 @@ import { closeDrawer } from "@/features/ui/profileDrawerSlice";
 import {
   useProviderProfile,
   useProviderPosts,
+  useSupplierProfile,
 } from "@/hooks/useProviderProfile";
 import ProfileCard from "./components/ProfileCard";
 import ProfileTabs from "./components/ProfileTabs";
@@ -14,29 +15,50 @@ import { Box, CircularProgress, Typography, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import ProfileDrawerWrapper from "./components/ProfileDrawerWrapper";
 import { useTranslate } from "@/hooks/useTranslate";
+import { AppUserType } from "@/services/auth/auth.interface";
+import ProfileProducts from "./components/ProfileProducts";
 
 function ProfileDrawer() {
   const dispatch = useDispatch();
-  const { isOpen, userId } = useSelector(
+  const { isOpen, userId, role, username } = useSelector(
     (state: RootState) => state.profileDrawer,
   );
   const { t } = useTranslate();
 
-  // Always call the hook, but handle the enabled state or null userId gracefully
-  // The hook implementation `enabled: !!userId` handles the skipping query.
-  const { data: profile, isLoading, error } = useProviderProfile(userId || "");
+  const isSupplier = role === AppUserType.SUPPLIER;
+
+  const {
+    data: providerProfile,
+    isLoading: providerLoading,
+    error: providerError,
+  } = useProviderProfile(!isSupplier ? userId : "");
   const { data: postsData, isLoading: postsLoading } = useProviderPosts(
-    userId || "",
+    !isSupplier ? userId : "",
   );
-  const [activeTab, setActiveTab] = useState("Posts");
+
+  const {
+    data: supplierProfileData,
+    isLoading: supplierLoading,
+    error: supplierError,
+  } = useSupplierProfile(isSupplier ? username || "" : "");
+
+  const profile = isSupplier ? supplierProfileData?.profile : providerProfile;
+  const isLoading = isSupplier ? supplierLoading : providerLoading;
+  const error = isSupplier ? supplierError : providerError;
+
+  const [activeTab, setActiveTab] = useState(isSupplier ? "Products" : "Posts");
 
   const allPosts = postsData?.pages.flatMap((page) => page.posts) || [];
+  const allProducts = supplierProfileData?.products || [];
 
-  // console.log("profile", profile);
+  React.useEffect(() => {
+    if (isOpen) {
+      setActiveTab(isSupplier ? "Products" : "Posts");
+    }
+  }, [isOpen, isSupplier]);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
-    // Logic to switch content below can be added here
   };
 
   return (
@@ -76,13 +98,19 @@ function ProfileDrawer() {
               profile={profile}
               onClose={() => dispatch(closeDrawer())}
             />
-            <ProfileTabs onTabChange={handleTabChange} />
+            <ProfileTabs onTabChange={handleTabChange} role={role} />
 
             {/* Content Area Placeholder */}
             {/* Content Area */}
             <Box sx={{ mt: 2 }}>
               {activeTab === "Posts" && (
                 <ProfilePosts posts={allPosts} isLoading={postsLoading} />
+              )}
+              {activeTab === "Products" && (
+                <ProfileProducts
+                  products={allProducts}
+                  isLoading={supplierLoading}
+                />
               )}
               {activeTab === "Services" && (
                 <ProfileServices userId={userId || ""} />

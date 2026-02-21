@@ -22,6 +22,9 @@ import {
 import { COLORS } from "@/constants/colors";
 import CommonButton from "@/components/common/Button";
 import { Product } from "./index";
+import { useDispatch } from "react-redux";
+import { openDrawer } from "@/features/ui/profileDrawerSlice";
+import { AppUserType } from "@/services/auth/auth.interface";
 
 interface ProductCardProps {
   product: Product;
@@ -45,6 +48,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const [hovered, setHovered] = useState(false);
+  const dispatch = useDispatch();
+
+  const handleOpenDrawer = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    dispatch(
+      openDrawer({
+        userId: product.supplier.id || product.supplier_id,
+        role: AppUserType.SUPPLIER,
+        username: product.supplier.username || "",
+      }),
+    );
+  };
 
   const getSupplierYears = (yearEstablished: number) => {
     return new Date().getFullYear() - yearEstablished;
@@ -223,6 +238,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   </Typography>
                   <Typography
                     variant="caption"
+                    onClick={handleOpenDrawer}
                     sx={{
                       color: isDark ? "white" : COLORS.TEXT.PRIMARY_LIGHT,
                       fontWeight: 700,
@@ -230,6 +246,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
+                      cursor: "pointer",
+                      "&:hover": {
+                        textDecoration: "underline",
+                      },
                     }}
                   >
                     {product.supplier.name}
