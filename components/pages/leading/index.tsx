@@ -1,18 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-import { Box, Container, Typography, useTheme } from "@mui/material";
-import Link from "next/link";
+import { Box, useTheme } from "@mui/material";
 import Hero from "./components/Hero";
+import TakeChargeSection from "./components/TakeChargeSection";
+import ConnectWithCustomersSection from "./components/ConnectWithCustomersSection";
+import ShowWhatYouOfferSection from "./components/ShowWhatYouOfferSection";
 import SuccessStories from "./components/SuccessStories";
 import HowItWorks from "./components/HowItWorks";
-import Benefits from "./components/Benefits";
 import FAQ from "./components/FAQ";
-import { useTranslate } from "@/hooks/useTranslate";
+import ScrollReveal from "./components/ScrollReveal";
 import { COLORS } from "@/constants/colors";
+import { SECTION_IDS } from "./components/sectionIds";
 
 function ListingView() {
-  const { t } = useTranslate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const [expandedFaq, setExpandedFaq] = useState<string | false>("faq0");
@@ -22,32 +23,65 @@ function ListingView() {
       setExpandedFaq(isExpanded ? panel : false);
     };
 
+  const sectionBorder = isDark
+    ? `1px solid ${COLORS.BORDER.DEFAULT_DARK}`
+    : "1px solid rgba(94, 24, 233, 0.06)";
+
   return (
     <Box
       sx={{
-        bgcolor: isDark
-          ? COLORS.BACKGROUND.PRIMARY_DARK
-          : COLORS.BACKGROUND.PRIMARY_LIGHT,
+        bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
         minHeight: "100vh",
         pb: 0,
+        overflowX: "hidden",
       }}
     >
-      
+      {/* 1. Hero — CTA target for all section buttons */}
+      <Box component="section" id={SECTION_IDS.HERO}>
+        <Hero />
+      </Box>
 
-      {/* Hero — Register your business */}
-      <Hero />
+      {/* 2. Take charge */}
+      <Box component="section" id={SECTION_IDS.TAKE_CHARGE} sx={{ borderTop: sectionBorder }}>
+        <ScrollReveal variant="fadeLeft" delay={0}>
+          <TakeChargeSection />
+        </ScrollReveal>
+      </Box>
 
-      {/* Why register — Benefits first for conversion */}
-      <Benefits />
+      {/* 3. Easily connect */}
+      <Box component="section" id={SECTION_IDS.CONNECT} sx={{ borderTop: sectionBorder }}>
+        <ScrollReveal variant="fadeRight" delay={0}>
+          <ConnectWithCustomersSection />
+        </ScrollReveal>
+      </Box>
 
-      {/* How it works — Clear steps */}
-      <HowItWorks />
+      {/* 4. Show what you offer */}
+      <Box component="section" id={SECTION_IDS.SHOW_WHAT_YOU_OFFER} sx={{ borderTop: sectionBorder }}>
+        <ScrollReveal variant="fadeLeft" delay={0}>
+          <ShowWhatYouOfferSection />
+        </ScrollReveal>
+      </Box>
 
-      {/* Social proof */}
-      <SuccessStories />
+      {/* 5. What success looks like */}
+      <Box component="section" id={SECTION_IDS.SUCCESS_STORIES} sx={{ borderTop: sectionBorder }}>
+        <ScrollReveal variant="fadeRight" delay={0}>
+          <SuccessStories />
+        </ScrollReveal>
+      </Box>
 
-      {/* FAQ */}
-      <FAQ expandedFaq={expandedFaq} handleFaqChange={handleFaqChange} />
+      {/* 6. How it works */}
+      <Box component="section" id={SECTION_IDS.HOW_IT_WORKS} sx={{ borderTop: sectionBorder }}>
+        <ScrollReveal variant="fadeLeft" delay={0}>
+          <HowItWorks />
+        </ScrollReveal>
+      </Box>
+
+      {/* 7. FAQ */}
+      <Box component="section" id={SECTION_IDS.FAQ} sx={{ borderTop: sectionBorder }}>
+        <ScrollReveal variant="fadeRight" delay={0}>
+          <FAQ expandedFaq={expandedFaq} handleFaqChange={handleFaqChange} />
+        </ScrollReveal>
+      </Box>
     </Box>
   );
 }

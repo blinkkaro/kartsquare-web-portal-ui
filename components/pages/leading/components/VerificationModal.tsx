@@ -13,7 +13,11 @@ import {
 import { LockOutlined, Close } from "@mui/icons-material";
 import type { TransitionProps } from "@mui/material/transitions";
 import { COLORS } from "@/constants/colors";
+
 import { useTranslate } from "@/hooks/useTranslate";
+
+const PURPLE = COLORS.PRIMARY_PURPLE;
+const PURPLE_HOVER = COLORS.PURPLE_HOVER;
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -100,14 +104,14 @@ const VerificationModal: React.FC<VerificationModalProps> = ({
             width: 80,
             height: 80,
             borderRadius: "50%",
-            bgcolor: `${COLORS.PRIMARY_PURPLE}10`,
+            bgcolor: COLORS.PURPLE_ALPHA_10,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             mb: 1,
           }}
         >
-          <LockOutlined sx={{ fontSize: 40, color: COLORS.PRIMARY_PURPLE }} />
+          <LockOutlined sx={{ fontSize: 40, color: PURPLE }} />
         </Box>
 
         <Typography
@@ -152,7 +156,7 @@ const VerificationModal: React.FC<VerificationModalProps> = ({
                 borderColor: isDark ? "rgba(255,255,255,0.1)" : "#E5E7EB",
               },
               "&.Mui-focused fieldset": {
-                borderColor: COLORS.PRIMARY_PURPLE,
+                borderColor: PURPLE,
                 borderWidth: "2px",
               },
             },
@@ -187,8 +191,8 @@ const VerificationModal: React.FC<VerificationModalProps> = ({
               py: 1.5,
               textTransform: "none",
               fontWeight: 600,
-              bgcolor: COLORS.PRIMARY_PURPLE,
-              "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
+              bgcolor: PURPLE,
+              "&:hover": { bgcolor: PURPLE_HOVER },
             }}
           >
             {loading ? (

@@ -1,113 +1,185 @@
+"use client";
+
 import React from "react";
 import {
   Box,
   Typography,
   Container,
   Grid,
-  Paper,
   Button,
   useTheme,
 } from "@mui/material";
 import Link from "next/link";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-import SearchIcon from "@mui/icons-material/Search";
-import DashboardIcon from "@mui/icons-material/Dashboard";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import PhotoCameraOutlinedIcon from "@mui/icons-material/PhotoCameraOutlined";
+import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
 import { getFreeListingBenefits, getBoostBenefits } from "./constants";
 import { useTranslate } from "@/hooks/useTranslate";
 import { COLORS } from "@/constants/colors";
 import Image from "next/image";
+
+const BLUE = COLORS.BUSINESS_PROFILE_BLUE;
+const BLUE_HOVER = COLORS.BUSINESS_PROFILE_BLUE_HOVER;
 
 const Benefits = () => {
   const { t } = useTranslate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
-  const freeListingIcons = [
-    VerifiedUserIcon,
-    SearchIcon,
-    DashboardIcon,
+  const takeChargeItems = [
+    {
+      title: t("addEssentialInfo"),
+      desc: t("addEssentialInfoDesc"),
+      Icon: InfoOutlinedIcon,
+    },
+    {
+      title: t("sharePhotosLogos"),
+      desc: t("sharePhotosLogosDesc"),
+      Icon: PhotoCameraOutlinedIcon,
+    },
+    {
+      title: t("showWhoYouAre"),
+      desc: t("showWhoYouAreDesc"),
+      Icon: BadgeOutlinedIcon,
+    },
   ];
 
   return (
     <Box
       sx={{
         py: { xs: 8, md: 12 },
-        bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
+        bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : "#f8f9fa",
       }}
     >
       <Container maxWidth="xl">
-        <Box sx={{ textAlign: "center", mb: { xs: 6, md: 8 }, maxWidth: 640, mx: "auto" }}>
+        {/* Take charge of your first impression — Google-style */}
+        <Box sx={{ mb: { xs: 8, md: 12 } }}>
           <Typography
-            variant="overline"
-            fontWeight={700}
-            color={COLORS.PRIMARY_PURPLE}
+            variant="h4"
+            component="h2"
+            fontWeight={400}
             sx={{
-              letterSpacing: 1.5,
-              display: "block",
+              color: isDark ? COLORS.TEXT.PRIMARY_DARK : "#202124",
+              fontSize: { xs: "1.5rem", md: "1.75rem" },
+              textAlign: "center",
               mb: 1,
             }}
           >
-            {t("forBusinessOwners")}
-          </Typography>
-          <Typography
-            variant="h4"
-            fontWeight={700}
-            sx={{
-              color: isDark
-                ? COLORS.TEXT.PRIMARY_DARK
-                : COLORS.TEXT.PRIMARY_LIGHT,
-              fontSize: { xs: "1.75rem", md: "2rem" },
-              letterSpacing: "-0.02em",
-              lineHeight: 1.25,
-            }}
-          >
-            {t("connectWithNewCustomers")}
+            {t("takeChargeTitle")}
           </Typography>
           <Typography
             variant="body1"
-            color={isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT}
-            sx={{ mt: 1.5, lineHeight: 1.6 }}
+            sx={{
+              color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#5f6368",
+              textAlign: "center",
+              maxWidth: 560,
+              mx: "auto",
+              mb: { xs: 4, md: 6 },
+              lineHeight: 1.6,
+            }}
           >
-            Register once. Reach more customers. Grow your business.
+            {t("takeChargeSubtext")}
           </Typography>
+          <Grid container spacing={{ xs: 3, md: 4 }} justifyContent="center">
+            {takeChargeItems.map((item, i) => (
+              <Grid size={{ xs: 12, md: 4 }} key={i}>
+                <Box
+                  sx={{
+                    height: "100%",
+                    p: 3,
+                    borderRadius: 2,
+                    bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "#fff",
+                    border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "#dadce0"}`,
+                    boxShadow: isDark ? "none" : "0 1px 2px rgba(60,64,67,.3)",
+                    transition: "box-shadow 0.2s ease",
+                    "&:hover": {
+                      boxShadow: isDark ? "none" : "0 2px 6px rgba(60,64,67,.15)",
+                    },
+                  }}
+                >
+                  <item.Icon
+                    sx={{
+                      fontSize: 40,
+                      color: BLUE,
+                      mb: 1.5,
+                    }}
+                  />
+                  <Typography
+                    variant="h6"
+                    fontWeight={700}
+                    sx={{
+                      fontSize: "1rem",
+                      color: isDark ? COLORS.TEXT.PRIMARY_DARK : "#202124",
+                      mb: 1,
+                    }}
+                  >
+                    {item.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#5f6368",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {item.desc}
+                  </Typography>
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
         </Box>
 
-        {/* Free listing benefits — card + value props */}
-        <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center" sx={{ mb: { xs: 8, md: 12 } }}>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Paper
-              elevation={0}
-              sx={{
-                overflow: "hidden",
-                borderRadius: 3,
-                border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.1)"}`,
-                bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-                boxShadow: isDark ? "none" : "0 8px 32px rgba(94, 24, 233, 0.06)",
-              }}
-            >
+        {/* Easily connect with customers */}
+        <Box sx={{ mb: { xs: 8, md: 12 } }}>
+          <Typography
+            variant="h4"
+            component="h2"
+            fontWeight={400}
+            sx={{
+              color: isDark ? COLORS.TEXT.PRIMARY_DARK : "#202124",
+              fontSize: { xs: "1.5rem", md: "1.75rem" },
+              textAlign: "center",
+              mb: 1,
+            }}
+          >
+            {t("connectWithCustomersTitle")}
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#5f6368",
+              textAlign: "center",
+              maxWidth: 560,
+              mx: "auto",
+              mb: { xs: 4, md: 6 },
+              lineHeight: 1.6,
+            }}
+          >
+            {t("connectWithCustomersSubtext")}
+          </Typography>
+          <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
+            <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 sx={{
-                  width: "100%",
-                  height: { xs: 320, sm: 380 },
-                  position: "relative",
-                  borderBottom: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.08)"}`,
+                  p: 3,
+                  borderRadius: 2,
+                  bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "#fff",
+                  border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "#dadce0"}`,
+                  boxShadow: isDark ? "none" : "0 1px 2px rgba(60,64,67,.3)",
                 }}
               >
-                <Image
-                  src="/businessProfile.png"
-                  alt="Business profile on platform"
-                  fill
-                  style={{ objectFit: "contain", objectPosition: "center top" }}
-                />
-              </Box>
-              <Box sx={{ p: { xs: 2.5, md: 3 } }}>
                 <Typography
                   variant="overline"
                   fontWeight={700}
-                  color={COLORS.PRIMARY_PURPLE}
-                  sx={{ letterSpacing: 1.2 }}
+                  sx={{
+                    color: BLUE,
+                    letterSpacing: 1.2,
+                    display: "block",
+                    mb: 1,
+                  }}
                 >
                   {t("yourFreeListingPage")}
                 </Typography>
@@ -117,7 +189,7 @@ const Benefits = () => {
                   sx={{
                     mt: 0.75,
                     mb: 1.5,
-                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : "#202124",
                     fontSize: "1.125rem",
                   }}
                 >
@@ -125,115 +197,79 @@ const Benefits = () => {
                 </Typography>
                 <Typography
                   variant="body2"
-                  color={isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT}
-                  sx={{ mb: 2, lineHeight: 1.6 }}
+                  sx={{
+                    color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#5f6368",
+                    mb: 2,
+                    lineHeight: 1.6,
+                  }}
                 >
                   {t("completeBusinessProfile")}
                 </Typography>
                 <Box component="ul" sx={{ m: 0, p: 0, listStyle: "none" }}>
-                  {getFreeListingBenefits(t).map((text: string, i: number) => {
-                    const Icon = freeListingIcons[i] || CheckCircleIcon;
-                    return (
-                      <Box
-                        key={i}
-                        component="li"
+                  {getFreeListingBenefits(t).map((text: string, i: number) => (
+                    <Box
+                      key={i}
+                      component="li"
+                      sx={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 1.5,
+                        mb: 1.25,
+                      }}
+                    >
+                      <CheckCircleIcon
                         sx={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          gap: 1.5,
-                          mb: 1.25,
+                          color: "#34a853",
+                          fontSize: 22,
+                          flexShrink: 0,
+                          mt: 0.15,
+                        }}
+                      />
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary",
+                          fontWeight: 500,
+                          lineHeight: 1.5,
                         }}
                       >
-                        <Icon
-                          sx={{
-                            color: COLORS.SUCCESS_GREEN,
-                            fontSize: 22,
-                            flexShrink: 0,
-                            mt: 0.15,
-                          }}
-                        />
-                        <Typography
-                          variant="body2"
-                          color={isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary"}
-                          sx={{ fontWeight: 500, lineHeight: 1.5 }}
-                        >
-                          {text}
-                        </Typography>
-                      </Box>
-                    );
-                  })}
+                        {text}
+                      </Typography>
+                    </Box>
+                  ))}
                 </Box>
               </Box>
-            </Paper>
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Box sx={{ maxWidth: 480 }}>
-              <Typography
-                variant="h5"
-                fontWeight={700}
-                sx={{
-                  color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                  mb: 2,
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                Why businesses register with us
-              </Typography>
-              <Typography
-                variant="body1"
-                color={isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT}
-                sx={{ mb: 3, lineHeight: 1.7 }}
-              >
-                A verified listing builds trust, improves discoverability, and gives you full control over how customers see your business — all from one dashboard.
-              </Typography>
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 sx={{
-                  display: "grid",
-                  gap: 2,
+                  width: "100%",
+                  height: { xs: 280, sm: 340 },
+                  position: "relative",
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "#dadce0"}`,
                 }}
               >
-                {[
-                  { title: "Trust & credibility", desc: "Verified badge and complete profile increase customer confidence." },
-                  { title: "Discoverability", desc: "Show up when customers search for your services in your area." },
-                  { title: "One dashboard", desc: "Update hours, photos, and info anytime. No technical skills needed." },
-                ].map((item, i) => (
-                  <Paper
-                    key={i}
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      borderRadius: 2,
-                      border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.08)"}`,
-                      bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-                      transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-                      "&:hover": {
-                        borderColor: COLORS.PRIMARY_PURPLE,
-                        boxShadow: isDark ? "none" : "0 4px 16px rgba(94, 24, 233, 0.08)",
-                      },
-                    }}
-                  >
-                    <Typography variant="subtitle2" fontWeight={700} color={isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary"} sx={{ mb: 0.5 }}>
-                      {item.title}
-                    </Typography>
-                    <Typography variant="body2" color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}>
-                      {item.desc}
-                    </Typography>
-                  </Paper>
-                ))}
+                <Image
+                  src="/businessProfile.png"
+                  alt="Business profile"
+                  fill
+                  style={{ objectFit: "contain", objectPosition: "center top" }}
+                />
               </Box>
-            </Box>
+            </Grid>
           </Grid>
-        </Grid>
+        </Box>
 
-        {/* Boost visibility (optional) */}
+        {/* Want more visibility — optional CTA */}
         <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
           <Grid size={{ xs: 12, md: 6 }} order={{ xs: 2, md: 1 }}>
             <Box sx={{ maxWidth: 480 }}>
               <Typography
                 variant="overline"
                 fontWeight={700}
-                color={COLORS.PRIMARY_PURPLE}
-                sx={{ letterSpacing: 1.2 }}
+                sx={{ color: BLUE, letterSpacing: 1.2, display: "block", mb: 1 }}
               >
                 {t("wantMoreLeads")}
               </Typography>
@@ -243,7 +279,7 @@ const Benefits = () => {
                 sx={{
                   mt: 0.75,
                   mb: 1.5,
-                  color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                  color: isDark ? COLORS.TEXT.PRIMARY_DARK : "#202124",
                   letterSpacing: "-0.02em",
                 }}
               >
@@ -251,8 +287,11 @@ const Benefits = () => {
               </Typography>
               <Typography
                 variant="body1"
-                color={isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT}
-                sx={{ mb: 2, lineHeight: 1.6 }}
+                sx={{
+                  color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#5f6368",
+                  mb: 2,
+                  lineHeight: 1.6,
+                }}
               >
                 {t("promoteListingDesc")}
               </Typography>
@@ -261,10 +300,28 @@ const Benefits = () => {
                   <Box
                     key={i}
                     component="li"
-                    sx={{ display: "flex", alignItems: "flex-start", gap: 1.5, mb: 1.25 }}
+                    sx={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 1.5,
+                      mb: 1.25,
+                    }}
                   >
-                    <CheckCircleIcon sx={{ color: COLORS.SUCCESS_GREEN, fontSize: 22, flexShrink: 0, mt: 0.15 }} />
-                    <Typography variant="body2" color={isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary"} sx={{ fontWeight: 500 }}>
+                    <CheckCircleIcon
+                      sx={{
+                        color: "#34a853",
+                        fontSize: 22,
+                        flexShrink: 0,
+                        mt: 0.15,
+                      }}
+                    />
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary",
+                        fontWeight: 500,
+                      }}
+                    >
                       {text}
                     </Typography>
                   </Box>
@@ -276,18 +333,14 @@ const Benefits = () => {
                 href="/supplier/register"
                 component={Link}
                 sx={{
-                  bgcolor: COLORS.PRIMARY_PURPLE,
-                  "&:hover": {
-                    bgcolor: COLORS.PURPLE_HOVER,
-                    boxShadow: "0 6px 20px rgba(94, 24, 233, 0.4)",
-                  },
+                  bgcolor: BLUE,
+                  "&:hover": { bgcolor: BLUE_HOVER, boxShadow: "none" },
                   textTransform: "none",
                   fontWeight: 600,
                   px: 3.5,
                   py: 1.5,
-                  borderRadius: 2,
-                  boxShadow: "0 4px 14px rgba(94, 24, 233, 0.35)",
-                  transition: "all 0.2s ease",
+                  borderRadius: 1,
+                  boxShadow: "none",
                 }}
               >
                 {t("getStartedFree")}
@@ -295,25 +348,23 @@ const Benefits = () => {
             </Box>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }} order={{ xs: 1, md: 2 }}>
-            <Paper
-              elevation={0}
+            <Box
               sx={{
+                width: "100%",
+                height: { xs: 260, sm: 320 },
+                position: "relative",
+                borderRadius: 2,
                 overflow: "hidden",
-                borderRadius: 3,
-                border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.1)"}`,
-                bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-                boxShadow: isDark ? "none" : "0 8px 32px rgba(94, 24, 233, 0.06)",
+                border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "#dadce0"}`,
               }}
             >
-              <Box sx={{ width: "100%", height: { xs: 280, sm: 360 }, position: "relative" }}>
-                <Image
-                  src="/serviceProfile.png"
-                  alt="Promoted listing"
-                  fill
-                  style={{ objectFit: "cover", objectPosition: "center" }}
-                />
-              </Box>
-            </Paper>
+              <Image
+                src="/serviceProfile.png"
+                alt="Promoted listing"
+                fill
+                style={{ objectFit: "cover", objectPosition: "center" }}
+              />
+            </Box>
           </Grid>
         </Grid>
       </Container>

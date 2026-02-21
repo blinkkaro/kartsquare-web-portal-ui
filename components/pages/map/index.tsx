@@ -5,82 +5,70 @@ import {
   useTheme,
   IconButton,
   Avatar,
-  TextField,
-  InputAdornment,
   Typography,
+  ToggleButtonGroup,
+  ToggleButton,
+  Chip,
 } from "@mui/material";
 import { GoogleMap, useJsApiLoader, OverlayView } from "@react-google-maps/api";
-import { Close, ChevronLeft, ChevronRight, Search } from "@mui/icons-material";
+import { ChevronLeft, ChevronRight, BuildOutlined, Storefront } from "@mui/icons-material";
 import { Service } from "@/services/serviceList/listInteraface";
 import { COLORS } from "@/constants/colors";
 import ServiceProviderCard from "./components/ServiceProviderCard";
+import StoreCard from "./components/StoreCard";
+import MapPinMarker from "./components/MapPinMarker";
 import { useAutoGeolocation } from "@/hooks/useGeolocation";
 import { secureStorage } from "@/helper/SecureStorage";
 import { useTranslate } from "@/hooks/useTranslate";
-import { useServicesList } from "@/hooks/useServicesList";
-import { useRouter } from "next/navigation";
+import { useMapDetails } from "@/hooks/useMapDetails";
+import type { MapServiceItem, MapStoreItem } from "@/services/map/mapInterface";
 
-// Define libraries outside component to prevent recreation
 const LIBRARIES: "places"[] = ["places"];
+const SERVICE_COLOR = COLORS.PRIMARY_PURPLE;
+const STORE_COLOR = COLORS.PRIMARY_BLUE;
+
+type SelectedItem =
+  | { type: "service"; data: MapServiceItem }
+  | { type: "store"; data: MapStoreItem }
+  | null;
 
 const MapView: React.FC = () => {
   const theme = useTheme();
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [selectedItem, setSelectedItem] = useState<SelectedItem>(null);
+  const [filter, setFilter] = useState<"all" | "services" | "stores">("all");
   const {
     coordinates,
     isLoading: isGeoLoading,
-    error: geoError,
   } = useAutoGeolocation();
-  const [mapCenter, setMapCenter] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [userProfile, setUserProfile] = useState<string | null>(null);
   const [mapZoom, setMapZoom] = useState(12);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
+  // const router = useRouter();
   const { t } = useTranslate();
 
-  // Fetch services
   const {
-    data: servicesData,
-    isLoading: isServicesLoading,
-    error: servicesError,
-  } = useServicesList({
-    limit: 10, // Fetch more for map view
-  });
+    data: mapData,
+    isLoading: isMapLoading,
+  } = useMapDetails({ limit: 30 });
 
-  const services = servicesData?.services || [];
+  const services = mapData?.services ?? [];
+  const stores = mapData?.stores ?? [];
 
-  // Load user profile from localStorage
   useEffect(() => {
     const profileData = secureStorage.getItem("user_details");
-    if (profileData) {
-      try {
-        console.log("profileData", profileData.profile_pic);
-        setUserProfile(profileData.profile_pic);
-      } catch (error) {
-        console.error("Error parsing user profile:", error);
-        setUserProfile(null);
-      }
-    }
+    if (profileData?.profile_pic) setUserProfile(profileData.profile_pic);
   }, []);
 
-  // Set initial map center to user location
   useEffect(() => {
     if (coordinates?.latitude && coordinates?.longitude && !mapCenter) {
-      setMapCenter({
-        lat: coordinates.latitude,
-        lng: coordinates.longitude,
-      });
+      setMapCenter({ lat: coordinates.latitude, lng: coordinates.longitude });
     }
   }, [coordinates, mapCenter]);
 
-  // Update map center when services flow in if map center is not set (optional, or just stick to user location)
-
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
-  const { isLoaded, loadError } = useJsApiLoader({
+  const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: apiKey,
     libraries: LIBRARIES,
   });
@@ -91,74 +79,64 @@ const MapView: React.FC = () => {
   };
 
   const mapOptions: google.maps.MapOptions = {
-    disableDefaultUI: true, // Disable default UI
-    zoomControl: false, // Enable zoom control
+    disableDefaultUI: true,
+    zoomControl: false,
     streetViewControl: false,
     mapTypeControl: false,
     fullscreenControl: false,
-    gestureHandling: "greedy", // Enable map interactions
+    gestureHandling: "greedy",
     zoom: mapZoom,
     styles: [
-      {
-        featureType: "poi",
-        elementType: "labels",
-        stylers: [{ visibility: "off" }],
-      },
+      { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
     ],
   };
 
-  const handleMarkerClick = useCallback((service: Service) => {
-    setSelectedService(service);
-    if (
-      service?.service_address?.latitude &&
-      service?.service_address?.longitude
-    ) {
+  const handleServiceMarkerClick = useCallback((service: MapServiceItem) => {
+    setSelectedItem({ type: "service", data: service });
+    if (service?.service_address?.latitude != null && service?.service_address?.longitude != null) {
       setMapCenter({
         lat: service.service_address.latitude,
         lng: service.service_address.longitude,
       });
-      setMapZoom(15); // Zoom in when marker is clicked
+      setMapZoom(15);
     }
   }, []);
 
-  const handleCardClick = useCallback((service: Service) => {
-    setSelectedService(service);
-    if (
-      service?.service_address?.latitude &&
-      service?.service_address?.longitude
-    ) {
+  const handleStoreMarkerClick = useCallback((store: MapStoreItem) => {
+    setSelectedItem({ type: "store", data: store });
+    const addr = store.store_details?.store_address;
+    if (addr?.latitude != null && addr?.longitude != null) {
+      setMapCenter({ lat: Number(addr.latitude), lng: Number(addr.longitude) });
+      setMapZoom(15);
+    }
+  }, []);
+
+  const handleServiceCardClick = useCallback((service: Service) => {
+    setSelectedItem({ type: "service", data: service as unknown as MapServiceItem });
+    if (service?.service_address?.latitude != null && service?.service_address?.longitude != null) {
       setMapCenter({
         lat: service.service_address.latitude,
         lng: service.service_address.longitude,
       });
-      setMapZoom(15); // Zoom in when card is clicked
+      setMapZoom(15);
     }
   }, []);
 
-  const handleCloseCard = useCallback(() => {
-    setSelectedService(null);
-  }, []);
-
-  const handleSelectedCardClick = useCallback((service: Service) => {
-    router.push(`/cus/service/${service.service_id}`);
+  const handleStoreCardClick = useCallback((store: MapStoreItem) => {
+    setSelectedItem({ type: "store", data: store });
+    const addr = store.store_details?.store_address;
+    if (addr?.latitude != null && addr?.longitude != null) {
+      setMapCenter({ lat: Number(addr.latitude), lng: Number(addr.longitude) });
+      setMapZoom(15);
+    }
   }, []);
 
   const handleScrollLeft = useCallback(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({
-        left: -340, // Card width (320px) + gap (20px)
-        behavior: "smooth",
-      });
-    }
+    scrollContainerRef.current?.scrollBy({ left: -340, behavior: "smooth" });
   }, []);
 
   const handleScrollRight = useCallback(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({
-        left: 340, // Card width (320px) + gap (20px)
-        behavior: "smooth",
-      });
-    }
+    scrollContainerRef.current?.scrollBy({ left: 340, behavior: "smooth" });
   }, []);
 
   if (!apiKey) {
@@ -180,8 +158,7 @@ const MapView: React.FC = () => {
     );
   }
 
-  const isLoading =
-    !isLoaded || isGeoLoading || (isServicesLoading && !servicesData); // Allow interactions while refetching for search
+  const isLoading = !isLoaded || isGeoLoading || (isMapLoading && !mapData);
 
   if (isLoading) {
     return (
@@ -218,97 +195,69 @@ const MapView: React.FC = () => {
         }
         options={mapOptions}
       >
-        {/* Custom Markers for Service Providers */}
-        {services.map((service) =>
-          service?.service_address?.latitude &&
-          service?.service_address?.longitude ? (
-            <OverlayView
-              key={service.service_id}
-              position={{
-                lat: service.service_address.latitude || 0,
-                lng: service.service_address.longitude || 0,
-              }}
-              mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-            >
-              <Box
-                onClick={() => handleMarkerClick(service)}
-                sx={{
-                  cursor: "pointer",
-                  transform: "translate(-50%, -50%)",
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    transform: "translate(-50%, -50%) scale(1.1)",
-                  },
-                  position: "relative",
-                }}
+        {/* Service markers — teardrop pin + popup */}
+        {(filter === "all" || filter === "services") &&
+          services.map((service: MapServiceItem) => {
+            const lat = service?.service_address?.latitude;
+            const lng = service?.service_address?.longitude;
+            if (lat == null || lng == null) return null;
+            const isSelected =
+              selectedItem?.type === "service" &&
+              selectedItem.data.service_id === service.service_id;
+            const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+            return (
+              <OverlayView
+                key={`s-${service.service_id}`}
+                position={{ lat, lng }}
+                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
               >
-                {/* Pulsing ring for selected service */}
-                {selectedService?.service_id === service.service_id && (
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      width: "70px",
-                      height: "70px",
-                      borderRadius: "50%",
-                      backgroundColor: "rgba(138, 43, 226, 0.2)",
-                      animation: "pulse 2s infinite",
-                      "@keyframes pulse": {
-                        "0%": {
-                          transform: "translate(-50%, -50%) scale(1)",
-                          opacity: 1,
-                        },
-                        "100%": {
-                          transform: "translate(-50%, -50%) scale(1.5)",
-                          opacity: 0,
-                        },
-                      },
-                    }}
-                  />
-                )}
-                <Box
-                  sx={{
-                    width:
-                      selectedService?.service_id === service.service_id
-                        ? 56
-                        : 48,
-                    height:
-                      selectedService?.service_id === service.service_id
-                        ? 56
-                        : 48,
-                    borderRadius: "50%",
-                    border: `3px solid ${
-                      selectedService?.service_id === service.service_id
-                        ? COLORS.PRIMARY_PURPLE
-                        : "#ffffff"
-                    }`,
-                    boxShadow:
-                      selectedService?.service_id === service.service_id
-                        ? "0 4px 16px rgba(138, 43, 226, 0.5)"
-                        : "0 2px 8px rgba(0, 0, 0, 0.3)",
-                    overflow: "hidden",
-                    backgroundColor: "#fff",
-                    transition: "all 0.3s ease",
-                  }}
-                >
-                  <img
-                    src={
-                      service.provider_image_url || "https://i.pravatar.cc/150"
-                    }
-                    alt={service.provider_name}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </Box>
-              </Box>
-            </OverlayView>
-          ) : null,
-        )}
+                <MapPinMarker
+                  type="service"
+                  color={SERVICE_COLOR}
+                  imageUrl={service.provider_image_url || service.image_urls?.[0]}
+                  name={service.service_name}
+                  selected={isSelected}
+                  onClick={() => handleServiceMarkerClick(service)}
+                  showPopup={true}
+                  directionsUrl={directionsUrl}
+                />
+              </OverlayView>
+            );
+          })}
+
+        {/* Store markers — teardrop pin + popup */}
+        {(filter === "all" || filter === "stores") &&
+          stores.map((store: MapStoreItem) => {
+            const addr = store.store_details?.store_address;
+            const lat = addr?.latitude;
+            const lng = addr?.longitude;
+            if (lat == null || lng == null) return null;
+            const isSelected =
+              selectedItem?.type === "store" &&
+              selectedItem.data.supplier_id === store.supplier_id;
+            const directionsUrl =
+              lat != null && lng != null
+                ? `https://www.google.com/maps/dir/?api=1&destination=${Number(lat)},${Number(lng)}`
+                : undefined;
+            return (
+              <OverlayView
+                key={`st-${store.supplier_id}`}
+                position={{ lat: Number(lat), lng: Number(lng) }}
+                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+              >
+                <MapPinMarker
+                  type="store"
+                  color={STORE_COLOR}
+                  imageUrl={store.store_details?.logo_url}
+                  name={store.store_details?.store_name || "Store"}
+                  selected={isSelected}
+                  onClick={() => handleStoreMarkerClick(store)}
+                  showPopup={true}
+                  directionsUrl={directionsUrl}
+                />
+              </OverlayView>
+            );
+          })}
 
         {/* User Location Marker */}
         {coordinates?.latitude && coordinates?.longitude && (
@@ -376,7 +325,52 @@ const MapView: React.FC = () => {
         )}
       </GoogleMap>
 
-      {/* Bottom Service Provider Cards Carousel */}
+      {/* Filter: All / Services / Stores */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 16,
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 10,
+        }}
+      >
+        <ToggleButtonGroup
+          value={filter}
+          exclusive
+          onChange={(_, v) => v != null && setFilter(v)}
+          sx={{
+            bgcolor: theme.palette.mode === "dark" ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE,
+            boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
+            borderRadius: 2,
+            "& .MuiToggleButton-root": {
+              px: 2,
+              py: 1,
+              textTransform: "none",
+              fontWeight: 600,
+              "&.Mui-selected": {
+                bgcolor: `${COLORS.PRIMARY_PURPLE}18`,
+                color: COLORS.PRIMARY_PURPLE,
+                "&:hover": { bgcolor: `${COLORS.PRIMARY_PURPLE}25` },
+              },
+            },
+          }}
+        >
+          <ToggleButton value="all">
+            <Typography variant="body2" sx={{ mr: 0.5 }}>All</Typography>
+          </ToggleButton>
+          <ToggleButton value="services">
+            <BuildOutlined sx={{ fontSize: 18, mr: 0.5 }} />
+            <Typography variant="body2">Services</Typography>
+          </ToggleButton>
+          <ToggleButton value="stores">
+            <Storefront sx={{ fontSize: 18, mr: 0.5 }} />
+            <Typography variant="body2">Stores</Typography>
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Box>
+
+      {/* Bottom carousel: Services + Stores */}
       <Box
         sx={{
           position: "absolute",
@@ -385,7 +379,6 @@ const MapView: React.FC = () => {
           right: 0,
         }}
       >
-        {/* Left Arrow */}
         <IconButton
           onClick={handleScrollLeft}
           sx={{
@@ -394,17 +387,12 @@ const MapView: React.FC = () => {
             top: "50%",
             transform: "translateY(-50%)",
             backgroundColor:
-              theme.palette.mode === "light"
-                ? COLORS.WHITE
-                : COLORS.BACKGROUND.PAPER_DARK,
-
+              theme.palette.mode === "light" ? COLORS.WHITE : COLORS.BACKGROUND.PAPER_DARK,
             boxShadow: `0 2px 8px ${COLORS.SHADOW.DEFAULT}`,
             zIndex: 2,
             "&:hover": {
               backgroundColor:
-                theme.palette.mode === "light"
-                  ? COLORS.WHITE
-                  : COLORS.BACKGROUND.PAPER_DARK,
+                theme.palette.mode === "light" ? COLORS.WHITE : COLORS.BACKGROUND.PAPER_DARK,
               boxShadow: `0 4px 12px ${COLORS.SHADOW.DEFAULT}`,
             },
           }}
@@ -412,7 +400,6 @@ const MapView: React.FC = () => {
           <ChevronLeft />
         </IconButton>
 
-        {/* Scrollable Container */}
         <Box
           ref={scrollContainerRef}
           sx={{
@@ -420,42 +407,116 @@ const MapView: React.FC = () => {
             gap: 2,
             overflowX: "auto",
             overflowY: "hidden",
-            scrollbarWidth: "none", // Firefox
-            "&::-webkit-scrollbar": {
-              display: "none", // Chrome, Safari, Edge
-            },
-            px: 6, // Padding for arrows
+            scrollbarWidth: "none",
+            "&::-webkit-scrollbar": { display: "none" },
+            px: 6,
           }}
         >
-          {services.map((service) => (
-            <Box
-              key={service.service_id}
-              sx={{
-                minWidth: "320px",
-                maxWidth: "320px",
-                border:
-                  selectedService?.service_id === service.service_id
-                    ? `2px solid ${COLORS.PRIMARY_PURPLE}`
-                    : "2px solid transparent",
-                borderRadius: "14px",
-                transition: "all 0.3s ease",
-                boxShadow:
-                  selectedService?.service_id === service.service_id
-                    ? "0 4px 16px rgba(138, 43, 226, 0.3)"
-                    : "none",
-              }}
-            >
-              <ServiceProviderCard
-                service={service}
-                size="large"
-                showExpandIcon={false}
-                onCardClick={handleCardClick}
-              />
-            </Box>
-          ))}
+          {(filter === "all" || filter === "services") &&
+            services.map((service: MapServiceItem) => (
+              <Box
+                key={service.service_id}
+                sx={{
+                  position: "relative",
+                  minWidth: 320,
+                  maxWidth: 320,
+                  border:
+                    selectedItem?.type === "service" &&
+                      selectedItem.data.service_id === service.service_id
+                      ? `2px solid ${SERVICE_COLOR}`
+                      : "2px solid transparent",
+                  borderRadius: "14px",
+                  transition: "all 0.3s ease",
+                  boxShadow:
+                    selectedItem?.type === "service" &&
+                      selectedItem.data.service_id === service.service_id
+                      ? `0 4px 16px ${SERVICE_COLOR}40`
+                      : "none",
+                  overflow: "hidden",
+                }}
+              >
+                <Chip
+                  label="Service"
+                  size="small"
+                  sx={{
+                    position: "absolute",
+                    top: 8,
+                    left: 8,
+                    zIndex: 1,
+                    height: 22,
+                    fontWeight: 600,
+                    fontSize: "0.7rem",
+                    bgcolor: SERVICE_COLOR,
+                    color: COLORS.WHITE,
+                    border: `1px solid ${COLORS.WHITE}`,
+                    "& .MuiChip-label": { px: 1 },
+                  }}
+                />
+                <Box sx={{ pt: 3.5 }}>
+                  <ServiceProviderCard
+                    service={service as unknown as Service}
+                    size="large"
+                    showExpandIcon={false}
+                    onCardClick={handleServiceCardClick}
+                  />
+                </Box>
+              </Box>
+            ))}
+          {(filter === "all" || filter === "stores") &&
+            stores.map((store: MapStoreItem) => (
+              <Box
+                key={store.supplier_id}
+                sx={{
+                  position: "relative",
+                  minWidth: 320,
+                  maxWidth: 320,
+                  border:
+                    selectedItem?.type === "store" &&
+                      selectedItem.data.supplier_id === store.supplier_id
+                      ? `2px solid ${STORE_COLOR}`
+                      : "2px solid transparent",
+                  borderRadius: "14px",
+                  transition: "all 0.3s ease",
+                  boxShadow:
+                    selectedItem?.type === "store" &&
+                      selectedItem.data.supplier_id === store.supplier_id
+                      ? `0 4px 16px ${STORE_COLOR}40`
+                      : "none",
+                  overflow: "hidden",
+                }}
+              >
+                <Chip
+                  label="Store"
+                  size="small"
+                  sx={{
+                    position: "absolute",
+                    top: 8,
+                    left: 8,
+                    zIndex: 1,
+                    height: 22,
+                    fontWeight: 600,
+                    fontSize: "0.7rem",
+                    bgcolor: STORE_COLOR,
+                    color: COLORS.WHITE,
+                    border: `1px solid ${COLORS.WHITE}`,
+                    "& .MuiChip-label": { px: 1 },
+                  }}
+                />
+                <Box sx={{ pt: 3.5 }}>
+                  <StoreCard
+                    store={store}
+                    size="large"
+                    selected={
+                      selectedItem?.type === "store" &&
+                      selectedItem.data.supplier_id === store.supplier_id
+                    }
+                    onCardClick={handleStoreCardClick}
+                  />
+                </Box>
+              </Box>
+            ))}
         </Box>
 
-        {/* Right Arrow */}
         <IconButton
           onClick={handleScrollRight}
           sx={{
@@ -464,16 +525,12 @@ const MapView: React.FC = () => {
             top: "50%",
             transform: "translateY(-50%)",
             backgroundColor:
-              theme.palette.mode === "light"
-                ? COLORS.WHITE
-                : COLORS.BACKGROUND.PAPER_DARK,
+              theme.palette.mode === "light" ? COLORS.WHITE : COLORS.BACKGROUND.PAPER_DARK,
             boxShadow: `0 2px 8px ${COLORS.SHADOW.DEFAULT}`,
             zIndex: 2,
             "&:hover": {
               backgroundColor:
-                theme.palette.mode === "light"
-                  ? COLORS.WHITE
-                  : COLORS.BACKGROUND.PAPER_DARK,
+                theme.palette.mode === "light" ? COLORS.WHITE : COLORS.BACKGROUND.PAPER_DARK,
               boxShadow: `0 4px 12px ${COLORS.SHADOW.DEFAULT}`,
             },
           }}
@@ -482,46 +539,6 @@ const MapView: React.FC = () => {
         </IconButton>
       </Box>
 
-      {/* Selected Service Card (Popup) */}
-      {selectedService && (
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 1000,
-            width: "90%",
-            maxWidth: "400px",
-          }}
-          onClick={handleCloseCard}
-        >
-          <Box sx={{ position: "relative" }}>
-            <IconButton
-              onClick={handleCloseCard}
-              sx={{
-                position: "absolute",
-                top: -8,
-                right: -8,
-                backgroundColor: "#fff",
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
-                zIndex: 1,
-                "&:hover": {
-                  backgroundColor: "#f5f5f5",
-                },
-              }}
-              size="small"
-            >
-              <Close />
-            </IconButton>
-            <ServiceProviderCard
-              service={selectedService}
-              size="large"
-              showExpandIcon={false}
-            />
-          </Box>
-        </Box>
-      )}
     </Box>
   );
 };
