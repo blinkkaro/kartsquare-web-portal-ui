@@ -599,9 +599,6 @@ const ProductsListingView: React.FC = () => {
                       index={index}
                       isFavorite={favorites.has(product.id)}
                       onToggleFavorite={toggleFavorite}
-                      onProductClick={handleProductClick}
-                      onInquiry={handleInquiry}
-                      onWhatsApp={handleWhatsApp}
                     />
                   </Grid>
                 ))}

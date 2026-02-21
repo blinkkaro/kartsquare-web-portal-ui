@@ -68,9 +68,6 @@ export default function ProfileProducts({
                   address: product.supplier?.store_address?.address || "",
                 },
               }}
-              onProductClick={() => {}}
-              onInquiry={() => {}}
-              onWhatsApp={() => {}}
               index={index}
             />
           </Grid>

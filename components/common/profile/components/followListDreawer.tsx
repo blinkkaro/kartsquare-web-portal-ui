@@ -20,12 +20,13 @@ import Button from "@/components/common/Button";
 import { IFollow } from "@/services/follow/followInterface";
 import { formatCount } from "@/helper/helper";
 import RightDrawer from "../../RightDrawer";
+import { AppUserType } from "@/services/auth/auth.interface";
 
 interface FollowListDrawerProps {
   open: boolean;
   onClose: () => void;
   userId: string;
-  userRole: "SERVICE_PROVIDER" | "CUSTOMER";
+  userRole: AppUserType;
 }
 
 const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
@@ -40,7 +41,7 @@ const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
   const observerTarget = useRef<HTMLDivElement>(null);
 
   // Determine which list to fetch based on user role
-  const isServiceProvider = userRole === "SERVICE_PROVIDER";
+  const isServiceProvider = userRole === AppUserType.SERVICE_PROVIDER || userRole === AppUserType.SUPPLIER;
 
   const {
     data: followersData,

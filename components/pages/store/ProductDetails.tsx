@@ -424,12 +424,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   key={simProduct.id}
                   product={simProduct}
                   index={index}
-                  onProductClick={handleProductClick}
-                  onInquiry={handleInquiry}
-                  onWhatsApp={handleWhatsApp}
-                  // isAnimatingWhatsApp={
-                  //   animatingContact === `whatsapp-${simProduct.id}`
-                  // }
                 />
               ))}
             </Box>
