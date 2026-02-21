@@ -24,6 +24,25 @@ const iconMap: {
   events_entertainment_icon: { icon: "🎉" },
   music_icon: { icon: "🎶" },
 
+  // New Database Icons from Screenshot
+  real_estate: { icon: "🏠" },
+  automotive_services: { icon: "🚗" },
+  business_services: { icon: "💼" },
+  education_services: { icon: "🎓" },
+  home_services: { icon: "🧹" },
+  construction_services: { icon: "🏗️" },
+  event_management: { icon: "🎭" },
+  jems_jewelry: { icon: "💎" },
+  healthcare_services: { icon: "🏥" },
+  digital_services: { icon: "💻" },
+  legal_services: { icon: "⚖️" },
+  hospitality_services: { icon: "🏨" },
+  financial_services: { icon: "🏦" },
+  relocation_services: { icon: "🚚" },
+  personal_care: { icon: "🧴" },
+  grocery_services: { icon: "🛒" },
+  government_services: { icon: "🏛️" },
+
   // Expanded Icons
   technology: { icon: "💻" },
   gaming: { icon: "🎮" },
