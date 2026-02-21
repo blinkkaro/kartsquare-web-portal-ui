@@ -1,12 +1,16 @@
 import React from "react";
 import { Avatar, Box, Typography, Button, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
-import { providerProfileInterface } from "@/services/profile/profileInterface";
+import {
+  providerProfileInterface,
+  ISupplierProfile,
+} from "@/services/profile/profileInterface";
 import ProfileStats from "./ProfileStats";
 import { useTranslate } from "@/hooks/useTranslate";
+import { AppUserType } from "@/services/auth/auth.interface";
 
 interface ProfileHeaderProps {
-  profile: providerProfileInterface;
+  profile: providerProfileInterface | ISupplierProfile;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
@@ -24,8 +28,16 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
       }}
     >
       <Avatar
-        src={profile.profile_pic}
-        alt={profile.first_name}
+        src={
+          profile.role === AppUserType.SUPPLIER
+            ? (profile as ISupplierProfile).logo_url
+            : profile.profile_pic
+        }
+        alt={
+          profile.role === AppUserType.SUPPLIER
+            ? (profile as ISupplierProfile).store_name
+            : profile.first_name
+        }
         sx={{
           width: { xs: 100, md: 80 },
           height: { xs: 100, md: 80 },
@@ -47,7 +59,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile }) => {
             lineHeight: 1.2,
           }}
         >
-          {profile.business_name }
+          {profile.role === AppUserType.SUPPLIER
+            ? (profile as ISupplierProfile).store_name
+            : (profile as providerProfileInterface).business_name}
         </Typography>
         <Typography
           variant="body2"

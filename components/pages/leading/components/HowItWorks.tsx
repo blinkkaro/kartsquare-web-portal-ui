@@ -1,214 +1,235 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Container,
-  useTheme,
-  keyframes,
-} from "@mui/material";
+"use client";
+
+import React from "react";
+import { Box, Typography, Container, useTheme } from "@mui/material";
+import { motion } from "framer-motion";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { getSteps } from "./constants";
 import { useTranslate } from "@/hooks/useTranslate";
 import { COLORS } from "@/constants/colors";
+import SectionHeading from "./SectionHeading";
+import SectionCTA from "./SectionCTA";
 
-const fadeUp = keyframes`
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
-`;
+const PURPLE = COLORS.PRIMARY_PURPLE;
+const PURPLE_HOVER = COLORS.PURPLE_HOVER;
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 32 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.15, duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  }),
+};
 
 const HowItWorks = () => {
   const { t } = useTranslate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const steps = getSteps(t);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <Box
       sx={{
-        py: { xs: 8, md: 10 },
-        bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : "#fafbff",
+        py: { xs: 6, md: 8 },
+        bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
         position: "relative",
         overflow: "hidden",
       }}
     >
-      <Container maxWidth="lg">
-        {/* Header */}
-        <Box
-          sx={{
-            textAlign: "center",
-            mb: { xs: 5, md: 7 },
-          }}
-        >
-          <Typography
-            variant="overline"
-            sx={{
-              color: COLORS.PRIMARY_PURPLE,
-              fontWeight: 700,
-              letterSpacing: 1.5,
-              display: "block",
-              mb: 1,
-            }}
-          >
-            {t("howItWorks")}
-          </Typography>
-          <Typography
-            variant="h4"
-            component="h2"
-            fontWeight={700}
-            sx={{
-              color: isDark
-                ? COLORS.TEXT.PRIMARY_DARK
-                : COLORS.TEXT.PRIMARY_LIGHT,
-              fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
-              lineHeight: 1.3,
-              maxWidth: 420,
-              mx: "auto",
-            }}
-          >
-            {t("getFreeListingSteps")}
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{
-              mt: 1.5,
-              color: isDark
-                ? COLORS.TEXT.SECONDARY_DARK
-                : COLORS.TEXT.SECONDARY_LIGHT,
-              lineHeight: 1.6,
-            }}
-          >
-            {t("takesLessThanMinutes")}
-          </Typography>
+      {/* Subtle background accent */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "80%",
+          maxWidth: 800,
+          height: "60%",
+          background: isDark
+            ? "radial-gradient(ellipse, rgba(94, 24, 233, 0.08) 0%, transparent 70%)"
+            : "radial-gradient(ellipse, rgba(94, 24, 233, 0.06) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }}
+      />
+
+      <Container maxWidth="lg" sx={{ position: "relative" }}>
+        <Box sx={{ mb: { xs: 6, md: 8 } }}>
+          <SectionHeading
+            title={t("showBestOfBusinessTitle")}
+            subtitle={t("showBestOfBusinessSubtext")}
+            variant="minimal"
+            align="center"
+          />
         </Box>
 
-        {/* Steps */}
+        {/* Horizontal journey: 3 steps with connectors */}
         <Box
           sx={{
-            display: "grid",
-            gridTemplateColumns: {
-              xs: "1fr",
-              sm: "repeat(2, 1fr)",
-              md: "repeat(4, 1fr)",
-            },
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            alignItems: { md: "stretch" },
+            justifyContent: "center",
             gap: { xs: 3, md: 2 },
             position: "relative",
           }}
         >
           {steps.map((item, index) => {
+            const stepNum = String(index + 1).padStart(2, "0");
             const Icon = item.Icon;
+            const subIcons = "subIcons" in item ? item.subIcons : null;
+
             return (
-              <Box
-                key={item.step}
-                sx={{
-                  position: "relative",
-                  animation: mounted
-                    ? `${fadeUp} 0.5s ease-out ${0.1 + index * 0.08}s both`
-                    : "none",
-                }}
-              >
-                <Box
-                  sx={{
-                    position: "relative",
-                    zIndex: 1,
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    textAlign: "center",
-                    p: { xs: 2.5, md: 2 },
-                    borderRadius: 3,
-                    bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-                    border: `1px solid ${isDark
-                        ? COLORS.BORDER.DEFAULT_DARK
-                        : "rgba(94, 24, 233, 0.08)"
-                      }`,
-                    boxShadow: isDark
-                      ? "none"
-                      : "0 2px 12px rgba(94, 24, 233, 0.04)",
-                    transition: "border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease",
-                    "&:hover": {
-                      borderColor: isDark
-                        ? COLORS.PURPLE_ALPHA_10
-                        : "rgba(94, 24, 233, 0.18)",
-                      boxShadow: isDark
-                        ? "none"
-                        : "0 8px 24px rgba(94, 24, 233, 0.08)",
-                      transform: "translateY(-2px)",
-                    },
-                  }}
-                >
-                  {/* Step number + icon */}
+              <React.Fragment key={item.step}>
+                {/* Connector arrow (between cards, desktop only) */}
+                {index > 0 && (
                   <Box
                     sx={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: "50%",
-                      bgcolor: isDark
-                        ? COLORS.PURPLE_ALPHA_10
-                        : "rgba(94, 24, 233, 0.06)",
-                      border: `2px solid ${isDark
-                          ? "rgba(94, 24, 233, 0.3)"
-                          : "rgba(94, 24, 233, 0.15)"
-                        }`,
-                      display: "flex",
+                      display: { xs: "none", md: "flex" },
                       alignItems: "center",
-                      justifyContent: "center",
-                      mb: 1.5,
+                      alignSelf: "center",
                       flexShrink: 0,
+                      color: isDark ? COLORS.TEXT.SECONDARY_DARK : "rgba(94, 24, 233, 0.35)",
+                      mx: -0.5,
                     }}
                   >
-                    <Icon
-                      sx={{
-                        fontSize: 26,
-                        color: COLORS.PRIMARY_PURPLE,
-                      }}
-                    />
+                    <ArrowForwardIcon sx={{ fontSize: 28 }} />
                   </Box>
-                  <Typography
-                    variant="caption"
-                    fontWeight={700}
+                )}
+
+                <motion.div
+                  custom={index}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-40px" }}
+                  variants={cardVariants}
+                  style={{ flex: "1 1 0", minWidth: 0 }}
+                >
+                  <Box sx={{ maxWidth: { xs: "none", md: 360 }, mx: "auto" }}>
+                  <Box
                     sx={{
-                      color: COLORS.PRIMARY_PURPLE,
-                      letterSpacing: 0.5,
-                      mb: 0.5,
+                      height: "100%",
+                      position: "relative",
+                      p: { xs: 2.5, md: 3 },
+                      borderRadius: 3,
+                      border: "1px solid transparent",
+                      background: isDark
+                        ? `linear-gradient(${COLORS.BACKGROUND.PAPER_DARK}, ${COLORS.BACKGROUND.PAPER_DARK}) padding-box, linear-gradient(145deg, rgba(94,24,233,0.25), rgba(94,24,233,0.05)) border-box`
+                        : "linear-gradient(#fff, #fff) padding-box, linear-gradient(145deg, rgba(94,24,233,0.35), rgba(94,24,233,0.08)) border-box",
+                      backgroundOrigin: "border-box",
+                      boxShadow: isDark ? "none" : "0 8px 32px rgba(94, 24, 233, 0.06)",
+                      transition: "transform 0.35s ease, box-shadow 0.35s ease",
+                      "&:hover": {
+                        transform: "translateY(-6px)",
+                        boxShadow: isDark ? "none" : `0 20px 48px rgba(94, 24, 233, 0.12), 0 0 0 1px rgba(94, 24, 233, 0.08)`,
+                      },
                     }}
                   >
-                    {t("step")} {item.step}
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight={700}
-                    sx={{
-                      color: isDark
-                        ? COLORS.TEXT.PRIMARY_DARK
-                        : COLORS.TEXT.PRIMARY_LIGHT,
-                      fontSize: "1rem",
-                      lineHeight: 1.35,
-                      mb: 0.75,
-                    }}
-                  >
-                    {item.title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: isDark
-                        ? COLORS.TEXT.SECONDARY_DARK
-                        : COLORS.TEXT.SECONDARY_LIGHT,
-                      lineHeight: 1.6,
-                      fontSize: "0.8125rem",
-                    }}
-                  >
-                    {item.desc}
-                  </Typography>
-                </Box>
-              </Box>
+                    {/* Large step number — watermark */}
+                    <Typography
+                      sx={{
+                        position: "absolute",
+                        top: 16,
+                        right: 20,
+                        fontFamily: "var(--font-heading)",
+                        fontWeight: 800,
+                        fontSize: "4rem",
+                        lineHeight: 1,
+                        color: isDark ? "rgba(255,255,255,0.04)" : "rgba(94, 24, 233, 0.06)",
+                        letterSpacing: "-0.04em",
+                      }}
+                    >
+                      {stepNum}
+                    </Typography>
+
+                    {/* Icon pill */}
+                    <Box
+                      sx={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 2,
+                        background: `linear-gradient(135deg, ${PURPLE} 0%, ${PURPLE_HOVER} 100%)`,
+                        color: "#fff",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        mb: 2,
+                        boxShadow: `0 8px 24px ${PURPLE}40`,
+                        "& .MuiSvgIcon-root": { fontSize: 28 },
+                      }}
+                    >
+                      <Icon />
+                    </Box>
+
+                    <Typography
+                      variant="h6"
+                      fontWeight={800}
+                      sx={{
+                        fontFamily: "var(--font-heading)",
+                        letterSpacing: "-0.02em",
+                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                        fontSize: "1.125rem",
+                        lineHeight: 1.25,
+                        mb: 1,
+                      }}
+                    >
+                      {item.title}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                        lineHeight: 1.65,
+                        fontSize: "0.875rem",
+                        pr: 2,
+                      }}
+                    >
+                      {item.desc}
+                    </Typography>
+
+                    {/* Sub-icons for Personalise step (e.g. place, store, schedule, photo) */}
+                    {subIcons && subIcons.length > 0 && (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: 1,
+                          mt: 2,
+                          pt: 2,
+                          borderTop: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.1)"}`,
+                        }}
+                      >
+                        {subIcons.map((SubIcon: React.ElementType, i: number) => (
+                          <Box
+                            key={i}
+                            sx={{
+                              width: 36,
+                              height: 36,
+                              borderRadius: 1.5,
+                              bgcolor: isDark ? "rgba(255,255,255,0.06)" : "rgba(94, 24, 233, 0.08)",
+                              color: PURPLE,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              "& .MuiSvgIcon-root": { fontSize: 18 },
+                            }}
+                          >
+                            <SubIcon />
+                          </Box>
+                        ))}
+                      </Box>
+                    )}
+                  </Box>
+                  </Box>
+                </motion.div>
+              </React.Fragment>
             );
           })}
+        </Box>
+
+        <Box sx={{ display: "flex", justifyContent: "center", mt: { xs: 6, md: 8 } }}>
+          <SectionCTA labelKey="getStartedNow" variant="contained" size="large" />
         </Box>
       </Container>
     </Box>

@@ -114,3 +114,67 @@ export interface ProviderProfileByUsernameResponse {
   services: Service[];
   posts: Posts[];
 }
+
+export interface ISupplierProfile extends providerProfileInterface {
+  store_name?: string;
+  logo_url?: string;
+  description?: string;
+  verification_status: string;
+  establishment_year?: string;
+  website_url?: string;
+  contact_email?: string;
+  business_type?: string;
+  products_count: number;
+  default_address?: DefaultAddress;
+}
+
+export interface ProductListItem {
+  product_id: string;
+  product_name: string;
+  price: number;
+  product_images: any; // JSONB
+  product_description: string;
+  sku_number?: string;
+  currency?: string;
+  is_returnable?: boolean;
+  product_origin?: string;
+  is_available?: boolean;
+  supplier_id: string;
+  similar_products?: any[];
+  specifications?: {
+    name: string;
+    value: any;
+  }[];
+  supplier?: {
+    store_name: string;
+    logo_url: string;
+    is_verified: boolean;
+    verification_status: string;
+    user_rating: number;
+    establishment_year: string;
+    country_code?: string;
+    first_name?: string;
+    last_name?: string;
+    whatsapp_country_code?: string;
+    whatsapp_number?: string;
+    primary_mobile?: string;
+    store_address?: {
+      address_id: string;
+      address: string;
+      city_town: string;
+      state: string;
+      country: string;
+      pincode: string;
+      building_no: string;
+      floor: string;
+      landmark: string;
+      lat?: number;
+      long?: number;
+    };
+  };
+}
+
+export interface ISupplierProfileResponse {
+  profile: ISupplierProfile;
+  products: ProductListItem[];
+}

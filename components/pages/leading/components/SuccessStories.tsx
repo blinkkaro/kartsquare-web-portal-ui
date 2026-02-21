@@ -1,184 +1,230 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import {
   Box,
   Typography,
   Container,
-  Grid,
-  Paper,
-  Button,
+  IconButton,
   useTheme,
 } from "@mui/material";
-import Link from "next/link";
-import FormatQuoteIcon from "@mui/icons-material/FormatQuote";
+import { motion, AnimatePresence } from "framer-motion";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { getSuccessStories } from "./constants";
 import { useTranslate } from "@/hooks/useTranslate";
 import { COLORS } from "@/constants/colors";
+import SectionHeading from "./SectionHeading";
+import SectionCTA from "./SectionCTA";
+
+const PURPLE = COLORS.PRIMARY_PURPLE;
+
+const slideVariants = {
+  enter: (dir: number) => ({ opacity: 0, x: dir > 0 ? 24 : -24 }),
+  center: { opacity: 1, x: 0 },
+  exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -24 : 24 }),
+};
 
 const SuccessStories = () => {
   const { t } = useTranslate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const stories = getSuccessStories(t);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+
+  const current = stories[currentIndex];
+  const total = stories.length;
+
+  const goPrev = () => {
+    setDirection(-1);
+    setCurrentIndex((i) => (i === 0 ? total - 1 : i - 1));
+  };
+  const goNext = () => {
+    setDirection(1);
+    setCurrentIndex((i) => (i === total - 1 ? 0 : i + 1));
+  };
 
   return (
     <Box
       sx={{
-        py: { xs: 8, md: 12 },
-        bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
+        py: { xs: 6, md: 8 },
+        bgcolor: isDark
+          ? COLORS.BACKGROUND.SECONDARY_DARK
+          : COLORS.BACKGROUND.SECONDARY_LIGHT,
       }}
     >
-      <Container maxWidth="xl">
-        <Box sx={{ textAlign: "center", mb: { xs: 5, md: 7 }, maxWidth: 600, mx: "auto" }}>
-          <Typography
-            variant="overline"
-            fontWeight={700}
-            color={COLORS.PRIMARY_PURPLE}
-            sx={{ letterSpacing: 1.5, display: "block", mb: 1 }}
-          >
-            {t("successStories")}
-          </Typography>
-          <Typography
-            variant="h4"
-            fontWeight={700}
+      <Container maxWidth="lg">
+        <Box sx={{ mb: { xs: 5, md: 6 } }}>
+          <SectionHeading
+            title={t("whatSuccessLooksLikeTitle")}
+            subtitle={t("whatSuccessLooksLikeSubtext")}
+            variant="accent"
+            align="center"
+          />
+        </Box>
+
+        {/* Single large card: quote left, image right */}
+        <Box
+          sx={{
+            borderRadius: 4,
+            overflow: "hidden",
+            bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "#fff",
+            border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.08)"}`,
+            boxShadow: isDark
+              ? "none"
+              : "0 4px 24px rgba(94, 24, 233, 0.06), 0 1px 3px rgba(0,0,0,0.06)",
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+            minHeight: { xs: "auto", md: 380 },
+          }}
+        >
+          <Box
             sx={{
-              mt: 0.5,
-              color: isDark
-                ? COLORS.TEXT.PRIMARY_DARK
-                : COLORS.TEXT.PRIMARY_LIGHT,
-              fontSize: { xs: "1.75rem", md: "2rem" },
-              letterSpacing: "-0.02em",
-              lineHeight: 1.25,
+              p: { xs: 3, md: 4 },
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
             }}
           >
-            {t("hearFromOwners")}
-          </Typography>
-          <Typography
-            variant="body1"
-            color={isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT}
-            sx={{ mt: 1.5, lineHeight: 1.6 }}
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={currentIndex}
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                style={{ width: "100%" }}
+              >
+                <Typography
+                  component="span"
+                  sx={{
+                    fontFamily: "var(--font-heading)",
+                    fontSize: "3.5rem",
+                    lineHeight: 1,
+                    color: PURPLE,
+                    opacity: 0.25,
+                    display: "block",
+                    mb: 0.5,
+                  }}
+                >
+                  &ldquo;
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                    fontWeight: 500,
+                    lineHeight: 1.7,
+                    fontSize: { xs: "1rem", md: "1.0625rem" },
+                  }}
+                >
+                  &ldquo;{current.tagline}&rdquo;
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mt: 2,
+                    color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                    fontSize: "0.9375rem",
+                  }}
+                >
+                  {current.name}, {current.role}
+                </Typography>
+              </motion.div>
+            </AnimatePresence>
+          </Box>
+          <Box
+            sx={{
+              position: "relative",
+              minHeight: { xs: 260, md: "100%" },
+              order: { xs: -1, md: 0 },
+            }}
           >
-            {t("seeHowOthers")}
-          </Typography>
-        </Box>
-        <Grid container spacing={{ xs: 3, md: 4 }} justifyContent="center">
-          {stories.map((person, i) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={i}>
-              <Paper
-                elevation={0}
-                sx={{
-                  overflow: "hidden",
-                  borderRadius: 3,
-                  border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.1)"}`,
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={currentIndex}
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
                   height: "100%",
-                  bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-                  boxShadow: isDark ? "none" : "0 4px 24px rgba(94, 24, 233, 0.06)",
-                  transition: "all 0.25s ease",
-                  display: "flex",
-                  flexDirection: "column",
-                  "&:hover": {
-                    borderColor: COLORS.PRIMARY_PURPLE,
-                    boxShadow: isDark ? "none" : "0 12px 32px rgba(94, 24, 233, 0.12)",
-                    transform: "translateY(-4px)",
-                  },
                 }}
               >
                 <Box
+                  component="img"
+                  src={current.image}
+                  alt={current.name}
                   sx={{
-                    position: "relative",
-                    pt: 3,
-                    px: 2.5,
-                    pb: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    display: "block",
                   }}
-                >
-                  <FormatQuoteIcon
-                    sx={{
-                      position: "absolute",
-                      top: 16,
-                      left: 20,
-                      fontSize: 36,
-                      color: COLORS.PRIMARY_PURPLE,
-                      opacity: 0.25,
-                    }}
-                  />
-                  <Typography
-                    variant="body1"
-                    color={isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary"}
-                    sx={{
-                      fontWeight: 500,
-                      lineHeight: 1.65,
-                      fontStyle: "italic",
-                      pl: 3,
-                      minHeight: 72,
-                    }}
-                  >
-                    &ldquo;{person.tagline}&rdquo;
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 2,
-                    p: 2.5,
-                    mt: "auto",
-                    borderTop: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.08)"}`,
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={person.image}
-                    alt={person.name}
-                    sx={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                      border: `2px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.2)"}`,
-                    }}
-                  />
-                  <Box>
-                    <Typography
-                      fontWeight={700}
-                      variant="subtitle2"
-                      color={isDark ? COLORS.TEXT.PRIMARY_DARK : "text.primary"}
-                    >
-                      {person.name}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      color={isDark ? COLORS.TEXT.SECONDARY_DARK : "text.secondary"}
-                    >
-                      {person.role}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-        <Box sx={{ textAlign: "center", mt: 5 }}>
-          <Button
-            variant="outlined"
-            href="/supplier/register"
-            component={Link}
+                />
+              </motion.div>
+            </AnimatePresence>
+          </Box>
+        </Box>
+
+        {/* Pagination: < current/total > */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 0.5,
+            mt: 3,
+          }}
+        >
+          <IconButton
+            onClick={goPrev}
+            aria-label={t("previousPost")}
             sx={{
-              borderColor: COLORS.PRIMARY_PURPLE,
-              color: COLORS.PRIMARY_PURPLE,
-              textTransform: "none",
-              fontWeight: 600,
-              px: 4,
-              py: 1.5,
-              borderRadius: 2,
-              "&:hover": {
-                borderColor: COLORS.PURPLE_HOVER,
-                bgcolor: isDark ? COLORS.PURPLE_ALPHA_10 : COLORS.PURPLE_ALPHA_04,
-                boxShadow: "0 4px 12px rgba(94, 24, 233, 0.2)",
-              },
-              transition: "all 0.2s ease",
+              color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+              "&:hover": { bgcolor: isDark ? "rgba(255,255,255,0.06)" : COLORS.PURPLE_ALPHA_10 },
+              "&:disabled": { opacity: 0.5 },
             }}
           >
-            {t("seeAllStories")}
-          </Button>
+            <ChevronLeftIcon />
+          </IconButton>
+          <Typography
+            variant="body2"
+            sx={{
+              minWidth: 48,
+              textAlign: "center",
+              color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+              fontWeight: 500,
+              px: 1.5,
+              py: 0.5,
+              borderRadius: 2,
+              bgcolor: isDark ? "rgba(255,255,255,0.04)" : "rgba(94, 24, 233, 0.06)",
+            }}
+          >
+            {currentIndex + 1}/{total}
+          </Typography>
+          <IconButton
+            onClick={goNext}
+            aria-label={t("nextPost")}
+            sx={{
+              color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+              "&:hover": { bgcolor: isDark ? "rgba(255,255,255,0.06)" : COLORS.PURPLE_ALPHA_10 },
+              "&:disabled": { opacity: 0.5 },
+            }}
+          >
+            <ChevronRightIcon />
+          </IconButton>
+        </Box>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: { xs: 6, md: 8 } }}>
+          <SectionCTA labelKey="getStartedNow" variant="contained" size="large" />
         </Box>
       </Container>
     </Box>

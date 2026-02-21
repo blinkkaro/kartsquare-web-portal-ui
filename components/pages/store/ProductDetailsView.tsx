@@ -61,6 +61,7 @@ const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ productId }) =>
               latitude: parseFloat(apiProd.supplier?.store_address?.lat) || 0,
               longitude: parseFloat(apiProd.supplier?.store_address?.long) || 0,
               id: apiProd.supplier_id,
+              username: apiProd.supplier?.username,
             },
           };
           setProduct(mappedProduct);

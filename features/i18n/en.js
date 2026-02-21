@@ -1072,6 +1072,7 @@ export const english = {
   listYourBusiness: "List your business",
   startIn30Seconds: "Start in 30 seconds",
   yourWhatsappNumber: "Your WhatsApp number",
+  yourNumber: "Your Phone number",
   getMyFreeListing: "Get my free listing",
   agreeToTerms:
     "By continuing, you agree to our Terms of Use, Privacy Policy & Infringement Policy",
@@ -1079,16 +1080,96 @@ export const english = {
   growYourBusinessWith: "Grow your business with a ",
   freeListing: "free listing",
   joinThousandsBusinessOwners:
-    "Join thousands of business owners on kartsquare. Get discovered by customers who are already searching for you.",
+    "Join thousands of Indian businesses on kartsquare. When people nearby search for what you offer, your name shows up.",
   heroBenefit1: "Get discovered by customers searching for your services",
   heroBenefit2: "Manage reviews and respond to questions in one place",
   heroBenefit3: "Showcase your services, photos, and business info",
-  statLabel1: "Businesses on platform",
+  standOutHeadline: "Get found by customers near you — list your business free",
+  standOutHighlight: "Get found by customers near you",
+  standOutRest: " — list your business free",
+  standOutSubtext:
+    "Whether you run a shop, a service, or a dukaan — put your business on kartsquare so people in your area can find you, call you, and visit you. No cost, no card needed.",
+  mobileNumber: "Mobile number",
+  startNow: "Start now",
+  chooseBusinessType: "What describes you best?",
+  chooseBusinessTypeSubtext:
+    "Select one to get a free listing tailored for you.",
+  serviceProviderDesc:
+    "You offer services — home visits, appointments, or on-site work.",
+  serviceProviderExamples:
+    "e.g. Electricians, tailors, tutors, beauticians, plumbers",
+  supplierDesc:
+    "You sell products or supply goods to customers or other businesses.",
+  supplierExamples:
+    "e.g. Kirana shops, garment stores, hardware dealers, wholesalers",
+  featureFree: "Free",
+  featureFreeDesc: "Create a Business Profile at no cost",
+  featureEasy: "Easy",
+  featureEasyDesc: "Manage your profile from Search and Maps",
+  featurePersonalised: "Personalised",
+  featurePersonalisedDesc: "Add hours, photos, posts, and more",
+  takeChargeTitle: "Make your business easy to find and trust",
+  takeChargeSubtext:
+    "Add the details your customers look for — so they can call, visit, or order without a second thought.",
+  addEssentialInfo: "Add your contact and timings",
+  addEssentialInfoDesc:
+    "Put your phone number, address, and opening hours. When someone searches 'plumber near me' or 'kirana nearby', they see when you're open and how to reach you.",
+  sharePhotosLogos: "Add photos of your work and shop",
+  sharePhotosLogosDesc:
+    "Photos build trust. Add pictures of your products, your shop, or your work so customers know what to expect before they call or visit.",
+  showWhoYouAre: "Tell people what you offer",
+  showWhoYouAreDesc:
+    "Mention your services or products clearly. The more accurate your profile, the more relevant customers you get.",
+  connectWithCustomersTitle: "Stay in touch with customers who find you",
+  connectWithCustomersSubtext:
+    "Share updates, offers, and new items so people in your area keep coming back.",
+  showWhatYouOfferTitle: "From your dukaan to your services — show it all",
+  showWhatYouOfferSubtext:
+    "Whether you sell goods, offer home services, or run a local shop — your free profile lets customers see what you offer, call you, or place orders.",
+  acceptOrdersTitle: "Take orders and bookings",
+  acceptOrdersDesc:
+    "Let customers order for delivery or pickup, or book a slot with you. Add your menu or service list so they know what you offer.",
+  acceptOrdersLearnMore: "Learn more",
+  beFoundForWhatYouSellTitle: "Get found for what you sell",
+  beFoundForWhatYouSellDesc:
+    "List your products on your profile so when someone searches for what you sell in your area, your business shows up.",
+  beFoundLearnMore: "Learn more",
+  offerYourServicesTitle: "List your services and get enquiries",
+  offerYourServicesDesc:
+    "Add your services and prices. Customers can see what you do and contact you for quotes or bookings — no middleman.",
+  offerServicesLearnMore: "Learn more",
+  whatSuccessLooksLikeTitle: "What success looks like",
+  whatSuccessLooksLikeSubtext:
+    "Real stories from local business owners who get more customers with kartsquare.",
+  showBestOfBusinessTitle: "Get your business online in three steps",
+  showBestOfBusinessSubtext:
+    "No technical skills needed. List free, add your details, and start getting found by customers nearby.",
+  stepClaim: "Create your free listing",
+  stepClaimDesc:
+    "Enter your mobile number and claim your business. If you're already on kartsquare, we'll help you manage it.",
+  stepPersonalise: "Add your details and photos",
+  stepPersonaliseDesc:
+    "Put your name, address, timings, and a few photos. The more complete your profile, the easier it is for customers to find and trust you.",
+  stepManage: "Respond and grow",
+  stepManageDesc:
+    "Reply to enquiries, share updates and offers, and see how many people are viewing your profile.",
+  threeSimpleSteps:
+    "Reach more customers in three simple steps with your free Business Profile.",
+  yourQuestionsAnswered: "Your questions, answered",
+  expandAll: "Expand all",
+  collapseAll: "Collapse all",
+  statLabel1: "Businesses listed",
   statLabel2: "Happy customers",
   statLabel3: "Searches every month",
-  successStoryTagline1: "More visibility, more clients",
-  successStoryTagline2: "Customers find me easily now",
-  successStoryTagline3: "My bookings have doubled",
+  successStoryTagline1:
+    "After listing on kartsquare, my phone keeps ringing with new customers. Best decision for my tailoring shop.",
+  successStoryTagline2:
+    "People in my locality now find my shop when they search. My daily sales have gone up.",
+  successStoryTagline3:
+    "I get calls and messages from customers who need electricians. No more standing at the chowk for work.",
+  roleTailor: "Tailor, Mumbai",
+  roleKiranaOwner: "Kirana shop owner, Pune",
+  roleElectrician: "Electrician, Delhi",
   roleAstrologer: "Astrologer",
   roleTileDealer: "Tile Dealer",
   roleMakeupArtist: "Makeup Artist",
@@ -1104,21 +1185,25 @@ export const english = {
   step4Title: "Choose your categories",
   step4Desc:
     "Pick the categories that match your business so customers can find you when they search.",
-  freeListingBenefit1: "Build trust with a verified business profile",
-  freeListingBenefit2: "Customers find you when they search for your services",
-  freeListingBenefit3: "Update your info anytime from your dashboard",
+  freeListingBenefit1: "Get a free profile so customers can find and call you",
+  freeListingBenefit2: "Show up when people nearby search for what you offer",
+  freeListingBenefit3:
+    "Edit your details, photos, and timings anytime from your phone",
   boostBenefit1: "Appear higher in search results for your category",
   boostBenefit2: "Get customer leads via SMS, email, or app notifications",
   boostBenefit3: "See insights and trends with a simple dashboard",
-  faq1Question: "How can I browse and purchase products on the app?",
+  faq1Question: "Is listing my business on kartsquare really free?",
   faq1Answer:
-    "You can browse products by category or use the search bar to find specific items. To purchase, simply add items to your cart and proceed to checkout.",
-  faq2Question: "Can I book services along with shopping for products?",
+    "Yes. Creating and maintaining your business profile on kartsquare is free. You can add your name, phone number, address, photos, and timings at no cost. There are no hidden charges to get listed.",
+  faq2Question: "Who can list their business?",
   faq2Answer:
-    "Yes, you can book services and shop for products in the same session.",
-  faq4Answer: "Yes, you can upgrade your plan at any time.",
-  faq5Question: "How do I get paid?",
-  faq5Answer: "Payments are processed securely and sent to your bank account.",
+    "Any legitimate business in India can list — shop owners, service providers, home businesses, kirana stores, tailors, electricians, tutors, and more. You just need a working mobile number to get started.",
+  faq3Question: "How will customers find my business?",
+  faq3Answer:
+    "When people in your city or locality search on kartsquare for what you offer (e.g. 'plumber near me', 'kirana nearby'), your profile can show up. The more complete your profile — with photos, timings, and a clear description — the better your chances of being found.",
+  faq4Question: "How long does it take to get listed?",
+  faq4Answer:
+    "You can create your free listing in a few minutes. Enter your mobile number, verify it, add your business name and basic details, and you're live. You can always come back to add more photos and information later.",
   failed_to_load_services: "Failed to load services",
   failed_to_load_reviews: "Failed to load reviews",
   added_to_testimonials: "Added to testimonials",
@@ -1130,16 +1215,8 @@ export const english = {
   load_more: "Load More",
   no_reviews_available: "No reviews available",
   testimonial: "Testimonial",
-  faq3Question: "How do I book a service appointment?",
-  faq3Answer:
-    "Navigate to the services section, choose your desired service, and follow the booking prompts to select a date and time.",
-  faq4Question:
-    "Is there a way to track my product orders and service bookings?",
-  faq4Answer:
-    "Yes, you can track your orders and bookings in the 'My Orders' and 'My Bookings' sections respectively.",
-  faq5Question:
-    "What payment methods are accepted for both products and services?",
-  faq5Answer: "We accept major credit cards, debit cards, and digital wallets.",
+  faq5Question: "How do I get paid?",
+  faq5Answer: "Payments are processed securely and sent to your bank account.",
   faq6Question: "Are there any discounts or promotions available?",
   faq6Answer:
     "Check the 'Offers' section for current discounts and promotions.",
@@ -1168,10 +1245,10 @@ export const english = {
   verified_service: "Verified Service",
   high_success_rate: "HIGH SUCCESS RATE",
   show_number: "Show Number",
-  yourFreeListingPage: "Your free listing page",
+  yourFreeListingPage: "Your free listing",
   oneProfileMoreVisibility: "One profile. More visibility. Zero cost.",
   completeBusinessProfile:
-    "A complete business profile on kartsquare helps customers find and trust you. Update your details anytime from your dashboard.",
+    "A complete profile helps customers in your area find and trust you. Add your phone number, address, timings, and photos — and update them anytime from your phone or dashboard.",
   wantMoreLeads: "Want more leads?",
   getMoreVisibility: "Get more visibility with promoted listing",
   promoteListingDesc:
@@ -1351,7 +1428,8 @@ export const english = {
   responseRateLabel: "RESPONSE RATE",
   locationLabel: "LOCATION",
   newArrivals: "NEW ARRIVALS",
-  similarProductsDescription: "Explore fresh styles and premium find from our top rated new brands",
+  similarProductsDescription:
+    "Explore fresh styles and premium find from our top rated new brands",
   directions: "Directions",
   similar: "Similar",
 };

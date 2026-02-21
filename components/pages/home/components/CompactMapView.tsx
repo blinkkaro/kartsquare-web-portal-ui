@@ -7,10 +7,15 @@ import { COLORS } from "@/constants/colors";
 import { useRouter } from "next/navigation";
 import { useAutoGeolocation } from "@/hooks/useGeolocation";
 import { useTranslate } from "@/hooks/useTranslate";
-import { useServicesList } from "@/hooks/useServicesList";
+import { useMapDetails } from "@/hooks/useMapDetails";
+import type { MapServiceItem, MapStoreItem } from "@/services/map/mapInterface";
+import MapPinMarker from "@/components/pages/map/components/MapPinMarker";
 
 // Define libraries outside component to prevent recreation
 const LIBRARIES: "places"[] = ["places"];
+
+const SERVICE_MARKER_COLOR = COLORS.PRIMARY_PURPLE;
+const STORE_MARKER_COLOR = COLORS.PRIMARY_BLUE;
 
 interface CompactMapViewProps {
   height?: string;
@@ -21,7 +26,7 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
 }) => {
   const theme = useTheme();
   const router = useRouter();
-  const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
   const {
     coordinates,
     isLoading: isGeoLoading,
@@ -29,14 +34,11 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
   } = useAutoGeolocation();
   const { t } = useTranslate();
 
-  // Fetch services using the new hook
   const {
-    data: servicesData,
-    isLoading: isServicesLoading,
-    error: servicesError,
-  } = useServicesList({
-    limit: 10,
-  });
+    data: mapData,
+    isLoading: isMapLoading,
+    error: mapError,
+  } = useMapDetails({ limit: 20 });
 
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
@@ -52,12 +54,12 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
   };
 
   const mapOptions: google.maps.MapOptions = {
-    disableDefaultUI: true, // Disable default UI
-    zoomControl: false, // Enable zoom control
+    disableDefaultUI: true,
+    zoomControl: false,
     streetViewControl: false,
     mapTypeControl: false,
     fullscreenControl: false,
-    gestureHandling: "greedy", // Enable map interactions
+    gestureHandling: "greedy",
     zoom: 12,
     styles: [
       {
@@ -72,7 +74,7 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
     router.push("/map");
   };
 
-  const isLoading = !isLoaded || isGeoLoading || isServicesLoading;
+  const isLoading = !isLoaded || isGeoLoading || isMapLoading;
 
   if (isLoading) {
     return (
@@ -96,7 +98,8 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
     );
   }
 
-  const services = servicesData?.services || [];
+  const services = mapData?.services ?? [];
+  const stores = mapData?.stores ?? [];
 
   return (
     <Box
@@ -107,9 +110,7 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
         borderRadius: "12px",
         overflow: "hidden",
         cursor: "pointer",
-        "&:hover .expand-button": {
-          opacity: 1,
-        },
+        "&:hover .expand-button": { opacity: 1 },
       }}
     >
       <GoogleMap
@@ -121,56 +122,74 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
         }
         options={mapOptions}
       >
-        {/* Custom Markers for Service Providers */}
-        {services.map((service) =>
-          service?.service_address?.latitude &&
-          service?.service_address?.longitude ? (
+        {/* Service markers — teardrop pin + popup on hover */}
+        {services.map((service: MapServiceItem) => {
+          const lat = service?.service_address?.latitude;
+          const lng = service?.service_address?.longitude;
+          if (lat == null || lng == null) return null;
+          const isHovered = hoveredId === `s-${service.service_id}`;
+          const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+          return (
             <OverlayView
-              key={service.service_id}
-              position={{
-                lat: service.service_address.latitude || 0,
-                lng: service.service_address.longitude || 0,
-              }}
+              key={`s-${service.service_id}`}
+              position={{ lat, lng }}
               mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
             >
               <Box
-                onMouseEnter={() => setHoveredMarkerId(service.service_id)}
-                onMouseLeave={() => setHoveredMarkerId(null)}
-                sx={{
-                  transform: "translate(-50%, -50%)",
-                  transition: "all 0.3s ease",
-                }}
+                onMouseEnter={() => setHoveredId(`s-${service.service_id}`)}
+                onMouseLeave={() => setHoveredId(null)}
+                sx={{ display: "inline-block" }}
               >
-                <Box
-                  sx={{
-                    width: hoveredMarkerId === service.service_id ? 44 : 36,
-                    height: hoveredMarkerId === service.service_id ? 44 : 36,
-                    borderRadius: "50%",
-                    border: `2px solid ${COLORS.PRIMARY_PURPLE}`,
-                    boxShadow: `0 2px 8px ${COLORS.SHADOW.DEFAULT}`,
-                    overflow: "hidden",
-                    backgroundColor: COLORS.WHITE,
-                    transition: "all 0.3s ease",
-                  }}
-                >
-                  <img
-                    src={
-                      service.provider_image_url || "https://i.pravatar.cc/150"
-                    }
-                    alt={service.provider_name}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </Box>
+                <MapPinMarker
+                  type="service"
+                  color={SERVICE_MARKER_COLOR}
+                  imageUrl={service.provider_image_url || service.image_urls?.[0]}
+                  name={service.service_name}
+                  selected={isHovered}
+                  showPopup={true}
+                  directionsUrl={directionsUrl}
+                  size="compact"
+                />
               </Box>
             </OverlayView>
-          ) : null,
-        )}
+          );
+        })}
 
-        {/* User Location Marker */}
+        {/* Store markers — teardrop pin + popup on hover */}
+        {stores.map((store: MapStoreItem) => {
+          const addr = store.store_details?.store_address;
+          const lat = addr?.latitude;
+          const lng = addr?.longitude;
+          if (lat == null || lng == null) return null;
+          const isHovered = hoveredId === `st-${store.supplier_id}`;
+          const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${Number(lat)},${Number(lng)}`;
+          return (
+            <OverlayView
+              key={`st-${store.supplier_id}`}
+              position={{ lat: Number(lat), lng: Number(lng) }}
+              mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+            >
+              <Box
+                onMouseEnter={() => setHoveredId(`st-${store.supplier_id}`)}
+                onMouseLeave={() => setHoveredId(null)}
+                sx={{ display: "inline-block" }}
+              >
+                <MapPinMarker
+                  type="store"
+                  color={STORE_MARKER_COLOR}
+                  imageUrl={store.store_details?.logo_url}
+                  name={store.store_details?.store_name || "Store"}
+                  selected={isHovered}
+                  showPopup={true}
+                  directionsUrl={directionsUrl}
+                  size="compact"
+                />
+              </Box>
+            </OverlayView>
+          );
+        })}
+
+        {/* User location */}
         {coordinates?.latitude && coordinates?.longitude && (
           <OverlayView
             position={{
@@ -179,21 +198,15 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
             }}
             mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
           >
-            <Box
-              sx={{
-                transform: "translate(-50%, -50%)",
-                position: "relative",
-              }}
-            >
-              {/* Inner blue dot */}
+            <Box sx={{ transform: "translate(-50%, -50%)" }}>
               <Box
                 sx={{
-                  width: "16px",
-                  height: "16px",
+                  width: 16,
+                  height: 16,
                   borderRadius: "50%",
-                  backgroundColor: COLORS.PRIMARY_BLUE,
+                  bgcolor: COLORS.PRIMARY_BLUE,
                   border: `3px solid ${COLORS.WHITE}`,
-                  boxShadow: `0 2px 8px ${COLORS.SHADOW.DEFAULT}`,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
                 }}
               />
             </Box>
@@ -201,25 +214,61 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
         )}
       </GoogleMap>
 
-      {/* Expand Button Overlay */}
+      {/* Legend: Services (purple) / Stores (blue) */}
       <Box
-        className="expand-button"
         sx={{
           position: "absolute",
-          top: 12,
-          right: 12,
-          // transition: "opacity 0.3s ease",
+          bottom: 12,
+          left: 12,
+          display: "flex",
+          flexDirection: "column",
+          gap: 0.5,
+          zIndex: 1,
         }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+          <Box
+            sx={{
+              width: 10,
+              height: 10,
+              borderRadius: "50%",
+              border: "1px solid rgba(255,255,255,0.9)",
+              bgcolor: SERVICE_MARKER_COLOR,
+              boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+            }}
+          />
+          <Typography variant="caption" sx={{ color: "#fff", textShadow: "0 1px 2px rgba(0,0,0,0.6)", fontWeight: 600 }}>
+            Services
+          </Typography>
+        </Box>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+          <Box
+            sx={{
+              width: 10,
+              height: 10,
+              borderRadius: "50%",
+              border: "1px solid rgba(255,255,255,0.9)",
+              bgcolor: STORE_MARKER_COLOR,
+              boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+            }}
+          />
+          <Typography variant="caption" sx={{ color: "#fff", textShadow: "0 1px 2px rgba(0,0,0,0.6)", fontWeight: 600 }}>
+            Stores
+          </Typography>
+        </Box>
+      </Box>
+
+      <Box
+        className="expand-button"
+        sx={{ position: "absolute", top: 12, right: 12 }}
       >
         <IconButton
           size="small"
           sx={{
             backgroundColor: COLORS.WHITE,
-            boxShadow: `0 2px 8px ${COLORS.SHADOW.DEFAULT}`,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
             color: COLORS.PRIMARY_PURPLE,
-            "&:hover": {
-              backgroundColor: COLORS.BACKGROUND.PAPER_LIGHT,
-            },
+            "&:hover": { backgroundColor: COLORS.BACKGROUND.PAPER_LIGHT },
           }}
           onClick={handleMapClick}
         >

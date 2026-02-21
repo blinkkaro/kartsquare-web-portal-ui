@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import { Box, Typography, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
-import { providerProfileInterface } from "@/services/profile/profileInterface";
+import {
+  providerProfileInterface,
+  ISupplierProfile,
+} from "@/services/profile/profileInterface";
 import ProfileHeader from "./ProfileHeader";
 import { useFollowProvider } from "@/hooks/useProviderProfile";
 import { useTranslate } from "@/hooks/useTranslate";
 import Button from "../../Button";
 import { useRouter } from "next/navigation";
+import { AppUserType } from "@/services/auth/auth.interface";
 
 interface ProfileCardProps {
-  profile: providerProfileInterface;
+  profile: providerProfileInterface | ISupplierProfile;
   onClose: () => void;
 }
 
@@ -52,28 +56,37 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClose }) => {
           lineHeight: 1.6,
         }}
       >
-        {profile.bio && profile.bio.length > 100
-          ? isExpand
-            ? profile.bio
-            : profile.bio?.slice(0, 100) + "..."
-          : profile.bio}
-        {!isExpand && profile.bio && (
-          <Box
-            component="span"
-            onClick={() => setIsExpand(true)}
-            sx={{
-              color:
-                theme.palette.mode === "dark"
-                  ? COLORS.TEXT.PRIMARY_DARK
-                  : COLORS.TEXT.PRIMARY_LIGHT,
-              cursor: "pointer",
-              fontWeight: 500,
-              ml: 0.5,
-            }}
-          >
-            {t("continueReading")}
-          </Box>
-        )}
+        {(() => {
+          const bioContent =
+            profile.bio ||
+            (profile.role === AppUserType.SUPPLIER
+              ? (profile as ISupplierProfile).description
+              : "");
+          if (bioContent && bioContent.length > 100) {
+            return isExpand ? bioContent : bioContent.slice(0, 100) + "...";
+          }
+          return bioContent;
+        })()}
+        {!isExpand &&
+          (profile.bio ||
+            (profile.role === AppUserType.SUPPLIER &&
+              (profile as ISupplierProfile).description)) && (
+            <Box
+              component="span"
+              onClick={() => setIsExpand(true)}
+              sx={{
+                color:
+                  theme.palette.mode === "dark"
+                    ? COLORS.TEXT.PRIMARY_DARK
+                    : COLORS.TEXT.PRIMARY_LIGHT,
+                cursor: "pointer",
+                fontWeight: 500,
+                ml: 0.5,
+              }}
+            >
+              {t("continueReading")}
+            </Box>
+          )}
       </Typography>
 
       {/* Actions Row */}

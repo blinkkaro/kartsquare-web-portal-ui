@@ -19,6 +19,9 @@ import { useSupplierProfile } from "@/hooks/useSupplier";
 import { useEffect } from "react";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { secureStorage } from "@/helper/SecureStorage";
+import { useRouter } from "next/navigation";
+import { logout } from "@/features/ui/authSlice";
+import { useAppDispatch } from "@/store/hooks";
 
 const steps = ["Store Setup", "KYC Verification"];
 
@@ -28,6 +31,8 @@ export default function SupplierOnboardingPage() {
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("xl"));
   // const { data: profileArgs } = useSupplierProfile();
   const register_step = secureStorage.getItem("register_step");
+  const router = useRouter();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (register_step) {
@@ -52,6 +57,15 @@ export default function SupplierOnboardingPage() {
   };
 
   const handleBack = () => {
+    if (activeStep === 0) {
+      secureStorage.removeItem("register_step");
+      secureStorage.removeItem("role");
+      secureStorage.removeItem("user_details");
+      secureStorage.removeItem("token");
+      secureStorage.removeItem("refreshToken");
+      dispatch(logout());
+      router.push("/");
+    }
     setActiveStep((prev) => prev - 1);
   };
 

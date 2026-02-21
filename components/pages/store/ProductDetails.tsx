@@ -25,6 +25,7 @@ import ProviderInfoCard from "../../ProviderInfoCard";
 import DescriptionDrawer from "../provider/serviceDetails/DescriptionDialog";
 import ProductMap from "./ProductMap";
 import ProductCard from "./ProductCard";
+import { AppUserType } from "@/services/auth/auth.interface";
 
 interface ProductDetailsProps {
   product: Product | null;
@@ -293,7 +294,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 businessName={product.supplier.name}
                 isFollowing={false}
                 gstNumber={product.supplier.gstNumber}
-                disableDrawer={true}
+                username={product.supplier.username || ""}
+                role={AppUserType.SUPPLIER}
               />
             </Box>
           </Box>
@@ -422,12 +424,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   key={simProduct.id}
                   product={simProduct}
                   index={index}
-                  onProductClick={handleProductClick}
-                  onInquiry={handleInquiry}
-                  onWhatsApp={handleWhatsApp}
-                  // isAnimatingWhatsApp={
-                  //   animatingContact === `whatsapp-${simProduct.id}`
-                  // }
                 />
               ))}
             </Box>

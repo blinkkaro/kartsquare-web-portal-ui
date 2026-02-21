@@ -133,13 +133,13 @@ function Profile({ profile }: { profile: profileInterface }) {
             </Typography>
           )}
           <Button variant="contained" onClick={handleDrawerClick}>
-            {role === "SERVICE_PROVIDER"
+            {role !== "CUSTOMER"
               ? formatCount(profile?.followers_count)
               : formatCount(profile?.following_count)}{" "}
-            {role === "SERVICE_PROVIDER" ? t("followers") : t("following")}
+            {role !== "CUSTOMER" ? t("followers") : t("following")}
           </Button>
 
-          {role === AppUserType.SERVICE_PROVIDER && (
+          {(role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER) && (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
               <IconButton
                 sx={{
@@ -174,7 +174,7 @@ function Profile({ profile }: { profile: profileInterface }) {
         open={drawerOpen}
         onClose={handleDrawerClick}
         userId={profile?.id || ""}
-        userRole={role as "SERVICE_PROVIDER" | "CUSTOMER"}
+        userRole={role as AppUserType}
       />
     </Paper>
   );

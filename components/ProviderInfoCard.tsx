@@ -23,6 +23,7 @@ import { english } from "../features/i18n/en";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { useIncreasePhoneNumberViewCount } from "@/hooks/useServicesList";
+import { AppUserType } from "@/services/auth/auth.interface";
 
 interface ProviderInfoCardProps {
   providerId: string;
@@ -34,6 +35,8 @@ interface ProviderInfoCardProps {
   providerPhoneNumber?: string;
   gstNumber?: string;
   disableDrawer?: boolean;
+  role?: AppUserType;
+  username?: string;
 }
 
 const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
@@ -45,7 +48,8 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
   isFollowing = false,
   providerPhoneNumber,
   gstNumber,
-  disableDrawer = false,
+  username,
+  role = AppUserType.SERVICE_PROVIDER,
 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -84,6 +88,10 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
   const handleShowPhoneNumber = () => {
     setShowPhoneNumber(true);
     increasePhoneNumberViewCountMutation.mutate();
+  };
+
+  const handleOpenDrawer = () => {
+    dispatch(openDrawer({ userId: providerId, role, username }));
   };
 
   const isLoading = followMutation.isPending || unfollowMutation.isPending;
@@ -133,13 +141,9 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
                   : COLORS.TEXT.PRIMARY_LIGHT,
                 lineHeight: 1.2,
                 fontSize: "1.1rem",
-                cursor: disableDrawer ? "default" : "pointer",
+                cursor: "pointer",
               }}
-              onClick={() => {
-                if (!disableDrawer) {
-                  dispatch(openDrawer({ userId: providerId }));
-                }
-              }}
+              onClick={handleOpenDrawer}
             >
               {businessName || providerName}
             </Typography>

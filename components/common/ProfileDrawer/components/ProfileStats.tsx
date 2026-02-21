@@ -1,10 +1,14 @@
 import React from "react";
 import { Box, Typography, Divider, useTheme } from "@mui/material";
 import { COLORS } from "@/constants/colors";
-import { providerProfileInterface } from "@/services/profile/profileInterface";
+import {
+  providerProfileInterface,
+  ISupplierProfile,
+} from "@/services/profile/profileInterface";
+import { AppUserType } from "@/services/auth/auth.interface";
 
 interface ProfileStatsProps {
-  profile: providerProfileInterface;
+  profile: providerProfileInterface | ISupplierProfile;
 }
 
 const StatItem = ({
@@ -63,7 +67,15 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({ profile }) => {
         px: { xs: 2, md: 3 },
       }}
     >
-      <StatItem count={profile.total_posts || 0} label="Posts" theme={theme} />
+      <StatItem
+        count={
+          profile.role === AppUserType.SUPPLIER
+            ? (profile as ISupplierProfile).products_count || 0
+            : (profile as providerProfileInterface).total_posts || 0
+        }
+        label={profile.role === AppUserType.SUPPLIER ? "Products" : "Posts"}
+        theme={theme}
+      />
       <Divider
         orientation="vertical"
         flexItem
