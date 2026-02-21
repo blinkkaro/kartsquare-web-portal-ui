@@ -3,7 +3,7 @@
 import React from "react";
 import { motion, useInView } from "framer-motion";
 
-const defaultEase = [0.25, 0.46, 0.45, 0.94];
+const defaultEase: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
 const defaultDuration = 0.65;
 
 interface ScrollRevealProps {
