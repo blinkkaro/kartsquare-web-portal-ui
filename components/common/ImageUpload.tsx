@@ -19,6 +19,10 @@ interface ImageUploadProps {
   error?: boolean;
   helperText?: string;
   title?: string;
+  /** "document" = compact drop zone for KYC/doc uploads */
+  variant?: "default" | "document";
+  /** Short hint shown below title (e.g. "Clear photo of PAN card") */
+  hint?: string;
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -28,6 +32,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   error,
   helperText,
   title,
+  variant = "default",
+  hint,
 }) => {
   const { t } = useTranslate();
   const theme = useTheme();
@@ -119,13 +125,15 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const displayError = (error ? helperText : "") || internalError;
 
+  const isDocument = variant === "document";
+
   return (
-    <Box sx={{ mb: 3 }}>
+    <Box sx={{ mb: isDocument ? 0 : 3 }}>
       {title && (
         <Typography
           variant="body2"
           sx={{
-            mb: 1,
+            mb: 0.5,
             fontWeight: 600,
             color: isDark
               ? COLORS.TEXT.PRIMARY_DARK
@@ -133,6 +141,20 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           }}
         >
           {title}
+        </Typography>
+      )}
+      {hint && (
+        <Typography
+          variant="caption"
+          sx={{
+            display: "block",
+            mb: 1,
+            color: isDark
+              ? COLORS.TEXT.SECONDARY_DARK
+              : COLORS.TEXT.SECONDARY_LIGHT,
+          }}
+        >
+          {hint}
         </Typography>
       )}
 
@@ -150,7 +172,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 : COLORS.BORDER.DEFAULT_LIGHT
           }`,
           borderRadius: 2,
-          p: 4,
+          p: isDocument ? 2 : 4,
           textAlign: "center",
           cursor: "pointer",
           backgroundColor: isDark
@@ -167,7 +189,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       >
         <CloudUpload
           sx={{
-            fontSize: 48,
+            fontSize: isDocument ? 32 : 48,
             color: isDark
               ? COLORS.TEXT.SECONDARY_DARK
               : COLORS.TEXT.SECONDARY_LIGHT,
@@ -177,25 +199,28 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         <Typography
           variant="body2"
           sx={{
+            fontSize: isDocument ? "0.8125rem" : undefined,
             color: isDark
               ? COLORS.TEXT.SECONDARY_DARK
               : COLORS.TEXT.SECONDARY_LIGHT,
           }}
         >
-          {t("dragDropImage")}
+          {isDocument ? t("uploadDocument") : t("dragDropImage")}
         </Typography>
-        <Typography
-          variant="caption"
-          sx={{
-            display: "block",
-            mt: 1,
-            color: isDark
-              ? COLORS.TEXT.SECONDARY_DARK
-              : COLORS.TEXT.SECONDARY_LIGHT,
-          }}
-        >
-          {t("maxImages")}: {maxImages}
-        </Typography>
+        {!isDocument && (
+          <Typography
+            variant="caption"
+            sx={{
+              display: "block",
+              mt: 1,
+              color: isDark
+                ? COLORS.TEXT.SECONDARY_DARK
+                : COLORS.TEXT.SECONDARY_LIGHT,
+            }}
+          >
+            {t("maxImages")}: {maxImages}
+          </Typography>
+        )}
       </Box>
 
       <input
@@ -219,17 +244,20 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))",
+            gridTemplateColumns: isDocument && imagePreviews.length === 1
+              ? "1fr"
+              : "repeat(auto-fill, minmax(100px, 1fr))",
             gap: 1,
-            mt: 2,
+            mt: isDocument ? 1.5 : 2,
           }}
         >
           {imagePreviews.map((preview, index) => (
             <Box
-              key={preview} // Using preview URL as key.
+              key={preview}
               sx={{
                 position: "relative",
-                paddingTop: "100%",
+                paddingTop: isDocument && imagePreviews.length === 1 ? "75%" : "100%",
+                maxWidth: isDocument && imagePreviews.length === 1 ? 140 : "none",
                 borderRadius: 1,
                 overflow: "hidden",
                 border: isDark ? "1px solid #333" : "1px solid #eee",

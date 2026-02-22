@@ -6,17 +6,15 @@ import * as yup from "yup";
 import {
   Box,
   Typography,
-  FormControlLabel,
-  Checkbox,
   Autocomplete,
   TextField,
-  FormGroup,
   Chip,
   Grid,
   useTheme,
   Paper,
   InputAdornment,
   MenuItem,
+  alpha,
 } from "@mui/material";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
@@ -47,6 +45,16 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
 
+// Section block: left accent, padding, rounded — consistent form layout
+const formSectionStyle = (isDark: boolean) => ({
+  p: 2.5,
+  mb: 2.5,
+  borderRadius: 2,
+  border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+  borderLeft: `4px solid ${COLORS.PRIMARY_PURPLE}`,
+  bgcolor: isDark ? alpha(COLORS.PRIMARY_PURPLE, 0.03) : alpha(COLORS.PRIMARY_PURPLE, 0.02),
+});
+
 interface StoreStepProps {
   onNext: () => void;
   onBack?: () => void;
@@ -68,33 +76,36 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
   const [addressDrawerOpen, setAddressDrawerOpen] = React.useState(false);
   const [isUploading, setIsUploading] = React.useState(false);
 
-  const schema = yup.object().shape({
-    display_name: yup.string().required("Store name is required"),
-    slug: yup.string(),
-    about_us: yup.string().optional(),
-    contact_email: yup.string().email("Invalid email").optional(),
-    contact_phone: yup
-      .string()
-      .required("Contact phone is required")
-      .matches(/^[0-9]{10}$/, "Contact phone must be 10 digits"),
-    country_code: yup.string().required("Country code is required"),
-    establishment_year: yup.string().optional(),
-    store_address_id: yup.string().required("Please select a store address"),
-    logo_url: yup.string().optional(),
-    banner_url: yup.string().optional(),
-    categories_served: yup
-      .array()
-      .of(yup.string())
-      .min(1, "Select at least one category")
-      .required("Categories served is required"),
-    operating_locations: yup
-      .array()
-      .of(yup.string())
-      .min(1, "Select at least one location")
-      .required("Operating locations is required"),
-    contact_preferences: yup.array().of(yup.string()).optional(),
-    business_type: yup.string().required("Business type is required"),
-  });
+  const schema = React.useMemo(
+    () =>
+      yup.object().shape({
+        display_name: yup.string().required(t("store_setup_store_name_required" as any)),
+        slug: yup.string(),
+        about_us: yup.string().optional(),
+        contact_email: yup.string().email(t("store_setup_invalid_email" as any)).optional(),
+        contact_phone: yup
+          .string()
+          .required(t("store_setup_contact_phone_required" as any))
+          .matches(/^[0-9]{10}$/, t("store_setup_contact_phone_digits" as any)),
+        country_code: yup.string().required(t("countryCodeRequired" as any)),
+        establishment_year: yup.string().optional(),
+        store_address_id: yup.string().optional(),
+        logo_url: yup.string().optional(),
+        banner_url: yup.string().optional(),
+        categories_served: yup
+          .array()
+          .of(yup.string())
+          .min(1, t("store_setup_categories_min" as any))
+          .required(t("store_setup_categories_required" as any)),
+        operating_locations: yup
+          .array()
+          .of(yup.string())
+          .optional(),
+        contact_preferences: yup.array().of(yup.string()).optional(),
+        business_type: yup.string().required(t("store_setup_business_type_required" as any)),
+      }),
+    [t],
+  );
 
   const {
     control,
@@ -264,120 +275,185 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
         <Paper
           elevation={0}
           sx={{
-            p: { xs: 3, md: 4 },
-            borderRadius: 4,
+            p: { xs: 2.5, md: 3 },
+            borderRadius: 3,
             border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
             bgcolor: isDark ? "background.paper" : "white",
-            boxShadow: isDark ? "none" : "0 8px 32px rgba(94, 24, 233, 0.04)",
+            boxShadow: isDark ? "none" : "0 4px 20px rgba(94, 24, 233, 0.06)",
           }}
         >
-          <Typography
-            variant="h5"
-            fontWeight="700"
-            mb={4}
-            sx={{ color: COLORS.PRIMARY_PURPLE }}
-          >
-            Store Setup
-          </Typography>
+          {/* Section: Basic Information */}
+          <Box sx={formSectionStyle(isDark)}>
+            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1, color: COLORS.PRIMARY_PURPLE }}>
+              <BusinessOutlinedIcon fontSize="small" /> {t("store_setup_basic_info" as any)}
+            </Typography>
+            <Grid container spacing={2.5}>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Typography variant="body2" fontWeight="500" mb={0.5}>
+                  {t("store_setup_display_name" as any)}*
+                </Typography>
+                <Input
+                  name="display_name"
+                  control={control}
+                  placeholder={t("store_setup_display_name_placeholder" as any)}
+                  startIcon={<StoreOutlinedIcon />}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Typography variant="body2" fontWeight="500" mb={0.5}>
+                  {t("store_setup_website_url" as any)}
+                </Typography>
+                <Input
+                  name="slug"
+                  control={control}
+                  placeholder={t("store_setup_website_url_placeholder" as any)}
+                  startIcon={<LinkOutlinedIcon />}
+                />
+              </Grid>
+              <Grid size={{ xs: 12 }}>
+                <Typography variant="body2" fontWeight="500" mb={1}>
+                  {t("store_setup_about_us" as any)}
+                </Typography>
+                <Input
+                  name="about_us"
+                  control={control}
+                  multiline
+                  rows={4}
+                  placeholder={t("store_setup_about_us_placeholder" as any)}
+                />
+              </Grid>
 
-          <Grid container spacing={4}>
-            {/* Basic Info Section */}
-            <Grid size={{ xs: 12 }}>
-              <Typography
-                variant="subtitle1"
-                fontWeight="600"
-                mb={1}
-                display="flex"
-                alignItems="center"
-                gap={1}
-              >
-                <BusinessOutlinedIcon fontSize="small" color="primary" /> Basic
-                Information
-              </Typography>
-            </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Typography variant="body2" fontWeight="500" mb={0.5}>
+                  {t("store_setup_business_type" as any)}*
+                </Typography>
+                <Input
+                  name="business_type"
+                  control={control}
+                  select
+                  placeholder={t("store_setup_business_type_placeholder" as any)}
+                  startIcon={<BusinessOutlinedIcon fontSize="small" />}
+                >
+                  <MenuItem value="Wholesaler">{t("wholesaler" as any)}</MenuItem>
+                  <MenuItem value="Retailer">{t("retailer" as any)}</MenuItem>
+                  <MenuItem value="Exporter">{t("exporter" as any)}</MenuItem>
+                  <MenuItem value="Manufacturer">{t("manufacturer" as any)}</MenuItem>
+                </Input>
+              </Grid>
 
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Typography variant="body2" fontWeight="500" mb={0.5}>
-                Store Display Name*
-              </Typography>
-              <Input
-                name="display_name"
-                control={control}
-                placeholder="LALA JI KELE WALE"
-                startIcon={<StoreOutlinedIcon />}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Typography variant="body2" fontWeight="500" mb={0.5}>
-                Store Website URL*
-              </Typography>
-              <Input
-                name="slug"
-                control={control}
-                placeholder="my-store-name"
-                startIcon={<LinkOutlinedIcon />}
-              />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <Typography variant="body2" fontWeight="500" mb={1}>
-                About Us
-              </Typography>
-              <Input
-                name="about_us"
-                control={control}
-                multiline
-                rows={4}
-                placeholder="Tell us more about your business..."
-              />
-            </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Typography variant="body2" fontWeight="500" mb={0.5}>
+                  {t("store_setup_categories_served" as any)}*
+                </Typography>
+                <Controller
+                  name="categories_served"
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
+                    <Box>
+                      <Autocomplete
+                        multiple
+                        options={STORE_CATEGORIES}
+                        value={(Array.isArray(value) ? value : []) as string[]}
+                        onChange={(_, newValue) => onChange(newValue)}
+                        renderTags={() => null} // Don't show inside
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder={t("store_setup_categories_placeholder" as any)}
+                            error={!!errors.categories_served}
+                            helperText={
+                              errors.categories_served?.message as string
+                            }
+                            InputProps={{
+                              ...params.InputProps,
+                              startAdornment: (
+                                <>
+                                  <InputAdornment position="start" sx={{ pl: 1 }}>
+                                    <CategoryOutlinedIcon fontSize="small" />
+                                  </InputAdornment>
+                                  {params.InputProps.startAdornment}
+                                </>
+                              ),
+                              sx: { borderRadius: "12px" },
+                            }}
+                          />
+                        )}
+                      />
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: 1,
+                          mt: 1.5,
+                        }}
+                      >
+                        {((value as string[]) || []).map((option) => (
+                          <Chip
+                            key={option}
+                            label={option}
+                            onDelete={() =>
+                              onChange(
+                                (value as string[]).filter((v) => v !== option),
+                              )
+                            }
+                            variant="filled"
+                            size="medium"
+                            sx={{
+                              bgcolor: `${COLORS.PRIMARY_PURPLE}10`,
+                              color: COLORS.PRIMARY_PURPLE,
+                              fontWeight: 500,
+                              borderRadius: "8px",
+                              "& .MuiChip-deleteIcon": {
+                                color: COLORS.PRIMARY_PURPLE,
+                                fontSize: "18px",
+                              },
+                            }}
+                          />
+                        ))}
+                      </Box>
+                    </Box>
+                  )}
+                />
+              </Grid>
 
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Typography variant="body2" fontWeight="500" mb={0.5}>
-                Business Type*
-              </Typography>
-              <Input
-                name="business_type"
-                control={control}
-                select
-                placeholder="Select Business Type"
-                startIcon={<BusinessOutlinedIcon fontSize="small" />}
-              >
-                <MenuItem value="Wholesaler">Wholesaler</MenuItem>
-                <MenuItem value="Retailer">Retailer</MenuItem>
-                <MenuItem value="Exporter">Exporter</MenuItem>
-                <MenuItem value="Manufacturer">Manufacturer</MenuItem>
-              </Input>
-            </Grid>
-
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Typography variant="body2" fontWeight="500" mb={0.5}>
-                Categories Served*
-              </Typography>
-              <Controller
-                name="categories_served"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <Box>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Typography variant="body2" fontWeight="500" mb={0.5}>
+                  {t("store_setup_operating_locations" as any)}
+                </Typography>
+                <Controller
+                  name="operating_locations"
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
                     <Autocomplete
                       multiple
-                      options={STORE_CATEGORIES}
+                      options={OPERATING_LOCATIONS}
                       value={(Array.isArray(value) ? value : []) as string[]}
                       onChange={(_, newValue) => onChange(newValue)}
-                      renderTags={() => null} // Don't show inside
+                      renderTags={(value: readonly string[], getTagProps) =>
+                        value.map((option: string, index: number) => (
+                          <Chip
+                            variant="outlined"
+                            label={option}
+                            {...getTagProps({ index })}
+                            key={option}
+                            size="small"
+                          />
+                        ))
+                      }
                       renderInput={(params) => (
                         <TextField
                           {...params}
-                          placeholder="Choose Categories"
-                          error={!!errors.categories_served}
+                          placeholder={t("store_setup_locations_placeholder" as any)}
+                          error={!!errors.operating_locations}
                           helperText={
-                            errors.categories_served?.message as string
+                            errors.operating_locations?.message as string
                           }
                           InputProps={{
                             ...params.InputProps,
                             startAdornment: (
                               <>
                                 <InputAdornment position="start" sx={{ pl: 1 }}>
-                                  <CategoryOutlinedIcon fontSize="small" />
+                                  <LocationOnOutlinedIcon fontSize="small" />
                                 </InputAdornment>
                                 {params.InputProps.startAdornment}
                               </>
@@ -387,305 +463,198 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                         />
                       )}
                     />
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: 1,
-                        mt: 1.5,
-                      }}
-                    >
-                      {((value as string[]) || []).map((option) => (
-                        <Chip
-                          key={option}
-                          label={option}
-                          onDelete={() =>
-                            onChange(
-                              (value as string[]).filter((v) => v !== option),
-                            )
-                          }
-                          variant="filled"
-                          size="medium"
-                          sx={{
-                            bgcolor: `${COLORS.PRIMARY_PURPLE}10`,
-                            color: COLORS.PRIMARY_PURPLE,
-                            fontWeight: 500,
-                            borderRadius: "8px",
-                            "& .MuiChip-deleteIcon": {
-                              color: COLORS.PRIMARY_PURPLE,
-                              fontSize: "18px",
-                            },
-                          }}
-                        />
-                      ))}
-                    </Box>
-                  </Box>
-                )}
-              />
-            </Grid>
+                  )}
+                />
+              </Grid>
 
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Typography variant="body2" fontWeight="500" mb={0.5}>
-                Operating Locations*
-              </Typography>
-              <Controller
-                name="operating_locations"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <Autocomplete
-                    multiple
-                    options={OPERATING_LOCATIONS}
-                    value={(Array.isArray(value) ? value : []) as string[]}
-                    onChange={(_, newValue) => onChange(newValue)}
-                    renderTags={(value: readonly string[], getTagProps) =>
-                      value.map((option: string, index: number) => (
-                        <Chip
-                          variant="outlined"
-                          label={option}
-                          {...getTagProps({ index })}
-                          key={option}
-                          size="small"
-                        />
-                      ))
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        placeholder="Choose Locations"
-                        error={!!errors.operating_locations}
-                        helperText={
-                          errors.operating_locations?.message as string
-                        }
-                        InputProps={{
-                          ...params.InputProps,
-                          startAdornment: (
-                            <>
-                              <InputAdornment position="start" sx={{ pl: 1 }}>
-                                <LocationOnOutlinedIcon fontSize="small" />
-                              </InputAdornment>
-                              {params.InputProps.startAdornment}
-                            </>
-                          ),
-                          sx: { borderRadius: "12px" },
-                        }}
-                      />
-                    )}
-                  />
-                )}
-              />
             </Grid>
+          </Box>
 
-            {/* Appearance Section */}
-            <Grid size={{ xs: 12 }}>
-              <Typography
-                variant="subtitle1"
-                fontWeight="600"
-                mb={2}
-                mt={5}
-                display="flex"
-                alignItems="center"
-                gap={1}
-              >
-                <InfoOutlinedIcon fontSize="small" color="primary" /> Aesthetics
-                & Branding
-              </Typography>
+          {/* Section: Aesthetics & Branding */}
+          <Box sx={formSectionStyle(isDark)}>
+            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1, color: COLORS.PRIMARY_PURPLE }}>
+              <InfoOutlinedIcon fontSize="small" /> {t("store_setup_aesthetics_branding" as any)}
+            </Typography>
+            <Grid container spacing={2.5}>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <ImageUpload
+                  variant="document"
+                  title={t("store_setup_store_logo" as any)}
+                  hint={t("store_setup_doc_hint_logo" as any)}
+                  images={logoUrl ? [logoUrl] : []}
+                  onChange={(files) => handleImageChange(files, "logo_url")}
+                  maxImages={1}
+                  error={!!errors.logo_url}
+                  helperText={errors.logo_url?.message as string}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <ImageUpload
+                  variant="document"
+                  title={t("store_setup_store_banner" as any)}
+                  hint={t("store_setup_doc_hint_banner" as any)}
+                  images={bannerUrl ? [bannerUrl] : []}
+                  onChange={(files) => handleImageChange(files, "banner_url")}
+                  maxImages={1}
+                  error={!!errors.banner_url}
+                  helperText={errors.banner_url?.message as string}
+                />
+              </Grid>
             </Grid>
+          </Box>
 
-            <Grid size={{ xs: 12, md: 6 }}>
-              <ImageUpload
-                title="Store Logo"
-                images={logoUrl ? [logoUrl] : []}
-                onChange={(files) => handleImageChange(files, "logo_url")}
-                maxImages={1}
-                error={!!errors.logo_url}
-                helperText={errors.logo_url?.message as string}
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12, md: 6 }}>
-              <ImageUpload
-                title="Store Banner"
-                images={bannerUrl ? [bannerUrl] : []}
-                onChange={(files) => handleImageChange(files, "banner_url")}
-                maxImages={1}
-                error={!!errors.banner_url}
-                helperText={errors.banner_url?.message as string}
-              />
-            </Grid>
-
-            {/* Location Section */}
-            <Grid size={{ xs: 12 }}>
-              <Typography
-                variant="subtitle1"
-                fontWeight="600"
-                mb={2}
-                mt={5}
-                display="flex"
-                alignItems="center"
-                gap={1}
-              >
-                <LocationOnOutlinedIcon fontSize="small" color="primary" />{" "}
-                Store Location
-              </Typography>
-            </Grid>
-
-            <Grid size={{ xs: 12 }}>
-              <Box sx={{ mt: 1 }}>
-                {isLoadingAddresses ? (
-                  <Box display="flex" gap={2}>
-                    <CircularProgress size={20} />{" "}
-                    <Typography variant="body2">
-                      Loading addresses...
-                    </Typography>
-                  </Box>
-                ) : (
-                  <Grid container spacing={2}>
-                    {addresses?.map((addr: any) => (
-                      <Grid size={{ xs: 12, md: 6 }} key={addr.id}>
-                        <Box
-                          onClick={() =>
-                            setValue("store_address_id", addr.id, {
-                              shouldValidate: true,
-                            })
-                          }
-                          sx={{
-                            p: 2,
-                            border: "1px solid",
-                            borderColor:
-                              watch("store_address_id") === addr.id
-                                ? COLORS.PRIMARY_PURPLE
-                                : "divider",
-                            borderRadius: 3,
-                            cursor: "pointer",
-                            bgcolor:
-                              watch("store_address_id") === addr.id
-                                ? `${COLORS.PRIMARY_PURPLE}08`
-                                : "transparent",
-                            transition: "all 0.3s ease",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 2,
-                            position: "relative",
-                            overflow: "hidden",
-                            "&:hover": {
-                              borderColor: COLORS.PRIMARY_PURPLE,
-                              bgcolor: `${COLORS.PRIMARY_PURPLE}04`,
-                            },
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              width: 40,
-                              height: 40,
-                              borderRadius: 2,
-                              bgcolor:
-                                watch("store_address_id") === addr.id
-                                  ? COLORS.PRIMARY_PURPLE
-                                  : "divider",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              color: "white",
-                              flexShrink: 0,
-                            }}
-                          >
-                            <LocationOnOutlinedIcon fontSize="small" />
-                          </Box>
-                          <Box sx={{ flex: 1, minWidth: 0, pr: 7 }}>
-                            <Typography variant="subtitle2" fontWeight="700">
-                              {addr.address_name}
-                            </Typography>
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                              noWrap
-                              sx={{ display: "block" }}
-                            >
-                              {addr.address}, {addr.city_town}
-                            </Typography>
-                          </Box>
-                          {watch("store_address_id") === addr.id && (
-                            <Chip
-                              label="Selected"
-                              size="small"
-                              color="primary"
-                              variant="filled"
-                              sx={{
-                                height: 20,
-                                fontSize: "0.65rem",
-                                position: "absolute",
-                                right: 8,
-                                top: "50%",
-                                transform: "translateY(-50%)",
-                                pointerEvents: "none",
-                              }}
-                            />
-                          )}
-                        </Box>
-                      </Grid>
-                    ))}
-                    <Grid size={{ xs: 12, md: 6 }}>
+          {/* Section: Store Location */}
+          <Box sx={formSectionStyle(isDark)}>
+            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1, color: COLORS.PRIMARY_PURPLE }}>
+              <LocationOnOutlinedIcon fontSize="small" /> {t("store_setup_store_location" as any)}
+            </Typography>
+            <Box>
+              {isLoadingAddresses ? (
+                <Box display="flex" gap={2}>
+                  <CircularProgress size={20} />{" "}
+                  <Typography variant="body2">
+                    {t("store_setup_loading_addresses" as any)}
+                  </Typography>
+                </Box>
+              ) : (
+                <Grid container spacing={2}>
+                  {addresses?.map((addr: any) => (
+                    <Grid size={{ xs: 12, md: 6 }} key={addr.id}>
                       <Box
-                        onClick={() => setAddressDrawerOpen(true)}
+                        onClick={() =>
+                          setValue("store_address_id", addr.id, {
+                            shouldValidate: true,
+                          })
+                        }
                         sx={{
                           p: 2,
-                          border: "2px dashed",
-                          borderColor: "divider",
+                          border: "1px solid",
+                          borderColor:
+                            watch("store_address_id") === addr.id
+                              ? COLORS.PRIMARY_PURPLE
+                              : "divider",
                           borderRadius: 3,
                           cursor: "pointer",
+                          bgcolor:
+                            watch("store_address_id") === addr.id
+                              ? `${COLORS.PRIMARY_PURPLE}08`
+                              : "transparent",
+                          transition: "all 0.3s ease",
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "center",
-                          height: "100%",
-                          minHeight: 74,
-                          transition: "all 0.3s ease",
+                          gap: 2,
+                          position: "relative",
+                          overflow: "hidden",
                           "&:hover": {
                             borderColor: COLORS.PRIMARY_PURPLE,
-                            color: COLORS.PRIMARY_PURPLE,
                             bgcolor: `${COLORS.PRIMARY_PURPLE}04`,
                           },
                         }}
                       >
-                        <Typography
-                          variant="body2"
-                          fontWeight="700"
-                          display="flex"
-                          alignItems="center"
-                          gap={1}
+                        <Box
+                          sx={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: 2,
+                            bgcolor:
+                              watch("store_address_id") === addr.id
+                                ? COLORS.PRIMARY_PURPLE
+                                : "divider",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "white",
+                            flexShrink: 0,
+                          }}
                         >
-                          + Add New Address
-                        </Typography>
+                          <LocationOnOutlinedIcon fontSize="small" />
+                        </Box>
+                        <Box sx={{ flex: 1, minWidth: 0, pr: 7 }}>
+                          <Typography variant="subtitle2" fontWeight="700">
+                            {addr.address_name}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            noWrap
+                            sx={{ display: "block" }}
+                          >
+                            {addr.address}, {addr.city_town}
+                          </Typography>
+                        </Box>
+                        {watch("store_address_id") === addr.id && (
+                          <Chip
+                            label={t("store_setup_selected" as any)}
+                            size="small"
+                            color="primary"
+                            variant="filled"
+                            sx={{
+                              height: 20,
+                              fontSize: "0.65rem",
+                              position: "absolute",
+                              right: 8,
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              pointerEvents: "none",
+                            }}
+                          />
+                        )}
                       </Box>
                     </Grid>
+                  ))}
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Box
+                      onClick={() => setAddressDrawerOpen(true)}
+                      sx={{
+                        p: 2,
+                        border: "2px dashed",
+                        borderColor: "divider",
+                        borderRadius: 3,
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        height: "100%",
+                        minHeight: 74,
+                        transition: "all 0.3s ease",
+                        "&:hover": {
+                          borderColor: COLORS.PRIMARY_PURPLE,
+                          color: COLORS.PRIMARY_PURPLE,
+                          bgcolor: `${COLORS.PRIMARY_PURPLE}04`,
+                        },
+                      }}
+                    >
+                      <Typography
+                        variant="body2"
+                        fontWeight="700"
+                        display="flex"
+                        alignItems="center"
+                        gap={1}
+                      >
+                        {t("store_setup_add_new_address" as any)}
+                      </Typography>
+                    </Box>
                   </Grid>
-                )}
-                {errors.store_address_id && (
-                  <Typography
-                    color="error"
-                    variant="caption"
-                    sx={{ mt: 1, display: "block" }}
-                  >
-                    {errors.store_address_id.message as string}
-                  </Typography>
-                )}
-              </Box>
-            </Grid>
+                </Grid>
+              )}
+              {errors.store_address_id && (
+                <Typography
+                  color="error"
+                  variant="caption"
+                  sx={{ mt: 1, display: "block" }}
+                >
+                  {errors.store_address_id.message as string}
+                </Typography>
+              )}
+            </Box>
+          </Box>
 
-            {/* Contact Section */}
-            <Grid size={{ xs: 12 }}>
-              <Typography
-                variant="subtitle1"
-                fontWeight="600"
-                mb={2}
-                mt={5}
-                display="flex"
-                alignItems="center"
-                gap={1}
-              >
-                <PhoneOutlinedIcon fontSize="small" color="primary" /> Contact
-                Information
-              </Typography>
-            </Grid>
+          {/* Section: Contact Information */}
+          <Box sx={formSectionStyle(isDark)}>
+            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1, color: COLORS.PRIMARY_PURPLE }}>
+              <PhoneOutlinedIcon fontSize="small" /> {t("store_setup_contact_info" as any)}
+            </Typography>
 
             {/* <Grid size={{ xs: 12 }}>
                         <Box sx={{ p: 4, border: '1px solid', borderColor: 'divider', borderRadius: 4, bgcolor: isDark ? 'transparent' : '#f9fbff', mb: 2 }}>
@@ -732,7 +701,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
               <Grid container spacing={2.5}>
                 <Grid size={{ xs: 12, md: 7 }}>
                   <Typography variant="body2" fontWeight="500" mb={1}>
-                    Primary Contact Number*
+                    {t("store_setup_primary_contact" as any)}*
                   </Typography>
                   <Box sx={{ display: "flex", gap: 1.5 }}>
                     <Box sx={{ width: { xs: "85px", md: "95px" } }}>
@@ -742,11 +711,6 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                         select
                         InputProps={{
                           sx: { borderRadius: "12px", height: 48 },
-                          // startAdornment: (
-                          //   <InputAdornment position="start">
-                          //     {selectedCountry?.flag}
-                          //   </InputAdornment>
-                          // ),
                         }}
                       >
                         {countries.map((option) => (
@@ -760,7 +724,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                       <Input
                         name="contact_phone"
                         control={control}
-                        placeholder="98765 43210"
+                        placeholder={t("store_setup_contact_phone_placeholder" as any)}
                         startIcon={<PhoneOutlinedIcon fontSize="small" />}
                         type="tel"
                         sx={{ height: 48 }}
@@ -771,12 +735,12 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
 
                 <Grid size={{ xs: 12, md: 5 }}>
                   <Typography variant="body2" fontWeight="500" mb={1}>
-                    Contact Email
+                    {t("store_setup_contact_email" as any)}
                   </Typography>
                   <Input
                     name="contact_email"
                     control={control}
-                    placeholder="business@mail.com"
+                    placeholder={t("store_setup_contact_email_placeholder" as any)}
                     startIcon={<EmailOutlinedIcon fontSize="small" />}
                     type="email"
                   />
@@ -785,20 +749,20 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
             </Grid>
 
             <Grid size={{ xs: 12, md: 6 }}>
-              <Typography variant="body2" fontWeight="500" mb={1}>
-                Establishment Year
+              <Typography variant="body2" fontWeight="500" mb={1} mt={2}>
+                {t("store_setup_establishment_year" as any)}
               </Typography>
               <Input
                 name="establishment_year"
                 control={control}
-                placeholder="e.g. 2020"
+                placeholder={t("store_setup_establishment_year_placeholder" as any)}
                 startIcon={<CalendarTodayOutlinedIcon fontSize="small" />}
               />
             </Grid>
-          </Grid>
+          </Box>
 
           <Box
-            mt={10}
+            mt={4}
             display="flex"
             justifyContent="space-between"
             alignItems="center"
@@ -822,7 +786,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
               size="large"
               sx={{
                 borderRadius: "50px",
-                px: 10,
+                px: 5,
                 height: 56,
                 boxShadow: isDark
                   ? "none"
@@ -836,7 +800,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                 transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >
-              Save & Continue
+              {t("store_setup_save_continue" as any)}
             </Button>
           </Box>
         </Paper>

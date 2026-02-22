@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Container,
@@ -60,47 +60,12 @@ import {
 import CommonButton from "@/components/common/Button";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
+import { useSearchSuggestions, Product } from "@/hooks/useSearchSuggestions";
+import SearchSuggestions from "./SearchSuggestions";
 
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
-
-// Interface Definitions
-export interface Product {
-  id: string;
-  name: string;
-  price: string;
-  unit: string;
-  image: string;
-  images: string[];
-  supplier: {
-    username?: string;
-    name: string;
-    location: string;
-    rating: number;
-    reviews: number;
-    yearEstablished: number;
-    gstVerified: boolean;
-    trustSeal: boolean;
-    responseRate: string;
-    businessType: string;
-    address: string;
-    logo?: string;
-    mobile?: string;
-    gstNumber?: string;
-    latitude?: number;
-    longitude?: number;
-    id?: string;
-  };
-  supplier_id: string;
-  specs: { [key: string]: string };
-  description: string;
-  gst: string;
-  category: string;
-  categoryId: string;
-  whatsapp_number?: string;
-  whatsapp_country_code?: string;
-}
 
 const StoreView: React.FC = () => {
   const theme = useTheme();
@@ -108,34 +73,33 @@ const StoreView: React.FC = () => {
   const searchParams = useSearchParams();
   const isDark = theme.palette.mode === "dark";
   const [searchQuery, setSearchQuery] = useState("");
+  const searchRef = useRef<HTMLDivElement>(null);
   const [homeData, setHomeData] = useState<StoreHomeData | null>(null);
-  const [featuredProducts, setFeaturedProducts] =
-    useState<Product[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
+  // Use TanStack Query based search suggestions hook
+  const { categories, products, isSearching, isEmpty } = useSearchSuggestions(
+    searchQuery,
+    homeData,
+  );
+
+  // Handle click away to close suggestions
   useEffect(() => {
-    const query = searchParams.get("q");
-    if (query) {
-      setSearchQuery(query);
-    }
-  }, [searchParams]);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
 
-  // Update URL when search query changes
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (searchQuery) {
-      params.set("q", searchQuery);
-    } else {
-      params.delete("q");
-    }
-    // Use replace to avoid cluttering history, but only if it's different
-    const currentQ = searchParams.get("q") || "";
-    if (currentQ !== searchQuery) {
-      router.replace(`/store?${params.toString()}`);
-    }
-  }, [searchQuery, router, searchParams]);
-
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Inquiry State
   const [inquiryOpen, setInquiryOpen] = useState(false);
@@ -180,7 +144,8 @@ const StoreView: React.FC = () => {
             gst: "18%",
             category: "General",
             categoryId: p.product_category_id || "",
-            supplier_id: p.supplier_id || p.supplier?.store_id || p.supplier?.id || "",
+            supplier_id:
+              p.supplier_id || p.supplier?.store_id || p.supplier?.id || "",
             specs: {},
             supplier: {
               name: p.supplier?.store_name || "Verified Supplier",
@@ -433,7 +398,15 @@ const StoreView: React.FC = () => {
             finished goods instantly.
           </Typography>
 
-          <Box sx={{ display: "flex", justifyContent: "center", px: 2 }}>
+          <Box
+            ref={searchRef}
+            sx={{
+              maxWidth: 850,
+              mx: "auto",
+              px: 2,
+              position: "relative",
+            }}
+          >
             <TextField
               fullWidth
               placeholder="What would you like to source today?"
@@ -467,8 +440,28 @@ const StoreView: React.FC = () => {
                   },
                 },
               }}
-              sx={{ maxWidth: 850 }}
+              onFocus={() => {
+                if (searchQuery.trim().length > 0) setShowSuggestions(true);
+              }}
             />
+
+            {/* Suggestions Dropdown */}
+            {showSuggestions && searchQuery.trim() !== "" && (
+              <SearchSuggestions
+                isSearching={isSearching}
+                categories={categories}
+                products={products}
+                searchQuery={searchQuery}
+                onCategoryClick={(id) => {
+                  handleCategoryClick(id);
+                  setShowSuggestions(false);
+                }}
+                onProductClick={(id) => {
+                  handleProductClick(id);
+                  setShowSuggestions(false);
+                }}
+              />
+            )}
           </Box>
         </Box>
 

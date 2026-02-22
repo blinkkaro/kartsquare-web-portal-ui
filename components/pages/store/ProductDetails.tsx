@@ -14,7 +14,6 @@ import { useRouter } from "next/navigation";
 import { COLORS } from "../../../constants/colors";
 import { useTranslationContext } from "../../../features/i18n/TranslationContext";
 import InquiryModal from "./InquiryModal";
-import { Product } from "./index";
 import ProductDetailsBreadcrumb from "./ProductDetailsBreadcrumb";
 import ProductDetailsHeader from "./ProductDetailsHeader";
 import ProductDetailsInfo from "./ProductDetailsInfo";
@@ -26,6 +25,7 @@ import DescriptionDrawer from "../provider/serviceDetails/DescriptionDialog";
 import ProductMap from "./ProductMap";
 import ProductCard from "./ProductCard";
 import { AppUserType } from "@/services/auth/auth.interface";
+import { Product } from "@/hooks/useSearchSuggestions";
 
 interface ProductDetailsProps {
   product: Product | null;

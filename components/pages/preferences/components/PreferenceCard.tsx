@@ -1,6 +1,6 @@
 "use client";
 import { COLORS } from "@/constants/colors";
-import { Box, Checkbox, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React from "react";
 
 const iconMap: {
@@ -87,32 +87,36 @@ const PreferenceCards: React.FC<PreferenceCardProps> = ({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        p: 2,
+        p: 1.5,
         borderRadius: "16px",
         boxShadow: isSelected
-          ? `0px 4px 20px ${COLORS.SHADOW.BLUE}`
-          : `0px 2px 10px ${COLORS.SHADOW.DEFAULT}`,
+          ? `0 4px 16px ${COLORS.SHADOW.BLUE}`
+          : "0 1px 3px rgba(0,0,0,0.08)",
         cursor: "pointer",
-        transition: "all 0.3s ease",
+        transition: "all 0.25s ease",
         border: "2px solid",
-        borderColor: isSelected ? "transparent" : "transparent",
+        borderColor: isSelected ? "primary.main" : "transparent",
         bgcolor: "background.paper",
-        transform: isSelected ? "scale(1.05)" : "scale(1)",
-        "&:hover": {
-          transform: "translateY(-4px)",
-          boxShadow: `0px 8px 25px ${COLORS.SHADOW.HOVER}`,
-        },
+        transform: isSelected ? "scale(1.02)" : "scale(1)",
         height: "100%",
-        minHeight: "140px",
+        minHeight: "120px",
         position: "relative",
+        "&:hover": {
+          transform: "scale(1.02) translateY(-2px)",
+          boxShadow: isSelected
+            ? `0 8px 24px ${COLORS.SHADOW.BLUE}`
+            : "0 4px 12px rgba(0,0,0,0.1)",
+          borderColor: isSelected ? "primary.main" : "grey.300",
+        },
       }}
     >
       <Box
         sx={{
-          fontSize: { xs: "2rem", lg: "3rem" },
-          mb: 2,
-          transition: "transform 0.3s ease",
-          transform: isSelected ? "scale(1.1)" : "scale(1)",
+          fontSize: { xs: "1.75rem", sm: "2rem" },
+          mb: 1,
+          lineHeight: 1,
+          transition: "transform 0.25s ease",
+          transform: isSelected ? "scale(1.08)" : "scale(1)",
         }}
       >
         {iconMap[iconName]?.icon || iconMap["default"].icon}
@@ -122,25 +126,28 @@ const PreferenceCards: React.FC<PreferenceCardProps> = ({
           fontWeight: 600,
           textAlign: "center",
           color: isSelected ? "text.primary" : "text.secondary",
-          fontSize: { xl: "1rem", lg: "0.875rem" },
+          fontSize: { xs: "0.8125rem", sm: "0.875rem" },
+          lineHeight: 1.3,
+          px: 0.5,
         }}
       >
         {title}
       </Typography>
 
-      <Box sx={{ mt: 1 }}>
+      <Box sx={{ mt: 0.75 }}>
         {isSelected ? (
           <Box
             sx={{
-              width: 24,
-              height: 24,
+              width: 22,
+              height: 22,
               borderRadius: "50%",
               bgcolor: "primary.main",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               color: "common.white",
-              fontSize: "14px",
+              fontSize: "12px",
+              fontWeight: 700,
             }}
           >
             ✓
@@ -148,11 +155,11 @@ const PreferenceCards: React.FC<PreferenceCardProps> = ({
         ) : (
           <Box
             sx={{
-              width: 24,
-              height: 24,
+              width: 22,
+              height: 22,
               borderRadius: "50%",
-              border: "1px solid",
-              borderColor: "divider",
+              border: "2px solid",
+              borderColor: "grey.300",
             }}
           />
         )}

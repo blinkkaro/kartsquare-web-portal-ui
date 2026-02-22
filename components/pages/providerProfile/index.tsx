@@ -65,7 +65,6 @@ import {
   ProductListItem,
 } from "@/services/profile/profileInterface";
 import ProfileProducts from "../../common/ProfileDrawer/components/ProfileProducts";
-import { Product } from "../store";
 
 interface ProviderProfilePageProps {
   username: string;
