@@ -1077,7 +1077,8 @@ export type TranslationKey =
   | "newArrivals"
   | "similarProductsDescription"
   | "directions"
-  | "similar";
+  | "similar"
+  | "uploadDocument";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

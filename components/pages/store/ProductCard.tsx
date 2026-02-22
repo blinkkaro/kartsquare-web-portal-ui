@@ -21,7 +21,7 @@ import {
 } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import CommonButton from "@/components/common/Button";
-import { Product } from "./index";
+import { Product } from "@/hooks/useSearchSuggestions";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { AppUserType } from "@/services/auth/auth.interface";
@@ -67,8 +67,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const handleInquiry = (e: React.MouseEvent) => {
     e.stopPropagation();
     setAnimatingContact(product.id);
-      setInquiryOpen(true);
-      setAnimatingContact(null);
+    setInquiryOpen(true);
+    setAnimatingContact(null);
   };
 
   const handleWhatsApp = (e: React.MouseEvent) => {
@@ -99,7 +99,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           sx={{
-            width: "25rem",
+            width: "100%",
             height: "100%",
             display: "flex",
             flexDirection: "column",
@@ -154,8 +154,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <Box
             sx={{
               position: "relative",
-              width: "25rem",
-              height: "15rem",
+              width: "100%",
+              height: 220,
               bgcolor: isDark ? "rgba(255,255,255,0.01)" : "#f8f9fc",
               overflow: "hidden",
             }}
@@ -168,9 +168,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 position: "absolute",
                 top: 0,
                 left: 0,
-                width: "25rem",
-                height: "15rem",
+                width: "100%",
+                height: "100%",
                 objectFit: "contain",
+                p: 1.5,
               }}
             />
 
@@ -221,15 +222,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <Typography
                 variant="subtitle1"
                 sx={{
-                  fontWeight: 800,
-                  lineHeight: 1.2,
-                  // height: 28,
+                  fontWeight: 700,
+                  lineHeight: 1.3,
+                  height: "2.6rem", // Approx 2 lines
                   overflow: "hidden",
                   display: "-webkit-box",
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: "vertical",
-                  color: isDark ? "white" : "#1a1a2e",
-                  fontSize: "0.85rem",
+                  color: isDark ? "white" : COLORS.TEXT.PRIMARY_LIGHT,
+                  fontSize: "0.95rem",
+                  mb: 1,
                 }}
               >
                 {product.name}
@@ -320,13 +322,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
             {/* Price */}
             <Box
-              sx={{ display: "flex", alignItems: "baseline", gap: 0.5, mt: 1 }}
+              sx={{
+                display: "flex",
+                alignItems: "baseline",
+                gap: 0.5,
+                mt: "auto",
+              }}
             >
               <Typography
-                variant="h6"
+                variant="h5"
                 color={COLORS.PRIMARY_PURPLE}
-                fontWeight={800}
-                sx={{ lineHeight: 1, fontSize: "1.1rem" }}
+                fontWeight={900}
+                sx={{ lineHeight: 1, fontSize: "1.25rem" }}
               >
                 {product.price}
               </Typography>
@@ -334,6 +341,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 variant="caption"
                 color="text.secondary"
                 fontWeight={600}
+                sx={{ fontSize: "0.75rem" }}
               >
                 / {product.unit}
               </Typography>
@@ -362,16 +370,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </Stack>
 
             {/* Primary CTA Buttons */}
-            <Stack direction="row" spacing={1} sx={{ mt: "auto", pt: 1.5 }}>
+            <Stack direction="row" spacing={1} sx={{ pt: 1.5 }}>
               <CommonButton
                 variant="contained"
-                size="small"
+                size="medium"
                 onClick={handleInquiry}
                 fullWidth
                 sx={{
-                  py: 0.8,
-                  width: "100%",
-                  fontSize: "0.75rem",
+                  py: 1.2,
+                  fontSize: "0.85rem",
                   fontWeight: 800,
                   borderRadius: 2,
                   textTransform: "none",
@@ -382,7 +389,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
                       : COLORS.PRIMARY_PURPLE,
                   "&:hover": {
                     background: COLORS.PURPLE_HOVER,
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 6px 12px rgba(94, 24, 233, 0.2)",
                   },
+                  transition: "all 0.3s",
                 }}
               >
                 {animatingContact === product.id
@@ -395,15 +405,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   bgcolor: "#25D366",
                   color: "white",
                   borderRadius: 2,
-                  width: 36,
-                  height: 36,
+                  width: 44,
+                  height: 44,
                   flexShrink: 0,
+                  transition: "all 0.3s",
                   "&:hover": {
                     bgcolor: "#1ebe57",
+                    transform: "translateY(-2px) scale(1.05)",
+                    boxShadow: "0 6px 12px rgba(37, 211, 102, 0.2)",
                   },
                 }}
               >
-                <WhatsApp sx={{ fontSize: 18 }} />
+                <WhatsApp sx={{ fontSize: 22 }} />
               </IconButton>
             </Stack>
           </CardContent>

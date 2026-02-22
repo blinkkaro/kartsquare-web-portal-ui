@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ProductDetails from "./ProductDetails";
-import { Product } from "./index";
 import { storeService } from "@/services/store/store.service";
 import { Box, CircularProgress, Container } from "@mui/material";
+import { Product } from "@/hooks/useSearchSuggestions";
 
 interface ProductDetailsViewProps {
   productId: string;
