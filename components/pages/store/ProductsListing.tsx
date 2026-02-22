@@ -47,11 +47,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { COLORS } from "@/constants/colors";
 import CategorySidebar from "./CategorySidebar";
 import InquiryModal from "./InquiryModal";
-import { Product } from "./index";
 import ProductCard from "./ProductCard";
 import { storeService, StoreHomeData } from "@/services/store/store.service";
 import CommonButton from "@/components/common/Button";
 import { keyframes } from "@mui/system";
+import { Product } from "@/hooks/useSearchSuggestions";
 
 // Animation keyframes
 const pulseGlow = keyframes`
@@ -518,20 +518,26 @@ const ProductsListingView: React.FC = () => {
             >
               <Box>
                 <Typography
-                  variant="h4"
-                  fontWeight={800}
+                  variant="h3"
+                  fontWeight={900}
                   sx={{
-                    color: isDark ? "text.primary" : "#1a1a2e",
-                    mb: 0.5,
+                    color: isDark ? "text.primary" : "#0f172a",
+                    mb: 1,
+                    letterSpacing: "-0.02em",
                   }}
                 >
                   {getCategoryTitle()}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {productsLoading
-                    ? "Loading products..."
-                    : `${filteredProducts.length} products available`}
-                </Typography>
+                <Chip
+                  label={`${productsLoading ? "..." : filteredProducts.length} items`}
+                  size="small"
+                  sx={{
+                    bgcolor: COLORS.PRIMARY_PURPLE,
+                    color: "white",
+                    fontWeight: 700,
+                    borderRadius: "8px",
+                  }}
+                />
               </Box>
             </Box>
 
