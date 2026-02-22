@@ -266,7 +266,7 @@ const StoreView: React.FC = () => {
         {/* Banner Section - Myntra style Carousel */}
         <Box
           sx={{
-            mb: 8,
+            mb: { xs: 4, md: 8 },
             borderRadius: "32px",
             overflow: "hidden",
             position: "relative",
@@ -334,7 +334,7 @@ const StoreView: React.FC = () => {
 
                   <Box
                     sx={{
-                      p: { xs: 4, md: 6 },
+                      p: { xs: 3, md: 6 },
                       color: "white",
                       maxWidth: 700,
                       position: "relative",
@@ -351,7 +351,7 @@ const StoreView: React.FC = () => {
                         px: 2,
                         py: 0.8,
                         borderRadius: "100px",
-                        fontSize: "0.75rem",
+                        fontSize: { xs: "0.6rem", md: "0.75rem" },
                       }}
                     >
                       {slide.tag}
@@ -391,8 +391,8 @@ const StoreView: React.FC = () => {
                           bgcolor: "#f5f5f5",
                           transform: "scale(1.02)",
                         },
-                        px: 6,
-                        py: 1.5,
+                        px: { xs: 4, md: 6 },
+                        py: { xs: 1, sm: 1.5 },
                         fontWeight: 800,
                         borderRadius: "14px",
                         transition: "all 0.3s ease",
@@ -409,7 +409,7 @@ const StoreView: React.FC = () => {
         </Box>
 
         {/* Search Header - Refined */}
-        <Box sx={{ mb: 10, textAlign: "center" }}>
+        <Box sx={{ mb: { xs: 6, md: 10 }, textAlign: "center" }}>
           <Typography
             variant="h4"
             fontWeight={900}
@@ -451,7 +451,7 @@ const StoreView: React.FC = () => {
                   borderRadius: "24px",
                   bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "white",
                   p: 1.5,
-                  fontSize: "1.25rem",
+                  fontSize: { xs: "1rem", md: "1.25rem" },
                   fontWeight: 500,
                   boxShadow: isDark
                     ? "0 10px 40px rgba(0,0,0,0.3)"
@@ -473,7 +473,7 @@ const StoreView: React.FC = () => {
         </Box>
 
         {/* Top Categories Static Section */}
-        <Box sx={{ mb: 10 }}>
+        <Box sx={{ mb: { xs: 6, md: 10 } }}>
           <Box sx={{ mb: 4 }}>
             <Typography
               variant="h5"
@@ -489,10 +489,10 @@ const StoreView: React.FC = () => {
               Explore the most active business sectors
             </Typography>
           </Box>
-          <Grid container spacing={2}>
+          <Grid container spacing={{ xs: 1.5, sm: 2 }}>
             {(homeData?.categories || []).slice(0, 5).map((cat) => (
               <Grid
-                size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}
+                size={{ xs: 6, sm: 6, md: 4, lg: 2.4 }}
                 key={cat.product_category_id}
               >
                 <Paper
@@ -577,12 +577,12 @@ const StoreView: React.FC = () => {
         {/* Top Products Section */}
         <Box
           sx={{
-            mb: 12,
+            mb: { xs: 8, md: 12 },
             bgcolor: isDark
               ? "rgba(94, 24, 233, 0.15)"
               : "rgba(94, 24, 233, 0.07)",
-            p: { xs: 4, md: 8 },
-            borderRadius: 8,
+            p: { xs: 2, md: 8 },
+            borderRadius: { xs: 4, md: 8 },
             border: `1px solid ${isDark ? "rgba(94, 24, 233, 0.25)" : "rgba(94, 24, 233, 0.12)"}`,
             boxShadow: isDark ? "none" : "0 25px 90px rgba(94, 24, 233, 0.08)",
           }}
@@ -590,8 +590,10 @@ const StoreView: React.FC = () => {
           <Box
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
-              alignItems: "flex-end",
+              alignItems: { xs: "flex-start", sm: "flex-end" },
+              gap: { xs: 2, sm: 0 },
               mb: 4,
             }}
           >
@@ -621,12 +623,12 @@ const StoreView: React.FC = () => {
               onClick={() => router.push("/store/products")}
             >
               View All Products
-            </CommonButton> 
+            </CommonButton>
           </Box>
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 1.5, sm: 3 }}>
             {productsLoading
               ? [1, 2, 3, 4].map((n) => (
-                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={n}>
+                <Grid size={{ xs: 6, sm: 6, md: 4, lg: 3 }} key={n}>
                   <Box
                     sx={{
                       height: 350,
@@ -637,7 +639,7 @@ const StoreView: React.FC = () => {
                 </Grid>
               ))
               : featuredProducts.map((product) => (
-                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={product.id}>
+                <Grid size={{ xs: 6, sm: 6, md: 4, lg: 3 }} key={product.id}>
                   <Card
                     elevation={0}
                     onClick={() => handleProductClick(product.id)}
@@ -654,7 +656,7 @@ const StoreView: React.FC = () => {
                       },
                     }}
                   >
-                    <Box sx={{ height: 220, overflow: "hidden", p: 2 }}>
+                    <Box sx={{ height: { xs: 140, sm: 220 }, overflow: "hidden", p: { xs: 1, sm: 2 } }}>
                       <Box
                         component="img"
                         src={product.image}
@@ -663,11 +665,11 @@ const StoreView: React.FC = () => {
                           width: "100%",
                           height: "100%",
                           objectFit: "cover",
-                          borderRadius: 4,
+                          borderRadius: { xs: 3, sm: 4 },
                         }}
                       />
                     </Box>
-                    <CardContent sx={{ pt: 1, px: 3, pb: 3 }}>
+                    <CardContent sx={{ pt: 1, px: { xs: 1.5, sm: 3 }, pb: { xs: 2, sm: 3 } }}>
                       <Typography
                         variant="caption"
                         sx={{
@@ -683,25 +685,28 @@ const StoreView: React.FC = () => {
                         variant="subtitle1"
                         fontWeight={800}
                         noWrap
-                        sx={{ mt: 0.5, mb: 1 }}
+                        sx={{ mt: 0.5, mb: 1, fontSize: { xs: "0.85rem", sm: "1rem" } }}
                       >
                         {product.name}
                       </Typography>
                       <Box
                         sx={{
                           display: "flex",
-                          alignItems: "center",
+                          flexDirection: { xs: "column", sm: "row" },
+                          alignItems: { xs: "flex-start", sm: "center" },
                           justifyContent: "space-between",
+                          gap: { xs: 1, sm: 0 },
                         }}
                       >
                         <Typography
                           variant="h6"
                           fontWeight={900}
-                          color={
-                            isDark
+                          sx={{
+                            fontSize: { xs: "1rem", sm: "1.25rem" },
+                            color: isDark
                               ? COLORS.ACCENT_BLUE_DARK
-                              : COLORS.PRIMARY_PURPLE
-                          }
+                              : COLORS.PRIMARY_PURPLE,
+                          }}
                         >
                           {product.price}
                         </Typography>
@@ -719,7 +724,11 @@ const StoreView: React.FC = () => {
                           <Verified sx={{ fontSize: 14, color: "#059669" }} />
                           <Typography
                             variant="caption"
-                            sx={{ color: "#059669", fontWeight: 800 }}
+                            sx={{
+                              color: "#059669",
+                              fontWeight: 800,
+                              fontSize: { xs: "0.65rem", sm: "0.75rem" },
+                            }}
                           >
                             Trusted
                           </Typography>
@@ -733,12 +742,14 @@ const StoreView: React.FC = () => {
         </Box>
 
         {/* Categories Grid Section */}
-        <Box sx={{ mb: 10 }}>
+        <Box sx={{ mb: { xs: 6, md: 10 } }}>
           <Box
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
-              alignItems: "flex-end",
+              alignItems: { xs: "flex-start", sm: "flex-end" },
+              gap: { xs: 2, sm: 0 },
               mb: 4,
             }}
           >
@@ -770,11 +781,11 @@ const StoreView: React.FC = () => {
             </CommonButton> */}
           </Box>
 
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 1.5, sm: 3 }}>
             {loading
               ? // Simple skeleton loader
               [1, 2, 3, 4].map((n) => (
-                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={n}>
+                <Grid size={{ xs: 6, sm: 6, md: 4, lg: 3 }} key={n}>
                   <Box
                     sx={{
                       height: 300,
@@ -786,7 +797,7 @@ const StoreView: React.FC = () => {
               ))
               : homeData?.categories.map((cat) => (
                 <Grid
-                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                  size={{ xs: 6, sm: 6, md: 4, lg: 3 }}
                   key={cat.product_category_id}
                 >
                   <Card
@@ -818,7 +829,7 @@ const StoreView: React.FC = () => {
                   >
                     <Box
                       sx={{
-                        height: 200,
+                        height: { xs: 140, sm: 200 },
                         p: 3,
                         display: "flex",
                         alignItems: "center",
@@ -896,8 +907,8 @@ const StoreView: React.FC = () => {
                               );
                             }}
                             sx={{
-                              height: 24,
-                              fontSize: "0.7rem",
+                              height: { xs: 20, sm: 24 },
+                              fontSize: { xs: "0.6rem", sm: "0.7rem" },
                               bgcolor: isDark
                                 ? "rgba(255,255,255,0.05)"
                                 : "rgba(0,0,0,0.03)",
@@ -930,7 +941,7 @@ const StoreView: React.FC = () => {
         </Box>
 
         {/* Recent Activity & Reviews Section - Premium UI Refresh */}
-        <Grid container spacing={6} sx={{ mt: 15, mb: 10 }}>
+        <Grid container spacing={{ xs: 4, md: 6 }} sx={{ mt: { xs: 8, md: 15 }, mb: { xs: 6, md: 10 } }}>
           {/* Recent Activity */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 5 }}>
@@ -980,7 +991,7 @@ const StoreView: React.FC = () => {
                 }}
               />
 
-              <Stack spacing={4}>
+              <Stack spacing={{ xs: 2.5, md: 4 }}>
                 {[
                   {
                     text: "Rahul from Delhi",
@@ -1019,7 +1030,7 @@ const StoreView: React.FC = () => {
                     key={i}
                     sx={{
                       display: "flex",
-                      gap: 3,
+                      gap: { xs: 2, sm: 3 },
                       position: "relative",
                       transition: "all 0.3s",
                       "&:hover": { transform: "translateX(8px)" },
@@ -1047,7 +1058,7 @@ const StoreView: React.FC = () => {
                     <Box
                       sx={{
                         flex: 1,
-                        p: 2.5,
+                        p: { xs: 2, sm: 2.5 },
                         borderRadius: "20px",
                         bgcolor: isDark ? "rgba(255,255,255,0.02)" : "white",
                         border: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "#f1f5f9"}`,
@@ -1130,7 +1141,7 @@ const StoreView: React.FC = () => {
               </Box>
             </Box>
 
-            <Stack spacing={4}>
+            <Stack spacing={{ xs: 2.5, md: 4 }}>
               {[
                 {
                   name: "Amit Sharma",
@@ -1158,7 +1169,7 @@ const StoreView: React.FC = () => {
                   key={i}
                   elevation={0}
                   sx={{
-                    p: 4,
+                    p: { xs: 2.5, sm: 4 },
                     borderRadius: "24px",
                     bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#ffffff",
                     border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "#f1f5f9"}`,
@@ -1249,7 +1260,7 @@ const StoreView: React.FC = () => {
 
         {/* Brands Section - Restored */}
         {!loading && homeData?.brands && homeData.brands.length > 0 && (
-          <Box sx={{ mt: 15, mb: 10 }}>
+          <Box sx={{ mt: { xs: 8, md: 15 }, mb: { xs: 6, md: 10 } }}>
             <Typography
               variant="h5"
               fontWeight={800}
