@@ -130,7 +130,6 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
 
   const statusConfig = getStatusConfig(booking.status);
 
-
   // Get action buttons based on status
   const getActionButtons = () => {
     switch (booking.status) {
@@ -526,36 +525,56 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-            <Typography
-              sx={{
-                fontSize: "12px",
-                //   fontWeight: 700,
-                color: isDark
-                  ? COLORS.TEXT.PRIMARY_DARK
-                  : COLORS.TEXT.PRIMARY_LIGHT,
-                mb: 0.5,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {booking.currency}
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: "16px",
-                fontWeight: 700,
-                color: isDark
-                  ? COLORS.TEXT.PRIMARY_DARK
-                  : COLORS.TEXT.PRIMARY_LIGHT,
-                mb: 0.5,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {booking.price}
-            </Typography>
+            {booking.price === 0 ? (
+              <Typography
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: 700,
+                  color: isDark
+                    ? COLORS.TEXT.PRIMARY_DARK
+                    : COLORS.TEXT.PRIMARY_LIGHT,
+                  mb: 0.5,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {t("getQuote")}
+              </Typography>
+            ) : (
+              <>
+                <Typography
+                  sx={{
+                    fontSize: "12px",
+                    //   fontWeight: 700,
+                    color: isDark
+                      ? COLORS.TEXT.PRIMARY_DARK
+                      : COLORS.TEXT.PRIMARY_LIGHT,
+                    mb: 0.5,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {booking.currency}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    color: isDark
+                      ? COLORS.TEXT.PRIMARY_DARK
+                      : COLORS.TEXT.PRIMARY_LIGHT,
+                    mb: 0.5,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {booking.price}
+                </Typography>
+              </>
+            )}
           </Box>
           {getActionButtons()}
         </Box>
