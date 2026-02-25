@@ -166,8 +166,8 @@ const ProviderServiceDetails = () => {
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
       : [
-        "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      ];
+          "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        ];
 
   return (
     <MainLayout>
@@ -185,7 +185,6 @@ const ProviderServiceDetails = () => {
         <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
           {/* Breadcrumb */}
           <ServiceDetailsBreadcrumb serviceName={service.service_name} />
-
 
           {/* Main Content Grid - Responsive layout */}
           <Box
@@ -219,13 +218,16 @@ const ProviderServiceDetails = () => {
                   priceItems={service.price_items}
                   currency={service.currency}
                 />
-                <Box sx={{ mt: 2 }}> {service.service_address?.latitude && service.service_address?.longitude && (
-                  <ServiceDetailsMap
-                    latitude={service.service_address.latitude}
-                    longitude={service.service_address.longitude}
-                    providerName={service.provider_name || ""}
-                  />
-                )}
+                <Box sx={{ mt: 2 }}>
+                  {" "}
+                  {service.service_address?.latitude &&
+                    service.service_address?.longitude && (
+                      <ServiceDetailsMap
+                        latitude={service.service_address.latitude}
+                        longitude={service.service_address.longitude}
+                        providerName={service.business_name || ""}
+                      />
+                    )}
                 </Box>
               </Box>
             </Box>
@@ -246,7 +248,11 @@ const ProviderServiceDetails = () => {
                   price={service.price || 0}
                   currency={service.currency || "INR"}
                   categoryName={service.category_name || ""}
-                  isPriceRequired={service.is_price_required}
+                  isPriceRequired={
+                    service.pricing_type === "noPrice"
+                      ? false
+                      : service.is_price_required
+                  }
                 />
               </Box>
 
@@ -271,6 +277,7 @@ const ProviderServiceDetails = () => {
               {/* Service Details Grid (Duration & Status) */}
               <Box sx={{ py: 1 }}>
                 <ServiceDetailsGrid
+                  hasServiceDuration={service.has_service_duration}
                   serviceDuration={service.service_duration || 0}
                   serviceStatus={service.status === "ACTIVE"}
                   onStatusToggle={handleStatusToggle}
@@ -285,7 +292,18 @@ const ProviderServiceDetails = () => {
               {/* Service Location */}
               <Box sx={{ py: 2 }}>
                 <ServiceLocation
-                  address={service.service_provider_address || ""}
+                  address={{
+                    address: service.service_address?.address || "",
+                    building_no: service.service_address?.building_no || "",
+                    floor: service.service_address?.floor || "",
+                    landmark: service.service_address?.landmark || "",
+                    city_town: service.service_address?.city_town || "",
+                    state: service.service_address?.state || "",
+                    country: "",
+                    pincode: service.service_address?.pincode || "",
+                    latitude: service.service_address?.latitude || 0,
+                    longitude: service.service_address?.longitude || 0,
+                  }}
                   serviceAtLocation={service.service_at_location}
                   visitingCharge={service.visiting_charge}
                   serviceRadius={service.service_radius}

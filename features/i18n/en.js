@@ -1522,4 +1522,5 @@ export const english = {
   kyc_owner_mobile_digits: "Mobile number must be 10 digits",
   kyc_owner_email_required: "Owner email is required",
   kyc_owner_email_invalid: "Invalid email address",
+  this_service_have_a_specific_duration: "Does this service have a specific duration?",
 };

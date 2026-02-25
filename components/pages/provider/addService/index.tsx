@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -28,10 +28,14 @@ const SECTION_STYLE = (isDark: boolean) => ({
   border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
   borderLeft: `4px solid ${COLORS.PRIMARY_PURPLE}`,
   bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-  boxShadow: isDark ? "none" : `0 1px 3px ${alpha(COLORS.PRIMARY_PURPLE, 0.06)}`,
+  boxShadow: isDark
+    ? "none"
+    : `0 1px 3px ${alpha(COLORS.PRIMARY_PURPLE, 0.06)}`,
   transition: "box-shadow 0.2s ease, border-color 0.2s ease",
   "&:hover": {
-    boxShadow: isDark ? "none" : `0 4px 12px ${alpha(COLORS.PRIMARY_PURPLE, 0.08)}`,
+    boxShadow: isDark
+      ? "none"
+      : `0 4px 12px ${alpha(COLORS.PRIMARY_PURPLE, 0.08)}`,
   },
 });
 
@@ -51,6 +55,7 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const [localCategoryId, setLocalCategoryId] = React.useState("");
+  const [haveprice, setHavePrice] = useState(false);
 
   // Data fetching hook
   const {
@@ -92,10 +97,14 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
     setSelectedAddressId,
     serviceRadius,
     setServiceRadius,
+    hasServiceDuration,
+    setHasServiceDuration,
     haveSlots,
     setHaveSlots,
     pricingType,
     setPricingType,
+    isPriceRequired,
+    setIsPriceRequired,
     priceCatalogFileNames,
     handleCatalogFileSelect,
     removeCatalogFile,
@@ -106,6 +115,9 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
     addPriceItem,
     removePriceItem,
     updatePriceItem,
+    mainImagePreview,
+    handleMainImageSelect,
+    handleRemoveMainImage,
     selectedImages,
     imagePreviews,
     handleImageSelect,
@@ -128,6 +140,34 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
   useEffect(() => {
     setLocalCategoryId(categoryId);
   }, [categoryId]);
+
+  useEffect(() => {
+    if (pricingType === "noPrice") {
+      setHavePrice(false);
+      setIsPriceRequired(false);
+    } else {
+      setHavePrice(true);
+      setIsPriceRequired(true);
+    }
+  }, [pricingType, setIsPriceRequired]);
+
+  // Sync haveprice to isPriceRequired
+  useEffect(() => {
+    setIsPriceRequired(haveprice);
+  }, [haveprice, setIsPriceRequired]);
+
+  const updateHavePrice = (type: boolean) => {
+    setHavePrice(type);
+    if (type === false) {
+      setPricingType("noPrice");
+      setHavePrice(false);
+      setIsPriceRequired(false);
+    } else {
+      setPricingType("single");
+      setHavePrice(true);
+      setIsPriceRequired(true);
+    }
+  };
 
   // Auto-select first address when addresses load
   useEffect(() => {
@@ -171,7 +211,9 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
         <Typography
           variant="body2"
           sx={{
-            color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+            color: isDark
+              ? COLORS.TEXT.SECONDARY_DARK
+              : COLORS.TEXT.SECONDARY_LIGHT,
             mb: 2,
             lineHeight: 1.5,
           }}
@@ -185,7 +227,9 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
           <Paper
             elevation={0}
             sx={{
-              bgcolor: isDark ? "rgba(211, 47, 47, 0.08)" : "rgba(211, 47, 47, 0.06)",
+              bgcolor: isDark
+                ? "rgba(211, 47, 47, 0.08)"
+                : "rgba(211, 47, 47, 0.06)",
               color: "error.main",
               p: 2,
               borderRadius: 2,
@@ -200,7 +244,9 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
         <Box sx={{ flex: 1 }}>
           {/* 1. Service Info */}
           <Paper elevation={0} sx={SECTION_STYLE(isDark)}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
+            <Box
+              sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}
+            >
               <Box
                 sx={{
                   width: 32,
@@ -227,6 +273,9 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
               </Box>
             </Box>
             <ServiceImageUpload
+              mainImagePreview={mainImagePreview}
+              onMainImageSelect={handleMainImageSelect}
+              onRemoveMainImage={handleRemoveMainImage}
               selectedImages={selectedImages}
               imagePreviews={imagePreviews}
               onImageSelect={handleImageSelect}
@@ -250,7 +299,9 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
 
           {/* 2. Pricing */}
           <Paper elevation={0} sx={SECTION_STYLE(isDark)}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
+            <Box
+              sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}
+            >
               <Box
                 sx={{
                   width: 32,
@@ -291,13 +342,17 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
               onUpdatePriceItem={updatePriceItem}
               price={price}
               onPriceChange={setPrice}
+              isPriceRequired={haveprice}
+              onIsPriceRequiredChange={updateHavePrice}
               errors={fieldErrors}
             />
           </Paper>
 
           {/* 3. Duration */}
           <Paper elevation={0} sx={SECTION_STYLE(isDark)}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
+            <Box
+              sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}
+            >
               <Box
                 sx={{
                   width: 32,
@@ -324,6 +379,8 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
               </Box>
             </Box>
             <ServiceDuration
+              hasServiceDuration={hasServiceDuration}
+              onHasServiceDurationChange={setHasServiceDuration}
               days={days}
               onDaysChange={setDays}
               hours={hours}
@@ -337,7 +394,9 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
 
           {/* 4. Location */}
           <Paper elevation={0} sx={SECTION_STYLE(isDark)}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
+            <Box
+              sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}
+            >
               <Box
                 sx={{
                   width: 32,

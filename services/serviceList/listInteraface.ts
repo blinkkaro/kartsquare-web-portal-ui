@@ -19,6 +19,7 @@ export enum PricingType {
   SINGLE = "single",
   CATALOG = "catalog",
   MULTIPLE = "multiple",
+  NOPRICE = "noPrice",
 }
 
 export interface Service {
@@ -70,7 +71,7 @@ export interface Service {
   pricing_type: PricingType;
   price_catalog_url?: string[];
   price_items?: ServicePriceItem[];
-  
+
   // SEO Fields
   slug?: string;
   meta_title?: string;
@@ -143,8 +144,8 @@ export interface ServiceCreateRequest {
   service_duration?: number;
   have_slots: boolean;
   status?: ServiceStatus;
-  /** How pricing is provided: single (default), catalog file(s), or multiple items */
-  pricing_type?: "single" | "catalog" | "multiple";
+  /** How pricing is provided: single (default), catalog file(s), or multiple items, or noPrice */
+  pricing_type?: "single" | "catalog" | "multiple" | "noPrice";
   /** URLs of uploaded price catalog files (PDF/image). Single string or array when pricing_type is "catalog" */
   price_catalog_url?: string | string[];
   /** List of service/price/description when pricing_type is "multiple" */

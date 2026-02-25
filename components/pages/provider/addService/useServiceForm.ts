@@ -36,11 +36,13 @@ export const useServiceForm = ({
   const [visitingCharge, setVisitingCharge] = useState("");
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [serviceRadius, setServiceRadius] = useState("5");
+  const [hasServiceDuration, setHasServiceDuration] = useState(false);
   const [haveSlots, setHaveSlots] = useState(false);
 
   // Pricing type: single (default), catalog (upload file(s)), or multiple (list of items)
-  type PricingType = "single" | "catalog" | "multiple";
-  const [pricingType, setPricingType] = useState<PricingType>("single");
+  type PricingType = "single" | "catalog" | "multiple" | "noPrice";
+  const [pricingType, setPricingType] = useState<PricingType>("noPrice");
+  const [isPriceRequired, setIsPriceRequired] = useState(true);
   const [priceCatalogFiles, setPriceCatalogFiles] = useState<File[]>([]);
   const [existingCatalogUrls, setExistingCatalogUrls] = useState<string[]>([]);
   const [priceItems, setPriceItems] = useState<
@@ -48,6 +50,8 @@ export const useServiceForm = ({
   >([{ name: "", price: "", description: "" }]);
 
   // Images state
+  const [mainImage, setMainImage] = useState<File | null>(null);
+  const [mainImagePreview, setMainImagePreview] = useState<string | null>(null);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
@@ -77,6 +81,9 @@ export const useServiceForm = ({
         setDays(daysCalc.toString());
         setHours(hoursCalc.toString());
         setMinutes(minutesCalc.toString());
+        setHasServiceDuration(
+          editService.has_service_duration || totalMinutes > 0,
+        );
 
         const locType = editService.service_at_location as string;
         if (locType === "at_customer" || locType === "at_provider") {
@@ -92,8 +99,12 @@ export const useServiceForm = ({
         setHaveSlots(editService.have_slots || false);
 
         if (editService.image_urls && editService.image_urls.length > 0) {
-          setImagePreviews(editService.image_urls);
+          setMainImagePreview(editService.image_urls[0]);
+          if (editService.image_urls.length > 1) {
+            setImagePreviews(editService.image_urls.slice(1));
+          }
           setSelectedImages([]);
+          setMainImage(null);
         }
 
         // Subcategory ID will be set by useServiceData effect
@@ -103,6 +114,12 @@ export const useServiceForm = ({
 
         if (editService.pricing_type) {
           setPricingType(editService.pricing_type);
+        }
+
+        if (editService.is_price_required !== undefined) {
+          setIsPriceRequired(editService.is_price_required);
+        } else {
+          setIsPriceRequired(!!editService.price);
         }
 
         if (
@@ -126,6 +143,26 @@ export const useServiceForm = ({
 
     prefillForm();
   }, [editService, open, setSubcategories]);
+
+  const handleMainImageSelect = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const { files } = event.target;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setMainImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+    setMainImage(file);
+  };
+
+  const handleRemoveMainImage = () => {
+    setMainImage(null);
+    setMainImagePreview(null);
+  };
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
@@ -232,7 +269,7 @@ export const useServiceForm = ({
       isValid = false;
     }
     if (pricingType === PricingType.SINGLE) {
-      if (!price || parseFloat(price) <= 0) {
+      if (isPriceRequired && (!price || parseFloat(price) <= 0)) {
         newFieldErrors.price = english.enter_valid_price_error;
         isValid = false;
       }
@@ -262,8 +299,11 @@ export const useServiceForm = ({
         isValid = false;
       }
     }
-    if (!editService && selectedImages.length === 0) {
-      setError(english.upload_image_error);
+    if (!editService && !mainImage) {
+      setError(english.upload_image_error || "Main image is required");
+      isValid = false;
+    } else if (editService && !mainImage && !mainImagePreview) {
+      setError(english.upload_image_error || "Main image is required");
       isValid = false;
     }
     if (!selectedAddressId) {
@@ -293,6 +333,14 @@ export const useServiceForm = ({
       }
 
       // Upload images only if new images are selected
+      let uploadedMainImageUrl = mainImagePreview || "";
+      if (mainImage) {
+        setUploadingImages(true);
+        const [url] = await verifyDocumentService.uploadImages([mainImage]);
+        uploadedMainImageUrl = url;
+        setUploadingImages(false);
+      }
+
       let uploadedUrls: string[] = [];
       if (selectedImages.length > 0) {
         setUploadingImages(true);
@@ -301,6 +349,10 @@ export const useServiceForm = ({
       } else if (editService && imagePreviews.length > 0) {
         uploadedUrls = imagePreviews;
       }
+
+      const finalImageUrls = [uploadedMainImageUrl, ...uploadedUrls].filter(
+        (url) => url !== "",
+      );
 
       let priceCatalogUrls: string[] = [...existingCatalogUrls];
       if (pricingType === "catalog" && priceCatalogFiles.length > 0) {
@@ -345,16 +397,17 @@ export const useServiceForm = ({
         sub_category_id: subcategoryId,
         service_name: finalServiceName,
         service_desc: finalDesc,
-        image_urls: uploadedUrls,
-        is_price_required: !!(pricingType === "single"),
-        price: pricingType === "single" ? finalPrice : 0,
+        image_urls: finalImageUrls,
+        is_price_required: pricingType === "single" ? isPriceRequired : false,
+        price: pricingType === "single" && isPriceRequired ? finalPrice : 0,
         currency: "INR",
         service_at_location: locationType,
         service_provider_address_id: selectedAddressId,
         service_radius: parseInt(serviceRadius),
-        has_service_duration: totalMinutes > 0,
-        service_duration: totalMinutes > 0 ? totalMinutes : undefined,
-        have_slots: haveSlots,
+        has_service_duration: hasServiceDuration,
+        service_duration:
+          hasServiceDuration && totalMinutes > 0 ? totalMinutes : undefined,
+        have_slots: hasServiceDuration ? haveSlots : false,
         pricing_type: pricingType,
       };
 
@@ -417,12 +470,15 @@ export const useServiceForm = ({
     setVisitingCharge("");
     setSelectedAddressId("");
     setServiceRadius("5");
+    setHasServiceDuration(false);
     setHaveSlots(false);
     setPricingType("single");
+    setIsPriceRequired(true);
     setPriceCatalogFiles([]);
     setPriceItems([{ name: "", price: "", description: "" }]);
+    setMainImage(null);
+    setMainImagePreview(null);
     setSelectedImages([]);
-    setImagePreviews([]);
     setImagePreviews([]);
     setExistingCatalogUrls([]);
     setError("");
@@ -455,11 +511,15 @@ export const useServiceForm = ({
     setSelectedAddressId,
     serviceRadius,
     setServiceRadius,
+    hasServiceDuration,
+    setHasServiceDuration,
     haveSlots,
     setHaveSlots,
     // Pricing options
     pricingType,
     setPricingType,
+    isPriceRequired,
+    setIsPriceRequired,
     priceCatalogFiles,
     priceCatalogFileNames: priceCatalogFiles.map((f) => f.name),
     handleCatalogFileSelect,
@@ -472,6 +532,10 @@ export const useServiceForm = ({
     removePriceItem,
     updatePriceItem,
     // Images
+    mainImage,
+    mainImagePreview,
+    handleMainImageSelect,
+    handleRemoveMainImage,
     selectedImages,
     imagePreviews,
     handleImageSelect,

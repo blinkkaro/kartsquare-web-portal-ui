@@ -192,10 +192,6 @@ export const formatAddress = (
     result = result ? `${result} - ${address.pincode}` : `${address.pincode}`;
   }
 
-  if (address.address) {
-    result += ` (${address.address})`;
-  }
-
   return result;
 };
 

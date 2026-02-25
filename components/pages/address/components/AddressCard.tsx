@@ -7,6 +7,7 @@ import { Address } from "@/services/address/addressInterface";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import Button from "@/components/common/Button";
 import { COLORS } from "@/constants/colors";
+import { formatAddress } from "@/helper/helper";
 
 interface AddressCardProps {
   address: Address;
@@ -22,20 +23,6 @@ const AddressCard: React.FC<AddressCardProps> = ({
   onSetDefault,
 }) => {
   const { t } = useTranslationContext();
-
-  const formatAddress = () => {
-    const parts = [
-      address.address,
-      address.building_no,
-      address.floor,
-      address.landmark,
-      address.city_town,
-      address.state,
-      address.country,
-      address.pincode,
-    ].filter(Boolean);
-    return parts.join(", ");
-  };
 
   return (
     <Box
@@ -74,13 +61,13 @@ const AddressCard: React.FC<AddressCardProps> = ({
               onClick={() => onEdit(address)}
               sx={{
                 color: (theme) => theme.palette.text.secondary,
-              "&:hover": {
-                backgroundColor: COLORS.PURPLE_ALPHA_04,
-              },
-            }}
-          >
-            <EditIcon fontSize="small" />
-          </IconButton>
+                "&:hover": {
+                  backgroundColor: COLORS.PURPLE_ALPHA_04,
+                },
+              }}
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
           )}
           {onDelete && (
             <IconButton
@@ -89,12 +76,12 @@ const AddressCard: React.FC<AddressCardProps> = ({
               sx={{
                 color: "#FF5252",
                 "&:hover": {
-                backgroundColor: "rgba(255, 82, 82, 0.1)",
-              },
-            }}
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
+                  backgroundColor: "rgba(255, 82, 82, 0.1)",
+                },
+              }}
+            >
+              <DeleteIcon fontSize="small" />
+            </IconButton>
           )}
         </Box>
       </Box>
@@ -108,7 +95,21 @@ const AddressCard: React.FC<AddressCardProps> = ({
           lineHeight: 1.6,
         }}
       >
-        {formatAddress()}
+        {formatAddress(
+          {
+            address: address.address,
+            building_no: address.building_no || "",
+            floor: address.floor || "",
+            landmark: address.landmark || "",
+            city_town: address.city_town,
+            state: address.state,
+            pincode: address.pincode,
+            country: address.country,
+            latitude: address.latitude,
+            longitude: address.longitude,
+          },
+          t,
+        )}
       </Typography>
 
       {/* Default button or badge */}
@@ -135,20 +136,20 @@ const AddressCard: React.FC<AddressCardProps> = ({
         </Box>
       ) : (
         onSetDefault && (
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={() => onSetDefault(address.id)}
-          sx={{
-            borderRadius: "20px",
-            fontSize: "0.7rem !important",
-            padding: "4px 16px !important",
-            textTransform: "uppercase",
-            fontWeight: 600,
-          }}
-        >
-          {t("setAsDefault")}
-        </Button>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => onSetDefault(address.id)}
+            sx={{
+              borderRadius: "20px",
+              fontSize: "0.7rem !important",
+              padding: "4px 16px !important",
+              textTransform: "uppercase",
+              fontWeight: 600,
+            }}
+          >
+            {t("setAsDefault")}
+          </Button>
         )
       )}
     </Box>
