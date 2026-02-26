@@ -1297,8 +1297,8 @@ export const english = {
   latest_leads: "Latest Leads",
   no_leads_yet: "No Leads Yet",
   no_leads_desc: "No leads found",
-  totalPhoneNumberViews: "Profile Impressions",
-  totalProfileViews: "Phone Impressions",
+  totalProfileViews: "Profile Impressions",
+  totalPhoneNumberViews: "Phone Impressions",
   advertisement: "Advertisement",
 
   // Advertise Page
