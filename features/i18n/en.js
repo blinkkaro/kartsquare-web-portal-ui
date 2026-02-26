@@ -869,6 +869,7 @@ export const english = {
   service_provider_location: "Service Provider Location",
   at_provider_location: "Provider Location",
   at_customer_location: "Customer Location",
+  virtual_call_location: "Virtual",
   select_address: "Select Address",
   no_address_yet: "You do not have an address yet.",
   add_address: "Add Address",
@@ -1522,5 +1523,6 @@ export const english = {
   kyc_owner_mobile_digits: "Mobile number must be 10 digits",
   kyc_owner_email_required: "Owner email is required",
   kyc_owner_email_invalid: "Invalid email address",
-  this_service_have_a_specific_duration: "Does this service have a specific duration?",
+  this_service_have_a_specific_duration:
+    "Does this service have a specific duration?",
 };

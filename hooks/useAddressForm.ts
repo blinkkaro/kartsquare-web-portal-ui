@@ -13,6 +13,7 @@ interface UseAddressFormProps {
   mode: "add" | "edit";
   open: boolean;
   coordinates?: { latitude: number; longitude: number } | null;
+  isDefault?: boolean;
 }
 
 export const useAddressForm = ({
@@ -20,6 +21,7 @@ export const useAddressForm = ({
   mode,
   open,
   coordinates,
+  isDefault = false,
 }: UseAddressFormProps): UseFormReturn<AddressFormData> => {
   const { t } = useTranslationContext();
 
@@ -35,7 +37,7 @@ export const useAddressForm = ({
       city_town: "",
       state: "",
       country: "",
-      is_default: false,
+      is_default: isDefault,
       latitude: undefined,
       longitude: undefined,
     },
@@ -73,7 +75,7 @@ export const useAddressForm = ({
         city_town: "",
         state: "",
         country: "",
-        is_default: false,
+        is_default: isDefault,
         latitude: coordinates?.latitude,
         longitude: coordinates?.longitude,
       });

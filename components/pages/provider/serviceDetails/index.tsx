@@ -299,7 +299,7 @@ const ProviderServiceDetails = () => {
                     landmark: service.service_address?.landmark || "",
                     city_town: service.service_address?.city_town || "",
                     state: service.service_address?.state || "",
-                    country: "",
+                    country: service.service_address?.country || "",
                     pincode: service.service_address?.pincode || "",
                     latitude: service.service_address?.latitude || 0,
                     longitude: service.service_address?.longitude || 0,

@@ -31,7 +31,7 @@ export const useServiceForm = ({
   const [hours, setHours] = useState("0");
   const [minutes, setMinutes] = useState("0");
   const [locationType, setLocationType] = useState<
-    "at_customer" | "at_provider"
+    "at_customer" | "at_provider" | "virtual_call"
   >("at_provider");
   const [visitingCharge, setVisitingCharge] = useState("");
   const [selectedAddressId, setSelectedAddressId] = useState("");
@@ -86,8 +86,14 @@ export const useServiceForm = ({
         );
 
         const locType = editService.service_at_location as string;
-        if (locType === "at_customer" || locType === "at_provider") {
-          setLocationType(locType as "at_customer" | "at_provider");
+        if (
+          locType === "at_customer" ||
+          locType === "at_provider" ||
+          locType === "virtual_call"
+        ) {
+          setLocationType(
+            locType as "at_customer" | "at_provider" | "virtual_call",
+          );
         }
 
         if (editService.visiting_charge) {
@@ -403,7 +409,8 @@ export const useServiceForm = ({
         currency: "INR",
         service_at_location: locationType,
         service_provider_address_id: selectedAddressId,
-        service_radius: parseInt(serviceRadius),
+        service_radius:
+          locationType === "virtual_call" ? 0 : parseInt(serviceRadius),
         has_service_duration: hasServiceDuration,
         service_duration:
           hasServiceDuration && totalMinutes > 0 ? totalMinutes : undefined,

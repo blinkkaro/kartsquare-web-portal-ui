@@ -19,8 +19,10 @@ import AddressDrawer from "@/components/common/address/AddressDrawer";
 import { english } from "@/features/i18n/en";
 
 interface ServiceLocationProps {
-  locationType: "at_customer" | "at_provider";
-  onLocationTypeChange: (value: "at_customer" | "at_provider") => void;
+  locationType: "at_customer" | "at_provider" | "virtual_call";
+  onLocationTypeChange: (
+    value: "at_customer" | "at_provider" | "virtual_call",
+  ) => void;
   addresses: UserAddress[];
   selectedAddressId: string;
   onAddressSelect: (addressId: string) => void;
@@ -73,6 +75,11 @@ const ServiceLocation = ({
             value="at_customer"
             control={<Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />}
             label={english.at_customer_location}
+          />
+          <FormControlLabel
+            value="virtual_call"
+            control={<Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+            label={english.virtual_call_location}
           />
         </RadioGroup>
       </FormControl>
@@ -208,30 +215,36 @@ const ServiceLocation = ({
       )}
 
       {/* Service Radius */}
-      <Box sx={{ mb: 3, px: 1 }}>
-        <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-          {english.service_radius_km}: {serviceRadius || 5}
-        </Typography>
-        <Slider
-          value={parseInt(serviceRadius) || 5}
-          onChange={(_, newValue) => onServiceRadiusChange(newValue.toString())}
-          min={5}
-          max={50}
-          step={1}
-          valueLabelDisplay="auto"
-          sx={{
-            color: COLORS.PRIMARY_PURPLE,
-          }}
-        />
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: -1 }}>
-          <Typography variant="caption" color="text.secondary">
-            5 km
+      {locationType !== "virtual_call" && (
+        <Box sx={{ mb: 3, px: 1 }}>
+          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+            {english.service_radius_km}: {serviceRadius || 5}
           </Typography>
-          <Typography variant="caption" color="text.secondary">
-            50 km
-          </Typography>
+          <Slider
+            value={parseInt(serviceRadius) || 5}
+            onChange={(_, newValue) =>
+              onServiceRadiusChange(newValue.toString())
+            }
+            min={5}
+            max={50}
+            step={1}
+            valueLabelDisplay="auto"
+            sx={{
+              color: COLORS.PRIMARY_PURPLE,
+            }}
+          />
+          <Box
+            sx={{ display: "flex", justifyContent: "space-between", mt: -1 }}
+          >
+            <Typography variant="caption" color="text.secondary">
+              5 km
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              50 km
+            </Typography>
+          </Box>
         </Box>
-      </Box>
+      )}
 
       {/* Address Drawer */}
       <AddressDrawer
