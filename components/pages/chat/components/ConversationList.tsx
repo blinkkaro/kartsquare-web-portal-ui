@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Typography, List, ListItem, ListItemAvatar, Avatar, ListItemText, IconButton, InputBase } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import SpeakerNotesOffOutlinedIcon from "@mui/icons-material/SpeakerNotesOffOutlined";
 
 interface ConversationListProps {
     conversations: any[];
@@ -149,8 +150,16 @@ export default function ConversationList({ conversations, onSelect, selectedId, 
                     );
                 })}
                 {filteredConversations.length === 0 && (
-                    <Box sx={{ p: 4, textAlign: "center" }}>
-                        <Typography color="text.secondary" variant="body2">No conversations found.</Typography>
+                    <Box sx={{ p: 4, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", mt: 4 }}>
+                        <Box sx={{ p: 2, bgcolor: '#F3F4F6', borderRadius: '50%', mb: 2 }}>
+                            <SpeakerNotesOffOutlinedIcon sx={{ fontSize: 40, color: '#9CA3AF' }} />
+                        </Box>
+                        <Typography color="text.primary" variant="subtitle1" fontWeight={600} gutterBottom>
+                            No conversations
+                        </Typography>
+                        <Typography color="text.secondary" variant="body2" textAlign="center" sx={{ maxWidth: 200 }}>
+                            {searchTerm ? "No user found matching your search." : "You haven't started any conversations yet."}
+                        </Typography>
                     </Box>
                 )}
             </List>

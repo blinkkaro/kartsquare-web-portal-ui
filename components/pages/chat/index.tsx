@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Box, Typography, useTheme, useMediaQuery, Paper } from "@mui/material";
+import ForumOutlinedIcon from "@mui/icons-material/ForumOutlined";
 import { useSocket } from "@/contexts/SocketContext";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
@@ -81,9 +82,14 @@ export default function ChatView() {
 
     return (
         <Box sx={{ p: isMobile ? 0 : 3, height: "100vh", display: "flex", flexDirection: "column" }}>
-            <Typography variant="h4" fontWeight={700} sx={{ mb: 2, display: isMobile ? "none" : "block" }}>
-                Chat
-            </Typography>
+            <Box sx={{ mb: 2, display: isMobile ? "none" : "flex", alignItems: "center" }}>
+                <Typography variant="h4" fontWeight={700} color="text.primary">
+                    Chat
+                </Typography>
+                <Box sx={{ ml: 2, px: 2, py: 0.5, bgcolor: "rgba(59, 94, 219, 0.1)", color: "#3B5EDB", borderRadius: 3, fontSize: "0.875rem", fontWeight: 600 }}>
+                    Messages
+                </Box>
+            </Box>
 
             <Paper
                 elevation={0}
@@ -120,8 +126,16 @@ export default function ChatView() {
                                 API_URL={API_URL}
                             />
                         ) : (
-                            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-                                <Typography color="text.secondary">Select a conversation to start chatting</Typography>
+                            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, p: 4 }}>
+                                <Box sx={{ p: 4, bgcolor: '#F0F4FF', borderRadius: '50%', mb: 3 }}>
+                                    <ForumOutlinedIcon sx={{ fontSize: 80, color: '#3B5EDB', opacity: 0.9 }} />
+                                </Box>
+                                <Typography variant="h6" color="text.primary" fontWeight={600} gutterBottom>
+                                    Your Messages
+                                </Typography>
+                                <Typography color="text.secondary" textAlign="center" sx={{ maxWidth: 300 }}>
+                                    Select a conversation from the list to start chatting or send a new message.
+                                </Typography>
                             </Box>
                         )}
                     </Box>
