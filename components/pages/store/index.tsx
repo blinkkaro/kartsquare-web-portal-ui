@@ -441,7 +441,7 @@ const StoreView: React.FC = () => {
                 },
               }}
               onFocus={() => {
-                if (searchQuery.trim().length > 0) setShowSuggestions(true);
+                setShowSuggestions(true);
               }}
             />
 
