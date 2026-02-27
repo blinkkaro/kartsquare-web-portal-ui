@@ -231,7 +231,7 @@ const StoreView: React.FC = () => {
         {/* Banner Section - Myntra style Carousel */}
         <Box
           sx={{
-            mb: 8,
+            mb: { xs: 4, md: 8 },
             borderRadius: "32px",
             overflow: "hidden",
             position: "relative",
@@ -299,7 +299,7 @@ const StoreView: React.FC = () => {
 
                   <Box
                     sx={{
-                      p: { xs: 4, md: 6 },
+                      p: { xs: 3, md: 6 },
                       color: "white",
                       maxWidth: 700,
                       position: "relative",
@@ -316,7 +316,7 @@ const StoreView: React.FC = () => {
                         px: 2,
                         py: 0.8,
                         borderRadius: "100px",
-                        fontSize: "0.75rem",
+                        fontSize: { xs: "0.6rem", md: "0.75rem" },
                       }}
                     >
                       {slide.tag}
@@ -356,8 +356,8 @@ const StoreView: React.FC = () => {
                           bgcolor: "#f5f5f5",
                           transform: "scale(1.02)",
                         },
-                        px: 6,
-                        py: 1.5,
+                        px: { xs: 4, md: 6 },
+                        py: { xs: 1, sm: 1.5 },
                         fontWeight: 800,
                         borderRadius: "14px",
                         transition: "all 0.3s ease",
@@ -374,7 +374,7 @@ const StoreView: React.FC = () => {
         </Box>
 
         {/* Search Header - Refined */}
-        <Box sx={{ mb: 10, textAlign: "center" }}>
+        <Box sx={{ mb: { xs: 6, md: 10 }, textAlign: "center" }}>
           <Typography
             variant="h4"
             fontWeight={900}
@@ -424,7 +424,7 @@ const StoreView: React.FC = () => {
                   borderRadius: "24px",
                   bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "white",
                   p: 1.5,
-                  fontSize: "1.25rem",
+                  fontSize: { xs: "1rem", md: "1.25rem" },
                   fontWeight: 500,
                   boxShadow: isDark
                     ? "0 10px 40px rgba(0,0,0,0.3)"
@@ -466,7 +466,7 @@ const StoreView: React.FC = () => {
         </Box>
 
         {/* Top Categories Static Section */}
-        <Box sx={{ mb: 10 }}>
+        <Box sx={{ mb: { xs: 6, md: 10 } }}>
           <Box sx={{ mb: 4 }}>
             <Typography
               variant="h5"
@@ -482,10 +482,10 @@ const StoreView: React.FC = () => {
               Explore the most active business sectors
             </Typography>
           </Box>
-          <Grid container spacing={2}>
+          <Grid container spacing={{ xs: 1.5, sm: 2 }}>
             {(homeData?.categories || []).slice(0, 5).map((cat) => (
               <Grid
-                size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }}
+                size={{ xs: 6, sm: 6, md: 4, lg: 2.4 }}
                 key={cat.product_category_id}
               >
                 <Paper
@@ -570,12 +570,12 @@ const StoreView: React.FC = () => {
         {/* Top Products Section */}
         <Box
           sx={{
-            mb: 12,
+            mb: { xs: 8, md: 12 },
             bgcolor: isDark
               ? "rgba(94, 24, 233, 0.15)"
               : "rgba(94, 24, 233, 0.07)",
-            p: { xs: 4, md: 8 },
-            borderRadius: 8,
+            p: { xs: 2, md: 8 },
+            borderRadius: { xs: 4, md: 8 },
             border: `1px solid ${isDark ? "rgba(94, 24, 233, 0.25)" : "rgba(94, 24, 233, 0.12)"}`,
             boxShadow: isDark ? "none" : "0 25px 90px rgba(94, 24, 233, 0.08)",
           }}
@@ -583,8 +583,10 @@ const StoreView: React.FC = () => {
           <Box
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
-              alignItems: "flex-end",
+              alignItems: { xs: "flex-start", sm: "flex-end" },
+              gap: { xs: 2, sm: 0 },
               mb: 4,
             }}
           >
@@ -616,7 +618,7 @@ const StoreView: React.FC = () => {
               View All Products
             </CommonButton>
           </Box>
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 1.5, sm: 3 }}>
             {productsLoading
               ? [1, 2, 3, 4].map((n) => (
                   <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={n}>
@@ -726,12 +728,14 @@ const StoreView: React.FC = () => {
         </Box>
 
         {/* Categories Grid Section */}
-        <Box sx={{ mb: 10 }}>
+        <Box sx={{ mb: { xs: 6, md: 10 } }}>
           <Box
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
-              alignItems: "flex-end",
+              alignItems: { xs: "flex-start", sm: "flex-end" },
+              gap: { xs: 2, sm: 0 },
               mb: 4,
             }}
           >
@@ -763,7 +767,7 @@ const StoreView: React.FC = () => {
             </CommonButton> */}
           </Box>
 
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 1.5, sm: 3 }}>
             {loading
               ? // Simple skeleton loader
                 [1, 2, 3, 4].map((n) => (
@@ -923,7 +927,7 @@ const StoreView: React.FC = () => {
         </Box>
 
         {/* Recent Activity & Reviews Section - Premium UI Refresh */}
-        <Grid container spacing={6} sx={{ mt: 15, mb: 10 }}>
+        <Grid container spacing={{ xs: 4, md: 6 }} sx={{ mt: { xs: 8, md: 15 }, mb: { xs: 6, md: 10 } }}>
           {/* Recent Activity */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 5 }}>
@@ -973,7 +977,7 @@ const StoreView: React.FC = () => {
                 }}
               />
 
-              <Stack spacing={4}>
+              <Stack spacing={{ xs: 2.5, md: 4 }}>
                 {[
                   {
                     text: "Rahul from Delhi",
@@ -1012,7 +1016,7 @@ const StoreView: React.FC = () => {
                     key={i}
                     sx={{
                       display: "flex",
-                      gap: 3,
+                      gap: { xs: 2, sm: 3 },
                       position: "relative",
                       transition: "all 0.3s",
                       "&:hover": { transform: "translateX(8px)" },
@@ -1040,7 +1044,7 @@ const StoreView: React.FC = () => {
                     <Box
                       sx={{
                         flex: 1,
-                        p: 2.5,
+                        p: { xs: 2, sm: 2.5 },
                         borderRadius: "20px",
                         bgcolor: isDark ? "rgba(255,255,255,0.02)" : "white",
                         border: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "#f1f5f9"}`,
@@ -1123,7 +1127,7 @@ const StoreView: React.FC = () => {
               </Box>
             </Box>
 
-            <Stack spacing={4}>
+            <Stack spacing={{ xs: 2.5, md: 4 }}>
               {[
                 {
                   name: "Amit Sharma",
@@ -1151,7 +1155,7 @@ const StoreView: React.FC = () => {
                   key={i}
                   elevation={0}
                   sx={{
-                    p: 4,
+                    p: { xs: 2.5, sm: 4 },
                     borderRadius: "24px",
                     bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#ffffff",
                     border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "#f1f5f9"}`,
@@ -1242,7 +1246,7 @@ const StoreView: React.FC = () => {
 
         {/* Brands Section - Restored */}
         {!loading && homeData?.brands && homeData.brands.length > 0 && (
-          <Box sx={{ mt: 15, mb: 10 }}>
+          <Box sx={{ mt: { xs: 8, md: 15 }, mb: { xs: 6, md: 10 } }}>
             <Typography
               variant="h5"
               fontWeight={800}
