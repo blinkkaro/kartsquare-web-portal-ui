@@ -60,8 +60,8 @@ export interface service_address {
   state: string;
   country: string;
   pincode: string;
-  latitude: string;
-  longitude: string;
+  latitude: number;
+  longitude: number;
 }
 export interface Booking {
   booking_id: string;

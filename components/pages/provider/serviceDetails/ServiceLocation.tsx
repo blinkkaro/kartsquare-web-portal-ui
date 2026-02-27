@@ -3,9 +3,12 @@ import React from "react";
 import { Box, Typography, useTheme } from "@mui/material";
 import { COLORS } from "../../../../constants/colors";
 import { english } from "../../../../features/i18n/en";
+import { formatAddress } from "@/helper/helper";
+import { service_address } from "@/services/providerDashboard/providerDashboard.interface";
+import { useTranslate } from "@/hooks/useTranslate";
 
 interface ServiceLocationProps {
-  address: string;
+  address: service_address;
   serviceAtLocation?: string;
   serviceRadius?: number;
   visitingCharge?: number | null;
@@ -19,6 +22,7 @@ const ServiceLocation = ({
 }: ServiceLocationProps) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const { t } = useTranslate();
 
   return (
     <Box sx={{ mb: 0 }}>
@@ -33,7 +37,7 @@ const ServiceLocation = ({
           fontSize: { xs: "0.75rem", sm: "0.875rem" },
         }}
       >
-        {english.my_address || "Service Provider Address"}
+        {t("my_address")}
       </Typography>
       <Typography
         variant="body1"
@@ -46,7 +50,7 @@ const ServiceLocation = ({
           wordBreak: "break-word",
         }}
       >
-        {address || "123 Main Street, Al Satwa Dubai, United Arab Emirates"}
+        {formatAddress(address, t)}
       </Typography>
 
       {serviceAtLocation === "at_customer" && (
@@ -65,7 +69,7 @@ const ServiceLocation = ({
                 mb: 0.2,
               }}
             >
-              {english.visiting_charge_inr || "Visiting Charge (INR)"}
+              {t("visiting_charge_inr")}
             </Typography>
             <Typography
               variant="body2"
@@ -94,7 +98,7 @@ const ServiceLocation = ({
                 mb: 0.2,
               }}
             >
-              {english.service_radius_km || "Service Radius (km)"}
+              {t("service_radius_km")}
             </Typography>
             <Typography
               variant="body2"
@@ -135,8 +139,7 @@ const ServiceLocation = ({
                   fontSize: { xs: "0.7rem", sm: "0.75rem" },
                 }}
               >
-                {english.provider_service_at_customer_location ||
-                  "I provide this service at customer location"}
+                {t("provider_service_at_customer_location")}
               </Typography>
             </Box>
           </Box>

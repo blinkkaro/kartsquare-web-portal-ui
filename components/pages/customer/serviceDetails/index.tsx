@@ -167,8 +167,8 @@ const CustomerServiceDetails = () => {
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
       : [
-        "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      ];
+          "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        ];
 
   return (
     <MainLayout>
@@ -229,13 +229,14 @@ const CustomerServiceDetails = () => {
                 priceItems={service.price_items}
                 currency={service.currency}
               />
-              {service.service_address?.latitude && service.service_address?.longitude && (
-                <ServiceDetailsMap
-                  latitude={service.service_address.latitude}
-                  longitude={service.service_address.longitude}
-                  providerName={service.provider_name || ""}
-                />
-              )}
+              {service.service_address?.latitude &&
+                service.service_address?.longitude && (
+                  <ServiceDetailsMap
+                    latitude={service.service_address.latitude}
+                    longitude={service.service_address.longitude}
+                    providerName={service.business_name || ""}
+                  />
+                )}
             </Box>
 
             <Box
@@ -252,7 +253,11 @@ const CustomerServiceDetails = () => {
             >
               <Box sx={{ py: 2 }}>
                 <CustomerServiceHeader
-                  isPriceRequired={service.is_price_required}
+                  isPriceRequired={
+                    service.pricing_type === "noPrice"
+                      ? false
+                      : service.is_price_required
+                  }
                   price={service.price || 0}
                   currency={service.currency || "INR"}
                   categoryName={service.category_name || ""}
@@ -289,24 +294,35 @@ const CustomerServiceDetails = () => {
                 />
               </Box>
 
-              <Divider sx={{ opacity: 0.6 }} />
+              {service.has_service_duration && (
+                <>
+                  <Divider sx={{ opacity: 0.6 }} />
 
-              <Box sx={{ py: 2 }}>
-                <CustomerServiceDetailsGrid
-                  serviceDuration={service.service_duration || 0}
-                  haveSlots={service.have_slots}
-                />
-              </Box>
+                  <Box sx={{ py: 2 }}>
+                    <CustomerServiceDetailsGrid
+                      serviceDuration={service.service_duration || 0}
+                      haveSlots={service.have_slots}
+                    />
+                  </Box>
+                </>
+              )}
 
               <Divider sx={{ opacity: 0.6 }} />
 
               <Box sx={{ py: 2 }}>
                 <ServiceLocation
-                  address={
-                    service.service_address
-                      ? `${service.service_address.building_no}${service.service_address.floor ? `, ${service.service_address.floor} Floor` : ""}, ${service.service_address.address}, ${service.service_address.city_town}, ${service.service_address.state} - ${service.service_address.pincode}`
-                      : service.service_provider_address || ""
-                  }
+                  address={{
+                    address: service.service_address?.address || "",
+                    building_no: service.service_address?.building_no || "",
+                    floor: service.service_address?.floor || "",
+                    landmark: service.service_address?.landmark || "",
+                    city_town: service.service_address?.city_town || "",
+                    state: service.service_address?.state || "",
+                    country: service.service_address?.country || "",
+                    pincode: service.service_address?.pincode || "",
+                    latitude: service.service_address?.latitude || 0,
+                    longitude: service.service_address?.longitude || 0,
+                  }}
                   serviceAtLocation={service.service_at_location}
                   visitingCharge={service.visiting_charge}
                   serviceRadius={service.service_radius}

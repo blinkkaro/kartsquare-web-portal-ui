@@ -306,6 +306,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
         open={isAddressDrawerOpen}
         onClose={() => setIsAddressDrawerOpen(false)}
         mode="add"
+        isDefault={true}
       />
 
       {/* Edit Address Drawer */}

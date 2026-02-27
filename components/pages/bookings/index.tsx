@@ -340,11 +340,11 @@ const BookingsPage = () => {
                                 country: booking.booking_address.country,
                                 pincode: booking.booking_address.pincode,
                                 latitude:
-                                  booking.booking_address.latitude?.toString() ??
-                                  "0",
+                                  booking.booking_address.latitude ??
+                                  0,
                                 longitude:
-                                  booking.booking_address.longitude?.toString() ??
-                                  "0",
+                                  booking.booking_address.longitude ??
+                                  0,
                                 landmark: booking.booking_address.landmark,
                               }
                               : {
@@ -353,8 +353,8 @@ const BookingsPage = () => {
                                 state: "",
                                 country: "",
                                 pincode: "",
-                                latitude: "0",
-                                longitude: "0",
+                                latitude: 0,
+                                longitude: 0,
                               },
                           }}
                           isProvider={false}

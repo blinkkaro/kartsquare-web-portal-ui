@@ -6,19 +6,18 @@ export enum ServiceStatus {
   INACTIVE = "INACTIVE",
 }
 
-export enum ServiceLocationType {
-  AT_PROVIDER = "AT_PROVIDER",
-  AT_CUSTOMER = "AT_CUSTOMER",
-  BOTH = "BOTH",
-  CUSTOMER_LOCATION = "CUSTOMER_LOCATION",
-  USER_LOCATION = "at_customer",
-  PROVIDER_LOCATION = "at_provider",
-}
-
 export enum PricingType {
   SINGLE = "single",
   CATALOG = "catalog",
   MULTIPLE = "multiple",
+  NOPRICE = "noPrice",
+}
+
+export enum BookingLocationType {
+  AT_CUSTOMER = "at_customer",
+  AT_PROVIDER = "at_provider",
+  VIRTUAL_CALL = "virtual_call",
+  IN_PERSON = "in_person",
 }
 
 export interface Service {
@@ -33,7 +32,7 @@ export interface Service {
   is_price_required: boolean;
   price: number | null;
   currency: string;
-  service_at_location: ServiceLocationType;
+  service_at_location: BookingLocationType;
   visiting_charge: number | null;
   service_provider_address_id: string | null;
   service_radius: number;
@@ -63,6 +62,7 @@ export interface Service {
     state: string;
     latitude: number;
     longitude: number;
+    country: string;
   };
   provider_image_url: string;
   is_following?: boolean;
@@ -70,7 +70,7 @@ export interface Service {
   pricing_type: PricingType;
   price_catalog_url?: string[];
   price_items?: ServicePriceItem[];
-  
+
   // SEO Fields
   slug?: string;
   meta_title?: string;
@@ -135,16 +135,16 @@ export interface ServiceCreateRequest {
   is_price_required: boolean;
   price?: number;
   currency: string;
-  service_at_location: "at_customer" | "at_provider" | "BOTH";
+  service_at_location: "at_customer" | "at_provider" | "BOTH" | "virtual_call";
   visiting_charge?: number;
   service_provider_address_id: string;
-  service_radius: number;
+  service_radius: number | null;
   has_service_duration: boolean;
   service_duration?: number;
   have_slots: boolean;
   status?: ServiceStatus;
-  /** How pricing is provided: single (default), catalog file(s), or multiple items */
-  pricing_type?: "single" | "catalog" | "multiple";
+  /** How pricing is provided: single (default), catalog file(s), or multiple items, or noPrice */
+  pricing_type?: "single" | "catalog" | "multiple" | "noPrice";
   /** URLs of uploaded price catalog files (PDF/image). Single string or array when pricing_type is "catalog" */
   price_catalog_url?: string | string[];
   /** List of service/price/description when pricing_type is "multiple" */

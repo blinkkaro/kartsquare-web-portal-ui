@@ -118,7 +118,7 @@ const BookingsTable: React.FC<BookingsTableProps> = ({ bookings, activeTab, onVi
                                     ) : null}
 
                                     <Typography variant="body2" fontWeight={700} sx={{ color: isDark ? "text.primary" : "#374151" }}>
-                                        {booking.currency} {booking.service_price.toFixed(2)}
+                                        {booking.service_price === 0 ? english.getQuote : `${booking.currency} ${booking.service_price.toFixed(2)}`}
                                     </Typography>
                                 </Box>
                             </TableCell>

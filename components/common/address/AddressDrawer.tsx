@@ -33,6 +33,7 @@ interface AddressDrawerProps {
   isLoading?: boolean;
   initialData?: Address | null;
   mode: "add" | "edit";
+  isDefault?: boolean;
 }
 
 const AddressDrawer: React.FC<AddressDrawerProps> = ({
@@ -40,6 +41,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
   onClose,
   initialData = null,
   mode,
+  isDefault = false,
 }) => {
   const { t } = useTranslationContext();
   const theme = useTheme();
@@ -69,6 +71,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
     mode,
     open,
     coordinates,
+    isDefault: isDefault ? true : false,
   });
 
   const { mapCoordinates, handleMapLocationChange, handleLocationSelect } =

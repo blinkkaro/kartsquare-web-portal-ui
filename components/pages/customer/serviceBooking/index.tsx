@@ -300,29 +300,46 @@ const CustomerServiceBooking = () => {
                   </Typography>
                 </Box>
               </Box>
-
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
-                  <Typography
-                    sx={{
-                      color: isDark
-                        ? COLORS.TEXT.SECONDARY_DARK
-                        : COLORS.TEXT.SECONDARY_LIGHT,
-                      fontWeight: 300,
-                      fontSize: "1rem",
-                    }}
+              {service.is_price_required ? (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Box
+                    sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}
                   >
-                    {service.currency}
-                  </Typography>
-                  <Typography
-                    variant="h6"
-                    sx={{ fontWeight: 600, color: COLORS.PRIMARY_PURPLE }}
-                  >
-                    {service.price?.toFixed(2)}
-                  </Typography>
+                    <Typography
+                      sx={{
+                        color: isDark
+                          ? COLORS.TEXT.SECONDARY_DARK
+                          : COLORS.TEXT.SECONDARY_LIGHT,
+                        fontWeight: 300,
+                        fontSize: "1rem",
+                      }}
+                    >
+                      {service.currency}
+                    </Typography>
+                    <Typography
+                      variant="h6"
+                      sx={{ fontWeight: 600, color: COLORS.PRIMARY_PURPLE }}
+                    >
+                      {service.price?.toFixed(2)}
+                    </Typography>
+                  </Box>
+                  <Chip label={service.category_name} size="small" />
                 </Box>
-                <Chip label={service.category_name} size="small" />
-              </Box>
+              ) : (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Box
+                    sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}
+                  >
+                    <Typography
+                      variant="body1"
+                      sx={{ fontWeight: 600, color: COLORS.PRIMARY_PURPLE }}
+                    >
+                      {english.getQuote}
+                    </Typography>
+                  </Box>
+                  <Chip label={service.category_name} size="small" />
+                </Box>
+              )}
             </Box>
           </Box>
 

@@ -441,7 +441,7 @@ const StoreView: React.FC = () => {
                 },
               }}
               onFocus={() => {
-                if (searchQuery.trim().length > 0) setShowSuggestions(true);
+                setShowSuggestions(true);
               }}
             />
 
@@ -621,116 +621,109 @@ const StoreView: React.FC = () => {
           <Grid container spacing={{ xs: 1.5, sm: 3 }}>
             {productsLoading
               ? [1, 2, 3, 4].map((n) => (
-                <Grid size={{ xs: 6, sm: 6, md: 4, lg: 3 }} key={n}>
-                  <Box
-                    sx={{
-                      height: 350,
-                      bgcolor: "rgba(0,0,0,0.05)",
-                      borderRadius: 5,
-                    }}
-                  />
-                </Grid>
-              ))
+                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={n}>
+                    <Box
+                      sx={{
+                        height: 350,
+                        bgcolor: "rgba(0,0,0,0.05)",
+                        borderRadius: 5,
+                      }}
+                    />
+                  </Grid>
+                ))
               : featuredProducts.map((product) => (
-                <Grid size={{ xs: 6, sm: 6, md: 4, lg: 3 }} key={product.id}>
-                  <Card
-                    elevation={0}
-                    onClick={() => handleProductClick(product.id)}
-                    sx={{
-                      borderRadius: 5,
-                      border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "#f0f2f5"}`,
-                      bgcolor: isDark ? "rgba(255, 255, 255, 0.02)" : "white",
-                      transition: "all 0.3s",
-                      cursor: "pointer",
-                      "&:hover": {
-                        transform: "translateY(-8px)",
-                        boxShadow: "0 20px 40px rgba(0,0,0,0.08)",
-                        borderColor: COLORS.PRIMARY_PURPLE,
-                      },
-                    }}
-                  >
-                    <Box sx={{ height: { xs: 140, sm: 220 }, overflow: "hidden", p: { xs: 1, sm: 2 } }}>
-                      <Box
-                        component="img"
-                        src={product.image}
-                        alt={product.name}
-                        sx={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          borderRadius: { xs: 3, sm: 4 },
-                        }}
-                      />
-                    </Box>
-                    <CardContent sx={{ pt: 1, px: { xs: 1.5, sm: 3 }, pb: { xs: 2, sm: 3 } }}>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: COLORS.PRIMARY_PURPLE,
-                          fontWeight: 800,
-                          textTransform: "uppercase",
-                          letterSpacing: 1,
-                        }}
-                      >
-                        {product.supplier.businessType}
-                      </Typography>
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight={800}
-                        noWrap
-                        sx={{ mt: 0.5, mb: 1, fontSize: { xs: "0.85rem", sm: "1rem" } }}
-                      >
-                        {product.name}
-                      </Typography>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: { xs: "column", sm: "row" },
-                          alignItems: { xs: "flex-start", sm: "center" },
-                          justifyContent: "space-between",
-                          gap: { xs: 1, sm: 0 },
-                        }}
-                      >
-                        <Typography
-                          variant="h6"
-                          fontWeight={900}
+                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={product.id}>
+                    <Card
+                      elevation={0}
+                      onClick={() => handleProductClick(product.id)}
+                      sx={{
+                        borderRadius: 5,
+                        border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "#f0f2f5"}`,
+                        bgcolor: isDark ? "rgba(255, 255, 255, 0.02)" : "white",
+                        transition: "all 0.3s",
+                        cursor: "pointer",
+                        "&:hover": {
+                          transform: "translateY(-8px)",
+                          boxShadow: "0 20px 40px rgba(0,0,0,0.08)",
+                          borderColor: COLORS.PRIMARY_PURPLE,
+                        },
+                      }}
+                    >
+                      <Box sx={{ height: 220, overflow: "hidden", p: 2 }}>
+                        <Box
+                          component="img"
+                          src={product.image}
+                          alt={product.name}
                           sx={{
-                            fontSize: { xs: "1rem", sm: "1.25rem" },
-                            color: isDark
-                              ? COLORS.ACCENT_BLUE_DARK
-                              : COLORS.PRIMARY_PURPLE,
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            borderRadius: 4,
+                          }}
+                        />
+                      </Box>
+                      <CardContent sx={{ pt: 1, px: 3, pb: 3 }}>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: COLORS.PRIMARY_PURPLE,
+                            fontWeight: 800,
+                            textTransform: "uppercase",
+                            letterSpacing: 1,
                           }}
                         >
-                          {product.price}
+                          {product.supplier.businessType}
+                        </Typography>
+                        <Typography
+                          variant="subtitle1"
+                          fontWeight={800}
+                          noWrap
+                          sx={{ mt: 0.5, mb: 1 }}
+                        >
+                          {product.name}
                         </Typography>
                         <Box
                           sx={{
                             display: "flex",
                             alignItems: "center",
-                            gap: 0.5,
-                            bgcolor: "rgba(5, 150, 105, 0.08)",
-                            px: 1,
-                            py: 0.3,
-                            borderRadius: 1,
+                            justifyContent: "space-between",
                           }}
                         >
-                          <Verified sx={{ fontSize: 14, color: "#059669" }} />
                           <Typography
-                            variant="caption"
+                            variant="h6"
+                            fontWeight={900}
+                            color={
+                              isDark
+                                ? COLORS.ACCENT_BLUE_DARK
+                                : COLORS.PRIMARY_PURPLE
+                            }
+                          >
+                            {product.price}
+                          </Typography>
+                          <Box
                             sx={{
-                              color: "#059669",
-                              fontWeight: 800,
-                              fontSize: { xs: "0.65rem", sm: "0.75rem" },
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 0.5,
+                              bgcolor: "rgba(5, 150, 105, 0.08)",
+                              px: 1,
+                              py: 0.3,
+                              borderRadius: 1,
                             }}
                           >
-                            Trusted
-                          </Typography>
+                            <Verified sx={{ fontSize: 14, color: "#059669" }} />
+                            <Typography
+                              variant="caption"
+                              sx={{ color: "#059669", fontWeight: 800 }}
+                            >
+                              Trusted
+                            </Typography>
+                          </Box>
                         </Box>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
           </Grid>
         </Box>
 
@@ -777,159 +770,159 @@ const StoreView: React.FC = () => {
           <Grid container spacing={{ xs: 1.5, sm: 3 }}>
             {loading
               ? // Simple skeleton loader
-              [1, 2, 3, 4].map((n) => (
-                <Grid size={{ xs: 6, sm: 6, md: 4, lg: 3 }} key={n}>
-                  <Box
-                    sx={{
-                      height: 300,
-                      bgcolor: "rgba(0,0,0,0.05)",
-                      borderRadius: 3,
-                    }}
-                  />
-                </Grid>
-              ))
-              : homeData?.categories.map((cat) => (
-                <Grid
-                  size={{ xs: 6, sm: 6, md: 4, lg: 3 }}
-                  key={cat.product_category_id}
-                >
-                  <Card
-                    elevation={0}
-                    sx={{
-                      height: "100%",
-                      borderRadius: 4,
-                      border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "#eef2f6"}`,
-                      bgcolor: isDark ? "rgba(255, 255, 255, 0.03)" : "white",
-                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                      cursor: "pointer",
-                      overflow: "hidden",
-                      "&:hover": {
-                        transform: "translateY(-10px)",
-                        boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
-                        borderColor: COLORS.PRIMARY_PURPLE,
-                        "& .cat-image": {
-                          transform: "scale(1.1)",
-                        },
-                        "& .arrow-icon": {
-                          transform: "translateX(5px)",
-                          color: COLORS.PRIMARY_PURPLE,
-                        },
-                      },
-                    }}
-                    onClick={() =>
-                      handleCategoryClick(cat.product_category_id)
-                    }
-                  >
+                [1, 2, 3, 4].map((n) => (
+                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={n}>
                     <Box
                       sx={{
-                        height: { xs: 140, sm: 200 },
-                        p: 3,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        bgcolor: isDark
-                          ? "rgba(255, 255, 255, 0.02)"
-                          : "#f8f9fa",
-                        overflow: "hidden",
+                        height: 300,
+                        bgcolor: "rgba(0,0,0,0.05)",
+                        borderRadius: 3,
                       }}
+                    />
+                  </Grid>
+                ))
+              : homeData?.categories.map((cat) => (
+                  <Grid
+                    size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                    key={cat.product_category_id}
+                  >
+                    <Card
+                      elevation={0}
+                      sx={{
+                        height: "100%",
+                        borderRadius: 4,
+                        border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "#eef2f6"}`,
+                        bgcolor: isDark ? "rgba(255, 255, 255, 0.03)" : "white",
+                        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                        cursor: "pointer",
+                        overflow: "hidden",
+                        "&:hover": {
+                          transform: "translateY(-10px)",
+                          boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                          borderColor: COLORS.PRIMARY_PURPLE,
+                          "& .cat-image": {
+                            transform: "scale(1.1)",
+                          },
+                          "& .arrow-icon": {
+                            transform: "translateX(5px)",
+                            color: COLORS.PRIMARY_PURPLE,
+                          },
+                        },
+                      }}
+                      onClick={() =>
+                        handleCategoryClick(cat.product_category_id)
+                      }
                     >
-                      <img
-                        src={cat.category_image}
-                        alt={cat.category_name}
-                        className="cat-image"
-                        style={{
-                          maxWidth: "100%",
-                          maxHeight: "100%",
-                          objectFit: "contain",
-                          transition: "transform 0.5s ease",
-                        }}
-                      />
-                    </Box>
-                    <CardContent sx={{ p: 3 }}>
                       <Box
                         sx={{
+                          height: 200,
+                          p: 3,
                           display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "flex-start",
-                          mb: 1,
+                          alignItems: "center",
+                          justifyContent: "center",
+                          bgcolor: isDark
+                            ? "rgba(255, 255, 255, 0.02)"
+                            : "#f8f9fa",
+                          overflow: "hidden",
                         }}
                       >
-                        <Typography
-                          variant="h6"
-                          fontWeight={700}
-                          sx={{
-                            flex: 1,
-                            pr: 1,
-                            color: isDark ? "text.primary" : "#1a1a2e",
-                          }}
-                        >
-                          {cat.category_name}
-                        </Typography>
-                        <KeyboardArrowRight
-                          className="arrow-icon"
-                          sx={{
-                            color: "text.disabled",
-                            transition: "all 0.3s",
+                        <img
+                          src={cat.category_image}
+                          alt={cat.category_name}
+                          className="cat-image"
+                          style={{
+                            maxWidth: "100%",
+                            maxHeight: "100%",
+                            objectFit: "contain",
+                            transition: "transform 0.5s ease",
                           }}
                         />
                       </Box>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{
-                          mb: 2,
-                          display: "-webkit-box",
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: "vertical",
-                          overflow: "hidden",
-                          minHeight: 40,
-                        }}
-                      >
-                        {cat.category_des}
-                      </Typography>
-                      <Stack direction="row" flexWrap="wrap" gap={0.5}>
-                        {cat.sub_categories.slice(0, 2).map((sub) => (
-                          <Chip
-                            key={sub.product_sub_category_id}
-                            label={sub.sub_category_name}
-                            size="small"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleSubCategoryClick(
-                                sub.product_sub_category_id,
-                              );
-                            }}
-                            sx={{
-                              height: { xs: 20, sm: 24 },
-                              fontSize: { xs: "0.6rem", sm: "0.7rem" },
-                              bgcolor: isDark
-                                ? "rgba(255,255,255,0.05)"
-                                : "rgba(0,0,0,0.03)",
-                              fontWeight: 500,
-                              "&:hover": {
-                                bgcolor: COLORS.PRIMARY_PURPLE,
-                                color: "white",
-                              },
-                            }}
-                          />
-                        ))}
-                        {cat.sub_categories.length > 2 && (
+                      <CardContent sx={{ p: 3 }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "flex-start",
+                            mb: 1,
+                          }}
+                        >
                           <Typography
-                            variant="caption"
+                            variant="h6"
+                            fontWeight={700}
                             sx={{
-                              mt: 0.5,
-                              color: COLORS.PRIMARY_PURPLE,
-                              fontWeight: 600,
+                              flex: 1,
+                              pr: 1,
+                              color: isDark ? "text.primary" : "#1a1a2e",
                             }}
                           >
-                            +{cat.sub_categories.length - 2} more
+                            {cat.category_name}
                           </Typography>
-                        )}
-                      </Stack>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
+                          <KeyboardArrowRight
+                            className="arrow-icon"
+                            sx={{
+                              color: "text.disabled",
+                              transition: "all 0.3s",
+                            }}
+                          />
+                        </Box>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{
+                            mb: 2,
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                            minHeight: 40,
+                          }}
+                        >
+                          {cat.category_des}
+                        </Typography>
+                        <Stack direction="row" flexWrap="wrap" gap={0.5}>
+                          {cat.sub_categories.slice(0, 2).map((sub) => (
+                            <Chip
+                              key={sub.product_sub_category_id}
+                              label={sub.sub_category_name}
+                              size="small"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSubCategoryClick(
+                                  sub.product_sub_category_id,
+                                );
+                              }}
+                              sx={{
+                                height: 24,
+                                fontSize: "0.7rem",
+                                bgcolor: isDark
+                                  ? "rgba(255,255,255,0.05)"
+                                  : "rgba(0,0,0,0.03)",
+                                fontWeight: 500,
+                                "&:hover": {
+                                  bgcolor: COLORS.PRIMARY_PURPLE,
+                                  color: "white",
+                                },
+                              }}
+                            />
+                          ))}
+                          {cat.sub_categories.length > 2 && (
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                mt: 0.5,
+                                color: COLORS.PRIMARY_PURPLE,
+                                fontWeight: 600,
+                              }}
+                            >
+                              +{cat.sub_categories.length - 2} more
+                            </Typography>
+                          )}
+                        </Stack>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
           </Grid>
         </Box>
 
