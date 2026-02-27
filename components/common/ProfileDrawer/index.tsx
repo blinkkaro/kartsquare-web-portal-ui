@@ -17,13 +17,21 @@ import ProfileDrawerWrapper from "./components/ProfileDrawerWrapper";
 import { useTranslate } from "@/hooks/useTranslate";
 import { AppUserType } from "@/services/auth/auth.interface";
 import ProfileProducts from "./components/ProfileProducts";
+import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/store/hooks";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-function ProfileDrawer() {
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+
+export function ProfileDrawer() {
   const dispatch = useDispatch();
   const { isOpen, userId, role, username } = useSelector(
     (state: RootState) => state.profileDrawer,
   );
   const { t } = useTranslate();
+  const router = useRouter();
+  const { token } = useAppSelector((state) => state.auth);
 
   const isSupplier = role === AppUserType.SUPPLIER;
 
@@ -61,14 +69,45 @@ function ProfileDrawer() {
     setActiveTab(tab);
   };
 
+  const handleChatClick = async () => {
+    if (!token) {
+      toast.error("Please login to start a chat.");
+      return;
+    }
+
+    // Attempt to get the target person ID
+    const targetUserId = isSupplier ? (profile as any)?.user_id || profile?.id : userId;
+
+    if (!targetUserId) {
+      toast.error("User ID not found for chatting.");
+      return;
+    }
+
+    try {
+      const res = await axios.post(`${API_URL}/chat/conversations`, {
+        participant2_id: targetUserId
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (res.data.status === "success") {
+        dispatch(closeDrawer());
+        router.push(`/chat?conversationId=${res.data.data.id}`);
+      }
+    } catch (err) {
+      console.error("Failed to initialize chat", err);
+      toast.error("Could not start chat.");
+    }
+  };
+
   return (
     <ProfileDrawerWrapper
       open={isOpen}
       profile={profile || undefined}
       onClose={() => dispatch(closeDrawer())}
-      // onChatClick={() => {}}
-      onLocationClick={() => {}}
-      onBookmarkClick={() => {}}
+      onChatClick={handleChatClick}
+      onLocationClick={() => { }}
+      onBookmarkClick={() => { }}
       width={700}
     >
       <Box

@@ -97,9 +97,10 @@ const NavActions: React.FC<NavActionsProps> = ({
         {/* Free Listing */}
 
         {/* Chat - Hide on mobile */}
-        {/* <StyledIconButton
+        <StyledIconButton
           size="small"
           aria-label="chat"
+          onClick={() => window.location.href = "/chat"}
           sx={{ display: { xs: "none", md: "inline-flex" } }}
         >
           <Badge badgeContent={0} color="error">
@@ -112,7 +113,7 @@ const NavActions: React.FC<NavActionsProps> = ({
               height={20}
             />
           </Badge>
-        </StyledIconButton> */}
+        </StyledIconButton>
 
         {/* Notifications */}
         <StyledIconButton

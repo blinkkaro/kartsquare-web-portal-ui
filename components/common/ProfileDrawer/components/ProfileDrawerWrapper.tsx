@@ -132,24 +132,24 @@ const ProfileDrawerWrapper: React.FC<ProfileDrawerWrapperProps> = ({
 
         {/* RIGHT SIDE: Action Buttons */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          {/* {onChatClick && (
-      <Tooltip title={t("chatTooltip")} arrow>
-        <IconButton onClick={onChatClick} size="small" sx={iconButtonStyle}>
-          <Badge badgeContent={0} color="error">
-            <Image
-              src={
-                theme.palette.mode === "dark"
-                  ? "/icons/darkThemeChat.svg"
-                  : "/icons/chat.svg"
-              }
-              alt="Chat"
-              width={20}
-              height={20}
-            />
-          </Badge>
-        </IconButton>
-      </Tooltip>
-    )} */}
+          {onChatClick && (
+            <Tooltip title={t("chatTooltip")} arrow>
+              <IconButton onClick={onChatClick} size="small" sx={iconButtonStyle}>
+                <Badge badgeContent={0} color="error">
+                  <Image
+                    src={
+                      theme.palette.mode === "dark"
+                        ? "/icons/darkThemeChat.svg"
+                        : "/icons/chat.svg"
+                    }
+                    alt="Chat"
+                    width={20}
+                    height={20}
+                  />
+                </Badge>
+              </IconButton>
+            </Tooltip>
+          )}
 
           {/* {onLocationClick && (
       <Tooltip title={t("locationTooltip")} arrow>

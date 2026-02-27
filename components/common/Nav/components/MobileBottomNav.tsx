@@ -21,11 +21,10 @@ const MobileNavContainer = styled(Box)(({ theme }) => ({
   zIndex: 1000,
   padding: "0.75rem 0",
   boxShadow: "0 -2px 10px rgba(0,0,0,0.1)",
-  borderTop: `1px solid ${
-    theme.palette.mode === "dark"
+  borderTop: `1px solid ${theme.palette.mode === "dark"
       ? COLORS.BORDER.DEFAULT_DARK
       : COLORS.BORDER.DEFAULT_LIGHT
-  }`,
+    }`,
 }));
 
 const MobileNavItem = styled(Link)(({ theme }) => ({

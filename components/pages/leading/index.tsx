@@ -10,6 +10,7 @@ import SuccessStories from "./components/SuccessStories";
 import HowItWorks from "./components/HowItWorks";
 import FAQ from "./components/FAQ";
 import ScrollReveal from "./components/ScrollReveal";
+import BenefitsSection from "./components/BenefitsSection";
 import { COLORS } from "@/constants/colors";
 import { SECTION_IDS } from "./components/sectionIds";
 
@@ -39,6 +40,11 @@ function ListingView() {
       {/* 1. Hero — CTA target for all section buttons */}
       <Box component="section" id={SECTION_IDS.HERO}>
         <Hero />
+      </Box>
+
+      {/* New: Benefits Section for Providers & Suppliers */}
+      <Box component="section" id="benefits" sx={{ borderTop: sectionBorder }}>
+        <BenefitsSection />
       </Box>
 
       {/* 2. Take charge */}
