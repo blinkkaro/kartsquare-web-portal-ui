@@ -5,32 +5,43 @@ type TFunction = (key: TranslationKey) => string;
 
 export const createAddressSchema = (t: TFunction) =>
   yup.object({
-    address_name: yup.string().required(t("addressNameRequired")),
+    address_name: yup.string().trim().required(t("addressNameRequired")),
 
     address: yup
       .string()
+      .trim()
       .max(200, t("addressMax"))
       .required(t("addressRequired")),
 
     pincode: yup
       .string()
+      .trim()
       .matches(/^\d{5,6}$/, t("pincodeInvalid"))
       .required(t("pincodeRequired")),
 
-    city_town: yup.string().max(50, t("cityMax")).required(t("cityRequired")),
+    city_town: yup
+      .string()
+      .trim()
+      .max(50, t("cityMax"))
+      .required(t("cityRequired")),
 
-    state: yup.string().max(50, t("stateMax")).required(t("stateRequired")),
+    state: yup
+      .string()
+      .trim()
+      .max(50, t("stateMax"))
+      .required(t("stateRequired")),
 
     country: yup
       .string()
+      .trim()
       .max(50, t("countryMax"))
       .required(t("countryRequired")),
 
-    building_no: yup.string().max(20, t("buildingNoMax")).optional(),
+    building_no: yup.string().trim().max(20, t("buildingNoMax")).optional(),
 
-    floor: yup.string().max(10, t("floorMax")).optional(),
+    floor: yup.string().trim().max(10, t("floorMax")).optional(),
 
-    landmark: yup.string().max(100, t("landmarkMax")).optional(),
+    landmark: yup.string().trim().max(100, t("landmarkMax")).optional(),
 
     is_default: yup.boolean().optional(),
     latitude: yup

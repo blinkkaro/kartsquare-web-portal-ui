@@ -29,19 +29,36 @@ const MotionBox = motion(Box) as any;
 type TFunction = (key: TranslationKey) => string;
 const schema = (t: TFunction) =>
   yup.object().shape({
-    first_name: yup.string().required(t("firstNameRequired")),
-    last_name: yup.string().required(t("lastNameRequired")),
+    first_name: yup
+      .string()
+      .trim()
+      .max(100, t("valNameMax"))
+      .required(t("firstNameRequired")),
+    last_name: yup
+      .string()
+      .trim()
+      .max(100, t("valNameMax"))
+      .required(t("lastNameRequired")),
     email: yup
       .string()
+      .trim()
       .email(t("emailInvalid"))
       .lowercase()
+      .max(255, t("valEmailMax"))
       .required(t("emailRequired")),
-    phone_number: yup.string().required(t("phoneNumberRequired")),
+    phone_number: yup
+      .string()
+      .trim()
+      .matches(/^[0-9]+$/, t("phoneNumberInvalid"))
+      .length(10, t("valPhoneExact"))
+      .required(t("phoneNumberRequired")),
     message: yup
       .string()
+      .trim()
       .required(t("messageRequired"))
-      .min(10, t("messageIsTooShort")),
-    country_code: yup.string().required(t("countryCodeRequired")),
+      .min(10, t("messageIsTooShort"))
+      .max(2000, t("valDescMax")),
+    country_code: yup.string().trim().required(t("countryCodeRequired")),
   });
 
 type ContactFormValues = {
