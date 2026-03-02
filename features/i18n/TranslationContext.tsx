@@ -798,6 +798,9 @@ export type TranslationKey =
   | "featureFree"
   | "featureFreeDesc"
   | "featureEasy"
+  | "guest_login"
+  | "guest_login_description"
+  | "continue_as_guest"
   | "featureEasyDesc"
   | "featurePersonalised"
   | "featurePersonalisedDesc"
@@ -1084,6 +1087,8 @@ export type TranslationKey =
   | "service_radius_km"
   | "provider_service_at_customer_location"
   | "this_service_have_a_specific_duration"
+  | "firstNameMax"
+  | "lastNameMax"
   ;
 
 // Sample dictionaries
