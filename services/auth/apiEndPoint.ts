@@ -37,5 +37,5 @@ export const API_ENDPOINTS = {
   VERIFY_NUMBER: (id: string) => `/auth/freeLead/verify-otp/${id}`,
   APPLY_FOR_FREE_LISTING: "/auth/freeLead/apply",
   GUEST_REGISTER: "/auth/guest-register",
-  REGISTER_DETAILS: "/auth/register-details",
+  REGISTER_DETAILS: "/auth/registration-details",
 };

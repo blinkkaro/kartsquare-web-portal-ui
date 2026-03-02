@@ -108,7 +108,11 @@ function SignUpView() {
       // Redirect to email verification immediately after successful signup
       router.replace("/emailVerfication");
     } catch (error: any) {
-      setError(error || "An unexpected error occurred");
+      setError(
+        typeof error === "string"
+          ? error
+          : error?.message || "An unexpected error occurred",
+      );
     } finally {
       setLoading(false);
     }
