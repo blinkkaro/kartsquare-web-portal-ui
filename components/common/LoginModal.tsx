@@ -15,7 +15,7 @@ function LoginModal() {
   const router = useRouter();
   return (
     <WarningModel
-      open={isOpen}
+      open={false}
       title={t("auth_required_title")}
       description={t("auth_required_description")}
       ActionsButtons={
