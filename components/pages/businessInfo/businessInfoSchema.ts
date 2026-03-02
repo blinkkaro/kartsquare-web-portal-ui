@@ -5,9 +5,13 @@ type TFunction = (key: TranslationKey) => string;
 
 export const BusinessInfoSchema = (t: TFunction) =>
   yup.object({
-    business_name: yup.string().required(t("businessNameRequired")),
+    business_name: yup
+      .string()
+      .trim()
+      .max(100, t("valNameMax"))
+      .required(t("businessNameRequired")),
     // description: yup.string().required(t("businessDescriptionRequired")),
-    address_id: yup.string().required(t("businessAddressRequired")),
+    address_id: yup.string().trim().required(t("businessAddressRequired")),
     business_images: yup
       .array()
       .of(yup.mixed())
