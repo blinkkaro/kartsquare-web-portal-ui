@@ -1,5 +1,6 @@
 export enum UserRegisterSteps {
   // Common user steps
+  ANONYMOUS = 0,
   REGISTERED = 1,               // Account created
   EMAIL_VERIFIED = 2,           // Email verified
   BUSINESS_INFO = 3,            // Business / Profile info
@@ -18,6 +19,7 @@ export enum UserRegisterSteps {
 import { AppUserType } from "@/services/auth/auth.interface";
 
 export type RegistrationStackParamList = {
+  Register: undefined;
   VerifyEmail: undefined;
   BusinessInfo: undefined;
   UploadDocuments: undefined;
@@ -32,6 +34,7 @@ type UserFlowMap = Partial<
 
 export const registrationStepMap: Record<AppUserType, UserFlowMap> = {
   CUSTOMER: {
+    [UserRegisterSteps.ANONYMOUS]: "Register",
     [UserRegisterSteps.REGISTERED]: "VerifyEmail",
     [UserRegisterSteps.EMAIL_VERIFIED]: "SetPreferences",
     [UserRegisterSteps.SCHEDULE_ADDED]: "SetPreferences",
@@ -71,6 +74,7 @@ export const getPathForScreen = (
   if (!screen) return "/";
 
   const screenToPathMap: Record<keyof RegistrationStackParamList, string> = {
+    Register: "/signUp?role=customer",
     VerifyEmail: "/emailVerfication",
     BusinessInfo: "/businessInfo",
     UploadDocuments: "/verifyDocuments",

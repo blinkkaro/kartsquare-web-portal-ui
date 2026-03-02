@@ -115,3 +115,13 @@ export interface IFreeLeadNumberResponse{
   source:string,
   source_type:string,
 }
+
+export interface IGuestRegisterParams {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  country_code: string;
+  password: string;
+  country: string;
+}
