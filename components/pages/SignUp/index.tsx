@@ -6,7 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
 import { SignUpFormData } from "./signUpSchema";
 import { registerUser } from "@/features/ui/authSlice";
-import { AppUserType } from "@/services/auth/auth.interface";
+import { AppUserType, RegisterData } from "@/services/auth/auth.interface";
 import Error from "@/components/common/ErrorMessage";
 import RegistrationForm from "./components/RegesitrationForm";
 import { Box, Link, Typography } from "@mui/material";
@@ -14,6 +14,9 @@ import NextLink from "next/link";
 
 import { useAppDispatch } from "@/store/hooks";
 import { useLeadVerification } from "@/hooks/useLeadVerification";
+import { useQuery } from "@tanstack/react-query";
+import { authService } from "@/services/auth/auth.service";
+import { secureStorage } from "@/helper/SecureStorage";
 
 function SignUpView() {
   const { t } = useTranslate();
@@ -31,10 +34,24 @@ function SignUpView() {
 
   const [busLeadId, setBusLeadId] = useState<string | null>(null);
   const { leadDetailsQuery } = useLeadVerification(busLeadId);
-  const [initialData, setInitialData] = useState<{
-    whatsapp_number?: string;
-    whatsapp_country_code?: string;
-  }>({});
+  const [initialData, setInitialData] = useState<Partial<RegisterData>>({});
+
+  const token = secureStorage.getItem("token");
+
+  const { data: registerDetails } = useQuery({
+    queryKey: ["registerDetails"],
+    queryFn: () => authService.getRegisterDetails(),
+    enabled: !!token,
+  });
+
+  useEffect(() => {
+    if (registerDetails) {
+      setInitialData((prev) => ({
+        ...prev,
+        ...registerDetails,
+      }));
+    }
+  }, [registerDetails]);
 
   useEffect(() => {
     if (role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER) {
@@ -49,11 +66,12 @@ function SignUpView() {
 
   useEffect(() => {
     if (leadDetailsQuery.data) {
-      setInitialData({
+      setInitialData((prev) => ({
+        ...prev,
         whatsapp_number: leadDetailsQuery.data.whatsapp_number || "",
         whatsapp_country_code:
           leadDetailsQuery.data.whatsapp_country_code || "",
-      });
+      }));
     }
     if (leadDetailsQuery.isError) {
       console.error("Failed to fetch lead info", leadDetailsQuery.error);
@@ -90,7 +108,11 @@ function SignUpView() {
       // Redirect to email verification immediately after successful signup
       router.replace("/emailVerfication");
     } catch (error: any) {
-      setError(error || "An unexpected error occurred");
+      setError(
+        typeof error === "string"
+          ? error
+          : error?.message || "An unexpected error occurred",
+      );
     } finally {
       setLoading(false);
     }

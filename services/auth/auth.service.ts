@@ -1,6 +1,6 @@
-import { AuthResponse, LoginCredentials, RegisterData } from "./auth.interface";
+import { AuthResponse, IGuestRegisterParams, LoginCredentials, RegisterData } from "./auth.interface";
 import { API_ENDPOINTS } from "./apiEndPoint";
-import { POST } from "../api";
+import { GET, POST, PUT } from "../api";
 import { secureStorage } from "@/helper/SecureStorage";
 
 class AuthService {
@@ -20,11 +20,15 @@ class AuthService {
 
   async signUp(data: RegisterData) {
     try {
-      const response = await POST<AuthResponse>(
-        API_ENDPOINTS.REGISTER,
+      // const response = await POST<AuthResponse>(
+      //   API_ENDPOINTS.REGISTER,
+      //   data,
+      //   {},
+      //   false
+      // );
+      const response = await PUT<AuthResponse>(
+        API_ENDPOINTS.REGISTER_DETAILS,
         data,
-        {},
-        false
       );
       return response;
     } catch (error) {
@@ -78,6 +82,27 @@ class AuthService {
       const response = await POST<any>(
         API_ENDPOINTS.RESEND_OTP,
         { email },
+        {},
+        false
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getRegisterDetails(): Promise<RegisterData> {
+    try {
+      const response = await GET<RegisterData>(API_ENDPOINTS.REGISTER_DETAILS);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async guestLogin(data: IGuestRegisterParams) {
+    try {
+      const response = await POST<AuthResponse>(
+        API_ENDPOINTS.GUEST_REGISTER,
+        data,
         {},
         false
       );
