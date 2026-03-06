@@ -6,27 +6,33 @@ export const changePasswordSchema = (t: TFunction) =>
   yup.object({
     currentPassword: yup
       .string()
+      .trim()
       .min(8, t("passwordMin"))
+      .max(100, t("valNameMax"))
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        t("passwordComplexity")
+        t("passwordComplexity"),
       )
       .required(t("currentPasswordRequired")),
     password: yup
       .string()
+      .trim()
       .min(8, t("passwordMin"))
+      .max(100, t("valNameMax"))
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        t("passwordComplexity")
+        t("passwordComplexity"),
       )
       .notOneOf([yup.ref("currentPassword")], t("newPasswordNotMatch"))
       .required(t("newPasswordRequired")),
     confirmPassword: yup
       .string()
+      .trim()
       .min(8, t("passwordMin"))
+      .max(100, t("valNameMax"))
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        t("passwordComplexity")
+        t("passwordComplexity"),
       )
       .oneOf([yup.ref("password")], t("passwordMatch"))
       .required(t("confirmPasswordRequired")),

@@ -7,20 +7,28 @@ export const SignUpSchema = (t: TFunction, role: AppUserType) =>
   yup.object({
     first_name: yup
       .string()
+      .trim()
       .min(2, t("firstNameMin"))
+      .max(100, t("valNameMax"))
       .required(t("firstNameRequired")),
     last_name: yup
       .string()
+      .trim()
       .min(2, t("lastNameMin"))
+      .max(100, t("valNameMax"))
       .required(t("lastNameRequired")),
     email: yup
       .string()
+      .trim()
       .email(t("emailInvalid"))
       .lowercase()
+      .max(255, t("valEmailMax"))
       .required(t("emailRequired")),
     password: yup
       .string()
+      .trim()
       .min(8, t("passwordMin"))
+      .max(100, t("valNameMax"))
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
         t("passwordComplexity"),
