@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { serviceListService } from "@/services/serviceList/serviceListService";
 import { subcategoryService } from "@/services/subcategory/subcategoryService";
 import { userAddressService } from "@/services/userAddress/userAddressService";
@@ -6,7 +6,7 @@ import { Category } from "@/services/serviceList/listInteraface";
 import { Subcategory } from "@/services/subcategory/subcategoryInterface";
 import { UserAddress } from "@/services/userAddress/userAddressInterface";
 
-export const useServiceData = (open: boolean, categoryId: string, selectedAddressId: string) => {
+export const useServiceData = (open: boolean, categoryIds: string[], selectedAddressId: string) => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
     const [addresses, setAddresses] = useState<UserAddress[]>([]);
@@ -16,6 +16,9 @@ export const useServiceData = (open: boolean, categoryId: string, selectedAddres
     const [addressesLoading, setAddressesLoading] = useState(false);
 
     const [error, setError] = useState("");
+
+    // Track previous categoryIds to avoid unnecessary fetches
+    const prevCategoryIdsRef = useRef<string>("");
 
     // Fetch categories
     useEffect(() => {
@@ -56,17 +59,21 @@ export const useServiceData = (open: boolean, categoryId: string, selectedAddres
         }
     }, [open]);
 
-    // Fetch subcategories when category changes
+    // Fetch subcategories when categories change
     useEffect(() => {
+        const serialized = JSON.stringify(categoryIds);
+        if (serialized === prevCategoryIdsRef.current) return;
+        prevCategoryIdsRef.current = serialized;
+
         const fetchSubcategories = async () => {
-            if (!categoryId) {
+            if (!categoryIds || categoryIds.length === 0) {
                 setSubcategories([]);
                 return;
             }
 
             try {
                 setSubcategoriesLoading(true);
-                const data = await subcategoryService.getSubcategoriesByCategoryId(categoryId);
+                const data = await subcategoryService.getSubcategoriesByCategoryIds(categoryIds);
                 setSubcategories(data || []);
             } catch (err) {
                 console.error("Failed to fetch subcategories:", err);
@@ -77,7 +84,7 @@ export const useServiceData = (open: boolean, categoryId: string, selectedAddres
         };
 
         fetchSubcategories();
-    }, [categoryId]);
+    }, [categoryIds]);
 
     const refreshAddresses = async () => {
         try {

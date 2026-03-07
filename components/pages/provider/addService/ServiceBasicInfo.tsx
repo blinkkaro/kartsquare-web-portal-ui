@@ -1,18 +1,27 @@
 "use client";
 import React from "react";
-import { Box, Typography, TextField, MenuItem } from "@mui/material";
+import {
+  Box,
+  Typography,
+  TextField,
+  Autocomplete,
+  Chip,
+} from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import { Category } from "@/services/serviceList/listInteraface";
 import { Subcategory } from "@/services/subcategory/subcategoryInterface";
 import { english } from "@/features/i18n/en";
 
+const MAX_CATEGORIES = 3;
+const MAX_SUBCATEGORIES = 6;
+
 interface ServiceBasicInfoProps {
   categories: Category[];
-  categoryId: string;
-  onCategoryChange: (value: string) => void;
+  categoryIds: string[];
+  onCategoryChange: (value: string[]) => void;
   subcategories: Subcategory[];
-  subcategoryId: string;
-  onSubcategoryChange: (value: string) => void;
+  subcategoryIds: string[];
+  onSubcategoryChange: (value: string[]) => void;
   serviceName: string;
   onServiceNameChange: (value: string) => void;
   categoriesLoading: boolean;
@@ -23,10 +32,10 @@ interface ServiceBasicInfoProps {
 
 const ServiceBasicInfo = ({
   categories,
-  categoryId,
+  categoryIds,
   onCategoryChange,
   subcategories,
-  subcategoryId,
+  subcategoryIds,
   onSubcategoryChange,
   serviceName,
   onServiceNameChange,
@@ -34,57 +43,131 @@ const ServiceBasicInfo = ({
   subcategoriesLoading,
   description,
   onDescriptionChange,
-  // pricingType = "single",
 }: ServiceBasicInfoProps) => {
-  // const showSinglePriceFields = pricingType === "single";
+  // Get the selected Category objects from their IDs
+  const selectedCategories = categories.filter((cat) =>
+    categoryIds.includes(cat.id)
+  );
+
+  // Get the selected Subcategory objects from their IDs
+  const selectedSubcategories = subcategories.filter((sub) =>
+    subcategoryIds.includes(sub.id)
+  );
 
   return (
     <>
-      {/* Category */}
+      {/* Category — multi-select, max 3 */}
       <Box sx={{ mb: 2 }}>
         <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>
-          {english.select_category}
+          {english.select_category} (max {MAX_CATEGORIES})
           <span style={{ color: COLORS.SECONDARY_ORANGE }}>*</span>
         </Typography>
-        <TextField
-          select
-          fullWidth
+        <Autocomplete
+          multiple
           size="small"
-          value={categoryId}
-          onChange={(e) => onCategoryChange(e.target.value)}
-          disabled={categoriesLoading}
-          placeholder={english.select}
-        >
-          {categories.map((cat) => (
-            <MenuItem key={cat.id} value={cat.id}>
-              {cat.name}
-            </MenuItem>
-          ))}
-        </TextField>
+          options={categories}
+          getOptionLabel={(option) => option.name}
+          value={selectedCategories}
+          onChange={(_event, newValue) => {
+            if (newValue.length <= MAX_CATEGORIES) {
+              onCategoryChange(newValue.map((cat) => cat.id));
+            }
+          }}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+          loading={categoriesLoading}
+          limitTags={3}
+          disableCloseOnSelect
+          getOptionDisabled={() =>
+            selectedCategories.length >= MAX_CATEGORIES
+          }
+          renderTags={(value, getTagProps) =>
+            value.map((option, index) => (
+              <Chip
+                label={option.name}
+                size="small"
+                {...getTagProps({ index })}
+                key={option.id}
+                sx={{
+                  bgcolor: `${COLORS.PRIMARY_PURPLE}20`,
+                  color: COLORS.PRIMARY_PURPLE,
+                  fontWeight: 500,
+                  "& .MuiChip-deleteIcon": {
+                    color: COLORS.PRIMARY_PURPLE,
+                    "&:hover": { color: COLORS.SECONDARY_ORANGE },
+                  },
+                }}
+              />
+            ))
+          }
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              placeholder={
+                selectedCategories.length === 0 ? english.select : ""
+              }
+            />
+          )}
+        />
       </Box>
 
-      {/* Subcategory */}
+      {/* Subcategory — multi-select, max 6 */}
       <Box sx={{ mb: 2 }}>
         <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>
-          {english.select_subcategory}
+          {english.select_subcategory} (max {MAX_SUBCATEGORIES})
           <span style={{ color: COLORS.SECONDARY_ORANGE }}>*</span>
         </Typography>
-        <TextField
-          select
-          fullWidth
+        <Autocomplete
+          multiple
           size="small"
-          value={subcategoryId}
-          onChange={(e) => onSubcategoryChange(e.target.value)}
-          disabled={!categoryId || subcategoriesLoading}
-          placeholder={english.select}
-          helperText={!categoryId ? english.select_subcategory_helper : ""}
-        >
-          {subcategories.map((subcat) => (
-            <MenuItem key={subcat.id} value={subcat.id}>
-              {subcat.name}
-            </MenuItem>
-          ))}
-        </TextField>
+          options={subcategories}
+          getOptionLabel={(option) => option.name}
+          value={selectedSubcategories}
+          onChange={(_event, newValue) => {
+            if (newValue.length <= MAX_SUBCATEGORIES) {
+              onSubcategoryChange(newValue.map((sub) => sub.id));
+            }
+          }}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+          loading={subcategoriesLoading}
+          disabled={categoryIds.length === 0}
+          limitTags={4}
+          disableCloseOnSelect
+          getOptionDisabled={() =>
+            selectedSubcategories.length >= MAX_SUBCATEGORIES
+          }
+          renderTags={(value, getTagProps) =>
+            value.map((option, index) => (
+              <Chip
+                label={option.name}
+                size="small"
+                {...getTagProps({ index })}
+                key={option.id}
+                sx={{
+                  bgcolor: `${COLORS.PRIMARY_PURPLE}20`,
+                  color: COLORS.PRIMARY_PURPLE,
+                  fontWeight: 500,
+                  "& .MuiChip-deleteIcon": {
+                    color: COLORS.PRIMARY_PURPLE,
+                    "&:hover": { color: COLORS.SECONDARY_ORANGE },
+                  },
+                }}
+              />
+            ))
+          }
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              placeholder={
+                selectedSubcategories.length === 0 ? english.select : ""
+              }
+              helperText={
+                categoryIds.length === 0
+                  ? english.select_subcategory_helper
+                  : ""
+              }
+            />
+          )}
+        />
       </Box>
 
       {/* Service Name */}
@@ -102,30 +185,7 @@ const ServiceBasicInfo = ({
         />
       </Box>
 
-      {/* {showSinglePriceFields && (
-                <>
-                    {/* Price — only when pricing type is single 
-                    <Box sx={{ mb: 2 }}>
-                        <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>
-                            {english.price_inr}
-                            <span style={{ color: COLORS.SECONDARY_ORANGE }}>*</span>
-                        </Typography>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            value={price}
-                            onChange={(e) => {
-                                const val = e.target.value.replace(/[^0-9.]/g, '');
-                                if (val === '' || (parseFloat(val) <= 10000 && (val.match(/\./g) || []).length <= 1)) {
-                                    onPriceChange(val);
-                                }
-                            }}
-                            placeholder={english.enter_price}
-                        />
-                    </Box>
-                    )}
-                    */}
-      {/* Description — only when pricing type is single */}
+      {/* Description */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500 }}>
           {english.description}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Typography,
@@ -54,7 +54,7 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
-  const [localCategoryId, setLocalCategoryId] = React.useState("");
+  const [localCategoryIds, setLocalCategoryIds] = React.useState<string[]>([]);
   const [haveprice, setHavePrice] = useState(false);
 
   // Data fetching hook
@@ -69,14 +69,14 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
     setError: setDataError,
     refreshAddresses,
     setSubcategories,
-  } = useServiceData(open, localCategoryId, "");
+  } = useServiceData(open, localCategoryIds, "");
 
   // Form state hook
   const {
-    categoryId,
-    setCategoryId,
-    subcategoryId,
-    setSubcategoryId,
+    categoryIds,
+    setCategoryIds,
+    subcategoryIds,
+    setSubcategoryIds,
     serviceName,
     setServiceName,
     price,
@@ -136,10 +136,25 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
     setSubcategories,
   });
 
-  // Sync local category ID with form category ID to trigger fetching
+  // Sync local category IDs with form category IDs to trigger fetching
   useEffect(() => {
-    setLocalCategoryId(categoryId);
-  }, [categoryId]);
+    setLocalCategoryIds(categoryIds);
+  }, [categoryIds]);
+
+  // Auto-remove orphaned subcategories when categories change
+  // Only prune when subcategories have actually been loaded (not during initial fetch)
+  const subcategorySet = useMemo(
+    () => new Set(subcategories.map((s) => s.id)),
+    [subcategories]
+  );
+  useEffect(() => {
+    if (subcategoryIds.length > 0 && subcategories.length > 0 && !subcategoriesLoading) {
+      const valid = subcategoryIds.filter((id) => subcategorySet.has(id));
+      if (valid.length !== subcategoryIds.length) {
+        setSubcategoryIds(valid);
+      }
+    }
+  }, [subcategorySet, subcategoryIds, setSubcategoryIds, subcategories.length, subcategoriesLoading]);
 
   useEffect(() => {
     if (pricingType === "noPrice") {
@@ -283,11 +298,11 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
             />
             <ServiceBasicInfo
               categories={categories}
-              categoryId={categoryId}
-              onCategoryChange={setCategoryId}
+              categoryIds={categoryIds}
+              onCategoryChange={setCategoryIds}
               subcategories={subcategories}
-              subcategoryId={subcategoryId}
-              onSubcategoryChange={setSubcategoryId}
+              subcategoryIds={subcategoryIds}
+              onSubcategoryChange={setSubcategoryIds}
               serviceName={serviceName}
               onServiceNameChange={setServiceName}
               categoriesLoading={categoriesLoading}
