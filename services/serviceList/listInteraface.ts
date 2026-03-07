@@ -127,8 +127,8 @@ export interface ServicePriceItem {
 
 export interface ServiceCreateRequest {
   provider_id: string;
-  category_id: string;
-  sub_category_id?: string;
+  category_id: string | string[];
+  sub_category_id?: string | string[];
   service_name: string;
   service_desc: string;
   image_urls: string[];

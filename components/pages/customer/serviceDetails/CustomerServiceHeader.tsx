@@ -9,6 +9,7 @@ interface CustomerServiceHeaderProps {
   price: number;
   currency: string;
   categoryName: string;
+  subCategoryName?: string;
   onBookmark?: () => void;
   onShare?: () => void;
   isPriceRequired: boolean;
@@ -19,6 +20,7 @@ const CustomerServiceHeader = ({
   isPriceRequired,
   currency,
   categoryName,
+  subCategoryName,
   onBookmark,
   onShare,
 }: CustomerServiceHeaderProps) => {
@@ -30,7 +32,7 @@ const CustomerServiceHeader = ({
     : COLORS.TEXT.PRIMARY_LIGHT;
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1, flexWrap: "wrap" }}>
       <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
         {isPriceRequired ? (
           <>
@@ -70,7 +72,11 @@ const CustomerServiceHeader = ({
         )}
       </Box>
       <Chip
-        label={categoryName}
+        label={
+          subCategoryName
+            ? `${categoryName} • ${subCategoryName}`
+            : categoryName
+        }
         size="small"
         sx={{
           bgcolor: isDark
@@ -79,6 +85,15 @@ const CustomerServiceHeader = ({
           color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
           fontWeight: 600,
           border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"}`,
+          maxWidth: "100%",
+          height: "auto",
+          minHeight: "24px",
+          py: 0.5,
+          "& .MuiChip-label": {
+            whiteSpace: "normal",
+            display: "block",
+            lineHeight: 1.4,
+          }
         }}
       />
     </Box>
