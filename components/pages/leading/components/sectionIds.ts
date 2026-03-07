@@ -7,6 +7,7 @@ export const SECTION_IDS = {
   SUCCESS_STORIES: "success-stories",
   HOW_IT_WORKS: "how-it-works",
   FAQ: "faq",
+  BENEFITS: "benefits",
 } as const;
 
 /** Target section for primary CTA (e.g. "Start now" → scroll to hero/form) */

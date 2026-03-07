@@ -13,7 +13,6 @@ import { COLORS } from "../../../constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { toggleTheme } from "@/features/ui/uiSlice";
-import { logout } from "@/features/ui/authSlice";
 import {
   getDesktopNavItems,
   getMobileNavItems,
@@ -40,11 +39,10 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     theme.palette.mode === "dark"
       ? "0 1px 3px rgba(0, 0, 0, 0.3)"
       : "0 1px 3px rgba(0, 0, 0, 0.1)",
-  borderBottom: `1px solid ${
-    theme.palette.mode === "dark"
-      ? COLORS.BORDER.DEFAULT_DARK
-      : COLORS.BORDER.DEFAULT_LIGHT
-  }`,
+  borderBottom: `1px solid ${theme.palette.mode === "dark"
+    ? COLORS.BORDER.DEFAULT_DARK
+    : COLORS.BORDER.DEFAULT_LIGHT
+    }`,
   zIndex: 1200,
 }));
 
@@ -119,7 +117,7 @@ const Nav = () => {
   };
 
   const handleFreeListingClick = () => {
-    router.push("/freeListing");
+    router.push("/business-listing");
   };
 
   return (
@@ -130,13 +128,13 @@ const Nav = () => {
           <Box sx={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
             <NavLogo isMobile={isMobile} mode={mode} />
 
-            {/* {!isMobile && !isTablet && (
+            {!isMobile && !isTablet && (
               <SearchBar
                 search={search}
                 onSearchChange={handleSearchChange}
                 placeholder={t("search")}
               />
-            )} */}
+            )}
           </Box>
 
           {/* Right Section: Navigation Links and Actions */}

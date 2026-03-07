@@ -1,13 +1,15 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Typography, Button, InputBase, useTheme, Grid, Paper } from "@mui/material";
+import { Box, Typography, Button, InputBase, useTheme, Grid, Paper, AvatarGroup, Avatar, Stack } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { COLORS } from "@/constants/colors";
 import { useRouter } from "next/navigation";
+import { useTranslationContext } from "@/features/i18n/TranslationContext";
 
 const HomeBanner = () => {
     const theme = useTheme();
+    const { t } = useTranslationContext();
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -32,7 +34,7 @@ const HomeBanner = () => {
                 overflow: "hidden",
                 bgcolor: "#1a1a1a",
                 color: "white",
-                minHeight: { xs: 350, md: 450 }, // Increased height as per design
+                minHeight: { xs: 260, md: 320 }, // Further reduced height
                 display: "flex",
                 alignItems: "center",
                 boxShadow: "0 8px 32px rgba(0,0,0,0.1)"
@@ -61,34 +63,39 @@ const HomeBanner = () => {
                 }}
             />
 
-            <Grid container sx={{ position: "relative", zIndex: 1, p: { xs: 4, md: 8 } }}>
-                <Grid size={{ xs: 12, md: 8, lg: 7 }}>
+            <Grid container sx={{ position: "relative", zIndex: 1, p: { xs: 3, md: 4 } }}>
+                <Grid size={{ xs: 12, md: 8, lg: 12 }}>
                     <Typography
                         variant="h2"
                         fontWeight="bold"
                         sx={{
-                            mb: 2,
-                            fontSize: { xs: "2.5rem", md: "3.5rem" },
+                            mb: 1.5,
+                            fontSize: { xs: "1.4rem", md: "2rem" },
                             lineHeight: 1.1,
                             letterSpacing: "-0.02em",
                             textShadow: "0 2px 10px rgba(0,0,0,0.3)"
                         }}
                     >
-                        Super Sale
+                        {t("home_banner_title")}
                     </Typography>
-                    <Typography
-                        variant="h5"
-                        sx={{
-                            mb: 5,
-                            opacity: 0.9,
-                            fontWeight: 400,
-                            maxWidth: "600px",
-                            lineHeight: 1.5,
-                            textShadow: "0 2px 4px rgba(0,0,0,0.3)"
-                        }}
-                    >
-                        Find out your ideal sound predicts...
-                    </Typography>
+
+                    <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2.5 }}>
+                        <AvatarGroup max={4} sx={{
+                            '& .MuiAvatar-root': {
+                                width: 28, height: 28, fontSize: '0.8rem',
+                                border: '2px solid rgba(255,255,255,0.8)'
+                            }
+                        }}>
+                            <Avatar alt="User 1" src="https://mui.com/static/images/avatar/1.jpg" />
+                            <Avatar alt="User 2" src="https://mui.com/static/images/avatar/2.jpg" />
+                            <Avatar alt="User 3" src="https://mui.com/static/images/avatar/3.jpg" />
+                            <Avatar alt="User 4" src="https://mui.com/static/images/avatar/4.jpg" />
+                            <Avatar alt="User 5" src="https://mui.com/static/images/avatar/5.jpg" />
+                        </AvatarGroup>
+                        <Typography variant="body2" sx={{ opacity: 0.9, fontWeight: 500, textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>
+                            {t("home_banner_trusted_by")}
+                        </Typography>
+                    </Stack>
 
                     {/* AI Search Bar */}
                     <Paper
@@ -99,7 +106,7 @@ const HomeBanner = () => {
                             alignItems: "center",
                             bgcolor: "white",
                             borderRadius: "50px", // Pill shape
-                            p: "8px",
+                            p: "6px",
                             pl: 3,
                             width: "100%",
                             maxWidth: "600px",
@@ -111,12 +118,12 @@ const HomeBanner = () => {
                             }
                         }}
                     >
-                        <SearchIcon sx={{ color: "text.secondary", fontSize: 28, mr: 1.5 }} />
+                        <SearchIcon sx={{ color: "text.secondary", fontSize: 24, mr: 1.5 }} />
                         <InputBase
-                            placeholder="Search for services, products..."
+                            placeholder={t("home_banner_search_placeholder")}
                             sx={{
                                 flex: 1,
-                                fontSize: "1.1rem",
+                                fontSize: "1rem",
                                 color: "text.primary",
                                 "& input::placeholder": {
                                     opacity: 0.7
@@ -135,25 +142,24 @@ const HomeBanner = () => {
                                 background: "linear-gradient(135deg, #6C5DD3 0%, #4D3CC1 100%)",
                                 textTransform: "none",
                                 boxShadow: "0 4px 15px rgba(108, 93, 211, 0.4)",
-                                px: 4,
-                                py: 1.5,
-                                fontSize: "1rem",
+                                px: 3,
+                                py: 1.2,
+                                fontSize: "0.95rem",
                                 fontWeight: 600,
-                                minWidth: "140px",
+                                minWidth: "120px",
                                 "&:hover": {
                                     background: "linear-gradient(135deg, #7A6BE0 0%, #5E4DD8 100%)",
                                     boxShadow: "0 6px 20px rgba(108, 93, 211, 0.6)",
                                 }
                             }}
                         >
-                            AI Search
+                            {t("home_banner_search_button")}
                         </Button>
                     </Paper>
 
                     {/* Category/Filter Tags */}
-                    <Box sx={{ mt: 4, display: "flex", gap: 1.5, flexWrap: "wrap", alignItems: "center" }}>
-                        {/* <Typography variant="body2" sx={{ opacity: 0.8, mr: 1 }}>Popular:</Typography> */}
-                        {["Loop All", "Lone Stovr", "Products", "Button"].map((tag, index) => (
+                    <Box sx={{ mt: 2.5, display: "flex", gap: 1.5, flexWrap: "wrap", alignItems: "center" }}>
+                        {["Home Services", "Gadgets", "Consulting", "Safety Gear", "Design"].map((tag, index) => (
                             <Box
                                 key={index}
                                 onClick={() => {
@@ -164,11 +170,11 @@ const HomeBanner = () => {
                                     bgcolor: "rgba(30,30,30,0.7)", // Dark semi-transparent
                                     backdropFilter: "blur(12px)",
                                     borderRadius: "20px",
-                                    px: 2.5,
-                                    py: 1,
+                                    px: 2,
+                                    py: 0.8,
                                     cursor: 'pointer',
                                     border: '1px solid rgba(255,255,255,0.15)',
-                                    fontSize: '0.9rem',
+                                    fontSize: '0.85rem',
                                     fontWeight: 500,
                                     color: "rgba(255,255,255,0.9)",
                                     transition: 'all 0.2s',
