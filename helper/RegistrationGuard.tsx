@@ -59,51 +59,46 @@ export default function RegistrationGuard({
         pathname.startsWith(path),
       );
 
-      // --- UNAUTHENTICATED: allow them to stay on any public/auth page ---
+      // --- SCENARIO 1: Authenticated user trying to access Auth pages ---
+      if (isAuthenticated && isRestrictedPath) {
+        router.replace("/");
+        return;
+      }
+
+      // --- SCENARIO 2: Unauthenticated user ---
       if (!isAuthenticated) {
+        // If they are on a public page (or auth page), let them stay.
+        // If you have protected routes that REQUIRE login, add that logic here.
         setIsChecking(false);
         return;
       }
 
-      // --- AUTHENTICATED: resolve registration state ---
+      // --- SCENARIO 3: Authenticated but Incomplete Registration ---
+
+      // Get data with fallbacks
       const registerStepFromStorage = secureStorage.getItem("register_step");
       const roleFromStorage = secureStorage.getItem("role");
 
       const currentRegisterStep =
-        user?.register_step !== undefined && user?.register_step !== null
-          ? user.register_step
-          : registerStepFromStorage !== null && registerStepFromStorage !== undefined
+        user?.register_step ??
+        (registerStepFromStorage
           ? parseInt(registerStepFromStorage, 10)
-          : null;
+          : null);
 
       const currentRole = (user?.role ?? roleFromStorage) as AppUserType | null;
 
-      // Determine if onboarding is fully complete
+      // If data is missing, we assume API/Auth slice is still loading or valid, let them pass
+      if (!currentRegisterStep || !currentRole) {
+        setIsChecking(false);
+        return;
+      }
+
+      // If registration is fully complete, allow access
       const isCompleted =
-        currentRegisterStep !== null &&
-        (currentRegisterStep === UserRegisterSteps.COMPLETED ||
-          currentRegisterStep === UserRegisterSteps.PREFERENCES_ADDED ||
-          (currentRole === AppUserType.SUPPLIER &&
-            currentRegisterStep === UserRegisterSteps.SUPPLIER_KYC_SUBMITTED));
-
-      // --- SCENARIO 1: Authenticated on a restricted auth page ---
-      // Only redirect to home if registration is actually complete.
-      // If it's incomplete, let them stay (e.g. /signUp during onboarding).
-      if (isAuthenticated && isRestrictedPath) {
-        if (isCompleted) {
-          router.replace("/");
-          return;
-        }
-        // Not complete: allow them to proceed (e.g. complete /signUp)
-        setIsChecking(false);
-        return;
-      }
-
-      // If data is missing, assume still loading — let them pass
-      if (currentRegisterStep === null || !currentRole) {
-        setIsChecking(false);
-        return;
-      }
+        currentRegisterStep === UserRegisterSteps.COMPLETED ||
+        currentRegisterStep === UserRegisterSteps.PREFERENCES_ADDED ||
+        (currentRole === AppUserType.SUPPLIER &&
+          currentRegisterStep === UserRegisterSteps.SUPPLIER_KYC_SUBMITTED);
 
       // If already completed but on onboarding paths, redirect to home
       if (isCompleted && isOnboardingPath) {
