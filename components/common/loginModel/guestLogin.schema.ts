@@ -32,6 +32,7 @@ export const guestLoginSchema = (t: TFunction) => yup.object().shape({
     .string()
     .required(t("phoneNumberRequired"))
     .matches(phoneRegex, t("phoneNumberInvalid"))
+    .length(10, t("phoneNumberLength"))
     .trim(),
   password: yup
     .string()

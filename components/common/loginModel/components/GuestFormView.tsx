@@ -1,11 +1,12 @@
 import React from "react";
-import { Box, Typography, IconButton } from "@mui/material";
+import { Box, Typography, IconButton, MenuItem } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
 import { Control, UseFormHandleSubmit } from "react-hook-form";
 import { useTranslate } from "@/hooks/useTranslate";
 import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
 import { GuestLoginFormData } from "../guestLogin.schema";
+import { countries } from "../../../pages/SignUp/components/data";
 
 interface GuestFormViewProps {
   control: Control<GuestLoginFormData>;
@@ -78,9 +79,23 @@ export const GuestFormView: React.FC<GuestFormViewProps> = ({
             <Input
               name="country_code"
               control={control}
-              placeholder="+91"
+              select
               label={t("code")}
-            />
+              InputProps={{
+                sx: {
+                  "& .MuiSelect-select": {
+                    paddingLeft: "8px !important",
+                    paddingRight: "24px !important",
+                  },
+                },
+              }}
+            >
+              {countries.map((option) => (
+                <MenuItem key={option.code} value={option.phone_code}>
+                  {option.phone_code}
+                </MenuItem>
+              ))}
+            </Input>
           </Box>
           <Box sx={{ gridColumn: "span 8" }}>
             <Input
@@ -95,9 +110,28 @@ export const GuestFormView: React.FC<GuestFormViewProps> = ({
             <Input
               name="country"
               control={control}
-              placeholder={t("country")}
+              select
               label={t("country")}
-            />
+              placeholder={t("country")}
+              SelectProps={{
+                renderValue: (selected: any) => {
+                  const country = countries.find((c) => c.name === selected);
+                  return (
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <span style={{ marginRight: 8 }}>{country?.flag}</span>
+                      {selected}
+                    </Box>
+                  );
+                },
+              }}
+            >
+              {countries.map((option) => (
+                <MenuItem key={option.code} value={option.name}>
+                  <span style={{ marginRight: 8 }}>{option.flag}</span>{" "}
+                  {option.name}
+                </MenuItem>
+              ))}
+            </Input>
           </Box>
           <Box sx={{ gridColumn: "span 12" }}>
             <Input

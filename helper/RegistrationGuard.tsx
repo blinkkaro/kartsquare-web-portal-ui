@@ -118,19 +118,19 @@ export default function RegistrationGuard({
 
       // Determine where they SHOULD be
       const roleMap = registrationStepMap[currentRole];
-      if (roleMap) {
+      if (roleMap && currentRegisterStep !== UserRegisterSteps.ANONYMOUS) {
         const requiredScreen =
           roleMap[currentRegisterStep as UserRegisterSteps];
-        const requiredPath = getPathForScreen(requiredScreen);
+        
+        if (requiredScreen) {
+          const requiredPath = getPathForScreen(requiredScreen);
+          const basePath = requiredPath.split("?")[0];
 
-        // If a required path exists and we aren't there, redirect (Only for Supplier as requested)
-        if (
-          currentRole === AppUserType.SUPPLIER &&
-          requiredPath &&
-          pathname !== requiredPath
-        ) {
-          router.replace(requiredPath);
-          return;
+          // If a required path exists and we aren't there, redirect to enforce onboarding step
+          if (requiredPath !== "/" && pathname !== basePath) {
+            router.replace(requiredPath);
+            return;
+          }
         }
       }
 

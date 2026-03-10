@@ -91,8 +91,9 @@ function LoginModal() {
         window.location.href = "/"; // Refresh and redirect
       }
     } catch (error) {
-      const err = error as { message?: string };
-      toast.error(err.message || "Something went wrong during guest login");
+      console.log(error);
+      const err = error as {response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Something went wrong during guest login");
     } finally {
       setLoading(false);
     }
