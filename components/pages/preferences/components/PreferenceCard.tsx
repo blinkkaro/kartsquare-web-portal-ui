@@ -1,6 +1,6 @@
 "use client";
 import { COLORS } from "@/constants/colors";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 import React from "react";
 
 const iconMap: {
@@ -79,6 +79,8 @@ const PreferenceCards: React.FC<PreferenceCardProps> = ({
   onPress,
   id,
 }) => {
+  const theme = useTheme();
+
   return (
     <Box
       onClick={() => onPress(id)}
@@ -91,6 +93,8 @@ const PreferenceCards: React.FC<PreferenceCardProps> = ({
         borderRadius: "16px",
         boxShadow: isSelected
           ? `0 4px 16px ${COLORS.SHADOW.BLUE}`
+          : theme.palette.mode === "dark"
+          ? "0 1px 3px rgba(0,0,0,0.5)"
           : "0 1px 3px rgba(0,0,0,0.08)",
         cursor: "pointer",
         transition: "all 0.25s ease",
@@ -105,8 +109,10 @@ const PreferenceCards: React.FC<PreferenceCardProps> = ({
           transform: "scale(1.02) translateY(-2px)",
           boxShadow: isSelected
             ? `0 8px 24px ${COLORS.SHADOW.BLUE}`
+            : theme.palette.mode === "dark"
+            ? "0 4px 12px rgba(0,0,0,0.5)"
             : "0 4px 12px rgba(0,0,0,0.1)",
-          borderColor: isSelected ? "primary.main" : "grey.300",
+          borderColor: isSelected ? "primary.main" : (theme.palette.mode === "dark" ? "grey.700" : "grey.300"),
         },
       }}
     >
@@ -159,7 +165,7 @@ const PreferenceCards: React.FC<PreferenceCardProps> = ({
               height: 22,
               borderRadius: "50%",
               border: "2px solid",
-              borderColor: "grey.300",
+              borderColor: theme.palette.mode === "dark" ? "grey.700" : "grey.300",
             }}
           />
         )}

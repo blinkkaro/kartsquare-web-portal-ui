@@ -256,7 +256,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               key={preview}
               sx={{
                 position: "relative",
-                paddingTop: isDocument && imagePreviews.length === 1 ? "75%" : "100%",
+                aspectRatio: isDocument && imagePreviews.length === 1 ? "1/1" : "1/1",
+                width: "100%",
                 maxWidth: isDocument && imagePreviews.length === 1 ? 140 : "none",
                 borderRadius: 1,
                 overflow: "hidden",
