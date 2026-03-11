@@ -37,19 +37,28 @@ export interface SupplierKyc {
 }
 
 export interface SupplierStore {
-  display_name: string;
-  slug: string;
+  id?: string;
+  supplier_id?: string;
+  store_name: string;
+  display_name?: string;
+  slug?: string;
   about_us?: string;
+  description?: string;
   logo_url?: string;
   banner_url?: string;
   contact_email?: string;
   contact_phone?: string;
+  primary_mobile?: string;
   whatsapp_number?: string;
   store_address_id?: string;
   address?: string;
   city?: string;
   state?: string;
   pincode?: string;
+  establishment_year?: string;
+  country_code?: string;
+  website_url?: string;
+  business_type?: string;
   categories_served: string[];
   operating_locations: string[];
   contact_preferences: {
@@ -116,6 +125,15 @@ class SupplierService {
     return POST<SupplierStore>(
       SUPPLIER_ENDPOINTS.STORE,
       { ...data, userId: this.getUserId() },
+      {},
+      true,
+    );
+  }
+
+  async editStore(data:Partial<SupplierStore>){
+    return PUT<SupplierStore>(
+      SUPPLIER_ENDPOINTS.STORE,
+      data,
       {},
       true,
     );
