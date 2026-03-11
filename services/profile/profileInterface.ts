@@ -31,6 +31,20 @@ export interface profileInterface {
   following_count: number;
   banner_image?: string;
   business_name: string;
+  gstNumber?: string;
+  store_address?: {
+    address_id?: string;
+    address?: string;
+    city_town?: string;
+    state?: string;
+    country?: string;
+    pincode?: string;
+    building_no?: string;
+    floor?: string;
+    landmark?: string;
+    lat?: number | string;
+    long?: number | string;
+  };
 }
 
 interface pagination {

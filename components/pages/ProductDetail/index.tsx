@@ -86,7 +86,6 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
       <Container maxWidth="xl">
         <ProductDetailHeader
           productId={productId}
-          productName={product.product_name}
           onDeleteClick={() => setIsDeleteModalOpen(true)}
         />
 
