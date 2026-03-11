@@ -45,6 +45,7 @@ export interface SupplierStore {
   contact_email?: string;
   contact_phone?: string;
   whatsapp_number?: string;
+  store_address_id?: string;
   address?: string;
   city?: string;
   state?: string;
