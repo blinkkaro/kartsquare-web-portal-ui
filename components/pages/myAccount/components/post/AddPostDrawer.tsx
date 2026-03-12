@@ -15,7 +15,7 @@ import ImageUpload from "@/components/common/ImageUpload";
 interface AddPostFormData {
   caption: string;
   visibility: Visibility;
-  images: File[];
+  media: File[];
 }
 
 interface AddPostDrawerProps {
@@ -29,6 +29,53 @@ const AddPostDrawer: React.FC<AddPostDrawerProps> = ({ onClose }) => {
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [error, setError] = useState<string>("");
+  const [compressing, setCompressing] = useState(false);
+
+  const compressVideo = async (file: File): Promise<File> => {
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+    if (file.size <= MAX_SIZE) return file;
+
+    return new Promise((resolve, reject) => {
+      const video = document.createElement("video");
+      const url = URL.createObjectURL(file);
+      video.src = url;
+      video.muted = true;
+      video.play();
+
+      video.onloadeddata = () => {
+        const stream = (video as any).captureStream();
+        const mediaRecorder = new MediaRecorder(stream, {
+          mimeType: "video/webm;codecs=vp8",
+          bitsPerSecond: 1000000, // 1Mbps target
+        });
+
+        const chunks: Blob[] = [];
+        mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: "video/webm" });
+          const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".webm"), {
+            type: "video/webm",
+          });
+          URL.revokeObjectURL(url);
+          resolve(compressedFile);
+        };
+
+        mediaRecorder.start();
+        video.onended = () => mediaRecorder.stop();
+        
+        // If video doesn't have an 'ended' event (e.g. streaming), stop after duration
+        setTimeout(() => {
+          if (mediaRecorder.state === "recording") mediaRecorder.stop();
+        }, (video.duration + 1) * 1000);
+      };
+
+      video.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("Video load failed"));
+      };
+    });
+  };
+
   const {
     coordinates: userCoordinates,
     error: locationError,
@@ -50,7 +97,7 @@ const AddPostDrawer: React.FC<AddPostDrawerProps> = ({ onClose }) => {
     defaultValues: {
       caption: "",
       visibility: Visibility.PUBLIC,
-      images: [],
+      media: [],
     },
   });
 
@@ -61,17 +108,38 @@ const AddPostDrawer: React.FC<AddPostDrawerProps> = ({ onClose }) => {
       return;
     }
 
+    const isVideo = selectedFiles.some((file) => file.type.startsWith("video/"));
+    const isImage = selectedFiles.some((file) => file.type.startsWith("image/"));
+
+    let postType: PostType = PostType.IMAGE;
+    if (isVideo && isImage) {
+      postType = PostType.MIXED;
+    } else if (isVideo) {
+      postType = PostType.VIDEO;
+    }
+
     try {
-      const imageUrls: File[] = [];
+      setCompressing(true);
+      const processedFiles: File[] = [];
 
       for (const file of selectedFiles) {
-        imageUrls.push(file);
+        if (file.type.startsWith("video/") && file.size > 5 * 1024 * 1024) {
+          try {
+            const compressed = await compressVideo(file);
+            processedFiles.push(compressed);
+          } catch (e) {
+            console.error("Compression failed, using original", e);
+            processedFiles.push(file);
+          }
+        } else {
+          processedFiles.push(file);
+        }
       }
-
+      
       await createPostMutation.mutateAsync({
         caption: data.caption,
-        media_urls: imageUrls,
-        post_type: PostType.IMAGE,
+        media_urls: processedFiles,
+        post_type: postType,
         visibility: data.visibility,
         location_name: "", // You might want to get this from reverse geocoding if needed
         latitude: userCoordinates?.latitude || 0,
@@ -87,6 +155,8 @@ const AddPostDrawer: React.FC<AddPostDrawerProps> = ({ onClose }) => {
       setError(
         error?.data?.message || error?.message || t("postCreationFailed"),
       );
+    } finally {
+      setCompressing(false);
     }
   };
 
@@ -107,7 +177,8 @@ const AddPostDrawer: React.FC<AddPostDrawerProps> = ({ onClose }) => {
           maxImages={1}
           error={!!error && selectedFiles.length === 0}
           helperText={selectedFiles.length === 0 ? error : ""}
-          title={t("selectImages")}
+          title={t("selectMedia")}
+          allowVideo={true}
         />
 
         {/* Caption Input */}
@@ -175,10 +246,14 @@ const AddPostDrawer: React.FC<AddPostDrawerProps> = ({ onClose }) => {
         <Button
           type="submit"
           fullWidth
-          isLoading={createPostMutation.isPending}
-          disabled={createPostMutation.isPending}
+          isLoading={createPostMutation.isPending || compressing}
+          disabled={createPostMutation.isPending || compressing}
         >
-          {createPostMutation.isPending ? t("uploadingPost") : t("createPost")}
+          {createPostMutation.isPending || compressing
+            ? compressing
+              ? t("compressingVideo")
+              : t("uploadingPost")
+            : t("createPost")}
         </Button>
       </form>
     </Box>
