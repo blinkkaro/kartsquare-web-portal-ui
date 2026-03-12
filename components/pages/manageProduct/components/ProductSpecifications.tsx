@@ -86,7 +86,11 @@ const ProductSpecifications = () => {
       <Typography variant="subtitle2" mb={1} fontWeight={500}>
         {t("other_specifications")}
       </Typography>
-      <Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={3}>
+      <Box
+        display="grid"
+        gridTemplateColumns={{ xs: "1fr", sm: "repeat(2, 1fr)" }}
+        gap={3}
+      >
         {specifications.map((spec, index) => {
           const fieldName = `specifications.${index}.product_specifications_entered_value`;
           const isRequired = spec.product_specifications_is_required;

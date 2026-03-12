@@ -55,7 +55,11 @@ const ProductCategorySelect = () => {
 
   return (
     <Box>
-      <Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={3}>
+      <Box
+        display="grid"
+        gridTemplateColumns={{ xs: "1fr", sm: "repeat(2, 1fr)" }}
+        gap={3}
+      >
         <Controller
           name="product_category_id"
           control={control}

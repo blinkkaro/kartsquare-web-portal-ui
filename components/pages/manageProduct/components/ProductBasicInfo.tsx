@@ -31,7 +31,11 @@ const ProductBasicInfo = () => {
         mb: 3,
       }}
     >
-      <Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={3}>
+      <Box
+        display="grid"
+        gridTemplateColumns={{ xs: "1fr", sm: "repeat(2, 1fr)" }}
+        gap={3}
+      >
         <Box>
           <Box>
             <Typography variant="subtitle2" mb={1} fontWeight={500}>
@@ -77,7 +81,12 @@ const ProductBasicInfo = () => {
         </Box>
       </Box>
 
-      <Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={3} mt={3}>
+      <Box
+        display="grid"
+        gridTemplateColumns={{ xs: "1fr", sm: "repeat(2, 1fr)" }}
+        gap={3}
+        mt={3}
+      >
         <Box>
           <Typography variant="subtitle2" mb={1} fontWeight={500}>
             {t("product_origin") + "*"}

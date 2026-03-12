@@ -74,8 +74,16 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
         </Box>
       </Typography>
 
-      <Stack direction="row" spacing={2} alignItems="center">
-        <Box sx={{ width: 300 }}>
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        alignItems={{ xs: "stretch", sm: "center" }}
+        sx={{
+          flexWrap: "wrap",
+          gap: 2,
+          width: { xs: "100%", sm: "auto" },
+        }}
+      >
+        <Box sx={{ width: { xs: "100%", sm: 300 } }}>
           <Input
             name="search"
             control={control}
@@ -85,8 +93,9 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
               "& .MuiOutlinedInput-root": {
                 borderRadius: "50px",
                 bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
-                "& fieldset": { border: "none" },
+                "& fieldset": { border: "none" }
               },
+              width: "100%",
             }}
           />
         </Box>
@@ -104,7 +113,13 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
           <FilterListIcon />
         </Button> */}
 
-        <Button onClick={handleAddProduct} startIcon={<AddIcon />}>{t("addNewProduct")}</Button>
+        <Button
+          sx={{ width: { xs: "100%", sm: "auto" } }}
+          onClick={handleAddProduct}
+          startIcon={<AddIcon />}
+        >
+          {t("addNewProduct")}
+        </Button>
       </Stack>
     </Box>
   );

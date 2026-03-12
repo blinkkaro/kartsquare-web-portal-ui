@@ -171,7 +171,7 @@ function ManageProductView({ productId }: ManageProductViewProps) {
   }
 
   return (
-    <Box sx={{ p: 5, px: 20 }}>
+    <Box sx={{ p: 5, px: { xs: 2, md: 20 } }}>
       <Box
         display="flex"
         justifyContent="space-between"
