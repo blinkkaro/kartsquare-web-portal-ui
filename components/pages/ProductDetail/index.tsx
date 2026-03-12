@@ -8,6 +8,7 @@ import {
   CircularProgress,
   Typography,
   Button,
+  Divider,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useGetProductById, useDeleteProduct } from "@/hooks/useProducts";
@@ -15,6 +16,9 @@ import ProductDetailHeader from "./components/ProductDetailHeader";
 import ProductDetailInfo from "./components/ProductDetailInfo";
 import ProductDetailSpecs from "./components/ProductDetailSpecs";
 import ServiceImageCarousel from "@/components/ServiceImageCarousel";
+import ProductMap from "../store/ProductMap";
+import ProviderInfoCard from "@/components/ProviderInfoCard";
+import { AppUserType } from "@/services/auth/auth.interface";
 import WarningModel from "@/components/common/WarningModel";
 import SuccessModel from "@/components/common/SuccessModel";
 import { COLORS } from "@/constants/colors";
@@ -86,7 +90,6 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
       <Container maxWidth="xl">
         <ProductDetailHeader
           productId={productId}
-          productName={product.product_name}
           onDeleteClick={() => setIsDeleteModalOpen(true)}
         />
 
@@ -103,18 +106,31 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
                 images={product.product_images}
                 serviceName={product.product_name}
               />
+
+              {/* Map View */}
+              {product.supplier?.store_address && (
+                <Box sx={{ mt: 7 }}>
+                  <ProductMap
+                    latitude={parseFloat(String(product.supplier.store_address.lat)) || 26.9124}
+                    longitude={parseFloat(String(product.supplier.store_address.long)) || 75.7873}
+                    storeName={product.supplier.name}
+                  />
+                </Box>
+              )}
             </Box>
           </Grid>
 
           {/* Right Side - Info & Specs */}
           <Grid size={{ xs: 12, md: 6 }}>
             <ProductDetailInfo
+              productName={product.product_name}
               price={product.price}
               currency={product.currency}
               description={product.product_description}
               category={product.category_name}
               status={product.product_status}
               rejectedReason={product.rejected_reason}
+              gstNumber={product.supplier?.gst_in ?? undefined}
             />
 
             <ProductDetailSpecs
@@ -122,6 +138,26 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
               isAvailable={product.is_available}
               origin={product.product_origin}
             />
+
+            {product.supplier && (
+              <>
+                <Divider sx={{ opacity: 0.6, my: 3 }} />
+                <Box sx={{ py: 3 }}>
+                  <ProviderInfoCard
+                    providerId={product.supplier_id}
+                    providerName={product.supplier.name}
+                    providerImageUrl={product.supplier.logo_url}
+                    isHotSeller={true}
+                    providerPhoneNumber={`${product.supplier.country_code || '+91'}${product.supplier.primary_mobile || ''}`}
+                    businessName={product.supplier.name}
+                    isFollowing={false}
+                    gstNumber={product.supplier.gst_in ?? undefined}
+                    username={product.supplier.username || ""}
+                    role={AppUserType.SUPPLIER}
+                  />
+                </Box>
+              </>
+            )}
           </Grid>
         </Grid>
       </Container>
