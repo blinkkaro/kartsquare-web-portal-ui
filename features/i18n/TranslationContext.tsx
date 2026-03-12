@@ -1176,7 +1176,9 @@ export type TranslationKey =
   | "store_setup_contact_email_placeholder"
   | "store_setup_establishment_year"
   | "store_setup_establishment_year_placeholder"
-  | "store_setup_save_continue";
+  | "store_setup_save_continue"
+  | "postReel"
+  | "reels";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

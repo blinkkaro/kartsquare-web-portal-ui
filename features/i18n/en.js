@@ -1565,4 +1565,6 @@ export const english = {
   kyc_gst_number_invalid: "Invalid GST Number format",
   kyc_gst_state_invalid: "Invalid GST State",
   store_setup_contact_preferences: "Contact Preferences",
+  postReel: "Posts/Reels",
+  reels: "Reels",
 };

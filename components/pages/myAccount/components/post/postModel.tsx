@@ -72,7 +72,7 @@ export default function PostModel({ onClose }: { onClose: () => void }) {
             <ArrowBack />
           </IconButton>
           <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: 600 }}>
-            {t("myPosts") || "My Posts"}
+            {t("myPosts")}
           </Typography>
         </Box>
       )}

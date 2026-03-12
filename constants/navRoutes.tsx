@@ -10,6 +10,30 @@ import {
 } from "@mui/icons-material";
 import { TranslationKey } from "@/features/i18n/TranslationContext";
 import { UserRole } from "@/utils/auth";
+import { SvgIcon } from "@mui/material";
+
+function PlaySquareIcon(props: any) {
+  return (
+    <SvgIcon {...props}>
+      {/* square outline */}
+      <rect
+        x="3"
+        y="3"
+        width="18"
+        height="18"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      
+      {/* play triangle */}
+      <polygon
+        points="10,8 16,12 10,16"
+        fill="currentColor"
+      />
+    </SvgIcon>
+  );
+}
 
 export interface NavItem {
   label: string;
@@ -47,6 +71,11 @@ export const getDesktopNavItems = (
           icon: <HomeRepairService sx={{ fontSize: 18 }} />,
         },
         {
+          label: t("reels"),
+          href: "/cus/reels",
+          icon: <PlaySquareIcon sx={{ fontSize: 18 }} />,
+        },
+        {
           label: t("bookings"),
           href: "/cus/bookings",
           icon: <Event sx={{ fontSize: 18 }} />,
@@ -76,6 +105,11 @@ export const getDesktopNavItems = (
           href: "/cus/servicesList",
           icon: <HomeRepairService sx={{ fontSize: 18 }} />,
         },
+        {
+          label: t("reels"),
+          href: "/cus/reels",
+          icon: <PlaySquareIcon sx={{ fontSize: 18 }} />,
+        },
       ];
   }
 };
@@ -94,6 +128,11 @@ export const getMobileNavItems = (
         label: t("services"),
         href: "/cus/servicesList",
         icon: <ArticleRounded />,
+      },
+      {
+        label: t("reels"),
+        href: "/cus/reels",
+        icon: <PlaySquareIcon />,
       },
       { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
       // { label: t("events"), href: "/events", icon: <Event /> }
@@ -143,6 +182,11 @@ export const getMobileNavItems = (
           label: t("store"),
           href: "/store",
           icon: <LocalMallRounded />,
+        });
+        items.push({
+          label: t("reels"),
+          href: "/cus/reels",
+          icon: <PlaySquareIcon />,
         });
         break;
     }
