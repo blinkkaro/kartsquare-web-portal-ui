@@ -5,6 +5,7 @@ import { closeDrawer } from "@/features/ui/profileDrawerSlice";
 import {
   useProviderProfile,
   useProviderPosts,
+  useProviderReels,
   useSupplierProfile,
 } from "@/hooks/useProviderProfile";
 import ProfileCard from "./components/ProfileCard";
@@ -21,6 +22,9 @@ import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/store/hooks";
 import axios from "axios";
 import toast from "react-hot-toast";
+import ReelFeedGrid from "../../pages/myAccount/components/post/ReelFeedGrid";
+import ReelViewModal from "../../pages/myAccount/components/post/ReelViewModal";
+import { Posts } from "@/services/post/postInterfaces";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
@@ -43,20 +47,30 @@ export function ProfileDrawer() {
   const { data: postsData, isLoading: postsLoading } = useProviderPosts(
     !isSupplier ? userId : "",
   );
+  const {
+    data: reelsData,
+    isLoading: reelsLoading,
+    fetchNextPage: fetchNextReels,
+    hasNextPage: hasNextReels,
+    isFetchingNextPage: isFetchingNextReels,
+  } = useProviderReels(!isSupplier ? userId : "");
 
   const {
     data: supplierProfileData,
     isLoading: supplierLoading,
     error: supplierError,
-  } = useSupplierProfile(isSupplier ? username || "" : "");
+    } = useSupplierProfile(isSupplier ? username || "" : "");
 
   const profile = isSupplier ? supplierProfileData?.profile : providerProfile;
   const isLoading = isSupplier ? supplierLoading : providerLoading;
   const error = isSupplier ? supplierError : providerError;
 
   const [activeTab, setActiveTab] = useState(isSupplier ? "Products" : "Posts");
+  const [isReelModalOpen, setIsReelModalOpen] = useState(false);
+  const [selectedReelIndex, setSelectedReelIndex] = useState(0);
 
   const allPosts = postsData?.pages.flatMap((page) => page.posts) || [];
+  const allReels = reelsData?.pages.flatMap((page) => page.posts) || [];
   const allProducts = supplierProfileData?.products || [];
 
   React.useEffect(() => {
@@ -98,6 +112,11 @@ export function ProfileDrawer() {
       console.error("Failed to initialize chat", err);
       toast.error("Could not start chat.");
     }
+  };
+
+  const handleReelClick = (reel: Posts, index: number) => {
+    setSelectedReelIndex(index);
+    setIsReelModalOpen(true);
   };
 
   return (
@@ -154,10 +173,28 @@ export function ProfileDrawer() {
               {activeTab === "Services" && (
                 <ProfileServices userId={userId || ""} />
               )}
+              {activeTab === "Reels" && (
+                <ReelFeedGrid
+                  reels={allReels}
+                  isLoading={reelsLoading}
+                  fetchNextPage={fetchNextReels}
+                  hasNextPage={hasNextReels ?? false}
+                  isFetchingNextPage={isFetchingNextReels}
+                  onReelClick={handleReelClick}
+                />
+              )}
             </Box>
           </Box>
         )}
       </Box>
+
+      {/* Reel View Modal */}
+      <ReelViewModal
+        open={isReelModalOpen}
+        onClose={() => setIsReelModalOpen(false)}
+        reels={allReels}
+        initialIndex={selectedReelIndex}
+      />
     </ProfileDrawerWrapper>
   );
 }

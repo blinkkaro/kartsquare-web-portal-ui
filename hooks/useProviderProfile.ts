@@ -54,6 +54,21 @@ export const useProviderPosts = (userId: string) => {
   });
 };
 
+export const useProviderReels = (userId: string) => {
+  return useInfiniteQuery({
+    queryKey: ["providerReels", userId],
+    queryFn: ({ pageParam = 1 }) =>
+      profileService.getProviderReels(userId, pageParam, 12),
+    getNextPageParam: (lastPage: providerPostsInterface, allPages) => {
+      const morePagesExist =
+        lastPage?.pagination?.currentPage < lastPage?.pagination?.totalPages;
+      return morePagesExist ? lastPage.pagination.currentPage + 1 : undefined;
+    },
+    initialPageParam: 1,
+    enabled: !!userId,
+  });
+};
+
 export const useProviderProfileByUsername = (username: string) => {
   return useQuery({
     queryKey: ["providerProfileByUsername", username],
