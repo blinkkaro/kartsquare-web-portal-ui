@@ -285,3 +285,10 @@ export const useLikePost = (postId: string) => {
     },
   });
 };
+
+export const useGetReels = () => {
+  return useQuery({
+    queryKey: ["reels"],
+    queryFn: () => postServices.getReels(),
+  });
+};

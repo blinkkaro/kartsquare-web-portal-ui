@@ -112,9 +112,9 @@ class PostServices {
     }
   }
 
-  async getReels() {
+  async getReels(): Promise<GetPostsResponse> {
     try {
-      const response = await GET(API_ENDPOINTS.GET_REELS);
+      const response = await GET<GetPostsResponse>(API_ENDPOINTS.GET_REELS);
       if (response.status !== "success") {
         throw new Error(response.message || "Failed to get reels");
       }

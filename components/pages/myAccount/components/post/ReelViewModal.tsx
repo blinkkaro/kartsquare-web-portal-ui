@@ -8,6 +8,7 @@ import {
   IconButton,
   Avatar,
   Fade,
+  Button,
 } from "@mui/material";
 import { ChevronLeft, ChevronRight, Close, Favorite, ChatBubble, MoreVert, PlayArrow, FavoriteBorderOutlined, Send, SentimentSatisfiedAlt } from "@mui/icons-material";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -18,6 +19,11 @@ import { formatTimestamp } from "@/helper/helper";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { TextField, CircularProgress, useTheme, useMediaQuery } from "@mui/material";
+import { useFollowProvider } from "@/hooks/useProviderProfile";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { openDrawer } from "@/features/ui/profileDrawerSlice";
+import { selectCurrentUser } from "@/features/ui/authSlice";
+import { AppUserType } from "@/services/auth/auth.interface";
 
 // Import Swiper styles
 import "swiper/css";
@@ -51,6 +57,24 @@ const ReelCommentSection = ({
       await addCommentMutation.mutateAsync(commentText);
       setCommentText("");
     }
+  };
+
+  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector(selectCurrentUser);
+  const followMutation = useFollowProvider(post.user.id);
+
+  const isOwnReel = currentUser?.id === post.user.id;
+
+  const handleFollow = () => {
+    followMutation.mutate(post.is_following ?? false);
+  };
+
+  const handleProfileClick = () => {
+    dispatch(openDrawer({
+      userId: post.user.id,
+      role: post.user.role as AppUserType || AppUserType.SERVICE_PROVIDER,
+      username: post.user.username || ''
+    }));
   };
 
   if (!open && !isSidebar) return null;
@@ -87,31 +111,33 @@ const ReelCommentSection = ({
             borderBottom: `1px solid ${isDark ? "#333" : "#eee"}`,
           }}
         >
-          <Avatar
-            src={post.user?.profile_pic || ""}
-            sx={{ width: 40, height: 40 }}
-          />
-          <Box sx={{ flex: 1, display: "flex", alignItems: "center", gap: 1 }}>
+          <Box onClick={handleProfileClick} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer' }}>
+            <Avatar
+              src={post.user?.profile_pic || ""}
+              sx={{ width: 40, height: 40 }}
+            />
             <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
               {post.user?.business_name || "User"}
-              
             </Typography>
-             <Typography
-            variant="caption"
-            sx={{
-              fontWeight: 700,
-              color: COLORS.PRIMARY_PURPLE,
-              cursor: "pointer",
-              "&:hover": { opacity: 0.8 },
-            }}
-          >
-            {t("follow")}
-          </Typography>
-            {/* <Typography variant="caption" sx={{ opacity: 0.6 }}>
-              Original Audio
-            </Typography> */}
           </Box>
-         
+          {!isOwnReel && (
+            <Button
+              size="small"
+              onClick={handleFollow}
+              sx={{
+                fontWeight: 700,
+                color: post.is_following ? "text.secondary" : COLORS.PRIMARY_PURPLE,
+                textTransform: 'none',
+                minWidth: 'auto',
+                p: 0,
+                ml: 1,
+                fontSize: "0.85rem",
+                '&:hover': { bgcolor: 'transparent', opacity: 0.8 }
+              }}
+            >
+              • {post.is_following ? t("following") : t("follow")}
+            </Button>
+          )}
         </Box>
       )}
 
@@ -144,10 +170,15 @@ const ReelCommentSection = ({
           <Box sx={{ display: "flex", gap: 1.5, mb: 3 }}>
             <Avatar
               src={post.user?.profile_pic || ""}
-              sx={{ width: 34, height: 34 }}
+              sx={{ width: 34, height: 34, cursor: 'pointer' }}
+              onClick={handleProfileClick}
             />
             <Box sx={{ flex: 1 }}>
-              <Typography variant="body2" sx={{ fontWeight: 700, fontSize: "0.85rem" }}>
+              <Typography 
+                variant="body2" 
+                sx={{ fontWeight: 700, fontSize: "0.85rem", cursor: 'pointer' }}
+                onClick={handleProfileClick}
+              >
                 {post.user?.business_name}
               </Typography>
               <Typography variant="body2" sx={{ mt: 0.5, lineHeight: 1.4 }}>
@@ -349,6 +380,24 @@ const ReelItem = ({
 
   const likeMutation = useLikePost(reel.id);
 
+  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector(selectCurrentUser);
+  const followMutation = useFollowProvider(reel.user.id);
+
+  const isOwnReel = currentUser?.id === reel.user.id;
+
+  const handleFollow = () => {
+    followMutation.mutate(reel.is_following ?? false);
+  };
+
+  const handleProfileClick = () => {
+    dispatch(openDrawer({
+      userId: reel.user.id,
+      role: reel.user.role as AppUserType || AppUserType.SERVICE_PROVIDER,
+      username: reel.user.username || ''
+    }));
+  };
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -455,6 +504,7 @@ const ReelItem = ({
             sx={{
               color: reel.is_liked ? "#ff0042" : "#fff",
               bgcolor: "rgba(0,0,0,0.3)",
+              filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.5))",
             }}
           >
             {reel.is_liked ? (
@@ -465,7 +515,13 @@ const ReelItem = ({
           </IconButton>
           <Typography
             variant="caption"
-            sx={{ color: "#fff", fontWeight: "bold", mt: -0.5, display: "block" }}
+            sx={{ 
+                color: "#fff", 
+                fontWeight: "bold", 
+                mt: -0.5, 
+                display: "block",
+                textShadow: "0px 1px 2px rgba(0,0,0,0.8)" 
+            }}
           >
             {reel.likes_count}
           </Typography>
@@ -477,19 +533,29 @@ const ReelItem = ({
               e.stopPropagation();
               onCommentClick();
             }}
-            sx={{ color: "#fff", bgcolor: "rgba(0,0,0,0.3)" }}
+            sx={{ 
+                color: "#fff", 
+                bgcolor: "rgba(0,0,0,0.3)",
+                filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.5))"
+            }}
           >
             <ChatBubble fontSize="large" sx={{ fontSize: 32 }} />
           </IconButton>
           <Typography
             variant="caption"
-            sx={{ color: "#fff", fontWeight: "bold", mt: -0.5, display: "block" }}
+            sx={{ 
+                color: "#fff", 
+                fontWeight: "bold", 
+                mt: -0.5, 
+                display: "block",
+                textShadow: "0px 1px 2px rgba(0,0,0,0.8)"
+            }}
           >
             {reel.comments_count}
           </Typography>
         </Box>
 
-        <IconButton sx={{ color: "#fff", bgcolor: "rgba(0,0,0,0.3)" }}>
+        <IconButton sx={{ color: "#fff", bgcolor: "rgba(0,0,0,0.3)", filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.5))" }}>
           <MoreVert fontSize="large" />
         </IconButton>
       </Box>
@@ -511,38 +577,47 @@ const ReelItem = ({
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1.5 }}>
-          <Avatar
-            src={reel.user?.profile_pic || ""}
-            sx={{ width: 42, height: 42, border: "2px solid #fff" }}
-          />
-          <Typography
-            variant="subtitle1"
-            sx={{ color: "#fff", fontWeight: 700 }}
-          >
-            {reel.user?.business_name || "User"}
-          </Typography>
-          <Box
-            sx={{
-              px: 1.5,
-              py: 0.3,
-              borderRadius: 1,
-              border: "1px solid #fff",
-              color: "#fff",
-              fontSize: "0.75rem",
-              fontWeight: "bold",
-              cursor: "pointer",
-              "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
-            }}
-          >
-            Follow
+          <Box onClick={handleProfileClick} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer' }}>
+            <Avatar
+              src={reel.user?.profile_pic || ""}
+              sx={{ width: 42, height: 42, border: "2px solid #fff", filter: "drop-shadow(0px 1px 3px rgba(0,0,0,0.5))" }}
+            />
+            <Typography
+              variant="subtitle1"
+              sx={{ color: "#fff", fontWeight: 700, textShadow: "0px 1px 3px rgba(0,0,0,0.8)" }}
+            >
+              {reel.user?.business_name || "User"}
+            </Typography>
           </Box>
+          {!isOwnReel && (
+            <Button
+              variant={reel.is_following ? "contained" : "outlined"}
+              size="small"
+              onClick={handleFollow}
+              sx={{
+                color: 'white',
+                borderColor: 'white',
+                borderRadius: '8px',
+                textTransform: 'none',
+                px: 1.5,
+                height: '28px',
+                fontSize: "0.75rem",
+                fontWeight: "bold",
+                bgcolor: reel.is_following ? 'rgba(255,255,255,0.2)' : 'transparent',
+                '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.1)' },
+              }}
+            >
+              {reel.is_following ? "Following" : "Follow"}
+            </Button>
+          )}
         </Box>
         <Typography
           variant="body2"
           sx={{
             color: "#fff",
             maxWidth: "80%",
-            textShadow: "0px 1px 2px rgba(0,0,0,0.5)",
+            textShadow: "0px 2px 4px rgba(0,0,0,0.9)",
+            fontWeight: 500,
           }}
         >
           {reel.caption}
@@ -636,7 +711,7 @@ const ReelViewModal = ({ open, onClose, reels, initialIndex }: any) => {
                 left: { md: "calc(50% - 450px)", lg: "calc(50% - 500px)" },
                 top: "50%",
                 transform: "translateY(-50%)",
-                zIndex: 1000,
+                zIndex: 100,
                 color: "#fff",
                 bgcolor: "rgba(255,255,255,0.1)",
                 "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },

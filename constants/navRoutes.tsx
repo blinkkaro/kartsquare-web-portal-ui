@@ -124,18 +124,17 @@ export const getMobileNavItems = (
   if (!isAuthenticated) {
     items.push(
       { label: t("home"), href: "/", icon: <HomeFilled /> },
-      {
-        label: t("services"),
-        href: "/cus/servicesList",
-        icon: <ArticleRounded />,
-      },
+      { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
       {
         label: t("reels"),
         href: "/cus/reels",
         icon: <PlaySquareIcon />,
       },
-      { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
-      // { label: t("events"), href: "/events", icon: <Event /> }
+      {
+        label: t("services"),
+        href: "/cus/servicesList",
+        icon: <ArticleRounded />,
+      },
     );
   } else {
     if (role === UserRole.SUPPLIER) {
@@ -157,38 +156,39 @@ export const getMobileNavItems = (
 
     const bookingsHref =
       role === UserRole.SERVICE_PROVIDER ? "/spr/bookings" : "/cus/bookings";
-    items.push(
-      { label: t("home"), href: "/", icon: <HomeFilled /> },
-      {
-        label: t("services"),
-        href: "/cus/servicesList",
-        icon: <ArticleRounded />,
-      },
 
-      // { label: t("events"), href: "/events", icon: <Event /> },
-      { label: t("bookings"), href: bookingsHref, icon: <ShoppingBag /> },
-      // { label: t("chat"), href: "/chat", icon: <Chat /> }
-    );
-    switch (role) {
-      case UserRole.SERVICE_PROVIDER:
-        items.push({
+    if (role === UserRole.SERVICE_PROVIDER) {
+      items.push(
+        { label: t("home"), href: "/", icon: <HomeFilled /> },
+        {
+          label: t("services"),
+          href: "/cus/servicesList",
+          icon: <ArticleRounded />,
+        },
+        { label: t("bookings"), href: bookingsHref, icon: <ShoppingBag /> },
+        {
           label: t("dashboard"),
           href: "/dashboard",
           icon: <Dashboard />,
-        });
-        break;
-      default:
-        items.push({
-          label: t("store"),
-          href: "/store",
-          icon: <LocalMallRounded />,
-        });
-        items.push({
+        },
+      );
+    } else {
+      // Default / Customer
+      items.push(
+        { label: t("home"), href: "/", icon: <HomeFilled /> },
+        { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
+        {
           label: t("reels"),
           href: "/cus/reels",
           icon: <PlaySquareIcon />,
-        });
-        break;
+        },
+        {
+          label: t("services"),
+          href: "/cus/servicesList",
+          icon: <ArticleRounded />,
+        },
+        { label: t("bookings"), href: bookingsHref, icon: <ShoppingBag /> },
+      );
     }
   }
 
