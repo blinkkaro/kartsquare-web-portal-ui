@@ -152,18 +152,43 @@ const ReelFeedGrid: React.FC<ReelFeedGridProps> = ({
                 }}
               >
                 {/* Reel Thumbnail */}
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    backgroundImage: `url(${thumbUrl})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                />
+                {thumbUrl && (thumbUrl.endsWith(".mp4") || thumbUrl.endsWith(".webm") || thumbUrl.endsWith(".mov")) ? (
+                  <Box
+                    component="video"
+                    src={`${thumbUrl}#t=0.5`}
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                    onMouseOver={(e: any) => e.currentTarget.play()}
+                    onMouseOut={(e: any) => {
+                      e.currentTarget.pause();
+                      e.currentTarget.currentTime = 0.5;
+                    }}
+                    muted
+                    playsInline
+                    preload="metadata"
+                  />
+                ) : (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      backgroundImage: `url(${thumbUrl})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                  />
+                )}
 
                 {/* Play Icon / Overlay */}
                 <Box

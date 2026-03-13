@@ -112,7 +112,20 @@ export default function PostModel({ onClose }: { onClose: () => void }) {
 
       {/* Tabs UI */}
       {viewMode === "grid" && (
-        <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
+        <Box
+          sx={{
+            borderBottom: 1,
+            borderColor: "divider",
+            mb: 2,
+            position: "sticky",
+            top: 72, // Height of RightDrawer header (approx 3*8 + 24/32)
+            zIndex: 10,
+            backgroundColor:
+              theme.palette.mode === "dark"
+                ? COLORS.BACKGROUND.PAPER_DARK
+                : COLORS.BACKGROUND.PAPER_LIGHT,
+          }}
+        >
           <Tabs
             value={activeTab}
             onChange={handleTabChange}
