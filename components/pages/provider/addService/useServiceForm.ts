@@ -22,8 +22,8 @@ export const useServiceForm = ({
   setSubcategories,
 }: UseServiceFormProps) => {
   // Form state
-  const [categoryId, setCategoryId] = useState("");
-  const [subcategoryId, setSubcategoryId] = useState("");
+  const [categoryIds, setCategoryIds] = useState<string[]>([]);
+  const [subcategoryIds, setSubcategoryIds] = useState<string[]>([]);
   const [serviceName, setServiceName] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
@@ -65,7 +65,15 @@ export const useServiceForm = ({
   useEffect(() => {
     const prefillForm = async () => {
       if (editService && open) {
-        setCategoryId(editService.category_id || "");
+        // Handle both string and array formats for backward compatibility
+        const catId = editService.category_id;
+        if (Array.isArray(catId)) {
+          setCategoryIds(catId);
+        } else if (catId) {
+          setCategoryIds([catId]);
+        } else {
+          setCategoryIds([]);
+        }
         setServiceName(editService.service_name || "");
         setDescription(editService.service_desc || "");
 
@@ -115,7 +123,12 @@ export const useServiceForm = ({
 
         // Subcategory ID will be set by useServiceData effect
         if (editService.sub_category_id) {
-          setSubcategoryId(editService.sub_category_id);
+          const subCatId = editService.sub_category_id;
+          if (Array.isArray(subCatId)) {
+            setSubcategoryIds(subCatId);
+          } else {
+            setSubcategoryIds([subCatId]);
+          }
         }
 
         if (editService.pricing_type) {
@@ -262,11 +275,11 @@ export const useServiceForm = ({
     const newFieldErrors: Record<string, string> = {};
     let isValid = true;
 
-    if (!categoryId) {
+    if (categoryIds.length === 0) {
       setError(english.select_category_error);
       isValid = false;
     }
-    if (!subcategoryId) {
+    if (subcategoryIds.length === 0) {
       setError(english.select_subcategory_error);
       isValid = false;
     }
@@ -397,10 +410,11 @@ export const useServiceForm = ({
         finalDesc = validPriceItems[0].description.trim();
       }
 
+      console.log('DEBUG SUBMIT - categoryIds:', categoryIds, 'subcategoryIds:', subcategoryIds);
       const requestData: any = {
         provider_id: userId,
-        category_id: categoryId,
-        sub_category_id: subcategoryId,
+        category_id: categoryIds,
+        sub_category_id: subcategoryIds,
         service_name: finalServiceName,
         service_desc: finalDesc,
         image_urls: finalImageUrls,
@@ -438,6 +452,7 @@ export const useServiceForm = ({
       }
 
       if (editService) {
+        console.log('DEBUG UPDATE - requestData:', requestData);
         await serviceListService.updateService(
           editService.service_id,
           requestData,
@@ -465,8 +480,8 @@ export const useServiceForm = ({
   };
 
   const resetForm = () => {
-    setCategoryId("");
-    setSubcategoryId("");
+    setCategoryIds([]);
+    setSubcategoryIds([]);
     setServiceName("");
     setPrice("");
     setDescription("");
@@ -494,10 +509,10 @@ export const useServiceForm = ({
 
   return {
     // Form state
-    categoryId,
-    setCategoryId,
-    subcategoryId,
-    setSubcategoryId,
+    categoryIds,
+    setCategoryIds,
+    subcategoryIds,
+    setSubcategoryIds,
     serviceName,
     setServiceName,
     price,

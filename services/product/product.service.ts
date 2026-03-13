@@ -13,6 +13,7 @@ import {
   ProductSummary,
   ProductSummaryPagination,
   ProductUpdate,
+  SupplierProductDetail,
 } from "./product.interface";
 import { DELETE, GET, POST, PUT } from "../api";
 import { APIENDPOINTS } from "./apiEndPoints";
@@ -131,10 +132,10 @@ class ProductService {
     }
   }
 
-  async getProductById(productId: string): Promise<ProductDetail> {
+  async getProductById(productId: string): Promise<SupplierProductDetail> {
     try {
       let url = APIENDPOINTS.PRODUCT_BY_ID(productId);
-      const response = await GET<ProductDetail>(url);
+      const response = await GET<SupplierProductDetail>(url);
       return response.data;
     } catch (error) {
       throw error;

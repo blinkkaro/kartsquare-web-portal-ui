@@ -261,6 +261,7 @@ const CustomerServiceDetails = () => {
                   price={service.price || 0}
                   currency={service.currency || "INR"}
                   categoryName={service.category_name || ""}
+                  subCategoryName={service.sub_category_name || ""}
                   onBookmark={() => {
                     /* TODO: Implement */
                   }}

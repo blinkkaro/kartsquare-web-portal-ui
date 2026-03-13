@@ -10,13 +10,11 @@ import { useTranslate } from "@/hooks/useTranslate";
 
 interface ProductDetailHeaderProps {
   productId: string;
-  productName: string;
   onDeleteClick: () => void;
 }
 
 const ProductDetailHeader: React.FC<ProductDetailHeaderProps> = ({
   productId,
-  productName,
   onDeleteClick,
 }) => {
   const router = useRouter();
@@ -39,21 +37,7 @@ const ProductDetailHeader: React.FC<ProductDetailHeaderProps> = ({
         gap: 2,
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <BackButton />
-        <Typography
-          variant="h4"
-          sx={{
-            fontWeight: 700,
-            fontSize: { xs: "1.5rem", sm: "2rem" },
-            color: isDark
-              ? COLORS.ACCENT_BLUE_DARK
-              : COLORS.PRIMARY_PURPLE,
-          }}
-        >
-          {productName}
-        </Typography>
-      </Box>
+      <BackButton />
 
       <Box sx={{ display: "flex", gap: 2 }}>
         <Tooltip title={t("edit_product")}>

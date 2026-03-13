@@ -35,19 +35,31 @@ interface InquiryModalProps {
 }
 
 const validationSchema = yup.object({
-  customer_name: yup.string().required("Name is required"),
+  customer_name: yup
+    .string()
+    .trim()
+    .max(100, "Maximum limit reached")
+    .required("Name is required"),
   phone_number: yup
     .string()
+    .trim()
     .matches(/^[0-9]{10}$/, "Phone number must be exactly 10 digits")
     .required("Mobile number is required"),
-  email: yup.string().email("Invalid email").required("Email is required"),
+  email: yup
+    .string()
+    .trim()
+    .lowercase()
+    .email("Invalid email")
+    .max(255, "Max limit reached")
+    .required("Email is required"),
   quantity: yup
     .number()
     .typeError("Quantity must be a number")
     .positive("Quantity must be positive")
     .integer("Quantity must be an integer")
+    .max(100000, "Quantity is too large")
     .required("Quantity is required"),
-  details: yup.string().optional(),
+  details: yup.string().trim().max(2000, "Max limit reached").optional(),
 });
 
 type FormData = yup.InferType<typeof validationSchema>;

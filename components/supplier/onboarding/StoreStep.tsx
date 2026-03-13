@@ -19,6 +19,9 @@ import {
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import ImageUpload from "@/components/common/ImageUpload";
+import AddressCard from "@/components/pages/address/components/AddressCard";
+import WarningModel from "@/components/common/WarningModel";
+import ErrorMessage from "@/components/common/ErrorMessage";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useSupplierStore, useUpdateSupplierStore } from "@/hooks/useSupplier";
 import { useRouter } from "next/navigation";
@@ -30,8 +33,12 @@ import { useAppDispatch } from "@/store/hooks";
 import { updateUser } from "@/features/ui/authSlice";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { secureStorage } from "@/helper/SecureStorage";
-
-import { useGetAddress } from "@/hooks/useAddress";
+import {
+  useGetAddress,
+  useUpdateAddress,
+  useDeleteAddress,
+} from "@/hooks/useAddress";
+import { Address } from "@/services/address/addressInterface";
 import AddressDrawer from "@/components/common/address/AddressDrawer";
 import { CircularProgress } from "@mui/material";
 
@@ -52,7 +59,9 @@ const formSectionStyle = (isDark: boolean) => ({
   borderRadius: 2,
   border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
   borderLeft: `4px solid ${COLORS.PRIMARY_PURPLE}`,
-  bgcolor: isDark ? alpha(COLORS.PRIMARY_PURPLE, 0.03) : alpha(COLORS.PRIMARY_PURPLE, 0.02),
+  bgcolor: isDark
+    ? alpha(COLORS.PRIMARY_PURPLE, 0.03)
+    : alpha(COLORS.PRIMARY_PURPLE, 0.02),
 });
 
 interface StoreStepProps {
@@ -76,33 +85,60 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
   const [addressDrawerOpen, setAddressDrawerOpen] = React.useState(false);
   const [isUploading, setIsUploading] = React.useState(false);
 
+  // Address Management State
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+  const [addressToEdit, setAddressToEdit] = React.useState<Address | null>(null);
+  const [addressToDelete, setAddressToDelete] = React.useState<string | null>(null);
+
+  const updateAddressMutation = useUpdateAddress();
+  const deleteAddressMutation = useDeleteAddress();
+
+
   const schema = React.useMemo(
     () =>
       yup.object().shape({
-        display_name: yup.string().required(t("store_setup_store_name_required" as any)),
-        slug: yup.string(),
-        about_us: yup.string().optional(),
-        contact_email: yup.string().email(t("store_setup_invalid_email" as any)).optional(),
+        display_name: yup
+          .string()
+          .trim()
+          .max(100, t("valNameMax"))
+          .required(t("store_setup_store_name_required" )),
+        slug: yup.string().trim().max(100, t("valNameMax")),
+        about_us: yup.string().trim().max(2000, t("valDescMax")).optional(),
+        contact_email: yup
+          .string()
+          .trim()
+          .max(255, t("valEmailMax"))
+          .email(t("store_setup_invalid_email" ))
+          .optional(),
         contact_phone: yup
           .string()
-          .required(t("store_setup_contact_phone_required" as any))
-          .matches(/^[0-9]{10}$/, t("store_setup_contact_phone_digits" as any)),
-        country_code: yup.string().required(t("countryCodeRequired" as any)),
-        establishment_year: yup.string().optional(),
-        store_address_id: yup.string().optional(),
-        logo_url: yup.string().optional(),
-        banner_url: yup.string().optional(),
+          .trim()
+          .required(t("store_setup_contact_phone_required" ))
+          .matches(/^[0-9]{10}$/, t("store_setup_contact_phone_digits" )),
+        country_code: yup
+          .string()
+          .trim()
+          .required(t("countryCodeRequired" )),
+        establishment_year: yup
+          .string()
+          .trim()
+          .max(4, "Invalid Year")
+          .optional(),
+        store_address_id: yup.string().trim().optional(),
+        logo_url: yup.string().trim().optional(),
+        banner_url: yup.string().trim().optional(),
         categories_served: yup
           .array()
-          .of(yup.string())
-          .min(1, t("store_setup_categories_min" as any))
-          .required(t("store_setup_categories_required" as any)),
-        operating_locations: yup
-          .array()
-          .of(yup.string())
-          .optional(),
-        contact_preferences: yup.array().of(yup.string()).optional(),
-        business_type: yup.string().required(t("store_setup_business_type_required" as any)),
+          .of(yup.string().trim())
+          .min(1, t("store_setup_categories_min" ))
+          .required(t("store_setup_categories_required" )),
+        operating_locations: yup.array().of(yup.string().trim()).optional(),
+        contact_preferences: yup.array().of(yup.string().trim()).optional(),
+        business_type: yup
+          .string()
+          .trim()
+          .required(t("store_setup_business_type_required" )),
       }),
     [t],
   );
@@ -126,6 +162,69 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
       business_type: "",
     },
   });
+
+  const handleSetDefault = (id: string) => {
+    const address = addresses?.find((addr) => addr.id === id);
+    if (address) {
+      updateAddressMutation.mutate({
+        id,
+        data: { ...address, is_default: true },
+      });
+    }
+  };
+
+  const handleDeleteAddress = () => {
+    if (addressToDelete) {
+      deleteAddressMutation.mutate(addressToDelete, {
+        onSuccess: () => {
+          setIsDeleteDialogOpen(false);
+          setAddressToDelete(null);
+          refetchAddresses();
+        },
+      });
+    }
+  };
+
+  const openEditModal = (address: Address) => {
+    setAddressToEdit(address);
+    setIsEditModalOpen(true);
+  };
+
+  const openDeleteDialog = (id: string) => {
+    setIsDeleteDialogOpen(true);
+    setAddressToDelete(id);
+  };
+
+  const displayedAddresses = addresses
+    ? [...addresses]
+        .sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        )
+        .slice(0, 1)
+    : [];
+
+  // Auto-selection effect
+  const storeAddressId = watch("store_address_id");
+  const prevAddressesCount = React.useRef(addresses?.length || 0);
+
+  React.useEffect(() => {
+    const currentCount = addresses?.length || 0;
+    if (currentCount > prevAddressesCount.current) {
+      // New address added - auto-select the latest one
+      if (displayedAddresses.length > 0) {
+        setValue("store_address_id", displayedAddresses[0].id, {
+          shouldValidate: true,
+        });
+      }
+    } else if (displayedAddresses.length > 0 && !storeAddressId) {
+      // Initial load - select first available address
+      setValue("store_address_id", displayedAddresses[0].id, {
+        shouldValidate: true,
+      });
+    }
+    prevAddressesCount.current = currentCount;
+  }, [displayedAddresses, storeAddressId, setValue, addresses?.length]);
 
   const selectedCountryCode = watch("country_code");
   const selectedCountry = countries.find(
@@ -284,66 +383,83 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
         >
           {/* Section: Basic Information */}
           <Box sx={formSectionStyle(isDark)}>
-            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1, color: COLORS.PRIMARY_PURPLE }}>
-              <BusinessOutlinedIcon fontSize="small" /> {t("store_setup_basic_info" as any)}
+            <Typography
+              variant="subtitle2"
+              fontWeight={700}
+              sx={{
+                mb: 2,
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                color: COLORS.PRIMARY_PURPLE,
+              }}
+            >
+              <BusinessOutlinedIcon fontSize="small" />{" "}
+              {t("store_setup_basic_info")}
             </Typography>
             <Grid container spacing={2.5}>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="body2" fontWeight="500" mb={0.5}>
-                  {t("store_setup_display_name" as any)}*
+                  {t("store_setup_display_name" )}*
                 </Typography>
                 <Input
                   name="display_name"
                   control={control}
-                  placeholder={t("store_setup_display_name_placeholder" as any)}
+                  placeholder={t("store_setup_display_name_placeholder" )}
                   startIcon={<StoreOutlinedIcon />}
                 />
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="body2" fontWeight="500" mb={0.5}>
-                  {t("store_setup_website_url" as any)}
+                  {t("store_setup_website_url" )}
                 </Typography>
                 <Input
                   name="slug"
                   control={control}
-                  placeholder={t("store_setup_website_url_placeholder" as any)}
+                  placeholder={t("store_setup_website_url_placeholder" )}
                   startIcon={<LinkOutlinedIcon />}
                 />
               </Grid>
               <Grid size={{ xs: 12 }}>
                 <Typography variant="body2" fontWeight="500" mb={1}>
-                  {t("store_setup_about_us" as any)}
+                  {t("store_setup_about_us" )}
                 </Typography>
                 <Input
                   name="about_us"
                   control={control}
                   multiline
                   rows={4}
-                  placeholder={t("store_setup_about_us_placeholder" as any)}
+                  placeholder={t("store_setup_about_us_placeholder" )}
                 />
               </Grid>
 
               <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="body2" fontWeight="500" mb={0.5}>
-                  {t("store_setup_business_type" as any)}*
+                  {t("store_setup_business_type" )}*
                 </Typography>
                 <Input
                   name="business_type"
                   control={control}
                   select
-                  placeholder={t("store_setup_business_type_placeholder" as any)}
+                  placeholder={t(
+                    "store_setup_business_type_placeholder" ,
+                  )}
                   startIcon={<BusinessOutlinedIcon fontSize="small" />}
                 >
-                  <MenuItem value="Wholesaler">{t("wholesaler" as any)}</MenuItem>
-                  <MenuItem value="Retailer">{t("retailer" as any)}</MenuItem>
-                  <MenuItem value="Exporter">{t("exporter" as any)}</MenuItem>
-                  <MenuItem value="Manufacturer">{t("manufacturer" as any)}</MenuItem>
+                  <MenuItem value="Wholesaler">
+                    {t("wholesaler" )}
+                  </MenuItem>
+                  <MenuItem value="Retailer">{t("retailer" )}</MenuItem>
+                  <MenuItem value="Exporter">{t("exporter" )}</MenuItem>
+                  <MenuItem value="Manufacturer">
+                    {t("manufacturer" )}
+                  </MenuItem>
                 </Input>
               </Grid>
 
               <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="body2" fontWeight="500" mb={0.5}>
-                  {t("store_setup_categories_served" as any)}*
+                  {t("store_setup_categories_served" )}*
                 </Typography>
                 <Controller
                   name="categories_served"
@@ -359,7 +475,9 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                         renderInput={(params) => (
                           <TextField
                             {...params}
-                            placeholder={t("store_setup_categories_placeholder" as any)}
+                            placeholder={t(
+                              "store_setup_categories_placeholder" ,
+                            )}
                             error={!!errors.categories_served}
                             helperText={
                               errors.categories_served?.message as string
@@ -368,7 +486,10 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                               ...params.InputProps,
                               startAdornment: (
                                 <>
-                                  <InputAdornment position="start" sx={{ pl: 1 }}>
+                                  <InputAdornment
+                                    position="start"
+                                    sx={{ pl: 1 }}
+                                  >
                                     <CategoryOutlinedIcon fontSize="small" />
                                   </InputAdornment>
                                   {params.InputProps.startAdornment}
@@ -418,7 +539,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
 
               <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="body2" fontWeight="500" mb={0.5}>
-                  {t("store_setup_operating_locations" as any)}
+                  {t("store_setup_operating_locations" )}
                 </Typography>
                 <Controller
                   name="operating_locations"
@@ -443,7 +564,9 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                       renderInput={(params) => (
                         <TextField
                           {...params}
-                          placeholder={t("store_setup_locations_placeholder" as any)}
+                          placeholder={t(
+                            "store_setup_locations_placeholder" ,
+                          )}
                           error={!!errors.operating_locations}
                           helperText={
                             errors.operating_locations?.message as string
@@ -466,21 +589,31 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                   )}
                 />
               </Grid>
-
             </Grid>
           </Box>
 
           {/* Section: Aesthetics & Branding */}
           <Box sx={formSectionStyle(isDark)}>
-            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1, color: COLORS.PRIMARY_PURPLE }}>
-              <InfoOutlinedIcon fontSize="small" /> {t("store_setup_aesthetics_branding" as any)}
+            <Typography
+              variant="subtitle2"
+              fontWeight={700}
+              sx={{
+                mb: 2,
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                color: COLORS.PRIMARY_PURPLE,
+              }}
+            >
+              <InfoOutlinedIcon fontSize="small" />{" "}
+              {t("store_setup_aesthetics_branding" )}
             </Typography>
             <Grid container spacing={2.5}>
               <Grid size={{ xs: 12, md: 6 }}>
                 <ImageUpload
                   variant="document"
-                  title={t("store_setup_store_logo" as any)}
-                  hint={t("store_setup_doc_hint_logo" as any)}
+                  title={t("store_setup_store_logo" )}
+                  hint={t("store_setup_doc_hint_logo" )}
                   images={logoUrl ? [logoUrl] : []}
                   onChange={(files) => handleImageChange(files, "logo_url")}
                   maxImages={1}
@@ -492,8 +625,8 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
               <Grid size={{ xs: 12, md: 6 }}>
                 <ImageUpload
                   variant="document"
-                  title={t("store_setup_store_banner" as any)}
-                  hint={t("store_setup_doc_hint_banner" as any)}
+                  title={t("store_setup_store_banner" )}
+                  hint={t("store_setup_doc_hint_banner" )}
                   images={bannerUrl ? [bannerUrl] : []}
                   onChange={(files) => handleImageChange(files, "banner_url")}
                   maxImages={1}
@@ -506,154 +639,126 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
 
           {/* Section: Store Location */}
           <Box sx={formSectionStyle(isDark)}>
-            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1, color: COLORS.PRIMARY_PURPLE }}>
-              <LocationOnOutlinedIcon fontSize="small" /> {t("store_setup_store_location" as any)}
+            <Typography
+              variant="subtitle2"
+              fontWeight={700}
+              sx={{
+                mb: 2,
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                color: COLORS.PRIMARY_PURPLE,
+              }}
+            >
+              <LocationOnOutlinedIcon fontSize="small" />{" "}
+              {t("store_setup_store_location" )}
             </Typography>
             <Box>
-              {isLoadingAddresses ? (
-                <Box display="flex" gap={2}>
-                  <CircularProgress size={20} />{" "}
-                  <Typography variant="body2">
-                    {t("store_setup_loading_addresses" as any)}
-                  </Typography>
-                </Box>
-              ) : (
-                <Grid container spacing={2}>
-                  {addresses?.map((addr: any) => (
-                    <Grid size={{ xs: 12, md: 6 }} key={addr.id}>
-                      <Box
-                        onClick={() =>
-                          setValue("store_address_id", addr.id, {
-                            shouldValidate: true,
-                          })
-                        }
-                        sx={{
-                          p: 2,
-                          border: "1px solid",
-                          borderColor:
-                            watch("store_address_id") === addr.id
-                              ? COLORS.PRIMARY_PURPLE
-                              : "divider",
-                          borderRadius: 3,
-                          cursor: "pointer",
-                          bgcolor:
-                            watch("store_address_id") === addr.id
-                              ? `${COLORS.PRIMARY_PURPLE}08`
-                              : "transparent",
-                          transition: "all 0.3s ease",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 2,
-                          position: "relative",
-                          overflow: "hidden",
-                          "&:hover": {
-                            borderColor: COLORS.PRIMARY_PURPLE,
-                            bgcolor: `${COLORS.PRIMARY_PURPLE}04`,
-                          },
-                        }}
-                      >
+              {errors.store_address_id && (
+                <ErrorMessage
+                  error={errors.store_address_id.message || ""}
+                  isVisible={!!errors.store_address_id}
+                />
+              )}
+
+              <Box
+                sx={{
+                  p: 2,
+                  borderRadius: 2,
+                  bgcolor: isDark
+                    ? COLORS.BACKGROUND.SECONDARY_DARK
+                    : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                  border: `1px solid ${
+                    isDark
+                      ? COLORS.BORDER.DEFAULT_DARK
+                      : COLORS.BORDER.DEFAULT_LIGHT
+                  }`,
+                }}
+              >
+                {isLoadingAddresses ? (
+                  <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+                    <CircularProgress size={20} />
+                  </Box>
+                ) : displayedAddresses && displayedAddresses.length > 0 ? (
+                  <Grid container spacing={2}>
+                    {displayedAddresses.map((addr: Address) => (
+                      <Grid size={{ xs: 12 }} key={addr.id}>
                         <Box
+                          onClick={() => {
+                            setValue("store_address_id", addr.id, {
+                              shouldValidate: true,
+                            });
+                          }}
                           sx={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: 2,
-                            bgcolor:
-                              watch("store_address_id") === addr.id
-                                ? COLORS.PRIMARY_PURPLE
-                                : "divider",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            color: "white",
-                            flexShrink: 0,
+                            cursor: "pointer",
+                            height: "100%",
+                            border:
+                              storeAddressId === addr.id
+                                ? `2px solid ${COLORS.PRIMARY_PURPLE}`
+                                : `1px solid ${
+                                    isDark
+                                      ? COLORS.BORDER.DEFAULT_DARK
+                                      : COLORS.BORDER.DEFAULT_LIGHT
+                                  }`,
+                            borderRadius: "12px",
+                            position: "relative",
+                            "&:hover": {
+                              borderColor: COLORS.PRIMARY_PURPLE,
+                            },
+                            backgroundColor:
+                              storeAddressId === addr.id
+                                ? isDark
+                                  ? "rgba(124, 77, 255, 0.1)"
+                                  : "rgba(124, 77, 255, 0.05)"
+                                : "transparent",
                           }}
                         >
-                          <LocationOnOutlinedIcon fontSize="small" />
-                        </Box>
-                        <Box sx={{ flex: 1, minWidth: 0, pr: 7 }}>
-                          <Typography variant="subtitle2" fontWeight="700">
-                            {addr.address_name}
-                          </Typography>
-                          <Typography
-                            variant="caption"
-                            color="text.secondary"
-                            noWrap
-                            sx={{ display: "block" }}
-                          >
-                            {addr.address}, {addr.city_town}
-                          </Typography>
-                        </Box>
-                        {watch("store_address_id") === addr.id && (
-                          <Chip
-                            label={t("store_setup_selected" as any)}
-                            size="small"
-                            color="primary"
-                            variant="filled"
-                            sx={{
-                              height: 20,
-                              fontSize: "0.65rem",
-                              position: "absolute",
-                              right: 8,
-                              top: "50%",
-                              transform: "translateY(-50%)",
-                              pointerEvents: "none",
-                            }}
+                          <AddressCard
+                            address={addr}
+                            onEdit={(a) => openEditModal(a)}
+                            onDelete={(id) => openDeleteDialog(id)}
+                            onSetDefault={handleSetDefault}
                           />
-                        )}
-                      </Box>
-                    </Grid>
-                  ))}
-                  <Grid size={{ xs: 12, md: 6 }}>
-                    <Box
-                      onClick={() => setAddressDrawerOpen(true)}
-                      sx={{
-                        p: 2,
-                        border: "2px dashed",
-                        borderColor: "divider",
-                        borderRadius: 3,
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        height: "100%",
-                        minHeight: 74,
-                        transition: "all 0.3s ease",
-                        "&:hover": {
-                          borderColor: COLORS.PRIMARY_PURPLE,
-                          color: COLORS.PRIMARY_PURPLE,
-                          bgcolor: `${COLORS.PRIMARY_PURPLE}04`,
-                        },
-                      }}
-                    >
-                      <Typography
-                        variant="body2"
-                        fontWeight="700"
-                        display="flex"
-                        alignItems="center"
-                        gap={1}
-                      >
-                        {t("store_setup_add_new_address" as any)}
-                      </Typography>
-                    </Box>
+                        </Box>
+                      </Grid>
+                    ))}
                   </Grid>
-                </Grid>
-              )}
-              {errors.store_address_id && (
-                <Typography
-                  color="error"
-                  variant="caption"
-                  sx={{ mt: 1, display: "block" }}
+                ) : (
+                  <Box sx={{ textAlign: "center", py: 4 }}>
+                    <Typography sx={{ mb: 2 }}>
+                      {t("no_address_yet" )}
+                    </Typography>
+                  </Box>
+                )}
+
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  onClick={() => setAddressDrawerOpen(true)}
+                  sx={{ mt: 3, borderStyle: "dashed" }}
+                  startIcon={<span>+</span>}
                 >
-                  {errors.store_address_id.message as string}
-                </Typography>
-              )}
+                  {t("store_setup_add_new_address" )}
+                </Button>
+              </Box>
             </Box>
           </Box>
 
           {/* Section: Contact Information */}
           <Box sx={formSectionStyle(isDark)}>
-            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1, color: COLORS.PRIMARY_PURPLE }}>
-              <PhoneOutlinedIcon fontSize="small" /> {t("store_setup_contact_info" as any)}
+            <Typography
+              variant="subtitle2"
+              fontWeight={700}
+              sx={{
+                mb: 2,
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                color: COLORS.PRIMARY_PURPLE,
+              }}
+            >
+              <PhoneOutlinedIcon fontSize="small" />{" "}
+              {t("store_setup_contact_info" )}
             </Typography>
 
             {/* <Grid size={{ xs: 12 }}>
@@ -676,7 +781,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                                                     <Checkbox
                                                         checked={(value as string[])?.includes(pref.key) || false}
                                                         onChange={(e) => {
-                                                            const current = (value as any[]) || [];
+                                                            const current = (value []) || [];
                                                             if (e.target.checked) {
                                                                 onChange([...current, pref.key]);
                                                             } else {
@@ -701,7 +806,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
               <Grid container spacing={2.5}>
                 <Grid size={{ xs: 12, md: 7 }}>
                   <Typography variant="body2" fontWeight="500" mb={1}>
-                    {t("store_setup_primary_contact" as any)}*
+                    {t("store_setup_primary_contact" )}*
                   </Typography>
                   <Box sx={{ display: "flex", gap: 1.5 }}>
                     <Box sx={{ width: { xs: "85px", md: "95px" } }}>
@@ -724,7 +829,9 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                       <Input
                         name="contact_phone"
                         control={control}
-                        placeholder={t("store_setup_contact_phone_placeholder" as any)}
+                        placeholder={t(
+                          "store_setup_contact_phone_placeholder" ,
+                        )}
                         startIcon={<PhoneOutlinedIcon fontSize="small" />}
                         type="tel"
                         sx={{ height: 48 }}
@@ -735,12 +842,14 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
 
                 <Grid size={{ xs: 12, md: 5 }}>
                   <Typography variant="body2" fontWeight="500" mb={1}>
-                    {t("store_setup_contact_email" as any)}
+                    {t("store_setup_contact_email" )}
                   </Typography>
                   <Input
                     name="contact_email"
                     control={control}
-                    placeholder={t("store_setup_contact_email_placeholder" as any)}
+                    placeholder={t(
+                      "store_setup_contact_email_placeholder" ,
+                    )}
                     startIcon={<EmailOutlinedIcon fontSize="small" />}
                     type="email"
                   />
@@ -750,12 +859,14 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
 
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography variant="body2" fontWeight="500" mb={1} mt={2}>
-                {t("store_setup_establishment_year" as any)}
+                {t("store_setup_establishment_year" )}
               </Typography>
               <Input
                 name="establishment_year"
                 control={control}
-                placeholder={t("store_setup_establishment_year_placeholder" as any)}
+                placeholder={t(
+                  "store_setup_establishment_year_placeholder",
+                )}
                 startIcon={<CalendarTodayOutlinedIcon fontSize="small" />}
               />
             </Grid>
@@ -774,7 +885,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                 onClick={onBack || (() => router.back())}
                 sx={{ borderRadius: "50px", px: 4, height: 48 }}
               >
-                {t("goBack" as any)}
+                {t("goBack" )}
               </Button>
             ) : (
               <Box />
@@ -800,7 +911,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                 transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >
-              {t("store_setup_save_continue" as any)}
+              {t("store_setup_save_continue" )}
             </Button>
           </Box>
         </Paper>
@@ -812,6 +923,50 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
           refetchAddresses();
         }}
         mode="add"
+        isDefault={true}
+      />
+
+      <AddressDrawer
+        open={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setAddressToEdit(null);
+          refetchAddresses();
+        }}
+        initialData={addressToEdit}
+        mode="edit"
+      />
+
+      <WarningModel
+        open={isDeleteDialogOpen}
+        onClose={() => {
+          setIsDeleteDialogOpen(false);
+          setAddressToDelete(null);
+        }}
+        title={t("deleteAddress" )}
+        description={t("deleteAddressDescription" )}
+        ActionsButtons={
+          <Box>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setIsDeleteDialogOpen(false);
+                setAddressToDelete(null);
+              }}
+            >
+              {t("cancel" )}
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleDeleteAddress}
+              sx={{
+                ml: 2,
+              }}
+            >
+              {t("delete" )}
+            </Button>
+          </Box>
+        }
       />
     </>
   );

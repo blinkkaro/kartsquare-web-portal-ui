@@ -269,28 +269,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             </IconButton>
           </>
         )}
-
-        {/* Category Badge */}
-        <Chip
-          label={service.category_name}
-          size="small"
-          sx={{
-            position: "absolute",
-            bottom: 12,
-            left: 12,
-            bgcolor: isDark
-              ? COLORS.BACKGROUND.PRIMARY_DARK
-              : COLORS.BACKGROUND.PRIMARY_LIGHT,
-            color: isDark
-              ? COLORS.TEXT.PRIMARY_DARK
-              : COLORS.TEXT.PRIMARY_LIGHT,
-            fontWeight: 600,
-            fontSize: "0.7rem",
-            height: "24px",
-            borderRadius: "12px",
-            border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
-          }}
-        />
       </Box>
 
       <CardContent sx={{ pt: 1.5, pb: "16px !important" }}>

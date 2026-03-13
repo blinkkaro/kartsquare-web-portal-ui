@@ -8,6 +8,7 @@ interface ServiceDetailsHeaderProps {
   price: number;
   currency: string;
   categoryName: string;
+  subCategoryName?: string;
   isPriceRequired: boolean;
 }
 
@@ -15,6 +16,7 @@ const ServiceDetailsHeader = ({
   price,
   currency,
   categoryName,
+  subCategoryName,
   isPriceRequired,
 }: ServiceDetailsHeaderProps) => {
   const theme = useTheme();
@@ -22,7 +24,7 @@ const ServiceDetailsHeader = ({
   const { t } = useTranslate();
 
   return (
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1, flexWrap: "wrap" }}>
         <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
           {isPriceRequired ? (
             <>
@@ -64,7 +66,11 @@ const ServiceDetailsHeader = ({
           )}
         </Box>
         <Chip
-          label={categoryName}
+          label={
+            subCategoryName
+              ? `${categoryName} • ${subCategoryName}`
+              : categoryName
+          }
           size="small"
           sx={{
             bgcolor: isDark
@@ -73,6 +79,15 @@ const ServiceDetailsHeader = ({
             color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
             fontWeight: 600,
             border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"}`,
+            maxWidth: "100%",
+            height: "auto",
+            minHeight: "24px",
+            py: 0.5,
+            "& .MuiChip-label": {
+              whiteSpace: "normal",
+              display: "block",
+              lineHeight: 1.4,
+            }
           }}
         />
       </Box>
