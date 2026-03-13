@@ -43,21 +43,21 @@ export const getSuccessStories = (t: any) => [
     role: t("roleTailor"),
     tagline: t("successStoryTagline1"),
     image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=60",
+      "https://res.cloudinary.com/dmltxho0z/image/upload/v1772179474/documents/file_pxqyq0.jpg",
   },
   {
     name: "Priya Sharma",
     role: t("roleKiranaOwner"),
     tagline: t("successStoryTagline2"),
     image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&auto=format&fit=crop&q=60",
+      "https://res.cloudinary.com/dmltxho0z/image/upload/v1772179474/documents/file_y8h4sh.jpg",
   },
   {
     name: "Vikram Singh",
     role: t("roleElectrician"),
     tagline: t("successStoryTagline3"),
     image:
-      "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&auto=format&fit=crop&q=60",
+      "https://res.cloudinary.com/dmltxho0z/image/upload/v1772179474/documents/file_ovitug.jpg",
   },
 ];
 
