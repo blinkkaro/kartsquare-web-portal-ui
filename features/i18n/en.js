@@ -346,6 +346,9 @@ export const english = {
   locationInformationUnavailable: "Location information unavailable",
   locationRequestTimedOut: "Location request timed out",
   myPosts: "My Posts",
+  myReels: "My Reels",
+  reels: "Reels",
+  noReels: "No reels yet",
 
   // Post Feed
   noPosts: "No posts yet",

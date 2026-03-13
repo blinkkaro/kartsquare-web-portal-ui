@@ -31,26 +31,70 @@ const AddPostDrawer: React.FC<AddPostDrawerProps> = ({ onClose }) => {
   const [error, setError] = useState<string>("");
   const [compressing, setCompressing] = useState(false);
 
+  const generateThumbnail = async (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement("video");
+      const url = URL.createObjectURL(file);
+      video.src = url;
+      video.currentTime = 1; // Capture at 1 second
+      
+      video.onloadeddata = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const thumbFile = new File([blob], "thumbnail.jpg", { type: "image/jpeg" });
+            URL.revokeObjectURL(url);
+            resolve(thumbFile);
+          } else {
+            reject(new Error("Thumbnail generation failed"));
+          }
+        }, "image/jpeg", 0.7);
+      };
+
+      video.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("Video load failed for thumbnail"));
+      };
+    });
+  };
+
   const compressVideo = async (file: File): Promise<File> => {
-    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+    const MAX_SIZE = 15 * 1024 * 1024; // 15MB
     if (file.size <= MAX_SIZE) return file;
 
     return new Promise((resolve, reject) => {
       const video = document.createElement("video");
       const url = URL.createObjectURL(file);
       video.src = url;
-      video.muted = true;
+      video.muted = false; // Need sound!
+      video.volume = 0; // But don't blast it to the user
       video.play();
 
       video.onloadeddata = () => {
-        const stream = (video as any).captureStream();
+        let stream;
+        try {
+          stream = (video as any).captureStream();
+        } catch (e) {
+          // Fallback if captureStream fails
+          URL.revokeObjectURL(url);
+          resolve(file); 
+          return;
+        }
+
         const mediaRecorder = new MediaRecorder(stream, {
-          mimeType: "video/webm;codecs=vp8",
-          bitsPerSecond: 1000000, // 1Mbps target
+          mimeType: "video/webm;codecs=vp8,opus", // Include opus for audio
+          videoBitsPerSecond: 2500000, // 2.5Mbps for better quality
         });
 
         const chunks: Blob[] = [];
-        mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) chunks.push(e.data);
+        };
         mediaRecorder.onstop = () => {
           const blob = new Blob(chunks, { type: "video/webm" });
           const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".webm"), {
@@ -63,7 +107,6 @@ const AddPostDrawer: React.FC<AddPostDrawerProps> = ({ onClose }) => {
         mediaRecorder.start();
         video.onended = () => mediaRecorder.stop();
         
-        // If video doesn't have an 'ended' event (e.g. streaming), stop after duration
         setTimeout(() => {
           if (mediaRecorder.state === "recording") mediaRecorder.stop();
         }, (video.duration + 1) * 1000);
@@ -123,12 +166,25 @@ const AddPostDrawer: React.FC<AddPostDrawerProps> = ({ onClose }) => {
       const processedFiles: File[] = [];
 
       for (const file of selectedFiles) {
-        if (file.type.startsWith("video/") && file.size > 5 * 1024 * 1024) {
+        if (file.type.startsWith("video/")) {
+          // 1. Generate thumbnail first
           try {
-            const compressed = await compressVideo(file);
-            processedFiles.push(compressed);
+            const thumbnail = await generateThumbnail(file);
+            processedFiles.push(thumbnail);
           } catch (e) {
-            console.error("Compression failed, using original", e);
+            console.error("Thumbnail generation failed", e);
+          }
+
+          // 2. Compress video if needed (increased limit to 20MB)
+          if (file.size > 20 * 1024 * 1024) {
+            try {
+              const compressed = await compressVideo(file);
+              processedFiles.push(compressed);
+            } catch (e) {
+              console.error("Compression failed, using original", e);
+              processedFiles.push(file);
+            }
+          } else {
             processedFiles.push(file);
           }
         } else {
@@ -141,7 +197,7 @@ const AddPostDrawer: React.FC<AddPostDrawerProps> = ({ onClose }) => {
         media_urls: processedFiles,
         post_type: postType,
         visibility: data.visibility,
-        location_name: "", // You might want to get this from reverse geocoding if needed
+        location_name: "", 
         latitude: userCoordinates?.latitude || 0,
         longitude: userCoordinates?.longitude || 0,
         mentions: [],

@@ -95,6 +95,23 @@ export const usePosts = (isOpen: boolean) => {
   });
 };
 
+export const useReels = (isOpen: boolean) => {
+  const user: User = secureStorage.getItem("user_details");
+  const userId = user.id;
+  return useInfiniteQuery({
+    queryKey: ["providerReels"],
+    queryFn: ({ pageParam = 1 }) =>
+      profileService.getProviderReels(userId, pageParam, 12),
+    getNextPageParam: (lastPage: providerPostsInterface, allPages) => {
+      const morePagesExist =
+        lastPage?.pagination?.currentPage < lastPage?.pagination?.totalPages;
+      return morePagesExist ? lastPage.pagination.currentPage + 1 : undefined;
+    },
+    initialPageParam: 1,
+    enabled: !!userId && isOpen,
+  });
+};
+
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
 

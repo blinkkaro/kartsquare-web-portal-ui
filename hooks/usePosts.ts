@@ -126,6 +126,7 @@ export const useLikePost = (postId: string) => {
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["posts"] });
       await queryClient.cancelQueries({ queryKey: ["providerPosts"] });
+      await queryClient.cancelQueries({ queryKey: ["providerReels"] });
       await queryClient.cancelQueries({
         predicate: (query) => query.queryKey[0] === "providerProfileByUsername",
       });
@@ -133,6 +134,9 @@ export const useLikePost = (postId: string) => {
       const previousPosts = queryClient.getQueriesData({ queryKey: ["posts"] });
       const previousProviderPosts = queryClient.getQueriesData({
         queryKey: ["providerPosts"],
+      });
+      const previousProviderReels = queryClient.getQueriesData({
+        queryKey: ["providerReels"],
       });
       const previousProfileByUsername = queryClient.getQueriesData({
         predicate: (query) => query.queryKey[0] === "providerProfileByUsername",
@@ -187,6 +191,10 @@ export const useLikePost = (postId: string) => {
         { queryKey: ["providerPosts"] },
         updatePostInCache,
       );
+      queryClient.setQueriesData(
+        { queryKey: ["providerReels"] },
+        updatePostInCache,
+      );
 
       // Update providerProfileByUsername cache
       queryClient.setQueriesData(
@@ -200,6 +208,7 @@ export const useLikePost = (postId: string) => {
       return {
         previousPosts,
         previousProviderPosts,
+        previousProviderReels,
         previousProfileByUsername,
       };
     },
@@ -240,6 +249,10 @@ export const useLikePost = (postId: string) => {
           updateVerifyPost,
         );
         queryClient.setQueriesData(
+          { queryKey: ["providerReels"] },
+          updateVerifyPost,
+        );
+        queryClient.setQueriesData(
           {
             predicate: (query) =>
               query.queryKey[0] === "providerProfileByUsername",
@@ -256,6 +269,11 @@ export const useLikePost = (postId: string) => {
       }
       if (context?.previousProviderPosts) {
         context.previousProviderPosts.forEach(([key, data]) => {
+          queryClient.setQueryData(key, data);
+        });
+      }
+      if (context?.previousProviderReels) {
+        context.previousProviderReels.forEach(([key, data]) => {
           queryClient.setQueryData(key, data);
         });
       }
