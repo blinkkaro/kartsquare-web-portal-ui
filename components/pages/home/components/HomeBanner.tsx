@@ -1,29 +1,17 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Typography, Button, InputBase, useTheme, Grid, Paper, AvatarGroup, Avatar, Stack } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import { COLORS } from "@/constants/colors";
+import { Box, Typography, Button, useTheme, Grid, AvatarGroup, Avatar, Stack } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
+import HomeSearchBar from "./HomeSearchBar";
 
 const HomeBanner = () => {
     const theme = useTheme();
     const { t } = useTranslationContext();
     const router = useRouter();
+
     const [searchQuery, setSearchQuery] = useState("");
-
-    const handleSearch = () => {
-        if (searchQuery.trim()) {
-            router.push(`/store?q=${encodeURIComponent(searchQuery.trim())}`);
-        }
-    };
-
-    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            handleSearch();
-        }
-    };
+    const searchRef = React.useRef<any>(null);
 
     return (
         <Box
@@ -97,65 +85,8 @@ const HomeBanner = () => {
                         </Typography>
                     </Stack>
 
-                    {/* AI Search Bar */}
-                    <Paper
-                        elevation={4}
-                        component="div"
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            bgcolor: "white",
-                            borderRadius: "50px", // Pill shape
-                            p: "6px",
-                            pl: 3,
-                            width: "100%",
-                            maxWidth: "600px",
-                            boxShadow: "0px 8px 25px rgba(0,0,0,0.2)",
-                            transition: "transform 0.2s",
-                            "&:focus-within": {
-                                transform: "scale(1.01)",
-                                boxShadow: "0px 12px 30px rgba(0,0,0,0.3)"
-                            }
-                        }}
-                    >
-                        <SearchIcon sx={{ color: "text.secondary", fontSize: 24, mr: 1.5 }} />
-                        <InputBase
-                            placeholder={t("home_banner_search_placeholder")}
-                            sx={{
-                                flex: 1,
-                                fontSize: "1rem",
-                                color: "text.primary",
-                                "& input::placeholder": {
-                                    opacity: 0.7
-                                }
-                            }}
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyDown={handleKeyPress}
-                        />
-                        <Button
-                            variant="contained"
-                            startIcon={<AutoAwesomeIcon />}
-                            onClick={handleSearch}
-                            sx={{
-                                borderRadius: "30px", // Inner pill
-                                background: "linear-gradient(135deg, #6C5DD3 0%, #4D3CC1 100%)",
-                                textTransform: "none",
-                                boxShadow: "0 4px 15px rgba(108, 93, 211, 0.4)",
-                                px: 3,
-                                py: 1.2,
-                                fontSize: "0.95rem",
-                                fontWeight: 600,
-                                minWidth: "120px",
-                                "&:hover": {
-                                    background: "linear-gradient(135deg, #7A6BE0 0%, #5E4DD8 100%)",
-                                    boxShadow: "0 6px 20px rgba(108, 93, 211, 0.6)",
-                                }
-                            }}
-                        >
-                            {t("home_banner_search_button")}
-                        </Button>
-                    </Paper>
+                    {/* Search Bar Component */}
+                    <HomeSearchBar ref={searchRef} value={searchQuery} onChange={setSearchQuery} />
 
                     {/* Category/Filter Tags */}
                     <Box sx={{ mt: 2.5, display: "flex", gap: 1.5, flexWrap: "wrap", alignItems: "center" }}>
@@ -164,7 +95,7 @@ const HomeBanner = () => {
                                 key={index}
                                 onClick={() => {
                                     setSearchQuery(tag);
-                                    // Optional: specific tag behavior
+                                    searchRef.current?.focus();
                                 }}
                                 sx={{
                                     bgcolor: "rgba(30,30,30,0.7)", // Dark semi-transparent

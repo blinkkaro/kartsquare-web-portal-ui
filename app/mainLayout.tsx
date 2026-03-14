@@ -56,10 +56,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
           }}
         >
           {children}
-          <AIBotton setOpen={setOpen} />
+          {/* <AIBotton setOpen={setOpen} /> */}
         </Box>
         <ProfileDrawer />
-        <Ai open={open} onClose={() => setOpen(false)} />
+        {/* <Ai open={open} onClose={() => setOpen(false)} /> */}
       </Box>
       <LoginModal />
       <Footer />
