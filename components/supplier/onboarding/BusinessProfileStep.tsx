@@ -4,6 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Box, Typography, Autocomplete, TextField, Grid } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -127,7 +128,7 @@ const BusinessProfileStep: React.FC<BusinessProfileStepProps> = ({
     }
   };
 
-  if (isLoadingProfile) return <Typography>Loading profile...</Typography>;
+  if (isLoadingProfile) return <CenteredLoader py={10} showText={true} />;
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)}>

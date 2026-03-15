@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState, KeyboardEvent, ClipboardEvent } from "react";
+import React, { useRef, useState, KeyboardEvent, ClipboardEvent, useEffect } from "react";
 import { Box, styled } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 
@@ -44,11 +44,20 @@ const StyledInput = styled("input")(({ theme }) => ({
 interface OtpInputProps {
   length?: number;
   onChange: (otp: string) => void;
+  onEnter?: () => void;
 }
 
-function OtpInput({ length = OTP_LENGTH, onChange }: OtpInputProps) {
+function OtpInput({ length = OTP_LENGTH, onChange, onEnter }: OtpInputProps) {
   const [otp, setOtp] = useState<string[]>(new Array(length).fill(""));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  useEffect(() => {
+    // Ensuring the first input is focused on mount
+    const timer = setTimeout(() => {
+      inputRefs.current[0]?.focus();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -76,11 +85,10 @@ function OtpInput({ length = OTP_LENGTH, onChange }: OtpInputProps) {
       if (!otp[index] && index > 0) {
         // Move to previous if current is empty
         inputRefs.current[index - 1]?.focus();
-      } else if (otp[index]) {
-        // If current has value, just clear it (default behavior) but we might want to ensure state updates
-        // Note: handleChange handles the value update. Backspace on non-empty just clears it.
-        // If we want backspace to clear AND move back if empty, we need to handle it carefully.
-        // Standard behavior: Backspace clears current. 2nd Backspace moves back.
+      }
+    } else if (e.key === "Enter") {
+      if (onEnter) {
+        onEnter();
       }
     }
   };

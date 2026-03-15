@@ -10,13 +10,14 @@ import {
   RadioGroup,
   FormControlLabel,
   FormControl,
-  CircularProgress,
   useTheme,
   Chip,
   Alert,
   Dialog,
   DialogContent,
 } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { CheckCircle, Bolt, Verified } from "@mui/icons-material";
 import { useParams, useRouter } from "next/navigation";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
@@ -98,19 +99,7 @@ const CustomerServiceBooking = () => {
   if (loading) {
     return (
       <MainLayout>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: "100vh",
-            bgcolor: isDark
-              ? COLORS.BACKGROUND.PRIMARY_DARK
-              : COLORS.BACKGROUND.SECONDARY_LIGHT,
-          }}
-        >
-          <CircularProgress />
-        </Box>
+        <CenteredLoader minHeight="100vh" py={0} />
       </MainLayout>
     );
   }
@@ -531,7 +520,7 @@ const CustomerServiceBooking = () => {
                           gridColumn: "1 / -1",
                         }}
                       >
-                        <CircularProgress size={24} />
+                        <LogoLoader size={24} />
                       </Box>
                     ) : timeSlots.length === 0 ? (
                       <Typography
@@ -684,7 +673,7 @@ const CustomerServiceBooking = () => {
                         {location === "at_customer" && (
                           <Box sx={{ ml: 4, mt: 2, mb: 2 }}>
                             {addressLoading ? (
-                              <CircularProgress size={20} />
+                              <LogoLoader size={20} />
                             ) : userAddresses.length > 0 ? (
                               <Box
                                 sx={{

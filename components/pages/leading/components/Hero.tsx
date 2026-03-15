@@ -7,10 +7,10 @@ import {
   Container,
   Button,
   useTheme,
-  CircularProgress,
   MenuItem,
   Grid,
 } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CheckIcon from "@mui/icons-material/Check";
@@ -478,7 +478,7 @@ const Hero: React.FC = () => {
                     type="submit"
                     disabled={loading}
                     variant="contained"
-                    endIcon={loading ? <CircularProgress size={22} color="inherit" /> : <ArrowForwardIcon sx={{ fontSize: 22 }} />}
+                    endIcon={loading ? <LogoLoader size={22} /> : <ArrowForwardIcon sx={{ fontSize: 22 }} />}
                     sx={{
                       bgcolor: PURPLE,
                       color: "#fff",

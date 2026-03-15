@@ -27,7 +27,8 @@ import { english } from "../../../../features/i18n/en";
 import dayjs from "dayjs";
 import RightDrawer from "../../../common/RightDrawer";
 import { bookingDetailsService } from "../../../../services/booking/bookingDetails";
-import { CircularProgress, Link } from "@mui/material";
+import { Link } from "@mui/material";
+import LogoLoader from "../../../common/Loader/LogoLoader";
 import {
   Phone,
   CalendarToday,
@@ -109,10 +110,10 @@ const ProviderBookingDetailsDrawer: React.FC<
               justifyContent: "center",
               alignItems: "center",
               height: "100%",
-              py: 10,
+              py: 20,
             }}
           >
-            <CircularProgress />
+            <LogoLoader size={60} />
           </Box>
         </Box>
       </RightDrawer>
@@ -129,7 +130,7 @@ const ProviderBookingDetailsDrawer: React.FC<
       title={english.booking_details}
       width={500}
     >
-      <Box sx={{ px: 4, pb: 4 }}>
+      <Box sx={{ px: { xs: 2, sm: 4 }, pb: 4 }}>
         {loading ? (
           <Box
             sx={{
@@ -137,10 +138,10 @@ const ProviderBookingDetailsDrawer: React.FC<
               justifyContent: "center",
               alignItems: "center",
               height: "100%",
-              py: 10,
+              py: 20,
             }}
           >
-            <CircularProgress />
+            <LogoLoader size={60} />
           </Box>
         ) : (
           <>
@@ -171,7 +172,7 @@ const ProviderBookingDetailsDrawer: React.FC<
             {/* Unified Header & Hero Section */}
             <Box
               sx={{
-                mx: -4,
+                mx: { xs: -2, sm: -4 },
                 mb: 4,
                 position: "relative",
                 borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "#F1F5F9"}`,
@@ -179,7 +180,7 @@ const ProviderBookingDetailsDrawer: React.FC<
             >
               {/* Hero Background Image */}
               <Box
-                sx={{ position: "relative", height: 220, overflow: "hidden" }}
+                sx={{ position: "relative", height: { xs: 180, sm: 220 }, overflow: "hidden" }}
               >
                 <Box
                   component="img"
@@ -192,7 +193,7 @@ const ProviderBookingDetailsDrawer: React.FC<
                   }}
                 />
                 {/* Status Chip Overlay */}
-                <Box sx={{ position: "absolute", top: 20, left: 24 }}>
+                <Box sx={{ position: "absolute", top: 20, left: { xs: 16, sm: 24 } }}>
                   <Chip
                     label={currentBooking.status}
                     sx={{
@@ -200,9 +201,9 @@ const ProviderBookingDetailsDrawer: React.FC<
                       color: COLORS.PRIMARY_PURPLE,
                       backdropFilter: "blur(10px)",
                       fontWeight: 800,
-                      fontSize: "0.75rem",
-                      height: 28,
-                      borderRadius: "10px",
+                      fontSize: "0.7rem",
+                      height: 24,
+                      borderRadius: "8px",
                       boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                     }}
                   />
@@ -215,12 +216,14 @@ const ProviderBookingDetailsDrawer: React.FC<
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    p: 3,
+                    p: { xs: 2, sm: 3 },
                     background:
                       "linear-gradient(to top, rgba(0,0,0,0.8), transparent)",
                     display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
                     justifyContent: "space-between",
-                    alignItems: "flex-end",
+                    alignItems: { xs: "flex-start", sm: "flex-end" },
+                    gap: 1.5,
                   }}
                 >
                   <Box>

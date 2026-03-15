@@ -11,6 +11,8 @@ import {
 import { AppUserType } from "@/services/auth/auth.interface";
 import { secureStorage } from "./SecureStorage";
 
+import GlobalLoading from "@/components/common/Loader/GlobalLoading";
+
 // 1. Move static constants outside the component to avoid recreation on re-renders
 const RESTRICTED_AUTH_PATHS = [
   "/login",
@@ -143,7 +145,7 @@ export default function RegistrationGuard({
 
   // 4. Show nothing (or a spinner) while we are verifying where the user belongs
   if (isChecking) {
-    return null; // Or return <LoadingSpinner />
+    return <GlobalLoading open={true} />;
   }
 
   return <>{children}</>;

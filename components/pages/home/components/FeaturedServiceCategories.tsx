@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
-import { Box, Typography, Card, CardContent, CircularProgress, Button } from "@mui/material";
+import { Box, Typography, Card, CardContent, Button } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { useCategories } from "@/hooks/useCategories";
 import { COLORS } from "@/constants/colors";
 
@@ -10,7 +11,7 @@ const FeaturedServiceCategories = () => {
     if (isLoading) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
-                <CircularProgress size={24} />
+                <LogoLoader size={24} />
             </Box>
         );
     }

@@ -10,11 +10,12 @@ import {
   Grid,
   Button,
   Box,
-  CircularProgress,
   TextField,
   InputAdornment,
   useTheme,
 } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { prefranceService } from "@/services/auth/preference.service";
 import { useRouter } from "next/navigation";
@@ -94,16 +95,7 @@ function PreferencesView() {
   };
 
   if (isLoading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="50vh"
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <CenteredLoader minHeight="50vh" />;
   }
 
   if (isError) {
@@ -316,7 +308,7 @@ function PreferencesView() {
         >
           {isSaving ? (
             <>
-              <CircularProgress size={20} sx={{ mr: 1, color: "inherit" }} />
+              <LogoLoader size={20} />
               Saving...
             </>
           ) : (

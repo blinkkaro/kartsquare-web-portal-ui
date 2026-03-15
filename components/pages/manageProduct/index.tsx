@@ -5,9 +5,11 @@ import {
   Box,
   Typography,
   Button,
-  CircularProgress,
   useTheme,
+  useMediaQuery,
 } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { productSchema, ProductFormValues } from "./product.schema";
@@ -47,6 +49,7 @@ function ManageProductView({ productId }: ManageProductViewProps) {
     productId || "",
   );
   const isDarkMode = theme.palette.mode === "dark";
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const methods = useForm<ProductFormValues>({
     resolver: yupResolver(productSchema(t)),
@@ -163,15 +166,11 @@ function ManageProductView({ productId }: ManageProductViewProps) {
   };
 
   if (isLoadingProduct) {
-    return (
-      <Box display="flex" justifyContent="center" p={5}>
-        <CircularProgress />
-      </Box>
-    );
+    return <CenteredLoader p={5} />;
   }
 
   return (
-    <Box sx={{ p: 5, px: 20 }}>
+    <Box sx={{ p: { xs: 2, sm: 5 }, px: { xs: 2, md: 10, lg: 20 } }}>
       <Box
         display="flex"
         justifyContent="space-between"
@@ -216,11 +215,18 @@ function ManageProductView({ productId }: ManageProductViewProps) {
             </Box>
           </Box>
 
-          <Box mt={3} display="flex" justifyContent="flex-end" gap={2}>
+          <Box
+            mt={3}
+            display="flex"
+            flexDirection={{ xs: "column", sm: "row" }}
+            justifyContent="flex-end"
+            gap={2}
+          >
             <Button
               variant="outlined"
               color="secondary"
               onClick={() => router.back()}
+              fullWidth={isMobile}
               sx={{
                 border: `1px solid ${theme.palette.mode === "dark" ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE}`,
                 color:
@@ -236,9 +242,10 @@ function ManageProductView({ productId }: ManageProductViewProps) {
               variant="contained"
               color="primary"
               disabled={isCreating || isUpdating}
+              fullWidth={isMobile}
             >
               {isCreating || isUpdating ? (
-                <CircularProgress size={24} />
+                <LogoLoader size={24} />
               ) : productId ? (
                 t("update_product")
               ) : (

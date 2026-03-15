@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
-import { Box, CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { keyframes } from "@mui/system";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -140,7 +141,7 @@ const MapView: React.FC<MapViewProps> = ({
           borderRadius: "12px",
         }}
       >
-        <CircularProgress size={40} />
+        <LogoLoader size={40} />
       </Box>
     );
   }

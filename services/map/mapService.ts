@@ -38,6 +38,33 @@ export const mapService = {
       return null;
     }
   },
+  geocodeAddress: async (
+    address: string,
+  ): Promise<google.maps.GeocoderResult | null> => {
+    try {
+      if (!window.google || !window.google.maps) {
+        return null;
+      }
+
+      const geocoder = new google.maps.Geocoder();
+      return new Promise((resolve) => {
+        geocoder.geocode({ address }, (results, status) => {
+          if (
+            status === google.maps.GeocoderStatus.OK &&
+            results &&
+            results.length > 0
+          ) {
+            resolve(results[0]);
+          } else {
+            resolve(null);
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Geocoding Error:", error);
+      return null;
+    }
+  },
 
   searchPlaces: async (
     query: string,

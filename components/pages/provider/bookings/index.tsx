@@ -3,10 +3,10 @@ import React, { useState, useMemo, useEffect } from "react";
 import {
   Box,
   Container,
-  CircularProgress,
   useTheme,
   IconButton,
 } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { CalendarToday, GridView, TableRows } from "@mui/icons-material";
 import { UserBooking } from "../../../../services/booking/bookingInterface";
 import { COLORS } from "../../../../constants/colors";
@@ -124,15 +124,15 @@ const ProviderBookingsPage = () => {
           <Box
             sx={{
               display: "flex",
-              flexDirection: { xs: "column", md: "row" },
+              flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
-              alignItems: { xs: "stretch", md: "center" },
-              gap: { xs: 2, md: 0 },
-              mb: 3,
+              alignItems: { xs: "flex-start", sm: "center" },
+              gap: 2,
+              mb: { xs: 3, md: 4 },
             }}
           >
             <ProviderBookingsHeader />
-            <Box sx={{ width: { xs: "100%", md: "auto" } }}>
+            <Box sx={{ width: { xs: "100%", sm: "auto" } }}>
               <ProviderBookingsSearchBar
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
@@ -140,13 +140,26 @@ const ProviderBookingsPage = () => {
             </Box>
           </Box>
 
-          {/* Tabs */}
-          <ProviderBookingsTabs
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            counts={tabCounts}
-            tabs={tabs}
-          />
+          {/* Tabs and Actions Row */}
+          <Box 
+            sx={{ 
+              display: "flex", 
+              flexDirection: { xs: "column", md: "row" },
+              justifyContent: "space-between",
+              alignItems: { xs: "stretch", md: "center" },
+              gap: 2,
+              mb: { xs: 2, md: 3 }
+            }}
+          >
+            <Box sx={{ flex: 1, overflow: "hidden" }}>
+              <ProviderBookingsTabs
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                counts={tabCounts}
+                tabs={tabs}
+              />
+            </Box>
+          </Box>
           {/* View Toggle - Hidden on mobile */}
           <Box
             sx={{
@@ -224,9 +237,7 @@ const ProviderBookingsPage = () => {
 
           {/* Bookings Content */}
           {loading ? (
-            <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
-              <CircularProgress />
-            </Box>
+            <CenteredLoader py={10} size={80} />
           ) : filteredBookings?.length === 0 ? (
             <EmptyState
               titleKey="no_bookings_found"

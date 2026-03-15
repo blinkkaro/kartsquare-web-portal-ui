@@ -8,8 +8,8 @@ import {
   useTheme,
   Grid,
   useMediaQuery,
-  CircularProgress,
 } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { COLORS } from "@/constants/colors";
 import HomeBanner from "./components/HomeBanner";
 import FeaturedServiceCategories from "./components/FeaturedServiceCategories";
@@ -180,9 +180,6 @@ function HomeView() {
           }}
         >
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {/* Banner Section */}
-            {/* <HomeBanner /> */}
-
             <StoriesSection data={stories} isLoading={storiesLoading} />
 
             {/* Compact Map - Mobile/Tablet View */}
@@ -195,13 +192,15 @@ function HomeView() {
               <CompactMapView height="300px" />
             </Box>
 
-            {mergedFeed.map((item) =>
-              item.type === "post" ? (
-                <PostCard post={item.data as Posts} key={item.key} />
-              ) : (
-                <AdCard ad={item.data as AdvertiseActiveAd} key={item.key} />
-              )
-            )}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              {mergedFeed.map((item) =>
+                item.type === "post" ? (
+                  <PostCard post={item.data as Posts} key={item.key} />
+                ) : (
+                  <AdCard ad={item.data as AdvertiseActiveAd} key={item.key} />
+                )
+              )}
+            </Box>
 
             {/* Loading Indicator */}
             {(isLoading || isFetchingNext) && (
@@ -212,7 +211,7 @@ function HomeView() {
                   padding: 3,
                 }}
               >
-                <CircularProgress />
+                <LogoLoader />
               </Box>
             )}
 

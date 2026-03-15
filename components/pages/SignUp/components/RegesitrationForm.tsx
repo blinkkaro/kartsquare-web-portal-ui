@@ -164,7 +164,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           <Input
             name="first_name"
             control={control}
-            placeholder="Masruq Jaun"
+            placeholder="Arjun"
             startIcon={<PersonIcon />}
           />
         </Grid>
@@ -182,7 +182,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           <Input
             name="last_name"
             control={control}
-            placeholder="Haik"
+            placeholder="Sharma"
             startIcon={<PersonIcon />}
           />
         </Grid>
@@ -202,7 +202,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           <Input
             name="email"
             control={control}
-            placeholder="masruqjaunhaik@mail.in"
+            placeholder="arjun.sharma@mail.in"
             startIcon={<EmailIcon />}
           />
         </Grid>
@@ -291,7 +291,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 <Input
                   name="whatsapp_number"
                   control={control}
-                  placeholder="621 121221"
+                  placeholder="98765 43210"
                   type="tel"
                   InputProps={{
                     readOnly: !!initialData?.whatsapp_number,
@@ -386,7 +386,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
               <Input
                 name="phone_number"
                 control={control}
-                placeholder="621 121221"
+                placeholder="98765 43210"
                 type="tel"
                 InputProps={{
                   readOnly: isSameAsPhone,

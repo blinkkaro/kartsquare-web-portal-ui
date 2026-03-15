@@ -4,10 +4,10 @@ import {
     Box,
     Container,
     Typography,
-    CircularProgress,
     useTheme,
     Button,
 } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { Service } from "../../../../services/serviceList/listInteraface";
 import { COLORS } from "../../../../constants/colors";
 import { getUserRole, UserRole } from "../../../../utils/auth";
@@ -176,9 +176,7 @@ const ProviderServicesList = () => {
 
                     {/* Loading State */}
                     {loading ? (
-                        <Box sx={{ display: "flex", justifyContent: "center", py: { xs: 4, sm: 8 } }}>
-                            <CircularProgress size={isDark ? 40 : 40} />
-                        </Box>
+                        <CenteredLoader py={8} size={60} />
                     ) : (
                         <ProviderServicesGrid
                             services={services}

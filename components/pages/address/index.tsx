@@ -1,6 +1,7 @@
 "use client";
 import ProfileWrapper from "@/components/common/profile/profileWrapper";
-import { Box, Typography, Grid, CircularProgress } from "@mui/material";
+import { Box, Typography, Grid } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import React, { useState } from "react";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import Button from "@/components/common/Button";
@@ -91,18 +92,7 @@ function AddressView() {
         </Box>
 
         {/* Loading State */}
-        {isLoading && (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              minHeight: "300px",
-            }}
-          >
-            <CircularProgress />
-          </Box>
-        )}
+        {isLoading && <CenteredLoader />}
 
         {/* Empty State */}
         {!isLoading && addresses.length === 0 && (
