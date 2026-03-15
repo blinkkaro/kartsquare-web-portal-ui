@@ -4,13 +4,14 @@ import React from "react";
 import { Box, Typography, Container, Grid } from "@mui/material";
 import { motion } from "framer-motion";
 
-import PublicIcon from "@mui/icons-material/Public";
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-import EventAvailableIcon from "@mui/icons-material/EventAvailable";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import SecurityIcon from "@mui/icons-material/Security";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import PlaceIcon from "@mui/icons-material/Place";
+import ForumIcon from "@mui/icons-material/Forum";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import StorefrontIcon from "@mui/icons-material/Storefront";
+import PaymentsIcon from "@mui/icons-material/Payments";
+import PeopleIcon from "@mui/icons-material/People";
 import HandshakeIcon from "@mui/icons-material/Handshake";
+import { useTranslate } from "@/hooks/useTranslate";
 
 import { ScrollStagger, staggerItemVariants, ScrollReveal } from "./ScrollReveal";
 
@@ -22,39 +23,41 @@ const PURPLE = "#8B5CF6";
 const BLUE = "#3B82F6";
 
 const BenefitsSection = () => {
+    const { t } = useTranslate();
+
     const serviceProviderBenefits = [
         {
-            title: "Global Visibility",
-            desc: "Expand your reach beyond local boundaries. Get discovered by clients actively searching for your expertise worldwide.",
-            Icon: PublicIcon,
+            title: t("benefitSpl1Title"),
+            desc: t("benefitSpl1Desc"),
+            Icon: PlaceIcon,
         },
         {
-            title: "High-Intent Leads",
-            desc: "Connect with verified and genuine clients. Spend less time prospecting and more time closing successful deals.",
-            Icon: VerifiedUserIcon,
+            title: t("benefitSpl2Title"),
+            desc: t("benefitSpl2Desc"),
+            Icon: ForumIcon,
         },
         {
-            title: "Seamless Management",
-            desc: "Take control of your bookings, schedules, and client communications all from one intuitive dashboard.",
-            Icon: EventAvailableIcon,
+            title: t("benefitSpl3Title"),
+            desc: t("benefitSpl3Desc"),
+            Icon: AccountBalanceWalletIcon,
         },
     ];
 
     const supplierBenefits = [
         {
-            title: "Bulk Order Access",
-            desc: "Tap into a network of B2B clients and consistent, high-volume requests to scale your business operations.",
-            Icon: InventoryIcon,
+            title: t("benefitSup1Title"),
+            desc: t("benefitSup1Desc"),
+            Icon: StorefrontIcon,
         },
         {
-            title: "Secure Transactions",
-            desc: "Experience peace of mind with our secure, reliable, and transparent payment gateways for every transaction.",
-            Icon: SecurityIcon,
+            title: t("benefitSup2Title"),
+            desc: t("benefitSup2Desc"),
+            Icon: PaymentsIcon,
         },
         {
-            title: "Logistics Integration",
-            desc: "Optimize your supply chain with our integrated logistics support, ensuring timely and efficient deliveries.",
-            Icon: LocalShippingIcon,
+            title: t("benefitSup3Title"),
+            desc: t("benefitSup3Desc"),
+            Icon: PeopleIcon,
         },
     ];
 
@@ -124,7 +127,7 @@ const BenefitsSection = () => {
                             >
                                 <HandshakeIcon sx={{ fontSize: 20, color: PURPLE }} />
                                 <Typography variant="body2" fontWeight={600} letterSpacing="0.05em" textTransform="uppercase" sx={{ color: "rgba(255, 255, 255, 0.8)" }}>
-                                    Unlock Mutual Growth
+                                    {t("benefitWhyChooseUs")}
                                 </Typography>
                             </Box>
                         </motion.div>
@@ -140,13 +143,13 @@ const BenefitsSection = () => {
                                 lineHeight: 1.1,
                             }}
                         >
-                            Engineered for <br />
+                            {t("benefitHeading1")} <br />
                             <Box component="span" sx={{
                                 background: "linear-gradient(135deg, #A78BFA 0%, #3B82F6 100%)",
                                 WebkitBackgroundClip: "text",
                                 WebkitTextFillColor: "transparent"
                             }}>
-                                Peak Performance
+                                {t("benefitHeading2")}
                             </Box>
                         </Typography>
                         <Typography
@@ -159,7 +162,7 @@ const BenefitsSection = () => {
                                 lineHeight: 1.6,
                             }}
                         >
-                            A cutting-edge platform designed to accelerate growth, whether you're delivering exceptional services or supplying premium goods.
+                            {t("benefitSubheading")}
                         </Typography>
                     </Box>
                 </ScrollReveal>
@@ -189,8 +192,8 @@ const BenefitsSection = () => {
                                     >
                                         <Box
                                             component="img"
-                                            src="https://images.unsplash.com/photo-1573164574572-cb89e39749b4?auto=format&fit=crop&q=80&w=1200"
-                                            alt="Service Provider Dashboard"
+                                            src="https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=1200&auto=format&fit=crop&q=80"
+                                            alt="Service Provider Working"
                                             sx={{
                                                 width: "100%",
                                                 height: "auto",
@@ -224,9 +227,9 @@ const BenefitsSection = () => {
                                                 display: { xs: "none", sm: "block" }
                                             }}
                                         >
-                                            <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)", mb: 1 }}>Active Clients</Typography>
+                                            <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)", mb: 1 }}>Direct Leads</Typography>
                                             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                                                <Typography variant="h4" fontWeight={800}>+4,280</Typography>
+                                                <Typography variant="h4" fontWeight={800}>500+</Typography>
                                                 <Box sx={{ bgcolor: "rgba(52, 211, 153, 0.2)", color: "#34D399", px: 1, py: 0.5, borderRadius: 1, fontSize: "0.75rem", fontWeight: 700 }}>
                                                     24% ↑
                                                 </Box>
@@ -249,10 +252,10 @@ const BenefitsSection = () => {
                                         letterSpacing: "-0.02em"
                                     }}
                                 >
-                                    For Service Providers
+                                    {t("benefitServiceTitle")}
                                 </Typography>
                                 <Typography variant="h6" sx={{ color: "rgba(255,255,255,0.6)", mb: 6, fontWeight: 400 }}>
-                                    Elevate your professional presence. Our tools are designed to put your skills in front of the right audience, instantly.
+                                    {t("benefitServiceSub")}
                                 </Typography>
 
                                 <ScrollStagger staggerDelay={0.15}>
@@ -313,10 +316,10 @@ const BenefitsSection = () => {
                                         letterSpacing: "-0.02em"
                                     }}
                                 >
-                                    For Suppliers
+                                    {t("benefitShopTitle")}
                                 </Typography>
                                 <Typography variant="h6" sx={{ color: "rgba(255,255,255,0.6)", mb: 6, fontWeight: 400 }}>
-                                    Streamline your robust B2B operations. Connect with a global network of buyers and scale your distribution effortlessly.
+                                    {t("benefitShopSub")}
                                 </Typography>
 
                                 <ScrollStagger staggerDelay={0.15}>
@@ -382,8 +385,8 @@ const BenefitsSection = () => {
                                     >
                                         <Box
                                             component="img"
-                                            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200"
-                                            alt="Supplier Logistics & Data"
+                                            src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=1200&auto=format&fit=crop&q=80"
+                                            alt="Indian Shop/Kirana Store"
                                             sx={{
                                                 width: "100%",
                                                 height: "auto",
@@ -417,9 +420,9 @@ const BenefitsSection = () => {
                                                 display: { xs: "none", sm: "block" }
                                             }}
                                         >
-                                            <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)", mb: 1 }}>Orders Fulfilled</Typography>
+                                            <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.6)", mb: 1 }}>Store Visits</Typography>
                                             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                                                <Typography variant="h4" fontWeight={800}>1.2M+</Typography>
+                                                <Typography variant="h4" fontWeight={800}>10k+</Typography>
                                                 <Box sx={{ bgcolor: "rgba(59, 130, 246, 0.2)", color: "#3B82F6", px: 1, py: 0.5, borderRadius: 1, fontSize: "0.75rem", fontWeight: 700 }}>
                                                     Real-time
                                                 </Box>

@@ -76,6 +76,21 @@ export const useUpdateSupplierStore = () => {
   });
 };
 
+export const useEditSupplierStore = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Partial<SupplierStore>) => supplierService.editStore(data),
+    onSuccess: (response: any) => {
+      if (response?.data?.register_step) {
+        secureStorage.setItem("register_step", response.data.register_step);
+        const existingUser = secureStorage.getItem("user_details") || {};
+        secureStorage.setItem("user_details", { ...existingUser, register_step: response.data.register_step });
+      }
+      queryClient.invalidateQueries({ queryKey: ["supplierStore"] });
+    },
+  });
+};
+
 export const useSupplierProducts = (params: any = {}) => {
   return useQuery({
     queryKey: ["supplierProducts", params],

@@ -22,6 +22,7 @@ export const useSupplierProducts = (filters: Partial<productFilter>) => {
       return page < totalPages ? page + 1 : undefined;
     },
     initialPageParam: 1,
+    refetchOnMount: true,
   });
 };
 
@@ -82,6 +83,7 @@ export const useGetProductById = (productId: string) => {
     queryKey: ["product", productId],
     queryFn: () => productService.getProductById(productId),
     enabled: !!productId,
+    refetchOnMount: true,
   });
 };
 

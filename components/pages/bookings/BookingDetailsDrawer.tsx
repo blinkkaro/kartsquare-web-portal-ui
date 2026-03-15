@@ -149,7 +149,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                   style={{
                     color: COLORS.PRIMARY_PURPLE,
                     fontWeight: 900,
-                    fontSize: "0.6em",
+                    fontSize: "0.8em",
                   }}
                 >
                   #{currentBooking.booking_id.toUpperCase()}
@@ -649,71 +649,71 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
               {/* Visual Evidence with Smooth Scrolling */}
               {(currentBooking.booking_photo_url ||
                 currentBooking.photo_url) && (
-                <Box sx={{ mb: 4 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: "#94A3B8",
-                      fontWeight: 700,
-                      letterSpacing: "0.1em",
-                      mb: 2,
-                      display: "block",
-                    }}
-                  >
-                    VISUAL EVIDENCE (
-                    {(currentBooking.booking_photo_url || []).length +
-                      (currentBooking.photo_url || []).length}
-                    )
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      gap: 2,
-                      overflowX: "auto",
-                      pt: 1.5,
-                      pb: 2,
-                      px: 0.5,
-                      mx: -0.5,
-                      "&::-webkit-scrollbar": { height: "4px" },
-                      "&::-webkit-scrollbar-thumb": {
-                        backgroundColor: isDark
-                          ? "rgba(255,255,255,0.1)"
-                          : "rgba(0,0,0,0.06)",
-                        borderRadius: "10px",
-                      },
-                    }}
-                  >
-                    {[
-                      ...(currentBooking.booking_photo_url || []),
-                      ...(currentBooking.photo_url || []),
-                    ].map((url, idx) => (
-                      <Box
-                        key={idx}
-                        component="img"
-                        src={url}
-                        onClick={() => setPreviewImage(url)}
-                        sx={{
-                          width: 130,
-                          height: 130,
-                          borderRadius: "20px",
-                          objectFit: "cover",
-                          flexShrink: 0,
-                          cursor: "pointer",
-                          transition:
-                            "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                          border: `2px solid ${isDark ? "rgba(255,255,255,0.05)" : "#FFFFFF"}`,
-                          boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                          "&:hover": {
-                            transform: "scale(1.05) translateY(-5px)",
-                            boxShadow: `0 15px 30px ${isDark ? "rgba(0,0,0,0.4)" : "rgba(94, 24, 233, 0.15)"}`,
-                            borderColor: COLORS.PRIMARY_PURPLE,
-                          },
-                        }}
-                      />
-                    ))}
+                  <Box sx={{ mb: 4 }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: "#94A3B8",
+                        fontWeight: 700,
+                        letterSpacing: "0.1em",
+                        mb: 2,
+                        display: "block",
+                      }}
+                    >
+                      VISUAL EVIDENCE (
+                      {(currentBooking.booking_photo_url || []).length +
+                        (currentBooking.photo_url || []).length}
+                      )
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: 2,
+                        overflowX: "auto",
+                        pt: 1.5,
+                        pb: 2,
+                        px: 0.5,
+                        mx: -0.5,
+                        "&::-webkit-scrollbar": { height: "4px" },
+                        "&::-webkit-scrollbar-thumb": {
+                          backgroundColor: isDark
+                            ? "rgba(255,255,255,0.1)"
+                            : "rgba(0,0,0,0.06)",
+                          borderRadius: "10px",
+                        },
+                      }}
+                    >
+                      {[
+                        ...(currentBooking.booking_photo_url || []),
+                        ...(currentBooking.photo_url || []),
+                      ].map((url, idx) => (
+                        <Box
+                          key={idx}
+                          component="img"
+                          src={url}
+                          onClick={() => setPreviewImage(url)}
+                          sx={{
+                            width: 130,
+                            height: 130,
+                            borderRadius: "20px",
+                            objectFit: "cover",
+                            flexShrink: 0,
+                            cursor: "pointer",
+                            transition:
+                              "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                            border: `2px solid ${isDark ? "rgba(255,255,255,0.05)" : "#FFFFFF"}`,
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                            "&:hover": {
+                              transform: "scale(1.05) translateY(-5px)",
+                              boxShadow: `0 15px 30px ${isDark ? "rgba(0,0,0,0.4)" : "rgba(94, 24, 233, 0.15)"}`,
+                              borderColor: COLORS.PRIMARY_PURPLE,
+                            },
+                          }}
+                        />
+                      ))}
+                    </Box>
                   </Box>
-                </Box>
-              )}
+                )}
             </Box>
 
             {/* Action Buttons */}
