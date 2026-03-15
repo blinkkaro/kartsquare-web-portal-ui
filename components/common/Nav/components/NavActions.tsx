@@ -85,7 +85,7 @@ const NavActions: React.FC<NavActionsProps> = ({
     return (
       <ActionsContainer>
         {/* Mobile/Tablet Search Icon */}
-        {(isMobile || isTablet) && (
+        {/* {(isMobile || isTablet) && (
           <StyledIconButton
             size="small"
             aria-label="search"
@@ -93,7 +93,7 @@ const NavActions: React.FC<NavActionsProps> = ({
           >
             <SearchIcon fontSize="small" />
           </StyledIconButton>
-        )}
+        )} */}
         {/* Free Listing */}
 
         {/* Chat - Hide on mobile */}

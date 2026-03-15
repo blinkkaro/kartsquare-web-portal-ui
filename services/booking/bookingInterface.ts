@@ -147,7 +147,7 @@ export interface BookingDetails {
   booking_updated_at?: string;
   service_price: number;
   otp?: number;
-  category_name?: string;
+  category_name?: string[];
   contact_number?: string;
   is_reviewed: boolean;
 }

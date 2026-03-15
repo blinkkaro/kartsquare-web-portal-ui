@@ -39,6 +39,7 @@ export interface Posts {
   created_at: string;
   updated_at: string;
   is_liked: boolean;
+  is_following?: boolean;
   mentions: Mention[];
   user: User;
 }
@@ -53,6 +54,9 @@ interface User {
   last_name: string;
   profile_pic: string | null;
   business_name: string;
+  username?: string;
+  is_following?: boolean;
+  role?: string;
 }
 
 interface Mention {

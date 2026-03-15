@@ -50,6 +50,13 @@ const RightDrawer = ({
           justifyContent: "space-between",
           alignItems: "center",
           pt: { xs: 2, md: 3 },
+          position: "sticky",
+          top: 0,
+          zIndex: 1100,
+          backgroundColor:
+            theme.palette.mode === "dark"
+              ? COLORS.BACKGROUND.PAPER_DARK
+              : COLORS.BACKGROUND.PAPER_LIGHT,
           ...headerStyle,
         }}
       >

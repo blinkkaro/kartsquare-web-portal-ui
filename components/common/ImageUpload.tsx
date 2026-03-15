@@ -23,6 +23,8 @@ interface ImageUploadProps {
   variant?: "default" | "document";
   /** Short hint shown below title (e.g. "Clear photo of PAN card") */
   hint?: string;
+  /** Whether to allow video files */
+  allowVideo?: boolean;
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -34,6 +36,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   title,
   variant = "default",
   hint,
+  allowVideo = false,
 }) => {
   const { t } = useTranslate();
   const theme = useTheme();
@@ -79,8 +82,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
     // Validate file types, size and count
     for (const file of newFiles) {
-      if (!file.type.match(/image\/(jpeg|jpg|png|gif)/)) {
-        setInternalError(t("invalidImageFormat"));
+      const isImage = file.type.match(/image\/(jpeg|jpg|png|gif)/);
+      const isVideo = allowVideo && file.type.match(/video\/(mp4|webm|ogg)/);
+
+      if (!isImage && !isVideo) {
+        setInternalError(allowVideo ? t("invalidMediaFormat") : t("invalidImageFormat"));
         hasError = true;
         return;
       }
@@ -205,7 +211,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               : COLORS.TEXT.SECONDARY_LIGHT,
           }}
         >
-          {isDocument ? t("uploadDocument") : t("dragDropImage")}
+          {isDocument
+            ? t("uploadDocument")
+            : allowVideo
+              ? t("dragDropMedia")
+              : t("dragDropImage")}
         </Typography>
         {!isDocument && (
           <Typography
@@ -226,7 +236,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/jpeg,image/jpg,image/png,image/gif"
+        accept={
+          allowVideo
+            ? "image/jpeg,image/jpg,image/png,image/gif,video/mp4,video/webm,video/ogg"
+            : "image/jpeg,image/jpg,image/png,image/gif"
+        }
         multiple
         onChange={handleFileSelect}
         style={{ display: "none" }}
@@ -263,18 +277,37 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 border: isDark ? "1px solid #333" : "1px solid #eee",
               }}
             >
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundImage: `url(${preview})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              />
+              {preview.startsWith("blob:") &&
+              images[index] instanceof File &&
+              (images[index] as File).type.startsWith("video/") ? (
+                <Box
+                  component="video"
+                  src={preview}
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              ) : (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundImage: `url(${preview})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                />
+              )}
               <IconButton
                 onClick={(e) => {
                   e.stopPropagation();
