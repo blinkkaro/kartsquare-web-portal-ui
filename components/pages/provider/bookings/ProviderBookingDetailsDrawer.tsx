@@ -11,15 +11,17 @@ import {
   useTheme,
   Dialog,
   Fade,
+  CircularProgress,
+  Stack
 } from "@mui/material";
 import {
   Close,
-  ChatBubbleOutline,
   NearMe,
-  CheckCircle,
+  Phone,
+  CalendarToday,
+  LocationOn,
 } from "@mui/icons-material";
 import {
-  UserBooking,
   BookingDetails,
 } from "../../../../services/booking/bookingInterface";
 import { COLORS } from "../../../../constants/colors";
@@ -43,9 +45,11 @@ interface ProviderBookingDetailsDrawerProps {
   booking_id: string;
 }
 
-const ProviderBookingDetailsDrawer: React.FC<
-  ProviderBookingDetailsDrawerProps
-> = ({ open, onClose, booking_id: initialBooking }) => {
+const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> = ({
+  open,
+  onClose,
+  booking_id: initialBooking
+}) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const [booking, setBooking] = React.useState<BookingDetails | null>(null);
@@ -74,27 +78,25 @@ const ProviderBookingDetailsDrawer: React.FC<
 
   if (!initialBooking) return null;
 
-  // Map status to colors
   const getStatusColor = (status: string) => {
     switch (status) {
       case "PENDING":
-        return { bg: "#FFFBEB", text: "#F59E0B" };
+        return { bg: isDark ? "rgba(245, 158, 11, 0.15)" : "#FEF3C7", text: "#D97706", border: "rgba(245, 158, 11, 0.2)" };
       case "CONFIRMED":
-        return { bg: "#ECFDF5", text: "#10B981" };
+        return { bg: isDark ? "rgba(16, 185, 129, 0.15)" : "#D1FAE5", text: "#059669", border: "rgba(16, 185, 129, 0.2)" };
       case "CANCELLED":
-        return { bg: "#FEF2F2", text: "#EF4444" };
+        return { bg: isDark ? "rgba(239, 68, 68, 0.15)" : "#FEE2E2", text: "#DC2626", border: "rgba(239, 68, 68, 0.2)" };
       case "COMPLETED":
-        return { bg: "#EFF6FF", text: "#3B82F6" };
+        return { bg: isDark ? "rgba(59, 130, 246, 0.15)" : "#DBEAFE", text: "#2563EB", border: "rgba(59, 130, 246, 0.2)" };
       case "ACTIVE":
-        return { bg: "#EEF2FF", text: "#6366F1" };
+        return { bg: isDark ? "rgba(139, 92, 246, 0.15)" : "#EDE9FE", text: "#7C3AED", border: "rgba(139, 92, 246, 0.2)" };
       default:
-        return { bg: "#F3F4F6", text: "#6B7280" };
+        return { bg: isDark ? "rgba(107, 114, 128, 0.15)" : "#F3F4F6", text: "#4B5563", border: "rgba(107, 114, 128, 0.2)" };
     }
   };
 
   const currentBooking = booking;
 
-  // Return loading state if booking data is not yet available
   if (!currentBooking) {
     return (
       <RightDrawer
@@ -123,6 +125,23 @@ const ProviderBookingDetailsDrawer: React.FC<
   const statusStyle = getStatusColor(currentBooking.status);
   const totalAmount = currentBooking.service_price;
 
+  const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+    <Typography
+      variant="caption"
+      sx={{
+        color: isDark ? "#94A3B8" : "#64748B",
+        fontWeight: 700,
+        letterSpacing: "0.1em",
+        mb: 1.5,
+        display: "block",
+        lineHeight: 1,
+        textTransform: 'uppercase'
+      }}
+    >
+      {children}
+    </Typography>
+  );
+
   return (
     <RightDrawer
       open={open}
@@ -144,29 +163,31 @@ const ProviderBookingDetailsDrawer: React.FC<
             <LogoLoader size={60} />
           </Box>
         ) : (
-          <>
-            {/* Subtle Top Booking ID */}
-            <Box sx={{ mb: 3, mt: -1 }}>
-              <Typography
-                variant="caption"
-                sx={{
-                  color: "#94A3B8",
-                  fontWeight: 700,
-                  letterSpacing: "0.1em",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                BOOKING ID:{" "}
-                <span
-                  style={{
-                    color: COLORS.PRIMARY_PURPLE,
-                    fontWeight: 900,
-                    fontSize: "0.6em",
-                  }}
-                >
-                  #{currentBooking.booking_id.toUpperCase()}
-                </span>
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+
+            {/* Header: ID & Status */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mb: 3 }}>
+              <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 700, letterSpacing: '0.05em' }}>
+                BOOKING ID
               </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 2 }}>
+                <Typography sx={{ fontWeight: 800, fontSize: "1.1rem", color: isDark ? '#E2E8F0' : '#1E293B', wordBreak: 'break-all', lineHeight: 1.3 }}>
+                  #{currentBooking.booking_id.toUpperCase()}
+                </Typography>
+                <Chip
+                  label={currentBooking.status}
+                  sx={{
+                    bgcolor: statusStyle.bg,
+                    color: statusStyle.text,
+                    border: 'none',
+                    fontWeight: 800,
+                    fontSize: "0.75rem",
+                    letterSpacing: '0.05em',
+                    height: 26,
+                    borderRadius: "6px",
+                  }}
+                />
+              </Box>
             </Box>
 
             {/* Unified Header & Hero Section */}
@@ -184,7 +205,7 @@ const ProviderBookingDetailsDrawer: React.FC<
               >
                 <Box
                   component="img"
-                  src={booking.service_image?.[0]}
+                  src={currentBooking.service_image[0]}
                   sx={{
                     width: "100%",
                     height: "100%",
@@ -302,241 +323,191 @@ const ProviderBookingDetailsDrawer: React.FC<
                     </Typography>
                   </Box>
                 </Box>
-              </Box>
+              </Stack>
             </Box>
 
-            {/* Unified Info Sheet */}
-            <Box
-              sx={{
-                borderRadius: "32px",
-                bgcolor: isDark ? "rgba(255,255,255,0.02)" : "#FFFFFF",
-                border: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "#F1F5F9"}`,
-                boxShadow: "0 20px 40px rgba(0,0,0,0.02)",
-                overflow: "hidden",
-                mb: 4,
-              }}
-            >
-              {/* Client Row */}
+            <Divider sx={{ my: 3, borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#E2E8F0' }} />
+
+            {/* Client Card */}
+            <Box sx={{ mb: 3 }}>
+              <SectionLabel>CLIENT DETAILS</SectionLabel>
               <Box
-                sx={{ p: 3, display: "flex", alignItems: "center", gap: 2.5 }}
+                sx={{
+                  p: 2,
+                  borderRadius: "16px",
+                  bgcolor: isDark ? "rgba(255,255,255,0.02)" : "#FFFFFF",
+                  border: `1px solid ${isDark ? "transparent" : "#F1F5F9"}`,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
+                  boxShadow: isDark ? 'none' : '0 2px 8px rgba(0,0,0,0.02)'
+                }}
               >
                 <Avatar
                   src={booking?.customer_details?.profile_pic || undefined}
-                  sx={{
-                    width: 64,
-                    height: 64,
-                    border: `2px solid ${COLORS.PRIMARY_PURPLE}20`,
-                  }}
+                  sx={{ width: 44, height: 44, bgcolor: '#CBD5E1' }}
                 />
                 <Box sx={{ flex: 1 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: "#94A3B8",
-                      fontWeight: 700,
-                      letterSpacing: "0.1em",
-                      mb: 0.5,
-                      display: "block",
-                    }}
-                  >
-                    CLIENT
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontWeight: 800,
-                      fontSize: "1rem",
-                      color: isDark ? "white" : "#1E293B",
-                    }}
-                  >
+                  <Typography sx={{ fontWeight: 700, fontSize: "0.95rem", color: isDark ? "white" : "#1E293B", lineHeight: 1.2, mb: 0.2 }}>
                     {`${booking.customer_details?.first_name || ""} ${booking.customer_details?.last_name || ""}`}
                   </Typography>
+                  <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 500 }}>
+                    Customer
+                  </Typography>
                 </Box>
-                <Box sx={{ display: "flex", gap: 1 }}>
-                  <IconButton
-                    href={`tel:${booking?.customer_details?.contact_number}`}
-                    sx={{
-                      bgcolor: "#F1F5F9",
-                      color: COLORS.PRIMARY_PURPLE,
-                      "&:hover": { bgcolor: "#E2E8F0" },
-                    }}
-                  >
-                    <Phone fontSize="small" />
-                  </IconButton>
-                </Box>
+                <IconButton
+                  href={`tel:${booking?.customer_details?.contact_number}`}
+                  sx={{
+                    bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#F8FAFC",
+                    color: '#4F46E5',
+                    border: `1px solid ${isDark ? "transparent" : "#F1F5F9"}`,
+                    "&:hover": { bgcolor: isDark ? "rgba(255,255,255,0.1)" : "#F1F5F9" },
+                    width: 36,
+                    height: 36
+                  }}
+                >
+                  <Phone sx={{ fontSize: 18 }} />
+                </IconButton>
               </Box>
+            </Box>
 
-              <Divider sx={{ mx: 3, opacity: 0.5 }} />
-
-              {/* Location Row */}
-              <Box sx={{ p: 3, display: "flex", gap: 2.5 }}>
+            {/* Location Card */}
+            <Box sx={{ mb: 3 }}>
+              <SectionLabel>SERVICE ADDRESS</SectionLabel>
+              <Box
+                sx={{
+                  p: 2.5,
+                  borderRadius: "16px",
+                  bgcolor: isDark ? "rgba(255,255,255,0.02)" : "#FFFFFF",
+                  border: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "#F1F5F9"}`,
+                  display: "flex",
+                  gap: 2,
+                  boxShadow: isDark ? 'none' : '0 2px 8px rgba(0,0,0,0.02)'
+                }}
+              >
                 <Box
                   sx={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: "16px",
-                    bgcolor: "#F1F5F9",
+                    width: 36,
+                    height: 36,
+                    borderRadius: "8px",
+                    bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#F8FAFC",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     flexShrink: 0,
                   }}
                 >
-                  <NearMe sx={{ color: "#64748B", fontSize: 20 }} />
+                  <NearMe sx={{ color: '#64748B', fontSize: 18 }} />
                 </Box>
                 <Box>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: "#94A3B8",
-                      fontWeight: 700,
-                      letterSpacing: "0.1em",
-                      mb: 0.5,
-                      display: "block",
-                    }}
-                  >
-                    SERVICE ADDRESS
+                  <Typography sx={{ fontWeight: 700, fontSize: "0.95rem", mb: 0.5, color: isDark ? "white" : "#1E293B" }}>
+                    {booking?.booking_address?.name || "Home"}
                   </Typography>
-                  <Typography
-                    sx={{
-                      fontWeight: 800,
-                      fontSize: "1rem",
-                      mb: 0.8,
-                      color: isDark ? "white" : "#1E293B",
-                    }}
-                  >
-                    {booking?.booking_address?.name}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ color: "#64748B", lineHeight: 1.8, fontWeight: 500 }}
-                  >
+                  <Typography variant="body2" sx={{ color: "#64748B", lineHeight: 1.6, fontWeight: 500 }}>
                     {booking?.booking_address?.address}
                     {booking?.booking_address?.landmark && (
-                      <>
-                        <br />
-                        <span style={{ color: "#94A3B8", fontSize: "0.75rem" }}>
-                          Landmark:
-                        </span>{" "}
-                        {booking?.booking_address?.landmark}
-                      </>
+                      <span style={{ display: 'block', marginTop: '4px' }}>
+                        <span style={{ color: '#94A3B8' }}>Landmark:</span> {booking?.booking_address?.landmark}
+                      </span>
                     )}
-                    <br />
-                    {booking?.booking_address?.cityTown},{" "}
-                    {booking?.booking_address?.state} —{" "}
-                    {booking?.booking_address?.pincode}
+                    <span style={{ display: 'block', marginTop: '4px' }}>
+                      {booking?.booking_address?.cityTown}, {booking?.booking_address?.state} {booking?.booking_address?.pincode}
+                    </span>
                   </Typography>
                 </Box>
               </Box>
             </Box>
 
-            {/* Secondary Flow: Instructions & Evidence */}
-            <Box sx={{ px: 1 }}>
-              {/* Notes Section with Subtle Quote Style */}
-              {currentBooking.customer_notes && (
-                <Box sx={{ mb: 4 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: "#94A3B8",
-                      fontWeight: 700,
-                      letterSpacing: "0.1em",
-                      mb: 2,
-                      display: "block",
-                    }}
-                  >
-                    CLIENT INSTRUCTIONS
+            {/* Subdued Instructions */}
+            {currentBooking.customer_notes && (
+              <Box sx={{ mb: 3 }}>
+                <SectionLabel>INSTRUCTIONS</SectionLabel>
+                <Box
+                  sx={{
+                    p: 2.5,
+                    borderRadius: "12px",
+                    bgcolor: isDark ? "rgba(255,255,255,0.02)" : "#F8FAFC",
+                    borderLeft: `3px solid ${COLORS.PRIMARY_PURPLE}`,
+                  }}
+                >
+                  <Typography variant="body2" sx={{ color: isDark ? "#CBD5E1" : "#475569", fontStyle: "italic", lineHeight: 1.6, fontWeight: 500 }}>
+                    "{currentBooking.customer_notes}"
                   </Typography>
-                  <Box
-                    sx={{
-                      p: 3,
-                      borderRadius: "24px",
-                      bgcolor: isDark ? "rgba(255,255,255,0.02)" : "#F8FAFC",
-                      border: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "#E2E8F0"}`,
-                      position: "relative",
-                    }}
-                  >
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: isDark ? "#CBD5E1" : "#475569",
-                        fontStyle: "italic",
-                        lineHeight: 1.8,
-                        fontWeight: 500,
-                      }}
-                    >
-                      "{currentBooking.customer_notes}"
-                    </Typography>
-                  </Box>
                 </Box>
-              )}
+              </Box>
+            )}
 
-              {/* Visual Evidence with Smooth Scrolling */}
-              {currentBooking.booking_photo_url &&
-                currentBooking.booking_photo_url.length > 0 && (
-                  <Box sx={{ mb: 4 }}>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        color: "#94A3B8",
-                        fontWeight: 700,
-                        letterSpacing: "0.1em",
-                        mb: 2,
-                        display: "block",
-                      }}
-                    >
-                      VISUAL EVIDENCE ({currentBooking.booking_photo_url.length}
-                      )
-                    </Typography>
+            {/* Visual Evidence Slider */}
+            {currentBooking.booking_photo_url && currentBooking.booking_photo_url.length > 0 && (
+              <Box sx={{ mb: 3 }}>
+                <SectionLabel>EVIDENCE ({currentBooking.booking_photo_url.length})</SectionLabel>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1.5,
+                    overflowX: "auto",
+                    pb: 1,
+                    "&::-webkit-scrollbar": { height: "4px" },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
+                      borderRadius: "10px",
+                    },
+                  }}
+                >
+                  {currentBooking.booking_photo_url.map((url, idx) => (
                     <Box
+                      key={idx}
+                      component="img"
+                      src={url}
+                      onClick={() => setPreviewImage(url)}
                       sx={{
-                        display: "flex",
-                        gap: 2,
-                        overflowX: "auto",
-                        pt: 1.5,
-                        pb: 2,
-                        px: 0.5,
-                        mx: -0.5,
-                        "&::-webkit-scrollbar": { height: "4px" },
-                        "&::-webkit-scrollbar-thumb": {
-                          backgroundColor: isDark
-                            ? "rgba(255,255,255,0.1)"
-                            : "rgba(0,0,0,0.06)",
-                          borderRadius: "10px",
+                        width: 100,
+                        height: 100,
+                        borderRadius: "12px",
+                        objectFit: "cover",
+                        flexShrink: 0,
+                        cursor: "pointer",
+                        transition: "all 0.2s",
+                        border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "#E2E8F0"}`,
+                        "&:hover": {
+                          transform: "translateY(-2px)",
+                          borderColor: COLORS.PRIMARY_PURPLE,
+                          opacity: 0.9
                         },
                       }}
-                    >
-                      {currentBooking.booking_photo_url.map((url, idx) => (
-                        <Box
-                          key={idx}
-                          component="img"
-                          src={url}
-                          onClick={() => setPreviewImage(url)}
-                          sx={{
-                            width: 130,
-                            height: 130,
-                            borderRadius: "20px",
-                            objectFit: "cover",
-                            flexShrink: 0,
-                            cursor: "pointer",
-                            transition:
-                              "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                            border: `2px solid ${isDark ? "rgba(255,255,255,0.05)" : "#FFFFFF"}`,
-                            boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                            "&:hover": {
-                              transform: "scale(1.05) translateY(-5px)",
-                              boxShadow: `0 15px 30px ${isDark ? "rgba(0,0,0,0.4)" : "rgba(94, 24, 233, 0.15)"}`,
-                              borderColor: COLORS.PRIMARY_PURPLE,
-                            },
-                          }}
-                        />
-                      ))}
-                    </Box>
-                  </Box>
-                )}
-            </Box>
+                    />
+                  ))}
+                </Box>
+              </Box>
+            )}
 
-            <Box sx={{ mt: 2, mb: 2 }} />
-          </>
+            {/* Action Buttons Container Minimal Focus */}
+            {(currentBooking.status === "PENDING" || currentBooking.status === "CONFIRMED") && (
+              <Box sx={{ mt: 1 }}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  sx={{
+                    py: 1.5,
+                    borderRadius: '12px',
+                    bgcolor: '#4F46E5',
+                    color: 'white',
+                    fontWeight: 700,
+                    textTransform: 'none',
+                    fontSize: '1rem',
+                    boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)',
+                    '&:hover': {
+                      bgcolor: '#4338CA',
+                      boxShadow: '0 6px 16px rgba(79, 70, 229, 0.4)',
+                    }
+                  }}
+                >
+                  Update Booking Status
+                </Button>
+              </Box>
+            )}
+
+          </Box>
         )}
       </Box>
 
@@ -546,7 +517,7 @@ const ProviderBookingDetailsDrawer: React.FC<
         onClose={() => setPreviewImage(null)}
         maxWidth="lg"
         TransitionComponent={Fade}
-        TransitionProps={{ timeout: 400 }}
+        TransitionProps={{ timeout: 300 }}
         PaperProps={{
           sx: {
             bgcolor: "transparent",
@@ -560,27 +531,21 @@ const ProviderBookingDetailsDrawer: React.FC<
           },
         }}
       >
-        <Box
-          sx={{
-            position: "relative",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+        <Box sx={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <IconButton
             onClick={() => setPreviewImage(null)}
             sx={{
               position: "absolute",
-              top: 8,
-              right: 8,
-              bgcolor: "rgba(0,0,0,0.5)",
+              top: 12,
+              right: 12,
+              bgcolor: "rgba(0,0,0,0.6)",
               color: "white",
-              "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
+              backdropFilter: "blur(4px)",
+              "&:hover": { bgcolor: "rgba(0,0,0,0.8)" },
               zIndex: 1,
             }}
           >
-            <Close />
+            <Close fontSize="small" />
           </IconButton>
           {previewImage && (
             <Box
@@ -590,8 +555,8 @@ const ProviderBookingDetailsDrawer: React.FC<
                 maxWidth: "100%",
                 maxHeight: "90vh",
                 objectFit: "contain",
-                borderRadius: "12px",
-                boxShadow: "0px 10px 40px rgba(0,0,0,0.5)",
+                borderRadius: "16px",
+                boxShadow: "0px 20px 60px rgba(0,0,0,0.6)",
               }}
             />
           )}

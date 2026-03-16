@@ -32,11 +32,11 @@ export default function ChatInterface() {
     start: () => void;
     stop: () => void;
     onresult:
-      | ((e: {
-          results: { isFinal: boolean; [0]: { transcript: string } }[];
-          resultIndex: number;
-        }) => void)
-      | null;
+    | ((e: {
+      results: { isFinal: boolean;[0]: { transcript: string } }[];
+      resultIndex: number;
+    }) => void)
+    | null;
     onend: (() => void) | null;
     onerror: (() => void) | null;
   };
@@ -67,7 +67,7 @@ export default function ChatInterface() {
     if (recognitionRef.current) recognitionRef.current.stop();
     recognitionRef.current = recognition;
     recognition.onresult = (event: {
-      results: { isFinal: boolean; [0]: { transcript: string } }[];
+      results: { isFinal: boolean;[0]: { transcript: string } }[];
       resultIndex: number;
     }) => {
       let final = "";

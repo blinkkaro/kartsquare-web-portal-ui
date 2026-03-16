@@ -75,7 +75,7 @@ const SupplierOrderPage = () => {
   return (
     <Box
       sx={{
-        p: 3,
+        p: { xs: 2, md: 3 },
         bgcolor: isDark
           ? COLORS.BACKGROUND.SECONDARY_DARK
           : COLORS.BACKGROUND.SECONDARY_LIGHT,

@@ -100,6 +100,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
                   : COLORS.BACKGROUND.SECONDARY_LIGHT,
                 "& fieldset": { border: "none" },
               },
+              width: "100%",
             }}
           />
         </Box>

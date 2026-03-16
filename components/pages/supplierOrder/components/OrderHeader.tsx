@@ -81,15 +81,20 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({
         </Box>
       </Typography>
 
-      <Stack direction="row" spacing={2} alignItems="center">
-        <Box sx={{ width: 300 }}>
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={2}
+        alignItems={{ xs: "stretch", sm: "center" }}
+        sx={{ width: { xs: "100%", sm: "auto" } }}
+      >
+        <Box sx={{ width: { xs: "100%", sm: 300 } }}>
           <Input
             name="search"
             control={control}
             placeholder={t("search")}
             startIcon={<SearchIcon sx={{ color: "text.secondary" }} />}
             sx={{
-              width: isMobile ? "95%" : 300,
+              width: "100%",
               "& .MuiOutlinedInput-root": {
                 borderRadius: "50px",
                 bgcolor: isDark

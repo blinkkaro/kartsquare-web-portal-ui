@@ -12,8 +12,7 @@ import {
 import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { COLORS } from "@/constants/colors";
 import HomeBanner from "./components/HomeBanner";
-import FeaturedServiceCategories from "./components/FeaturedServiceCategories";
-import FeaturedProductCategories from "./components/FeaturedProductCategories";
+import CombinedFeaturedSection from "./components/CombinedFeaturedSection";
 import StoriesSection from "./components/StoriesSection";
 import PostCard from "./components/PostCard";
 import AdCard from "./components/AdCard";
@@ -180,7 +179,12 @@ function HomeView() {
           }}
         >
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            <StoriesSection data={stories} isLoading={storiesLoading} />
+            {/* Banner Section */}
+            <HomeBanner />
+
+            <div id="posts-feed-section">
+              <StoriesSection data={stories} isLoading={storiesLoading} />
+            </div>
 
             {/* Compact Map - Mobile/Tablet View */}
             <Box

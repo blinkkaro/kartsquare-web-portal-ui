@@ -47,6 +47,7 @@ const WarningModel: React.FC<SuccessModelProps> = ({
       keepMounted
       onClose={onClose}
       aria-describedby="success-modal-description"
+      sx={{ zIndex: 1000000 }}
       PaperProps={{
         sx: {
           borderRadius: "24px",

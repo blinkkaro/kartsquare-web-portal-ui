@@ -39,25 +39,46 @@ export const getStatCards = (t: any) => [
 
 export const getSuccessStories = (t: any) => [
   {
-    name: "Ramesh Gupta",
-    role: t("roleTailor"),
-    tagline: t("successStoryTagline1"),
+    name: "Rajesh Kumar",
+    role: "Kirana Store Owner",
+    tagline: "Since listing on KartSquare, my daily footfall has doubled. People in my locality now find my shop easily when they search for groceries online.",
     image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1596484552834-6a58f84cc235?w=500&auto=format&fit=crop&q=60", // Indian man smiling
   },
   {
     name: "Priya Sharma",
-    role: t("roleKiranaOwner"),
-    tagline: t("successStoryTagline2"),
+    role: "Freelance Makeup Artist",
+    tagline: "I used to rely only on referrals. Now, I get consistent booking inquiries directly through my profile. It's completely free and so easy to use.",
     image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1589156229687-496a31ad1d1f?w=500&auto=format&fit=crop&q=60", // Indian woman smiling
+  },
+  {
+    name: "Amit Patel",
+    role: "Electronics Dealer",
+    tagline: "The platform connecting suppliers with local customers is a game-changer. My bulk orders have increased significantly since joining.",
+    image:
+      "https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?w=500&auto=format&fit=crop&q=60", // generic professional/shop owner
+  },
+  {
+    name: "Sneha Reddy",
+    role: "Boutique Owner",
+    tagline: "Uploading photos of our latest collections brings so many walk-ins. Customers love seeing what we have before they even visit.",
+    image:
+      "https://images.unsplash.com/photo-1615585093557-caaa0f5abe5e?w=500&auto=format&fit=crop&q=60", // Indian woman looking confident
   },
   {
     name: "Vikram Singh",
-    role: t("roleElectrician"),
-    tagline: t("successStoryTagline3"),
+    role: "AC Repair & Service",
+    tagline: "Summer is our peak time, and being on this directory means when an AC breaks down in the neighborhood, my phone rings first.",
     image:
-      "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=500&auto=format&fit=crop&q=60", // man working/service
+  },
+  {
+    name: "Anjali Desai",
+    role: "Home Baker",
+    tagline: "Starting my baking business from home was tough until I created my free profile. The local visibility gave me the initial boost I truly needed.",
+    image:
+      "https://images.unsplash.com/photo-1525543907410-b2562b6796d6?w=500&auto=format&fit=crop&q=60", // woman cooking/smiling
   },
 ];
 

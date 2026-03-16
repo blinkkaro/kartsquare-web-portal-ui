@@ -111,5 +111,17 @@ class PostServices {
       throw error;
     }
   }
+
+  async getReels(): Promise<GetPostsResponse> {
+    try {
+      const response = await GET<GetPostsResponse>(API_ENDPOINTS.GET_REELS);
+      if (response.status !== "success") {
+        throw new Error(response.message || "Failed to get reels");
+      }
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 export const postServices = new PostServices();

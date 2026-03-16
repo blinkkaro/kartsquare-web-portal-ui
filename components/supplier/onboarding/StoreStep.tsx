@@ -22,6 +22,9 @@ import ImageUpload from "@/components/common/ImageUpload";
 import AddressCard from "@/components/pages/address/components/AddressCard";
 import WarningModel from "@/components/common/WarningModel";
 import ErrorMessage from "@/components/common/ErrorMessage";
+import AddressCard from "@/components/pages/address/components/AddressCard";
+import WarningModel from "@/components/common/WarningModel";
+import ErrorMessage from "@/components/common/ErrorMessage";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useSupplierStore, useUpdateSupplierStore } from "@/hooks/useSupplier";
 import { useRouter } from "next/navigation";
@@ -33,6 +36,12 @@ import { useAppDispatch } from "@/store/hooks";
 import { updateUser } from "@/features/ui/authSlice";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { secureStorage } from "@/helper/SecureStorage";
+import {
+  useGetAddress,
+  useUpdateAddress,
+  useDeleteAddress,
+} from "@/hooks/useAddress";
+import { Address } from "@/services/address/addressInterface";
 import {
   useGetAddress,
   useUpdateAddress,
@@ -84,6 +93,16 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
   const dispatch = useAppDispatch();
   const [addressDrawerOpen, setAddressDrawerOpen] = React.useState(false);
   const [isUploading, setIsUploading] = React.useState(false);
+
+  // Address Management State
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+  const [addressToEdit, setAddressToEdit] = React.useState<Address | null>(null);
+  const [addressToDelete, setAddressToDelete] = React.useState<string | null>(null);
+
+  const updateAddressMutation = useUpdateAddress();
+  const deleteAddressMutation = useDeleteAddress();
+
 
   // Address Management State
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
@@ -162,6 +181,69 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
       business_type: "",
     },
   });
+
+  const handleSetDefault = (id: string) => {
+    const address = addresses?.find((addr) => addr.id === id);
+    if (address) {
+      updateAddressMutation.mutate({
+        id,
+        data: { ...address, is_default: true },
+      });
+    }
+  };
+
+  const handleDeleteAddress = () => {
+    if (addressToDelete) {
+      deleteAddressMutation.mutate(addressToDelete, {
+        onSuccess: () => {
+          setIsDeleteDialogOpen(false);
+          setAddressToDelete(null);
+          refetchAddresses();
+        },
+      });
+    }
+  };
+
+  const openEditModal = (address: Address) => {
+    setAddressToEdit(address);
+    setIsEditModalOpen(true);
+  };
+
+  const openDeleteDialog = (id: string) => {
+    setIsDeleteDialogOpen(true);
+    setAddressToDelete(id);
+  };
+
+  const displayedAddresses = addresses
+    ? [...addresses]
+        .sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        )
+        .slice(0, 1)
+    : [];
+
+  // Auto-selection effect
+  const storeAddressId = watch("store_address_id");
+  const prevAddressesCount = React.useRef(addresses?.length || 0);
+
+  React.useEffect(() => {
+    const currentCount = addresses?.length || 0;
+    if (currentCount > prevAddressesCount.current) {
+      // New address added - auto-select the latest one
+      if (displayedAddresses.length > 0) {
+        setValue("store_address_id", displayedAddresses[0].id, {
+          shouldValidate: true,
+        });
+      }
+    } else if (displayedAddresses.length > 0 && !storeAddressId) {
+      // Initial load - select first available address
+      setValue("store_address_id", displayedAddresses[0].id, {
+        shouldValidate: true,
+      });
+    }
+    prevAddressesCount.current = currentCount;
+  }, [displayedAddresses, storeAddressId, setValue, addresses?.length]);
 
   const handleSetDefault = (id: string) => {
     const address = addresses?.find((addr) => addr.id === id);
@@ -737,7 +819,28 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                   onClick={() => setAddressDrawerOpen(true)}
                   sx={{ mt: 3, borderStyle: "dashed" }}
                   startIcon={<span>+</span>}
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
+                ) : (
+                  <Box sx={{ textAlign: "center", py: 4 }}>
+                    <Typography sx={{ mb: 2 }}>
+                      {t("no_address_yet" )}
+                    </Typography>
+                  </Box>
+                )}
+
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  onClick={() => setAddressDrawerOpen(true)}
+                  sx={{ mt: 3, borderStyle: "dashed" }}
+                  startIcon={<span>+</span>}
                 >
+                  {t("store_setup_add_new_address" )}
+                </Button>
+              </Box>
                   {t("store_setup_add_new_address" )}
                 </Button>
               </Box>
@@ -923,6 +1026,50 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
           refetchAddresses();
         }}
         mode="add"
+        isDefault={true}
+      />
+
+      <AddressDrawer
+        open={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setAddressToEdit(null);
+          refetchAddresses();
+        }}
+        initialData={addressToEdit}
+        mode="edit"
+      />
+
+      <WarningModel
+        open={isDeleteDialogOpen}
+        onClose={() => {
+          setIsDeleteDialogOpen(false);
+          setAddressToDelete(null);
+        }}
+        title={t("deleteAddress" )}
+        description={t("deleteAddressDescription" )}
+        ActionsButtons={
+          <Box>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setIsDeleteDialogOpen(false);
+                setAddressToDelete(null);
+              }}
+            >
+              {t("cancel" )}
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleDeleteAddress}
+              sx={{
+                ml: 2,
+              }}
+            >
+              {t("delete" )}
+            </Button>
+          </Box>
+        }
         isDefault={true}
       />
 
