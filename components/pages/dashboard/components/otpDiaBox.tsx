@@ -7,10 +7,10 @@ import {
   Typography,
   TextField,
   Button,
+  CircularProgress,
   Slide,
   useTheme,
 } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { LockOutlined } from "@mui/icons-material";
 import type { TransitionProps } from "@mui/material/transitions";
 import { COLORS } from "@/constants/colors";
@@ -111,11 +111,6 @@ function OtpDiaBox({
           variant="outlined"
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && otp.length === 6) {
-              handleUpdateStatus(BookingStatus.ACTIVE, otp);
-            }
-          }}
           disabled={loading}
           inputProps={{
             maxLength: 6,
@@ -181,7 +176,7 @@ function OtpDiaBox({
             }}
           >
             {loading ? (
-              <LogoLoader size={24} />
+              <CircularProgress size={24} color="inherit" />
             ) : status === "ACTIVE" ? (
               t("verify_and_start")
             ) : (

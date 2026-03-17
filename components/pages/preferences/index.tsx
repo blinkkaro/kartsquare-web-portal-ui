@@ -1,21 +1,19 @@
 "use client";
 import AuthWrapper from "@/components/auth/authWrapper";
 import { useTranslate } from "@/hooks/useTranslate";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { useGetUserPreference } from "@/hooks/usePreference";
+import { usePreference } from "@/hooks/usePreference";
 import PreferenceCard from "./components/PreferenceCard";
 import {
   Typography,
   Grid,
   Button,
   Box,
+  CircularProgress,
   TextField,
   InputAdornment,
-  useTheme,
 } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { prefranceService } from "@/services/auth/preference.service";
 import { useRouter } from "next/navigation";
@@ -35,22 +33,11 @@ function PreferencesView() {
   const { t } = useTranslate();
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const theme = useTheme();
 
   const headerTitle =
     user?.role === "CUSTOMER" ? t("preferences") : t("category");
 
-  const { data: preferences, isLoading, error, isError } = useGetUserPreference();
-
-  useEffect(() => {
-    if (preferences) {
-      const activePreferences = preferences
-        .filter((pref: any) => pref.is_selected)
-        .map((pref: any) => pref.id);
-      setSelectedPreferenceIds(new Set(activePreferences));
-    }
-  }, [preferences]);
-
+  const { data: preferences, isLoading, error, isError } = usePreference();
 
   const filteredPreferences = useMemo(() => {
     if (!preferences) return [];
@@ -95,7 +82,16 @@ function PreferencesView() {
   };
 
   if (isLoading) {
-    return <CenteredLoader minHeight="50vh" />;
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="50vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (isError) {
@@ -224,20 +220,20 @@ function PreferencesView() {
             borderRadius: "20px",
             p: 2,
             mb: 3,
-            bgcolor: theme.palette.mode === "dark" ? "background.default" : "grey.50",
+            bgcolor: "grey.50",
             border: "1px solid",
-            borderColor: theme.palette.mode === "dark" ? "divider" : "grey.200",
-            boxShadow: theme.palette.mode === "dark" ? "none" : "inset 0 1px 2px rgba(0,0,0,0.04)",
+            borderColor: "grey.200",
+            boxShadow: "inset 0 1px 2px rgba(0,0,0,0.04)",
             "&::-webkit-scrollbar": { width: 8 },
             "&::-webkit-scrollbar-track": {
-              bgcolor: theme.palette.mode === "dark" ? "background.paper" : "grey.100",
+              bgcolor: "grey.100",
               borderRadius: 4,
             },
             "&::-webkit-scrollbar-thumb": {
-              bgcolor: theme.palette.mode === "dark" ? "grey.700" : "grey.400",
+              bgcolor: "grey.400",
               borderRadius: 4,
             },
-            "&::-webkit-scrollbar-thumb:hover": { bgcolor: theme.palette.mode === "dark" ? "grey.600" : "grey.500" },
+            "&::-webkit-scrollbar-thumb:hover": { bgcolor: "grey.500" },
           }}
         >
           <Grid container spacing={2}>
@@ -293,13 +289,13 @@ function PreferencesView() {
             boxShadow: isContinueDisabled
               ? "none"
               : "0 4px 14px rgba(94, 24, 233, 0.35)",
-            bgcolor: isContinueDisabled ? (theme.palette.mode === "dark" ? "action.disabledBackground" : "grey.300") : undefined,
-            color: isContinueDisabled ? (theme.palette.mode === "dark" ? "action.disabled" : "grey.600") : undefined,
+            bgcolor: isContinueDisabled ? "grey.300" : undefined,
+            color: isContinueDisabled ? "grey.600" : undefined,
             "&:hover": {
               boxShadow: isContinueDisabled
                 ? "none"
                 : "0 6px 20px rgba(94, 24, 233, 0.4)",
-              bgcolor: isContinueDisabled ? (theme.palette.mode === "dark" ? "action.disabledBackground" : "grey.300") : undefined,
+              bgcolor: isContinueDisabled ? "grey.300" : undefined,
             },
           }}
           onClick={handleSave}
@@ -308,7 +304,7 @@ function PreferencesView() {
         >
           {isSaving ? (
             <>
-              <LogoLoader size={20} />
+              <CircularProgress size={20} sx={{ mr: 1, color: "inherit" }} />
               Saving...
             </>
           ) : (

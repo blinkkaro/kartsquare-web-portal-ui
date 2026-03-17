@@ -9,10 +9,10 @@ import {
   RadioGroup,
   FormControlLabel,
   FormControl,
+  CircularProgress,
   useTheme,
   Slider,
 } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { COLORS } from "@/constants/colors";
 import { UserAddress } from "@/services/userAddress/userAddressInterface";
 import AddressDrawer from "@/components/common/address/AddressDrawer";
@@ -92,7 +92,7 @@ const ServiceLocation = ({
         </Typography>
 
         {addressesLoading ? (
-          <LogoLoader size={20} />
+          <CircularProgress size={20} />
         ) : addresses.length > 0 ? (
           <Box
             sx={{ display: "flex", flexDirection: "column", gap: 1.5, mb: 2 }}

@@ -13,8 +13,8 @@ import {
   useTheme,
   Divider,
   InputAdornment,
+  CircularProgress,
 } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import {
   Work,
   School,
@@ -802,10 +802,8 @@ const CareersView: React.FC = () => {
                       }}
                     >
                       {isSubmitting ? (
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          <LogoLoader size={20} />
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                          <CircularProgress size={20} sx={{ color: COLORS.WHITE }} />
                           <Typography>{t("submitting")}</Typography>
                         </Box>
                       ) : (

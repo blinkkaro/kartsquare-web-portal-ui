@@ -13,7 +13,6 @@ import { formatDate } from "@/helper/helper";
 import EditProfileModal from "./components/EditProfileModal";
 import WarningModel from "@/components/common/WarningModel";
 import { getUserRole, UserRole } from "@/utils/auth";
-import { UserRegisterSteps } from "@/types/resgistrationFlow";
 
 function PersonalInfoView() {
   const theme = useTheme();
@@ -109,7 +108,7 @@ function PersonalInfoView() {
             <Labels
               label={t("email")}
               description={profile?.email || ""}
-              verified={(profile?.register_step ?? 0) > UserRegisterSteps.EMAIL_VERIFIED}
+              verified={true}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
@@ -126,7 +125,7 @@ function PersonalInfoView() {
               <Labels
                 label={t("phone_number")}
                 description={profile?.phone_number || ""}
-                verified={(profile?.register_step ?? 0) > UserRegisterSteps.EMAIL_VERIFIED}
+                verified={true}
               />
             </Box>
           </Grid>

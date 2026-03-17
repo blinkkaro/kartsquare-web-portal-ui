@@ -12,11 +12,11 @@ import {
   TableHead,
   TableRow,
   Paper,
+  CircularProgress,
   Tooltip,
   TextField,
   InputAdornment,
 } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import SearchIcon from "@mui/icons-material/Search";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -122,7 +122,9 @@ const LatestLeads = () => {
         </Box>
 
         {isLoading ? (
-          <CenteredLoader p={5} />
+          <Box sx={{ display: "flex", justifyContent: "center", p: 5 }}>
+            <CircularProgress />
+          </Box>
         ) : leads.length > 0 ? (
           <>
             <TableContainer sx={{ overflowX: "auto" }}>

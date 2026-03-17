@@ -41,17 +41,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
     []
   );
   return (
-    <Grid
-      container
-      sx={{
-        minHeight: "100vh",
-        width: "100%",
-        bgcolor:
-          theme.palette.mode === "light"
-            ? COLORS.BACKGROUND.PRIMARY_LIGHT
-            : COLORS.BACKGROUND.PRIMARY_DARK,
-      }}
-    >
+    <Grid container sx={{ minHeight: "100vh", width: "100%" }}>
       {/* Left Side (Image & Branding) */}
       <Grid
         size={{ xs: 12, lg: 6 }}
@@ -116,10 +106,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
                 theme.palette.mode === "light"
                   ? COLORS.PURPLECYAN
                   : COLORS.DARK_GRADIENT,
-              lg:
-                theme.palette.mode === "light"
-                  ? COLORS.BACKGROUND.PRIMARY_LIGHT
-                  : COLORS.BACKGROUND.PRIMARY_DARK,
+              lg: "none",
             },
             display: "flex",
             flexDirection: "column",

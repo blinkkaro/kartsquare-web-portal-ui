@@ -12,12 +12,12 @@ import {
   useTheme,
   Paper,
   MenuItem,
+  CircularProgress,
   alpha,
   Accordion,
   AccordionSummary,
   AccordionDetails,
 } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
@@ -225,7 +225,11 @@ const KycStep: React.FC<KycStepProps> = ({ onBack, onNext }) => {
   };
 
   if (isLoadingKyc)
-    return <CenteredLoader py={10} />;
+    return (
+      <Box display="flex" justifyContent="center" py={10}>
+        <CircularProgress />
+      </Box>
+    );
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ pb: 4 }}>

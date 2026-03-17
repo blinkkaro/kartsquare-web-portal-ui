@@ -5,6 +5,7 @@ import {
   Paper,
   Typography,
   Avatar,
+  CircularProgress,
   Divider,
   useTheme,
   Card,
@@ -13,7 +14,6 @@ import {
   Rating,
   useMediaQuery,
 } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { Star, Person, Business } from "@mui/icons-material";
 import { COLORS } from "../../../../constants/colors";
 import { SearchUser, SearchService } from "../../../../services/search/searchInterface";
@@ -203,7 +203,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
               py: 4,
             }}
           >
-            <LogoLoader size={32} />
+            <CircularProgress size={32} sx={{ color: COLORS.PRIMARY_PURPLE }} />
           </Box>
         ) : !hasResults && searchQuery.trim().length > 0 ? (
           <Box

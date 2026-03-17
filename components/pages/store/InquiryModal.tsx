@@ -12,8 +12,8 @@ import {
   Box,
   IconButton,
   Grid,
+  CircularProgress,
 } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { Close, Send, CheckCircleOutline } from "@mui/icons-material";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -309,7 +309,7 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
             disabled={isLoading}
             startIcon={
               isLoading ? (
-                <LogoLoader size={20} />
+                <CircularProgress size={20} color="inherit" />
               ) : (
                 <Send />
               )

@@ -4,12 +4,12 @@ import {
   TextField,
   useTheme,
   Typography,
+  CircularProgress,
   Grid,
   Chip,
   IconButton,
   InputAdornment,
 } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { Send, AutoAwesome, SmartToy, Mic } from "@mui/icons-material";
 import { AIMessage } from "@/services/ai/aiInterface";
 import { COLORS } from "@/constants/colors";
@@ -462,7 +462,10 @@ export default function ChatInterface() {
                   : "0 2px 12px rgba(94, 24, 233, 0.08)",
               }}
             >
-              <LogoLoader size={20} />
+              <CircularProgress
+                size={20}
+                sx={{ color: COLORS.PRIMARY_PURPLE }}
+              />
               <Typography
                 variant="body2"
                 sx={{
@@ -641,7 +644,7 @@ export default function ChatInterface() {
             }}
           >
             {isLoading ? (
-              <LogoLoader size={24} />
+              <CircularProgress size={24} color="inherit" />
             ) : (
               <Send sx={{ fontSize: 22 }} />
             )}

@@ -10,12 +10,12 @@ import {
     IconButton,
     Chip,
     Stack,
+    CircularProgress,
     alpha,
     useTheme,
     Breadcrumbs,
     Link
 } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import {
     ArrowBack,
     Edit as EditIcon,
@@ -45,7 +45,7 @@ export default function ProductDetailsPage() {
 
     if (isLoading) return (
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
-            <LogoLoader />
+            <CircularProgress color="primary" />
         </Box>
     );
 

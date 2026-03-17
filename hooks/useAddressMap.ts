@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { UseFormSetValue } from "react-hook-form";
 import { mapService } from "@/services/map/mapService";
 import { AddressFormData } from "@/components/common/address/AddressSchema";
@@ -8,20 +8,17 @@ interface UseAddressMapProps {
   initialData: Address | null;
   setValue: UseFormSetValue<AddressFormData>;
   coordinates: { latitude: number; longitude: number } | null | undefined;
-  watch: any;
 }
 
 export const useAddressMap = ({
   initialData,
   setValue,
   coordinates,
-  watch,
 }: UseAddressMapProps) => {
   const [mapCoordinates, setMapCoordinates] = useState<{
     lat: number;
     lng: number;
   }>({ lat: 28.6139, lng: 77.209 }); // Default to New Delhi
-  const [isInternalUpdate, setIsInternalUpdate] = useState(false);
 
   // Update map coordinates when geolocation coordinates change
   useEffect(() => {
@@ -47,85 +44,113 @@ export const useAddressMap = ({
     setMapCoordinates({ lat, lng });
     setValue("latitude", lat);
     setValue("longitude", lng);
+    console.log("Map location changed:", {
+      latitude: lat,
+      longitude: lng,
+    });
   };
 
-  const fetchAddressFromCoordinates = async (lat: number, lng: number) => {
-    // Check if Google Maps API is loaded
-    if (typeof window === "undefined" || !window.google || !window.google.maps) {
-      return;
-    }
-
-    try {
-      const addressData = await mapService.reverseGeocode(lat, lng);
-
-      if (!addressData?.address_components) return;
-
-      const components = addressData.address_components;
-      const findComp = (types: string[]) => 
-        components.find((c: any) => types.some(type => c.types.includes(type)))?.long_name || "";
-
-      const streetNumber = findComp(["street_number"]);
-      const route = findComp(["route"]);
-      const neighborhood = findComp(["neighborhood"]);
-      const subLocality = findComp(["sublocality", "sublocality_level_1"]);
-      const subLocality2 = findComp(["sublocality_level_2"]);
-      const premise = findComp(["premise"]);
-      const locality = findComp(["locality"]);
-      const adminArea2 = findComp(["administrative_area_level_2"]);
-      const adminArea1 = findComp(["administrative_area_level_1"]);
-      const countryName = findComp(["country"]);
-      const postalCode = findComp(["postal_code"]);
-      const pointOfInterest = findComp(["point_of_interest"]);
-
-      setIsInternalUpdate(true);
-      
-      // Building No
-      const finalBuildingNo = streetNumber || premise || "";
-      if (finalBuildingNo) {
-        setValue("building_no", finalBuildingNo, { shouldValidate: true });
-      }
-
-      // Landmark
-      const finalLandmark = pointOfInterest || neighborhood || subLocality2 || "";
-      if (finalLandmark) {
-        setValue("landmark", finalLandmark, { shouldValidate: true });
-      }
-
-      const streetAddress = [route, subLocality, subLocality2]
-        .filter(Boolean)
-        .join(", ");
-      if (streetAddress) setValue("address", streetAddress, { shouldValidate: true });
-
-      const finalCity = locality || subLocality || adminArea2;
-      if (finalCity) setValue("city_town", finalCity, { shouldValidate: true });
-      if (adminArea1) setValue("state", adminArea1, { shouldValidate: true });
-      if (countryName) setValue("country", countryName, { shouldValidate: true });
-      if (postalCode) setValue("pincode", postalCode, { shouldValidate: true });
-      
-      setTimeout(() => setIsInternalUpdate(false), 1000);
-
-    } catch (error) {
-      // console.error("Error fetching address from coordinates:", error);
-    }
-  };
-
-  // Form Population Logic (from Reverse Geocode) - DEBOUNCED
+  // Form Population Logic (from Reverse Geocode)
   useEffect(() => {
-    // If we're currently geocoding from a manual form entry, don't reverse geocode
-    if (isInternalUpdate) return;
-
-    const timer = setTimeout(() => {
+    const fetchAddressFromCoordinates = async () => {
       if (mapCoordinates.lat && mapCoordinates.lng) {
-        fetchAddressFromCoordinates(mapCoordinates.lat, mapCoordinates.lng);
+        try {
+          const addressData = await mapService.reverseGeocode(
+            mapCoordinates.lat,
+            mapCoordinates.lng,
+          );
+
+          console.log("Address Data:", addressData);
+
+          if (!addressData?.address_components) return;
+
+          const components = addressData.address_components;
+          let streetNumber = "";
+          let route = "";
+          let neighborhood = "";
+          let subLocality = "";
+          let locality = "";
+          let adminArea2 = ""; // District/County
+          let adminArea1 = ""; // State
+          let countryName = "";
+          let postalCode = "";
+          let premise = "";
+
+          components.forEach((component: any) => {
+            const types = component.types;
+            if (types.includes("street_number"))
+              streetNumber = component.long_name;
+            if (types.includes("route")) route = component.long_name;
+            if (types.includes("neighborhood"))
+              neighborhood = component.long_name;
+            if (
+              types.includes("sublocality") ||
+              types.includes("sublocality_level_1")
+            ) {
+              subLocality = component.long_name;
+            }
+            if (types.includes("premise")) premise = component.long_name;
+            if (types.includes("locality")) locality = component.long_name;
+            if (types.includes("administrative_area_level_2"))
+              adminArea2 = component.long_name;
+            if (types.includes("administrative_area_level_1"))
+              adminArea1 = component.long_name;
+            if (types.includes("country")) countryName = component.long_name;
+            if (types.includes("postal_code")) postalCode = component.long_name;
+          });
+
+          // 1. Building No
+          if (streetNumber) {
+            setValue("building_no", streetNumber, { shouldValidate: true });
+          } else if (premise) {
+            setValue("building_no", premise, { shouldValidate: true });
+          } else {
+            setValue("building_no", "", { shouldValidate: false });
+          }
+
+          // 2. Address (Street)
+          const streetAddress = [route, subLocality, neighborhood]
+            .filter(Boolean)
+            .join(", ");
+          if (streetAddress) {
+            setValue("address", streetAddress, { shouldValidate: true });
+          } else if (neighborhood) {
+            setValue("address", neighborhood, { shouldValidate: true });
+          }
+
+          // 3. City
+          const finalCity = locality || subLocality || adminArea2;
+          if (finalCity)
+            setValue("city_town", finalCity, { shouldValidate: true });
+
+          // 4. State
+          if (adminArea1)
+            setValue("state", adminArea1, { shouldValidate: true });
+
+          // 5. Country
+          if (countryName)
+            setValue("country", countryName, { shouldValidate: true });
+
+          // 6. Pincode
+          if (postalCode)
+            setValue("pincode", postalCode, { shouldValidate: true });
+
+          console.log("Address fields populated:", {
+            building_no: streetNumber || premise,
+            address: streetAddress || neighborhood,
+            city_town: finalCity,
+            state: adminArea1,
+            country: countryName,
+            pincode: postalCode,
+          });
+        } catch (error) {
+          console.error("Error fetching address from coordinates:", error);
+        }
       }
-    }, 1000); // 1s debounce for map movement
+    };
 
-    return () => clearTimeout(timer);
-  }, [mapCoordinates.lat, mapCoordinates.lng]);
-
-  const refreshAddressFromMap = () => {
-    fetchAddressFromCoordinates(mapCoordinates.lat, mapCoordinates.lng);
-  };
+    fetchAddressFromCoordinates();
+  }, [mapCoordinates.lat, mapCoordinates.lng, setValue]);
 
   // Handle location selection from search suggestions
   const handleLocationSelect = async (location: {
@@ -135,40 +160,71 @@ export const useAddressMap = ({
     placeId: string;
     addressComponents?: any;
   }) => {
+    // Update map coordinates
     setMapCoordinates({ lat: location.lat, lng: location.lng });
     setValue("latitude", location.lat);
     setValue("longitude", location.lng);
 
+    // Parse address components to populate form fields
     if (location.addressComponents) {
       const components = location.addressComponents;
-      const findComponent = (type: string) => components.find((c: any) => c.types.includes(type))?.long_name || "";
 
+      // Helper to find component by type
+      const findComponent = (type: string) => {
+        const component = components.find((c: any) => c.types.includes(type));
+        return component?.long_name || "";
+      };
+
+      // Extract address details
       const streetNumber = findComponent("street_number");
       const route = findComponent("route");
       const locality = findComponent("locality");
       const sublocality = findComponent("sublocality_level_1");
-      const sublocality2 = findComponent("sublocality_level_2");
       const administrativeArea = findComponent("administrative_area_level_1");
       const country = findComponent("country");
       const postalCode = findComponent("postal_code");
       const premise = findComponent("premise");
-      const pointOfInterest = findComponent("point_of_interest");
-      const neighborhood = findComponent("neighborhood");
 
-      setIsInternalUpdate(true);
-      if (streetNumber || route) setValue("address", `${streetNumber} ${route}`.trim());
-      else if (location.address) setValue("address", location.address);
+      // Populate form fields
+      if (streetNumber || route) {
+        setValue("address", `${streetNumber} ${route}`.trim());
+      } else if (location.address) {
+        setValue("address", location.address);
+      }
 
-      if (premise || streetNumber) setValue("building_no", premise || streetNumber);
-      if (locality || sublocality) setValue("city_town", locality || sublocality);
-      if (administrativeArea) setValue("state", administrativeArea);
-      if (country) setValue("country", country);
-      if (postalCode) setValue("pincode", postalCode);
-      
-      const finalLandmark = pointOfInterest || neighborhood || sublocality2;
-      if (finalLandmark) setValue("landmark", finalLandmark);
-      
-      setTimeout(() => setIsInternalUpdate(false), 500);
+      if (premise) {
+        setValue("building_no", premise);
+      }
+
+      if (locality || sublocality) {
+        const cityValue = locality || sublocality;
+        setValue("city_town", cityValue);
+      }
+
+      if (administrativeArea) {
+        setValue("state", administrativeArea);
+      }
+
+      if (country) {
+        setValue("country", country);
+      }
+
+      if (postalCode) {
+        setValue("pincode", postalCode);
+      }
+    } else {
+      // Fallback: use reverse geocoding if address components not available
+      try {
+        const geocodeResult = await mapService.reverseGeocode(
+          location.lat,
+          location.lng,
+        );
+        if (geocodeResult) {
+          setValue("address", geocodeResult.formatted_address || "");
+        }
+      } catch (error) {
+        console.error("Reverse geocoding error:", error);
+      }
     }
   };
 
@@ -177,6 +233,5 @@ export const useAddressMap = ({
     setMapCoordinates,
     handleMapLocationChange,
     handleLocationSelect,
-    refreshAddressFromMap
   };
 };

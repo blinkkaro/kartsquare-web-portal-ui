@@ -15,9 +15,9 @@ import {
     FormControl,
     InputLabel,
     alpha,
+    CircularProgress,
     Fade
 } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import {
     Search as SearchIcon,
     FilterList as FilterIcon,
@@ -140,7 +140,7 @@ export default function SupplierProductsPage() {
 
     if (isLoading) return (
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
-            <LogoLoader />
+            <CircularProgress color="primary" />
         </Box>
     );
 

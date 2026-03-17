@@ -37,7 +37,6 @@ const ResetPassForm: React.FC<{
       }}
     >
       <Input
-        autoFocus
         name="code"
         label={t("code")}
         type="number"
@@ -45,10 +44,10 @@ const ResetPassForm: React.FC<{
         aria-disabled
         sx={{
           "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-          {
-            WebkitAppearance: "none",
-            margin: 0,
-          },
+            {
+              WebkitAppearance: "none",
+              margin: 0,
+            },
           "& input[type=number]": {
             MozAppearance: "textfield",
           },

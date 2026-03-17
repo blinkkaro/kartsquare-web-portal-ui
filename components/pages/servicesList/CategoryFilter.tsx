@@ -4,10 +4,10 @@ import React from "react";
 import {
   Box,
   Chip,
+  CircularProgress,
   Typography,
   useTheme,
 } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { Category } from "../../../services/serviceList/listInteraface";
 import { COLORS } from "../../../constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -141,7 +141,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
       >
         {loading ? (
           <Box sx={{ display: "flex", alignItems: "center", py: 1 }}>
-            <LogoLoader size={28} />
+            <CircularProgress size={28} sx={{ color: COLORS.PRIMARY_PURPLE }} />
           </Box>
         ) : (
           <>

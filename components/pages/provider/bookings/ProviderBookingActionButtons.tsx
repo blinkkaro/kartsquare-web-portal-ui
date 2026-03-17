@@ -15,9 +15,9 @@ import {
   Slide,
   useTheme,
   IconButton,
+  CircularProgress,
   Button,
 } from "@mui/material";
-import LogoLoader from "../../../common/Loader/LogoLoader";
 import { TransitionProps } from "@mui/material/transitions";
 import { UserBooking } from "../../../../services/booking/bookingInterface";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -73,7 +73,7 @@ const ProviderBookingActionButtons: React.FC<
   };
 
   if (loading && !openOtpDialog) {
-    return <LogoLoader size={24} />;
+    return <CircularProgress size={20} sx={{ mr: 2 }} />;
   }
 
   if (tabName === t("pending")) {
@@ -161,7 +161,7 @@ const ProviderBookingActionButtons: React.FC<
                 }}
               >
                 {loading ? (
-                  <LogoLoader size={24} />
+                  <CircularProgress size={24} color="inherit" />
                 ) : (
                   t("yes_cancel")
                 )}
@@ -282,11 +282,6 @@ const ProviderBookingActionButtons: React.FC<
               variant="outlined"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && otp.length === 6) {
-                  handleUpdateStatus("ACTIVE", otp);
-                }
-              }}
               disabled={loading}
               inputProps={{
                 maxLength: 6,
@@ -352,7 +347,7 @@ const ProviderBookingActionButtons: React.FC<
                 }}
               >
                 {loading ? (
-                  <LogoLoader size={24} />
+                  <CircularProgress size={24} color="inherit" />
                 ) : (
                   t("verify_and_start")
                 )}
@@ -401,7 +396,7 @@ const ProviderBookingActionButtons: React.FC<
                 }}
               >
                 {loading ? (
-                  <LogoLoader size={24} />
+                  <CircularProgress size={24} color="inherit" />
                 ) : (
                   t("yes_cancel")
                 )}

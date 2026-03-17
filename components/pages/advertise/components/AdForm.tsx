@@ -7,12 +7,11 @@ import {
   Button,
   MenuItem,
   Typography,
+  CircularProgress,
   useTheme,
   Switch,
   FormControlLabel,
 } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { COLORS } from "@/constants/colors";
 import { useProviderServicesList } from "@/hooks/useServicesList";
 import {
@@ -203,7 +202,17 @@ const AdForm: React.FC<AdFormProps> = ({
 
   if (isEditMode && isLoadingAd) {
     return (
-      <CenteredLoader minHeight={400} size={80} p={3} />
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: 400,
+          p: 3,
+        }}
+      >
+        <CircularProgress sx={{ color: COLORS.PRIMARY_PURPLE }} />
+      </Box>
     );
   }
 
@@ -601,7 +610,7 @@ const AdForm: React.FC<AdFormProps> = ({
             }}
           >
             {isSubmitting ? (
-              <LogoLoader size={24} />
+              <CircularProgress size={24} sx={{ color: COLORS.WHITE }} />
             ) : isEditMode ? (
               t("update_advertisement")
             ) : (
