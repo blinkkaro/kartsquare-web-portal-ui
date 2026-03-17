@@ -46,6 +46,7 @@ export interface profileInterface {
     lat?: number | string;
     long?: number | string;
   };
+  register_step?: UserRegisterSteps;
 }
 
 interface pagination {

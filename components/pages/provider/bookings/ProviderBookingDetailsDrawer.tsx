@@ -17,9 +17,6 @@ import {
 import {
   Close,
   NearMe,
-  Phone,
-  CalendarToday,
-  LocationOn,
 } from "@mui/icons-material";
 import {
   BookingDetails,
@@ -323,7 +320,7 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                     </Typography>
                   </Box>
                 </Box>
-              </Stack>
+              </Box>
             </Box>
 
             <Divider sx={{ my: 3, borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#E2E8F0' }} />
