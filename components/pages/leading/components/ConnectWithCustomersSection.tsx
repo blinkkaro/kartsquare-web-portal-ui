@@ -1,156 +1,206 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Container, Grid, useTheme } from "@mui/material";
-import { motion } from "framer-motion";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { getFreeListingBenefits } from "./constants";
+import { motion, AnimatePresence } from "framer-motion";
+import CheckIcon from "@mui/icons-material/Check";
 import { useTranslate } from "@/hooks/useTranslate";
 import { COLORS } from "@/constants/colors";
 import Image from "next/image";
+import { getFreeListingBenefits } from "./constants";
 import SectionHeading from "./SectionHeading";
-import SectionCTA from "./SectionCTA";
 
-const PURPLE = COLORS.PRIMARY_PURPLE;
-
-const ConnectWithCustomersSection = () => {
+export default function ConnectWithCustomersSection() {
   const { t } = useTranslate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const [activeStep, setActiveStep] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const benefits = getFreeListingBenefits(t) || [];
+  const steps = [
+    {
+      title: t("yourFreeListingPage"),
+      desc: benefits[0] || "Get a free profile so customers can find and call you",
+    },
+    {
+      title: t("oneProfileMoreVisibility"),
+      desc: benefits[1] || "Show up when people nearby search for what you offer",
+    },
+    {
+      title: t("completeBusinessProfile"),
+      desc: benefits[2] || "Connect seamlessly and drive more engagement online",
+    }
+  ];
+
+  // Auto-play steps
+  useEffect(() => {
+    if (isPaused) return;
+
+    const interval = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % steps.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [isPaused, steps.length]);
 
   return (
     <Box
       sx={{
         py: { xs: 6, md: 8 },
-        bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
+        bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
       }}
     >
       <Container maxWidth="xl">
-        <Box sx={{ mb: { xs: 5, md: 7 } }}>
-          <SectionHeading
-            title={t("connectWithCustomersTitle")}
-            subtitle={t("connectWithCustomersSubtext")}
-            variant="gradient"
-            align="center"
-          />
-        </Box>
-        <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
-          {/* Left: phone mockup (reference: floating, tilted) */}
-          <Grid size={{ xs: 12, md: 6 }} sx={{ order: { xs: 2, md: 1 } }}>
-            <motion.div
-              initial={{ opacity: 0, x: -24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+        >
+          <Box sx={{ mb: { xs: 5, md: 8 } }}>
+            <SectionHeading
+              title={t("connectWithCustomersTitle")}
+              subtitle={t("connectWithCustomersSubtext")}
+              variant="accent"
+              align="center"
+            />
+          </Box>
+        </motion.div>
+
+        <Grid container spacing={{ xs: 6, md: 4, lg: 6 }} alignItems="center" justifyContent="center">
+          {/* Left Side: Steps List */}
+          <Grid size={{ xs: 12, md: 5, lg: 4 }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column", gap: 4 }}
+              onMouseEnter={() => setIsPaused(true)}
+              onMouseLeave={() => setIsPaused(false)}
             >
-              <Box
-                sx={{
-                  width: "100%",
-                  maxWidth: 320,
-                  height: { xs: 280, sm: 340 },
-                  position: "relative",
-                  borderRadius: 3,
-                  overflow: "hidden",
-                  border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.12)"}`,
-                  boxShadow: isDark
-                    ? "none"
-                    : "0 24px 48px rgba(94, 24, 233, 0.12), 0 8px 16px rgba(0,0,0,0.06)",
-                  transform: { md: "rotate(-2deg)" },
-                  bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "#fff",
-                }}
-              >
-                <Image
-                  src="/businessProfile.png"
-                  alt="Business profile on kartsquare"
-                  fill
-                  style={{ objectFit: "contain", objectPosition: "center top" }}
-                />
-              </Box>
-            </motion.div>
+              {steps.map((step, index) => {
+                const isActive = activeStep === index;
+
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.5, delay: index * 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  >
+                    <Box
+                      onClick={() => setActiveStep(index)}
+                      sx={{
+                        display: "flex",
+                        gap: 2.5,
+                        cursor: "pointer",
+                        opacity: isActive ? 1 : 0.4,
+                        transition: "opacity 0.3s ease",
+                        "&:hover": { opacity: 1 },
+                      }}
+                    >
+                      {/* Circle Indicator */}
+                      <Box
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: "50%",
+                          flexShrink: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          bgcolor: isActive
+                            ? isDark ? "#fff" : "#111"
+                            : "transparent",
+                          border: `2px solid ${isActive ? (isDark ? "#fff" : "#111") : (isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.15)")}`,
+                          color: isActive ? (isDark ? "#000" : "#fff") : (isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT),
+                          transition: "all 0.3s ease",
+                        }}
+                      >
+                        {isActive ? (
+                          <CheckIcon sx={{ fontSize: 20, fontWeight: "bold" }} />
+                        ) : (
+                          <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                            {index + 1}
+                          </Typography>
+                        )}
+                      </Box>
+
+                      {/* Text content */}
+                      <Box sx={{ pt: 0.5 }}>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            fontWeight: 700,
+                            mb: 1,
+                            color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                            fontSize: "1.125rem",
+                            lineHeight: 1.2,
+                          }}
+                        >
+                          {step.title}
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                            lineHeight: 1.5,
+                            fontSize: "0.9375rem"
+                          }}
+                        >
+                          {step.desc}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </motion.div>
+                );
+              })}
+            </Box>
           </Grid>
-          {/* Right: Create posts, offers, and events + list (reference) */}
-          <Grid size={{ xs: 12, md: 6 }} sx={{ order: { xs: 1, md: 2 } }}>
+
+          {/* Right Side: Image/Visual */}
+          <Grid size={{ xs: 12, md: 7, lg: 7 }}>
             <motion.div
-              initial={{ opacity: 0, x: 24 }}
+              initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.55, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+              transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
               <Box
+                onMouseEnter={() => setIsPaused(true)}
+                onMouseLeave={() => setIsPaused(false)}
                 sx={{
-                  p: 3,
-                  borderRadius: 3,
-                  bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "#fff",
-                  border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.12)"}`,
+                  position: "relative",
+                  width: "100%",
+                  height: { xs: 300, sm: 400, md: 450, lg: 550 },
+                  borderRadius: 4,
+                  overflow: "hidden",
+                  bgcolor: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)",
+                  border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.08)"}`,
                   boxShadow: isDark ? "none" : "0 8px 32px rgba(94, 24, 233, 0.08)",
                 }}
               >
-                <Typography
-                  variant="overline"
-                  fontWeight={700}
-                  sx={{ color: PURPLE, letterSpacing: 1.2, display: "block", mb: 1 }}
-                >
-                  {t("yourFreeListingPage")}
-                </Typography>
-                <Typography
-                  variant="h6"
-                  fontWeight={700}
-                  sx={{
-                    fontFamily: "var(--font-heading)",
-                    mt: 0.75,
-                    mb: 1.5,
-                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                    fontSize: "1.125rem",
-                  }}
-                >
-                  {t("oneProfileMoreVisibility")}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                    mb: 2,
-                    lineHeight: 1.6,
-                  }}
-                >
-                  {t("completeBusinessProfile")}
-                </Typography>
-                <Box component="ul" sx={{ m: 0, p: 0, listStyle: "none" }}>
-                  {getFreeListingBenefits(t).map((text: string, i: number) => (
-                    <Box
-                      key={i}
-                      component="li"
-                      sx={{ display: "flex", alignItems: "flex-start", gap: 1.5, mb: 1.25 }}
-                    >
-                      <CheckCircleIcon sx={{ color: COLORS.SUCCESS_GREEN, fontSize: 22, flexShrink: 0, mt: 0.15 }} />
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                          fontWeight: 500,
-                          lineHeight: 1.5,
-                        }}
-                      >
-                        {text}
-                      </Typography>
-                    </Box>
-                  ))}
-                </Box>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeStep}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.02 }}
+                    transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    style={{ width: "100%", height: "100%", position: "relative" }}
+                  >
+                    <Image
+                      src="/businessProfile.png"
+                      alt="Business Profile"
+                      fill
+                      style={{ objectFit: "contain", objectPosition: "center top" }}
+                    />
+                  </motion.div>
+                </AnimatePresence>
               </Box>
             </motion.div>
           </Grid>
         </Grid>
-        <Box sx={{ display: "flex", justifyContent: "center", mt: { xs: 6, md: 8 } }}>
-          <SectionCTA labelKey="getStartedNow" variant="contained" size="large" />
-        </Box>
-        </Container>
-      </Box>
-    );
-  };
-
-export default ConnectWithCustomersSection;
+      </Container>
+    </Box>
+  );
+}

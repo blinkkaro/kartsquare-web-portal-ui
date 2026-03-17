@@ -15,7 +15,7 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ onTabChange, role }) => {
   const theme = useTheme();
 
   const isSupplier = role === AppUserType.SUPPLIER;
-  const tabs = isSupplier ? ["Products"] : ["Posts", "Services"];
+  const tabs = isSupplier ? ["Products"] : ["Posts", "Services", "Reels"];
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);

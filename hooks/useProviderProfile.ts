@@ -54,6 +54,21 @@ export const useProviderPosts = (userId: string) => {
   });
 };
 
+export const useProviderReels = (userId: string) => {
+  return useInfiniteQuery({
+    queryKey: ["providerReels", userId],
+    queryFn: ({ pageParam = 1 }) =>
+      profileService.getProviderReels(userId, pageParam, 12),
+    getNextPageParam: (lastPage: providerPostsInterface, allPages) => {
+      const morePagesExist =
+        lastPage?.pagination?.currentPage < lastPage?.pagination?.totalPages;
+      return morePagesExist ? lastPage.pagination.currentPage + 1 : undefined;
+    },
+    initialPageParam: 1,
+    enabled: !!userId,
+  });
+};
+
 export const useProviderProfileByUsername = (username: string) => {
   return useQuery({
     queryKey: ["providerProfileByUsername", username],
@@ -78,12 +93,15 @@ export const useFollowProvider = (userId: string) => {
       await queryClient.cancelQueries({
         predicate: (query) => query.queryKey[0] === "providerProfileByUsername",
       });
+      await queryClient.cancelQueries({ queryKey: ["reels"] });
+      await queryClient.cancelQueries({ queryKey: ["posts"] });
+      await queryClient.cancelQueries({ queryKey: ["providerPosts"] });
+      await queryClient.cancelQueries({ queryKey: ["providerReels"] });
 
-      // Snapshot the previous value
+      // Snapshot the previous values
       const previousProfile =
         queryClient.getQueryData<providerProfileInterface>(queryKey);
 
-      // Also get username-based query data
       const usernameQueries = queryClient.getQueriesData({
         predicate: (query) => query.queryKey[0] === "providerProfileByUsername",
       });
@@ -91,7 +109,43 @@ export const useFollowProvider = (userId: string) => {
         | ProviderProfileByUsernameResponse
         | undefined;
 
-      // Optimistically update to the new value
+      const previousReels = queryClient.getQueryData<any>(["reels"]);
+      const previousPosts = queryClient.getQueriesData({ queryKey: ["posts"] });
+      const previousProviderPosts = queryClient.getQueriesData({ queryKey: ["providerPosts"] });
+      const previousProviderReels = queryClient.getQueriesData({ queryKey: ["providerReels"] });
+
+      // Helper function to update posts/reels in cache
+      const updatePostInCache = (old: any) => {
+        if (!old) return old;
+        // Handle infinite query structure (pages)
+        if (old.pages) {
+          return {
+            ...old,
+            pages: old.pages.map((page: any) => ({
+              ...page,
+              posts: page.posts.map((post: any) =>
+                post.user.id === userId
+                  ? { ...post, is_following: !isFollowing }
+                  : post,
+              ),
+            })),
+          };
+        }
+        // Handle regular list (posts or reels)
+        if (old.posts) {
+          return {
+            ...old,
+            posts: old.posts.map((post: any) =>
+              post.user.id === userId
+                ? { ...post, is_following: !isFollowing }
+                : post,
+            ),
+          };
+        }
+        return old;
+      };
+
+      // Optimistically update provider profile
       if (previousProfile) {
         queryClient.setQueryData<providerProfileInterface>(queryKey, {
           ...previousProfile,
@@ -119,10 +173,20 @@ export const useFollowProvider = (userId: string) => {
         );
       }
 
-      // Return a context object with the snapshotted value
+      // Update reels and posts caches
+      queryClient.setQueriesData({ queryKey: ["reels"] }, updatePostInCache);
+      queryClient.setQueriesData({ queryKey: ["posts"] }, updatePostInCache);
+      queryClient.setQueriesData({ queryKey: ["providerPosts"] }, updatePostInCache);
+      queryClient.setQueriesData({ queryKey: ["providerReels"] }, updatePostInCache);
+
+      // Return a context object with the snapshotted values for rollback
       return {
         previousProfile,
         previousUsernameData,
+        previousReels,
+        previousPosts,
+        previousProviderPosts,
+        previousProviderReels,
         usernameQueryKey: usernameQueries[0]?.[0],
       };
     },
@@ -138,6 +202,24 @@ export const useFollowProvider = (userId: string) => {
           context.previousUsernameData,
         );
       }
+      if (context?.previousReels) {
+        queryClient.setQueryData(["reels"], context.previousReels);
+      }
+      if (context?.previousPosts) {
+        context.previousPosts.forEach(([key, data]: [any, any]) => {
+          queryClient.setQueryData(key, data);
+        });
+      }
+      if (context?.previousProviderPosts) {
+        context.previousProviderPosts.forEach(([key, data]: [any, any]) => {
+          queryClient.setQueryData(key, data);
+        });
+      }
+      if (context?.previousProviderReels) {
+        context.previousProviderReels.forEach(([key, data]: [any, any]) => {
+          queryClient.setQueryData(key, data);
+        });
+      }
     },
 
     onSettled: () => {
@@ -146,6 +228,10 @@ export const useFollowProvider = (userId: string) => {
       queryClient.invalidateQueries({
         predicate: (query) => query.queryKey[0] === "providerProfileByUsername",
       });
+      queryClient.invalidateQueries({ queryKey: ["reels"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["providerPosts"] });
+      queryClient.invalidateQueries({ queryKey: ["providerReels"] });
     },
   });
 };

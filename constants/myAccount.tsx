@@ -35,7 +35,7 @@ export const myAccountNav = (
   if (role === "SERVICE_PROVIDER") {
     return [
       {
-        label: t("myPosts"),
+        label: t("postReel"),
         href: "#",
         icon: <PostAddIcon />,
         isPosts: true,

@@ -11,6 +11,7 @@ import HowItWorks from "./components/HowItWorks";
 import FAQ from "./components/FAQ";
 import ScrollReveal from "./components/ScrollReveal";
 import BenefitsSection from "./components/BenefitsSection";
+import BottomCTASection from "./components/BottomCTASection";
 import { COLORS } from "@/constants/colors";
 import { SECTION_IDS } from "./components/sectionIds";
 
@@ -37,52 +38,55 @@ function ListingView() {
         overflowX: "hidden",
       }}
     >
-      {/* 1. Hero — CTA target for all section buttons */}
+      {/* 1. Hero — Initial hook + Form */}
       <Box component="section" id={SECTION_IDS.HERO}>
         <Hero />
       </Box>
 
-      {/* New: Benefits Section for Providers & Suppliers */}
-      <Box component="section" id="benefits" sx={{ borderTop: sectionBorder }}>
-        <BenefitsSection />
-      </Box>
-
-      {/* 2. Take charge */}
-      <Box component="section" id={SECTION_IDS.TAKE_CHARGE} sx={{ borderTop: sectionBorder }}>
-        <ScrollReveal variant="fadeLeft" delay={0}>
-          <TakeChargeSection />
-        </ScrollReveal>
-      </Box>
-
-      {/* 3. Easily connect */}
-      <Box component="section" id={SECTION_IDS.CONNECT} sx={{ borderTop: sectionBorder }}>
-        <ScrollReveal variant="fadeRight" delay={0}>
-          <ConnectWithCustomersSection />
-        </ScrollReveal>
-      </Box>
-
-      {/* 4. Show what you offer */}
-      <Box component="section" id={SECTION_IDS.SHOW_WHAT_YOU_OFFER} sx={{ borderTop: sectionBorder }}>
-        <ScrollReveal variant="fadeLeft" delay={0}>
-          <ShowWhatYouOfferSection />
-        </ScrollReveal>
-      </Box>
-
-      {/* 5. What success looks like */}
+      {/* 2. Success Stories — Build trust early with social proof */}
       <Box component="section" id={SECTION_IDS.SUCCESS_STORIES} sx={{ borderTop: sectionBorder }}>
         <ScrollReveal variant="fadeRight" delay={0}>
           <SuccessStories />
         </ScrollReveal>
       </Box>
 
-      {/* 6. How it works */}
+      {/* 3. How It Works - Simple process */}
       <Box component="section" id={SECTION_IDS.HOW_IT_WORKS} sx={{ borderTop: sectionBorder }}>
         <ScrollReveal variant="fadeLeft" delay={0}>
           <HowItWorks />
         </ScrollReveal>
       </Box>
 
-      {/* 7. FAQ */}
+      {/* 4. Benefits - Value Proposition before diving into features */}
+      {/* <Box component="section" id={SECTION_IDS.BENEFITS} sx={{ borderTop: sectionBorder }}>
+        <ScrollReveal variant="fadeRight" delay={0}>
+          <BenefitsSection />
+        </ScrollReveal>
+      </Box> */}
+
+      {/* 5. Show What You Offer - Feature deep dive */}
+      <Box component="section" id={SECTION_IDS.SHOW_WHAT_YOU_OFFER} sx={{ borderTop: sectionBorder }}>
+        <ScrollReveal variant="fadeLeft" delay={0}>
+          <ShowWhatYouOfferSection />
+        </ScrollReveal>
+      </Box>
+
+      {/* 5. Take Charge - Feature deep dive */}
+
+
+      {/* 6. Easily connect - Benefits */}
+      <Box component="section" id={SECTION_IDS.CONNECT} sx={{ borderTop: sectionBorder }}>
+        <ScrollReveal variant="fadeRight" delay={0}>
+          <ConnectWithCustomersSection />
+        </ScrollReveal>
+      </Box>
+
+      {/* 7. Bottom CTA - Second chance form before FAQ */}
+      <Box component="section" id="bottom-cta" sx={{ borderTop: sectionBorder }}>
+        <BottomCTASection />
+      </Box>
+
+      {/* 8. FAQ - Overcoming final objections */}
       <Box component="section" id={SECTION_IDS.FAQ} sx={{ borderTop: sectionBorder }}>
         <ScrollReveal variant="fadeRight" delay={0}>
           <FAQ expandedFaq={expandedFaq} handleFaqChange={handleFaqChange} />

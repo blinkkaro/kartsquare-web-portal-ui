@@ -31,6 +31,7 @@ import { bookingDetailsService } from "../../../services/booking/bookingDetails"
 import LogoLoader from "../../common/Loader/LogoLoader";
 import { Phone, CalendarToday, LocationOn } from "@mui/icons-material";
 import ReviewModal from "./ReviewModal";
+import { useTranslate } from "@/hooks/useTranslate";
 
 interface BookingDetailsDrawerProps {
   open: boolean;
@@ -49,6 +50,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
   const [loading, setLoading] = React.useState(false);
   const [previewImage, setPreviewImage] = React.useState<string | null>(null);
   const [reviewModalOpen, setReviewModalOpen] = React.useState(false);
+  const {t} = useTranslate();
 
   React.useEffect(() => {
     if (open && initialBooking?.booking_id) {
@@ -147,7 +149,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                   style={{
                     color: COLORS.PRIMARY_PURPLE,
                     fontWeight: 900,
-                    fontSize: "0.6em",
+                    fontSize: "0.8em",
                   }}
                 >
                   #{currentBooking.booking_id.toUpperCase()}
@@ -275,6 +277,8 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                     </Box>
                   </Box>
                   <Box sx={{ textAlign: "right" }}>
+                    {totalAmount > 0 ? (
+                      <>
                     <Typography
                       variant="caption"
                       sx={{
@@ -294,6 +298,15 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                         initialBooking.currency}{" "}
                       {totalAmount.toFixed(0)}
                     </Typography>
+                      </>
+                    ): (
+                    <Typography
+                      variant="body1"
+                      sx={{ fontWeight: 900, color: "white" }}
+                    >
+                      {t("getQuote")}
+                    </Typography>
+                    )}
                   </Box>
                 </Box>
               </Box>
@@ -481,12 +494,31 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                       {currentBooking.provider_details?.last_name}
                     </Typography>
                   }
-                  <Typography
-                    variant="caption"
-                    sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700 }}
-                  >
-                    {currentBooking.category_name} Service
-                  </Typography>
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 0.5 }}>
+                    {(Array.isArray(currentBooking.category_name)
+                      ? currentBooking.category_name
+                      : [currentBooking.category_name]
+                    )
+                      .filter(Boolean)
+                      .map((cat, idx) => (
+                        <Typography
+                          key={idx}
+                          variant="caption"
+                          sx={{
+                            color: COLORS.PRIMARY_PURPLE,
+                            fontWeight: 700,
+                            bgcolor: `${COLORS.PRIMARY_PURPLE}10`,
+                            px: 1,
+                            py: 0.2,
+                            borderRadius: "6px",
+                            fontSize: "0.7rem",
+                            display: "inline-block",
+                          }}
+                        >
+                          {cat}
+                        </Typography>
+                      ))}
+                  </Box>
                 </Box>
                 <Box sx={{ display: "flex", gap: 1 }}>
                   <IconButton
@@ -619,76 +651,76 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
               {/* Visual Evidence with Smooth Scrolling */}
               {(currentBooking.booking_photo_url ||
                 currentBooking.photo_url) && (
-                <Box sx={{ mb: 4 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: "#94A3B8",
-                      fontWeight: 700,
-                      letterSpacing: "0.1em",
-                      mb: 2,
-                      display: "block",
-                    }}
-                  >
-                    VISUAL EVIDENCE (
-                    {(currentBooking.booking_photo_url || []).length +
-                      (currentBooking.photo_url || []).length}
-                    )
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      gap: 2,
-                      overflowX: "auto",
-                      pt: 1.5,
-                      pb: 2,
-                      px: 0.5,
-                      mx: -0.5,
-                      "&::-webkit-scrollbar": { height: "4px" },
-                      "&::-webkit-scrollbar-thumb": {
-                        backgroundColor: isDark
-                          ? "rgba(255,255,255,0.1)"
-                          : "rgba(0,0,0,0.06)",
-                        borderRadius: "10px",
-                      },
-                    }}
-                  >
-                    {[
-                      ...(currentBooking.booking_photo_url || []),
-                      ...(currentBooking.photo_url || []),
-                    ].map((url, idx) => (
-                      <Box
-                        key={idx}
-                        component="img"
-                        src={url}
-                        onClick={() => setPreviewImage(url)}
-                        sx={{
-                          width: 130,
-                          height: 130,
-                          borderRadius: "20px",
-                          objectFit: "cover",
-                          flexShrink: 0,
-                          cursor: "pointer",
-                          transition:
-                            "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                          border: `2px solid ${isDark ? "rgba(255,255,255,0.05)" : "#FFFFFF"}`,
-                          boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                          "&:hover": {
-                            transform: "scale(1.05) translateY(-5px)",
-                            boxShadow: `0 15px 30px ${isDark ? "rgba(0,0,0,0.4)" : "rgba(94, 24, 233, 0.15)"}`,
-                            borderColor: COLORS.PRIMARY_PURPLE,
-                          },
-                        }}
-                      />
-                    ))}
+                  <Box sx={{ mb: 4 }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: "#94A3B8",
+                        fontWeight: 700,
+                        letterSpacing: "0.1em",
+                        mb: 2,
+                        display: "block",
+                      }}
+                    >
+                      VISUAL EVIDENCE (
+                      {(currentBooking.booking_photo_url || []).length +
+                        (currentBooking.photo_url || []).length}
+                      )
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: 2,
+                        overflowX: "auto",
+                        pt: 1.5,
+                        pb: 2,
+                        px: 0.5,
+                        mx: -0.5,
+                        "&::-webkit-scrollbar": { height: "4px" },
+                        "&::-webkit-scrollbar-thumb": {
+                          backgroundColor: isDark
+                            ? "rgba(255,255,255,0.1)"
+                            : "rgba(0,0,0,0.06)",
+                          borderRadius: "10px",
+                        },
+                      }}
+                    >
+                      {[
+                        ...(currentBooking.booking_photo_url || []),
+                        ...(currentBooking.photo_url || []),
+                      ].map((url, idx) => (
+                        <Box
+                          key={idx}
+                          component="img"
+                          src={url}
+                          onClick={() => setPreviewImage(url)}
+                          sx={{
+                            width: 130,
+                            height: 130,
+                            borderRadius: "20px",
+                            objectFit: "cover",
+                            flexShrink: 0,
+                            cursor: "pointer",
+                            transition:
+                              "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                            border: `2px solid ${isDark ? "rgba(255,255,255,0.05)" : "#FFFFFF"}`,
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                            "&:hover": {
+                              transform: "scale(1.05) translateY(-5px)",
+                              boxShadow: `0 15px 30px ${isDark ? "rgba(0,0,0,0.4)" : "rgba(94, 24, 233, 0.15)"}`,
+                              borderColor: COLORS.PRIMARY_PURPLE,
+                            },
+                          }}
+                        />
+                      ))}
+                    </Box>
                   </Box>
-                </Box>
-              )}
+                )}
             </Box>
 
             {/* Action Buttons */}
             <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
-              <Button
+              {/* <Button
                 fullWidth
                 variant="outlined"
                 sx={{
@@ -702,7 +734,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                 }}
               >
                 Help & Support
-              </Button>
+              </Button> */}
               {/* <Button
                 fullWidth
                 variant="contained"

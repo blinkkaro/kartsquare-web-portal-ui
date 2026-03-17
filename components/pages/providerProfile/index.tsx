@@ -40,6 +40,7 @@ import {
   Article as ArticleIcon,
   ExpandMore,
   ExpandLess,
+  MovieFilter,
 } from "@mui/icons-material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -47,6 +48,7 @@ import { COLORS } from "@/constants/colors";
 import {
   useProviderProfileByUsername,
   useFollowProvider,
+  useProviderReels,
 } from "@/hooks/useProviderProfile";
 import { useTranslate } from "@/hooks/useTranslate";
 import ServiceCard from "@/components/ServiceCard";
@@ -65,6 +67,8 @@ import {
   ProductListItem,
 } from "@/services/profile/profileInterface";
 import ProfileProducts from "../../common/ProfileDrawer/components/ProfileProducts";
+import ReelFeedGrid from "@/components/pages/myAccount/components/post/ReelFeedGrid";
+import ReelViewModal from "@/components/pages/myAccount/components/post/ReelViewModal";
 
 interface ProviderProfilePageProps {
   username: string;
@@ -74,6 +78,7 @@ const PROFILE_TABS = {
   Posts: "Posts",
   Services: "Services",
   Products: "Products",
+  Reels: "Reels",
 };
 
 const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
@@ -109,6 +114,14 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
   const posts = profileData && "posts" in profileData ? profileData.posts : [];
   const products =
     profileData && "products" in profileData ? profileData.products : [];
+  
+  const {
+      data: reelsData,
+      isLoading: reelsLoading,
+      fetchNextPage: fetchNextReels,
+      hasNextPage: hasNextReels,
+      isFetchingNextPage: isFetchingNextReels,
+    } = useProviderReels(profile?.id || "");
 
   const followMutation = useFollowProvider(profile?.id || "");
 
@@ -186,6 +199,16 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
     if (profile) {
       followMutation.mutate(profile.is_following || false);
     }
+  };
+
+  const [isReelModalOpen, setIsReelModalOpen] = useState(false);
+  const [selectedReelIndex, setSelectedReelIndex] = useState(0);
+
+  const allReels = reelsData?.pages.flatMap((page) => page.posts) || [];
+
+  const handleReelClick = (reel: Posts, index: number) => {
+    setSelectedReelIndex(index);
+    setIsReelModalOpen(true);
   };
 
   // Transform posts to match the expected format (media_urls as string)
@@ -397,7 +420,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                 @{profile?.username || "-"} ·{" "}
                 {isSupplier
                   ? `${t("products")}`
-                  : `${t("services")} & ${t("posts")}`}
+                  : `${t("services")} & ${t("posts")} & ${t("reels")}`}
               </Typography>
             </Box>
           </Box>
@@ -660,6 +683,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     />
                   )}
                   {!isSupplier && (
+                    <>
                     <StatRow
                       icon={<Visibility />}
                       label={t("posts")}
@@ -667,6 +691,14 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       iconColor={textSecondary}
                       compact={isMobile}
                     />
+                    <StatRow
+                      icon={<Visibility />}
+                      label={t("reels")}
+                      value={(profile as any)?.total_reels || 0}
+                      iconColor={textSecondary}
+                      compact={isMobile}
+                    />
+                    </>
                   )}
                   <StatRow
                     icon={<Favorite />}
@@ -957,6 +989,39 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       {t("posts")}
                     </Box>
                   </Box>
+                  <Box
+                    onClick={() => handleTabChange(PROFILE_TABS.Reels)}
+                    sx={{
+                      px: 2.5,
+                      py: 1.25,
+                      borderRadius: 1.5,
+                      cursor: "pointer",
+                      bgcolor:
+                        activeTab === PROFILE_TABS.Reels
+                          ? COLORS.PRIMARY_PURPLE
+                          : "transparent",
+                      color:
+                        activeTab === PROFILE_TABS.Reels
+                          ? COLORS.WHITE
+                          : textSecondary,
+                      fontWeight: activeTab === PROFILE_TABS.Reels ? 700 : 500,
+                      fontSize: "0.95rem",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        bgcolor:
+                          activeTab === PROFILE_TABS.Reels
+                            ? COLORS.PURPLE_HOVER
+                            : isDark
+                              ? COLORS.PURPLE_ALPHA_10
+                              : COLORS.PURPLE_ALPHA_04,
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <MovieFilter sx={{ fontSize: 20 }} />
+                      {t("reels")}
+                    </Box>
+                  </Box>
                 </>
               )}
             </Box>
@@ -1064,6 +1129,16 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     </Grid>
                   )}
                 </Box>
+              )}
+              {activeTab === PROFILE_TABS.Reels && !isSupplier && (
+                <ReelFeedGrid
+                  reels={allReels}
+                  isLoading={reelsLoading}
+                  fetchNextPage={fetchNextReels}
+                  hasNextPage={hasNextReels ?? false}
+                  isFetchingNextPage={isFetchingNextReels}
+                  onReelClick={handleReelClick}
+                />
               )}
             </Box>
 
@@ -1295,6 +1370,14 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
           {snackbarMessage}
         </Alert>
       </Snackbar>
+
+      {/* Reel View Modal */}
+      <ReelViewModal
+        open={isReelModalOpen}
+        onClose={() => setIsReelModalOpen(false)}
+        reels={allReels}
+        initialIndex={selectedReelIndex}
+      />
     </Box>
   );
 };

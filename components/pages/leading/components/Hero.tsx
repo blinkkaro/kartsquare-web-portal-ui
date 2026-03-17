@@ -13,22 +13,10 @@ import {
 import LogoLoader from "@/components/common/Loader/LogoLoader";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CheckIcon from "@mui/icons-material/Check";
-import BuildOutlinedIcon from "@mui/icons-material/BuildOutlined";
-import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import { getStatCards } from "./constants";
 import { COLORS } from "@/constants/colors";
 import Image from "next/image";
 import { useTranslate } from "@/hooks/useTranslate";
-import { useLeadVerification } from "@/hooks/useLeadVerification";
-import VerificationModal from "./VerificationModal";
-import { countries } from "../../SignUp/components/data";
-import ErrorMessage from "@/components/common/ErrorMessage";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import Input from "@/components/common/Input";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -36,74 +24,12 @@ const PURPLE = COLORS.PRIMARY_PURPLE;
 const PURPLE_HOVER = COLORS.PURPLE_HOVER;
 const PURPLE_ALPHA_04 = COLORS.PURPLE_ALPHA_04;
 
-const heroSchema = (t: any) =>
-  yup.object().shape({
-    whatsapp_number: yup
-      .string()
-      .required(t("phoneNumberRequired"))
-      .length(10, t("phoneNumberLength"))
-      .matches(/^[0-9]+$/, t("phoneNumberInvalid")),
-    whatsapp_country_code: yup.string().required(t("countryCodeRequired")),
-  });
-
-type HeroFormData = {
-  whatsapp_number: string;
-  whatsapp_country_code: string;
-};
+import LeadCaptureForm from "./LeadCaptureForm";
 
 const Hero: React.FC = () => {
   const { t } = useTranslate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
-  const [role, setRole] = React.useState<"SERVICE_PROVIDER" | "SUPPLIER">(
-    "SERVICE_PROVIDER",
-  );
-  const {
-    loading,
-    isOtpOpen,
-    error,
-    handleCheckUser,
-    handleVerifyOtp,
-    closeOtpModal,
-  } = useLeadVerification();
-
-  const { control, handleSubmit } = useForm<HeroFormData>({
-    resolver: yupResolver(heroSchema(t)),
-    defaultValues: {
-      whatsapp_number: "",
-      whatsapp_country_code: "+91",
-    },
-  });
-
-  const onSubmit = (data: HeroFormData) => {
-    handleCheckUser({
-      whatsapp_number: data.whatsapp_number,
-      whatsapp_country_code: data.whatsapp_country_code,
-      source: "WEB",
-      source_type: role,
-    });
-  };
-
-  const features = [
-    { label: t("featureFree"), desc: t("featureFreeDesc"), Icon: CheckCircleIcon },
-    { label: t("featureEasy"), desc: t("featureEasyDesc"), Icon: SettingsOutlinedIcon },
-    { label: t("featurePersonalised"), desc: t("featurePersonalisedDesc"), Icon: Inventory2OutlinedIcon },
-  ];
-
-  const businessTypes = [
-    {
-      value: "SERVICE_PROVIDER" as const,
-      label: t("service_provider"),
-      examples: t("serviceProviderExamples"),
-      Icon: BuildOutlinedIcon,
-    },
-    {
-      value: "SUPPLIER" as const,
-      label: t("supplier"),
-      examples: t("supplierExamples"),
-      Icon: Inventory2OutlinedIcon,
-    },
-  ];
 
   return (
     <Box
@@ -197,13 +123,11 @@ const Hero: React.FC = () => {
                 </Typography>
               </motion.div>
 
-              <ErrorMessage isVisible={!!error} error={error || ""} />
-
-              {/* Form: phone first, then type, then CTA */}
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.12 }}
+                style={{ position: 'relative', zIndex: 10 }} // Ensure form stays clickable above backgrounds
               >
                 <Box
                   component="form"
@@ -579,14 +503,8 @@ const Hero: React.FC = () => {
                 </Box>
               </motion.div>
             </Box>
-
-            <VerificationModal
-              open={isOtpOpen}
-              onClose={closeOtpModal}
-              onVerify={handleVerifyOtp}
-              loading={loading}
-            />
           </Grid>
+
 
           {/* Right: floating composition — phone + image stat cards */}
           <Grid size={{ xs: 12, lg: 5 }}>
