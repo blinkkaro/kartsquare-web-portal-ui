@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTranslate } from "./useTranslate";
 
 interface Coordinates {
@@ -27,7 +27,7 @@ export const useGeolocation = (options?: UseGeolocationOptions) => {
   });
   const { t } = useTranslate();
 
-  const getCoordinates = () => {
+  const getCoordinates = useCallback(() => {
     if (!navigator.geolocation) {
       setState({
         coordinates: null,
@@ -78,7 +78,7 @@ export const useGeolocation = (options?: UseGeolocationOptions) => {
       },
       defaultOptions,
     );
-  };
+  }, [options, t]);
 
   return {
     coordinates: state.coordinates,

@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Box, Container, CircularProgress, Paper, useTheme } from "@mui/material";
+import { Box, Container, Paper, useTheme } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import MainLayout from "@/app/mainLayout";
 import { serviceListService } from "../../../services/serviceList/serviceListService";
 import { Service, Category } from "../../../services/serviceList/listInteraface";
@@ -129,9 +130,7 @@ const ListOfServices = () => {
 
                     {/* Loading State */}
                     {loading ? (
-                        <Box sx={{ display: "flex", justifyContent: "center", py: { xs: 6, sm: 10 } }}>
-                            <CircularProgress size={44} sx={{ color: COLORS.PRIMARY_PURPLE }} />
-                        </Box>
+                        <CenteredLoader py={{ xs: 6, sm: 10 }} size={60} />
                     ) : (
                         <>
                             {/* Service Grid */}

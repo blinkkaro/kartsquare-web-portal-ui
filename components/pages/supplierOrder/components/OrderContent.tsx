@@ -1,5 +1,6 @@
 import React from "react";
-import { Box, Grid, CircularProgress } from "@mui/material";
+import { Box, Grid } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import SupplierQuotationCard from "@/components/common/supplierQuotations/SupplierQuotationCard";
@@ -29,7 +30,7 @@ const OrderContent: React.FC<OrderContentProps> = ({
   if (isLoading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
-        <CircularProgress sx={{ color: COLORS.PRIMARY_PURPLE }} />
+        <LogoLoader />
       </Box>
     );
   }

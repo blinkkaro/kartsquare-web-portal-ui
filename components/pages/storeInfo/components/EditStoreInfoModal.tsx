@@ -8,9 +8,9 @@ import {
   Autocomplete,
   Chip,
   InputAdornment,
-  CircularProgress,
   MenuItem,
 } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import Button from "@/components/common/Button";
 import { COLORS } from "@/constants/colors";
 
@@ -405,7 +405,7 @@ const EditStoreInfoModal: React.FC<EditStoreInfoModalProps> = ({
             >
               {isLoadingAddresses ? (
                 <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-                  <CircularProgress size={20} />
+                  <LogoLoader size={20} />
                 </Box>
               ) : displayedAddresses && displayedAddresses.length > 0 ? (
                 <Grid container spacing={2}>

@@ -65,6 +65,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useAddressForm({
     initialData,
@@ -74,11 +75,16 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
     isDefault: isDefault ? true : false,
   });
 
-  const { mapCoordinates, handleMapLocationChange, handleLocationSelect } =
-    useAddressMap({
+  const { 
+    mapCoordinates, 
+    handleMapLocationChange, 
+    handleLocationSelect,
+    refreshAddressFromMap 
+  } = useAddressMap({
       initialData,
       setValue,
       coordinates,
+      watch, // Pass extracted watch
     });
 
   const { handleFormSubmit, isPending } = useAddressSubmit({
@@ -144,6 +150,36 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                 currentLocation={mapCoordinates}
                 onLocationSelect={handleLocationSelect}
               />
+            </Box>
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 16,
+                left: "50%",
+                transform: "translateX(-50%)",
+                zIndex: 1000,
+                width: "fit-content",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <Button
+                variant="contained"
+                onClick={refreshAddressFromMap}
+                sx={{
+                  borderRadius: "50px",
+                  boxShadow: `0 4px 12px ${COLORS.SHADOW.DEFAULT}`,
+                  px: 3,
+                  py: 1,
+                  bgcolor: COLORS.WHITE,
+                  color: COLORS.PRIMARY_PURPLE,
+                  border: `1px solid ${COLORS.PRIMARY_PURPLE}`,
+                  "&:hover": {
+                    bgcolor: COLORS.PURPLE_ALPHA_04,
+                  },
+                }}
+              >
+                {t("selectCurrentAddress")}
+              </Button>
             </Box>
           </Box>
 

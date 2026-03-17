@@ -45,7 +45,7 @@ function MyStoreView() {
   return (
     <Box
       sx={{
-        p: 3,
+        p: { xs: 1.5, sm: 3 },
         bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
         minHeight: "100vh",
       }}

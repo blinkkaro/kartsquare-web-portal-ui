@@ -5,11 +5,11 @@ import {
   Typography,
   TextField,
   Button,
-  CircularProgress,
   Slide,
   useTheme,
   IconButton,
 } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { LockOutlined, Close } from "@mui/icons-material";
 import type { TransitionProps } from "@mui/material/transitions";
 import { COLORS } from "@/constants/colors";
@@ -45,6 +45,16 @@ const VerificationModal: React.FC<VerificationModalProps> = ({
   const isDark = theme.palette.mode === "dark";
   const { t } = useTranslate();
   const [otp, setOtp] = React.useState("");
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (open) {
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
 
   const handleClose = () => {
     if (!loading) {
@@ -129,13 +139,19 @@ const VerificationModal: React.FC<VerificationModalProps> = ({
         </Typography>
 
         <TextField
-          autoFocus 
+          inputRef={inputRef}
+          autoFocus
           fullWidth
           variant="outlined"
           value={otp}
           onChange={(e) => {
             const val = e.target.value.replace(/[^0-9]/g, "");
             if (val.length <= 6) setOtp(val);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleVerify();
+            }
           }}
           disabled={loading}
           inputProps={{
@@ -196,7 +212,7 @@ const VerificationModal: React.FC<VerificationModalProps> = ({
             }}
           >
             {loading ? (
-              <CircularProgress size={24} color="inherit" />
+              <LogoLoader size={24} />
             ) : (
               t("verify")
             )}

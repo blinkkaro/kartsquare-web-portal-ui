@@ -139,6 +139,7 @@ const OTPVerification = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box mb={3} sx={{ maxWidth: "200px", mx: "auto" }}>
           <Input
+            autoFocus
             name="code"
             control={control}
             label={t("enter_code") || "Enter Code"}

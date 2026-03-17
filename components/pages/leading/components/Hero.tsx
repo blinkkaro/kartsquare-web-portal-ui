@@ -7,10 +7,10 @@ import {
   Container,
   Button,
   useTheme,
-  CircularProgress,
   MenuItem,
   Grid,
 } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { getStatCards } from "./constants";
@@ -129,7 +129,378 @@ const Hero: React.FC = () => {
                 transition={{ duration: 0.4, delay: 0.12 }}
                 style={{ position: 'relative', zIndex: 10 }} // Ensure form stays clickable above backgrounds
               >
-                <LeadCaptureForm />
+                <Box
+                  component="form"
+                  onSubmit={handleSubmit(onSubmit)}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                    alignItems: "stretch",
+                  }}
+                >
+                  {/* Phone: single row, large touch target */}
+                  <Box>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        display: "block",
+                        mb: 0.75,
+                        color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                        fontSize: "0.8125rem",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {t("mobileNumber")}
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: 1,
+                        alignItems: "stretch",
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.15)"}`,
+                          borderRadius: 2,
+                          overflow: "hidden",
+                          bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "#fff",
+                          minHeight: 52,
+                          "&:focus-within": {
+                            borderColor: PURPLE,
+                            boxShadow: `0 0 0 3px ${PURPLE_ALPHA_04}`,
+                          },
+                          transition: "border-color 0.2s, box-shadow 0.2s",
+                        }}
+                      >
+                        <Input
+                          name="whatsapp_country_code"
+                          control={control}
+                          select
+                          variant="standard"
+                          InputProps={{
+                            disableUnderline: true,
+                            sx: {
+                              minWidth: 92,
+                              "& .MuiSelect-select": {
+                                py: 1.5,
+                                pl: 2,
+                                pr: "32px !important",
+                                fontWeight: 500,
+                                fontSize: "1rem",
+                                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                              },
+                            },
+                          }}
+                        >
+                          {countries.map((country) => (
+                            <MenuItem key={country.code} value={country.phone_code}>
+                              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                <span>{country.flag}</span>
+                                <span>{country.phone_code}</span>
+                              </Box>
+                            </MenuItem>
+                          ))}
+                        </Input>
+                      </Box>
+                      <Box
+                        sx={{
+                          flex: "1 1 200px",
+                          minWidth: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.15)"}`,
+                          borderRadius: 2,
+                          px: 2,
+                          minHeight: 52,
+                          bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "#fff",
+                          "&:focus-within": {
+                            borderColor: PURPLE,
+                            boxShadow: `0 0 0 3px ${PURPLE_ALPHA_04}`,
+                          },
+                          transition: "border-color 0.2s, box-shadow 0.2s",
+                        }}
+                      >
+                        <Input
+                          name="whatsapp_number"
+                          control={control}
+                          placeholder={t("yourNumber")}
+                          variant="standard"
+                          type="tel"
+                          inputMode="numeric"
+                          inputProps={{ maxLength: 10 }}
+                          InputProps={{
+                            disableUnderline: true,
+                            sx: {
+                              py: 0.5,
+                              color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                              fontSize: "1rem",
+                            },
+                          }}
+                          sx={{ "& .MuiInputBase-root": { width: "100%" } }}
+                        />
+                      </Box>
+                    </Box>
+                  </Box>
+
+                  {/* Business type: Service Provider vs Supplier — modern cards */}
+                  <Box>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        display: "block",
+                        mb: 1.25,
+                        color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                        fontSize: "0.8125rem",
+                        fontWeight: 600,
+                        letterSpacing: "0.02em",
+                      }}
+                    >
+                      {t("chooseBusinessType")}
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "grid",
+                        gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                        gap: 1.5,
+                      }}
+                    >
+                      {businessTypes.map((opt) => {
+                        const isSelected = role === opt.value;
+                        const Icon = opt.Icon;
+                        return (
+                          <Box
+                            key={opt.value}
+                            component="button"
+                            type="button"
+                            onClick={() => setRole(opt.value)}
+                            sx={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "stretch",
+                              gap: 0.75,
+                              textAlign: "left",
+                              px: 2,
+                              py: 1.5,
+                              borderRadius: 2.5,
+                              border: `1px solid ${isSelected ? "transparent" : isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.12)"}`,
+                              bgcolor: isSelected
+                                ? (isDark ? "rgba(94, 24, 233, 0.12)" : "rgba(94, 24, 233, 0.06)")
+                                : isDark
+                                  ? "rgba(255,255,255,0.03)"
+                                  : "rgba(255,255,255,0.7)",
+                              cursor: "pointer",
+                              outline: "none",
+                              transition: "all 0.25s ease",
+                              position: "relative",
+                              overflow: "hidden",
+                              boxShadow: isSelected
+                                ? (isDark ? "0 4px 20px rgba(94, 24, 233, 0.15)" : "0 4px 16px rgba(94, 24, 233, 0.08)")
+                                : "none",
+                              "&::before": {
+                                content: '""',
+                                position: "absolute",
+                                left: 0,
+                                top: 0,
+                                bottom: 0,
+                                width: isSelected ? 4 : 0,
+                                bgcolor: PURPLE,
+                                borderRadius: "4px 0 0 4px",
+                                transition: "width 0.25s ease",
+                              },
+                              "&:hover": {
+                                borderColor: isSelected ? "transparent" : PURPLE,
+                                bgcolor: isDark ? "rgba(94, 24, 233, 0.1)" : "rgba(94, 24, 233, 0.05)",
+                                boxShadow: "0 4px 20px rgba(94, 24, 233, 0.1)",
+                                transform: "translateY(-1px)",
+                              },
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                gap: 1,
+                              }}
+                            >
+                              <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, flex: 1, minWidth: 0 }}>
+                                <Box
+                                  sx={{
+                                    width: 44,
+                                    height: 44,
+                                    borderRadius: "12px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    flexShrink: 0,
+                                    bgcolor: isSelected
+                                      ? (isDark ? "rgba(94, 24, 233, 0.2)" : "rgba(94, 24, 233, 0.12)")
+                                      : isDark
+                                        ? "rgba(255,255,255,0.06)"
+                                        : "rgba(94, 24, 233, 0.06)",
+                                    color: isSelected ? PURPLE : (isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT),
+                                    transition: "background-color 0.25s ease, color 0.25s ease",
+                                  }}
+                                >
+                                  <Icon sx={{ fontSize: 24 }} />
+                                </Box>
+                                <Typography
+                                  sx={{
+                                    fontWeight: 700,
+                                    fontSize: "1rem",
+                                    color: isSelected ? PURPLE : (isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT),
+                                    fontFamily: "var(--font-heading)",
+                                    transition: "color 0.25s ease",
+                                  }}
+                                >
+                                  {opt.label}
+                                </Typography>
+                              </Box>
+                              <Box
+                                sx={{
+                                  width: 22,
+                                  height: 22,
+                                  borderRadius: "50%",
+                                  border: `2px solid ${isSelected ? PURPLE : isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.25)"}`,
+                                  bgcolor: isSelected ? PURPLE : "transparent",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  flexShrink: 0,
+                                  transition: "all 0.25s ease",
+                                  "& svg": { fontSize: 14, color: "#fff" },
+                                }}
+                              >
+                                {isSelected && <CheckIcon sx={{ fontSize: 14, color: "#fff" }} />}
+                              </Box>
+                            </Box>
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                fontSize: "0.8125rem",
+                                lineHeight: 1.4,
+                                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                                display: "block",
+                                pl: 0.5,
+                              }}
+                            >
+                              {opt.examples}
+                            </Typography>
+                          </Box>
+                        );
+                      })}
+                    </Box>
+                  </Box>
+
+                  {/* CTA */}
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    variant="contained"
+                    endIcon={loading ? <LogoLoader size={22} /> : <ArrowForwardIcon sx={{ fontSize: 22 }} />}
+                    sx={{
+                      bgcolor: PURPLE,
+                      color: "#fff",
+                      py: 1.75,
+                      px: 3,
+                      borderRadius: 2,
+                      textTransform: "none",
+                      fontWeight: 700,
+                      fontSize: "1.0625rem",
+                      fontFamily: "var(--font-heading)",
+                      boxShadow: `0 6px 20px ${PURPLE}50`,
+                      "&:hover": {
+                        bgcolor: PURPLE_HOVER,
+                        boxShadow: `0 8px 28px ${PURPLE}60`,
+                        transform: "translateY(-1px)",
+                      },
+                      transition: "all 0.25s ease",
+                    }}
+                  >
+                    {t("startNow")}
+                  </Button>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      textAlign: "center",
+                      color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                      fontSize: "0.8125rem",
+                    }}
+                  >
+                    {t("freeForever")}
+                  </Typography>
+
+                  {/* Features: Free, Easy, Personalised — below Start now */}
+                  {/* <Box
+                    sx={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: { xs: 1.5, sm: 2 },
+                      mt: 3,
+                      pt: 3,
+                      borderTop: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : "rgba(94, 24, 233, 0.1)"}`,
+                    }}
+                  >
+                    {features.map((f, i) => {
+                      const Icon = f.Icon;
+                      return (
+                        <Box
+                          key={f.label}
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1.25,
+                            flex: { xs: "1 1 100%", sm: "0 0 auto" },
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: 40,
+                              height: 40,
+                              borderRadius: "10px",
+                              bgcolor: isDark ? COLORS.PURPLE_ALPHA_10 : "rgba(94, 24, 233, 0.08)",
+                              color: PURPLE,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              "& .MuiSvgIcon-root": { fontSize: 20 },
+                            }}
+                          >
+                            <Icon />
+                          </Box>
+                          <Box>
+                            <Typography
+                              fontWeight={700}
+                              sx={{
+                                fontSize: "0.875rem",
+                                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                              }}
+                            >
+                              {f.label}
+                            </Typography>
+                            {/* <Typography
+                              variant="caption"
+                              sx={{
+                                fontSize: "0.75rem",
+                                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                                display: "block",
+                                lineHeight: 1.3,
+                              }}
+                            >
+                              {f.desc}
+                            </Typography> 
+                          </Box>
+                        </Box>
+                      );
+                    })}
+                  </Box> */}
+
+                </Box>
               </motion.div>
             </Box>
           </Grid>

@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslate } from "@/hooks/useTranslate";
-import { Box, CircularProgress, Typography, Grid } from "@mui/material";
+import { Box, Typography, Grid } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { COLORS } from "@/constants/colors";
 import { useProviderServices } from "@/hooks/useProviderProfile";
 import ServiceCard from "@/components/ServiceCard";
@@ -26,7 +27,7 @@ export default function ProfileServices({ userId }: ProfileServicesProps) {
   if (isLoading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <CircularProgress sx={{ color: COLORS.PRIMARY_PURPLE }} />
+        <LogoLoader />
       </Box>
     );
   }
@@ -65,7 +66,7 @@ export default function ProfileServices({ userId }: ProfileServicesProps) {
       {/* Load More Trigger/Spinner could be added here similar to posts */}
       {isFetchingNextPage && (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-          <CircularProgress size={24} sx={{ color: COLORS.PRIMARY_PURPLE }} />
+          <LogoLoader size={24} />
         </Box>
       )}
     </Box>
