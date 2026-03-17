@@ -9,8 +9,8 @@ import {
   IconButton,
   TextField,
   Button,
+  CircularProgress,
 } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { PhotoCamera, Videocam, Close, ArrowBack } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
@@ -262,7 +262,7 @@ const AddStoryModal: React.FC<AddStoryModalProps> = ({
                 }}
               >
                 {isLoading ? (
-                  <LogoLoader size={24} />
+                  <CircularProgress size={24} color="inherit" />
                 ) : (
                   t("share")
                 )}

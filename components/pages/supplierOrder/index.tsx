@@ -5,9 +5,9 @@ import {
   Box,
   useMediaQuery,
   useTheme,
+  CircularProgress,
   Container,
 } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { useSupplierQuotations } from "@/hooks/useSupplierQuotations";
 import { COLORS } from "@/constants/colors";
 import OrderHeader from "./components/OrderHeader";
@@ -110,7 +110,7 @@ const SupplierOrderPage = () => {
         }}
       >
         {isFetchingNextPage && (
-          <LogoLoader size={24} />
+          <CircularProgress size={24} sx={{ color: COLORS.PRIMARY_PURPLE }} />
         )}
       </Box>
 

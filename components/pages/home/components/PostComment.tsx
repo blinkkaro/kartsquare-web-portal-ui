@@ -6,10 +6,10 @@ import {
   Typography,
   IconButton,
   TextField,
+  CircularProgress,
   useTheme,
   useMediaQuery,
 } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { Close, Send } from "@mui/icons-material";
 import { Posts, Comment } from "@/services/post/postInterfaces";
 import { useGetPostComments, useAddPostComment } from "@/hooks/usePosts";
@@ -236,7 +236,7 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
                   height: "100%",
                 }}
               >
-                <LogoLoader size={30} />
+                <CircularProgress size={30} />
               </Box>
             ) : comments.length === 0 ? (
               <Box
@@ -371,7 +371,7 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
                 }}
               >
                 {addCommentMutation.isPending ? (
-                  <LogoLoader size={20} />
+                  <CircularProgress size={20} />
                 ) : (
                   <Send fontSize="small" />
                 )}

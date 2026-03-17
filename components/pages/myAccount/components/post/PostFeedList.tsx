@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useCallback } from "react";
-import { Box, Typography } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { Posts } from "@/services/post/postInterfaces";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -93,8 +92,11 @@ const PostFeedList: React.FC<PostFeedListProps> = ({
             mb: 3,
           }}
         >
-          <LogoLoader
+          <CircularProgress
             size={32}
+            sx={{
+              color: COLORS.PRIMARY_PURPLE,
+            }}
           />
         </Box>
       )}

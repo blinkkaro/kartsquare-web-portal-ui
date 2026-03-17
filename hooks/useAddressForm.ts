@@ -46,11 +46,9 @@ export const useAddressForm = ({
   const { reset } = form;
 
   useEffect(() => {
-    if (!open) return;
-
     if (initialData && mode === "edit") {
-      const stateValue = initialData.state;
-      const countryValue = initialData.country;
+      const state = initialData.state;
+      const country = initialData.country;
 
       reset({
         address_name: initialData.address_name || "",
@@ -60,17 +58,14 @@ export const useAddressForm = ({
         landmark: initialData.landmark || "",
         pincode: initialData.pincode || "",
         city_town: initialData.city_town,
-        state: stateValue,
-        country: countryValue,
+        state: state,
+        country: country,
         is_default: initialData.is_default || false,
         latitude: initialData.latitude,
         longitude: initialData.longitude,
       });
     } else if (mode === "add") {
-      // For "add" mode, we only reset when the drawer opens to clear previous state
-      // We don't wipe the form if coordinates arrive later, as useAddressMap will handle setting them
-      reset((prev) => ({
-        ...prev,
+      reset({
         address_name: "",
         building_no: "",
         floor: "",
@@ -81,19 +76,11 @@ export const useAddressForm = ({
         state: "",
         country: "",
         is_default: isDefault,
-        latitude: prev.latitude || coordinates?.latitude,
-        longitude: prev.longitude || coordinates?.longitude,
-      }));
+        latitude: coordinates?.latitude,
+        longitude: coordinates?.longitude,
+      });
     }
-  }, [initialData, mode, reset, open]); // Removed coordinates from dependencies to prevent re-clearing form
-
-  // Separate effect to sync lat/lng when coordinates arrive without resetting whole form
-  useEffect(() => {
-    if (mode === "add" && coordinates) {
-      form.setValue("latitude", coordinates.latitude);
-      form.setValue("longitude", coordinates.longitude);
-    }
-  }, [coordinates, mode]);
+  }, [initialData, mode, reset, open, coordinates]);
 
   return form;
 };

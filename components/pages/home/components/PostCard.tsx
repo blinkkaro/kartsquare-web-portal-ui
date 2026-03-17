@@ -52,8 +52,7 @@ const PostCard = ({ post }: { post: Posts }) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            py: 0,
-            px: 2,
+            p: 2,
           }}
         >
           <Box
@@ -158,8 +157,7 @@ const PostCard = ({ post }: { post: Posts }) => {
           display: "flex",
           gap: 2,
           alignItems: "center",
-          py: 1,
-          px: 2,
+          p: 2,
         }}
       >
         <Box
@@ -191,7 +189,7 @@ const PostCard = ({ post }: { post: Posts }) => {
               variant="caption"
               sx={{
                 position: "absolute",
-                bottom: -10,
+                bottom: -20,
                 left: "50%",
                 transform: "translateX(-50%)",
                 fontSize: "0.75rem",
@@ -225,7 +223,7 @@ const PostCard = ({ post }: { post: Posts }) => {
               variant="caption"
               sx={{
                 position: "absolute",
-                bottom: -10,
+                bottom: -20,
                 left: "50%",
                 transform: "translateX(-50%)",
                 fontSize: "0.75rem",
@@ -263,7 +261,7 @@ const PostCard = ({ post }: { post: Posts }) => {
         ></Box>
       </Box>
       {post.caption && (
-        <Box sx={{ mt: 1, px: 2, pb: 2 }}>
+        <Box sx={{ mt: 2, px: 1 }}>
           <Typography
             variant="body2"
             sx={{

@@ -17,7 +17,7 @@ export const handleRegistrationStepNavigation = (
   const role = secureStorage.getItem("role");
   const register_step = secureStorage.getItem("register_step");
 
-  if (register_step === null || register_step === undefined || !role) {
+  if (!register_step || !role) {
     // router.replace("/");
     return;
   }

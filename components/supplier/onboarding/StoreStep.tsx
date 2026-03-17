@@ -40,7 +40,7 @@ import {
 } from "@/hooks/useAddress";
 import { Address } from "@/services/address/addressInterface";
 import AddressDrawer from "@/components/common/address/AddressDrawer";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
+import { CircularProgress } from "@mui/material";
 
 import StoreOutlinedIcon from "@mui/icons-material/StoreOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
@@ -361,7 +361,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
   if (isLoadingStore)
     return (
       <Box display="flex" justifyContent="center" py={10}>
-        <LogoLoader />
+        <CircularProgress />
       </Box>
     );
 
@@ -677,7 +677,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
               >
                 {isLoadingAddresses ? (
                   <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-                    <LogoLoader size={20} />
+                    <CircularProgress size={20} />
                   </Box>
                 ) : displayedAddresses && displayedAddresses.length > 0 ? (
                   <Grid container spacing={2}>

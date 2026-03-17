@@ -21,12 +21,12 @@ export const useLeadVerification = (leadId?: string | null) => {
       setCurrentSourceType(params.source_type);
       return freeLeadService.applyForFreeListing(params);
     },
-    onSuccess: (response, variables) => {
+    onSuccess: (response) => {
       if (response?.bus_lead_id) {
         sessionStorage.setItem("bus_lead_id", response.bus_lead_id);
       }
 
-      const role = getRoleFromSourceType(variables.source_type);
+      const role = getRoleFromSourceType(currentSourceType);
 
       if (response.status !== "VERIFIED") {
         setVerificationId(response.bus_lead_id);
@@ -41,8 +41,7 @@ export const useLeadVerification = (leadId?: string | null) => {
     },
     onError: (err: any) => {
       console.error("Check user error:", err);
-      const errorMessage =
-        err.response?.data?.message || err.message || "Something went wrong";
+      const errorMessage = err.message || "Something went wrong";
       setError(errorMessage);
       toast.error(errorMessage);
     },
@@ -61,8 +60,7 @@ export const useLeadVerification = (leadId?: string | null) => {
     },
     onError: (err: any) => {
       console.error("Verification error:", err);
-      const errorMessage =
-        err.response?.data?.message || err.message || "Verification failed";
+      const errorMessage = err.message || "Verification failed";
       setError(errorMessage);
       toast.error(errorMessage);
     },

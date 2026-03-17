@@ -5,12 +5,11 @@ import {
   Box,
   Container,
   Grid,
+  CircularProgress,
   Typography,
   Button,
   Divider,
 } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { useRouter } from "next/navigation";
 import { useGetProductById, useDeleteProduct } from "@/hooks/useProducts";
 import ProductDetailHeader from "./components/ProductDetailHeader";
@@ -48,7 +47,18 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
   };
 
   if (isLoading) {
-    return <CenteredLoader minHeight="60vh" />;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "60vh",
+        }}
+      >
+        <CircularProgress sx={{ color: COLORS.PRIMARY_PURPLE }} />
+      </Box>
+    );
   }
 
   if (error || !product) {
@@ -185,7 +195,7 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
                 py: 1.5,
               }}
             >
-              {deleteMutation.isPending ? <LogoLoader size={20} /> : t("delete")}
+              {deleteMutation.isPending ? t("deleting") : t("delete")}
             </Button>
           </Box>
         }

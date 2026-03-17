@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, useTheme, Chip, Divider } from "@mui/material";
+import { Box, Typography, useTheme, Chip } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import { BookingStatus } from "@/services/booking/bookingInterface";
 import {
@@ -364,23 +364,12 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
       <Box
         sx={{
           bgcolor: isDark
-            ? COLORS.BACKGROUND.PAPER_DARK
+            ? COLORS.BACKGROUND.PRIMARY_DARK
             : COLORS.BACKGROUND.PAPER_LIGHT,
-          p: { xs: 2, sm: 2.5 },
-          borderRadius: "16px",
-          boxShadow: isDark
-            ? "0px 4px 20px rgba(0, 0, 0, 0.4)"
-            : "0px 4px 16px rgba(0, 0, 0, 0.05)",
+          p: 2,
+          borderRadius: "25px",
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
           cursor: "pointer",
-          transition: "all 0.3s ease",
-          border: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)"}`,
-          "&:hover": {
-            transform: "translateY(-4px)",
-            boxShadow: isDark
-              ? "0px 8px 30px rgba(0, 0, 0, 0.6)"
-              : "0px 8px 24px rgba(0, 0, 0, 0.1)",
-            borderColor: COLORS.PRIMARY_PURPLE,
-          },
         }}
         onClick={() => setIsDrawerOpen(true)}
       >
@@ -388,9 +377,10 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
+            //   justifyContent: "space-between",
+            gap: 2,
             alignItems: "center",
-            mb: 2,
+            //   mb: 2,
           }}
         >
           <Typography
@@ -399,11 +389,10 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
               color: isDark
                 ? COLORS.TEXT.SECONDARY_DARK
                 : COLORS.TEXT.SECONDARY_LIGHT,
-              fontWeight: 600,
-              fontFamily: 'monospace',
+              fontWeight: 500,
             }}
           >
-            #{booking.booking_id.substring(0, 8).toUpperCase()}
+            {t("id")}: {booking.booking_id}
           </Typography>
           {showStatus && (
             <Chip
@@ -411,13 +400,12 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
               label={statusConfig.label}
               size="small"
               sx={{
-                bgcolor: `${statusConfig.color}15`,
-                border: `1px solid ${statusConfig.borderColor}30`,
+                bgcolor: "transparent",
+                border: `1px solid ${statusConfig.borderColor}`,
                 color: statusConfig.color,
-                fontWeight: 700,
-                fontSize: "10px",
+                fontWeight: 600,
+                fontSize: "11px",
                 height: "24px",
-                textTransform: "uppercase",
                 "& .MuiChip-icon": {
                   color: statusConfig.color,
                 },
@@ -425,7 +413,41 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
             />
           )}
         </Box>
+        {/* arrow */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          {/* Line */}
+          <Box
+            sx={{
+              flexGrow: 1,
+              height: "1px",
+              backgroundColor: "#E0E0E0",
+            }}
+          />
 
+          {/* Arrow button */}
+          <Box
+            sx={{
+              ml: 1,
+              width: 40,
+              height: 40,
+              background: isDark ? COLORS.DARK_GRADIENT : COLORS.PURPLECYAN,
+              // color: COLORS.WHITE,
+              borderRadius: "25px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+            }}
+          >
+            <ArrowForwardIos sx={{ fontSize: 20 }} />
+          </Box>
+        </Box>
         {/* Service Info with Image */}
         <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
           <Box
@@ -433,9 +455,9 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
             src={booking.image || "/placeholder-service.png"}
             alt={booking.name}
             sx={{
-              width: { xs: 60, sm: 70 },
-              height: { xs: 60, sm: 70 },
-              borderRadius: "12px",
+              width: 60,
+              height: 60,
+              borderRadius: "8px",
               objectFit: "cover",
               border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : COLORS.BORDER.DEFAULT_LIGHT}`,
             }}
@@ -443,17 +465,15 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography
               sx={{
-                fontSize: { xs: "15px", sm: "16px" },
+                fontSize: "16px",
                 fontWeight: 700,
                 color: isDark
                   ? COLORS.TEXT.PRIMARY_DARK
                   : COLORS.TEXT.PRIMARY_LIGHT,
                 mb: 0.5,
-                lineHeight: 1.2,
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
                 overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
               }}
             >
               {booking.name}
@@ -464,13 +484,14 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
               <AccessTime
                 sx={{
                   fontSize: 14,
-                  color: COLORS.PRIMARY_PURPLE,
+                  color: isDark
+                    ? COLORS.TEXT.SECONDARY_DARK
+                    : COLORS.TEXT.SECONDARY_LIGHT,
                 }}
               />
               <Typography
                 sx={{
-                  fontSize: "12px",
-                  fontWeight: 500,
+                  fontSize: "13px",
                   color: isDark
                     ? COLORS.TEXT.SECONDARY_DARK
                     : COLORS.TEXT.SECONDARY_LIGHT,
@@ -481,40 +502,41 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
             </Box>
             <Typography
               sx={{
-                fontSize: "12px",
+                fontSize: "13px",
                 color: isDark
                   ? COLORS.TEXT.SECONDARY_DARK
                   : COLORS.TEXT.SECONDARY_LIGHT,
-                display: "-webkit-box",
-                WebkitLineClamp: 1,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
               }}
             >
-              {formatAddress(booking.service_address, t)}
+              {formatAddress(booking.service_address, t).length > 20
+                ? formatAddress(booking.service_address, t).slice(0, 30) + "..."
+                : formatAddress(booking.service_address, t)}
             </Typography>
           </Box>
         </Box>
 
-        <Divider sx={{ my: 1.5, opacity: isDark ? 0.1 : 0.5 }} />
-
-        {/* Footer with Price and Actions */}
+        {/* Action Buttons */}
         <Box
           sx={{
+            mt: 2,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            flexWrap: "wrap",
-            gap: 1,
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
             {booking.price === 0 ? (
               <Typography
                 sx={{
-                  fontSize: "15px",
+                  fontSize: "16px",
                   fontWeight: 700,
-                  color: COLORS.PRIMARY_PURPLE,
+                  color: isDark
+                    ? COLORS.TEXT.PRIMARY_DARK
+                    : COLORS.TEXT.PRIMARY_LIGHT,
+                  mb: 0.5,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
                 }}
               >
                 {t("getQuote")}
@@ -523,22 +545,30 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
               <>
                 <Typography
                   sx={{
-                    fontSize: "11px",
-                    fontWeight: 600,
+                    fontSize: "12px",
+                    //   fontWeight: 700,
                     color: isDark
-                      ? COLORS.TEXT.SECONDARY_DARK
-                      : COLORS.TEXT.SECONDARY_LIGHT,
+                      ? COLORS.TEXT.PRIMARY_DARK
+                      : COLORS.TEXT.PRIMARY_LIGHT,
+                    mb: 0.5,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   {booking.currency}
                 </Typography>
                 <Typography
                   sx={{
-                    fontSize: "18px",
-                    fontWeight: 800,
+                    fontSize: "16px",
+                    fontWeight: 700,
                     color: isDark
                       ? COLORS.TEXT.PRIMARY_DARK
                       : COLORS.TEXT.PRIMARY_LIGHT,
+                    mb: 0.5,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   {booking.price}
@@ -546,9 +576,7 @@ const BookingStatusCard: React.FC<BookingStatusCardProps> = ({
               </>
             )}
           </Box>
-          <Box sx={{ ml: "auto" }}>
-            {getActionButtons()}
-          </Box>
+          {getActionButtons()}
         </Box>
       </Box>
       {/* Booking Details Drawer */}

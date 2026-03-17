@@ -4,6 +4,7 @@ import {
   Box,
   Typography,
   Grid,
+  CircularProgress,
   Avatar,
   Card,
   CardMedia,
@@ -13,8 +14,6 @@ import {
   Divider,
   Paper,
 } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { Star, Person, Business, Search as SearchIcon } from "@mui/icons-material";
 import { useSearchParams, useRouter } from "next/navigation";
 import { COLORS } from "@/constants/colors";
@@ -145,7 +144,18 @@ const SearchResultsView: React.FC = () => {
   };
 
   if (loading && users.length === 0 && services.length === 0) {
-    return <CenteredLoader minHeight="400px" size={60} />;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "400px",
+        }}
+      >
+        <CircularProgress sx={{ color: COLORS.PRIMARY_PURPLE }} />
+      </Box>
+    );
   }
 
   if (!searchQuery.trim()) {
@@ -458,7 +468,7 @@ const SearchResultsView: React.FC = () => {
                 }}
               >
                 {loading && (
-                  <LogoLoader size={40} />
+                  <CircularProgress sx={{ color: COLORS.PRIMARY_PURPLE }} />
                 )}
               </Box>
             </Grid>

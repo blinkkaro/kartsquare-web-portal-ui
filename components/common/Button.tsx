@@ -2,10 +2,10 @@
 import React from "react";
 import {
   Button as MuiButton,
+  CircularProgress,
   ButtonProps as MuiButtonProps,
   styled,
 } from "@mui/material";
-import LogoLoader from "./Loader/LogoLoader";
 import { COLORS } from "../../constants/colors";
 
 interface ButtonProps extends MuiButtonProps {
@@ -71,7 +71,13 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <StyledButton variant={variant} disabled={disabled || isLoading} {...props}>
       {isLoading ? (
-        <LogoLoader size={24} />
+        <CircularProgress
+          size={24}
+          color="inherit"
+          sx={{
+            color: variant === "contained" ? "white" : COLORS.PRIMARY_PURPLE,
+          }}
+        />
       ) : (
         children
       )}

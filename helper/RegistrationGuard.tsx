@@ -11,8 +11,6 @@ import {
 import { AppUserType } from "@/services/auth/auth.interface";
 import { secureStorage } from "./SecureStorage";
 
-import GlobalLoading from "@/components/common/Loader/GlobalLoading";
-
 // 1. Move static constants outside the component to avoid recreation on re-renders
 const RESTRICTED_AUTH_PATHS = [
   "/login",
@@ -61,51 +59,46 @@ export default function RegistrationGuard({
         pathname.startsWith(path),
       );
 
-      // --- UNAUTHENTICATED: allow them to stay on any public/auth page ---
+      // --- SCENARIO 1: Authenticated user trying to access Auth pages ---
+      if (isAuthenticated && isRestrictedPath) {
+        router.replace("/");
+        return;
+      }
+
+      // --- SCENARIO 2: Unauthenticated user ---
       if (!isAuthenticated) {
+        // If they are on a public page (or auth page), let them stay.
+        // If you have protected routes that REQUIRE login, add that logic here.
         setIsChecking(false);
         return;
       }
 
-      // --- AUTHENTICATED: resolve registration state ---
+      // --- SCENARIO 3: Authenticated but Incomplete Registration ---
+
+      // Get data with fallbacks
       const registerStepFromStorage = secureStorage.getItem("register_step");
       const roleFromStorage = secureStorage.getItem("role");
 
       const currentRegisterStep =
-        user?.register_step !== undefined && user?.register_step !== null
-          ? user.register_step
-          : registerStepFromStorage !== null && registerStepFromStorage !== undefined
+        user?.register_step ??
+        (registerStepFromStorage
           ? parseInt(registerStepFromStorage, 10)
-          : null;
+          : null);
 
       const currentRole = (user?.role ?? roleFromStorage) as AppUserType | null;
 
-      // Determine if onboarding is fully complete
+      // If data is missing, we assume API/Auth slice is still loading or valid, let them pass
+      if (!currentRegisterStep || !currentRole) {
+        setIsChecking(false);
+        return;
+      }
+
+      // If registration is fully complete, allow access
       const isCompleted =
-        currentRegisterStep !== null &&
-        (currentRegisterStep === UserRegisterSteps.COMPLETED ||
-          currentRegisterStep === UserRegisterSteps.PREFERENCES_ADDED ||
-          (currentRole === AppUserType.SUPPLIER &&
-            currentRegisterStep === UserRegisterSteps.SUPPLIER_KYC_SUBMITTED));
-
-      // --- SCENARIO 1: Authenticated on a restricted auth page ---
-      // Only redirect to home if registration is actually complete.
-      // If it's incomplete, let them stay (e.g. /signUp during onboarding).
-      if (isAuthenticated && isRestrictedPath) {
-        if (isCompleted) {
-          router.replace("/");
-          return;
-        }
-        // Not complete: allow them to proceed (e.g. complete /signUp)
-        setIsChecking(false);
-        return;
-      }
-
-      // If data is missing, assume still loading — let them pass
-      if (currentRegisterStep === null || !currentRole) {
-        setIsChecking(false);
-        return;
-      }
+        currentRegisterStep === UserRegisterSteps.COMPLETED ||
+        currentRegisterStep === UserRegisterSteps.PREFERENCES_ADDED ||
+        (currentRole === AppUserType.SUPPLIER &&
+          currentRegisterStep === UserRegisterSteps.SUPPLIER_KYC_SUBMITTED);
 
       // If already completed but on onboarding paths, redirect to home
       if (isCompleted && isOnboardingPath) {
@@ -120,19 +113,19 @@ export default function RegistrationGuard({
 
       // Determine where they SHOULD be
       const roleMap = registrationStepMap[currentRole];
-      if (roleMap && currentRegisterStep !== UserRegisterSteps.ANONYMOUS) {
+      if (roleMap) {
         const requiredScreen =
           roleMap[currentRegisterStep as UserRegisterSteps];
-        
-        if (requiredScreen) {
-          const requiredPath = getPathForScreen(requiredScreen);
-          const basePath = requiredPath.split("?")[0];
+        const requiredPath = getPathForScreen(requiredScreen);
 
-          // If a required path exists and we aren't there, redirect to enforce onboarding step
-          if (requiredPath !== "/" && pathname !== basePath) {
-            router.replace(requiredPath);
-            return;
-          }
+        // If a required path exists and we aren't there, redirect (Only for Supplier as requested)
+        if (
+          currentRole === AppUserType.SUPPLIER &&
+          requiredPath &&
+          pathname !== requiredPath
+        ) {
+          router.replace(requiredPath);
+          return;
         }
       }
 
@@ -145,7 +138,7 @@ export default function RegistrationGuard({
 
   // 4. Show nothing (or a spinner) while we are verifying where the user belongs
   if (isChecking) {
-    return <GlobalLoading open={true} />;
+    return null; // Or return <LoadingSpinner />
   }
 
   return <>{children}</>;

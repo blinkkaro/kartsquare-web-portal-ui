@@ -7,8 +7,8 @@ import {
   Checkbox,
   FormControlLabel,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import ProfileWrapper from "@/components/common/profile/profileWrapper";
@@ -177,7 +177,16 @@ function MyScheduleView() {
   if (isLoading) {
     return (
       <ProfileWrapper showBackButton>
-        <CenteredLoader minHeight="400px" />
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "400px",
+          }}
+        >
+          <CircularProgress />
+        </Box>
       </ProfileWrapper>
     );
   }

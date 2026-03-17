@@ -9,10 +9,9 @@ import {
   FormControlLabel,
   FormControl,
   Rating,
+  CircularProgress,
   useTheme,
 } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { useReviewQuestions, useCreateReview } from "@/hooks/useReview";
 import { Service } from "@/services/serviceList/listInteraface";
 import { COLORS } from "@/constants/colors";
@@ -86,7 +85,11 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
   };
 
   if (isLoading) {
-    return <CenteredLoader p={4} />;
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
@@ -199,7 +202,7 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
           }}
         >
           {isSubmitting ? (
-            <LogoLoader size={24} />
+            <CircularProgress size={24} color="inherit" />
           ) : (
             t("submit_review")
           )}

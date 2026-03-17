@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { Box, Typography, useTheme } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
+import { Box, Typography, useTheme, CircularProgress } from "@mui/material";
 import { Verified } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -22,7 +21,11 @@ const ProviderReviews: React.FC<{
   const { data: reviews, isLoading, error } = useGetAllTestimonials(providerId);
 
   if (isLoading) {
-    return <CenteredLoader p={4} size={30} />;
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+        <CircularProgress size={30} sx={{ color: COLORS.PRIMARY_PURPLE }} />
+      </Box>
+    );
   }
 
   if (error || !reviews || reviews.length === 0) {

@@ -1,6 +1,5 @@
 import { Posts } from "../post/postInterfaces";
 import { Service } from "../serviceList/listInteraface";
-import { UserRegisterSteps } from "../../types/resgistrationFlow";
 
 export enum service_location_type {
   USER_LOCATION = "at_customer",

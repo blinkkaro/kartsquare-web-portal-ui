@@ -1,8 +1,7 @@
 "use client";
 
 import Title from "@/components/auth/title";
-import { Box, Container } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
+import { Box, CircularProgress, Container } from "@mui/material";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import { useTranslate } from "@/hooks/useTranslate";
 import { formatDateToString } from "@/helper/helper";
@@ -14,7 +13,18 @@ function TermsConditionsView() {
   const { data: termsConditions, isLoading, isError } = useTermsAndConditions();
 
   if (isLoading) {
-    return <CenteredLoader minHeight="50vh" />;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "50vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (isError) {

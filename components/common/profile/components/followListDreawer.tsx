@@ -5,9 +5,9 @@ import {
   Box,
   Typography,
   Avatar,
+  CircularProgress,
   useTheme,
 } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import {
@@ -143,7 +143,7 @@ const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
                 gap: 2,
               }}
             >
-              <LogoLoader size={40} />
+              <CircularProgress size={40} />
               <Typography variant="body2" color="text.secondary">
                 {loadingMessage}
               </Typography>
@@ -247,7 +247,7 @@ const FollowListDrawer: React.FC<FollowListDrawerProps> = ({
               {/* Loading indicator for pagination */}
               {isFetchingNextPage && (
                 <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
-                  <LogoLoader size={24} />
+                  <CircularProgress size={24} />
                 </Box>
               )}
 

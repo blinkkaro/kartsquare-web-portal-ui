@@ -8,11 +8,10 @@ import {
   Box,
   Typography,
   useTheme,
+  CircularProgress,
   Button,
   Pagination,
 } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { Campaign, Add } from "@mui/icons-material";
 import {
   useProviderAdvertisements,
@@ -201,7 +200,16 @@ function AdvertiseView() {
 
       {/* Loading State */}
       {isLoading && (
-        <CenteredLoader minHeight={400} size={80} />
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: 400,
+          }}
+        >
+          <CircularProgress sx={{ color: COLORS.PRIMARY_PURPLE }} />
+        </Box>
       )}
 
       {/* Error State */}
@@ -383,7 +391,7 @@ function AdvertiseView() {
               }}
             >
               {deleteMutation.isPending ? (
-                <LogoLoader size={24} />
+                <CircularProgress size={20} sx={{ color: COLORS.WHITE }} />
               ) : (
                 t("delete")
               )}

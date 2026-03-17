@@ -34,7 +34,6 @@ const BookingsTabs: React.FC<BookingsTabsProps> = ({
         scrollButtons="auto"
         allowScrollButtonsMobile
         sx={{
-          minHeight: "48px",
           "& .MuiTabs-indicator": {
             backgroundColor: COLORS.PRIMARY_PURPLE,
             height: "3px",
@@ -45,20 +44,15 @@ const BookingsTabs: React.FC<BookingsTabsProps> = ({
           },
           "& .MuiTab-root": {
             textTransform: "none",
-            fontWeight: 700,
-            fontSize: { xs: "0.875rem", sm: "0.95rem" },
-            color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#64748B",
+            fontWeight: 600,
+            fontSize: { xs: "0.85rem", sm: "0.9rem", md: "0.95rem" },
+            color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#6B7280",
+            mr: 2,
             minWidth: "max-content",
-            px: { xs: 1.5, sm: 2.5 },
-            py: 1.5,
-            transition: "all 0.2s ease",
-            borderRadius: "12px 12px 0 0",
-            "&:hover": {
-              color: COLORS.PRIMARY_PURPLE,
-              bgcolor: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)",
-            },
+            px: { xs: 0.5, sm: 1 },
+            py: { xs: 0.75, sm: 1 },
             "&.Mui-selected": {
-              color: COLORS.PRIMARY_PURPLE,
+              color: isDark ? "white" : "#111827",
             },
           },
         }}
@@ -71,7 +65,7 @@ const BookingsTabs: React.FC<BookingsTabsProps> = ({
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 1.2,
+                  gap: 1,
                   whiteSpace: "nowrap",
                 }}
               >
@@ -81,18 +75,18 @@ const BookingsTabs: React.FC<BookingsTabsProps> = ({
                     sx={{
                       bgcolor:
                         activeTab === index
-                          ? `${COLORS.PRIMARY_PURPLE}20`
+                          ? COLORS.PRIMARY_PURPLE
                           : isDark
-                            ? "rgba(255,255,255,0.05)"
+                            ? "rgba(255,255,255,0.1)"
                             : "rgba(0,0,0,0.05)",
-                      color: activeTab === index ? COLORS.PRIMARY_PURPLE : "inherit",
+                      color: activeTab === index ? "white" : "inherit",
                       borderRadius: "6px",
                       px: 0.8,
                       py: 0.2,
                       fontSize: "0.75rem",
-                      fontWeight: 800,
-                      minWidth: "22px",
-                      border: activeTab === index ? `1px solid ${COLORS.PRIMARY_PURPLE}40` : "none",
+                      fontWeight: 700,
+                      minWidth: "20px",
+                      textAlign: "center",
                     }}
                   >
                     {counts[index]}

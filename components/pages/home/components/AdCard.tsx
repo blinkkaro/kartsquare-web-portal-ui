@@ -42,8 +42,7 @@ const AdCard = ({ ad }: AdCardProps) => {
           alignItems: "center",
           gap: 1,
           cursor: "pointer",
-          my: 1,
-          mx: 2,
+          m: 2,
         }}
         onClick={() => dispatch(openDrawer({ userId: ad.provider_id }))}
       >

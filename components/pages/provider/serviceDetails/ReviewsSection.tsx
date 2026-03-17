@@ -4,9 +4,9 @@ import {
   Box,
   Typography,
   Button,
+  CircularProgress,
   useTheme,
 } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { Star, RateReview } from "@mui/icons-material";
 import ReviewCard from "@/components/common/ReviewCard";
 import { Review } from "@/services/review/reviewInterface";
@@ -139,7 +139,9 @@ const ReviewsSection = ({
 
       {/* Reviews List */}
       {reviewsLoading ? (
-        <CenteredLoader py={4} size={40} />
+        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+          <CircularProgress />
+        </Box>
       ) : reviews.length === 0 ? (
         <EmptyState
           titleKey="no_reviews_yet"

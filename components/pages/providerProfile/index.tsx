@@ -10,6 +10,7 @@ import {
   IconButton,
   useTheme,
   useMediaQuery,
+  CircularProgress,
   Divider,
   Menu,
   MenuItem,
@@ -21,7 +22,6 @@ import {
   Chip,
   Collapse,
 } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import {
   Share,
   ContentCopy,
@@ -307,7 +307,18 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
   };
 
   if (isLoading) {
-    return <CenteredLoader minHeight="60vh" />;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "60vh",
+        }}
+      >
+        <CircularProgress sx={{ color: COLORS.PRIMARY_PURPLE }} />
+      </Box>
+    );
   }
 
   if (error || !profile) {

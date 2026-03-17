@@ -10,10 +10,10 @@ import {
   TextField,
   useTheme,
   Drawer,
+  CircularProgress,
   InputAdornment,
   CardMedia,
 } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import {
   Close,
   CameraAlt,
@@ -463,7 +463,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   InputProps={{
                     endAdornment: usernameValidation.isValidating ? (
                       <InputAdornment position="end">
-                        <LogoLoader size={20} />
+                        <CircularProgress size={20} />
                       </InputAdornment>
                     ) : usernameValidation.isValid === true ? (
                       <InputAdornment position="end">

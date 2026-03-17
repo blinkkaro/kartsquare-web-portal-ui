@@ -4,10 +4,10 @@ import {
   Box,
   Container,
   Typography,
+  CircularProgress,
   useTheme,
   Divider,
 } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { useParams, useRouter } from "next/navigation";
 import { Edit, Delete, Share } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
@@ -124,7 +124,19 @@ const ProviderServiceDetails = () => {
   if (loading) {
     return (
       <MainLayout>
-        <CenteredLoader minHeight="100vh" py={0} />
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "100vh",
+            bgcolor: isDark
+              ? COLORS.BACKGROUND.PRIMARY_DARK
+              : COLORS.BACKGROUND.SECONDARY_LIGHT,
+          }}
+        >
+          <CircularProgress />
+        </Box>
       </MainLayout>
     );
   }

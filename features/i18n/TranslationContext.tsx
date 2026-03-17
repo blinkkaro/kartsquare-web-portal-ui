@@ -823,9 +823,6 @@ export type TranslationKey =
   | "featureFree"
   | "featureFreeDesc"
   | "featureEasy"
-  | "guest_login"
-  | "guest_login_description"
-  | "continue_as_guest"
   | "featureEasyDesc"
   | "featurePersonalised"
   | "featurePersonalisedDesc"
@@ -1132,8 +1129,6 @@ export type TranslationKey =
   | "service_radius_km"
   | "provider_service_at_customer_location"
   | "this_service_have_a_specific_duration"
-  | "firstNameMax"
-  | "lastNameMax"
   | "kyc_id_proof_type_placeholder"
   | "kyc_pan_card_image"
   | "kyc_doc_hint_pan"
@@ -1246,7 +1241,7 @@ export type TranslationKey =
   | "store_setup_operating_locations_required"
   | "store_setup_establishment_year_required"
   | "websiteUrl"
-  | "selectCurrentAddress";
+  ;
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
+import { Box, Typography, CircularProgress } from "@mui/material";
 import { useTranslate } from "@/hooks/useTranslate";
 import { serviceListService } from "@/services/serviceList/serviceListService";
 import { Service } from "@/services/serviceList/listInteraface";
@@ -141,7 +139,11 @@ const ReviewManagementContainer = () => {
   }, [reviews]);
 
   if (loadingServices) {
-    return <CenteredLoader />;
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (!services || services.length === 0) {
@@ -161,8 +163,8 @@ const ReviewManagementContainer = () => {
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
           {t("testimonials")} ({testimonials.length})
         </Typography>
-        {isReviewsLoading && reviews.length === 0 ? (
-          <LogoLoader size={24} />
+        {isReviewsLoading && reviews.length === 0 ? ( // Show loading only on initial fetch
+          <CircularProgress size={24} />
         ) : testimonials.length > 0 ? (
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
             {testimonials.map((review) => (
@@ -226,7 +228,7 @@ const ReviewManagementContainer = () => {
                 >
                   {(isReviewsLoading || isReviewsRefetching) &&
                   reviews.length > 0 ? (
-                    <LogoLoader size={20} />
+                    <CircularProgress size={20} />
                   ) : (
                     t("load_more")
                   )}
@@ -252,7 +254,9 @@ const ReviewManagementContainer = () => {
         )}
 
         {isReviewsLoading && reviews.length === 0 && (
-          <CenteredLoader p={2} />
+          <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+            <CircularProgress />
+          </Box>
         )}
       </Box>
     </Box>

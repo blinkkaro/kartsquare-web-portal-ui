@@ -87,8 +87,8 @@ function EmailVerificationView() {
       // console.log(error);
       setError(
         error?.response?.data?.message ||
-        error?.message ||
-        "An unexpected error occurred"
+          error?.message ||
+          "An unexpected error occurred"
       );
     } finally {
       setResending(false);
@@ -105,8 +105,8 @@ function EmailVerificationView() {
     } catch (error: any) {
       setError(
         error?.response?.data?.message ||
-        error?.message ||
-        "An unexpected error occurred"
+          error?.message ||
+          "An unexpected error occurred"
       );
     } finally {
       setLoading(false);
@@ -123,13 +123,13 @@ function EmailVerificationView() {
 
     dispatch(logout());
     console.log(role);
-
-    if (role === AppUserType.CUSTOMER) {
+    
+    if(role===AppUserType.CUSTOMER){
       router.push(`/login?role=customer`);
-    } else {
+    }else{
       router.push(`/freeListing`);
     }
-
+    
   };
 
   const handleContinue = () => {
@@ -150,28 +150,19 @@ function EmailVerificationView() {
         subtitle={t("email_verification_subtitle")}
       />
       <ErrorMessage isVisible={!!error} error={error} />
-      <Box
-        component="form"
-        onSubmit={(e: React.FormEvent) => {
-          e.preventDefault();
-          if (otp.length === 6) OnSubmit();
-        }}
-        sx={{ width: "100%" }}
-      >
-        <Box sx={{ my: 4 }}>
-          <OtpInput onChange={setOtp} onEnter={OnSubmit} />
-        </Box>
-
-        <Button
-          fullWidth
-          variant="contained"
-          type="submit"
-          isLoading={loading}
-          disabled={otp.length !== 6}
-        >
-          {t("verify")}
-        </Button>
+      <Box sx={{ my: 4 }}>
+        <OtpInput onChange={setOtp} />
       </Box>
+
+      <Button
+        fullWidth
+        variant="contained"
+        onClick={OnSubmit}
+        isLoading={loading}
+        disabled={otp.length !== 6}
+      >
+        {t("verify")}
+      </Button>
 
       <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
         {timeLeft > 0 ? (
