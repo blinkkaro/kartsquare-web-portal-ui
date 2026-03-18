@@ -1638,4 +1638,17 @@ export const english = {
   store_setup_establishment_year_required: "Establishment year is required",
   store_setup_website_url_required: "Website URL is required",
   websiteUrl: "Website URL",
+  // Aibot
+  aibot_greeting: "Hi there! 👋 I'm your KartSquare assistant. How can I help grow your business today?",
+  aibot_tooltip: "Hi there! 👋 I'm your KartSquare assistant.",
+  aibot_header_title: "KartSquare Assistant",
+  aibot_online_now: "Online Now",
+  aibot_thinking: "KartSquare is thinking...",
+  aibot_input_placeholder: "Ask about business benefits...",
+  aibot_powered_by: "Powered by KartSquare AI",
+  aibot_benefit_response: "KartSquare helps businesses reach more customers, manage listings easily, and boost sales with integrated marketing tools.",
+  aibot_cost_response: "We offer flexible pricing plans tailored for businesses of all sizes, starting from a free tier for local shops!",
+  aibot_feature_response: "Our platform includes AI-driven search, reel integration, booking management, and detailed analytics.",
+  aibot_reach_response: "With KartSquare, you can tap into a network of thousands of active shoppers looking for services like yours.",
+  aibot_default_response: "That's a great question! KartSquare is designed to grow your digital presence. Would you like to know more about our pricing or key features?",
 };

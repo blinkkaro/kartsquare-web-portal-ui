@@ -21,30 +21,11 @@ import {
   MoreHoriz as MoreIcon,
 } from "@mui/icons-material";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslationContext } from "../../../../features/i18n/TranslationContext";
+import { aiService } from "@/services/ai/aiService";
+import ReactMarkdown from "react-markdown";
 
-// --- Mock API Response Logic ---
-
-const FAQ_DATA: Record<string, string> = {
-  benefits: "KartSquare helps businesses reach more customers, manage listings easily, and boost sales with integrated marketing tools.",
-  cost: "We offer flexible pricing plans tailored for businesses of all sizes, starting from a free tier for local shops!",
-  features: "Our platform includes AI-driven search, reel integration, booking management, and detailed analytics.",
-  reach: "With KartSquare, you can tap into a network of thousands of active shoppers looking for services like yours.",
-  default: "That's a great question! KartSquare is designed to grow your digital presence. Would you like to know more about our pricing or key features?",
-};
-
-const getBotResponse = async (query: string): Promise<string> => {
-  // Simulate network delay
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-  
-  const lowerQuery = query.toLowerCase();
-  
-  if (lowerQuery.includes("benefit") || lowerQuery.includes("why")) return FAQ_DATA.benefits;
-  if (lowerQuery.includes("cost") || lowerQuery.includes("price") || lowerQuery.includes("free")) return FAQ_DATA.cost;
-  if (lowerQuery.includes("feature") || lowerQuery.includes("tool") || lowerQuery.includes("work")) return FAQ_DATA.features;
-  if (lowerQuery.includes("reach") || lowerQuery.includes("customer")) return FAQ_DATA.reach;
-  
-  return FAQ_DATA.default;
-};
+// --- Bot Logic is now inside the component to access translation context ---
 
 // --- Sub-components ---
 
@@ -90,9 +71,57 @@ const MessageBubble = ({ message }: { message: Message }) => {
           boxShadow: isBot ? "none" : "0 4px 12px rgba(0, 178, 255, 0.25)",
         }}
       >
-        <Typography variant="body2" sx={{ fontFamily: "Inter", lineHeight: 1.5 }}>
-          {message.text}
-        </Typography>
+        <Box sx={{ fontFamily: "Inter", lineHeight: 1.5, fontSize: "0.875rem" }}>
+          {isBot ? (
+            <ReactMarkdown
+              components={{
+                p: ({ children }) => (
+                  <Typography variant="body2" sx={{ mb: 1, "&:last-child": { mb: 0 }, fontSize: "inherit" }}>
+                    {children}
+                  </Typography>
+                ),
+                h1: ({ children }) => (
+                  <Typography variant="h6" sx={{ mt: 1.5, mb: 1, fontWeight: 700, fontSize: "1.1rem" }}>
+                    {children}
+                  </Typography>
+                ),
+                h2: ({ children }) => (
+                  <Typography variant="subtitle1" sx={{ mt: 1.5, mb: 1, fontWeight: 700, fontSize: "1rem" }}>
+                    {children}
+                  </Typography>
+                ),
+                h3: ({ children }) => (
+                  <Typography variant="subtitle2" sx={{ mt: 1.2, mb: 0.8, fontWeight: 700, fontSize: "0.9rem" }}>
+                    {children}
+                  </Typography>
+                ),
+                ul: ({ children }) => (
+                  <Box component="ul" sx={{ pl: 2, mb: 1, "&:last-child": { mb: 0 } }}>
+                    {children}
+                  </Box>
+                ),
+                ol: ({ children }) => (
+                  <Box component="ol" sx={{ pl: 2, mb: 1, "&:last-child": { mb: 0 } }}>
+                    {children}
+                  </Box>
+                ),
+                li: ({ children }) => (
+                  <Box component="li" sx={{ mb: 0.5 }}>
+                    <Typography variant="body2" sx={{ fontSize: "inherit" }}>
+                      {children}
+                    </Typography>
+                  </Box>
+                ),
+              }}
+            >
+              {message.text}
+            </ReactMarkdown>
+          ) : (
+            <Typography variant="body2" sx={{ fontSize: "inherit" }}>
+              {message.text}
+            </Typography>
+          )}
+        </Box>
         <Typography
           variant="caption"
           sx={{
@@ -111,12 +140,21 @@ const MessageBubble = ({ message }: { message: Message }) => {
 };
 
 const Aibot: React.FC = () => {
+  const { t } = useTranslationContext();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
+
+
+
+  const getBotResponse = async (question: string): Promise<string> => {
+    const res = await aiService.aibot(question);
+    return res.answer;
+  };
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: "Hi there! 👋 I'm your KartSquare assistant. How can I help grow your business today?",
+      text: t("aibot_greeting"),
       sender: "bot",
       timestamp: new Date(),
     },
@@ -221,7 +259,7 @@ const Aibot: React.FC = () => {
                   whiteSpace: { xs: "normal", md: "nowrap" }
                 }}
               >
-                Hi there! 👋 I'm your KartSquare assistant.
+                {t("aibot_tooltip")}
               </Typography>
             </Paper>
           </motion.div>
@@ -306,7 +344,7 @@ const Aibot: React.FC = () => {
                         lineHeight: 1.2,
                       }}
                     >
-                      KartSquare Assistant
+                      {t("aibot_header_title")}
                     </Typography>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                       <Box
@@ -319,7 +357,7 @@ const Aibot: React.FC = () => {
                         }}
                       />
                       <Typography variant="caption" sx={{ opacity: 0.8 }}>
-                        Online Now
+                        {t("aibot_online_now")}
                       </Typography>
                     </Box>
                   </Box>
@@ -354,7 +392,7 @@ const Aibot: React.FC = () => {
                   <Box sx={{ display: "flex", gap: 1, alignItems: "center", color: "#8800FF", mb: 2 }}>
                     <CircularProgress size={12} color="inherit" />
                     <Typography variant="caption" sx={{ fontStyle: "italic", opacity: 0.7 }}>
-                      KartSquare is thinking...
+                      {t("aibot_thinking")}
                     </Typography>
                   </Box>
                 )}
@@ -364,7 +402,7 @@ const Aibot: React.FC = () => {
               <Box sx={{ p: 2, bgcolor: "white", borderTop: "1px solid rgba(0,0,0,0.05)" }}>
                 <TextField
                   fullWidth
-                  placeholder="Ask about business benefits..."
+                  placeholder={t("aibot_input_placeholder")}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && handleSend()}
@@ -416,7 +454,7 @@ const Aibot: React.FC = () => {
                     fontSize: "11px",
                   }}
                 >
-                  Powered by KartSquare AI
+                  {t("aibot_powered_by")}
                 </Typography>
               </Box>
             </Paper>
