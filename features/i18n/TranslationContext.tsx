@@ -1241,6 +1241,19 @@ export type TranslationKey =
   | "store_setup_operating_locations_required"
   | "store_setup_establishment_year_required"
   | "websiteUrl"
+  // Aibot
+  | "aibot_greeting"
+  | "aibot_tooltip"
+  | "aibot_header_title"
+  | "aibot_online_now"
+  | "aibot_thinking"
+  | "aibot_input_placeholder"
+  | "aibot_powered_by"
+  | "aibot_benefit_response"
+  | "aibot_cost_response"
+  | "aibot_feature_response"
+  | "aibot_reach_response"
+  | "aibot_default_response"
   ;
 
 // Sample dictionaries

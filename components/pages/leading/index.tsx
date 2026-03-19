@@ -14,6 +14,7 @@ import BenefitsSection from "./components/BenefitsSection";
 import BottomCTASection from "./components/BottomCTASection";
 import { COLORS } from "@/constants/colors";
 import { SECTION_IDS } from "./components/sectionIds";
+import Aibot from "./components/Aibot";
 
 function ListingView() {
   const theme = useTheme();
@@ -91,6 +92,10 @@ function ListingView() {
         <ScrollReveal variant="fadeRight" delay={0}>
           <FAQ expandedFaq={expandedFaq} handleFaqChange={handleFaqChange} />
         </ScrollReveal>
+      </Box>
+      {/* 9. Aibot - AI Chatbot */}
+      <Box sx={{ position: "fixed", bottom: {xs: 100, md: 30}, right: {xs: 20, md: 30}, zIndex: 1000 }}>
+        <Aibot />
       </Box>
     </Box>
   );

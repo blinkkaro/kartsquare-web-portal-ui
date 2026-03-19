@@ -15,7 +15,6 @@ import { secureStorage } from "./SecureStorage";
 const RESTRICTED_AUTH_PATHS = [
   "/login",
   "/signUp",
-  "/selectRole",
   "/forgotPassword",
   "/resetPassword",
 ];
