@@ -49,7 +49,7 @@ const ReelContainer: React.FC<ReelContainerProps> = ({ reel, isActive }) => {
     return (
         <Box
             sx={{
-                height: '92vh',
+                height:'90vh',
                 width: '100%',
                 display: 'flex',
                 justifyContent: 'center',
@@ -63,7 +63,7 @@ const ReelContainer: React.FC<ReelContainerProps> = ({ reel, isActive }) => {
                 sx={{
                     display: 'flex',
                     flexDirection: isDesktop ? 'row' : 'column',
-                    height: isDesktop ? 'calc(100% - 40px)' : 'calc(100% - 80px)',
+                    height: isDesktop ? 'calc(100% - 2px)' : 'calc(100% - 2px)',
                     mb: isDesktop ? 0 : 8,
                     width: 'auto',
                     maxWidth: '100%',

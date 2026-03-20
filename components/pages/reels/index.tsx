@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState, useRef } from 'react';
-import { Box, CircularProgress, Typography, useTheme } from '@mui/material';
+import { Box, CircularProgress, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { postServices } from '../../../services/post/postServices';
 import { Posts } from '../../../services/post/postInterfaces';
 import ReelContainer from './components/ReelContainer';
@@ -17,6 +17,7 @@ function ReelsView() {
     const containerRef = useRef<HTMLDivElement>(null);
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
+    const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
     useEffect(() => {
         if (reels.length > 0 && !activeReelId) {
@@ -48,7 +49,7 @@ function ReelsView() {
 
     const loadingView = () => {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', bgcolor: 'black' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 <CircularProgress color="inherit" />
             </Box>
         );
@@ -56,7 +57,7 @@ function ReelsView() {
 
     const noReelsView = () => {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', bgcolor: 'black', color: 'white' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'white' }}>
                 <Typography variant="h6">No reels found</Typography>
             </Box>
         );
@@ -67,17 +68,18 @@ function ReelsView() {
         <Box
             ref={containerRef}
             sx={{
-                height: '100vh',
+                height: '90vh',
                 overflowY: 'scroll',
                 scrollSnapType: 'y mandatory',
                 // bgcolor: 'black',
                 '&::-webkit-scrollbar': { display: 'none' },
                 msOverflowStyle: 'none',
                 scrollbarWidth: 'none',
+                mt: isDesktop ? 2 : 0,
             }}
         >
             {reels.map((reel) => (
-                <Box key={reel.id} className="reel-wrapper" data-id={reel.id}>
+                <Box key={reel.id} className="reel-wrapper" data-id={reel.id} >
                     <ReelContainer reel={reel} isActive={activeReelId === reel.id} />
                 </Box>
             ))}
@@ -86,7 +88,7 @@ function ReelsView() {
                   sx={{ 
                     display: 'flex', 
                     justifyContent: 'center', 
-                    p: 4, 
+                    // p: 4, 
                     scrollSnapAlign: 'start' 
                   }}
                   ref={(el: HTMLDivElement | null) => {
@@ -114,10 +116,6 @@ function ReelsView() {
           minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
-          // Responsive padding
-          px: { xs: 0, sm: 1.5, md: 3, lg: 4, xl: 5 },
-          pt: { xs: 0, md: 0 },
-          // pb: { xs: 4, md: 6 },
           backgroundColor:
             theme.palette.mode === "dark"
               ? COLORS.BACKGROUND.PAPER_DARK
@@ -132,11 +130,9 @@ function ReelsView() {
           component="main"
           sx={{
             flex: 1,
-            // maxWidth: { lg: "1500px", xl: "2000px" },
             mx: "auto",
             width: "100%",
-            px: { xs: 1, md: 0, lg: 0, xl: 0 },
-            mt: { xs: 9, sm: 10, md: 9, lg: 10 },
+            mt: { xs: 7, sm: 8, md: 9, lg: 8 },
             backgroundColor:
               theme.palette.mode === "dark"
                 ? COLORS.BACKGROUND.PAPER_DARK
