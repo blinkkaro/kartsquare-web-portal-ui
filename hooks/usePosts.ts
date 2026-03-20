@@ -25,10 +25,23 @@ export const useGetInfinitePosts = (params: Omit<GetPostsParams, "cursor">) => {
   });
 };
 
-export const useGetPostComments = (postId: string, enabled: boolean = true) => {
-  return useQuery({
+export const useGetPostComments = (
+  postId: string,
+  limit: number = 10,
+  enabled: boolean = true,
+) => {
+  return useInfiniteQuery({
     queryKey: ["post-comments", postId],
-    queryFn: () => postServices.getPostComments(postId),
+    queryFn: ({ pageParam = 0 }) =>
+      postServices.getPostComments(postId, limit, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      const totalLoaded = allPages.reduce(
+        (acc, page) => acc + page.comments.length,
+        0,
+      );
+      return lastPage.comments.length === limit ? totalLoaded : undefined;
+    },
     enabled,
   });
 };
@@ -63,6 +76,16 @@ export const useAddPostComment = (postId: string) => {
 
       queryClient.setQueryData(["post-comments", postId], (old: any) => {
         if (!old) return { comments: [newComment] };
+        if (old.pages) {
+          return {
+            ...old,
+            pages: old.pages.map((page: any, index: number) =>
+              index === 0
+                ? { ...page, comments: [newComment, ...(page.comments || [])] }
+                : page,
+            ),
+          };
+        }
         return {
           ...old,
           comments: [newComment, ...(old.comments || [])],
@@ -87,6 +110,17 @@ export const useAddPostComment = (postId: string) => {
       const realId = data.commentId;
       const tempId = context?.newCommentId;
       await queryClient.setQueryData(["post-comments", postId], (old: any) => {
+        if (old?.pages) {
+          return {
+            ...old,
+            pages: old.pages.map((page: any) => ({
+              ...page,
+              comments: (page.comments || []).map((c: any) =>
+                c.id === tempId ? { ...c, id: realId } : c,
+              ),
+            })),
+          };
+        }
         if (!old?.comments) return old;
 
         const updatedComments = old.comments.map((c: any) =>
@@ -287,8 +321,10 @@ export const useLikePost = (postId: string) => {
 };
 
 export const useGetReels = () => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ["reels"],
-    queryFn: () => postServices.getReels(),
+    queryFn: ({ pageParam }) => postServices.getReels(10, pageParam),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
   });
 };

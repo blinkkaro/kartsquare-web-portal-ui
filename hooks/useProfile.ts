@@ -118,8 +118,10 @@ export const useCreatePost = () => {
   return useMutation({
     mutationFn: (data: CreatePostParams) => postServices.createPost(data),
     onSuccess: () => {
-      // Invalidate React Query cache
+      // Invalidate React Query cache so both the posts grid and reels grid
+      // update in real time immediately after a post/reel is created.
       queryClient.invalidateQueries({ queryKey: ["providerPosts"] });
+      queryClient.invalidateQueries({ queryKey: ["providerReels"] });
     },
     onError: (error: any) => {
       throw error;

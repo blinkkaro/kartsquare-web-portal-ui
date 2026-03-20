@@ -137,7 +137,7 @@ api.interceptors.response.use(
         }
 
         const response = await authService.refreshToken(refreshToken);
-
+        console.log("response", response);
         if (response.data) {
           secureStorage.setItem("token", response.data.access_token);
           secureStorage.setItem(

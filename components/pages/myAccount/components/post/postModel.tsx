@@ -192,6 +192,9 @@ export default function PostModel({ onClose }: { onClose: () => void }) {
         onClose={() => setIsReelModalOpen(false)}
         reels={allReels}
         initialIndex={selectedReelIndex}
+        fetchNextPage={fetchNextReels}
+        hasNextPage={hasNextReels}
+        isFetchingNextPage={isFetchingNextReels}
       />
 
       {/* Floating Action Button - Only show in Grid or if desired in both */}

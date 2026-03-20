@@ -5,25 +5,28 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 interface ReelPlayerProps {
     videoUrl: string;
     isActive: boolean;
+    isPaused?: boolean;
 }
 
-const ReelPlayer: React.FC<ReelPlayerProps> = ({ videoUrl, isActive }) => {
+const ReelPlayer: React.FC<ReelPlayerProps> = ({ videoUrl, isActive, isPaused = false }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
 
     const [isMuted, setIsMuted] = useState(false);
 
     useEffect(() => {
-        if (videoRef.current) {
-            if (isActive) {
-                videoRef.current.play().catch((err) => console.log('Autoplay blocked:', err));
-                setIsPlaying(true);
-            } else {
-                videoRef.current.pause();
-                setIsPlaying(false);
-            }
+        const video = videoRef.current;
+        if (!video) return;
+
+        if (isActive && !isPaused) {
+            video.play().catch((err) => console.log('Autoplay blocked:', err));
+            setIsPlaying(true);
+        } else {
+            video.pause();
+            if (!isActive) video.currentTime = 0;
+            setIsPlaying(false);
         }
-    }, [isActive]);
+    }, [isActive, isPaused]);
 
     const handleVideoClick = () => {
         if (videoRef.current) {

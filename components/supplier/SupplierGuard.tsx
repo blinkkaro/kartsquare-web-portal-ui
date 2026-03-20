@@ -38,7 +38,7 @@ const SupplierGuard: React.FC<SupplierGuardProps> = ({ children, requireComplete
             }
 
             if (role !== AppUserType.SUPPLIER) {
-                router.replace("/selectRole"); // Or access denied page
+                router.replace("/login"); // Or access denied page
                 return;
             }
 

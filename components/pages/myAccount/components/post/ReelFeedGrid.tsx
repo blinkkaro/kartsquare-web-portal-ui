@@ -12,7 +12,9 @@ import {
 import { useTranslate } from "@/hooks/useTranslate";
 import { COLORS } from "@/constants/colors";
 import { Posts } from "@/services/post/postInterfaces";
+import { getMediaUrls } from "@/helper/helper";
 import { PlayArrow } from "@mui/icons-material";
+
 import Image from "next/image";
 
 interface ReelFeedGridProps {
@@ -105,23 +107,9 @@ const ReelFeedGrid: React.FC<ReelFeedGridProps> = ({
     );
   }
 
-  const getMediaUrls = (urls: any): string[] => {
-    if (Array.isArray(urls)) return urls;
-    if (typeof urls === "string") {
-      try {
-        // Try parsing if it's a JSON array string
-        const parsed = JSON.parse(urls);
-        if (Array.isArray(parsed)) return parsed;
-      } catch (e) {
-        // If not JSON, try comma-separated
-        if (urls.includes(",")) return urls.split(",");
-      }
-      return [urls];
-    }
-    return [];
-  };
 
   return (
+
     <Box sx={{ p: { xs: 1, md: 3 } }}>
       <Grid container spacing={1}>
         {reels.map((reel, index) => {
@@ -211,7 +199,7 @@ const ReelFeedGrid: React.FC<ReelFeedGridProps> = ({
                 </Box>
                 
                 {/* Stats in corner */}
-                <Box sx={{
+                {/* <Box sx={{
                   position: "absolute",
                   bottom: 8,
                   left: 8,
@@ -224,7 +212,7 @@ const ReelFeedGrid: React.FC<ReelFeedGridProps> = ({
                   <Typography variant="caption" sx={{ fontWeight: 600 }}>
                     {reel.likes_count}
                   </Typography>
-                </Box>
+                </Box> */}
               </Box>
             </Grid>
           );

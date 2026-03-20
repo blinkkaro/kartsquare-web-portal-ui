@@ -17,7 +17,6 @@ import GlobalLoading from "@/components/common/Loader/GlobalLoading";
 const RESTRICTED_AUTH_PATHS = [
   "/login",
   "/signUp",
-  "/selectRole",
   "/forgotPassword",
   "/resetPassword",
 ];

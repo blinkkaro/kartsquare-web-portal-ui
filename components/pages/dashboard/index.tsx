@@ -49,7 +49,7 @@ function DashboardView() {
     const token = secureStorage.getItem("token");
 
     if (!token) {
-      router.push("/selectRole");
+      router.push("/login");
       return;
     }
 

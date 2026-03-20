@@ -1,10 +1,12 @@
 import {
   AgenticSearchRequest,
   AgenticSearchResponse,
+  AIBOTRESPONSE,
 } from './aiInterface';
 import { POST } from '../api';
 const AI_ENDPOINTS = {
   AGENTIC_SEARCH: '/agentic-search',
+  AIBOT: '/agentic-search/aibot',
 };
 
 export const aiService = {
@@ -28,4 +30,11 @@ export const aiService = {
     // response.data contains the actual backend response
     return response.data;
   },
+
+  async aibot(
+    question: string,
+  ): Promise<AIBOTRESPONSE> {
+    const res =  await POST<AIBOTRESPONSE>(AI_ENDPOINTS.AIBOT, { question });
+    return res.data;
+  }    
 };

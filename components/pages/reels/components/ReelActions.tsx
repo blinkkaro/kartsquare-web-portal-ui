@@ -38,12 +38,12 @@ const ReelActions: React.FC<ReelActionsProps> = ({
     return (
         <Stack spacing={2} alignItems="center">
             <Box textAlign="center">
-                <IconButton onClick={handleLike} sx={{ color: liked ? 'red' : 'white', filter: 'drop-shadow(0px 2px 2px rgba(0,0,0,0.5))' }}>
-                    {liked ? <FavoriteIcon fontSize="large" /> : <FavoriteBorderIcon fontSize="large" />}
-                </IconButton>
-                <Typography variant="caption" sx={{ color: 'white', fontWeight: 'bold', textShadow: '0px 1px 2px rgba(0,0,0,0.8)' }}>
-                    {count}
-                </Typography>
+                    <IconButton onClick={handleLike} sx={{ color: liked ? 'red' : 'white', filter: 'drop-shadow(0px 2px 2px rgba(0,0,0,0.5))' }}>
+                        {liked ? <FavoriteIcon fontSize="large" /> : <FavoriteBorderIcon fontSize="large" />}
+                    </IconButton>
+                    <Typography variant="caption" sx={{ color: 'white', fontWeight: 'bold', textShadow: '0px 1px 2px rgba(0,0,0,0.8)' }}>
+                        {count}
+                    </Typography>
             </Box>
 
             <Box textAlign="center">

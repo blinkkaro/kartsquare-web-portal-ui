@@ -195,6 +195,9 @@ export function ProfileDrawer() {
         onClose={() => setIsReelModalOpen(false)}
         reels={allReels}
         initialIndex={selectedReelIndex}
+        fetchNextPage={fetchNextReels}
+        hasNextPage={hasNextReels}
+        isFetchingNextPage={isFetchingNextReels}
       />
     </ProfileDrawerWrapper>
   );

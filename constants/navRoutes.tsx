@@ -51,6 +51,11 @@ export const getDesktopNavItems = (
         { label: t("home"), href: "/", icon: <HomeFilled sx={{ fontSize: 18 }} /> },
         { label: t("dashboard"), href: "/dashboard", icon: <Dashboard sx={{ fontSize: 18 }} /> },
         {
+          label: t("reels"),
+          href: "/cus/reels",
+          icon: <PlaySquareIcon sx={{ fontSize: 18 }} />,
+        },
+        {
           label: t("services"),
           href: "/spr/servicesList",
           icon: <HomeRepairService sx={{ fontSize: 18 }} />,
@@ -66,14 +71,14 @@ export const getDesktopNavItems = (
         { label: t("home"), href: "/", icon: <HomeFilled sx={{ fontSize: 18 }} /> },
         { label: t("store"), href: "/store", icon: <ShoppingBag sx={{ fontSize: 18 }} /> },
         {
-          label: t("services"),
-          href: "/cus/servicesList",
-          icon: <HomeRepairService sx={{ fontSize: 18 }} />,
-        },
-        {
           label: t("reels"),
           href: "/cus/reels",
           icon: <PlaySquareIcon sx={{ fontSize: 18 }} />,
+        },
+        {
+          label: t("services"),
+          href: "/cus/servicesList",
+          icon: <HomeRepairService sx={{ fontSize: 18 }} />,
         },
         {
           label: t("bookings"),
@@ -85,6 +90,11 @@ export const getDesktopNavItems = (
       return [
         { label: t("home"), href: "/", icon: <HomeFilled sx={{ fontSize: 18 }} /> },
         { label: t("dashboard"), href: "/dashboard", icon: <Dashboard sx={{ fontSize: 18 }} /> },
+        {
+          label: t("reels"),
+          href: "/cus/reels",
+          icon: <PlaySquareIcon sx={{ fontSize: 18 }} />,
+        },
         {
           label: t("my_store"),
           href: "/sup/myStore",
@@ -101,14 +111,14 @@ export const getDesktopNavItems = (
         { label: t("home"), href: "/", icon: <HomeFilled sx={{ fontSize: 18 }} /> },
         { label: t("store"), href: "/store", icon: <ShoppingBag sx={{ fontSize: 18 }} /> },
         {
-          label: t("services"),
-          href: "/cus/servicesList",
-          icon: <HomeRepairService sx={{ fontSize: 18 }} />,
-        },
-        {
           label: t("reels"),
           href: "/cus/reels",
           icon: <PlaySquareIcon sx={{ fontSize: 18 }} />,
+        },
+        {
+          label: t("services"),
+          href: "/cus/servicesList",
+          icon: <HomeRepairService sx={{ fontSize: 18 }} />,
         },
       ];
   }
@@ -142,6 +152,11 @@ export const getMobileNavItems = (
         { label: t("home"), href: "/", icon: <HomeFilled /> },
         { label: t("dashboard"), href: "/dashboard", icon: <Dashboard /> },
         {
+          label: t("reels"),
+          href: "/cus/reels",
+          icon: <PlaySquareIcon />,
+        },
+        {
           label: t("my_store"),
           href: "/sup/myStore",
           icon: <LocalMallRounded />,
@@ -164,6 +179,11 @@ export const getMobileNavItems = (
           label: t("services"),
           href: "/cus/servicesList",
           icon: <ArticleRounded />,
+        },
+        {
+          label: t("reels"),
+          href: "/cus/reels",
+          icon: <PlaySquareIcon />,
         },
         { label: t("bookings"), href: bookingsHref, icon: <ShoppingBag /> },
         {

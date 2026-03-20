@@ -1,6 +1,5 @@
 import React from "react";
 import { Metadata } from "next";
-import MainLayout from "@/app/mainLayout";
 import ReelsView from "@/components/pages/reels";
 
 export const metadata: Metadata = {
@@ -8,9 +7,7 @@ export const metadata: Metadata = {
 }
 
 function ReelsPage() {
-  return <MainLayout>
-    <ReelsView />
-  </MainLayout>;
+    return <ReelsView />
 }
 
 export default ReelsPage;

@@ -73,7 +73,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     handleFiles(Array.from(files));
   };
 
-  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
   const handleFiles = (newFiles: File[]) => {
     const currentCount = images.length;
