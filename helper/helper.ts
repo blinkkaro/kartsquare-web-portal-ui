@@ -207,3 +207,19 @@ export const seededRandom = (seed: number) => {
     return state / (m - 1);
   };
 };
+
+export const getMediaUrls = (urls: any): string[] => {
+  if (Array.isArray(urls)) return urls;
+  if (typeof urls === "string") {
+    try {
+      // Try parsing if it's a JSON array string
+      const parsed = JSON.parse(urls);
+      if (Array.isArray(parsed)) return parsed;
+    } catch (e) {
+      // If not JSON, try comma-separated
+      if (urls.includes(",")) return urls.split(",");
+    }
+    return [urls];
+  }
+  return [];
+};

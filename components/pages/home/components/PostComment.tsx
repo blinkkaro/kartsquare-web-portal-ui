@@ -30,7 +30,7 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
 
   const [commentText, setCommentText] = useState("");
 
-  const { data: commentsData, isLoading } = useGetPostComments(post.id, open);
+  const { data: commentsData, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetPostComments(post.id, 10, open);
   const addCommentMutation = useAddPostComment(post.id);
 
   const handleSubmitComment = async () => {
@@ -52,7 +52,7 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
     }
   };
 
-  const comments = commentsData?.comments || [];
+  const comments = commentsData?.pages.flatMap((page) => page.comments) || [];
 
   return (
     <Modal
@@ -314,6 +314,22 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
                     </Box>
                   </Box>
                 ))}
+                {hasNextPage && (
+                  <Box sx={{ display: "flex", justifyContent: "center", py: 1 }}>
+                    <Typography
+                      variant="caption"
+                      onClick={() => fetchNextPage()}
+                      sx={{
+                        cursor: "pointer",
+                        color: theme.palette.primary.main,
+                        fontWeight: 600,
+                        "&:hover": { textDecoration: "underline" },
+                      }}
+                    >
+                      {isFetchingNextPage ? <CircularProgress size={16} /> : "Load more comments"}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             )}
           </Box>

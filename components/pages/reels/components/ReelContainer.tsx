@@ -10,6 +10,8 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { openDrawer } from '@/features/ui/profileDrawerSlice';
 import { selectCurrentUser } from '@/features/ui/authSlice';
 import { AppUserType } from '@/services/auth/auth.interface';
+import { getMediaUrls } from '@/helper/helper';
+
 
 interface ReelContainerProps {
     reel: Posts;
@@ -17,12 +19,17 @@ interface ReelContainerProps {
 }
 
 const ReelContainer: React.FC<ReelContainerProps> = ({ reel, isActive }) => {
+    const urls = getMediaUrls(reel.media_urls);
+    const videoUrl = urls.length > 1 ? urls[1] : urls[0];
     const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+
     const theme = useTheme();
     const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
     const dispatch = useAppDispatch();
     const currentUser = useAppSelector(selectCurrentUser);
     const followMutation = useFollowProvider(reel.user.id);
+    // Pause the reel automatically when the profile drawer opens
+    const isDrawerOpen = useAppSelector((state: any) => state.profileDrawer.isOpen);
 
     const isOwnReel = currentUser?.id === reel.user.id;
 
@@ -31,6 +38,7 @@ const ReelContainer: React.FC<ReelContainerProps> = ({ reel, isActive }) => {
     };
 
     const handleProfileClick = () => {
+        
         dispatch(openDrawer({
             userId: reel.user.id,
             role: reel.user.role as AppUserType || AppUserType.SERVICE_PROVIDER,
@@ -41,7 +49,7 @@ const ReelContainer: React.FC<ReelContainerProps> = ({ reel, isActive }) => {
     return (
         <Box
             sx={{
-                height: '95vh',
+                height: '92vh',
                 width: '100%',
                 display: 'flex',
                 justifyContent: 'center',
@@ -56,7 +64,7 @@ const ReelContainer: React.FC<ReelContainerProps> = ({ reel, isActive }) => {
                     display: 'flex',
                     flexDirection: isDesktop ? 'row' : 'column',
                     height: isDesktop ? 'calc(100% - 40px)' : 'calc(100% - 80px)',
-                    mb: isDesktop ? 0 : 10,
+                    mb: isDesktop ? 0 : 8,
                     width: 'auto',
                     maxWidth: '100%',
                     position: 'relative',
@@ -74,7 +82,7 @@ const ReelContainer: React.FC<ReelContainerProps> = ({ reel, isActive }) => {
                         // bgcolor: 'black',
                     }}
                 >
-                    <ReelPlayer videoUrl={reel.media_urls} isActive={isActive} />
+                    <ReelPlayer videoUrl={videoUrl} isActive={isActive} isPaused={isDrawerOpen} />
                     
                     <ReelOverlay
                         userName={reel.user.business_name || `${reel.user.first_name} ${reel.user.last_name}`}
@@ -116,7 +124,7 @@ const ReelContainer: React.FC<ReelContainerProps> = ({ reel, isActive }) => {
                         }}
                     >
                         <ReelComments
-                            postId={reel.id}
+                            post={reel}
                             open={isCommentsOpen}
                             onClose={() => setIsCommentsOpen(false)}
                         />
@@ -127,7 +135,7 @@ const ReelContainer: React.FC<ReelContainerProps> = ({ reel, isActive }) => {
             {/* Bottom Comments for Mobile */}
             {!isDesktop && (
                 <ReelComments
-                    postId={reel.id}
+                    post={reel}
                     open={isCommentsOpen}
                     onClose={() => setIsCommentsOpen(false)}
                 />

@@ -1388,6 +1388,9 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
         onClose={() => setIsReelModalOpen(false)}
         reels={allReels}
         initialIndex={selectedReelIndex}
+        fetchNextPage={fetchNextReels}
+        hasNextPage={hasNextReels}
+        isFetchingNextPage={isFetchingNextReels}
       />
     </Box>
   );

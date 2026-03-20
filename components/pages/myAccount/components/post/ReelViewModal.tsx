@@ -10,7 +10,7 @@ import {
   Fade,
   Button,
 } from "@mui/material";
-import { ChevronLeft, ChevronRight, Close, Favorite, ChatBubble, MoreVert, PlayArrow, FavoriteBorderOutlined, Send, SentimentSatisfiedAlt } from "@mui/icons-material";
+import { ChevronLeft, ChevronRight, Close, Favorite, ChatBubble, MoreVert, PlayArrow, FavoriteBorderOutlined, Send, SentimentSatisfiedAlt, ChatBubbleOutline } from "@mui/icons-material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Mousewheel, Navigation } from "swiper/modules";
 import { Posts } from "@/services/post/postInterfaces";
@@ -18,6 +18,7 @@ import { useLikePost, useGetPostComments, useAddPostComment } from "@/hooks/useP
 import { formatTimestamp } from "@/helper/helper";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
+import ExpandableText from "@/components/common/ExpandableText";
 import { TextField, CircularProgress, useTheme, useMediaQuery } from "@mui/material";
 import { useFollowProvider } from "@/hooks/useProviderProfile";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -43,14 +44,14 @@ const ReelCommentSection = ({
   isSidebar?: boolean;
 }) => {
   const [commentText, setCommentText] = useState("");
-  const { data: commentsData, isLoading } = useGetPostComments(post.id, open);
+  const { data: commentsData, isLoading } = useGetPostComments(post.id, 10, open);
   const addCommentMutation = useAddPostComment(post.id);
   const likeMutation = useLikePost(post.id);
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
     const { t } = useTranslate();
 
-  const comments = commentsData?.comments || [];
+  const comments = commentsData?.pages?.flatMap((page) => page.comments) || [];
 
   const handleSend = async () => {
     if (commentText.trim()) {
@@ -181,9 +182,11 @@ const ReelCommentSection = ({
               >
                 {post.user?.business_name}
               </Typography>
-              <Typography variant="body2" sx={{ mt: 0.5, lineHeight: 1.4 }}>
-                {post.caption}
-              </Typography>
+              <ExpandableText
+                text={post.caption || ""}
+                maxChars={120}
+                sx={{ mt: 0.5, lineHeight: 1.4, fontSize: "0.875rem" }}
+              />
             </Box>
           </Box>
         )}
@@ -215,12 +218,11 @@ const ReelCommentSection = ({
                     {formatTimestamp(comment.created_at)}
                   </Typography>
                 </Box>
-                <Typography
-                  variant="body2"
+                <ExpandableText
+                  text={comment.comment || ""}
+                  maxChars={100}
                   sx={{ my: 0.2, fontSize: "0.85rem", lineHeight: 1.4 }}
-                >
-                  {comment.comment}
-                </Typography>
+                />
                 <Box sx={{ display: "flex", gap: 2, mt: 0.5, opacity: 0.7 }}>
                   <Typography variant="caption" sx={{ fontWeight: 600 }}>
                     {comment.likes_count || 0} likes
@@ -250,9 +252,9 @@ const ReelCommentSection = ({
                   </Typography>
                 )}
               </Box>
-              <IconButton size="small" sx={{ color: "inherit", opacity: 0.5 }}>
+              {/* <IconButton size="small" sx={{ color: "inherit", opacity: 0.5 }}>
                 <FavoriteBorderOutlined sx={{ fontSize: 18 }} />
-              </IconButton>
+              </IconButton> */}
             </Box>
           ))
         )}
@@ -276,9 +278,9 @@ const ReelCommentSection = ({
             <IconButton size="small" sx={{ color: "inherit" }}>
               <ChatBubble sx={{ fontSize: 26 }} />
             </IconButton>
-            <IconButton size="small" sx={{ color: "inherit" }}>
+            {/* <IconButton size="small" sx={{ color: "inherit" }}>
               <Send sx={{ fontSize: 26 }} />
-            </IconButton>
+            </IconButton> */}
           </Box>
           <Typography variant="body2" sx={{ fontWeight: 700, mb: 0.5 }}>
             {post.likes_count} likes
@@ -333,7 +335,7 @@ const ReelCommentSection = ({
             {addCommentMutation.isPending ? (
               <CircularProgress size={18} color="inherit" />
             ) : (
-              <SentimentSatisfiedAlt sx={{ fontSize: 20 }} />
+              <Send sx={{ fontSize: 20 }} />
             )}
           </IconButton>
         </Box>
@@ -425,6 +427,27 @@ const ReelItem = ({
     }
   }, [isActive, isCommentOpen, isDesktop]);
 
+  // Pause when the browser tab/window loses focus; resume when it comes back (only if active)
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleVisibilityChange = () => {
+      const shouldPause = !isActive || (!isDesktop && isCommentOpen);
+      if (document.hidden) {
+        video.pause();
+      } else if (!shouldPause) {
+        video.play().catch(() => {
+          video.muted = true;
+          video.play();
+        });
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [isActive, isCommentOpen, isDesktop]);
+
   const handleVideoClick = () => {
     if (videoRef.current) {
       if (videoRef.current.paused) {
@@ -499,65 +522,34 @@ const ReelItem = ({
         }}
       >
         <Box sx={{ textAlign: "center" }}>
-          <IconButton
-            onClick={handleLike}
-            sx={{
-              color: reel.is_liked ? "#ff0042" : "#fff",
-              bgcolor: "rgba(0,0,0,0.3)",
-              filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.5))",
-            }}
-          >
-            {reel.is_liked ? (
-              <Favorite fontSize="large" sx={{ fontSize: 35 }} />
-            ) : (
-              <FavoriteBorderOutlined fontSize="large" sx={{ fontSize: 35 }} />
-            )}
-          </IconButton>
-          <Typography
-            variant="caption"
-            sx={{ 
-                color: "#fff", 
-                fontWeight: "bold", 
-                mt: -0.5, 
-                display: "block",
-                textShadow: "0px 1px 2px rgba(0,0,0,0.8)" 
-            }}
-          >
-            {reel.likes_count}
-          </Typography>
+          <IconButton onClick={handleLike} sx={{ color: reel.is_liked ? 'red' : 'white', filter: 'drop-shadow(0px 2px 2px rgba(0,0,0,0.5))' }}>
+                    {reel.is_liked ? <Favorite fontSize="large" /> : <FavoriteBorderOutlined fontSize="large" />}
+                </IconButton>
+                <Typography variant="caption" sx={{ color: 'white', fontWeight: 'bold', textShadow: '0px 1px 2px rgba(0,0,0,0.8)' }}>
+                    {reel.likes_count}
+                </Typography>
+          
+          
         </Box>
 
-        <Box sx={{ textAlign: "center" }}>
+        <Box sx={{ textAlign: "center", mb: 5 }}>
           <IconButton
             onClick={(e) => {
               e.stopPropagation();
               onCommentClick();
             }}
-            sx={{ 
-                color: "#fff", 
-                bgcolor: "rgba(0,0,0,0.3)",
-                filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.5))"
-            }}
+            sx={{ color: 'white', filter: 'drop-shadow(0px 2px 2px rgba(0,0,0,0.5))' }}
           >
-            <ChatBubble fontSize="large" sx={{ fontSize: 32 }} />
+            <ChatBubbleOutline fontSize="large" sx={{ fontSize: 32 }} />
           </IconButton>
-          <Typography
-            variant="caption"
-            sx={{ 
-                color: "#fff", 
-                fontWeight: "bold", 
-                mt: -0.5, 
-                display: "block",
-                textShadow: "0px 1px 2px rgba(0,0,0,0.8)"
-            }}
-          >
+          <Typography variant="caption" sx={{ color: 'white', fontWeight: 'bold', textShadow: '0px 1px 2px rgba(0,0,0,0.8)' }}>
             {reel.comments_count}
           </Typography>
         </Box>
 
-        <IconButton sx={{ color: "#fff", bgcolor: "rgba(0,0,0,0.3)", filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.5))" }}>
+        {/* <IconButton sx={{ color: "#fff", bgcolor: "rgba(0,0,0,0.3)", filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.5))" }}>
           <MoreVert fontSize="large" />
-        </IconButton>
+        </IconButton> */}
       </Box>
 
       {/* Bottom Info */}
@@ -611,17 +603,16 @@ const ReelItem = ({
             </Button>
           )}
         </Box>
-        <Typography
-          variant="body2"
+        <ExpandableText
+          text={reel.caption || ""}
+          maxChars={80}
           sx={{
             color: "#fff",
             maxWidth: "80%",
             textShadow: "0px 2px 4px rgba(0,0,0,0.9)",
             fontWeight: 500,
           }}
-        >
-          {reel.caption}
-        </Typography>
+        />
       </Box>
 
       {/* Custom Comment Section Overlay (Mobile only) */}
