@@ -17,6 +17,7 @@ import RecentTransactions from "./components/RecentTransactions";
 import { useProviderDashboard } from "@/hooks/useProviderDashboard";
 import { useSupplierDashboard } from "@/hooks/useSupplierDashboard";
 import ProviderBookingDetailsDrawer from "../provider/bookings/ProviderBookingDetailsDrawer";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 
 function DashboardView() {
   const theme = useTheme();
@@ -60,9 +61,10 @@ function DashboardView() {
 
   if (isLoading) {
     return (
-      <Box sx={{ py: { xs: 2, md: 3 } }}>
-        <Typography variant="h4">{t("loading")}</Typography>
-      </Box>
+      <CenteredLoader 
+        minHeight="400px" 
+        showText={true} 
+      />
     );
   }
 

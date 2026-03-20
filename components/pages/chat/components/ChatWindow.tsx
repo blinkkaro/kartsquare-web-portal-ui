@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Box, Typography, IconButton, Avatar, InputBase, CircularProgress } from "@mui/material";
+import { Box, Typography, IconButton, Avatar, InputBase } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SendIcon from "@mui/icons-material/Send";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -165,7 +166,7 @@ export default function ChatWindow({ conversation, currentUserId, token, socket,
             }}>
                 {loading ? (
                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-                        <CircularProgress />
+                        <LogoLoader />
                     </Box>
                 ) : messages.length === 0 ? (
                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>

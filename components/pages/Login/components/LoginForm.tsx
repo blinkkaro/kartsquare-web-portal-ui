@@ -81,7 +81,7 @@ export default function LoginForm({
             name="email"
             control={control}
             fullWidth
-            placeholder="masruqjaunhaik@mail.in"
+            placeholder="arjun.sharma@mail.in"
             startIcon={<EmailOutlined color="action" />}
           />
         </Box>
@@ -138,7 +138,7 @@ export default function LoginForm({
           </Link>
         </Box>
 
-        <Button isLoading={loading} onClick={handleSubmit(onSubmit)}>
+        <Button isLoading={loading} type="submit">
           {t("login")}
         </Button>
 

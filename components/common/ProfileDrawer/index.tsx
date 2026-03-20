@@ -12,7 +12,8 @@ import ProfileCard from "./components/ProfileCard";
 import ProfileTabs from "./components/ProfileTabs";
 import ProfilePosts from "./components/ProfilePosts";
 import ProfileServices from "./components/ProfileServices";
-import { Box, CircularProgress, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { COLORS } from "@/constants/colors";
 import ProfileDrawerWrapper from "./components/ProfileDrawerWrapper";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -140,7 +141,7 @@ export function ProfileDrawer() {
       >
         {isLoading && (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-            <CircularProgress sx={{ color: COLORS.PRIMARY_PURPLE }} />
+            <LogoLoader />
           </Box>
         )}
 

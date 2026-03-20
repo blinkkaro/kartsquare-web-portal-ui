@@ -5,9 +5,9 @@ import {
   Box,
   Grid,
   Typography,
-  CircularProgress,
   Skeleton,
 } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { useTranslate } from "@/hooks/useTranslate";
 import { COLORS } from "@/constants/colors";
 import { useTheme } from "@mui/material";
@@ -235,11 +235,8 @@ const PostFeedGrid: React.FC<PostFeedGridProps> = ({
             mt: 3,
           }}
         >
-          <CircularProgress
+          <LogoLoader
             size={32}
-            sx={{
-              color: COLORS.PRIMARY_PURPLE,
-            }}
           />
         </Box>
       )}

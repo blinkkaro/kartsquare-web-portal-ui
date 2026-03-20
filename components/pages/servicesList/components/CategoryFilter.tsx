@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
-import { Box, Chip, CircularProgress, useTheme } from "@mui/material";
+import { Box, Chip, useTheme } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { Category } from "@/services/serviceList/listInteraface";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -105,7 +106,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
       }}
     >
       {loading ? (
-        <CircularProgress size={24} />
+        <LogoLoader size={24} />
       ) : (
         <>
           <Chip

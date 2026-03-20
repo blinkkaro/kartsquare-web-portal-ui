@@ -17,9 +17,6 @@ import {
 import {
   Close,
   NearMe,
-  Phone,
-  CalendarToday,
-  LocationOn,
 } from "@mui/icons-material";
 import {
   BookingDetails,
@@ -29,6 +26,15 @@ import { english } from "../../../../features/i18n/en";
 import dayjs from "dayjs";
 import RightDrawer from "../../../common/RightDrawer";
 import { bookingDetailsService } from "../../../../services/booking/bookingDetails";
+import { Link } from "@mui/material";
+import LogoLoader from "../../../common/Loader/LogoLoader";
+import {
+  Phone,
+  CalendarToday,
+  LocationOn,
+  Notes,
+  Collections,
+} from "@mui/icons-material";
 
 interface ProviderBookingDetailsDrawerProps {
   open: boolean;
@@ -90,9 +96,24 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
 
   if (!currentBooking) {
     return (
-      <RightDrawer open={open} onClose={onClose} title={english.booking_details} width={480}>
-        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", py: 10 }}>
-          <CircularProgress size={30} thickness={4} sx={{ color: COLORS.PRIMARY_PURPLE }} />
+      <RightDrawer
+        open={open}
+        onClose={onClose}
+        title={english.booking_details}
+        width={500}
+      >
+        <Box sx={{ px: 4, pb: 4 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+              py: 20,
+            }}
+          >
+            <LogoLoader size={60} />
+          </Box>
         </Box>
       </RightDrawer>
     );
@@ -119,19 +140,24 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
   );
 
   return (
-    <RightDrawer open={open} onClose={onClose} title={english.booking_details} width={480}>
-      <Box
-        sx={{
-          px: { xs: 3, sm: 4 },
-          pb: 6,
-          pt: 1,
-          bgcolor: isDark ? "#0B0F19" : "#FAFAFA",
-          minHeight: '100%',
-        }}
-      >
+    <RightDrawer
+      open={open}
+      onClose={onClose}
+      title={english.booking_details}
+      width={500}
+    >
+      <Box sx={{ px: { xs: 2, sm: 4 }, pb: 4 }}>
         {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", py: 10 }}>
-            <CircularProgress size={30} thickness={4} sx={{ color: COLORS.PRIMARY_PURPLE }} />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+              py: 20,
+            }}
+          >
+            <LogoLoader size={60} />
           </Box>
         ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -161,23 +187,18 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
               </Box>
             </Box>
 
-            {/* Clean Box Image */}
-            {currentBooking.service_image?.[0] && (
+            {/* Unified Header & Hero Section */}
+            <Box
+              sx={{
+                mx: { xs: -2, sm: -4 },
+                mb: 4,
+                position: "relative",
+                borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "#F1F5F9"}`,
+              }}
+            >
+              {/* Hero Background Image */}
               <Box
-                sx={{
-                  width: "100%",
-                  height: 180,
-                  bgcolor: 'white',
-                  borderRadius: "16px",
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  mb: 3,
-                  border: isDark ? 'none' : '1px solid #F1F5F9',
-                  boxShadow: isDark ? "0 8px 24px rgba(0,0,0,0.4)" : "0 4px 12px rgba(0,0,0,0.03)",
-                  overflow: 'hidden',
-                  p: 2
-                }}
+                sx={{ position: "relative", height: { xs: 180, sm: 220 }, overflow: "hidden" }}
               >
                 <Box
                   component="img"
@@ -185,40 +206,121 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                   sx={{
                     width: "100%",
                     height: "100%",
-                    objectFit: "contain",
+                    objectFit: "cover",
+                    filter: "brightness(0.7)",
                   }}
                 />
-              </Box>
-            )}
+                {/* Status Chip Overlay */}
+                <Box sx={{ position: "absolute", top: 20, left: { xs: 16, sm: 24 } }}>
+                  <Chip
+                    label={currentBooking.status}
+                    sx={{
+                      bgcolor: "rgba(255,255,255,0.9)",
+                      color: COLORS.PRIMARY_PURPLE,
+                      backdropFilter: "blur(10px)",
+                      fontWeight: 800,
+                      fontSize: "0.7rem",
+                      height: 24,
+                      borderRadius: "8px",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                    }}
+                  />
+                </Box>
 
-            {/* Core Service Info */}
-            <Box sx={{ mb: 2.5 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                <Typography variant="h5" sx={{ fontWeight: 900, color: isDark ? 'white' : '#0F172A', maxWidth: '75%', lineHeight: 1.25 }}>
-                  {currentBooking.service_name}
-                </Typography>
-                <Box sx={{ textAlign: "right", display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'flex-start' }}>
-                  <Typography variant="caption" sx={{ color: "#64748B", fontWeight: 700, letterSpacing: '0.05em', mb: 0.5 }}>PRICE</Typography>
-                  <Typography variant="h6" sx={{ fontWeight: 800, color: '#4F46E5', mt: -0.5 }}>
-                    {booking.service_currency} {totalAmount.toFixed(0)}
-                  </Typography>
+                {/* Service Info Glass Overlay */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    p: { xs: 2, sm: 3 },
+                    background:
+                      "linear-gradient(to top, rgba(0,0,0,0.8), transparent)",
+                    display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
+                    justifyContent: "space-between",
+                    alignItems: { xs: "flex-start", sm: "flex-end" },
+                    gap: 1.5,
+                  }}
+                >
+                  <Box>
+                    <Typography
+                      variant="h5"
+                      sx={{ fontWeight: 900, color: "white", mb: 0.5 }}
+                    >
+                      {currentBooking.service_name}
+                    </Typography>
+                    <Box sx={{ display: "flex", gap: 1.5 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 0.8,
+                          bgcolor: "rgba(255,255,255,0.15)",
+                          px: 1.5,
+                          py: 0.5,
+                          borderRadius: "8px",
+                          backdropFilter: "blur(4px)",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                        }}
+                      >
+                        <CalendarToday
+                          sx={{ fontSize: 14, color: "#FCD34D" }}
+                        />
+                        <Typography
+                          variant="caption"
+                          sx={{ color: "white", fontWeight: 800 }}
+                        >
+                          {dayjs(currentBooking.booking_at).format("h:mm A")}
+                        </Typography>
+                      </Box>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 0.8,
+                          bgcolor: "rgba(255,255,255,0.15)",
+                          px: 1.5,
+                          py: 0.5,
+                          borderRadius: "8px",
+                          backdropFilter: "blur(4px)",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                        }}
+                      >
+                        <LocationOn sx={{ fontSize: 14, color: "#FCD34D" }} />
+                        <Typography
+                          variant="caption"
+                          sx={{ color: "white", fontWeight: 800 }}
+                        >
+                          {currentBooking.service_location === "at_customer"
+                            ? "At Customer"
+                            : "In-Store"}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                  <Box sx={{ textAlign: "right" }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: "rgba(255,255,255,0.6)",
+                        fontWeight: 700,
+                        letterSpacing: "0.1em",
+                        display: "block",
+                      }}
+                    >
+                      TOTAL
+                    </Typography>
+                    <Typography
+                      variant="h5"
+                      sx={{ fontWeight: 900, color: "white" }}
+                    >
+                      {booking.service_currency} {totalAmount.toFixed(0)}
+                    </Typography>
+                  </Box>
                 </Box>
               </Box>
-
-              <Stack direction="row" spacing={3} alignItems="center">
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <CalendarToday sx={{ fontSize: 16, color: '#64748B' }} />
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: isDark ? '#E2E8F0' : '#1E293B' }}>
-                    {dayjs(currentBooking.booking_at).format("MMM D, YYYY • h:mm A")}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <LocationOn sx={{ fontSize: 16, color: '#64748B' }} />
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: isDark ? '#E2E8F0' : '#1E293B' }}>
-                    {currentBooking.service_location === "at_customer" ? "At Customer's" : "In-Store"}
-                  </Typography>
-                </Box>
-              </Stack>
             </Box>
 
             <Divider sx={{ my: 3, borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#E2E8F0' }} />

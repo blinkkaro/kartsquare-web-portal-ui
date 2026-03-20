@@ -7,10 +7,10 @@ import {
   Container,
   Button,
   useTheme,
-  CircularProgress,
   MenuItem,
   Grid,
 } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { getStatCards } from "./constants";

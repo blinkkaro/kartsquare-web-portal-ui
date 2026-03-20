@@ -34,6 +34,14 @@ interface RegistrationFormProps {
   loading: boolean;
   role: AppUserType;
   initialData?: {
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    phone_number?: string;
+    country_code?: string;
+    country?: string;
+    birth_date?: string;
+    gender?: string;
     whatsapp_number?: string;
     whatsapp_country_code?: string;
   };
@@ -84,12 +92,20 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   });
 
   React.useEffect(() => {
-    if (initialData?.whatsapp_number) {
-      setValue("whatsapp_number", initialData.whatsapp_number);
+    if (!initialData) return;
+    if (initialData.first_name) setValue("first_name", initialData.first_name);
+    if (initialData.last_name) setValue("last_name", initialData.last_name);
+    if (initialData.email) setValue("email", initialData.email);
+    if (initialData.phone_number) setValue("phone_number", initialData.phone_number);
+    if (initialData.country_code) setValue("country_code", initialData.country_code);
+    if (initialData.country) setValue("country", initialData.country);
+    if (initialData.birth_date) {
+      // Convert ISO date string to YYYY-MM-DD format for the date input
+      setValue("birth_date", initialData.birth_date.split("T")[0]);
     }
-    if (initialData?.whatsapp_country_code) {
-      setValue("whatsapp_country_code", initialData.whatsapp_country_code);
-    }
+    if (initialData.gender) setValue("gender", initialData.gender as SignUpFormData["gender"]);
+    if (initialData.whatsapp_number) setValue("whatsapp_number", initialData.whatsapp_number);
+    if (initialData.whatsapp_country_code) setValue("whatsapp_country_code", initialData.whatsapp_country_code);
   }, [initialData, setValue]);
 
   const selectedCountryCode = watch("country_code");
@@ -148,7 +164,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           <Input
             name="first_name"
             control={control}
-            placeholder="Masruq Jaun"
+            placeholder="Arjun"
             startIcon={<PersonIcon />}
           />
         </Grid>
@@ -166,7 +182,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           <Input
             name="last_name"
             control={control}
-            placeholder="Haik"
+            placeholder="Sharma"
             startIcon={<PersonIcon />}
           />
         </Grid>
@@ -186,7 +202,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           <Input
             name="email"
             control={control}
-            placeholder="masruqjaunhaik@mail.in"
+            placeholder="arjun.sharma@mail.in"
             startIcon={<EmailIcon />}
           />
         </Grid>
@@ -275,7 +291,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 <Input
                   name="whatsapp_number"
                   control={control}
-                  placeholder="621 121221"
+                  placeholder="98765 43210"
                   type="tel"
                   InputProps={{
                     readOnly: !!initialData?.whatsapp_number,
@@ -370,7 +386,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
               <Input
                 name="phone_number"
                 control={control}
-                placeholder="621 121221"
+                placeholder="98765 43210"
                 type="tel"
                 InputProps={{
                   readOnly: isSameAsPhone,

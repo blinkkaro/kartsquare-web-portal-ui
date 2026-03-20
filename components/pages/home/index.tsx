@@ -8,8 +8,8 @@ import {
   useTheme,
   Grid,
   useMediaQuery,
-  CircularProgress,
 } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { COLORS } from "@/constants/colors";
 import HomeBanner from "./components/HomeBanner";
 import CombinedFeaturedSection from "./components/CombinedFeaturedSection";
@@ -182,11 +182,6 @@ function HomeView() {
             {/* Banner Section */}
             <HomeBanner />
 
-            {/* Unified Featured Categories for Services and Products */}
-            {/* <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <CombinedFeaturedSection />
-            </Box> */}
-
             <div id="posts-feed-section">
               <StoriesSection data={stories} isLoading={storiesLoading} />
             </div>
@@ -201,13 +196,15 @@ function HomeView() {
               <CompactMapView height="300px" />
             </Box>
 
-            {mergedFeed.map((item) =>
-              item.type === "post" ? (
-                <PostCard post={item.data as Posts} key={item.key} />
-              ) : (
-                <AdCard ad={item.data as AdvertiseActiveAd} key={item.key} />
-              )
-            )}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              {mergedFeed.map((item) =>
+                item.type === "post" ? (
+                  <PostCard post={item.data as Posts} key={item.key} />
+                ) : (
+                  <AdCard ad={item.data as AdvertiseActiveAd} key={item.key} />
+                )
+              )}
+            </Box>
 
             {/* Loading Indicator */}
             {(isLoading || isFetchingNext) && (
@@ -218,7 +215,7 @@ function HomeView() {
                   padding: 3,
                 }}
               >
-                <CircularProgress />
+                <LogoLoader />
               </Box>
             )}
 

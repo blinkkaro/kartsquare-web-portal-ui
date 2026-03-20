@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslate } from "@/hooks/useTranslate";
-import { Box, Typography, CircularProgress, Grid } from "@mui/material";
+import { Box, Typography, Grid } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { COLORS } from "@/constants/colors";
 import { ProductListItem } from "@/services/profile/profileInterface";
 import ProductCard from "@/components/pages/store/ProductCard";
@@ -19,7 +20,7 @@ export default function ProfileProducts({
   if (isLoading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <CircularProgress sx={{ color: COLORS.PRIMARY_PURPLE }} />
+        <LogoLoader />
       </Box>
     );
   }

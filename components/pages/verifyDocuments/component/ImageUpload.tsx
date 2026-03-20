@@ -97,7 +97,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   error,
   previewUrl,
   icon,
-  description = "Jpeg, png, pdf file with max size of 10mb.",
+  description = "Jpeg, png, pdf file with max size of 5mb.",
 }) => {
   const { t } = useTranslate();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -110,9 +110,23 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   );
   const [isDragActive, setIsDragActive] = useState(false);
 
+  const [internalError, setInternalError] = useState<string | null>(null);
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInternalError(null);
     const file = event.target.files?.[0];
     if (file) {
+      if (!file.type.match(/image\/(jpeg|jpg|png|gif)/)) {
+        setInternalError(t("invalidImageFormat"));
+        event.target.value = "";
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        setInternalError(t("imageSizeTooLarge"));
+        event.target.value = "";
+        return;
+      }
       onImageSelect(file);
     }
   };
@@ -130,8 +144,17 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const handleDrop = (event: React.DragEvent) => {
     event.preventDefault();
     setIsDragActive(false);
+    setInternalError(null);
     const file = event.dataTransfer.files?.[0];
     if (file) {
+      if (!file.type.match(/image\/(jpeg|jpg|png|gif)/)) {
+        setInternalError(t("invalidImageFormat"));
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        setInternalError(t("imageSizeTooLarge"));
+        return;
+      }
       onImageSelect(file);
     }
   };
@@ -315,13 +338,13 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         </Box>
       )}
 
-      {error && (
+      {(error || internalError) && (
         <Typography
           variant="caption"
           color="error"
           sx={{ mt: 0.5, display: "block" }}
         >
-          {error}
+          {error || internalError}
         </Typography>
       )}
 

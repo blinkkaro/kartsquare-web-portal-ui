@@ -40,7 +40,7 @@ import {
 } from "@/hooks/useAddress";
 import { Address } from "@/services/address/addressInterface";
 import AddressDrawer from "@/components/common/address/AddressDrawer";
-import { CircularProgress } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 
 import StoreOutlinedIcon from "@mui/icons-material/StoreOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
@@ -93,7 +93,6 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
 
   const updateAddressMutation = useUpdateAddress();
   const deleteAddressMutation = useDeleteAddress();
-
 
   const schema = React.useMemo(
     () =>
@@ -226,16 +225,10 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
     prevAddressesCount.current = currentCount;
   }, [displayedAddresses, storeAddressId, setValue, addresses?.length]);
 
-  const selectedCountryCode = watch("country_code");
-  const selectedCountry = countries.find(
-    (c) => c.phone_code === selectedCountryCode,
-  );
-
   useEffect(() => {
     if (storeData?.data) {
       const data = storeData.data as any;
 
-      // Map backend keys to form keys
       const formData = {
         ...data,
         display_name: data.display_name || data.store_name || "",
@@ -253,7 +246,6 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
         business_type: data.business_type || "",
       };
 
-      // Mapping contact preferences from object to array for form
       if (
         data.contact_preferences &&
         typeof data.contact_preferences === "object"
@@ -268,7 +260,6 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
         formData.contact_preferences = [];
       }
 
-      // Remove null values to avoid Yup validation issues
       Object.keys(formData).forEach((key) => {
         if (formData[key] === null) {
           delete formData[key];
@@ -287,7 +278,6 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
       | File
       | undefined;
     if (!newFile) {
-      // Check if removal happened
       const currentString = files.find((f) => typeof f === "string") as
         | string
         | undefined;
@@ -315,21 +305,19 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
         ? payload.contact_preferences
         : [];
 
-      // Map form keys back to backend keys just in case
       payload.store_name = payload.display_name;
       payload.description = payload.about_us;
       payload.primary_mobile = payload.contact_phone?.trim();
-      payload.website_url = payload.slug; // Send slug as website_url as requested
+      payload.website_url = payload.slug;
 
       payload.contact_preferences = {
         show_phone: prefs.includes("show_phone"),
         allow_calls: prefs.includes("allow_calls"),
         allow_chat: prefs.includes("allow_chat"),
         enquiry_only: prefs.includes("enquiry_only"),
-        show_whatsapp: true, // Defaulting to true as per API response
+        show_whatsapp: true,
       };
 
-      // Remove empty strings and nulls
       Object.keys(payload).forEach((key) => {
         if (payload[key] === "" || payload[key] === null) {
           delete payload[key];
@@ -338,7 +326,6 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
 
       await updateStore.mutateAsync(payload);
 
-      // Update auth state for Guard
       secureStorage.setItem(
         "register_step",
         UserRegisterSteps.SUPPLIER_STORE_CREATED.toString(),
@@ -361,7 +348,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
   if (isLoadingStore)
     return (
       <Box display="flex" justifyContent="center" py={10}>
-        <CircularProgress />
+        <LogoLoader />
       </Box>
     );
 
@@ -471,7 +458,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                         options={STORE_CATEGORIES}
                         value={(Array.isArray(value) ? value : []) as string[]}
                         onChange={(_, newValue) => onChange(newValue)}
-                        renderTags={() => null} // Don't show inside
+                        renderTags={() => null}
                         renderInput={(params) => (
                           <TextField
                             {...params}
@@ -677,7 +664,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
               >
                 {isLoadingAddresses ? (
                   <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-                    <CircularProgress size={20} />
+                    <LogoLoader size={20} />
                   </Box>
                 ) : displayedAddresses && displayedAddresses.length > 0 ? (
                   <Grid container spacing={2}>
@@ -760,47 +747,6 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
               <PhoneOutlinedIcon fontSize="small" />{" "}
               {t("store_setup_contact_info" )}
             </Typography>
-
-            {/* <Grid size={{ xs: 12 }}>
-                        <Box sx={{ p: 4, border: '1px solid', borderColor: 'divider', borderRadius: 4, bgcolor: isDark ? 'transparent' : '#f9fbff', mb: 2 }}>
-                            <Typography variant="body2" gutterBottom fontWeight="600" mb={2}>Contact Preferences*</Typography>
-                            <Controller
-                                name="contact_preferences"
-                                control={control}
-                                render={({ field: { onChange, value } }) => (
-                                    <FormGroup row>
-                                        {[
-                                            { key: "show_phone", label: "Show Phone" },
-                                            { key: "allow_calls", label: "Allow Calls" },
-                                            { key: "allow_chat", label: "Allow Chat" },
-                                            { key: "enquiry_only", label: "Enquiry Only" }
-                                        ].map((pref) => (
-                                            <FormControlLabel
-                                                key={pref.key}
-                                                control={
-                                                    <Checkbox
-                                                        checked={(value as string[])?.includes(pref.key) || false}
-                                                        onChange={(e) => {
-                                                            const current = (value []) || [];
-                                                            if (e.target.checked) {
-                                                                onChange([...current, pref.key]);
-                                                            } else {
-                                                                onChange(current.filter((v: string) => v !== pref.key));
-                                                            }
-                                                        }}
-                                                        color="primary"
-                                                    />
-                                                }
-                                                label={pref.label}
-                                                sx={{ '& .MuiTypography-root': { fontSize: '0.9rem', fontWeight: 500 } }}
-                                            />
-                                        ))}
-                                    </FormGroup>
-                                )}
-                            />
-                            {errors.contact_preferences && <Typography color="error" variant="caption">{errors.contact_preferences.message as string}</Typography>}
-                        </Box>
-                    </Grid> */}
 
             <Grid size={{ xs: 12 }}>
               <Grid container spacing={2.5}>
@@ -916,6 +862,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
           </Box>
         </Paper>
       </Box>
+
       <AddressDrawer
         open={addressDrawerOpen}
         onClose={() => {

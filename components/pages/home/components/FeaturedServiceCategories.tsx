@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Card, CardContent, Button } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { useCategories } from "@/hooks/useCategories";
 import { COLORS } from "@/constants/colors";
 import {
@@ -43,10 +44,8 @@ const FeaturedServiceCategories = () => {
 
     if (isLoading) {
         return (
-            <Box sx={{ display: "flex", gap: 2, overflowX: "auto", mt: 4, pb: 2 }}>
-                {[...Array(6)].map((_, i) => (
-                    <Box key={i} sx={{ minWidth: 140, height: 140, borderRadius: 4, bgcolor: 'action.hover', animation: 'pulse 1.5s infinite' }} />
-                ))}
+            <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+                <LogoLoader size={24} />
             </Box>
         );
     }

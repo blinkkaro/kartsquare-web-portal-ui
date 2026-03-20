@@ -6,6 +6,7 @@ import { COLORS } from "@/constants/colors";
 import { Storefront, LocationOn, Directions } from "@mui/icons-material";
 import { useTranslationContext } from "../../../features/i18n/TranslationContext";
 import { keyframes } from "@mui/system";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 
 const LIBRARIES: "places"[] = ["places"];
 
@@ -223,9 +224,7 @@ const ProductMap: React.FC<ProductMapProps> = ({
                     border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.05)"}`,
                 }}
             >
-                <Typography variant="body2" color="text.secondary">
-                    Loading Store Location...
-                </Typography>
+                <LogoLoader size={30} />
             </Box>
         );
     }

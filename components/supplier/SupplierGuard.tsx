@@ -5,7 +5,8 @@ import { useAppSelector } from "@/store/hooks"; // Assuming auth state is here o
 import { secureStorage } from "@/helper/SecureStorage";
 import { AppUserType } from "@/services/auth/auth.interface";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
-import { CircularProgress, Box } from "@mui/material";
+import { Box } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 
 interface SupplierGuardProps {
     children: React.ReactNode;
@@ -70,11 +71,7 @@ const SupplierGuard: React.FC<SupplierGuardProps> = ({ children, requireComplete
     }, [router, pathname, requireComplete]);
 
     if (!authorized) {
-        return (
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-                <CircularProgress />
-            </Box>
-        );
+        return <CenteredLoader height="100vh" />;
     }
 
     return <>{children}</>;

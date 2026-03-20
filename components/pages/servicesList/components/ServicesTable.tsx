@@ -3,10 +3,10 @@ import React from "react";
 import {
   Box,
   Grid,
-  CircularProgress,
   Typography,
   useTheme,
 } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import ServiceCard from "@/components/ServiceCard";
 import { Service } from "@/services/serviceList/listInteraface";
 import { COLORS } from "@/constants/colors";
@@ -23,18 +23,7 @@ const ServicesTable: React.FC<ServicesTableProps> = ({ services, loading }) => {
   const { t } = useTranslate();
 
   if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "400px",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <CenteredLoader minHeight="400px" />;
   }
 
   if (services.length === 0) {

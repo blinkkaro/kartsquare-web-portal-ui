@@ -1,7 +1,8 @@
 "use client";
 
 import Title from "@/components/auth/title";
-import { Box, CircularProgress, Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { usePrivacyPolicy } from "@/hooks/useAppConfig";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -13,18 +14,7 @@ function PrivacyPolicyView() {
   const { data: privacyPolicy, isLoading, isError } = usePrivacyPolicy();
 
   if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "50vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <CenteredLoader minHeight="50vh" />;
   }
 
   if (isError) {

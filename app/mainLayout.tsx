@@ -7,7 +7,7 @@ import { COLORS } from "@/constants/colors";
 import ProfileDrawer from "@/components/common/ProfileDrawer";
 import Ai from "@/components/common/Ai";
 import AIBotton from "@/components/common/Ai/AIBotton";
-import LoginModal from "@/components/common/LoginModal";
+import LoginModal from "@/components/common/loginModel";
 import { useRouter } from "next/navigation";
 
 interface MainLayoutProps {

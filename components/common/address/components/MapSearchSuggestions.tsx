@@ -8,12 +8,12 @@ import {
   ListItemButton,
   ListItemText,
   Typography,
-  CircularProgress,
   Chip,
   InputAdornment,
   useTheme,
   Paper,
 } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { Search, MyLocation, Place } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
@@ -140,7 +140,7 @@ const MapSearchSuggestions: React.FC<MapSearchSuggestionsProps> = ({
 
   // Debounced search
   const debouncedSearch = useMemo(
-    () => debounce(performSearch, 500),
+    () => debounce(performSearch, 1000),
     [performSearch],
   );
 
@@ -280,7 +280,7 @@ const MapSearchSuggestions: React.FC<MapSearchSuggestionsProps> = ({
             ),
             endAdornment: isLoading && (
               <InputAdornment position="end">
-                <CircularProgress size={20} />
+                <LogoLoader size={20} />
               </InputAdornment>
             ),
           }}
