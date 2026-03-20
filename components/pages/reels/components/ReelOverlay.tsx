@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Avatar, Stack, Button } from '@mui/material';
-import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import ExpandableText from '@/components/common/ExpandableText';
 
 interface ReelOverlayProps {
     userName: string;
@@ -68,22 +68,18 @@ const ReelOverlay: React.FC<ReelOverlayProps> = ({
             </Stack>
 
             {caption && (
-                <Typography
-                    variant="body2"
+                <ExpandableText
+                    text={caption}
+                    maxChars={100}
                     sx={{
                         mb: 1.5,
                         textShadow: '0px 1px 2px rgba(0,0,0,0.8)',
-                        display: '-webkit-box',
-                        overflow: 'hidden',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
                     }}
-                >
-                    {caption}
-                </Typography>
+                />
             )}
         </Box>
     );
 };
+
 
 export default ReelOverlay;
