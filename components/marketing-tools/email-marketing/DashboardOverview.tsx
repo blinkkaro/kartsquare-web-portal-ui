@@ -25,22 +25,29 @@ interface DashboardOverviewProps {
   role: "supplier" | "spr";
 }
 
-// Mock chart data while backend is empty
-const mockLineData = [
-  { name: 'Mon', sent: 400 },
-  { name: 'Tue', sent: 300 },
-  { name: 'Wed', sent: 550 },
-  { name: 'Thu', sent: 450 },
-  { name: 'Fri', sent: 700 },
-  { name: 'Sat', sent: 200 },
-  { name: 'Sun', sent: 300 },
-];
+const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-const mockBarData = [
-  { name: 'Welcome', target: 1000, sent: 800 },
-  { name: 'Promo Q1', target: 2000, sent: 1800 },
-  { name: 'Update', target: 500, sent: 490 },
-];
+/** Aggregate sentCount by day-of-week from real campaigns */
+function buildLineData(campaigns: { sentCount?: number; createdAt: string | Date }[]) {
+  const buckets: Record<string, number> = {};
+  DAY_LABELS.forEach(d => (buckets[d] = 0));
+  campaigns.forEach(c => {
+    const day = DAY_LABELS[new Date(c.createdAt).getDay()];
+    buckets[day] = (buckets[day] || 0) + Number(c.sentCount || 0);
+  });
+  // Return in Mon→Sun order
+  const order = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  return order.map(name => ({ name, sent: buckets[name] }));
+}
+
+/** Map each campaign to a bar entry */
+function buildBarData(campaigns: { name: string; sentCount?: number; totalRecipients?: number }[]) {
+  return campaigns.map(c => ({
+    name: c.name,
+    sent: Number(c.sentCount || 0),
+    target: Number(c.totalRecipients || 0),
+  }));
+}
 
 export default function DashboardOverview({ role }: DashboardOverviewProps) {
   const router = useRouter();
@@ -80,9 +87,12 @@ export default function DashboardOverview({ role }: DashboardOverviewProps) {
   const stats = {
     total: campaigns.length,
     active: campaigns.filter(c => c.status === "processing" || c.status === "scheduled").length,
-    sentEmails: campaigns.reduce((acc, c) => acc + (c.sentCount || 0), 0),
-    failedEmails: campaigns.reduce((acc, c) => acc + (c.failedCount || 0), 0),
+    sentEmails: campaigns.reduce((acc, c) => acc + Number(c.sentCount || 0), 0),
+    failedEmails: campaigns.reduce((acc, c) => acc + Number(c.failedCount || 0), 0),
   };
+
+  const lineData = buildLineData(campaigns);
+  const barData = buildBarData(campaigns);
 
   const renderStatCard = (title: string, value: string | number, icon: React.ReactNode, color: string) => (
     <Card sx={{ borderRadius: 3, boxShadow: "0 4px 20px rgba(0,0,0,0.05)" }}>
@@ -190,50 +200,60 @@ export default function DashboardOverview({ role }: DashboardOverviewProps) {
       </Grid>
 
       {/* Charts Section */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{ xs: 12, lg: 7 }}>
-          <Card sx={{ borderRadius: 3, boxShadow: "0 4px 20px rgba(0,0,0,0.05)", height: "100%" }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
-                {translate("emails_sent_over_time", "Emails Sent Over Time")}
-              </Typography>
-              <Box sx={{ height: 300, mt: 2 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={mockLineData}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                    <YAxis axisLine={false} tickLine={false} />
-                    <RechartsTooltip contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 15px rgba(0,0,0,0.1)" }} />
-                    <Line type="monotone" dataKey="sent" stroke="#1976d2" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </Box>
-            </CardContent>
-          </Card>
+      {campaigns.length > 0 && (
+        <Grid container spacing={3} sx={{ mb: 4 }}>
+          <Grid size={{ xs: 12, lg: 7 }}>
+            <Card sx={{ borderRadius: 3, boxShadow: "0 4px 20px rgba(0,0,0,0.05)", height: "100%" }}>
+              <CardContent>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  {translate("emails_sent_over_time", "Emails Sent Over Time")}
+                </Typography>
+                <Box sx={{ height: 300, mt: 2 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={lineData}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
+                      <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                      <YAxis 
+                        axisLine={false} 
+                        tickLine={false} 
+                        tickFormatter={(value) => Number.isInteger(value) ? value : ''} 
+                      />
+                      <RechartsTooltip contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 15px rgba(0,0,0,0.1)" }} />
+                      <Line type="monotone" dataKey="sent" stroke="#1976d2" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid size={{ xs: 12, lg: 5 }}>
+            <Card sx={{ borderRadius: 3, boxShadow: "0 4px 20px rgba(0,0,0,0.05)", height: "100%" }}>
+              <CardContent>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  {translate("campaign_performance", "Campaign Performance")}
+                </Typography>
+                <Box sx={{ height: 300, mt: 2 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={barData}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
+                      <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                      <YAxis 
+                        axisLine={false} 
+                        tickLine={false} 
+                        tickFormatter={(value) => Number.isInteger(value) ? value : ''} 
+                      />
+                      <RechartsTooltip cursor={{fill: 'transparent'}} contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 15px rgba(0,0,0,0.1)" }} />
+                      <Legend />
+                      <Bar dataKey="sent" fill="#2e7d32" radius={[4, 4, 0, 0]} barSize={30} />
+                      <Bar dataKey="target" fill="#e0e0e0" radius={[4, 4, 0, 0]} barSize={30} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
-        <Grid size={{ xs: 12, lg: 5 }}>
-          <Card sx={{ borderRadius: 3, boxShadow: "0 4px 20px rgba(0,0,0,0.05)", height: "100%" }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
-                {translate("campaign_performance", "Campaign Performance")}
-              </Typography>
-              <Box sx={{ height: 300, mt: 2 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={mockBarData}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                    <YAxis axisLine={false} tickLine={false} />
-                    <RechartsTooltip cursor={{fill: 'transparent'}} contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 15px rgba(0,0,0,0.1)" }} />
-                    <Legend />
-                    <Bar dataKey="sent" fill="#2e7d32" radius={[4, 4, 0, 0]} barSize={30} />
-                    <Bar dataKey="target" fill="#e0e0e0" radius={[4, 4, 0, 0]} barSize={30} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+      )}
 
       {/* Recent Campaigns Table */}
       <Card sx={{ borderRadius: 3, boxShadow: "0 4px 20px rgba(0,0,0,0.05)" }}>

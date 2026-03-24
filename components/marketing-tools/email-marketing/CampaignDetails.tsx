@@ -114,8 +114,12 @@ export default function CampaignDetails({ role }: CampaignDetailsProps) {
     );
   }
 
-  const progress = campaign.totalRecipients > 0 
-    ? ((campaign.sentCount + campaign.failedCount) / campaign.totalRecipients) * 100 
+  const total = Number(campaign.totalRecipients) || 0;
+  const sent = Number(campaign.sentCount) || 0;
+  const failed = Number(campaign.failedCount) || 0;
+
+  const progress = total > 0 
+    ? ((sent + failed) / total) * 100 
     : 0;
 
   return (
