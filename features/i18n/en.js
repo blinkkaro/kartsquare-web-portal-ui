@@ -1682,5 +1682,5 @@ export const english = {
   aibot_feature_response: "Our platform includes AI-driven search, reel integration, booking management, and detailed analytics.",
   aibot_reach_response: "With KartSquare, you can tap into a network of thousands of active shoppers looking for services like yours.",
   aibot_default_response: "That's a great question! KartSquare is designed to grow your digital presence. Would you like to know more about our pricing or key features?",
-  showNumberInServices: "Show Number In Services",
+  showNumberInServices: "Show Number On Plateform",
 };

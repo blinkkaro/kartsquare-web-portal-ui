@@ -172,37 +172,6 @@ const ServiceDetailsGrid = ({
             </Box>
           </Tooltip>
         </Box>
-
-        {/* Show Number Toggle */}
-        <Box
-          sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 2 } }}
-        >
-          <Typography
-            variant="body2"
-            sx={{
-              color: isDark
-                ? COLORS.TEXT.PRIMARY_DARK
-                : COLORS.TEXT.PRIMARY_LIGHT,
-              fontWeight: 500,
-              fontSize: { xs: "0.75rem", sm: "0.875rem" },
-            }}
-          >
-            {english.show_number || "Show Number"}
-          </Typography>
-          <Switch
-            checked={showNumber}
-            onChange={(e) => onShowNumberToggle?.(e.target.checked)}
-            size={isMobile ? "small" : "medium"}
-            sx={{
-              "& .MuiSwitch-switchBase.Mui-checked": {
-                color: COLORS.PRIMARY_PURPLE,
-              },
-              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                backgroundColor: COLORS.PRIMARY_PURPLE,
-              },
-            }}
-          />
-        </Box>
       </Box>
     </Box>
   );

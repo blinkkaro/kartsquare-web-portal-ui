@@ -39,9 +39,6 @@ export function ProfileDrawer() {
   const router = useRouter();
   const { token } = useAppSelector((state) => state.auth);
 
-  console.log(userId, "userId");
-  console.log(role, "role");
-
   const isSupplier = role === AppUserType.SUPPLIER;
 
   const {
@@ -49,17 +46,6 @@ export function ProfileDrawer() {
     isLoading: providerLoading,
     error: providerError,
   } = useProviderProfile(!isSupplier ? userId : "");
-  const { data: postsData, isLoading: postsLoading } = useProviderPosts(
-    !isSupplier ? userId : "",
-  );
-  const {
-    data: reelsData,
-    isLoading: reelsLoading,
-    fetchNextPage: fetchNextReels,
-    hasNextPage: hasNextReels,
-    isFetchingNextPage: isFetchingNextReels,
-  } = useProviderReels(!isSupplier ? userId : "");
-
   const {
     data: supplierProfileData,
     isLoading: supplierLoading,
@@ -70,7 +56,21 @@ export function ProfileDrawer() {
   const isLoading = isSupplier ? supplierLoading : providerLoading;
   const error = isSupplier ? supplierError : providerError;
 
-  const [activeTab, setActiveTab] = useState(isSupplier ? "Products" : "Posts");
+  const effectiveUserId = isSupplier
+    ? (profile as any)?.user_id || profile?.id || userId
+    : userId;
+
+  const { data: postsData, isLoading: postsLoading } =
+    useProviderPosts(effectiveUserId);
+  const {
+    data: reelsData,
+    isLoading: reelsLoading,
+    fetchNextPage: fetchNextReels,
+    hasNextPage: hasNextReels,
+    isFetchingNextPage: isFetchingNextReels,
+  } = useProviderReels(effectiveUserId);
+
+  const [activeTab, setActiveTab] = useState("Posts");
   const [isReelModalOpen, setIsReelModalOpen] = useState(false);
   const [selectedReelIndex, setSelectedReelIndex] = useState(0);
 
@@ -80,9 +80,9 @@ export function ProfileDrawer() {
 
   React.useEffect(() => {
     if (isOpen) {
-      setActiveTab(isSupplier ? "Products" : "Posts");
+      setActiveTab("Posts");
     }
-  }, [isOpen, isSupplier]);
+  }, [isOpen]);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
