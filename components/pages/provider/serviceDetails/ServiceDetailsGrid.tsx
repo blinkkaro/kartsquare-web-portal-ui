@@ -22,6 +22,8 @@ interface ServiceDetailsGridProps {
   isUpdating?: boolean;
   status?: string | null;
   haveSlots?: boolean;
+  showNumber?: boolean;
+  onShowNumberToggle?: (checked: boolean) => void;
 }
 
 const ServiceDetailsGrid = ({
@@ -34,6 +36,8 @@ const ServiceDetailsGrid = ({
   isUpdating = false,
   status = "",
   haveSlots = false,
+  showNumber = false,
+  onShowNumberToggle,
 }: ServiceDetailsGridProps) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -167,6 +171,37 @@ const ServiceDetailsGrid = ({
               />
             </Box>
           </Tooltip>
+        </Box>
+
+        {/* Show Number Toggle */}
+        <Box
+          sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 2 } }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              color: isDark
+                ? COLORS.TEXT.PRIMARY_DARK
+                : COLORS.TEXT.PRIMARY_LIGHT,
+              fontWeight: 500,
+              fontSize: { xs: "0.75rem", sm: "0.875rem" },
+            }}
+          >
+            {english.show_number || "Show Number"}
+          </Typography>
+          <Switch
+            checked={showNumber}
+            onChange={(e) => onShowNumberToggle?.(e.target.checked)}
+            size={isMobile ? "small" : "medium"}
+            sx={{
+              "& .MuiSwitch-switchBase.Mui-checked": {
+                color: COLORS.PRIMARY_PURPLE,
+              },
+              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                backgroundColor: COLORS.PRIMARY_PURPLE,
+              },
+            }}
+          />
         </Box>
       </Box>
     </Box>

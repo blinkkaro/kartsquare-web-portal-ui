@@ -181,6 +181,11 @@ export interface ProductBrand {
   deleted_by?: string;
   created_at: Date;
   updated_at: Date;
+} 
+
+export interface ProductBrandPagination {
+  pagination: pagination;
+  brands: ProductBrand[];
 }
 
 export interface ProductCategoriesInterface {

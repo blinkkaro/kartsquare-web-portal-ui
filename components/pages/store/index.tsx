@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
+  CircularProgress,
   Box,
   Container,
   Typography,
@@ -62,6 +63,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import { useSearchSuggestions, Product } from "@/hooks/useSearchSuggestions";
 import SearchSuggestions from "./SearchSuggestions";
+import { useGetAllBrands } from "@/hooks/useProducts";
 
 // Import Swiper styles
 import "swiper/css";
@@ -79,6 +81,35 @@ const StoreView: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const [showAllBrands, setShowAllBrands] = useState(false);
+  const {
+    data: brandsData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: brandsLoading,
+  } = useGetAllBrands("", showAllBrands ? 12 : 5);
+  
+  const allBrands = brandsData?.pages.flatMap((page: any) => {
+    if (Array.isArray(page)) return page;
+    return page?.brands || [];
+  }).filter(Boolean) || [];
+  
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const lastBrandElementRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (brandsLoading || isFetchingNextPage) return;
+      if (observerRef.current) observerRef.current.disconnect();
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasNextPage) {
+          fetchNextPage();
+        }
+      });
+      if (node) observerRef.current.observe(node);
+    },
+    [brandsLoading, isFetchingNextPage, hasNextPage, fetchNextPage]
+  );
 
   // Use TanStack Query based search suggestions hook
   const { categories, products, isSearching, isEmpty } = useSearchSuggestions(
@@ -1245,32 +1276,54 @@ const StoreView: React.FC = () => {
         </Grid>
 
         {/* Brands Section - Restored */}
-        {!loading && homeData?.brands && homeData.brands.length > 0 && (
+        {!brandsLoading && allBrands.length > 0 && (
           <Box sx={{ mt: { xs: 8, md: 15 }, mb: { xs: 6, md: 10 } }}>
-            <Typography
-              variant="h5"
-              fontWeight={800}
-              sx={{ mb: 4, color: isDark ? "text.primary" : "#30263E" }}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                justifyContent: "space-between",
+                alignItems: { xs: "flex-start", sm: "flex-end" },
+                gap: { xs: 2, sm: 0 },
+                mb: 4,
+              }}
             >
-              Top Brands in Store
-            </Typography>
+              <Typography
+                variant="h5"
+                fontWeight={800}
+                sx={{ color: isDark ? "text.primary" : "#30263E", letterSpacing: -0.5 }}
+              >
+                Top Brands in Store
+              </Typography>
+              <CommonButton
+                variant="outlined"
+                endIcon={showAllBrands ? undefined : <ArrowForward />}
+                sx={{ borderRadius: 2, fontWeight: 700 }}
+                onClick={() => setShowAllBrands(!showAllBrands)}
+              >
+                {showAllBrands ? "Show Less" : "See All"}
+              </CommonButton>
+            </Box>
             <Grid container spacing={3}>
-              {homeData.brands.map((brand) => (
-                <Grid
-                  size={{ xs: 6, sm: 4, md: 3, lg: 2 }}
-                  key={brand.product_brand_id}
-                >
-                  <Paper
+              {allBrands.map((brand, index) => {
+                const isLast = index === allBrands.length - 1;
+                return (
+                  <Grid
+                    size={{ xs: 6, sm: 4, md: 2.4, lg: 2.4 }}
+                    key={`${brand.product_brand_id}-${index}`}
+                    ref={showAllBrands && isLast ? lastBrandElementRef : null}
+                  >
+                    <Paper
                     elevation={0}
                     onClick={() => handleBrandClick(brand.product_brand_id)}
                     sx={{
-                      p: 3,
-                      height: "100%",
+                      p: 4,
+                      height: 160,
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "center",
-                      borderRadius: 3,
+                      borderRadius: 4,
                       border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "#eef2f6"}`,
                       transition: "all 0.3s",
                       cursor: "pointer",
@@ -1288,10 +1341,10 @@ const StoreView: React.FC = () => {
                       src={brand.brand_image}
                       alt={brand.brand_name}
                       style={{
-                        width: "80%",
-                        height: 60,
+                        width: "100%",
+                        height: 80,
                         objectFit: "contain",
-                        marginBottom: 8,
+                        marginBottom: 16,
                       }}
                     />
                     <Typography variant="subtitle2" fontWeight={700}>
@@ -1299,7 +1352,18 @@ const StoreView: React.FC = () => {
                     </Typography>
                   </Paper>
                 </Grid>
-              ))}
+                );
+              })}
+              {isFetchingNextPage && (
+                <Grid size={{ xs: 12 }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 6, gap: 2 }}>
+                    <CircularProgress size={48} sx={{ color: isDark ? 'primary.main' : COLORS.PRIMARY_PURPLE }} />
+                    <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 600 }}>
+                      Loading more brands...
+                    </Typography>
+                  </Box>
+                </Grid>
+              )}
             </Grid>
           </Box>
         )}

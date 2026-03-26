@@ -27,7 +27,8 @@ import ReelFeedGrid from "../../pages/myAccount/components/post/ReelFeedGrid";
 import ReelViewModal from "../../pages/myAccount/components/post/ReelViewModal";
 import { Posts } from "@/services/post/postInterfaces";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 export function ProfileDrawer() {
   const dispatch = useDispatch();
@@ -37,6 +38,9 @@ export function ProfileDrawer() {
   const { t } = useTranslate();
   const router = useRouter();
   const { token } = useAppSelector((state) => state.auth);
+
+  console.log(userId, "userId");
+  console.log(role, "role");
 
   const isSupplier = role === AppUserType.SUPPLIER;
 
@@ -60,7 +64,7 @@ export function ProfileDrawer() {
     data: supplierProfileData,
     isLoading: supplierLoading,
     error: supplierError,
-    } = useSupplierProfile(isSupplier ? username || "" : "");
+  } = useSupplierProfile(isSupplier ? username || "" : "");
 
   const profile = isSupplier ? supplierProfileData?.profile : providerProfile;
   const isLoading = isSupplier ? supplierLoading : providerLoading;
@@ -91,7 +95,9 @@ export function ProfileDrawer() {
     }
 
     // Attempt to get the target person ID
-    const targetUserId = isSupplier ? (profile as any)?.user_id || profile?.id : userId;
+    const targetUserId = isSupplier
+      ? (profile as any)?.user_id || profile?.id
+      : userId;
 
     if (!targetUserId) {
       toast.error("User ID not found for chatting.");
@@ -99,11 +105,15 @@ export function ProfileDrawer() {
     }
 
     try {
-      const res = await axios.post(`${API_URL}/chat/conversations`, {
-        participant2_id: targetUserId
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.post(
+        `${API_URL}/chat/conversations`,
+        {
+          participant2_id: targetUserId,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       if (res.data.status === "success") {
         dispatch(closeDrawer());
@@ -126,8 +136,8 @@ export function ProfileDrawer() {
       profile={profile || undefined}
       onClose={() => dispatch(closeDrawer())}
       onChatClick={handleChatClick}
-      onLocationClick={() => { }}
-      onBookmarkClick={() => { }}
+      onLocationClick={() => {}}
+      onBookmarkClick={() => {}}
       width={700}
     >
       <Box

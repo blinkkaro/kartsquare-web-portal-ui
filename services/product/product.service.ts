@@ -1,6 +1,7 @@
 import {
   Product,
   ProductBrand,
+  ProductBrandPagination,
   ProductCategoriesInterface,
   ProductCategoriesResponse,
   ProductCreate,
@@ -264,6 +265,28 @@ class ProductService {
     try {
       let url = APIENDPOINTS.PRODUCT_STATUS(product.product_id);
       const response = await PUT<Product>(url, product);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAllBrands(
+    search?: string,
+    limit: number = 5,
+    page: number = 1,
+  ): Promise<ProductBrandPagination> {
+    try {
+      let url = APIENDPOINTS.GET_ALL_BRANDS;
+      const params = new URLSearchParams();
+      if (search) params.append("search", search);
+
+      params.append("limit", limit.toString());
+      params.append("page", page.toString());
+
+      const queryString = params.toString();
+      if (queryString) url += `?${queryString}`;
+      const response = await GET<ProductBrandPagination>(url);
       return response.data;
     } catch (error) {
       throw error;

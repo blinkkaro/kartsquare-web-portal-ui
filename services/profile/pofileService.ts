@@ -187,6 +187,20 @@ class ProfileService {
       throw error;
     }
   }
+
+  async updateShowNumber(show_number: boolean): Promise<profileInterface> {
+    try {
+      const response = await PUT<profileInterface>(
+        APIENDPOINTS.UPDATE_SHOW_NUMBER,
+        {
+          show_number,
+        },
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export const profileService = new ProfileService();

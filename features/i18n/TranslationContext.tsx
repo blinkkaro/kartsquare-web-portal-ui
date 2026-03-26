@@ -1260,6 +1260,7 @@ export type TranslationKey =
   | "aibot_feature_response"
   | "aibot_reach_response"
   | "aibot_default_response"
+  | "showNumberInServices"
   ;
 
 // Sample dictionaries

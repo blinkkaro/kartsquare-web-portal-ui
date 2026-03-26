@@ -34,6 +34,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import CustomerServicePricing from "@/components/common/CustomerServicePricing";
 import { review_type } from "@/services/providerDashboard/providerDashboard.interface";
 import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
+import { useProfile, useUpdateShowNumber } from "@/hooks/useProfile";
 
 const ProviderServiceDetails = () => {
   const params = useParams();
@@ -43,6 +44,8 @@ const ProviderServiceDetails = () => {
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
   const queryClient = useQueryClient();
+  const { data: profile } = useProfile();
+  const { mutate: updateShowNumber } = useUpdateShowNumber();
 
   // State
   const reviewsPerPage = 5;
@@ -273,6 +276,8 @@ const ProviderServiceDetails = () => {
                   isUpdating={updatingStatus}
                   status={service.status}
                   haveSlots={service.have_slots}
+                  showNumber={profile?.show_number}
+                  onShowNumberToggle={(checked) => updateShowNumber(checked)}
                 />
               </Box>
 
