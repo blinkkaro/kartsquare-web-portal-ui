@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "kartsquare-document.s3.ap-south-1.amazonaws.com",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
 };
