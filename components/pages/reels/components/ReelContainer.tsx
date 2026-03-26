@@ -38,10 +38,9 @@ const ReelContainer: React.FC<ReelContainerProps> = ({ reel, isActive }) => {
     };
 
     const handleProfileClick = () => {
-        
         dispatch(openDrawer({
             userId: reel.user.id,
-            role: reel.user.role as AppUserType || AppUserType.SERVICE_PROVIDER,
+            role: (reel.upload_user_type || reel.user.role) as AppUserType || AppUserType.SERVICE_PROVIDER,
             username: reel.user.username || ''
         }));
     };

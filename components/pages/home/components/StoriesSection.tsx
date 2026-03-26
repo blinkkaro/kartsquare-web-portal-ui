@@ -288,7 +288,7 @@ const StoriesSection = ({
                   >
                     <Avatar
                       src={storyUser.user_profile_image}
-                      alt={storyUser.user_name}
+                      alt={storyUser.business_name}
                       sx={{
                         width: 56,
                         height: 56,
@@ -307,7 +307,7 @@ const StoriesSection = ({
                       color: theme.palette.text.primary,
                     }}
                   >
-                    {storyUser.user_name}
+                    {storyUser.business_name}
                   </Typography>
                 </Stack>
               );

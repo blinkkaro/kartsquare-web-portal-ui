@@ -96,6 +96,12 @@ export const myAccountNav = (
     if(role === "SUPPLIER"){
       return [
         {
+          label: t("postReel"),
+          href: "#",
+          icon: <PostAddIcon />,
+          isPosts: true,
+        },
+        {
           label: t("personalInfo"),
           href: "myAccount/personal-info",
           icon: <PersonIcon />,

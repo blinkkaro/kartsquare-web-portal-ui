@@ -89,7 +89,7 @@ export const useAddStory = () => {
                 } else {
                   const newEntry = {
                     user_id: userId,
-                    user_name: profile?.first_name ?? "",
+                    user_name: profile?.user_name ?? "",
                     user_profile_image: profile?.profile_pic ?? "",
                     stories: [optimisticStoryAny],
                   };
