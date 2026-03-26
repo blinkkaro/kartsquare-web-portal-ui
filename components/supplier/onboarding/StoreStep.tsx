@@ -27,7 +27,7 @@ import { useSupplierStore, useUpdateSupplierStore } from "@/hooks/useSupplier";
 import { useRouter } from "next/navigation";
 import { STORE_CATEGORIES, OPERATING_LOCATIONS } from "@/constants/common";
 import { COLORS } from "@/constants/colors";
-import { countries } from "@/components/pages/signUp/components/data";
+import { countries } from "@/data/countries";
 import { verifyDocumentService } from "@/services/auth/verifyDocument.service";
 import { useAppDispatch } from "@/store/hooks";
 import { updateUser } from "@/features/ui/authSlice";

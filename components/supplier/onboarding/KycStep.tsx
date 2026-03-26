@@ -28,7 +28,7 @@ import { ID_PROOF_TYPES } from "@/constants/common";
 import { COLORS } from "@/constants/colors";
 import { useRouter } from "next/navigation";
 import { verifyDocumentService } from "@/services/auth/verifyDocument.service";
-import { countries } from "@/components/pages/signUp/components/data";
+import { countries } from "@/data/countries";
 import { useAppDispatch } from "@/store/hooks";
 import { updateUser } from "@/features/ui/authSlice";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
