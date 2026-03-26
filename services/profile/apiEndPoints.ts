@@ -11,4 +11,5 @@ export const APIENDPOINTS = {
   GET_SUPPLIER_PROFILE: (id: string) => `/profile/supplier/${id}`,
   GET_PROVIDER_REELS: (id: string, page?: number, limit?: number) =>
     `/profile/${id}/reels?page=${page}&limit=${limit}`,
+  UPDATE_SHOW_NUMBER: '/profile/show-number',
 };

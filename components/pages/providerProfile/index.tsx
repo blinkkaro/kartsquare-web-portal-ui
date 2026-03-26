@@ -49,6 +49,7 @@ import {
   useProviderProfileByUsername,
   useFollowProvider,
   useProviderReels,
+  useProviderPosts,
 } from "@/hooks/useProviderProfile";
 import { useTranslate } from "@/hooks/useTranslate";
 import ServiceCard from "@/components/ServiceCard";
@@ -89,7 +90,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
 
-  const [activeTab, setActiveTab] = useState(PROFILE_TABS.Services);
+  const [activeTab, setActiveTab] = useState(PROFILE_TABS.Posts);
   const [shareMenuAnchor, setShareMenuAnchor] = useState<null | HTMLElement>(
     null,
   );
@@ -108,32 +109,37 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
   const isSupplier = profileData?.profile?.role === AppUserType.SUPPLIER;
   const profile = profileData?.profile;
 
+  const {
+    data: reelsData,
+    isLoading: reelsLoading,
+    fetchNextPage: fetchNextReels,
+    hasNextPage: hasNextReels,
+    isFetchingNextPage: isFetchingNextReels,
+  } = useProviderReels(profile?.id || "");
+
+  const {
+    data: postsData,
+    isLoading: postsLoading,
+  } = useProviderPosts(profile?.id || "");
+
   // Type-safe data extraction
   const services =
     profileData && "services" in profileData ? profileData.services : [];
-  const posts = profileData && "posts" in profileData ? profileData.posts : [];
+  const profilePosts =
+    profileData && "posts" in profileData ? profileData.posts : [];
+  const fetchedPosts = postsData?.pages.flatMap((page) => page.posts) || [];
+  const posts = fetchedPosts.length > 0 ? fetchedPosts : profilePosts;
   const products =
     profileData && "products" in profileData ? profileData.products : [];
   
-  const {
-      data: reelsData,
-      isLoading: reelsLoading,
-      fetchNextPage: fetchNextReels,
-      hasNextPage: hasNextReels,
-      isFetchingNextPage: isFetchingNextReels,
-    } = useProviderReels(profile?.id || "");
 
   const followMutation = useFollowProvider(profile?.id || "");
 
   React.useEffect(() => {
     if (profileData) {
-      if (isSupplier) {
-        setActiveTab(PROFILE_TABS.Products);
-      } else {
-        setActiveTab(PROFILE_TABS.Services);
-      }
+      setActiveTab(PROFILE_TABS.Posts);
     }
-  }, [profileData, isSupplier]);
+  }, [profileData]);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -682,24 +688,20 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       compact={isMobile}
                     />
                   )}
-                  {!isSupplier && (
-                    <>
-                    <StatRow
-                      icon={<Visibility />}
-                      label={t("posts")}
-                      value={(profile as any)?.total_posts || 0}
-                      iconColor={textSecondary}
-                      compact={isMobile}
-                    />
-                    <StatRow
-                      icon={<Visibility />}
-                      label={t("reels")}
-                      value={(profile as any)?.total_reels || 0}
-                      iconColor={textSecondary}
-                      compact={isMobile}
-                    />
-                    </>
-                  )}
+                  <StatRow
+                    icon={<Visibility />}
+                    label={t("posts")}
+                    value={(profile as any)?.total_posts || 0}
+                    iconColor={textSecondary}
+                    compact={isMobile}
+                  />
+                  <StatRow
+                    icon={<Visibility />}
+                    label={t("reels")}
+                    value={(profile as any)?.total_reels || 0}
+                    iconColor={textSecondary}
+                    compact={isMobile}
+                  />
                   <StatRow
                     icon={<Favorite />}
                     label={t("followers") || "Followers"}
@@ -860,7 +862,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                 }}
               >
                 {isSupplier
-                  ? `Our ${t("products")}`
+                  ? `Our ${t("products")} & ${t("posts")}`
                   : `Our ${t("services")} & ${t("posts")}`}
               </Typography>
               <Typography
@@ -868,7 +870,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                 sx={{ color: textSecondary, fontSize: "0.9rem" }}
               >
                 {isSupplier
-                  ? "Explore our range of quality products."
+                  ? "Explore our range of quality products and latest updates."
                   : "Explore what we offer and our latest updates."}
               </Typography>
             </Box>
@@ -887,41 +889,143 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
               }}
             >
               {isSupplier ? (
-                <Box
-                  onClick={() => handleTabChange(PROFILE_TABS.Products)}
-                  sx={{
-                    px: 2.5,
-                    py: 1.25,
-                    borderRadius: 1.5,
-                    cursor: "pointer",
-                    bgcolor:
-                      activeTab === PROFILE_TABS.Products
-                        ? COLORS.PRIMARY_PURPLE
-                        : "transparent",
-                    color:
-                      activeTab === PROFILE_TABS.Products
-                        ? COLORS.WHITE
-                        : textSecondary,
-                    fontWeight: activeTab === PROFILE_TABS.Products ? 700 : 500,
-                    fontSize: "0.95rem",
-                    transition: "all 0.2s ease",
-                    "&:hover": {
+                <>
+                  <Box
+                    onClick={() => handleTabChange(PROFILE_TABS.Posts)}
+                    sx={{
+                      px: 2.5,
+                      py: 1.25,
+                      borderRadius: 1.5,
+                      cursor: "pointer",
+                      bgcolor:
+                        activeTab === PROFILE_TABS.Posts
+                          ? COLORS.PRIMARY_PURPLE
+                          : "transparent",
+                      color:
+                        activeTab === PROFILE_TABS.Posts
+                          ? COLORS.WHITE
+                          : textSecondary,
+                      fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 500,
+                      fontSize: "0.95rem",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        bgcolor:
+                          activeTab === PROFILE_TABS.Posts
+                            ? COLORS.PURPLE_HOVER
+                            : isDark
+                              ? COLORS.PURPLE_ALPHA_10
+                              : COLORS.PURPLE_ALPHA_04,
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <ArticleIcon sx={{ fontSize: 20 }} />
+                      {t("posts")}
+                    </Box>
+                  </Box>
+                  <Box
+                    onClick={() => handleTabChange(PROFILE_TABS.Products)}
+                    sx={{
+                      px: 2.5,
+                      py: 1.25,
+                      borderRadius: 1.5,
+                      cursor: "pointer",
                       bgcolor:
                         activeTab === PROFILE_TABS.Products
-                          ? COLORS.PURPLE_HOVER
-                          : isDark
-                            ? COLORS.PURPLE_ALPHA_10
-                            : COLORS.PURPLE_ALPHA_04,
-                    },
-                  }}
-                >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <WorkIcon sx={{ fontSize: 20 }} />
-                    {t("products")}
+                          ? COLORS.PRIMARY_PURPLE
+                          : "transparent",
+                      color:
+                        activeTab === PROFILE_TABS.Products
+                          ? COLORS.WHITE
+                          : textSecondary,
+                      fontWeight:
+                        activeTab === PROFILE_TABS.Products ? 700 : 500,
+                      fontSize: "0.95rem",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        bgcolor:
+                          activeTab === PROFILE_TABS.Products
+                            ? COLORS.PURPLE_HOVER
+                            : isDark
+                              ? COLORS.PURPLE_ALPHA_10
+                              : COLORS.PURPLE_ALPHA_04,
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <WorkIcon sx={{ fontSize: 20 }} />
+                      {t("products")}
+                    </Box>
                   </Box>
-                </Box>
+                  <Box
+                    onClick={() => handleTabChange(PROFILE_TABS.Reels)}
+                    sx={{
+                      px: 2.5,
+                      py: 1.25,
+                      borderRadius: 1.5,
+                      cursor: "pointer",
+                      bgcolor:
+                        activeTab === PROFILE_TABS.Reels
+                          ? COLORS.PRIMARY_PURPLE
+                          : "transparent",
+                      color:
+                        activeTab === PROFILE_TABS.Reels
+                          ? COLORS.WHITE
+                          : textSecondary,
+                      fontWeight: activeTab === PROFILE_TABS.Reels ? 700 : 500,
+                      fontSize: "0.95rem",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        bgcolor:
+                          activeTab === PROFILE_TABS.Reels
+                            ? COLORS.PURPLE_HOVER
+                            : isDark
+                              ? COLORS.PURPLE_ALPHA_10
+                              : COLORS.PURPLE_ALPHA_04,
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <MovieFilter sx={{ fontSize: 20 }} />
+                      {t("reels")}
+                    </Box>
+                  </Box>
+                </>
               ) : (
                 <>
+                  <Box
+                    onClick={() => handleTabChange(PROFILE_TABS.Posts)}
+                    sx={{
+                      px: 2.5,
+                      py: 1.25,
+                      borderRadius: 1.5,
+                      cursor: "pointer",
+                      bgcolor:
+                        activeTab === PROFILE_TABS.Posts
+                          ? COLORS.PRIMARY_PURPLE
+                          : "transparent",
+                      color:
+                        activeTab === PROFILE_TABS.Posts
+                          ? COLORS.WHITE
+                          : textSecondary,
+                      fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 500,
+                      fontSize: "0.95rem",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        bgcolor:
+                          activeTab === PROFILE_TABS.Posts
+                            ? COLORS.PURPLE_HOVER
+                            : isDark
+                              ? COLORS.PURPLE_ALPHA_10
+                              : COLORS.PURPLE_ALPHA_04,
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <ArticleIcon sx={{ fontSize: 20 }} />
+                      {t("posts")}
+                    </Box>
+                  </Box>
                   <Box
                     onClick={() => handleTabChange(PROFILE_TABS.Services)}
                     sx={{
@@ -954,39 +1058,6 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                       <WorkIcon sx={{ fontSize: 20 }} />
                       {t("services")}
-                    </Box>
-                  </Box>
-                  <Box
-                    onClick={() => handleTabChange(PROFILE_TABS.Posts)}
-                    sx={{
-                      px: 2.5,
-                      py: 1.25,
-                      borderRadius: 1.5,
-                      cursor: "pointer",
-                      bgcolor:
-                        activeTab === PROFILE_TABS.Posts
-                          ? COLORS.PRIMARY_PURPLE
-                          : "transparent",
-                      color:
-                        activeTab === PROFILE_TABS.Posts
-                          ? COLORS.WHITE
-                          : textSecondary,
-                      fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 500,
-                      fontSize: "0.95rem",
-                      transition: "all 0.2s ease",
-                      "&:hover": {
-                        bgcolor:
-                          activeTab === PROFILE_TABS.Posts
-                            ? COLORS.PURPLE_HOVER
-                            : isDark
-                              ? COLORS.PURPLE_ALPHA_10
-                              : COLORS.PURPLE_ALPHA_04,
-                      },
-                    }}
-                  >
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <ArticleIcon sx={{ fontSize: 20 }} />
-                      {t("posts")}
                     </Box>
                   </Box>
                   <Box
@@ -1030,7 +1101,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
               {activeTab === PROFILE_TABS.Products && isSupplier && (
                 <ProfileProducts products={products} isLoading={isLoading} />
               )}
-              {activeTab === PROFILE_TABS.Posts && !isSupplier && (
+              {activeTab === PROFILE_TABS.Posts && (
                 <Box>
                   {transformedPosts.length === 0 ? (
                     <Paper
@@ -1070,7 +1141,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   ) : (
                     <PostFeedGrid
                       posts={transformedPosts}
-                      isLoading={false}
+                      isLoading={postsLoading}
                       fetchNextPage={() => {}}
                       hasNextPage={false}
                       isFetchingNextPage={false}
@@ -1130,7 +1201,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   )}
                 </Box>
               )}
-              {activeTab === PROFILE_TABS.Reels && !isSupplier && (
+              {activeTab === PROFILE_TABS.Reels && (
                 <ReelFeedGrid
                   reels={allReels}
                   isLoading={reelsLoading}

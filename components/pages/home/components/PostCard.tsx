@@ -58,7 +58,7 @@ const PostCard = ({ post }: { post: Posts }) => {
         >
           <Box
             sx={{ display: "flex", alignItems: "center", gap: 1, cursor: "pointer" }}
-            onClick={() => dispatch(openDrawer({ userId: post.user_id }))}
+            onClick={() => dispatch(openDrawer({ userId: post.user_id, role: post.upload_user_type, username: post.user.username }))}
           >
             <Avatar
               sx={{

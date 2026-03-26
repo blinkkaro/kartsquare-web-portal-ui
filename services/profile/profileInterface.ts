@@ -47,6 +47,7 @@ export interface profileInterface {
     long?: number | string;
   };
   register_step?: UserRegisterSteps;
+  show_number?: boolean;
 }
 
 interface pagination {

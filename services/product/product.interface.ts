@@ -10,6 +10,7 @@ export enum product_status {
 export enum product_specifications_option_type {
   TEXT = "text",
   DROPDOWN = "dropdown",
+  SELECT = "select",
   RANGE = "range",
   DATE = "date",
   CHECKBOX = "checkbox",
@@ -181,6 +182,11 @@ export interface ProductBrand {
   deleted_by?: string;
   created_at: Date;
   updated_at: Date;
+} 
+
+export interface ProductBrandPagination {
+  pagination: pagination;
+  brands: ProductBrand[];
 }
 
 export interface ProductCategoriesInterface {

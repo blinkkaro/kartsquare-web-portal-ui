@@ -22,6 +22,8 @@ interface ServiceDetailsGridProps {
   isUpdating?: boolean;
   status?: string | null;
   haveSlots?: boolean;
+  showNumber?: boolean;
+  onShowNumberToggle?: (checked: boolean) => void;
 }
 
 const ServiceDetailsGrid = ({
@@ -34,6 +36,8 @@ const ServiceDetailsGrid = ({
   isUpdating = false,
   status = "",
   haveSlots = false,
+  showNumber = false,
+  onShowNumberToggle,
 }: ServiceDetailsGridProps) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";

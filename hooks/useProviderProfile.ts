@@ -77,7 +77,7 @@ export const useProviderProfileByUsername = (username: string) => {
   });
 };
 
-export const useFollowProvider = (userId: string) => {
+export const useFollowProvider = (userId: string, username?: string) => {
   const queryClient = useQueryClient();
   const queryKey = ["providerProfile", userId];
 
@@ -173,16 +173,36 @@ export const useFollowProvider = (userId: string) => {
         );
       }
 
-      // Update reels and posts caches
       queryClient.setQueriesData({ queryKey: ["reels"] }, updatePostInCache);
       queryClient.setQueriesData({ queryKey: ["posts"] }, updatePostInCache);
       queryClient.setQueriesData({ queryKey: ["providerPosts"] }, updatePostInCache);
       queryClient.setQueriesData({ queryKey: ["providerReels"] }, updatePostInCache);
 
+      // Snapshot supplier profile if username is provided
+      const supplierQueryKey = ["supplierProfile", username];
+      const previousSupplierData = username
+        ? queryClient.getQueryData<any>(supplierQueryKey)
+        : undefined;
+
+      // Optimistically update supplier profile
+      if (username && previousSupplierData) {
+        queryClient.setQueryData<any>(supplierQueryKey, {
+          ...previousSupplierData,
+          profile: {
+            ...previousSupplierData.profile,
+            is_following: !isFollowing,
+            followers_count: isFollowing
+              ? (previousSupplierData.profile?.followers_count || 1) - 1
+              : (previousSupplierData.profile?.followers_count || 0) + 1,
+          },
+        });
+      }
+
       // Return a context object with the snapshotted values for rollback
       return {
         previousProfile,
         previousUsernameData,
+        previousSupplierData,
         previousReels,
         previousPosts,
         previousProviderPosts,
@@ -220,6 +240,12 @@ export const useFollowProvider = (userId: string) => {
           queryClient.setQueryData(key, data);
         });
       }
+      if (username && context?.previousSupplierData) {
+        queryClient.setQueryData(
+          ["supplierProfile", username],
+          context.previousSupplierData,
+        );
+      }
     },
 
     onSettled: () => {
@@ -232,6 +258,9 @@ export const useFollowProvider = (userId: string) => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       queryClient.invalidateQueries({ queryKey: ["providerPosts"] });
       queryClient.invalidateQueries({ queryKey: ["providerReels"] });
+      if (username) {
+        queryClient.invalidateQueries({ queryKey: ["supplierProfile", username] });
+      }
     },
   });
 };

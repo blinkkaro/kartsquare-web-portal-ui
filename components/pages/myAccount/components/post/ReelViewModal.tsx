@@ -73,7 +73,7 @@ const ReelCommentSection = ({
   const handleProfileClick = () => {
     dispatch(openDrawer({
       userId: post.user.id,
-      role: post.user.role as AppUserType || AppUserType.SERVICE_PROVIDER,
+      role: post.upload_user_type,
       username: post.user.username || ''
     }));
   };

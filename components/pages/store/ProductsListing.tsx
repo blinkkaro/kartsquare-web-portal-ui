@@ -439,7 +439,7 @@ const ProductsListingView: React.FC = () => {
               <ArrowBack />
             </IconButton>
 
-            <Box sx={{ flex: 1 }}>
+            {/* <Box sx={{ flex: 1 }}>
               <TextField
                 fullWidth
                 placeholder="Search products..."
@@ -467,7 +467,7 @@ const ProductsListingView: React.FC = () => {
                   },
                 }}
               />
-            </Box>
+            </Box> */}
 
             {/* <IconButton
               onClick={(e) => setSortAnchor(e.currentTarget)}

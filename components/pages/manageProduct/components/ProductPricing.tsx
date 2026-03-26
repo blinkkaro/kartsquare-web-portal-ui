@@ -13,7 +13,7 @@ import {
   TextField,
 } from "@mui/material";
 import Input from "@/components/common/Input";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useGetBrands } from "@/hooks/useProducts";
 import { Info, InfoOutline } from "@mui/icons-material";
@@ -25,10 +25,12 @@ const ProductPricing = () => {
     register,
     control,
     formState: { errors },
-    watch,
   } = useFormContext();
   const { t } = useTranslate();
-  const subCategoryId = watch("product_sub_category_id");
+  const subCategoryId = useWatch({
+    control,
+    name: "product_sub_category_id",
+  });
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
