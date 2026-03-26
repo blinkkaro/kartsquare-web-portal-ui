@@ -42,6 +42,7 @@ import { review_type } from "@/services/providerDashboard/providerDashboard.inte
 import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
 import axios from "axios";
 import toast from "react-hot-toast";
+import GetQuoteModal from "./GetQuoteModal";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
@@ -57,6 +58,7 @@ const CustomerServiceDetails = () => {
   const dispatch = useDispatch();
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [descriptionDrawerOpen, setDescriptionDrawerOpen] = useState(false);
+  const [getQuoteModalOpen, setGetQuoteModalOpen] = useState(false);
 
   const handleBookNow = () => {
     const token = secureStorage.getItem("token");
@@ -269,12 +271,13 @@ const CustomerServiceDetails = () => {
               alignItems: "start",
               width: "100%",
               maxWidth: "100%",
+              position: "relative",
             }}
           >
             <Box
               sx={{
                 position: { xs: "static", md: "sticky" },
-                order: { xs: 1, md: 1 },
+                order: { xs: 2, md: 1 },
                 width: "100%",
                 maxWidth: "100%",
                 overflow: "hidden",
@@ -289,6 +292,7 @@ const CustomerServiceDetails = () => {
                 priceCatalogUrls={service.price_catalog_url}
                 priceItems={service.price_items}
                 currency={service.currency}
+                onGetQuote={() => setGetQuoteModalOpen(true)}
               />
               {service.service_address?.latitude &&
                 service.service_address?.longitude && (
@@ -302,7 +306,7 @@ const CustomerServiceDetails = () => {
 
             <Box
               sx={{
-                order: { xs: 2, md: 2 },
+                order: { xs: 3, md: 2 },
                 bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "white",
                 borderRadius: "16px",
                 p: { xs: 1.5, sm: 2.5, md: 3 },
@@ -501,8 +505,8 @@ const CustomerServiceDetails = () => {
                 display: "flex",
                 flexDirection: { xs: "row", lg: "column" },
                 gap: { xs: 1, sm: 2 },
-                justifyContent: { xs: "flex-start", lg: "flex-start" },
-                order: { xs: 3, md: 3 },
+                justifyContent: { xs: "flex-end", lg: "flex-start" },
+                order: { xs: 1, md: 3 },
                 pt: { xs: 0, lg: 1 },
                 mb: { xs: 2, lg: 0 },
                 width: { xs: "100%", lg: "auto" },
@@ -562,6 +566,14 @@ const CustomerServiceDetails = () => {
       >
         <ReviewDrawerContent service={service} onClose={handleReviewSubmit} />
       </RightDrawer>
+
+      <GetQuoteModal
+        open={getQuoteModalOpen}
+        onClose={() => setGetQuoteModalOpen(false)}
+        providerId={service.provider_id || ""}
+        serviceName={service.service_name || ""}
+        businessName={service.business_name || ""}
+      />
     </MainLayout>
   );
 };
