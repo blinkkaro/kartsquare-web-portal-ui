@@ -49,14 +49,11 @@ export const useAddStory = () => {
         queryClient.getQueryData<InfiniteData<StoriesListResponse>>(queryKey);
 
       const optimisticStory = {
-        ...newStory,
         story_id: Date.now().toString(),
-        user_id: profile?.id ?? "",
-        user_name: profile?.first_name ?? "",
-        user_profile_image: profile?.profile_pic ?? "",
-        media_url: newStory.media,
+        media_url: URL.createObjectURL(newStory.media),
+        caption: newStory.caption,
+        media_type: newStory.media_type,
         created_at: new Date(),
-        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000),
         is_visited: false,
       };
 
@@ -71,7 +68,6 @@ export const useAddStory = () => {
               if (index === 0) {
                 const pageStories = page.stories || [];
                 const userId = profile?.id ?? "";
-                const optimisticStoryAny = optimisticStory as any;
                 const userIndex = pageStories.findIndex(
                   (s) => s.user_id === userId
                 );
@@ -82,16 +78,19 @@ export const useAddStory = () => {
                     i === userIndex
                       ? {
                           ...s,
-                          stories: [optimisticStoryAny, ...(s.stories || [])],
+                          stories: [optimisticStory, ...(s.stories || [])],
                         }
                       : s
                   );
                 } else {
                   const newEntry = {
                     user_id: userId,
-                    user_name: profile?.user_name ?? "",
+                    user_name: profile?.first_name + " " + (profile?.last_name ?? "") || profile?.user_name || "",
                     user_profile_image: profile?.profile_pic ?? "",
-                    stories: [optimisticStoryAny],
+                    user_username: profile?.username || profile?.first_name || "",
+                    business_name: profile?.business_name || "",
+                    upload_user_type: profile?.role || "CUSTOMER",
+                    stories: [optimisticStory],
                   };
                   newStoriesList = [newEntry, ...pageStories];
                 }
