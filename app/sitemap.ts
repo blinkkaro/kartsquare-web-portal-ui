@@ -14,14 +14,9 @@ function getStaticRoutes(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/services`, lastModified: now, changeFrequency: 'daily', priority: 0.95 },
     { url: `${BASE_URL}/contactUs`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${BASE_URL}/business-listing`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${BASE_URL}/businessInfo`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${BASE_URL}/blogs`, lastModified: now, changeFrequency: 'weekly', priority: 0.85 },
     { url: `${BASE_URL}/careers`, lastModified: now, changeFrequency: 'weekly', priority: 0.6 },
     { url: `${BASE_URL}/map`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${BASE_URL}/search`, lastModified: now, changeFrequency: 'daily', priority: 0.8 },
-    { url: `${BASE_URL}/termsConditions`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${BASE_URL}/privacyPolicy`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${BASE_URL}/cookie-policy`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
   ];
 }
 
@@ -80,15 +75,13 @@ async function getServiceRoutes(): Promise<MetadataRoute.Sitemap> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [productRoutes, serviceRoutes] = await Promise.all([
-    getProductRoutes(),
+  const [ serviceRoutes] = await Promise.all([  
     getServiceRoutes(),
   ]);
 
   return [
     ...getStaticRoutes(),
     ...getBlogRoutes(),
-    ...productRoutes,
     ...serviceRoutes,
   ];
 }

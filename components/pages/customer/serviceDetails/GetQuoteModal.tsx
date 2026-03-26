@@ -21,7 +21,7 @@ import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { Close, RequestQuote } from "@mui/icons-material";
 import { TranslationKey } from "@/features/i18n/TranslationContext";
-import { countries } from "../../SignUp/components/data";
+import { countries } from "../../signUp/components/data";
 import LeadService from "@/services/leads/lead.service";
 import SuccessModel from "@/components/common/SuccessModel";
 
