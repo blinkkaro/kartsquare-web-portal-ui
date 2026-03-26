@@ -40,6 +40,9 @@ export async function generateMetadata(
         description: profile.og_description || description,
         images: profile.og_image ? [profile.og_image] : (profile.profile_pic ? [profile.profile_pic] : []),
       },
+      alternates: {
+        canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://kartsquare.com'}/in/${profile.username}`,
+      },
       other: {
         'script:ld+json': structuredData ? JSON.stringify(structuredData) : ''
       }

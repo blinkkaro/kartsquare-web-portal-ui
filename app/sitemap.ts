@@ -23,7 +23,7 @@ function getStaticRoutes(): MetadataRoute.Sitemap {
 /** Blog post URLs from static data */
 function getBlogRoutes(): MetadataRoute.Sitemap {
   return blogs.map((blog) => ({
-    url: `${BASE_URL}/blogs/${blog.id}`,
+    url: `${BASE_URL}/blogs/${blog.slug || blog.id}`,
     lastModified: blog.date ? new Date(blog.date) : new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.75,
@@ -47,8 +47,8 @@ async function getProductRoutes(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     }));
-  } catch {
-    return [];
+  } catch (error: any) {
+    return [{ url: `${BASE_URL}/error/profile/${encodeURIComponent(error.message)}`, changeFrequency: 'monthly' as const }];
   }
 }
 
@@ -63,25 +63,49 @@ async function getServiceRoutes(): Promise<MetadataRoute.Sitemap> {
     const json = await res.json();
     const services = json?.data?.services ?? json?.data ?? json?.services ?? [];
     if (!Array.isArray(services)) return [];
-    return services.slice(0, 10000).map((s: { id: string; updated_at?: string; created_at?: string }) => ({
-      url: `${BASE_URL}/services/${s.id}`,
+    return services.slice(0, 10000).map((s: { id?: string; service_id?: string; slug?: string; updated_at?: string; created_at?: string }) => ({
+      url: `${BASE_URL}/services/${s.slug || s.service_id || s.id}`,
       lastModified: s.updated_at || s.created_at ? new Date(s.updated_at || s.created_at!) : new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     }));
-  } catch {
-    return [];
+  } catch (error: any) {
+    return [{ url: `${BASE_URL}/error/profile/${encodeURIComponent(error.message)}`, changeFrequency: 'monthly' as const }];
+  }
+}
+
+/** Fetch public profiles from API */
+async function getProfileRoutes(): Promise<MetadataRoute.Sitemap> {
+  try {
+    const res = await fetch(`${API_URL}/profile/sitemap`, {
+      next: { revalidate: 3600 },
+      headers: { 'Accept': 'application/json' },
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    const profiles = json?.data ?? json ?? [];
+    if (!Array.isArray(profiles)) return [];
+    return profiles.slice(0, 20000).map((p: { username: string; updated_at?: string }) => ({
+      url: `${BASE_URL}/in/${p.username}`,
+      lastModified: p.updated_at ? new Date(p.updated_at) : new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.9,
+    }));
+  } catch (error: any) {
+    return [{ url: `${BASE_URL}/error/profile/${encodeURIComponent(error.message)}`, changeFrequency: 'monthly' as const }];
   }
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [ serviceRoutes] = await Promise.all([  
+  const [ serviceRoutes, profileRoutes ] = await Promise.all([  
     getServiceRoutes(),
+    getProfileRoutes(),
   ]);
 
   return [
     ...getStaticRoutes(),
     ...getBlogRoutes(),
     ...serviceRoutes,
+    ...profileRoutes,
   ];
 }
