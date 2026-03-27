@@ -18,8 +18,9 @@ export async function generateMetadata(
   try {
     // Need to fix typo in filename or import if 'pofileService' is typo in codebase
     // Assuming 'pofileService.ts' exports 'profileService'
-    const response = await profileService.getProviderProfileByUsername(username);
+    const response = await profileService.getUnifiedProfileByUsername(username);
     const profile = response.profile;
+    const isSupplier = (profile as any).role === 'supplier';
 
     let structuredData = null;
     if (profile.structured_data) {
@@ -28,8 +29,14 @@ export async function generateMetadata(
         : profile.structured_data;
     }
 
-    const title = profile.meta_title || `${profile.first_name} ${profile.last_name} | Kartsquare`;
-    const description = profile.meta_description || profile.bio || `Check out ${profile.first_name} ${profile.last_name}'s profile on Kartsquare.`;
+    const displayName = isSupplier 
+      ? (profile as any).store_name || `${profile.first_name} ${profile.last_name}`
+      : `${profile.first_name} ${profile.last_name}`;
+
+    const title = profile.meta_title || `${displayName} | Kartsquare`;
+    const description = profile.meta_description || profile.bio || `Check out ${displayName}'s profile on Kartsquare.`;
+
+    const profilePic = isSupplier ? (profile as any).logo_url : profile.profile_pic;
 
     return {
       title: title,
@@ -38,10 +45,7 @@ export async function generateMetadata(
       openGraph: {
         title: profile.og_title || title,
         description: profile.og_description || description,
-        images: profile.og_image ? [profile.og_image] : (profile.profile_pic ? [profile.profile_pic] : []),
-      },
-      alternates: {
-        canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://kartsquare.com'}/in/${profile.username}`,
+        images: profile.og_image ? [profile.og_image] : (profilePic ? [profilePic] : []),
       },
       other: {
         'script:ld+json': structuredData ? JSON.stringify(structuredData) : ''
