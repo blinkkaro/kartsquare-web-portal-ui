@@ -49,7 +49,7 @@ const ReelContainer: React.FC<ReelContainerProps> = ({ reel, isActive, preloadHi
     return (
         <Box
             sx={{
-                height: { xs: 'calc(100vh - 56px - 60px)', sm: 'calc(100vh - 64px - 60px)', md: 'calc(100vh - 72px)' },
+                height: { xs: 'calc(100vh - 70px - 60px)', sm: 'calc(100vh - 64px - 60px)', md: 'calc(100vh - 72px)' },
                 width: '100%',
                 display: 'flex',
                 justifyContent: 'center',

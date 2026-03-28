@@ -104,16 +104,27 @@ function ReelsView() {
         <Box
             ref={containerRef}
             sx={{
-                height: { xs: 'calc(100vh - 56px - 60px)', sm: 'calc(100vh - 64px - 60px)', md: 'calc(100vh - 72px)' },
+                height: { xs: 'calc(100vh - 70px - 60px)', sm: 'calc(100vh - 64px - 60px)', md: 'calc(100vh - 72px)' },
                 overflowY: 'scroll',
                 scrollSnapType: 'y mandatory',
+                scrollBehavior: 'auto',
                 '&::-webkit-scrollbar': { display: 'none' },
                 msOverflowStyle: 'none',
                 scrollbarWidth: 'none',
             }}
         >
             {reels.map((reel, index) => (
-                <Box key={reel.id} className="reel-wrapper" data-id={reel.id} >
+                <Box
+                    key={reel.id}
+                    className="reel-wrapper"
+                    data-id={reel.id}
+                    sx={{
+                        scrollSnapAlign: 'start',
+                        scrollSnapStop: 'always',
+                        height: { xs: 'calc(100vh - 70px - 60px)', sm: 'calc(100vh - 64px - 60px)', md: 'calc(100vh - 72px)' },
+                        flexShrink: 0,
+                    }}
+                >
                     <ReelContainer
                         reel={reel}
                         isActive={activeReelId === reel.id}
