@@ -16,9 +16,10 @@ import { getMediaUrls } from '@/helper/helper';
 interface ReelContainerProps {
     reel: Posts;
     isActive: boolean;
+    preloadHint?: 'auto' | 'metadata' | 'none';
 }
 
-const ReelContainer: React.FC<ReelContainerProps> = ({ reel, isActive }) => {
+const ReelContainer: React.FC<ReelContainerProps> = ({ reel, isActive, preloadHint = 'auto' }) => {
     const urls = getMediaUrls(reel.media_urls);
     const videoUrl = urls.length > 1 ? urls[1] : urls[0];
     const [isCommentsOpen, setIsCommentsOpen] = useState(false);
@@ -48,7 +49,7 @@ const ReelContainer: React.FC<ReelContainerProps> = ({ reel, isActive }) => {
     return (
         <Box
             sx={{
-                height:'90vh',
+                height: { xs: 'calc(100vh - 56px - 60px)', sm: 'calc(100vh - 64px - 60px)', md: 'calc(100vh - 72px)' },
                 width: '100%',
                 display: 'flex',
                 justifyContent: 'center',
@@ -81,7 +82,7 @@ const ReelContainer: React.FC<ReelContainerProps> = ({ reel, isActive }) => {
                         // bgcolor: 'black',
                     }}
                 >
-                    <ReelPlayer videoUrl={videoUrl} isActive={isActive} isPaused={isDrawerOpen} />
+                    <ReelPlayer videoUrl={videoUrl} isActive={isActive} isPaused={isDrawerOpen} preload={preloadHint} />
                     
                     <ReelOverlay
                         userName={reel.user.business_name || `${reel.user.first_name} ${reel.user.last_name}`}

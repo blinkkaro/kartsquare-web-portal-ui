@@ -68,6 +68,10 @@ function SignUpView() {
     if (leadDetailsQuery.data) {
       setInitialData((prev) => ({
         ...prev,
+        // Prefill phone number from the verified WhatsApp number
+        phone_number: leadDetailsQuery.data.whatsapp_number || "",
+        country_code: leadDetailsQuery.data.whatsapp_country_code || "",
+        // Keep whatsapp fields in sync too (used for registration payload)
         whatsapp_number: leadDetailsQuery.data.whatsapp_number || "",
         whatsapp_country_code:
           leadDetailsQuery.data.whatsapp_country_code || "",

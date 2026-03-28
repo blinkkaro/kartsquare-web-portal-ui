@@ -55,7 +55,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 }) => {
   const { t } = useTranslate();
   const [showPassword, setShowPassword] = useState(false);
-  const [isSameAsPhone, setIsSameAsPhone] = useState(false);
+  // const [isSameAsPhone, setIsSameAsPhone] = useState(false);
   const birthDateRef = useRef<HTMLInputElement>(null);
 
   // Calculate max date (13 years ago)
@@ -119,23 +119,23 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
     (c) => c.phone_code === whatsappCountryCode,
   );
 
-  React.useEffect(() => {
-    if (isSameAsPhone) {
-      setValue("phone_number", whatsappNumber || "");
-      setValue("country_code", whatsappCountryCode || "");
-    }
-  }, [isSameAsPhone, whatsappNumber, whatsappCountryCode, setValue]);
+  // React.useEffect(() => {
+  //   if (isSameAsPhone) {
+  //     setValue("phone_number", whatsappNumber || "");
+  //     setValue("country_code", whatsappCountryCode || "");
+  //   }
+  // }, [isSameAsPhone, whatsappNumber, whatsappCountryCode, setValue]);
 
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsSameAsPhone(event.target.checked);
-    if (event.target.checked) {
-      setValue("phone_number", whatsappNumber || "");
-      setValue("country_code", whatsappCountryCode || "");
-    } else {
-      setValue("phone_number", "");
-      setValue("country_code", "+91");
-    }
-  };
+  // const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setIsSameAsPhone(event.target.checked);
+  //   if (event.target.checked) {
+  //     setValue("phone_number", whatsappNumber || "");
+  //     setValue("country_code", whatsappCountryCode || "");
+  //   } else {
+  //     setValue("phone_number", "");
+  //     setValue("country_code", "+91");
+  //   }
+  // };
 
   const isServiceProvider = role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER;
 
@@ -240,9 +240,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           />
         </Grid>
 
-        {/* WhatsApp Number */}
-
-        {isServiceProvider && (
+        {/* WhatsApp Number — hidden, number is used to prefill phone field */}
+        {/* {isServiceProvider && (
           <Grid size={{ xs: 12, sm: 6 }}>
             <Typography
               variant="body2"
@@ -255,7 +254,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
               {t("whatsapp_number")}*
             </Typography>
             <Box sx={{ display: "flex", gap: 1 }}>
-              {/* Country Code Selector */}
               <Box
                 sx={{
                   width: { sm: "70px", lg: "95px", md: "105px" },
@@ -266,19 +264,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                   control={control}
                   select
                   disabled={!!initialData?.whatsapp_country_code}
-                  InputProps={{
-                    sx: {
-                      "& .MuiSelect-select": {
-                        paddingLeft: "8px !important",
-                        paddingRight: "24px !important",
-                      },
-                    },
-                    // startAdornment: (
-                    //   <InputAdornment position="start" sx={{ mr: 0.5 }}>
-                    //     {selectedWhatsappCountry?.flag}
-                    //   </InputAdornment>
-                    // ),
-                  }}
                 >
                   {countries.map((option) => (
                     <MenuItem key={option.code} value={option.phone_code}>
@@ -293,19 +278,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                   control={control}
                   placeholder="98765 43210"
                   type="tel"
-                  InputProps={{
-                    readOnly: !!initialData?.whatsapp_number,
-                  }}
-                  inputProps={{
-                    maxLength: 10,
-                    inputMode: "numeric",
-                    pattern: "[0-9]*",
-                  }}
+                  InputProps={{ readOnly: !!initialData?.whatsapp_number }}
+                  inputProps={{ maxLength: 10, inputMode: "numeric", pattern: "[0-9]*" }}
                 />
               </Box>
             </Box>
           </Grid>
-        )}
+        )} */}
         {/* Phone Number */}
         <Grid size={{ xs: 12, sm: 6 }}>
           <Box
@@ -325,17 +304,15 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             >
               {t("phone_number")}*
             </Typography>
-            {isServiceProvider && (
+            {/* Same-as-WhatsApp checkbox removed — phone is prefilled from lead */}
+            {/* {isServiceProvider && (
               <FormControlLabel
                 control={
                   <Checkbox
                     checked={isSameAsPhone}
                     onChange={handleCheckboxChange}
                     size="small"
-                    sx={{
-                      padding: 0,
-                      mr: 1,
-                    }}
+                    sx={{ padding: 0, mr: 1 }}
                   />
                 }
                 label={
@@ -345,7 +322,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 }
                 sx={{ margin: 0 }}
               />
-            )}
+            )} */}
           </Box>
           <Box sx={{ display: "flex", gap: 1 }}>
             <Box
@@ -357,10 +334,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 name="country_code"
                 control={control}
                 select
+                disabled={!!initialData?.phone_number}
                 InputProps={{
-                  readOnly: isSameAsPhone,
                   sx: {
-                    bgcolor: isSameAsPhone
+                    bgcolor: initialData?.phone_number
                       ? "rgba(0, 0, 0, 0.05)"
                       : "transparent",
                     "& .MuiSelect-select": {
@@ -368,11 +345,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                       paddingRight: "24px !important",
                     },
                   },
-                  // startAdornment: (
-                  //   <InputAdornment position="start" sx={{ mr: 0.5 }}>
-                  //     {selectedCountry?.flag}
-                  //   </InputAdornment>
-                  // ),
                 }}
               >
                 {countries.map((option) => (
@@ -389,9 +361,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 placeholder="98765 43210"
                 type="tel"
                 InputProps={{
-                  readOnly: isSameAsPhone,
+                  readOnly: !!initialData?.phone_number,
                   sx: {
-                    bgcolor: isSameAsPhone
+                    bgcolor: initialData?.phone_number
                       ? "rgba(0, 0, 0, 0.05)"
                       : "transparent",
                   },

@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Box, CircularProgress, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { postServices } from '../../../services/post/postServices';
 import { Posts } from '../../../services/post/postInterfaces';
@@ -15,20 +15,35 @@ function ReelsView() {
     const reels = data?.pages.flatMap((page) => page.posts) || [];
     const [activeReelId, setActiveReelId] = useState<string | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const sentinelRef = useRef<HTMLDivElement | null>(null);
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
     const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
+    // Compute active index for preload hints
+    const activeIndex = reels.findIndex((r) => r.id === activeReelId);
+
+    const getPreloadHint = useCallback(
+        (index: number): 'auto' | 'metadata' | 'none' => {
+            if (index === activeIndex) return 'auto';
+            if (Math.abs(index - activeIndex) === 1) return 'metadata';
+            return 'none';
+        },
+        [activeIndex],
+    );
+
+    // Set first reel as active on initial load
     useEffect(() => {
         if (reels.length > 0 && !activeReelId) {
             setActiveReelId(reels[0].id);
         }
     }, [reels, activeReelId]);
 
+    // Intersection observer for active reel detection
     useEffect(() => {
         const observerOptions = {
             root: containerRef.current,
-            threshold: 0.8, // Reel is considered active when 80% visible
+            threshold: 0.8,
         };
 
         const observer = new IntersectionObserver((entries) => {
@@ -46,6 +61,27 @@ function ReelsView() {
             reelElements?.forEach((el) => observer.unobserve(el));
         };
     }, [reels]);
+
+    // Infinite scroll sentinel observer (properly managed)
+    useEffect(() => {
+        const sentinel = sentinelRef.current;
+        if (!sentinel || !hasNextPage || isFetchingNextPage) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    fetchNextPage();
+                }
+            },
+            { threshold: 0.1 },
+        );
+
+        observer.observe(sentinel);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     const loadingView = () => {
         return (
@@ -68,38 +104,30 @@ function ReelsView() {
         <Box
             ref={containerRef}
             sx={{
-                height: '90vh',
+                height: { xs: 'calc(100vh - 56px - 60px)', sm: 'calc(100vh - 64px - 60px)', md: 'calc(100vh - 72px)' },
                 overflowY: 'scroll',
                 scrollSnapType: 'y mandatory',
-                // bgcolor: 'black',
                 '&::-webkit-scrollbar': { display: 'none' },
                 msOverflowStyle: 'none',
                 scrollbarWidth: 'none',
-                mt: isDesktop ? 2 : 0,
             }}
         >
-            {reels.map((reel) => (
+            {reels.map((reel, index) => (
                 <Box key={reel.id} className="reel-wrapper" data-id={reel.id} >
-                    <ReelContainer reel={reel} isActive={activeReelId === reel.id} />
+                    <ReelContainer
+                        reel={reel}
+                        isActive={activeReelId === reel.id}
+                        preloadHint={getPreloadHint(index)}
+                    />
                 </Box>
             ))}
             {hasNextPage && (
                 <Box 
+                  ref={sentinelRef}
                   sx={{ 
                     display: 'flex', 
                     justifyContent: 'center', 
-                    // p: 4, 
                     scrollSnapAlign: 'start' 
-                  }}
-                  ref={(el: HTMLDivElement | null) => {
-                    if (el && hasNextPage && !isFetchingNextPage) {
-                        const observer = new IntersectionObserver((entries) => {
-                            if (entries[0].isIntersecting) {
-                                fetchNextPage();
-                            }
-                        });
-                        observer.observe(el);
-                    }
                   }}
                 >
                     <CircularProgress color="inherit" />
@@ -120,7 +148,6 @@ function ReelsView() {
             theme.palette.mode === "dark"
               ? COLORS.BACKGROUND.PAPER_DARK
               : COLORS.BACKGROUND.PAPER_LIGHT,
-          // more breathing room at bottom on mobile
         }}
       >
         <Nav />

@@ -16,7 +16,7 @@ import CombinedFeaturedSection from "./components/CombinedFeaturedSection";
 import StoriesSection from "./components/StoriesSection";
 import PostCard from "./components/PostCard";
 import AdCard from "./components/AdCard";
-import { useGetInfinitePosts } from "@/hooks/usePosts";
+import { useGetInfinitePosts, usePrefetchReels } from "@/hooks/usePosts";
 import { useGetInfiniteAds } from "@/hooks/useAdvertisements";
 import Blogs from "./components/Blogs";
 import TopSuggestions from "./components/TopSuggestions";
@@ -28,6 +28,9 @@ import { AdvertiseActiveAd } from "@/services/advertise/advertise.intreface";
 import { seededRandom } from "@/helper/helper";
 
 function HomeView() {
+  // Prefetch reels data so it's ready when user navigates to Reels page
+  usePrefetchReels();
+
   const {
     data: postsData,
     isLoading: postsLoading,

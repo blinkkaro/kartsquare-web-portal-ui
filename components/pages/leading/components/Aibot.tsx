@@ -196,7 +196,7 @@ const Aibot: React.FC = () => {
   };
 
   return (
-    <Box sx={{ position: "fixed", bottom: 24, left: 24, zIndex: 1300 }}>
+    <Box>
       {/* AI Assistance Tooltip (visible when closed) */}
       <AnimatePresence>
         {!isOpen && (

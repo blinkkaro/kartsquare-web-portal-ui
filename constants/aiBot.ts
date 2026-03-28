@@ -8,18 +8,19 @@ export const shouldShowAIBot = (
   userRole?: AppUserType | null,
   appAIServiceConfig?: AIServiceConfigResponse | null,
 ): boolean => {
-  return true;
+  if (AI_BOT_ENABLED_ROUTES.includes(currentPath)) {
+    return true;
+  }
+  return false;
   if (!appAIServiceConfig?.is_active) {
     return false;
   }
 
-  if (userRole === AppUserType.SERVICE_PROVIDER) {
+  if (userRole === AppUserType.SERVICE_PROVIDER || userRole === AppUserType.SUPPLIER) {
     return false;
   }
 
-  if (AI_BOT_ENABLED_ROUTES.includes(currentPath)) {
-    return true;
-  }
+  
 
   return false;
 };
