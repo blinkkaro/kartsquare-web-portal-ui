@@ -89,7 +89,7 @@ const StoreView: React.FC = () => {
     hasNextPage,
     isFetchingNextPage,
     isLoading: brandsLoading,
-  } = useGetAllBrands("", showAllBrands ? 12 : 5);
+  } = useGetAllBrands("", 15); // Use a fixed limit for stability
   
   const allBrands = brandsData?.pages.flatMap((page: any) => {
     if (Array.isArray(page)) return page;
@@ -1305,7 +1305,7 @@ const StoreView: React.FC = () => {
               </CommonButton>
             </Box>
             <Grid container spacing={3}>
-              {allBrands.map((brand, index) => {
+              {(showAllBrands ? allBrands : allBrands.slice(0, 5)).map((brand, index) => {
                 const isLast = index === allBrands.length - 1;
                 return (
                   <Grid
