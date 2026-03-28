@@ -6,7 +6,7 @@ import { useTranslate } from "@/hooks/useTranslate";
 import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
 import { GuestLoginFormData } from "../guestLogin.schema";
-import { countries } from "../../../pages/signUp/components/data";
+import { countries } from "@/components/pages/SignUp/components/data";
 
 interface GuestFormViewProps {
   control: Control<GuestLoginFormData>;

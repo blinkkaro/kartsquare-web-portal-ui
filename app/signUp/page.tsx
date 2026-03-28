@@ -1,4 +1,4 @@
-import SignUpView from "@/components/pages/signUp";
+import SignUpView from "@/components/pages/SignUp";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
