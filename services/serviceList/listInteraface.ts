@@ -46,6 +46,8 @@ export interface Service {
   deleted_at: string | null;
   is_deleted: boolean;
   provider_phone_number: string;
+  provider_whatsapp_country_code: string;
+  provider_whatsapp_number: string;
 
   // Joined fields
   provider_name: string;

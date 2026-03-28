@@ -25,6 +25,9 @@ export interface StoriesList {
   user_id: string;
   user_name: string;
   user_profile_image: string;
+  user_username: string;
+  business_name: string;
+  upload_user_type: string;
   stories: StoryItem[];
 }
 

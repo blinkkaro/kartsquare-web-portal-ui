@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Input from "@/components/common/Input";
-import { countries } from "@/components/pages/SignUp/components/data";
+import { countries } from "@/data/countries";
 import { useLeadVerification } from "@/hooks/useLeadVerification";
 import VerificationModal from "./VerificationModal";
 import ErrorMessage from "@/components/common/ErrorMessage";

@@ -1,49 +1,54 @@
 "use client";
 import React from "react";
 import { Box, Button, useTheme } from "@mui/material";
-import { ShoppingCart, CalendarMonth } from "@mui/icons-material";
+import { ShoppingCart, CalendarMonth, WhatsApp } from "@mui/icons-material";
 import { COLORS } from "../../../../constants/colors";
 import { english } from "../../../../features/i18n/en";
-import { color } from "framer-motion";
 
 interface CustomerServiceActionsProps {
-  onAddToCart: () => void;
+  onAddToCart?: () => void;
   onBookNow: () => void;
+  onWhatsApp?: () => void;
+  showWhatsApp?: boolean;
 }
 
 const CustomerServiceActions = ({
   onAddToCart,
   onBookNow,
+  onWhatsApp,
+  showWhatsApp,
 }: CustomerServiceActionsProps) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
   return (
     <Box sx={{ display: "flex", gap: 2, mb: 1, py: 1 }}>
-      {/* <Button
-                variant="contained"
-                onClick={onAddToCart}
-                startIcon={<ShoppingCart sx={{ fontSize: '1.2rem !important' }} />}
-                sx={{
-                    flex: 1,
-                    bgcolor: isDark ? "rgba(255, 255, 255, 0.1)" : "#1A1A1A",
-                    color: "white",
-                    borderRadius: "30px",
-                    px: 3,
-                    py: 1.2,
-                    textTransform: "none",
-                    fontWeight: 700,
-                    letterSpacing: "0.02em",
-                    "&:hover": {
-                        bgcolor: isDark ? "rgba(255, 255, 255, 0.15)" : "#000000",
-                        transform: "translateY(-1px)",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
-                    },
-                    transition: "all 0.2s ease-in-out"
-                }}
-            >
-                {english.add_to_cart || "Add to Cart"}
-            </Button> */}
+      {showWhatsApp && (
+        <Button
+          variant="outlined"
+          fullWidth
+          onClick={onWhatsApp}
+          startIcon={<WhatsApp sx={{ fontSize: "1.2rem !important" }} />}
+          sx={{
+            flex: 1,
+            color: "#25D366",
+            borderColor: "#25D366",
+            borderRadius: "30px",
+            px: 3,
+            py: 1.2,
+            textTransform: "none",
+            fontWeight: 700,
+            letterSpacing: "0.02em",
+            "&:hover": {
+              borderColor: "#1EBE5D",
+              bgcolor: "rgba(37, 211, 102, 0.08)",
+            },
+            transition: "all 0.2s ease-in-out",
+          }}
+        >
+          WhatsApp
+        </Button>
+      )}
       <Button
         variant="contained"
         fullWidth
@@ -51,8 +56,6 @@ const CustomerServiceActions = ({
         startIcon={<CalendarMonth sx={{ fontSize: "1.2rem !important" }} />}
         sx={{
           flex: 1,
-          /* bgcolor: COLORS.PRIMARY_PURPLE,
-          color: "white", */
           bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
           color: "white",
           borderRadius: "30px",
@@ -62,10 +65,8 @@ const CustomerServiceActions = ({
           fontWeight: 700,
           letterSpacing: "0.02em",
           "&:hover": {
-            /* bgcolor: COLORS.PURPLE_HOVER, */
             bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
             transform: "translateY(-1px)",
-            /* boxShadow: `0 4px 12px ${COLORS.PRIMARY_PURPLE}40`, */
             boxShadow: `0 4px 12px ${
               isDark
                 ? `${COLORS.ACCENT_BLUE_BG_DARK}40`

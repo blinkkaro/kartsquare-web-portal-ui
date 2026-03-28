@@ -105,3 +105,23 @@ export const useUpdateProductStatus = () => {
     },
   });
 };
+
+export const useGetAllBrands = (search?: string, limit: number = 10) => {
+  return useInfiniteQuery({
+    queryKey: ["all-brands", search, limit],
+    queryFn: async ({ pageParam = 1 }) => {
+      return await productService.getAllBrands(search, limit, pageParam);
+    },
+    getNextPageParam: (lastPage: any, allPages) => {
+      if (Array.isArray(lastPage)) {
+        return lastPage.length === limit ? allPages.length + 1 : undefined;
+      }
+      if (!lastPage || !lastPage.pagination) return undefined;
+      const { page, totalPages } = lastPage.pagination;
+      return page < totalPages ? page + 1 : undefined;
+    },
+    initialPageParam: 1,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
+};

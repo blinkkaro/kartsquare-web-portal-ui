@@ -21,7 +21,9 @@ const NavLink = styled(Link)(({ theme }) => ({
   textDecoration: "none",
   fontSize: "0.875rem",
   fontWeight: 500,
-  transition: "color 0.2s ease-in-out",
+  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+  padding: "0.4rem 0.75rem",
+  borderRadius: "8px",
 }));
 
 interface DesktopNavLinksProps {
@@ -56,8 +58,18 @@ const DesktopNavLinks: React.FC<DesktopNavLinksProps> = ({
                   ? COLORS.TEXT.PRIMARY_DARK
                   : COLORS.TEXT.PRIMARY_LIGHT,
             fontWeight: currentPath === item.href ? 600 : 500,
+            backgroundColor:
+              currentPath === item.href
+                ? isDark
+                  ? "rgba(100, 181, 246, 0.08)"
+                  : "rgba(106, 27, 154, 0.06)"
+                : "transparent",
             "&:hover": {
               color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+              backgroundColor: isDark
+                ? "rgba(100, 181, 246, 0.12)"
+                : "rgba(106, 27, 154, 0.08)",
+              transform: "translateY(-2px)",
             },
           }}
         >

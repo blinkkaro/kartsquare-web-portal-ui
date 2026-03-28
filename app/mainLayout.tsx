@@ -8,7 +8,6 @@ import ProfileDrawer from "@/components/common/ProfileDrawer";
 import Ai from "@/components/common/Ai";
 import AIBotton from "@/components/common/Ai/AIBotton";
 import LoginModal from "@/components/common/loginModel";
-import { useRouter } from "next/navigation";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -56,10 +55,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
           }}
         >
           {children}
-          {/* <AIBotton setOpen={setOpen} /> */}
+          <AIBotton setOpen={setOpen} />
         </Box>
         <ProfileDrawer />
-        {/* <Ai open={open} onClose={() => setOpen(false)} /> */}
+        <Ai open={open} onClose={() => setOpen(false)} />
       </Box>
       <LoginModal />
       <Footer />

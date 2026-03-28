@@ -78,6 +78,26 @@ export const useDeleteProfile = () => {
   });
 };
 
+export const useUpdateShowNumber = () => {
+  const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
+
+  return useMutation({
+    mutationFn: (show_number: boolean) =>
+      profileService.updateShowNumber(show_number),
+    onSuccess: (updatedProfile) => {
+      // Invalidate React Query cache
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+
+      // Update Redux state with the updated profile
+      dispatch(updateUser(updatedProfile as any));
+    },
+    onError: (error: any) => {
+      throw error;
+    },
+  });
+};
+
 export const usePosts = (isOpen: boolean) => {
   const user: User = secureStorage.getItem("user_details");
   const userId = user.id;

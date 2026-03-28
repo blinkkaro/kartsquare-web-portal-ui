@@ -38,7 +38,7 @@ export const productSchema = (t: TFunction) =>
     product_sub_category_id: yup
       .string()
       .required(t("productSubCategoryRequired")),
-    product_brand_id: yup.string().optional(),
+    product_brand_id: yup.string().nullable().optional(),
     product_name: yup
       .string()
       .trim()

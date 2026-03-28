@@ -196,32 +196,33 @@ const Aibot: React.FC = () => {
   };
 
   return (
-    <Box sx={{ position: "relative" }}>
+    <Box sx={{ position: "fixed", bottom: 24, left: 24, zIndex: 1300 }}>
       {/* AI Assistance Tooltip (visible when closed) */}
       <AnimatePresence>
         {!isOpen && (
           <motion.div
             initial={{ opacity: 0, x: 20, scale: 0.8 }}
-            animate={{ 
-              opacity: 1, 
-              x: 0, 
+            animate={{
+              opacity: 1,
+              x: 0,
               scale: 1,
               y: [0, -8, 0], // Floating bounce effect
             }}
             exit={{ opacity: 0, x: 20, scale: 0.8 }}
-            transition={{ 
+            transition={{
               opacity: { duration: 0.2 },
-              y: { 
-                repeat: Infinity, 
-                duration: 3, 
-                ease: "easeInOut" 
-              } 
+              y: {
+                repeat: Infinity,
+                duration: 3,
+                ease: "easeInOut"
+              }
             }}
             style={{
               position: "absolute",
-              right: 80,
-              bottom: 12,
-              pointerEvents: "none"
+              left: 70,
+              bottom: 8,
+              pointerEvents: "none",
+              whiteSpace: "nowrap"
             }}
           >
             <Paper
@@ -239,20 +240,20 @@ const Aibot: React.FC = () => {
                 "&::after": {
                   content: '""',
                   position: "absolute",
-                  right: -6,
-                  bottom: 8,
+                  left: -8,
+                  bottom: 14,
                   width: 12,
                   height: 12,
                   bgcolor: "white",
                   transform: "rotate(45deg)",
-                  borderRight: "1px solid rgba(136, 0, 255, 0.1)",
-                  borderTop: "1px solid rgba(136, 0, 255, 0.1)",
+                  borderLeft: "1px solid rgba(136, 0, 255, 0.1)",
+                  borderBottom: "1px solid rgba(136, 0, 255, 0.1)",
                 }
               }}
             >
-              <Typography 
-                variant="body2" 
-                sx={{ 
+              <Typography
+                variant="body2"
+                sx={{
                   fontWeight: 600,
                   fontFamily: "Plus Jakarta Sans",
                   fontSize: "13px",
@@ -296,8 +297,8 @@ const Aibot: React.FC = () => {
             transition={{ duration: 0.3, ease: "easeOut" }}
             style={{
               position: "absolute",
-              bottom: 80,
-              right: 0,
+              bottom: 70,
+              left: 0,
               zIndex: 1000,
             }}
           >
@@ -387,7 +388,7 @@ const Aibot: React.FC = () => {
                 {messages.map((msg) => (
                   <MessageBubble key={msg.id} message={msg} />
                 ))}
-                
+
                 {isTyping && (
                   <Box sx={{ display: "flex", gap: 1, alignItems: "center", color: "#8800FF", mb: 2 }}>
                     <CircularProgress size={12} color="inherit" />

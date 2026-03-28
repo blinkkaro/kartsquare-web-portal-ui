@@ -25,7 +25,7 @@ export const blogs: BlogPost[] = [
     "author": "kartsquare Team",
     "date": "2026-03-20",
     "category": "General",
-    "coverImage": "https://kartsquare-document.s3.ap-south-1.amazonaws.com/documents/5ad5f430-fe4d-46a8-af01-6c71ddf8e749.png",
+    "coverImage": "https://kartsquare-document.s3.ap-south-1.amazonaws.com/documents/03732433-f9a8-405f-b927-3bd3ec85e840.jpg",
     "metaTitle": "What is KartSquare? | India's Leading Home Service Marketplace",
     "metaDescription": "Learn how KartSquare connects you with verified plumbers, electricians, beauticians, and tutors in India. Explore services, pricing, and how to book instantly.",
     "tags": [
@@ -61,7 +61,7 @@ export const blogs: BlogPost[] = [
     "author": "kartsquare Team",
     "date": "2026-03-20",
     "category": "General",
-    "coverImage": "https://kartsquare-document.s3.ap-south-1.amazonaws.com/documents/f8a33488-2864-4d96-85a5-d766cb0444e4.png",
+    "coverImage": "https://kartsquare-document.s3.ap-south-1.amazonaws.com/documents/f37d1b35-9d3e-4ced-b2ca-84484ea1955c.jpg",
     "metaTitle": "Step-by-Step Guide to Booking Home Services | KartSquare",
     "metaDescription": "Learn how to book home repairs, cleaning, and beauty services on KartSquare. Follow our simple tutorial for a seamless online booking experience.",
     "tags": [

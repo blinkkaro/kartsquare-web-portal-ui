@@ -13,7 +13,7 @@ import {
   Slider,
   InputLabel,
 } from "@mui/material";
-import { useFormContext, Controller } from "react-hook-form";
+import { useFormContext, Controller, useWatch } from "react-hook-form";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useGetProductSpecifications } from "@/hooks/useProducts";
 import { product_specifications_option_type } from "@/services/product/product.interface";
@@ -22,25 +22,31 @@ import { COLORS } from "@/constants/colors";
 const ProductSpecifications = () => {
   const {
     control,
-    watch,
     formState: { errors },
     setValue,
   } = useFormContext();
   const { t } = useTranslate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
-  const subCategoryId = watch("product_sub_category_id");
+  const subCategoryId = useWatch({
+    control,
+    name: "product_sub_category_id",
+  });
+  const currentFormSpecs = useWatch({
+    control,
+    name: "specifications",
+  });
   const { data: specifications } = useGetProductSpecifications(subCategoryId);
 
   // Initialize specifications array when subcategory changes or schema is fetched
   useEffect(() => {
     if (specifications && Array.isArray(specifications)) {
-      const currentFormSpecs = watch("specifications") || [];
+      const currentFormSpecsList = currentFormSpecs || [];
 
       // Map through backend specifications to ensure metadata is present for all
       const mergedSpecs = specifications.map((schemaSpec) => {
         // Find if we already have a value for this spec in the form
-        const existingVal = currentFormSpecs.find(
+        const existingVal = currentFormSpecsList.find(
           (s: any) =>
             s.product_specifications_id ===
             schemaSpec.product_specifications_id,
@@ -60,18 +66,18 @@ const ProductSpecifications = () => {
 
       // ONLY update if there's a meaningful change to avoid infinite loops
       // We check if the IDs or the number of specs changed, or if we are initializing empty values
-      const currentIds = currentFormSpecs
+      const currentIds = currentFormSpecsList
         .map((s: any) => s.product_specifications_id)
         .join(",");
       const newIds = mergedSpecs
         .map((s: any) => s.product_specifications_id)
         .join(",");
 
-      if (currentIds !== newIds || currentFormSpecs.length === 0) {
+      if (currentIds !== newIds || currentFormSpecsList.length === 0) {
         setValue("specifications", mergedSpecs);
       }
     }
-  }, [specifications, setValue, watch]); // Removed subCategoryId to focus on the data fetched for it
+  }, [specifications, setValue, currentFormSpecs]);
 
   if (
     !specifications ||
@@ -137,8 +143,10 @@ const ProductSpecifications = () => {
                     />
                   )}
 
-                  {spec.product_specifications_option_type ===
-                    product_specifications_option_type.DROPDOWN && (
+                  {(spec.product_specifications_option_type ===
+                    product_specifications_option_type.DROPDOWN ||
+                    spec.product_specifications_option_type ===
+                      product_specifications_option_type.SELECT) && (
                     <Select
                       {...field}
                       value={

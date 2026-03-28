@@ -20,9 +20,9 @@ import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { Message as MessageIcon, Phone } from "@mui/icons-material";
 import { TranslationKey } from "@/features/i18n/TranslationContext";
-import { countries } from "@/components/pages/SignUp/components/data";
-import LeadService from "@/services/leads/lead.service";
+import { countries } from "@/data/countries";
 import SuccessModel from "@/components/common/SuccessModel";
+import LeadService from "@/services/leads/lead.service";
 
 const MotionBox = motion(Box) as any;
 

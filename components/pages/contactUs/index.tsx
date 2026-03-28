@@ -24,7 +24,7 @@ import Image from "next/image";
 import ProfileWrapper from "@/components/common/profile/profileWrapper";
 import contactUsService from "@/services/contantUs/contactUs.service";
 import { TranslationKey } from "@/features/i18n/TranslationContext";
-import { countries } from "@/components/pages/SignUp/components/data";
+import { countries } from "@/data/countries";
 import SuccessModel from "@/components/common/SuccessModel";
 import { useRouter } from "next/navigation";
 

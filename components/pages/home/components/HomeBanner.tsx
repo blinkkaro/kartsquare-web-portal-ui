@@ -19,7 +19,6 @@ const HomeBanner = () => {
                 width: "100%",
                 position: "relative",
                 borderRadius: 4,
-                overflow: "hidden",
                 bgcolor: "#1a1a1a",
                 color: "white",
                 minHeight: { xs: 260, md: 320 }, // Further reduced height
@@ -36,6 +35,8 @@ const HomeBanner = () => {
                     left: 0,
                     right: 0,
                     bottom: 0,
+                    borderRadius: "inherit",
+                    overflow: "hidden",
                     backgroundImage: `url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000')`, // More modern office/team image
                     backgroundSize: "cover",
                     backgroundPosition: "center",
