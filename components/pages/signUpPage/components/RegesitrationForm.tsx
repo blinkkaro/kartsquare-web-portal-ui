@@ -96,16 +96,21 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
     if (initialData.first_name) setValue("first_name", initialData.first_name);
     if (initialData.last_name) setValue("last_name", initialData.last_name);
     if (initialData.email) setValue("email", initialData.email);
-    if (initialData.phone_number) setValue("phone_number", initialData.phone_number);
-    if (initialData.country_code) setValue("country_code", initialData.country_code);
+    if (initialData.phone_number)
+      setValue("phone_number", initialData.phone_number);
+    if (initialData.country_code)
+      setValue("country_code", initialData.country_code);
     if (initialData.country) setValue("country", initialData.country);
     if (initialData.birth_date) {
       // Convert ISO date string to YYYY-MM-DD format for the date input
       setValue("birth_date", initialData.birth_date.split("T")[0]);
     }
-    if (initialData.gender) setValue("gender", initialData.gender as SignUpFormData["gender"]);
-    if (initialData.whatsapp_number) setValue("whatsapp_number", initialData.whatsapp_number);
-    if (initialData.whatsapp_country_code) setValue("whatsapp_country_code", initialData.whatsapp_country_code);
+    if (initialData.gender)
+      setValue("gender", initialData.gender as SignUpFormData["gender"]);
+    if (initialData.whatsapp_number)
+      setValue("whatsapp_number", initialData.whatsapp_number);
+    if (initialData.whatsapp_country_code)
+      setValue("whatsapp_country_code", initialData.whatsapp_country_code);
   }, [initialData, setValue]);
 
   const selectedCountryCode = watch("country_code");
@@ -137,7 +142,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   //   }
   // };
 
-  const isServiceProvider = role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER;
+  const isServiceProvider =
+    role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER;
 
   return (
     <Box
@@ -407,199 +413,90 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           />
         </Grid>
 
-        {!isServiceProvider && (
-          <>
-            {/* Country */}
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Typography
-                variant="body2"
-                sx={{
-                  mb: 1,
-                  fontWeight: 500,
-                  fontSize: { lg: "0.875rem", xl: "1rem" },
-                }}
-              >
-                {t("country")}*
-              </Typography>
-              <Input
-                name="country"
-                control={control}
-                select
-                placeholder="Select Country"
-                SelectProps={{
-                  renderValue: (selected: any) => {
-                    const country = countries.find((c) => c.name === selected);
-                    return (
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <span style={{ marginRight: 8 }}>{country?.flag}</span>
-                        {selected}
-                      </Box>
-                    );
-                  },
-                }}
-              >
-                {countries.map((option) => (
-                  <MenuItem key={option.code} value={option.name}>
-                    <span style={{ marginRight: 8 }}>{option.flag}</span>{" "}
-                    {option.name}
-                  </MenuItem>
-                ))}
-              </Input>
-            </Grid>
-            {/* Gender */}
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Typography
-                variant="body2"
-                sx={{
-                  mb: 1,
-                  fontWeight: 500,
-                  fontSize: { lg: "0.875rem", xl: "1rem" },
-                }}
-              >
-                {t("gender")}
-              </Typography>
-              <Input
-                name="gender"
-                control={control}
-                select
-                SelectProps={{
-                  displayEmpty: true,
-                  renderValue: (selected: any) => {
-                    if (!selected) {
-                      return (
-                        <Typography color="textSecondary">
-                          {t("select_gender")}*
-                        </Typography>
-                      );
-                    }
-                    const genderOptions: Record<string, string> = {
-                      MALE: t("male"),
-                      FEMALE: t("female"),
-                      OTHER: t("other"),
-                      PREFER_NOT_TO_SAY: t("prefer_not_to_say"),
-                    };
-                    return genderOptions[selected] || selected;
-                  },
-                }}
-                startIcon={gender === "MALE" ? <MaleIcon /> : <FemaleIcon />}
-              >
-                <MenuItem value="MALE">{t("male")}</MenuItem>
-                <MenuItem value="FEMALE">{t("female")}</MenuItem>
-                <MenuItem value="OTHER">{t("other")}</MenuItem>
-                <MenuItem value="PREFER_NOT_TO_SAY">
-                  {t("prefer_not_to_say")}
-                </MenuItem>
-              </Input>
-            </Grid>
-          </>
-        )}
-
-        {isServiceProvider && (
+        <>
+          {/* Country */}
           <Grid size={{ xs: 12, sm: 6 }}>
-            <Grid container spacing={1}>
-              {/* Country */}
-              <Grid size={{ xs: 6 }}>
-                <Typography
-                  variant="body2"
-                  noWrap
-                  sx={{
-                    mb: 1,
-                    fontWeight: 500,
-                    fontSize: { lg: "0.875rem", xl: "1rem" },
-                  }}
-                >
-                  {t("country")}*
-                </Typography>
-                <Input
-                  name="country"
-                  control={control}
-                  select
-                  placeholder="Select"
-                  SelectProps={{
-                    renderValue: (selected: any) => {
-                      const country = countries.find(
-                        (c) => c.name === selected,
-                      );
-                      return (
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <span style={{ marginRight: 8 }}>
-                            {country?.flag}
-                          </span>
-                          <Box
-                            component="span"
-                            sx={{
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
-                            {selected}
-                          </Box>
-                        </Box>
-                      );
-                    },
-                  }}
-                >
-                  {countries.map((option) => (
-                    <MenuItem key={option.code} value={option.name}>
-                      <span style={{ marginRight: 8 }}>{option.flag}</span>{" "}
-                      {option.name}
-                    </MenuItem>
-                  ))}
-                </Input>
-              </Grid>
-              {/* Gender */}
-              <Grid size={{ xs: 6 }}>
-                <Typography
-                  variant="body2"
-                  noWrap
-                  sx={{
-                    mb: 1,
-                    fontWeight: 500,
-                    fontSize: { lg: "0.875rem", xl: "1rem" },
-                  }}
-                >
-                  {t("gender")}
-                </Typography>
-                <Input
-                  name="gender"
-                  control={control}
-                  select
-                  SelectProps={{
-                    displayEmpty: true,
-                    renderValue: (selected: any) => {
-                      if (!selected) {
-                        return (
-                          <Typography
-                            color="textSecondary"
-                            sx={{ fontSize: "0.8rem" }}
-                          >
-                            {t("select")}*
-                          </Typography>
-                        );
-                      }
-                      const genderOptions: Record<string, string> = {
-                        MALE: t("male"),
-                        FEMALE: t("female"),
-                        OTHER: t("other"),
-                        PREFER_NOT_TO_SAY: t("prefer"),
-                      };
-                      return genderOptions[selected] || selected;
-                    },
-                  }}
-                  startIcon={gender === "MALE" ? <MaleIcon /> : <FemaleIcon />}
-                >
-                  <MenuItem value="MALE">{t("male")}</MenuItem>
-                  <MenuItem value="FEMALE">{t("female")}</MenuItem>
-                  <MenuItem value="OTHER">{t("other")}</MenuItem>
-                  <MenuItem value="PREFER_NOT_TO_SAY">
-                    {t("prefer_not_to_say")}
-                  </MenuItem>
-                </Input>
-              </Grid>
-            </Grid>
+            <Typography
+              variant="body2"
+              sx={{
+                mb: 1,
+                fontWeight: 500,
+                fontSize: { lg: "0.875rem", xl: "1rem" },
+              }}
+            >
+              {t("country")}*
+            </Typography>
+            <Input
+              name="country"
+              control={control}
+              select
+              placeholder="Select Country"
+              SelectProps={{
+                renderValue: (selected: any) => {
+                  const country = countries.find((c) => c.name === selected);
+                  return (
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <span style={{ marginRight: 8 }}>{country?.flag}</span>
+                      {selected}
+                    </Box>
+                  );
+                },
+              }}
+            >
+              {countries.map((option) => (
+                <MenuItem key={option.code} value={option.name}>
+                  <span style={{ marginRight: 8 }}>{option.flag}</span>{" "}
+                  {option.name}
+                </MenuItem>
+              ))}
+            </Input>
           </Grid>
-        )}
+          {/* Gender */}
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                mb: 1,
+                fontWeight: 500,
+                fontSize: { lg: "0.875rem", xl: "1rem" },
+              }}
+            >
+              {t("gender")}
+            </Typography>
+            <Input
+              name="gender"
+              control={control}
+              select
+              SelectProps={{
+                displayEmpty: true,
+                renderValue: (selected: any) => {
+                  if (!selected) {
+                    return (
+                      <Typography color="textSecondary">
+                        {t("select_gender")}*
+                      </Typography>
+                    );
+                  }
+                  const genderOptions: Record<string, string> = {
+                    MALE: t("male"),
+                    FEMALE: t("female"),
+                    OTHER: t("other"),
+                    PREFER_NOT_TO_SAY: t("prefer_not_to_say"),
+                  };
+                  return genderOptions[selected] || selected;
+                },
+              }}
+              startIcon={gender === "MALE" ? <MaleIcon /> : <FemaleIcon />}
+            >
+              <MenuItem value="MALE">{t("male")}</MenuItem>
+              <MenuItem value="FEMALE">{t("female")}</MenuItem>
+              <MenuItem value="OTHER">{t("other")}</MenuItem>
+              <MenuItem value="PREFER_NOT_TO_SAY">
+                {t("prefer_not_to_say")}
+              </MenuItem>
+            </Input>
+          </Grid>
+        </>
       </Grid>
       <Typography
         variant="body1"
