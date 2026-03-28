@@ -127,7 +127,7 @@ function EmailVerificationView() {
     if (role === AppUserType.CUSTOMER) {
       router.push(`/login?role=customer`);
     } else {
-      router.push(`/freeListing`);
+      router.push(`/business-listing`);
     }
 
   };

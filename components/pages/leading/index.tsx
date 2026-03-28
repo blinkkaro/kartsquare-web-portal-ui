@@ -94,7 +94,7 @@ function ListingView() {
         </ScrollReveal>
       </Box>
       {/* 9. Aibot - AI Chatbot */}
-      <Box sx={{ position: "fixed", bottom: {xs: 100, md: 30}, right: {xs: 20, md: 30}, zIndex: 1000 }}>
+      <Box sx={{ position: "fixed", bottom: {xs: 100, md: 30}, left: {xs: 20, md: 30}, zIndex: 1000 }}>
         <Aibot />
       </Box>
     </Box>

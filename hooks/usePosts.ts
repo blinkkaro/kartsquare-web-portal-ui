@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { GetPostsParams } from "@/services/post/postInterfaces";
 import { postServices } from "@/services/post/postServices";
 import {
@@ -327,4 +328,16 @@ export const useGetReels = () => {
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
   });
+};
+
+export const usePrefetchReels = () => {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    queryClient.prefetchInfiniteQuery({
+      queryKey: ["reels"],
+      queryFn: ({ pageParam }) => postServices.getReels(10, pageParam),
+      initialPageParam: undefined as string | undefined,
+    });
+  }, [queryClient]);
 };
