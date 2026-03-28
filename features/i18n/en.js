@@ -184,6 +184,7 @@ export const english = {
   logout: "Logout",
   myPosts: "My Posts",
   myPackage: "My Package",
+  marketing_tools: "Marketing tools",
   affiliateProducts: "Affiliate Products",
   bankInfo: "Bank Info.",
   myDocuments: "My Documents",

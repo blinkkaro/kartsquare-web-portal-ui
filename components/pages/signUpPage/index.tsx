@@ -8,7 +8,6 @@ import { SignUpFormData } from "./signUpSchema";
 import { registerUser } from "@/features/ui/authSlice";
 import { AppUserType, RegisterData } from "@/services/auth/auth.interface";
 import Error from "@/components/common/ErrorMessage";
-import RegistrationForm from "./components/RegesitrationForm";
 import { Box, Link, Typography } from "@mui/material";
 import NextLink from "next/link";
 
@@ -17,6 +16,7 @@ import { useLeadVerification } from "@/hooks/useLeadVerification";
 import { useQuery } from "@tanstack/react-query";
 import { authService } from "@/services/auth/auth.service";
 import { secureStorage } from "@/helper/SecureStorage";
+import RegistrationForm from "./components/RegesitrationForm";
 
 function SignUpView() {
   const { t } = useTranslate();

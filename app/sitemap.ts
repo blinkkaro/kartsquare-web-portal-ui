@@ -37,12 +37,12 @@ async function getProductRoutes(): Promise<MetadataRoute.Sitemap> {
       next: { revalidate: 3600 },
       headers: { 'Accept': 'application/json' },
     });
-    if (!res.ok) return [];
+    if (!res.ok) return [{ url: `${BASE_URL}/error/products/${res.status}`, changeFrequency: 'monthly' as const }];
     const json = await res.json();
-    const products = json?.data?.products ?? json?.data ?? json?.products ?? [];
+    const products = json?.data?.products ?? json?.data ?? json?.products ?? (Array.isArray(json) ? json : []);
     if (!Array.isArray(products)) return [];
-    return products.slice(0, 10000).map((p: { id: string; updated_at?: string; created_at?: string }) => ({
-      url: `${BASE_URL}/store/product/${p.id}`,
+    return products.slice(0, 10000).map((p: { id?: string; product_id?: string; updated_at?: string; created_at?: string }) => ({
+      url: `${BASE_URL}/store/product/${p.product_id || p.id}`,
       lastModified: p.updated_at || p.created_at ? new Date(p.updated_at || p.created_at!) : new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
@@ -55,16 +55,15 @@ async function getProductRoutes(): Promise<MetadataRoute.Sitemap> {
 /** Fetch service URLs from API */
 async function getServiceRoutes(): Promise<MetadataRoute.Sitemap> {
   try {
-    const res = await fetch(`${API_URL}/services?limit=5000`, {
+    const res = await fetch(`${API_URL}/services?limit=100`, {
       next: { revalidate: 3600 },
       headers: { 'Accept': 'application/json' },
     });
-    if (!res.ok) return [];
     const json = await res.json();
-    const services = json?.data?.services ?? json?.data ?? json?.services ?? [];
+    const services = json?.data?.services ?? json?.data ?? json?.services ?? (Array.isArray(json) ? json : []);
     if (!Array.isArray(services)) return [];
     return services.slice(0, 10000).map((s: { id?: string; service_id?: string; slug?: string; updated_at?: string; created_at?: string }) => ({
-      url: `${BASE_URL}/services/${s.slug || s.service_id || s.id}`,
+      url: `${BASE_URL}/services/${s.service_id}`,
       lastModified: s.updated_at || s.created_at ? new Date(s.updated_at || s.created_at!) : new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
@@ -81,9 +80,9 @@ async function getProfileRoutes(): Promise<MetadataRoute.Sitemap> {
       next: { revalidate: 3600 },
       headers: { 'Accept': 'application/json' },
     });
-    if (!res.ok) return [];
+    if (!res.ok) return [{ url: `${BASE_URL}/error/profiles/${res.status}`, changeFrequency: 'monthly' as const }];
     const json = await res.json();
-    const profiles = json?.data ?? json ?? [];
+    const profiles = json?.data?.profiles ?? json?.data ?? json?.profiles ?? (Array.isArray(json) ? json : []);
     if (!Array.isArray(profiles)) return [];
     return profiles.slice(0, 20000).map((p: { username: string; updated_at?: string }) => ({
       url: `${BASE_URL}/in/${p.username}`,
@@ -97,7 +96,8 @@ async function getProfileRoutes(): Promise<MetadataRoute.Sitemap> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [ serviceRoutes, profileRoutes ] = await Promise.all([  
+  const [ productRoutes, serviceRoutes, profileRoutes ] = await Promise.all([  
+    getProductRoutes(),
     getServiceRoutes(),
     getProfileRoutes(),
   ]);
@@ -105,6 +105,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...getStaticRoutes(),
     ...getBlogRoutes(),
+    ...productRoutes,
     ...serviceRoutes,
     ...profileRoutes,
   ];

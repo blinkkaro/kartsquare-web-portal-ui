@@ -36,7 +36,7 @@ function Profile({ profile }: { profile: profileInterface }) {
   };
   const handleCopy = () => {
     navigator.clipboard.writeText(
-      `${window.location.origin}/in/${profile?.username}`
+      `${window.location.origin}/in/${profile?.username}`,
     );
     setCopied(true);
     setTimeout(() => {
@@ -76,7 +76,7 @@ function Profile({ profile }: { profile: profileInterface }) {
           height: 200,
         }}
       />
-      
+
       <Box
         sx={{
           mt: -20,
@@ -143,8 +143,16 @@ function Profile({ profile }: { profile: profileInterface }) {
             {role !== "CUSTOMER" ? t("followers") : t("following")}
           </Button>
 
-          {(role === AppUserType.SERVICE_PROVIDER) && (
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 2, gap: 1 }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              mt: 2,
+              gap: 1,
+            }}
+          >
+            {role === AppUserType.SERVICE_PROVIDER && (
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <FormControlLabel
                   control={
@@ -161,7 +169,9 @@ function Profile({ profile }: { profile: profileInterface }) {
                   }
                 />
               </Box>
-
+            )}
+            {(role === AppUserType.SERVICE_PROVIDER ||
+              role === AppUserType.SUPPLIER) && (
               <IconButton
                 sx={{
                   bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#F5F5F7",
@@ -179,8 +189,9 @@ function Profile({ profile }: { profile: profileInterface }) {
                   alt="share"
                 />
               </IconButton>
-            </Box>
-          )}
+            )}
+          </Box>
+
           {copied && (
             <Typography variant="body2" sx={{ ml: 1, mt: 1 }}>
               {t("copied")}!
