@@ -98,7 +98,7 @@ function VerifyDocumentsView() {
 
 
     dispatch(logout());
-    router.push(`/freeListing`);
+    router.push(`/business-listing`);
   };
 
   const handleImageSelect = (field: string, file: File) => {

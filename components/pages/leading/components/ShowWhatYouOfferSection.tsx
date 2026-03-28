@@ -219,7 +219,7 @@ const ShowWhatYouOfferSection = () => {
                 </Typography>
                 <Button
                   component={Link}
-                  href="/freeListing"
+                  href="/business-listing"
                   variant="contained"
                   endIcon={<ArrowForwardIcon sx={{ fontSize: 20 }} />}
                   sx={{
@@ -350,7 +350,7 @@ const ShowWhatYouOfferSection = () => {
                     </Typography>
                     <Button
                       component={Link}
-                      href="/freeListing"
+                      href="/business-listing"
                       endIcon={<ArrowForwardIcon sx={{ fontSize: 16 }} />}
                       sx={{
                         color: PURPLE,

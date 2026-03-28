@@ -57,7 +57,7 @@ function SignUpView() {
     if (role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER) {
       const busLeadId = sessionStorage.getItem("bus_lead_id");
       if (!busLeadId) {
-        router.replace("/freeListing");
+        router.replace("/business-listing");
         return;
       }
       setBusLeadId(busLeadId);
@@ -79,7 +79,7 @@ function SignUpView() {
     }
     if (leadDetailsQuery.isError) {
       console.error("Failed to fetch lead info", leadDetailsQuery.error);
-      router.replace("/freeListing");
+      router.replace("/business-listing");
     }
   }, [
     leadDetailsQuery.data,
