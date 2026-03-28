@@ -93,7 +93,7 @@ export const myAccountNav = (
       },
     ];
   } else {
-    if(role === "SUPPLIER"){
+    if (role === "SUPPLIER") {
       return [
         {
           label: t("postReel"),
