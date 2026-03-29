@@ -64,6 +64,12 @@ const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ productId }) =>
               id: apiProd.supplier_id,
               username: apiProd.supplier?.username,
             },
+            whatsapp_number:
+              apiProd.supplier?.whatsapp_number ||
+              apiProd.supplier?.primary_mobile ||
+              apiProd.supplier?.contact_phone ||
+              "",
+            whatsapp_country_code: apiProd.supplier?.country_code || "91",
           };
           setProduct(mappedProduct);
 
@@ -95,6 +101,12 @@ const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ productId }) =>
                 logo: sim.supplier?.logo_url,
                 id: sim.supplier_id || "",
               },
+              whatsapp_number:
+                sim.supplier?.whatsapp_number ||
+                sim.supplier?.primary_mobile ||
+                sim.supplier?.contact_phone ||
+                "",
+              whatsapp_country_code: sim.supplier?.country_code || "91",
               supplier_id: sim.supplier_id || "",
             }));
             setSimilarProducts(mappedSimilar);

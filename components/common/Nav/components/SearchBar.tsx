@@ -119,7 +119,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             : COLORS.BACKGROUND.PRIMARY_LIGHT,
         padding: "0.2rem",
         borderRadius: "25px",
-        width: "20rem",
+        width: { md: "14rem", lg: "18rem", xl: "22rem" },
       }}
     >
       <InputBase

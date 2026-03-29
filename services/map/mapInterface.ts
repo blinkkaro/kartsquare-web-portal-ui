@@ -65,6 +65,7 @@ export interface MapStoreDetails {
 export interface MapStoreItem {
   supplier_id: string;
   store_details: MapStoreDetails;
+  store_address: MapStoreAddress;
 }
 
 export interface MapDetailsPagination {

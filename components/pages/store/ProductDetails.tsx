@@ -68,7 +68,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     setAnimatingContact(`whatsapp-${product.id}`);
     setTimeout(() => {
       const cleanPhone =
-        `${product.whatsapp_country_code}${product.whatsapp_number}`.replace(
+        `${product.whatsapp_country_code || "91"}${product.whatsapp_number || ""}`.replace(
           /\D/g,
           "",
         );

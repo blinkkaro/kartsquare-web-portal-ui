@@ -11,7 +11,12 @@ import {
   Chip,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import { OpenInFull, Star, Verified, HomeRepairService } from "@mui/icons-material";
+import {
+  OpenInFull,
+  Star,
+  Verified,
+  HomeRepairService,
+} from "@mui/icons-material";
 import { calculateDistance } from "@/helper/helper";
 import { useAutoGeolocation } from "@/hooks/useGeolocation";
 import { LocationOn } from "@mui/icons-material";
@@ -99,7 +104,9 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
         boxShadow: selected
           ? `0 20px 40px -12px ${accentColor}30, 0 8px 16px -8px ${accentColor}20`
           : "0 10px 30px -10px rgba(0, 0, 0, 0.12), 0 4px 10px -5px rgba(0, 0, 0, 0.04)",
-        border: selected ? `2px solid ${accentColor}` : "1px solid rgba(0,0,0,0.04)",
+        border: selected
+          ? `2px solid ${accentColor}`
+          : "1px solid rgba(0,0,0,0.04)",
         transition: "box-shadow 0.3s ease, border-color 0.3s ease",
         "&:hover": {
           boxShadow: `0 20px 40px -12px ${accentColor}25, 0 8px 16px -8px ${accentColor}15`,
@@ -122,8 +129,44 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
       />
 
       <CardContent
-        sx={{ p: isSmall ? 1.5 : 2.5, "&:last-child": { pb: isSmall ? 1.5 : 2.5 } }}
+        sx={{
+          p: isSmall ? 1.5 : 2.5,
+          "&:last-child": { pb: isSmall ? 1.5 : 2.5 },
+        }}
       >
+        {getDistance() && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              mb: .5,
+            }}
+          >
+            <Box
+              sx={{
+                bgcolor: "rgba(0,0,0,0.03)",
+                px: 1,
+                py: 0.25,
+                borderRadius: "20px",
+              }}
+            >
+              <LocationOn
+                sx={{ fontSize: 14, color: COLORS.TEXT.SECONDARY_LIGHT }}
+              />
+              <Typography
+                variant="caption"
+                sx={{
+                  fontWeight: 600,
+                  color: COLORS.TEXT.SECONDARY_LIGHT,
+                  fontSize: "0.7rem",
+                }}
+              >
+                {getDistance()}
+              </Typography>
+            </Box>
+          </Box>
+        )}
         <Box sx={{ display: "flex", gap: 1.5 }}>
           <Box sx={{ position: "relative" }}>
             <Box
@@ -172,7 +215,14 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
                 >
                   {service.service_name}
                 </Typography>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.25 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    mt: 0.25,
+                  }}
+                >
                   <Typography
                     variant="caption"
                     sx={{
@@ -269,47 +319,30 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
                 gap: 1,
               }}
             >
-              <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
-                <Typography
-                  variant="subtitle2"
-                  sx={{ fontWeight: 800, color: COLORS.TEXT.PRIMARY_LIGHT }}
-                >
-                  {service.currency} {service.price}
-                </Typography>
-                <Typography variant="caption" sx={{ color: COLORS.TEXT.SECONDARY_LIGHT }}>
-                  / hr
-                </Typography>
-              </Box>
+              {/*
 
-              {getDistance() && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 0.5,
-                    bgcolor: "rgba(0,0,0,0.03)",
-                    px: 1,
-                    py: 0.25,
-                    borderRadius: "20px",
-                  }}
-                >
-                  <LocationOn sx={{ fontSize: 14, color: COLORS.TEXT.SECONDARY_LIGHT }} />
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      fontWeight: 600,
-                      color: COLORS.TEXT.SECONDARY_LIGHT,
-                      fontSize: "0.7rem",
-                    }}
-                  >
-                    {getDistance()}
-                  </Typography>
-                </Box>
-              )}
+            <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{ fontWeight: 800, color: COLORS.TEXT.PRIMARY_LIGHT }}
+              >
+                {service.currency} {service.price}
+              </Typography>
+              <Typography variant="caption" sx={{ color: COLORS.TEXT.SECONDARY_LIGHT }}>
+                / hr
+              </Typography>
+            </Box>
+            */}
             </Box>
 
             {!isSmall && (
-              <Box sx={{ mt: 1.5, pt: 1.5, borderTop: "1px dashed rgba(0,0,0,0.08)" }}>
+              <Box
+                sx={{
+                  mt: 1.5,
+                  pt: 1.5,
+                  borderTop: "1px dashed rgba(0,0,0,0.08)",
+                }}
+              >
                 <Typography
                   variant="caption"
                   sx={{
@@ -323,7 +356,10 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
                   <HomeRepairService sx={{ fontSize: 14, opacity: 0.6 }} />
                   {service.category_name}
                   {service.sub_category_name && (
-                    <Box component="span" sx={{ opacity: 0.4 }}> • </Box>
+                    <Box component="span" sx={{ opacity: 0.4 }}>
+                      {" "}
+                      •{" "}
+                    </Box>
                   )}
                   {service.sub_category_name}
                 </Typography>

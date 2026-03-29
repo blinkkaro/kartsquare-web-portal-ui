@@ -14,6 +14,8 @@ import { ShoppingBag, LocationOn, Verified } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import { useRouter } from "next/navigation";
 import type { MapStoreItem } from "@/services/map/mapInterface";
+import { useAutoGeolocation } from "@/hooks/useGeolocation";
+import { calculateDistance } from "@/helper/helper";
 
 const STORE_ACCENT = COLORS.PRIMARY_BLUE;
 const MotionCard = motion(Card);
@@ -33,6 +35,7 @@ const StoreCard: React.FC<StoreCardProps> = ({
 }) => {
   const theme = useTheme();
   const router = useRouter();
+  const { coordinates } = useAutoGeolocation();
   const isSmall = size === "small";
   const details = store.store_details;
   const address = details?.store_address;
@@ -51,6 +54,24 @@ const StoreCard: React.FC<StoreCardProps> = ({
     .join(", ");
 
   const bannerUrl = details?.banner_url;
+
+    const getDistance = () => {
+      if (
+        coordinates?.latitude &&
+        coordinates?.longitude &&
+        address?.latitude &&
+        address?.longitude
+      ) {
+        const dist = calculateDistance(
+          coordinates.latitude,
+          coordinates.longitude,
+          address?.latitude,
+          address?.longitude,
+        );
+        return `${dist.toFixed(1)} km`;
+      }
+      return null;
+    };
 
   return (
     <MotionCard
@@ -125,6 +146,39 @@ const StoreCard: React.FC<StoreCardProps> = ({
       )}
 
       <CardContent sx={{ p: isSmall ? 1.5 : 2.5, "&:last-child": { pb: isSmall ? 1.5 : 2.5 } }}>
+        {getDistance() && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              mb: .5,
+            }}
+          >
+            <Box
+              sx={{
+                bgcolor: "rgba(0,0,0,0.03)",
+                px: 1,
+                py: 0.25,
+                borderRadius: "20px",
+              }}
+            >
+              <LocationOn
+                sx={{ fontSize: 14, color: COLORS.TEXT.SECONDARY_LIGHT }}
+              />
+              <Typography
+                variant="caption"
+                sx={{
+                  fontWeight: 600,
+                  color: COLORS.TEXT.SECONDARY_LIGHT,
+                  fontSize: "0.7rem",
+                }}
+              >
+                {getDistance()}
+              </Typography>
+            </Box>
+          </Box>
+        )}
         <Box sx={{ display: "flex", gap: 1.5, alignItems: isSmall ? "center" : "flex-start", mt: bannerUrl && !isSmall ? -4 : 0 }}>
           <Box sx={{ position: "relative", zIndex: 1 }}>
             <Box

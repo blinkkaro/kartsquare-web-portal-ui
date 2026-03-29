@@ -22,9 +22,15 @@ import { secureStorage } from "@/helper/SecureStorage";
 const ActionsContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: "0.5rem",
+  gap: "0.25rem",
   [theme.breakpoints.up("md")]: {
-    gap: "1rem",
+    gap: "0.5rem",
+  },
+  [theme.breakpoints.up("lg")]: {
+    gap: "0.75rem",
+  },
+  [theme.breakpoints.up("xl")]: {
+    gap: "1.5rem",
   },
 }));
 

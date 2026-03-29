@@ -6,10 +6,16 @@ import { NavItem } from "../../../../constants/navRoutes";
 
 const NavLinksContainer = styled(Box)(({ theme }) => ({
   display: "none",
-  gap: "2rem",
+  gap: "0.75rem",
   alignItems: "center",
   [theme.breakpoints.up("md")]: {
     display: "flex",
+  },
+  [theme.breakpoints.up("lg")]: {
+    gap: ".25rem",
+  },
+  [theme.breakpoints.up("xl")]: {
+    gap: ".5rem",
   },
 }));
 
