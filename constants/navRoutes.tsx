@@ -66,11 +66,6 @@ export const getDesktopNavItems = (
           href: "/spr/bookings",
           icon: <Event sx={{ fontSize: 18 }} />,
         },
-        {
-          label: t("marketing_tools" as TranslationKey) || "Marketing Tools",
-          href: "/spr/marketing-tools",
-          icon: <Campaign sx={{ fontSize: 18 }} />,
-        },
       ];
     case UserRole.CUSTOMER:
       return [
@@ -110,11 +105,6 @@ export const getDesktopNavItems = (
           label: t("enquiries"),
           href: "/sup/orders",
           icon: <Chat sx={{ fontSize: 18 }} />,
-        },
-        {
-          label: t("marketing_tools" as TranslationKey) || "Marketing Tools",
-          href: "/supplier/marketing-tools",
-          icon: <Campaign sx={{ fontSize: 18 }} />,
         },
       ];
     default:
@@ -177,11 +167,6 @@ export const getMobileNavItems = (
           href: "/sup/orders",
           icon: <ShoppingBag />,
         },
-        {
-          label: t("marketing_tools" as TranslationKey) || "Marketing Tools",
-          href: "/supplier/marketing-tools",
-          icon: <Campaign />,
-        },
       ];
     }
 
@@ -206,11 +191,6 @@ export const getMobileNavItems = (
           label: t("dashboard"),
           href: "/dashboard",
           icon: <Dashboard />,
-        },
-        {
-          label: t("marketing_tools" as TranslationKey) || "Marketing Tools",
-          href: "/spr/marketing-tools",
-          icon: <Campaign />,
         },
       );
     } else {
