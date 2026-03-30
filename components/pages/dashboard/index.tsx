@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Box, Grid, Typography, useTheme } from "@mui/material";
+import { Box, Card, CardActionArea, CardContent, Grid, Typography, useTheme } from "@mui/material";
+import { Campaign } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { useTranslate } from "@/hooks/useTranslate";
 import { COLORS } from "@/constants/colors";
@@ -17,6 +18,7 @@ import RecentTransactions from "./components/RecentTransactions";
 import { useProviderDashboard } from "@/hooks/useProviderDashboard";
 import { useSupplierDashboard } from "@/hooks/useSupplierDashboard";
 import ProviderBookingDetailsDrawer from "../provider/bookings/ProviderBookingDetailsDrawer";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 
 function DashboardView() {
   const theme = useTheme();
@@ -48,7 +50,7 @@ function DashboardView() {
     const token = secureStorage.getItem("token");
 
     if (!token) {
-      router.push("/selectRole");
+      router.push("/login");
       return;
     }
 
@@ -60,9 +62,10 @@ function DashboardView() {
 
   if (isLoading) {
     return (
-      <Box sx={{ py: { xs: 2, md: 3 } }}>
-        <Typography variant="h4">{t("loading")}</Typography>
-      </Box>
+      <CenteredLoader
+        minHeight="400px"
+        showText={true}
+      />
     );
   }
 
@@ -96,18 +99,103 @@ function DashboardView() {
 
   return (
     <Box sx={{ py: { xs: 2, md: 3 }, mx: { xs: 2, md: 3, lg: 10, xl: 20 } }}>
-      {/* Dashboard Title */}
-      <Typography
-        variant="h4"
+      {/* Header row: Title + Tools */}
+      <Box
         sx={{
-          fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
-          fontWeight: 600,
-          color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+          display: "flex",
+          alignItems: { xs: "flex-start", sm: "center" },
+          justifyContent: "space-between",
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 2,
           mb: { xs: 3, md: 4 },
         }}
       >
-        {t("dashboard")}
-      </Typography>
+        <Typography
+          variant="h4"
+          sx={{
+            fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
+            fontWeight: 600,
+            color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+          }}
+        >
+          {t("dashboard")}
+        </Typography>
+
+        {/* Quick Tools Strip */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              fontWeight: 600,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+              mr: 1,
+              display: { xs: "none", md: "block" },
+            }}
+          >
+            Tools
+          </Typography>
+
+          {/* Marketing Tools Chip */}
+          <Box
+            onClick={() =>
+              router.push(
+                role === "SUPPLIER"
+                  ? "/spr/marketing-tools"
+                  : "/spr/marketing-tools"
+              )
+            }
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              px: 2,
+              py: 1,
+              borderRadius: "999px",
+              border: `1px solid ${isDark ? "rgba(99,102,241,0.35)" : "rgba(99,102,241,0.25)"}`,
+              background: isDark
+                ? "linear-gradient(135deg, rgba(99,102,241,0.18) 0%, rgba(168,85,247,0.12) 100%)"
+                : "linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(168,85,247,0.05) 100%)",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              "&:hover": {
+                transform: "translateY(-2px)",
+                background: isDark
+                  ? "linear-gradient(135deg, rgba(99,102,241,0.28) 0%, rgba(168,85,247,0.2) 100%)"
+                  : "linear-gradient(135deg, rgba(99,102,241,0.14) 0%, rgba(168,85,247,0.1) 100%)",
+                boxShadow: "0 4px 16px rgba(99,102,241,0.2)",
+              },
+            }}
+          >
+            <Box
+              sx={{
+                width: 28,
+                height: 28,
+                borderRadius: "50%",
+                background: "linear-gradient(135deg, #6366f1, #a855f7)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <Campaign sx={{ color: "#fff", fontSize: 15 }} />
+            </Box>
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: 600,
+                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                fontSize: "0.82rem",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Marketing Tools
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
 
       <Grid container spacing={3}>
         {/* Left Column - Main Content */}
@@ -162,6 +250,7 @@ function DashboardView() {
           </Box>
         </Grid>
       </Grid>
+
     </Box>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
-import { Box, Chip, CircularProgress, useTheme } from "@mui/material";
+import { Box, Chip, useTheme } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { COLORS } from "../../../../constants/colors";
 import { Category } from "../../../../services/serviceList/listInteraface";
 import { english } from "../../../../features/i18n/en";
@@ -107,7 +108,7 @@ const ProviderCategoriesBar = ({
       }}
     >
       {categoriesLoading ? (
-        <CircularProgress size={24} />
+        <LogoLoader size={24} />
       ) : (
         <>
           <Chip

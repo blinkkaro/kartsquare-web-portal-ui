@@ -51,15 +51,17 @@ class PostServices {
     }
   }
 
-  async getPostComments(postId: string): Promise<GetPostComments> {
+  async getPostComments(
+    postId: string,
+    limit: number = 10,
+    offset: number = 0,
+  ): Promise<GetPostComments> {
     try {
-      console.log("postId", postId);
       const response = await GET<GetPostComments>(
-        `${API_ENDPOINTS.GET_POST_COMMENT(postId)}`,
+        `${API_ENDPOINTS.GET_POST_COMMENT(postId, limit, offset)}`,
         {},
         false,
       );
-      console.log("response", response);
       if (response.status !== "success") {
         throw new Error(response.message || "Failed to get post comments");
       }
@@ -108,6 +110,32 @@ class PostServices {
       return response.data;
     } catch (error: any) {
       console.log("error", error);
+      throw error;
+    }
+  }
+
+  async getReels(
+    limit: number = 10,
+    cursor?: string,
+    visibility: string = "public",
+  ): Promise<GetPostsResponse> {
+    try {
+      const params = new URLSearchParams({
+        limit: limit.toString(),
+        visibility,
+      });
+
+      if (cursor) {
+        params.append("cursor", cursor);
+      }
+      const response = await api.get<GetPostsResponse>(
+        `${API_ENDPOINTS.GET_REELS}?${params.toString()}`,
+      );
+      if (response.status !== "success") {
+        throw new Error(response.message || "Failed to get reels");
+      }
+      return response.data;
+    } catch (error) {
       throw error;
     }
   }

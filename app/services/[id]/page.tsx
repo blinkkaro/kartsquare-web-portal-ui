@@ -38,6 +38,9 @@ export async function generateMetadata({
           "",
         images: service.og_image ? [service.og_image] : service.image_urls,
       },
+      alternates: {
+        canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://kartsquare.com'}/services/${service.slug || service.service_id}`,
+      },
       other: {
         "script:ld+json": structuredData ? JSON.stringify(structuredData) : "",
       },

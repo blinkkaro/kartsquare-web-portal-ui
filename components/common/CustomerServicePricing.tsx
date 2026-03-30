@@ -6,6 +6,7 @@ import {
   useTheme,
   Dialog,
   IconButton,
+  Button,
 } from "@mui/material";
 import {
   Description,
@@ -26,6 +27,7 @@ interface CustomerServicePricingProps {
   priceCatalogUrls?: string[];
   priceItems?: ServicePriceItem[];
   currency?: string;
+  onGetQuote?: () => void;
 }
 
 const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
@@ -33,6 +35,7 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
   priceCatalogUrls,
   priceItems,
   currency = "INR",
+  onGetQuote,
 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -91,6 +94,29 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
             {t(subtitleKey)}
           </Typography>
         </Box>
+        {onGetQuote && (
+          <Box sx={{ ml: "auto", alignSelf: "center" }}>
+            <Button
+              onClick={onGetQuote}
+              sx={{
+                bgcolor: isDark ? COLORS.PRIMARY_PURPLE : COLORS.WHITE,
+                color: isDark ? COLORS.WHITE : COLORS.PRIMARY_PURPLE,
+                fontWeight: 700,
+                fontSize: "0.75rem",
+                textTransform: "none",
+                px: 2,
+                py: 0.75,
+                borderRadius: 1.5,
+                border: `1px solid ${isDark ? "transparent" : COLORS.PRIMARY_PURPLE}`,
+                "&:hover": {
+                  bgcolor: isDark ? COLORS.PURPLE_HOVER : COLORS.PURPLE_ALPHA_10,
+                },
+              }}
+            >
+              {t("getQuote") || "Get Quote"}
+            </Button>
+          </Box>
+        )}
       </Box>
     </Paper>
   );

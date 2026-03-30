@@ -18,7 +18,7 @@ interface ProfileCardProps {
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClose }) => {
-  const followMutation = useFollowProvider(profile.id);
+  const followMutation = useFollowProvider(profile.id, profile.username);
   const [isExpand, setIsExpand] = useState(false);
   const { t } = useTranslate();
   const theme = useTheme();

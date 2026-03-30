@@ -208,7 +208,7 @@ function MyAccountView() {
       <RightDrawer
         open={isPostsModalOpen}
         onClose={() => setIsPostsModalOpen(false)}
-        title={t("myPosts")}
+        title={t("postReel")}
         width={800}
       >
         <PostModel onClose={() => setIsPostsModalOpen(false)} />

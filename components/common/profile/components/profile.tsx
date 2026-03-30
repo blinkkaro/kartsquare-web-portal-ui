@@ -7,12 +7,15 @@ import {
   Paper,
   Typography,
   useTheme,
+  Switch,
+  FormControlLabel,
 } from "@mui/material";
 import React, { useState } from "react";
 import Image from "next/image";
 import Button from "@/components/common/Button";
 import { useTranslate } from "@/hooks/useTranslate";
 import { formatCount } from "@/helper/helper";
+import { useUpdateShowNumber } from "@/hooks/useProfile";
 import FollowListDrawer from "./followListDreawer";
 import { secureStorage } from "@/helper/SecureStorage";
 import { AppUserType } from "@/services/auth/auth.interface";
@@ -26,13 +29,14 @@ function Profile({ profile }: { profile: profileInterface }) {
   const handleOpen = () => setOpen((prev) => !prev);
   const role = secureStorage.getItem("role");
   const [copied, setCopied] = useState(false);
+  const { mutate: updateShowNumber } = useUpdateShowNumber();
 
   const handleDrawerClick = () => {
     setDrawerOpen((prev) => !prev);
   };
   const handleCopy = () => {
     navigator.clipboard.writeText(
-      `${window.location.origin}/in/${profile?.username}`
+      `${window.location.origin}/in/${profile?.username}`,
     );
     setCopied(true);
     setTimeout(() => {
@@ -72,7 +76,7 @@ function Profile({ profile }: { profile: profileInterface }) {
           height: 200,
         }}
       />
-      
+
       <Box
         sx={{
           mt: -20,
@@ -139,12 +143,38 @@ function Profile({ profile }: { profile: profileInterface }) {
             {role !== "CUSTOMER" ? t("followers") : t("following")}
           </Button>
 
-          {(role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER) && (
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              mt: 2,
+              gap: 1,
+            }}
+          >
+            {role === AppUserType.SERVICE_PROVIDER && (
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={profile?.show_number ?? false}
+                      onChange={(e) => updateShowNumber(e.target.checked)}
+                      color="primary"
+                    />
+                  }
+                  label={
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      {t("showNumberInServices")}
+                    </Typography>
+                  }
+                />
+              </Box>
+            )}
+            {(role === AppUserType.SERVICE_PROVIDER ||
+              role === AppUserType.SUPPLIER) && (
               <IconButton
                 sx={{
                   bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#F5F5F7",
-                  //   transform: "scaleX(-1)", // Flipping the reply icon to look like the share arrow
                 }}
                 onClick={handleCopy}
               >
@@ -159,10 +189,11 @@ function Profile({ profile }: { profile: profileInterface }) {
                   alt="share"
                 />
               </IconButton>
-            </Box>
-          )}
+            )}
+          </Box>
+
           {copied && (
-            <Typography variant="body2" sx={{ ml: 1 }}>
+            <Typography variant="body2" sx={{ ml: 1, mt: 1 }}>
               {t("copied")}!
             </Typography>
           )}

@@ -310,8 +310,7 @@ export const useServiceForm = ({
         (item) =>
           item.name.trim() &&
           item.price &&
-          parseFloat(item.price) > 0 &&
-          item.description.trim(),
+          parseFloat(item.price) > 0
       );
       if (validItems.length === 0) {
         newFieldErrors.multiple = english.at_least_one_price_item;
@@ -393,33 +392,23 @@ export const useServiceForm = ({
         return;
       }
 
-      let finalServiceName = serviceName;
-      let finalPrice = parseFloat(price) || 0;
-      let finalDesc = description;
       const validPriceItems = priceItems.filter(
         (item) =>
           item.name.trim() &&
           item.price &&
-          parseFloat(item.price) > 0 &&
-          item.description.trim(),
+          parseFloat(item.price) > 0
       );
-
-      if (pricingType === "multiple" && validPriceItems.length > 0) {
-        finalServiceName = validPriceItems[0].name.trim();
-        finalPrice = parseFloat(validPriceItems[0].price);
-        finalDesc = validPriceItems[0].description.trim();
-      }
 
       console.log('DEBUG SUBMIT - categoryIds:', categoryIds, 'subcategoryIds:', subcategoryIds);
       const requestData: any = {
         provider_id: userId,
         category_id: categoryIds,
         sub_category_id: subcategoryIds,
-        service_name: finalServiceName,
-        service_desc: finalDesc,
+        service_name: serviceName.trim(),
+        service_desc: description.trim(),
         image_urls: finalImageUrls,
-        is_price_required: pricingType === "single" ? isPriceRequired : false,
-        price: pricingType === "single" && isPriceRequired ? finalPrice : 0,
+        is_price_required: isPriceRequired,
+        price: pricingType === "single" && isPriceRequired ? parseFloat(price) || 0 : 0,
         currency: "INR",
         service_at_location: locationType,
         service_provider_address_id: selectedAddressId,
@@ -432,18 +421,15 @@ export const useServiceForm = ({
         pricing_type: pricingType,
       };
 
-      if (pricingType === "catalog") {
-        requestData.price_catalog_url = priceCatalogUrls;
-      }
-
       if (pricingType === "catalog" && priceCatalogUrls.length > 0) {
         requestData.price_catalog_url = priceCatalogUrls;
       }
+      
       if (pricingType === "multiple" && validPriceItems.length > 0) {
         requestData.price_items = validPriceItems.map((item) => ({
           service_name: item.name.trim(),
           price: parseFloat(item.price),
-          service_desc: item.description.trim(),
+          service_desc: item.description.trim() || "",
         }));
       }
 
@@ -469,10 +455,25 @@ export const useServiceForm = ({
         editService ? "Failed to update service:" : "Failed to create service:",
         err,
       );
-      setError(
-        err?.response?.data?.message ||
-          `Failed to ${editService ? "update" : "create"} service. Please try again.`,
-      );
+      
+      const errorData = err?.response?.data;
+      if (errorData?.errors && Array.isArray(errorData.errors)) {
+        const formattedErrors = errorData.errors.map((e: any) => `• ${e.message}`).join("\n");
+        setError(`Please fix the following validation errors:\n${formattedErrors}`);
+      } else {
+        setError(
+          errorData?.message ||
+            `Failed to ${editService ? "update" : "create"} service. Please try again.`,
+        );
+      }
+
+      // Scroll to the top of the drawer to ensure the user sees the error
+      setTimeout(() => {
+        const errorElement = document.getElementById("add-service-drawer-scroll-container") || document.querySelector('.MuiDrawer-paper');
+        if (errorElement) {
+          errorElement.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }, 50);
     } finally {
       setLoading(false);
       setUploadingImages(false);

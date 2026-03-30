@@ -1,3 +1,5 @@
+import { AppUserType } from "../auth/auth.interface";
+
 export enum Visibility {
   PUBLIC = "public",
   FRIENDS = "friends",
@@ -39,8 +41,10 @@ export interface Posts {
   created_at: string;
   updated_at: string;
   is_liked: boolean;
+  is_following?: boolean;
   mentions: Mention[];
   user: User;
+  upload_user_type:AppUserType
 }
 export interface GetPostsResponse {
   posts: Posts[];
@@ -53,6 +57,9 @@ interface User {
   last_name: string;
   profile_pic: string | null;
   business_name: string;
+  username?: string;
+  is_following?: boolean;
+  role?: string;
 }
 
 interface Mention {

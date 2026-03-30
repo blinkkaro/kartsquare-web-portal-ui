@@ -12,12 +12,12 @@ import {
   useTheme,
   Paper,
   MenuItem,
-  CircularProgress,
   alpha,
   Accordion,
   AccordionSummary,
   AccordionDetails,
 } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
@@ -28,7 +28,7 @@ import { ID_PROOF_TYPES } from "@/constants/common";
 import { COLORS } from "@/constants/colors";
 import { useRouter } from "next/navigation";
 import { verifyDocumentService } from "@/services/auth/verifyDocument.service";
-import { countries } from "@/components/pages/SignUp/components/data";
+import { countries } from "@/data/countries";
 import { useAppDispatch } from "@/store/hooks";
 import { updateUser } from "@/features/ui/authSlice";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
@@ -225,11 +225,7 @@ const KycStep: React.FC<KycStepProps> = ({ onBack, onNext }) => {
   };
 
   if (isLoadingKyc)
-    return (
-      <Box display="flex" justifyContent="center" py={10}>
-        <CircularProgress />
-      </Box>
-    );
+    return <CenteredLoader py={10} />;
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ pb: 4 }}>

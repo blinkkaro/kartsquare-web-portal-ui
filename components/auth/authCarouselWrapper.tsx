@@ -60,7 +60,15 @@ function AuthCarouselWrapper({
   return (
     <Grid
       container
-      sx={{ minHeight: "100vh", width: "100%", position: "relative" }}
+      sx={{
+        minHeight: "100vh",
+        width: "100%",
+        position: "relative",
+        bgcolor:
+          theme.palette.mode === "light"
+            ? COLORS.BACKGROUND.PRIMARY_LIGHT
+            : COLORS.BACKGROUND.PRIMARY_DARK,
+      }}
     >
       {/* Left Side (Carousel) */}
       {showBackButton && (
@@ -282,7 +290,16 @@ function AuthCarouselWrapper({
         </Box> */}
         <Box
           sx={{
-            background: "none",
+            background: {
+              xs:
+                theme.palette.mode === "light"
+                  ? COLORS.PURPLECYAN
+                  : COLORS.DARK_GRADIENT,
+              lg:
+                theme.palette.mode === "light"
+                  ? COLORS.BACKGROUND.PRIMARY_LIGHT
+                  : COLORS.BACKGROUND.PRIMARY_DARK,
+            },
             display: "flex",
             flexDirection: "column",
             margin: "auto",

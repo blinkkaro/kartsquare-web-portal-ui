@@ -35,7 +35,7 @@ export const myAccountNav = (
   if (role === "SERVICE_PROVIDER") {
     return [
       {
-        label: t("myPosts"),
+        label: t("postReel"),
         href: "#",
         icon: <PostAddIcon />,
         isPosts: true,
@@ -93,6 +93,49 @@ export const myAccountNav = (
       },
     ];
   } else {
+    if (role === "SUPPLIER") {
+      return [
+        {
+          label: t("postReel"),
+          href: "#",
+          icon: <PostAddIcon />,
+          isPosts: true,
+        },
+        {
+          label: t("personalInfo"),
+          href: "myAccount/personal-info",
+          icon: <PersonIcon />,
+        },
+        {
+          label: t("storeInfo"),
+          href: "myAccount/storeInfo",
+          icon: <BusinessIcon />,
+        },
+      // {
+      //   label: t("saved"),
+      //   href: "myAccount/saved",
+      //   icon: <BookmarkBorderIcon />,
+      // },
+      // {
+      //   label: t("blogs"),
+      //   href: "myAccount/blog",
+      //   icon: <ArticleOutlinedIcon />,
+      // },
+        {
+          label: t("preferences"),
+          href: "myAccount/myPreferences",
+          icon: <TuneIcon />,
+        },
+        {
+          label: t("logout"),
+          href: "#",
+          icon: <PowerSettingsNewIcon />,
+          isLogout: true,
+        },
+      ]
+    }
+      
+    
     // CUSTOMER
     return [
       {

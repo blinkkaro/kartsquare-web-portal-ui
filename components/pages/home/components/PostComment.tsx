@@ -6,10 +6,11 @@ import {
   Typography,
   IconButton,
   TextField,
-  CircularProgress,
   useTheme,
   useMediaQuery,
+  CircularProgress,
 } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { Close, Send } from "@mui/icons-material";
 import { Posts, Comment } from "@/services/post/postInterfaces";
 import { useGetPostComments, useAddPostComment } from "@/hooks/usePosts";
@@ -30,7 +31,7 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
 
   const [commentText, setCommentText] = useState("");
 
-  const { data: commentsData, isLoading } = useGetPostComments(post.id, open);
+  const { data: commentsData, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetPostComments(post.id, 10, open);
   const addCommentMutation = useAddPostComment(post.id);
 
   const handleSubmitComment = async () => {
@@ -52,7 +53,7 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
     }
   };
 
-  const comments = commentsData?.comments || [];
+  const comments = commentsData?.pages.flatMap((page) => page.comments) || [];
 
   return (
     <Modal
@@ -236,7 +237,7 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
                   height: "100%",
                 }}
               >
-                <CircularProgress size={30} />
+                <LogoLoader size={30} />
               </Box>
             ) : comments.length === 0 ? (
               <Box
@@ -314,6 +315,22 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
                     </Box>
                   </Box>
                 ))}
+                {hasNextPage && (
+                  <Box sx={{ display: "flex", justifyContent: "center", py: 1 }}>
+                    <Typography
+                      variant="caption"
+                      onClick={() => fetchNextPage()}
+                      sx={{
+                        cursor: "pointer",
+                        color: theme.palette.primary.main,
+                        fontWeight: 600,
+                        "&:hover": { textDecoration: "underline" },
+                      }}
+                    >
+                      {isFetchingNextPage ? <CircularProgress size={16} /> : "Load more comments"}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             )}
           </Box>
@@ -371,7 +388,7 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
                 }}
               >
                 {addCommentMutation.isPending ? (
-                  <CircularProgress size={20} />
+                  <LogoLoader size={20} />
                 ) : (
                   <Send fontSize="small" />
                 )}

@@ -4,7 +4,8 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ProductDetails from "./ProductDetails";
 import { storeService } from "@/services/store/store.service";
-import { Box, CircularProgress, Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { Product } from "@/hooks/useSearchSuggestions";
 
 interface ProductDetailsViewProps {
@@ -114,18 +115,7 @@ const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({ productId }) =>
   };
 
   if (loading) {
-    return (
-      <Box
-        sx={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <CenteredLoader size={60} minHeight="100vh" />;
   }
 
   return <ProductDetails product={product} onBack={handleBack} similarProducts={similarProducts} />;

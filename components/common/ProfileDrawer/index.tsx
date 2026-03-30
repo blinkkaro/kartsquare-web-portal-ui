@@ -5,13 +5,15 @@ import { closeDrawer } from "@/features/ui/profileDrawerSlice";
 import {
   useProviderProfile,
   useProviderPosts,
+  useProviderReels,
   useSupplierProfile,
 } from "@/hooks/useProviderProfile";
 import ProfileCard from "./components/ProfileCard";
 import ProfileTabs from "./components/ProfileTabs";
 import ProfilePosts from "./components/ProfilePosts";
 import ProfileServices from "./components/ProfileServices";
-import { Box, CircularProgress, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { COLORS } from "@/constants/colors";
 import ProfileDrawerWrapper from "./components/ProfileDrawerWrapper";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -21,8 +23,12 @@ import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/store/hooks";
 import axios from "axios";
 import toast from "react-hot-toast";
+import ReelFeedGrid from "../../pages/myAccount/components/post/ReelFeedGrid";
+import ReelViewModal from "../../pages/myAccount/components/post/ReelViewModal";
+import { Posts } from "@/services/post/postInterfaces";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 export function ProfileDrawer() {
   const dispatch = useDispatch();
@@ -33,6 +39,10 @@ export function ProfileDrawer() {
   const router = useRouter();
   const { token } = useAppSelector((state) => state.auth);
 
+  console.log("role", role);
+  console.log("userId", userId);
+  console.log("username", username);
+
   const isSupplier = role === AppUserType.SUPPLIER;
 
   const {
@@ -40,10 +50,6 @@ export function ProfileDrawer() {
     isLoading: providerLoading,
     error: providerError,
   } = useProviderProfile(!isSupplier ? userId : "");
-  const { data: postsData, isLoading: postsLoading } = useProviderPosts(
-    !isSupplier ? userId : "",
-  );
-
   const {
     data: supplierProfileData,
     isLoading: supplierLoading,
@@ -54,16 +60,33 @@ export function ProfileDrawer() {
   const isLoading = isSupplier ? supplierLoading : providerLoading;
   const error = isSupplier ? supplierError : providerError;
 
-  const [activeTab, setActiveTab] = useState(isSupplier ? "Products" : "Posts");
+  const effectiveUserId = isSupplier
+    ? (profile as any)?.user_id || profile?.id || userId
+    : userId;
+
+  const { data: postsData, isLoading: postsLoading } =
+    useProviderPosts(effectiveUserId);
+  const {
+    data: reelsData,
+    isLoading: reelsLoading,
+    fetchNextPage: fetchNextReels,
+    hasNextPage: hasNextReels,
+    isFetchingNextPage: isFetchingNextReels,
+  } = useProviderReels(effectiveUserId);
+
+  const [activeTab, setActiveTab] = useState("Posts");
+  const [isReelModalOpen, setIsReelModalOpen] = useState(false);
+  const [selectedReelIndex, setSelectedReelIndex] = useState(0);
 
   const allPosts = postsData?.pages.flatMap((page) => page.posts) || [];
+  const allReels = reelsData?.pages.flatMap((page) => page.posts) || [];
   const allProducts = supplierProfileData?.products || [];
 
   React.useEffect(() => {
     if (isOpen) {
-      setActiveTab(isSupplier ? "Products" : "Posts");
+      setActiveTab("Posts");
     }
-  }, [isOpen, isSupplier]);
+  }, [isOpen]);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -76,7 +99,9 @@ export function ProfileDrawer() {
     }
 
     // Attempt to get the target person ID
-    const targetUserId = isSupplier ? (profile as any)?.user_id || profile?.id : userId;
+    const targetUserId = isSupplier
+      ? (profile as any)?.user_id || profile?.id
+      : userId;
 
     if (!targetUserId) {
       toast.error("User ID not found for chatting.");
@@ -84,11 +109,15 @@ export function ProfileDrawer() {
     }
 
     try {
-      const res = await axios.post(`${API_URL}/chat/conversations`, {
-        participant2_id: targetUserId
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.post(
+        `${API_URL}/chat/conversations`,
+        {
+          participant2_id: targetUserId,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       if (res.data.status === "success") {
         dispatch(closeDrawer());
@@ -100,14 +129,19 @@ export function ProfileDrawer() {
     }
   };
 
+  const handleReelClick = (reel: Posts, index: number) => {
+    setSelectedReelIndex(index);
+    setIsReelModalOpen(true);
+  };
+
   return (
     <ProfileDrawerWrapper
       open={isOpen}
       profile={profile || undefined}
       onClose={() => dispatch(closeDrawer())}
       onChatClick={handleChatClick}
-      onLocationClick={() => { }}
-      onBookmarkClick={() => { }}
+      onLocationClick={() => {}}
+      onBookmarkClick={() => {}}
       width={700}
     >
       <Box
@@ -121,7 +155,7 @@ export function ProfileDrawer() {
       >
         {isLoading && (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-            <CircularProgress sx={{ color: COLORS.PRIMARY_PURPLE }} />
+            <LogoLoader />
           </Box>
         )}
 
@@ -154,10 +188,31 @@ export function ProfileDrawer() {
               {activeTab === "Services" && (
                 <ProfileServices userId={userId || ""} />
               )}
+              {activeTab === "Reels" && (
+                <ReelFeedGrid
+                  reels={allReels}
+                  isLoading={reelsLoading}
+                  fetchNextPage={fetchNextReels}
+                  hasNextPage={hasNextReels ?? false}
+                  isFetchingNextPage={isFetchingNextReels}
+                  onReelClick={handleReelClick}
+                />
+              )}
             </Box>
           </Box>
         )}
       </Box>
+
+      {/* Reel View Modal */}
+      <ReelViewModal
+        open={isReelModalOpen}
+        onClose={() => setIsReelModalOpen(false)}
+        reels={allReels}
+        initialIndex={selectedReelIndex}
+        fetchNextPage={fetchNextReels}
+        hasNextPage={hasNextReels}
+        isFetchingNextPage={isFetchingNextReels}
+      />
     </ProfileDrawerWrapper>
   );
 }

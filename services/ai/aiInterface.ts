@@ -61,3 +61,8 @@ export function isFailureResponse(
 ): response is AgenticSearchFailureResponse {
   return 'success' in response && response.success === false;
 }
+
+export interface AIBOTRESPONSE {
+  answer: string;
+}
+  

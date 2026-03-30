@@ -34,7 +34,7 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
       ? COLORS.TEXT.PRIMARY_DARK
       : COLORS.TEXT.PRIMARY_LIGHT,
   padding: "0.5rem",
-  transition: "all 0.2s ease-in-out",
+  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
   backgroundColor:
     theme.palette.mode === "dark"
       ? COLORS.BACKGROUND.PRIMARY_DARK
@@ -43,6 +43,8 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
   "&:hover": {
     backgroundColor: COLORS.PURPLE_ALPHA_10,
     color: COLORS.PRIMARY_PURPLE,
+    transform: "translateY(-2px)",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
   },
 }));
 
@@ -85,7 +87,7 @@ const NavActions: React.FC<NavActionsProps> = ({
     return (
       <ActionsContainer>
         {/* Mobile/Tablet Search Icon */}
-        {(isMobile || isTablet) && (
+        {/* {(isMobile || isTablet) && (
           <StyledIconButton
             size="small"
             aria-label="search"
@@ -93,7 +95,7 @@ const NavActions: React.FC<NavActionsProps> = ({
           >
             <SearchIcon fontSize="small" />
           </StyledIconButton>
-        )}
+        )} */}
         {/* Free Listing */}
 
         {/* Chat - Hide on mobile */}
@@ -152,9 +154,11 @@ const NavActions: React.FC<NavActionsProps> = ({
             width: { xs: 32, md: 36 },
             height: { xs: 32, md: 36 },
             cursor: "pointer",
-            transition: "transform 0.2s ease-in-out",
+            transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
             "&:hover": {
-              transform: "scale(1.05)",
+              transform: "scale(1.05) translateY(-2px)",
+              boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
             },
           }}
           alt="User Avatar"
@@ -218,6 +222,14 @@ const NavActions: React.FC<NavActionsProps> = ({
           alignItems: "flex-start",
           cursor: "pointer",
           position: "relative",
+          padding: "6px 10px",
+          borderRadius: "8px",
+          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          "&:hover": {
+            backgroundColor:
+              mode === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
+            transform: "translateY(-2px)",
+          },
           "&:hover .listing-text": {
             color: COLORS.PRIMARY_PURPLE,
           },
@@ -311,11 +323,19 @@ const NavActions: React.FC<NavActionsProps> = ({
           color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
           minWidth: { xs: "auto", md: "64px" },
           padding: { xs: "4px 8px", md: "4px 10px" },
+          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           "&:hover": {
             borderColor: isDark
               ? COLORS.ACCENT_BLUE_DARK
               : COLORS.PRIMARY_PURPLE,
-            backgroundColor: COLORS.PURPLE_ALPHA_10,
+            backgroundColor: isDark
+              ? COLORS.ACCENT_BLUE_DARK
+              : COLORS.PRIMARY_PURPLE,
+            color: isDark ? "#000" : "#fff",
+            transform: "translateY(-2px)",
+            boxShadow: `0 4px 12px ${
+              isDark ? "rgba(100, 181, 246, 0.3)" : "rgba(106, 27, 154, 0.2)"
+            }`,
           },
         }}
       >

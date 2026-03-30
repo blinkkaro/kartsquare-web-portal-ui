@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { GetPostsParams } from "@/services/post/postInterfaces";
 import { postServices } from "@/services/post/postServices";
 import {
@@ -25,10 +26,23 @@ export const useGetInfinitePosts = (params: Omit<GetPostsParams, "cursor">) => {
   });
 };
 
-export const useGetPostComments = (postId: string, enabled: boolean = true) => {
-  return useQuery({
+export const useGetPostComments = (
+  postId: string,
+  limit: number = 10,
+  enabled: boolean = true,
+) => {
+  return useInfiniteQuery({
     queryKey: ["post-comments", postId],
-    queryFn: () => postServices.getPostComments(postId),
+    queryFn: ({ pageParam = 0 }) =>
+      postServices.getPostComments(postId, limit, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      const totalLoaded = allPages.reduce(
+        (acc, page) => acc + page.comments.length,
+        0,
+      );
+      return lastPage.comments.length === limit ? totalLoaded : undefined;
+    },
     enabled,
   });
 };
@@ -63,6 +77,16 @@ export const useAddPostComment = (postId: string) => {
 
       queryClient.setQueryData(["post-comments", postId], (old: any) => {
         if (!old) return { comments: [newComment] };
+        if (old.pages) {
+          return {
+            ...old,
+            pages: old.pages.map((page: any, index: number) =>
+              index === 0
+                ? { ...page, comments: [newComment, ...(page.comments || [])] }
+                : page,
+            ),
+          };
+        }
         return {
           ...old,
           comments: [newComment, ...(old.comments || [])],
@@ -87,6 +111,17 @@ export const useAddPostComment = (postId: string) => {
       const realId = data.commentId;
       const tempId = context?.newCommentId;
       await queryClient.setQueryData(["post-comments", postId], (old: any) => {
+        if (old?.pages) {
+          return {
+            ...old,
+            pages: old.pages.map((page: any) => ({
+              ...page,
+              comments: (page.comments || []).map((c: any) =>
+                c.id === tempId ? { ...c, id: realId } : c,
+              ),
+            })),
+          };
+        }
         if (!old?.comments) return old;
 
         const updatedComments = old.comments.map((c: any) =>
@@ -126,6 +161,7 @@ export const useLikePost = (postId: string) => {
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["posts"] });
       await queryClient.cancelQueries({ queryKey: ["providerPosts"] });
+      await queryClient.cancelQueries({ queryKey: ["providerReels"] });
       await queryClient.cancelQueries({
         predicate: (query) => query.queryKey[0] === "providerProfileByUsername",
       });
@@ -133,6 +169,9 @@ export const useLikePost = (postId: string) => {
       const previousPosts = queryClient.getQueriesData({ queryKey: ["posts"] });
       const previousProviderPosts = queryClient.getQueriesData({
         queryKey: ["providerPosts"],
+      });
+      const previousProviderReels = queryClient.getQueriesData({
+        queryKey: ["providerReels"],
       });
       const previousProfileByUsername = queryClient.getQueriesData({
         predicate: (query) => query.queryKey[0] === "providerProfileByUsername",
@@ -187,6 +226,10 @@ export const useLikePost = (postId: string) => {
         { queryKey: ["providerPosts"] },
         updatePostInCache,
       );
+      queryClient.setQueriesData(
+        { queryKey: ["providerReels"] },
+        updatePostInCache,
+      );
 
       // Update providerProfileByUsername cache
       queryClient.setQueriesData(
@@ -200,6 +243,7 @@ export const useLikePost = (postId: string) => {
       return {
         previousPosts,
         previousProviderPosts,
+        previousProviderReels,
         previousProfileByUsername,
       };
     },
@@ -240,6 +284,10 @@ export const useLikePost = (postId: string) => {
           updateVerifyPost,
         );
         queryClient.setQueriesData(
+          { queryKey: ["providerReels"] },
+          updateVerifyPost,
+        );
+        queryClient.setQueriesData(
           {
             predicate: (query) =>
               query.queryKey[0] === "providerProfileByUsername",
@@ -259,6 +307,11 @@ export const useLikePost = (postId: string) => {
           queryClient.setQueryData(key, data);
         });
       }
+      if (context?.previousProviderReels) {
+        context.previousProviderReels.forEach(([key, data]) => {
+          queryClient.setQueryData(key, data);
+        });
+      }
       if (context?.previousProfileByUsername) {
         context.previousProfileByUsername.forEach(([key, data]) => {
           queryClient.setQueryData(key, data);
@@ -266,4 +319,25 @@ export const useLikePost = (postId: string) => {
       }
     },
   });
+};
+
+export const useGetReels = () => {
+  return useInfiniteQuery({
+    queryKey: ["reels"],
+    queryFn: ({ pageParam }) => postServices.getReels(10, pageParam),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
+  });
+};
+
+export const usePrefetchReels = () => {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    queryClient.prefetchInfiniteQuery({
+      queryKey: ["reels"],
+      queryFn: ({ pageParam }) => postServices.getReels(10, pageParam),
+      initialPageParam: undefined as string | undefined,
+    });
+  }, [queryClient]);
 };

@@ -78,6 +78,26 @@ export const useDeleteProfile = () => {
   });
 };
 
+export const useUpdateShowNumber = () => {
+  const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
+
+  return useMutation({
+    mutationFn: (show_number: boolean) =>
+      profileService.updateShowNumber(show_number),
+    onSuccess: (updatedProfile) => {
+      // Invalidate React Query cache
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+
+      // Update Redux state with the updated profile
+      dispatch(updateUser(updatedProfile as any));
+    },
+    onError: (error: any) => {
+      throw error;
+    },
+  });
+};
+
 export const usePosts = (isOpen: boolean) => {
   const user: User = secureStorage.getItem("user_details");
   const userId = user.id;
@@ -95,14 +115,33 @@ export const usePosts = (isOpen: boolean) => {
   });
 };
 
+export const useReels = (isOpen: boolean) => {
+  const user: User = secureStorage.getItem("user_details");
+  const userId = user.id;
+  return useInfiniteQuery({
+    queryKey: ["providerReels"],
+    queryFn: ({ pageParam = 1 }) =>
+      profileService.getProviderReels(userId, pageParam, 12),
+    getNextPageParam: (lastPage: providerPostsInterface, allPages) => {
+      const morePagesExist =
+        lastPage?.pagination?.currentPage < lastPage?.pagination?.totalPages;
+      return morePagesExist ? lastPage.pagination.currentPage + 1 : undefined;
+    },
+    initialPageParam: 1,
+    enabled: !!userId && isOpen,
+  });
+};
+
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data: CreatePostParams) => postServices.createPost(data),
     onSuccess: () => {
-      // Invalidate React Query cache
+      // Invalidate React Query cache so both the posts grid and reels grid
+      // update in real time immediately after a post/reel is created.
       queryClient.invalidateQueries({ queryKey: ["providerPosts"] });
+      queryClient.invalidateQueries({ queryKey: ["providerReels"] });
     },
     onError: (error: any) => {
       throw error;

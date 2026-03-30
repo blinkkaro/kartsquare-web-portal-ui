@@ -282,51 +282,55 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
         </Button> */}
         <Stack gap={2}>
           {" "}
-          <Button
-            variant="contained"
-            fullWidth
-            size="small"
-            startIcon={<Call sx={{ fontSize: "1rem !important" }} />}
-            onClick={handleShowPhoneNumber}
-            disabled={showPhoneNumber}
-            sx={{
-              borderRadius: "11px",
-              textTransform: "none",
-              bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-              color: "white",
-              fontWeight: 800,
-              letterSpacing: showPhoneNumber ? "0.06em" : "0.02em",
-              px: 3,
-              py: 1.1,
-              minWidth: 0,
-              whiteSpace: "nowrap",
-              boxShadow: `0 10px 20px ${
-                isDark
-                  ? `${COLORS.ACCENT_BLUE_BG_DARK}40`
-                  : `${COLORS.PRIMARY_PURPLE}40`
-              }`,
-              "&:hover": {
-                bgcolor: isDark
-                  ? COLORS.ACCENT_BLUE_DARK
-                  : COLORS.PRIMARY_PURPLE,
-                transform: "translateY(-1px)",
-                boxShadow: `0 4px 12px ${
-                  isDark
-                    ? `${COLORS.ACCENT_BLUE_BG_DARK}40`
-                    : `${COLORS.PRIMARY_PURPLE}40`
-                }`,
-              },
-              transition: "all 0.2s ease-in-out",
-              "&.Mui-disabled": {
+          {providerPhoneNumber && (
+            <Button
+              variant="contained"
+              fullWidth
+              size="small"
+              startIcon={<Call sx={{ fontSize: "1rem !important" }} />}
+              onClick={handleShowPhoneNumber}
+              disabled={showPhoneNumber}
+              sx={{
+                borderRadius: "11px",
+                textTransform: "none",
                 bgcolor: isDark
                   ? COLORS.ACCENT_BLUE_DARK
                   : COLORS.PRIMARY_PURPLE,
                 color: "white",
-              },
-            }}
-          >
-            {showPhoneNumber ? providerPhoneNumber : english.show_number}
-          </Button>
+                fontWeight: 800,
+                letterSpacing: showPhoneNumber ? "0.06em" : "0.02em",
+                px: 3,
+                py: 1.1,
+                minWidth: 0,
+                whiteSpace: "nowrap",
+                boxShadow: `0 10px 20px ${
+                  isDark
+                    ? `${COLORS.ACCENT_BLUE_BG_DARK}40`
+                    : `${COLORS.PRIMARY_PURPLE}40`
+                }`,
+                "&:hover": {
+                  bgcolor: isDark
+                    ? COLORS.ACCENT_BLUE_DARK
+                    : COLORS.PRIMARY_PURPLE,
+                  transform: "translateY(-1px)",
+                  boxShadow: `0 4px 12px ${
+                    isDark
+                      ? `${COLORS.ACCENT_BLUE_BG_DARK}40`
+                      : `${COLORS.PRIMARY_PURPLE}40`
+                  }`,
+                },
+                transition: "all 0.2s ease-in-out",
+                "&.Mui-disabled": {
+                  bgcolor: isDark
+                    ? COLORS.ACCENT_BLUE_DARK
+                    : COLORS.PRIMARY_PURPLE,
+                  color: "white",
+                },
+              }}
+            >
+              {showPhoneNumber ? providerPhoneNumber : english.show_number}
+            </Button>
+          )}
           <Button
             variant={"outlined"}
             fullWidth

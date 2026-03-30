@@ -16,7 +16,115 @@ export interface BlogPost {
 
 export const blogs: BlogPost[] = [
   {
-    id: "1",
+    "id": "1",
+    "slug": "what-is-kartsquare-everything-you-need-to-know",
+    "title": "What is KartSquare? Everything You Need to Know",
+    "excerpt": "Discover KartSquare, India's emerging online service marketplace connecting you with verified professionals for home repairs, beauty treatments, and more with just a few clicks.",
+    "description": "An in-depth guide to KartSquare, the smarter home services portal designed for the new India. Learn about its diverse service offerings, transparent pricing, and how it simplifies daily life through a seamless booking process.",
+    "content": "<h2>Knowing KartSquare: Your Service Solution Hub</h2><p>Ever felt the need to search for a dependable plumber, tutor, or beautician with just a few clicks? Look no further than the smarter home services portal, KartSquare, which is bringing this dream to life for thousands of Indians. KartSquare is India's emerging online service marketplace that connects you with verified professionals for all the services you could think of.</p><p>Imagine a place that brings all your home repairs, beauty treatments, tuitions, events, and many such things all under one roof. This is where KartSquare services help you out, where the need to dig through contacts or seek neighbors' help is eliminated. It's made for the new India—fast, transparent, and extremely convenient.</p><h3>What Services Does KartSquare Offer?</h3><p>The beauty of the on-demand service resides in its variety. Here is a breakdown of what you can actually book:</p><ul><li><strong>Home Repairs & Maintenance:</strong> Plumbers, electricians, carpenters, AC technicians, and other appliance repair experts are available whenever you want them. Having a dripping tap in the middle of the night? No worries!</li><li><strong>Cleaning Services:</strong> With services ranging from cleaning your entire house to cleaning your sofa, kitchen, or controlling pests, cleaning services are just a booking away.</li><li><strong>Beauty & Wellness:</strong> Why step out when salon professionals will come to you? Book on-demand home services, massages, spa treatments, bridal makeovers, or salon services.</li><li><strong>Education & Tutoring:</strong> Locate a qualified tutor for your children in subjects ranging from the conventional school run to exam prep, programming, and even music.</li><li><strong>Events & Celebrations:</strong> Planning a birthday party or wedding? You can find photographers, caterers, decorators, and DJs at one home services platform.</li><li><strong>Personal Services:</strong> From hiring a personal chef to cater a special dinner to astrological consultations, KartSquare delivers it all.</li><li><strong>Physical Products:</strong> Beyond services, KartSquare also offers a range of physical products for your home and daily needs like cleaning supplies, home repair tools, and kitchen essentials.</li></ul><h3>How KartSquare Actually Works</h3><p>The difference between KartSquare home services and random service providers is a structured, five-step process:</p><ol><li><strong>Browse Services:</strong> First, go to the platform and look through services depending on what you need. Everything is well-organized for quick location.</li><li><strong>See Real Prices:</strong> Prices are clearly presented. No more 'checking and informing'—you know exactly what you'll be paying before booking.</li><li><strong>Check Profiles:</strong> Every expert has a profile including ratings, reviews, and verified credentials to help you make informed decisions.</li><li><strong>Book Instantly:</strong> Choose your desired time slot and book in less than a minute.</li><li><strong>Track & Pay:</strong> Receive live updates and pay your provider only after the service is completed, ensuring trust.</li></ol><h3>Why KartSquare Stands Out</h3><blockquote>\"Just good professionals at the right prices, at the right time.\"</blockquote><ul><li><strong>Background Verification:</strong> All service providers undergo background checks, document verification, and skill tests.</li><li><strong>Transparent Pricing:</strong> Fixed prices mean no more haggling over the final bill.</li><li><strong>Quality Assurance:</strong> Customer reviews keep everyone accountable, recognizing excellence and exposing poor service.</li><li><strong>Convenience Factor:</strong> The platform is available 24/7, with support ready to assist if anything goes wrong.</li><li><strong>Wide Coverage:</strong> From minor repairs to major events, it covers the full spectrum of everyday needs.</li></ul><h3>Frequently Asked Questions</h3><h4>Is KartSquare available in my city?</h4><p>KartSquare has expansion plans in major cities of India. Check their website or sign up to be notified of expansion in your area.</p><h4>Are membership fees charged?</h4><p>No, joining or browsing KartSquare is completely free. You only pay for the services you actually book.</p><h4>Can I book for someone else?</h4><p>Yes, you can book for family or friends by providing their location and contact information during the booking process.</p>",
+    "author": "kartsquare Team",
+    "date": "2026-03-20",
+    "category": "General",
+    "coverImage": "https://kartsquare-document.s3.ap-south-1.amazonaws.com/documents/03732433-f9a8-405f-b927-3bd3ec85e840.jpg",
+    "metaTitle": "What is KartSquare? | India's Leading Home Service Marketplace",
+    "metaDescription": "Learn how KartSquare connects you with verified plumbers, electricians, beauticians, and tutors in India. Explore services, pricing, and how to book instantly.",
+    "tags": [
+      "KartSquare",
+      "Home Services",
+      "Online Marketplace India",
+      "Verified Professionals",
+      "Plumbing Services",
+      "Home Repairs",
+      "Beauty at Home",
+      "On-demand Services",
+      "Cleaning Services",
+      "Tutors India",
+      "Event Planning",
+      "Appliance Repair",
+      "Professional Services",
+      "Transparent Pricing",
+      "Service Booking App",
+      "Smart Home Solutions",
+      "India Startup",
+      "Home Maintenance",
+      "Verified Experts",
+      "Digital India"
+    ]
+  },
+  {
+    "id": "2",
+    "slug": "kartsquare-booking-step-by-step-tutorial",
+    "title": "KartSquare Booking Made Easy: A Step-by-Step Tutorial",
+    "excerpt": "Booking home services shouldn't be complicated. Learn how to navigate the KartSquare platform to book repairs, cleaning, and wellness services in under two minutes.",
+    "description": "A comprehensive instructional guide designed to help both tech-savvy users and beginners book their first home service appointment on KartSquare with confidence and ease.",
+    "content": "<h2>Booking Home Services Without the Hassle</h2><p>Booking home-based services should not require a degree in computer science[cite: 96]. While many people hesitate to try new platforms for fear of technical difficulty, KartSquare is designed to be simpler than ordering food online[cite: 97, 98]. Whether you are a digital native or just getting comfortable with online tools, this guide will walk you through every step of the process [cite: 99].</p><h3>Getting Started: What You Need</h3><p>Before making your initial booking, ensure you have the following essentials ready [cite: 102]:</p><ul><li>An email address or phone number [cite: 103].</li><li>The service location address [cite: 104].</li><li>A clear idea of the services you require [cite: 105].</li><li>Your preferred date and time for the appointment [cite: 106].</li></ul><p>Notably, no credit card is required to start, and there are no complex verification hurdles [cite: 107].</p><h3>Accessing the Platform</h3><p>You can access KartSquare through any standard web browser at <strong>kartsquare.com</strong>, and the site is fully compatible with phones, tablets, and computers[cite: 109]. As the platform is currently in an early access phase, new users are added to a waitlist first—a process that typically takes around 30 minutes[cite: 110]. Once access opens in your region, you can sign up by providing your contact details and creating a password [cite: 111].</p><h3>Setting Up Your Location and Browsing Services</h3><p>After logging in, your first task is to add your address[cite: 112]. This is crucial because the platform displays professionals based specifically on your location[cite: 113]. You can save multiple addresses for your home, office, or family members [cite: 114].</p><p>The homepage features clear service categories to help you find what you need quickly [cite: 116]:</p><ul><li>Home Repairs & Maintenance [cite: 117]</li><li>Cleaning Services (including full-home, kitchen, sofa, and pest management) [cite: 118, 125]</li><li>Beauty & Wellness [cite: 119]</li><li>Education & Tutoring [cite: 120]</li><li>Events & Celebrations [cite: 121]</li><li>Personal Services & Physical Products [cite: 122, 123]</li></ul><h3>Selecting Professionals and Scheduling</h3><p>Once you pick a service, you can view available time slots for today, tomorrow, or a future date[cite: 128, 129]. Most providers offer flexible morning, afternoon, and evening schedules, though weekend slots tend to fill up fast [cite: 130].</p><p>Before confirming, you can review the profile of your assigned professional, checking their overall rating, number of completed jobs, customer feedback, and verification badges [cite: 131, 132, 133, 134, 135].</p><h3>Payment and Real-Time Tracking</h3><p>KartSquare offers a \"Pay After Completion\" model for the majority of its services[cite: 142]. This allows you to book now, inspect the quality of the work upon completion, and pay only once you are satisfied[cite: 143]. Upfront payment options are also available for those who prefer them [cite: 144].</p><p>Throughout the process, you can monitor your service in real time via your dashboard with updates on [cite: 146, 152]:</p><ul><li>Booking confirmation [cite: 147]</li><li>Professional assignment [cite: 148]</li><li>Professional en route status [cite: 149]</li><li>Service in progress and completion [cite: 150, 151]</li></ul><h3>Pro Tips for a Successful Experience</h3><ul><li><strong>Advance Planning:</strong> Reserve a few days early for better availability [cite: 157].</li><li><strong>Be Specific:</strong> Use service notes to describe difficult problems or specific access directions [cite: 158].</li><li><strong>Save Favorites:</strong> If you find an excellent professional, save them for faster future bookings [cite: 159].</li><li><strong>Check for Offers:</strong> Always visit the deals section before finalizing your booking[cite: 160].</li></ul>",
+    "author": "kartsquare Team",
+    "date": "2026-03-20",
+    "category": "General",
+    "coverImage": "https://kartsquare-document.s3.ap-south-1.amazonaws.com/documents/f37d1b35-9d3e-4ced-b2ca-84484ea1955c.jpg",
+    "metaTitle": "Step-by-Step Guide to Booking Home Services | KartSquare",
+    "metaDescription": "Learn how to book home repairs, cleaning, and beauty services on KartSquare. Follow our simple tutorial for a seamless online booking experience.",
+    "tags": [
+      "Booking Tutorial",
+      "How to Use KartSquare",
+      "Home Service App",
+      "Service Scheduling",
+      "Online Booking Guide",
+      "Verified Professionals",
+      "Pay After Completion",
+      "Cleaning Services",
+      "Home Maintenance",
+      "Customer Support",
+      "Real-time Tracking",
+      "Service Marketplace",
+      "Digital Payments",
+      "User Tutorial",
+      "Convenience",
+      "Service Management",
+      "Help Guide",
+      "India Services",
+      "Tech Support",
+      "Local Experts"
+    ]
+  },
+  {
+    "id": "3",
+    "slug": "kartsquare-app-features-download-booking-guide",
+    "title": "KartSquare App: Features, Download & First Booking Guide",
+    "excerpt": "Finding dependable home service providers in India shouldn't be a puzzle. Explore how the KartSquare app connects you with certified contractors in seconds.",
+    "description": "A deep dive into the revolutionary KartSquare app. Learn about its key features like instant booking and transparent pricing, and follow our guide to securing your first verified professional.",
+    "content": "<h2>What Makes KartSquare Special?</h2><p>Finding dependable home service providers should not feel like piecing together a puzzle[cite: 185]. Whether you require a midnight plumber or a beauty professional for your wedding day, the KartSquare mobile app makes this process very easy[cite: 186]. Think of KartSquare as your very own home service assistant—whether you need a domestic helper, a tutor, or a massage at home, you can secure help within just a couple of clicks[cite: 189, 190, 191]. This on-demand platform connects individuals with thousands of certified local contractors without the hassle of multiple apps or countless phone calls [cite: 192].</p><h3>Key Features That Stand Out</h3><p>Before you get started, it is worth exploring why thousands of Indians are joining the platform [cite: 194]:</p><ul><li><strong>Instant Booking:</strong> The biggest strength is speed[cite: 195]. You can book services on the website within 30 seconds with no lengthy forms or waiting for callbacks [cite: 196, 197].</li><li><strong>Transparent Pricing:</strong> KartSquare eliminates the fear of being cheated with final bills[cite: 198]. What you see is what you pay [cite: 199].</li><li><strong>Verified Professionals:</strong> Safety is paramount; all service providers, from electricians to tutors, undergo rigorous background checks [cite: 200].</li><li><strong>Wide Service Range:</strong> Offerings span from AC repair and pest control to astrology consultations and personal chefs [cite: 201].</li><li><strong>24/7 Support:</strong> Assistance is available at any time of the day or night [cite: 202].</li><li><strong>Physical Products:</strong> You can also order home essentials like cleaning supplies and repair tools to be delivered alongside your professional services [cite: 203, 204].</li></ul><h3>How to Access the KartSquare Platform</h3><p>Getting started is a straightforward process [cite: 206]:</p><ol><li>Visit <strong>kartsquare.com</strong> from any mobile or computer browser [cite: 207].</li><li>Join the waitlist, as the platform is currently in early access [cite: 208, 209].</li><li>Once access is granted, register with your phone number or email to create an account [cite: 210].</li><li>Set your location so the platform can show services near you [cite: 211].</li><li>Explore the available services in your area [cite: 212].</li></ol><h3>Your First KartSquare Booking: Step-by-Step</h3><p>Once you are on the platform, follow these steps to book your first service [cite: 214]:</p><ul><li><strong>Step 1:</strong> Choose a category, such as \"Cleaning Services\" or \"Tutors & Learning\" [cite: 216, 217].</li><li><strong>Step 2:</strong> Select a specific service, like Deep Cleaning, which offers options for kitchen, sofa, or full home cleaning [cite: 218, 219].</li><li><strong>Step 3:</strong> Pick your preferred date and time from the available slots [cite: 220].</li><li><strong>Step 4:</strong> Review the price, service description, and professional reviews from other customers[cite: 221, 222].</li><li><strong>Step 5:</strong> Confirm the appointment. Most services allow you to pay later, after the job is done [cite: 223].</li><li><strong>Step 6:</strong> Track your booking in real time and receive updates when the professional is en route [cite: 225].</li><li><strong>Step 7:</strong> Complete the service and leave an honest review [cite: 226].</li></ul><h3>The Bottom Line</h3><p>KartSquare is changing the way people manage their lives[cite: 229]. By eliminating the need for bulky phone books and the uncertainty of pricing, it provides pure honesty and ease for booking home services online[cite: 230, 231, 232]. Join the waitlist today and see why life is simpler with KartSquare[cite: 233].</p>",
+    "author": "kartsquare Team",
+    "date": "2026-03-20",
+    "category": "General",
+    "coverImage": "https://kartsquare-document.s3.ap-south-1.amazonaws.com/documents/c0b043f0-fdad-4950-bfcf-23237ffe3bd0.png",
+    "metaTitle": "KartSquare App Guide | Features, Download & Booking",
+    "metaDescription": "Master the KartSquare app with our guide to features like 30-second instant booking, verified professionals, and 24/7 support. Book your first home service today.",
+    "tags": [
+      "KartSquare App",
+      "Home Service Guide",
+      "Instant Booking",
+      "Verified Contractors",
+      "India Home Services",
+      "App Features",
+      "Transparent Pricing",
+      "24/7 Customer Support",
+      "Home Maintenance App",
+      "Deep Cleaning Services",
+      "Tutor Booking",
+      "Professional Services",
+      "Service Tracking",
+      "Early Access",
+      "Service Marketplace",
+      "Mobile Booking",
+      "Certified Professionals",
+      "Service Reviews",
+      "Home Improvement",
+      "Digital Services India"
+    ]
+  },
+  {
+    id: "4",
     slug: "discover-kartsquare-services-for-home-needs",
     title:
       "Discover kartsquare Services: Your Go-To Home Services App in India",
@@ -297,7 +405,7 @@ export const blogs: BlogPost[] = [
     ],
   },
   {
-    id: "2",
+    id: "5",
     slug: "luxury-salon-at-home-services-guide",
     title:
       "Luxury Salon at Home Services: Pamper Yourself Without Leaving Home",
@@ -581,7 +689,7 @@ export const blogs: BlogPost[] = [
     ],
   },
   {
-    id: "3",
+    id: "6",
     slug: "ultimate-guide-home-deep-cleaning-services",
     title: "The Ultimate Guide to Home Deep Cleaning Services",
     excerpt:
@@ -854,7 +962,7 @@ export const blogs: BlogPost[] = [
     ],
   },
   {
-    id: "4",
+    id: "7",
     slug: "essential-home-repair-services-plumber-electrician",
     title: "Essential Home Repair Services: Plumber and Electrician Solutions",
     excerpt:
@@ -996,7 +1104,7 @@ export const blogs: BlogPost[] = [
     ],
   },
   {
-    id: "5",
+    id: "8",
     slug: "finding-best-home-tutor-online-tutors-india",
     title:
       "Finding the Best Home Tutor: Online Tutors India for Quality Education",
@@ -1127,7 +1235,7 @@ export const blogs: BlogPost[] = [
     ],
   },
   {
-    id: "6",
+    id: "9",
     slug: "comprehensive-home-services-kartsquare-app",
     title: "Comprehensive Home Services Through kartsquare App",
     excerpt:

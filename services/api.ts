@@ -9,6 +9,7 @@ import axios, {
 import { store } from "@/store/store";
 import { openLoginModal } from "@/features/ui/loginModalSlice";
 import { authService } from "./auth/auth.service";
+import { logout } from "@/features/ui/authSlice";
 
 // Create Axios instance with default config
 
@@ -136,7 +137,7 @@ api.interceptors.response.use(
         }
 
         const response = await authService.refreshToken(refreshToken);
-
+        console.log("response", response);
         if (response.data) {
           secureStorage.setItem("token", response.data.access_token);
           secureStorage.setItem(
@@ -158,19 +159,15 @@ api.interceptors.response.use(
         }
       } catch (refreshError) {
         processQueue(refreshError, null);
-        // Refresh failed - only clear storage, don't redirect
-        // Let the app handle navigation based on context
-        localStorage.removeItem("token");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("role");
-        localStorage.removeItem("register_step");
-        localStorage.removeItem("user_details");
 
-        // Open Login Modal instead of redirecting
-        store.dispatch(openLoginModal());
+        // Dispatch logout action to clear Redux state and secureStorage
+        store.dispatch(logout());
 
-        // Return a safe response so the app doesn't crash
-        // The component can check success: false
+        // Redirect to login page
+        if (typeof window !== "undefined") {
+          window.location.href = "/login";
+        }
+
         return Promise.resolve({
           data: null,
           errors: refreshError,

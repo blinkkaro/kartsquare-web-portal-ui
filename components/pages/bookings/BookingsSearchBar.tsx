@@ -40,18 +40,29 @@ const BookingsSearchBar: React.FC<BookingsSearchBarProps> = ({
                     )
                 }}
                 sx={{
-                    width: { xs: '100%', md: '400px' },
+                    width: { xs: '100%', md: '450px' },
                     "& .MuiOutlinedInput-root": {
-                        borderRadius: "30px",
+                        borderRadius: "16px",
                         bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-                        height: "40px",
+                        height: { xs: "48px", md: "50px" },
                         pl: 2,
-                        "& fieldset": { border: 'none' },
-                        boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
+                        "& fieldset": { 
+                            border: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)"}`,
+                        },
+                        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                        transition: "all 0.2s ease",
+                        "&:hover": {
+                            boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+                            "& fieldset": { borderColor: `${COLORS.PRIMARY_PURPLE}40` }
+                        },
+                        "&.Mui-focused": {
+                            "& fieldset": { borderColor: COLORS.PRIMARY_PURPLE, borderWidth: "1.5px" }
+                        }
                     },
                     "& .MuiInputBase-input": {
                         py: 1,
-                        fontSize: "0.875rem"
+                        fontSize: "0.95rem",
+                        fontWeight: 500
                     }
                 }}
             />

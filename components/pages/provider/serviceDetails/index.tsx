@@ -4,10 +4,10 @@ import {
   Box,
   Container,
   Typography,
-  CircularProgress,
   useTheme,
   Divider,
 } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { useParams, useRouter } from "next/navigation";
 import { Edit, Delete, Share } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
@@ -34,6 +34,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import CustomerServicePricing from "@/components/common/CustomerServicePricing";
 import { review_type } from "@/services/providerDashboard/providerDashboard.interface";
 import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
+import { useProfile, useUpdateShowNumber } from "@/hooks/useProfile";
 
 const ProviderServiceDetails = () => {
   const params = useParams();
@@ -43,6 +44,8 @@ const ProviderServiceDetails = () => {
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
   const queryClient = useQueryClient();
+  const { data: profile } = useProfile();
+  const { mutate: updateShowNumber } = useUpdateShowNumber();
 
   // State
   const reviewsPerPage = 5;
@@ -124,19 +127,7 @@ const ProviderServiceDetails = () => {
   if (loading) {
     return (
       <MainLayout>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: "100vh",
-            bgcolor: isDark
-              ? COLORS.BACKGROUND.PRIMARY_DARK
-              : COLORS.BACKGROUND.SECONDARY_LIGHT,
-          }}
-        >
-          <CircularProgress />
-        </Box>
+        <CenteredLoader minHeight="100vh" py={0} />
       </MainLayout>
     );
   }
@@ -285,6 +276,8 @@ const ProviderServiceDetails = () => {
                   isUpdating={updatingStatus}
                   status={service.status}
                   haveSlots={service.have_slots}
+                  showNumber={profile?.show_number}
+                  onShowNumberToggle={(checked) => updateShowNumber(checked)}
                 />
               </Box>
 

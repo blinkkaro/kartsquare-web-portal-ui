@@ -19,21 +19,28 @@ import {
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import ImageUpload from "@/components/common/ImageUpload";
+import AddressCard from "@/components/pages/address/components/AddressCard";
+import WarningModel from "@/components/common/WarningModel";
+import ErrorMessage from "@/components/common/ErrorMessage";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useSupplierStore, useUpdateSupplierStore } from "@/hooks/useSupplier";
 import { useRouter } from "next/navigation";
 import { STORE_CATEGORIES, OPERATING_LOCATIONS } from "@/constants/common";
 import { COLORS } from "@/constants/colors";
-import { countries } from "@/components/pages/SignUp/components/data";
+import { countries } from "@/data/countries";
 import { verifyDocumentService } from "@/services/auth/verifyDocument.service";
 import { useAppDispatch } from "@/store/hooks";
 import { updateUser } from "@/features/ui/authSlice";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { secureStorage } from "@/helper/SecureStorage";
-
-import { useGetAddress } from "@/hooks/useAddress";
+import {
+  useGetAddress,
+  useUpdateAddress,
+  useDeleteAddress,
+} from "@/hooks/useAddress";
+import { Address } from "@/services/address/addressInterface";
 import AddressDrawer from "@/components/common/address/AddressDrawer";
-import { CircularProgress } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 
 import StoreOutlinedIcon from "@mui/icons-material/StoreOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
@@ -77,6 +84,15 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
   const dispatch = useAppDispatch();
   const [addressDrawerOpen, setAddressDrawerOpen] = React.useState(false);
   const [isUploading, setIsUploading] = React.useState(false);
+
+  // Address Management State
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+  const [addressToEdit, setAddressToEdit] = React.useState<Address | null>(null);
+  const [addressToDelete, setAddressToDelete] = React.useState<string | null>(null);
+
+  const updateAddressMutation = useUpdateAddress();
+  const deleteAddressMutation = useDeleteAddress();
 
   const schema = React.useMemo(
     () =>
@@ -146,16 +162,73 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
     },
   });
 
-  const selectedCountryCode = watch("country_code");
-  const selectedCountry = countries.find(
-    (c) => c.phone_code === selectedCountryCode,
-  );
+  const handleSetDefault = (id: string) => {
+    const address = addresses?.find((addr) => addr.id === id);
+    if (address) {
+      updateAddressMutation.mutate({
+        id,
+        data: { ...address, is_default: true },
+      });
+    }
+  };
+
+  const handleDeleteAddress = () => {
+    if (addressToDelete) {
+      deleteAddressMutation.mutate(addressToDelete, {
+        onSuccess: () => {
+          setIsDeleteDialogOpen(false);
+          setAddressToDelete(null);
+          refetchAddresses();
+        },
+      });
+    }
+  };
+
+  const openEditModal = (address: Address) => {
+    setAddressToEdit(address);
+    setIsEditModalOpen(true);
+  };
+
+  const openDeleteDialog = (id: string) => {
+    setIsDeleteDialogOpen(true);
+    setAddressToDelete(id);
+  };
+
+  const displayedAddresses = addresses
+    ? [...addresses]
+        .sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        )
+        .slice(0, 1)
+    : [];
+
+  // Auto-selection effect
+  const storeAddressId = watch("store_address_id");
+  const prevAddressesCount = React.useRef(addresses?.length || 0);
+
+  React.useEffect(() => {
+    const currentCount = addresses?.length || 0;
+    if (currentCount > prevAddressesCount.current) {
+      // New address added - auto-select the latest one
+      if (displayedAddresses.length > 0) {
+        setValue("store_address_id", displayedAddresses[0].id, {
+          shouldValidate: true,
+        });
+      }
+    } else if (displayedAddresses.length > 0 && !storeAddressId) {
+      // Initial load - select first available address
+      setValue("store_address_id", displayedAddresses[0].id, {
+        shouldValidate: true,
+      });
+    }
+    prevAddressesCount.current = currentCount;
+  }, [displayedAddresses, storeAddressId, setValue, addresses?.length]);
 
   useEffect(() => {
     if (storeData?.data) {
       const data = storeData.data as any;
 
-      // Map backend keys to form keys
       const formData = {
         ...data,
         display_name: data.display_name || data.store_name || "",
@@ -173,7 +246,6 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
         business_type: data.business_type || "",
       };
 
-      // Mapping contact preferences from object to array for form
       if (
         data.contact_preferences &&
         typeof data.contact_preferences === "object"
@@ -188,7 +260,6 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
         formData.contact_preferences = [];
       }
 
-      // Remove null values to avoid Yup validation issues
       Object.keys(formData).forEach((key) => {
         if (formData[key] === null) {
           delete formData[key];
@@ -207,7 +278,6 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
       | File
       | undefined;
     if (!newFile) {
-      // Check if removal happened
       const currentString = files.find((f) => typeof f === "string") as
         | string
         | undefined;
@@ -235,21 +305,19 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
         ? payload.contact_preferences
         : [];
 
-      // Map form keys back to backend keys just in case
       payload.store_name = payload.display_name;
       payload.description = payload.about_us;
       payload.primary_mobile = payload.contact_phone?.trim();
-      payload.website_url = payload.slug; // Send slug as website_url as requested
+      payload.website_url = payload.slug;
 
       payload.contact_preferences = {
         show_phone: prefs.includes("show_phone"),
         allow_calls: prefs.includes("allow_calls"),
         allow_chat: prefs.includes("allow_chat"),
         enquiry_only: prefs.includes("enquiry_only"),
-        show_whatsapp: true, // Defaulting to true as per API response
+        show_whatsapp: true,
       };
 
-      // Remove empty strings and nulls
       Object.keys(payload).forEach((key) => {
         if (payload[key] === "" || payload[key] === null) {
           delete payload[key];
@@ -258,7 +326,6 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
 
       await updateStore.mutateAsync(payload);
 
-      // Update auth state for Guard
       secureStorage.setItem(
         "register_step",
         UserRegisterSteps.SUPPLIER_STORE_CREATED.toString(),
@@ -281,7 +348,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
   if (isLoadingStore)
     return (
       <Box display="flex" justifyContent="center" py={10}>
-        <CircularProgress />
+        <LogoLoader />
       </Box>
     );
 
@@ -391,7 +458,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                         options={STORE_CATEGORIES}
                         value={(Array.isArray(value) ? value : []) as string[]}
                         onChange={(_, newValue) => onChange(newValue)}
-                        renderTags={() => null} // Don't show inside
+                        renderTags={() => null}
                         renderInput={(params) => (
                           <TextField
                             {...params}
@@ -574,143 +641,93 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
               {t("store_setup_store_location" )}
             </Typography>
             <Box>
-              {isLoadingAddresses ? (
-                <Box display="flex" gap={2}>
-                  <CircularProgress size={20} />{" "}
-                  <Typography variant="body2">
-                    {t("store_setup_loading_addresses" )}
-                  </Typography>
-                </Box>
-              ) : (
-                <Grid container spacing={2}>
-                  {addresses?.map((addr: any) => (
-                    <Grid size={{ xs: 12, md: 6 }} key={addr.id}>
-                      <Box
-                        onClick={() =>
-                          setValue("store_address_id", addr.id, {
-                            shouldValidate: true,
-                          })
-                        }
-                        sx={{
-                          p: 2,
-                          border: "1px solid",
-                          borderColor:
-                            watch("store_address_id") === addr.id
-                              ? COLORS.PRIMARY_PURPLE
-                              : "divider",
-                          borderRadius: 3,
-                          cursor: "pointer",
-                          bgcolor:
-                            watch("store_address_id") === addr.id
-                              ? `${COLORS.PRIMARY_PURPLE}08`
-                              : "transparent",
-                          transition: "all 0.3s ease",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 2,
-                          position: "relative",
-                          overflow: "hidden",
-                          "&:hover": {
-                            borderColor: COLORS.PRIMARY_PURPLE,
-                            bgcolor: `${COLORS.PRIMARY_PURPLE}04`,
-                          },
-                        }}
-                      >
+              {errors.store_address_id && (
+                <ErrorMessage
+                  error={errors.store_address_id.message || ""}
+                  isVisible={!!errors.store_address_id}
+                />
+              )}
+
+              <Box
+                sx={{
+                  p: 2,
+                  borderRadius: 2,
+                  bgcolor: isDark
+                    ? COLORS.BACKGROUND.SECONDARY_DARK
+                    : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                  border: `1px solid ${
+                    isDark
+                      ? COLORS.BORDER.DEFAULT_DARK
+                      : COLORS.BORDER.DEFAULT_LIGHT
+                  }`,
+                }}
+              >
+                {isLoadingAddresses ? (
+                  <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+                    <LogoLoader size={20} />
+                  </Box>
+                ) : displayedAddresses && displayedAddresses.length > 0 ? (
+                  <Grid container spacing={2}>
+                    {displayedAddresses.map((addr: Address) => (
+                      <Grid size={{ xs: 12 }} key={addr.id}>
                         <Box
+                          onClick={() => {
+                            setValue("store_address_id", addr.id, {
+                              shouldValidate: true,
+                            });
+                          }}
                           sx={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: 2,
-                            bgcolor:
-                              watch("store_address_id") === addr.id
-                                ? COLORS.PRIMARY_PURPLE
-                                : "divider",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            color: "white",
-                            flexShrink: 0,
+                            cursor: "pointer",
+                            height: "100%",
+                            border:
+                              storeAddressId === addr.id
+                                ? `2px solid ${COLORS.PRIMARY_PURPLE}`
+                                : `1px solid ${
+                                    isDark
+                                      ? COLORS.BORDER.DEFAULT_DARK
+                                      : COLORS.BORDER.DEFAULT_LIGHT
+                                  }`,
+                            borderRadius: "12px",
+                            position: "relative",
+                            "&:hover": {
+                              borderColor: COLORS.PRIMARY_PURPLE,
+                            },
+                            backgroundColor:
+                              storeAddressId === addr.id
+                                ? isDark
+                                  ? "rgba(124, 77, 255, 0.1)"
+                                  : "rgba(124, 77, 255, 0.05)"
+                                : "transparent",
                           }}
                         >
-                          <LocationOnOutlinedIcon fontSize="small" />
-                        </Box>
-                        <Box sx={{ flex: 1, minWidth: 0, pr: 7 }}>
-                          <Typography variant="subtitle2" fontWeight="700">
-                            {addr.address_name}
-                          </Typography>
-                          <Typography
-                            variant="caption"
-                            color="text.secondary"
-                            noWrap
-                            sx={{ display: "block" }}
-                          >
-                            {addr.address}, {addr.city_town}
-                          </Typography>
-                        </Box>
-                        {watch("store_address_id") === addr.id && (
-                          <Chip
-                            label={t("store_setup_selected" )}
-                            size="small"
-                            color="primary"
-                            variant="filled"
-                            sx={{
-                              height: 20,
-                              fontSize: "0.65rem",
-                              position: "absolute",
-                              right: 8,
-                              top: "50%",
-                              transform: "translateY(-50%)",
-                              pointerEvents: "none",
-                            }}
+                          <AddressCard
+                            address={addr}
+                            onEdit={(a) => openEditModal(a)}
+                            onDelete={(id) => openDeleteDialog(id)}
+                            onSetDefault={handleSetDefault}
                           />
-                        )}
-                      </Box>
-                    </Grid>
-                  ))}
-                  <Grid size={{ xs: 12, md: 6 }}>
-                    <Box
-                      onClick={() => setAddressDrawerOpen(true)}
-                      sx={{
-                        p: 2,
-                        border: "2px dashed",
-                        borderColor: "divider",
-                        borderRadius: 3,
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        height: "100%",
-                        minHeight: 74,
-                        transition: "all 0.3s ease",
-                        "&:hover": {
-                          borderColor: COLORS.PRIMARY_PURPLE,
-                          color: COLORS.PRIMARY_PURPLE,
-                          bgcolor: `${COLORS.PRIMARY_PURPLE}04`,
-                        },
-                      }}
-                    >
-                      <Typography
-                        variant="body2"
-                        fontWeight="700"
-                        display="flex"
-                        alignItems="center"
-                        gap={1}
-                      >
-                        {t("store_setup_add_new_address" )}
-                      </Typography>
-                    </Box>
+                        </Box>
+                      </Grid>
+                    ))}
                   </Grid>
-                </Grid>
-              )}
-              {errors.store_address_id && (
-                <Typography
-                  color="error"
-                  variant="caption"
-                  sx={{ mt: 1, display: "block" }}
+                ) : (
+                  <Box sx={{ textAlign: "center", py: 4 }}>
+                    <Typography sx={{ mb: 2 }}>
+                      {t("no_address_yet" )}
+                    </Typography>
+                  </Box>
+                )}
+
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  onClick={() => setAddressDrawerOpen(true)}
+                  sx={{ mt: 3, borderStyle: "dashed" }}
+                  startIcon={<span>+</span>}
                 >
-                  {errors.store_address_id.message as string}
-                </Typography>
-              )}
+                  {t("store_setup_add_new_address" )}
+                </Button>
+              </Box>
             </Box>
           </Box>
 
@@ -730,47 +747,6 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
               <PhoneOutlinedIcon fontSize="small" />{" "}
               {t("store_setup_contact_info" )}
             </Typography>
-
-            {/* <Grid size={{ xs: 12 }}>
-                        <Box sx={{ p: 4, border: '1px solid', borderColor: 'divider', borderRadius: 4, bgcolor: isDark ? 'transparent' : '#f9fbff', mb: 2 }}>
-                            <Typography variant="body2" gutterBottom fontWeight="600" mb={2}>Contact Preferences*</Typography>
-                            <Controller
-                                name="contact_preferences"
-                                control={control}
-                                render={({ field: { onChange, value } }) => (
-                                    <FormGroup row>
-                                        {[
-                                            { key: "show_phone", label: "Show Phone" },
-                                            { key: "allow_calls", label: "Allow Calls" },
-                                            { key: "allow_chat", label: "Allow Chat" },
-                                            { key: "enquiry_only", label: "Enquiry Only" }
-                                        ].map((pref) => (
-                                            <FormControlLabel
-                                                key={pref.key}
-                                                control={
-                                                    <Checkbox
-                                                        checked={(value as string[])?.includes(pref.key) || false}
-                                                        onChange={(e) => {
-                                                            const current = (value []) || [];
-                                                            if (e.target.checked) {
-                                                                onChange([...current, pref.key]);
-                                                            } else {
-                                                                onChange(current.filter((v: string) => v !== pref.key));
-                                                            }
-                                                        }}
-                                                        color="primary"
-                                                    />
-                                                }
-                                                label={pref.label}
-                                                sx={{ '& .MuiTypography-root': { fontSize: '0.9rem', fontWeight: 500 } }}
-                                            />
-                                        ))}
-                                    </FormGroup>
-                                )}
-                            />
-                            {errors.contact_preferences && <Typography color="error" variant="caption">{errors.contact_preferences.message as string}</Typography>}
-                        </Box>
-                    </Grid> */}
 
             <Grid size={{ xs: 12 }}>
               <Grid container spacing={2.5}>
@@ -886,6 +862,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
           </Box>
         </Paper>
       </Box>
+
       <AddressDrawer
         open={addressDrawerOpen}
         onClose={() => {
@@ -893,6 +870,50 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
           refetchAddresses();
         }}
         mode="add"
+        isDefault={true}
+      />
+
+      <AddressDrawer
+        open={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setAddressToEdit(null);
+          refetchAddresses();
+        }}
+        initialData={addressToEdit}
+        mode="edit"
+      />
+
+      <WarningModel
+        open={isDeleteDialogOpen}
+        onClose={() => {
+          setIsDeleteDialogOpen(false);
+          setAddressToDelete(null);
+        }}
+        title={t("deleteAddress" )}
+        description={t("deleteAddressDescription" )}
+        ActionsButtons={
+          <Box>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setIsDeleteDialogOpen(false);
+                setAddressToDelete(null);
+              }}
+            >
+              {t("cancel" )}
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleDeleteAddress}
+              sx={{
+                ml: 2,
+              }}
+            >
+              {t("delete" )}
+            </Button>
+          </Box>
+        }
       />
     </>
   );

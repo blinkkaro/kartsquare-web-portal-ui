@@ -28,9 +28,10 @@ import { english } from "../../../features/i18n/en";
 import dayjs from "dayjs";
 import RightDrawer from "../../common/RightDrawer";
 import { bookingDetailsService } from "../../../services/booking/bookingDetails";
-import { CircularProgress } from "@mui/material";
+import LogoLoader from "../../common/Loader/LogoLoader";
 import { Phone, CalendarToday, LocationOn } from "@mui/icons-material";
 import ReviewModal from "./ReviewModal";
+import { useTranslate } from "@/hooks/useTranslate";
 
 interface BookingDetailsDrawerProps {
   open: boolean;
@@ -49,6 +50,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
   const [loading, setLoading] = React.useState(false);
   const [previewImage, setPreviewImage] = React.useState<string | null>(null);
   const [reviewModalOpen, setReviewModalOpen] = React.useState(false);
+  const {t} = useTranslate();
 
   React.useEffect(() => {
     if (open && initialBooking?.booking_id) {
@@ -117,7 +119,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
       title={english.booking_details}
       width={500}
     >
-      <Box sx={{ px: 4, pb: 4 }}>
+      <Box sx={{ px: { xs: 2, sm: 4 }, pb: 4 }}>
         {loading ? (
           <Box
             sx={{
@@ -125,10 +127,10 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
               justifyContent: "center",
               alignItems: "center",
               height: "100%",
-              py: 10,
+              py: 20,
             }}
           >
-            <CircularProgress />
+            <LogoLoader size={60} />
           </Box>
         ) : (
           <>
@@ -147,7 +149,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                   style={{
                     color: COLORS.PRIMARY_PURPLE,
                     fontWeight: 900,
-                    fontSize: "0.6em",
+                    fontSize: "0.8em",
                   }}
                 >
                   #{currentBooking.booking_id.toUpperCase()}
@@ -158,7 +160,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
             {/* Unified Header & Hero Section */}
             <Box
               sx={{
-                mx: -4,
+                mx: { xs: -2, sm: -4 },
                 mb: 4,
                 position: "relative",
                 borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "#F1F5F9"}`,
@@ -166,7 +168,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
             >
               {/* Hero Background Image */}
               <Box
-                sx={{ position: "relative", height: 220, overflow: "hidden" }}
+                sx={{ position: "relative", height: { xs: 180, sm: 220 }, overflow: "hidden" }}
               >
                 <Box
                   component="img"
@@ -183,7 +185,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                   }}
                 />
                 {/* Status Chip Overlay */}
-                <Box sx={{ position: "absolute", top: 20, left: 24 }}>
+                <Box sx={{ position: "absolute", top: 20, left: { xs: 16, sm: 24 } }}>
                   <Chip
                     label={currentBooking.status}
                     sx={{
@@ -191,9 +193,9 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                       color: COLORS.PRIMARY_PURPLE,
                       backdropFilter: "blur(10px)",
                       fontWeight: 800,
-                      fontSize: "0.75rem",
-                      height: 28,
-                      borderRadius: "10px",
+                      fontSize: "0.7rem",
+                      height: 24,
+                      borderRadius: "8px",
                       boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                     }}
                   />
@@ -206,12 +208,14 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    p: 3,
+                    p: { xs: 2, sm: 3 },
                     background:
                       "linear-gradient(to top, rgba(0,0,0,0.8), transparent)",
                     display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
                     justifyContent: "space-between",
-                    alignItems: "flex-end",
+                    alignItems: { xs: "flex-start", sm: "flex-end" },
+                    gap: 1.5,
                   }}
                 >
                   <Box>
@@ -273,6 +277,8 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                     </Box>
                   </Box>
                   <Box sx={{ textAlign: "right" }}>
+                    {totalAmount > 0 ? (
+                      <>
                     <Typography
                       variant="caption"
                       sx={{
@@ -292,6 +298,15 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                         initialBooking.currency}{" "}
                       {totalAmount.toFixed(0)}
                     </Typography>
+                      </>
+                    ): (
+                    <Typography
+                      variant="body1"
+                      sx={{ fontWeight: 900, color: "white" }}
+                    >
+                      {t("getQuote")}
+                    </Typography>
+                    )}
                   </Box>
                 </Box>
               </Box>
@@ -479,12 +494,31 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                       {currentBooking.provider_details?.last_name}
                     </Typography>
                   }
-                  <Typography
-                    variant="caption"
-                    sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700 }}
-                  >
-                    {currentBooking.category_name} Service
-                  </Typography>
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 0.5 }}>
+                    {(Array.isArray(currentBooking.category_name)
+                      ? currentBooking.category_name
+                      : [currentBooking.category_name]
+                    )
+                      .filter(Boolean)
+                      .map((cat, idx) => (
+                        <Typography
+                          key={idx}
+                          variant="caption"
+                          sx={{
+                            color: COLORS.PRIMARY_PURPLE,
+                            fontWeight: 700,
+                            bgcolor: `${COLORS.PRIMARY_PURPLE}10`,
+                            px: 1,
+                            py: 0.2,
+                            borderRadius: "6px",
+                            fontSize: "0.7rem",
+                            display: "inline-block",
+                          }}
+                        >
+                          {cat}
+                        </Typography>
+                      ))}
+                  </Box>
                 </Box>
                 <Box sx={{ display: "flex", gap: 1 }}>
                   <IconButton
@@ -617,76 +651,76 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
               {/* Visual Evidence with Smooth Scrolling */}
               {(currentBooking.booking_photo_url ||
                 currentBooking.photo_url) && (
-                <Box sx={{ mb: 4 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: "#94A3B8",
-                      fontWeight: 700,
-                      letterSpacing: "0.1em",
-                      mb: 2,
-                      display: "block",
-                    }}
-                  >
-                    VISUAL EVIDENCE (
-                    {(currentBooking.booking_photo_url || []).length +
-                      (currentBooking.photo_url || []).length}
-                    )
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      gap: 2,
-                      overflowX: "auto",
-                      pt: 1.5,
-                      pb: 2,
-                      px: 0.5,
-                      mx: -0.5,
-                      "&::-webkit-scrollbar": { height: "4px" },
-                      "&::-webkit-scrollbar-thumb": {
-                        backgroundColor: isDark
-                          ? "rgba(255,255,255,0.1)"
-                          : "rgba(0,0,0,0.06)",
-                        borderRadius: "10px",
-                      },
-                    }}
-                  >
-                    {[
-                      ...(currentBooking.booking_photo_url || []),
-                      ...(currentBooking.photo_url || []),
-                    ].map((url, idx) => (
-                      <Box
-                        key={idx}
-                        component="img"
-                        src={url}
-                        onClick={() => setPreviewImage(url)}
-                        sx={{
-                          width: 130,
-                          height: 130,
-                          borderRadius: "20px",
-                          objectFit: "cover",
-                          flexShrink: 0,
-                          cursor: "pointer",
-                          transition:
-                            "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                          border: `2px solid ${isDark ? "rgba(255,255,255,0.05)" : "#FFFFFF"}`,
-                          boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                          "&:hover": {
-                            transform: "scale(1.05) translateY(-5px)",
-                            boxShadow: `0 15px 30px ${isDark ? "rgba(0,0,0,0.4)" : "rgba(94, 24, 233, 0.15)"}`,
-                            borderColor: COLORS.PRIMARY_PURPLE,
-                          },
-                        }}
-                      />
-                    ))}
+                  <Box sx={{ mb: 4 }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: "#94A3B8",
+                        fontWeight: 700,
+                        letterSpacing: "0.1em",
+                        mb: 2,
+                        display: "block",
+                      }}
+                    >
+                      VISUAL EVIDENCE (
+                      {(currentBooking.booking_photo_url || []).length +
+                        (currentBooking.photo_url || []).length}
+                      )
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: 2,
+                        overflowX: "auto",
+                        pt: 1.5,
+                        pb: 2,
+                        px: 0.5,
+                        mx: -0.5,
+                        "&::-webkit-scrollbar": { height: "4px" },
+                        "&::-webkit-scrollbar-thumb": {
+                          backgroundColor: isDark
+                            ? "rgba(255,255,255,0.1)"
+                            : "rgba(0,0,0,0.06)",
+                          borderRadius: "10px",
+                        },
+                      }}
+                    >
+                      {[
+                        ...(currentBooking.booking_photo_url || []),
+                        ...(currentBooking.photo_url || []),
+                      ].map((url, idx) => (
+                        <Box
+                          key={idx}
+                          component="img"
+                          src={url}
+                          onClick={() => setPreviewImage(url)}
+                          sx={{
+                            width: 130,
+                            height: 130,
+                            borderRadius: "20px",
+                            objectFit: "cover",
+                            flexShrink: 0,
+                            cursor: "pointer",
+                            transition:
+                              "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                            border: `2px solid ${isDark ? "rgba(255,255,255,0.05)" : "#FFFFFF"}`,
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                            "&:hover": {
+                              transform: "scale(1.05) translateY(-5px)",
+                              boxShadow: `0 15px 30px ${isDark ? "rgba(0,0,0,0.4)" : "rgba(94, 24, 233, 0.15)"}`,
+                              borderColor: COLORS.PRIMARY_PURPLE,
+                            },
+                          }}
+                        />
+                      ))}
+                    </Box>
                   </Box>
-                </Box>
-              )}
+                )}
             </Box>
 
             {/* Action Buttons */}
             <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
-              <Button
+              {/* <Button
                 fullWidth
                 variant="outlined"
                 sx={{
@@ -700,7 +734,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                 }}
               >
                 Help & Support
-              </Button>
+              </Button> */}
               {/* <Button
                 fullWidth
                 variant="contained"

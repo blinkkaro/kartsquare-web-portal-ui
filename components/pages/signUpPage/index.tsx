@@ -8,7 +8,6 @@ import { SignUpFormData } from "./signUpSchema";
 import { registerUser } from "@/features/ui/authSlice";
 import { AppUserType, RegisterData } from "@/services/auth/auth.interface";
 import Error from "@/components/common/ErrorMessage";
-import RegistrationForm from "./components/RegesitrationForm";
 import { Box, Link, Typography } from "@mui/material";
 import NextLink from "next/link";
 
@@ -17,6 +16,7 @@ import { useLeadVerification } from "@/hooks/useLeadVerification";
 import { useQuery } from "@tanstack/react-query";
 import { authService } from "@/services/auth/auth.service";
 import { secureStorage } from "@/helper/SecureStorage";
+import RegistrationForm from "./components/RegesitrationForm";
 
 function SignUpView() {
   const { t } = useTranslate();
@@ -57,7 +57,7 @@ function SignUpView() {
     if (role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER) {
       const busLeadId = sessionStorage.getItem("bus_lead_id");
       if (!busLeadId) {
-        router.replace("/freeListing");
+        router.replace("/business-listing");
         return;
       }
       setBusLeadId(busLeadId);
@@ -68,6 +68,10 @@ function SignUpView() {
     if (leadDetailsQuery.data) {
       setInitialData((prev) => ({
         ...prev,
+        // Prefill phone number from the verified WhatsApp number
+        phone_number: leadDetailsQuery.data.whatsapp_number || "",
+        country_code: leadDetailsQuery.data.whatsapp_country_code || "",
+        // Keep whatsapp fields in sync too (used for registration payload)
         whatsapp_number: leadDetailsQuery.data.whatsapp_number || "",
         whatsapp_country_code:
           leadDetailsQuery.data.whatsapp_country_code || "",
@@ -75,7 +79,7 @@ function SignUpView() {
     }
     if (leadDetailsQuery.isError) {
       console.error("Failed to fetch lead info", leadDetailsQuery.error);
-      router.replace("/freeListing");
+      router.replace("/business-listing");
     }
   }, [
     leadDetailsQuery.data,

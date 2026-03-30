@@ -4,11 +4,11 @@ import {
   Box,
   Typography,
   Button,
-  CircularProgress,
   Paper,
   useTheme,
   alpha,
 } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import RightDrawer from "@/components/common/RightDrawer";
 import { ServiceDetails } from "@/services/serviceDetails/serviceDetailsInterface";
 import { COLORS } from "@/constants/colors";
@@ -252,7 +252,9 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
               border: `1px solid ${isDark ? "rgba(211, 47, 47, 0.3)" : "rgba(211, 47, 47, 0.2)"}`,
             }}
           >
-            <Typography variant="body2">{error}</Typography>
+            <Typography variant="body2" sx={{ whiteSpace: "pre-line", lineHeight: 1.5 }}>
+              {error}
+            </Typography>
           </Paper>
         )}
 
@@ -485,7 +487,7 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
             }}
           >
             {loading || uploadingImages ? (
-              <CircularProgress size={24} color="inherit" />
+              <LogoLoader size={24} />
             ) : editService ? (
               english.update_service
             ) : (

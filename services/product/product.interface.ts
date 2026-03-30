@@ -10,6 +10,7 @@ export enum product_status {
 export enum product_specifications_option_type {
   TEXT = "text",
   DROPDOWN = "dropdown",
+  SELECT = "select",
   RANGE = "range",
   DATE = "date",
   CHECKBOX = "checkbox",
@@ -135,6 +136,43 @@ export interface ProductDetail extends Product {
   }[];
 }
 
+export interface StoreAddress {
+  lat: number | string;
+  long: number | string;
+  floor: string;
+  state: string;
+  address: string;
+  country: string;
+  pincode: string;
+  landmark: string;
+  city_town: string;
+  address_id: string;
+  building_no: string;
+}
+
+export interface SupplierInfo {
+  name: string;
+  gst_in: string | null;
+  logo_url: string;
+  username: string;
+  last_name: string;
+  first_name: string;
+  is_verified: boolean;
+  user_rating: number;
+  website_url: string | null;
+  country_code: string;
+  store_address: StoreAddress;
+  primary_mobile: string;
+  whatsapp_number: string;
+  establishment_year: string;
+  verification_status: string;
+  whatsapp_country_code: string;
+}
+
+export interface SupplierProductDetail extends Omit<ProductDetail, "supplier"> {
+  supplier: SupplierInfo;
+}
+
 export interface ProductBrand {
   product_brand_id: string;
   brand_name: string;
@@ -144,6 +182,11 @@ export interface ProductBrand {
   deleted_by?: string;
   created_at: Date;
   updated_at: Date;
+} 
+
+export interface ProductBrandPagination {
+  pagination: pagination;
+  brands: ProductBrand[];
 }
 
 export interface ProductCategoriesInterface {

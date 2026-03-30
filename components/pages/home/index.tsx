@@ -8,16 +8,15 @@ import {
   useTheme,
   Grid,
   useMediaQuery,
-  CircularProgress,
 } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { COLORS } from "@/constants/colors";
 import HomeBanner from "./components/HomeBanner";
-import FeaturedServiceCategories from "./components/FeaturedServiceCategories";
-import FeaturedProductCategories from "./components/FeaturedProductCategories";
+import CombinedFeaturedSection from "./components/CombinedFeaturedSection";
 import StoriesSection from "./components/StoriesSection";
 import PostCard from "./components/PostCard";
 import AdCard from "./components/AdCard";
-import { useGetInfinitePosts } from "@/hooks/usePosts";
+import { useGetInfinitePosts, usePrefetchReels } from "@/hooks/usePosts";
 import { useGetInfiniteAds } from "@/hooks/useAdvertisements";
 import Blogs from "./components/Blogs";
 import TopSuggestions from "./components/TopSuggestions";
@@ -29,6 +28,9 @@ import { AdvertiseActiveAd } from "@/services/advertise/advertise.intreface";
 import { seededRandom } from "@/helper/helper";
 
 function HomeView() {
+  // Prefetch reels data so it's ready when user navigates to Reels page
+  usePrefetchReels();
+
   const {
     data: postsData,
     isLoading: postsLoading,
@@ -181,9 +183,11 @@ function HomeView() {
         >
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             {/* Banner Section */}
-            {/* <HomeBanner /> */}
+            <HomeBanner />
 
-            <StoriesSection data={stories} isLoading={storiesLoading} />
+            <div id="posts-feed-section">
+              <StoriesSection data={stories} isLoading={storiesLoading} />
+            </div>
 
             {/* Compact Map - Mobile/Tablet View */}
             <Box
@@ -195,13 +199,15 @@ function HomeView() {
               <CompactMapView height="300px" />
             </Box>
 
-            {mergedFeed.map((item) =>
-              item.type === "post" ? (
-                <PostCard post={item.data as Posts} key={item.key} />
-              ) : (
-                <AdCard ad={item.data as AdvertiseActiveAd} key={item.key} />
-              )
-            )}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              {mergedFeed.map((item) =>
+                item.type === "post" ? (
+                  <PostCard post={item.data as Posts} key={item.key} />
+                ) : (
+                  <AdCard ad={item.data as AdvertiseActiveAd} key={item.key} />
+                )
+              )}
+            </Box>
 
             {/* Loading Indicator */}
             {(isLoading || isFetchingNext) && (
@@ -212,7 +218,7 @@ function HomeView() {
                   padding: 3,
                 }}
               >
-                <CircularProgress />
+                <LogoLoader />
               </Box>
             )}
 

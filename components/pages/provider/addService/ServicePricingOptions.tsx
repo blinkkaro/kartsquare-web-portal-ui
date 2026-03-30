@@ -512,7 +512,7 @@ const ServicePricingOptions: React.FC<ServicePricingOptionsProps> = ({
                 color="text.secondary"
                 sx={{ mb: 2, display: "block", lineHeight: 1.5 }}
               >
-                Enter name, price (INR), and a short description for each item.
+                Enter name, price (INR), and an optional description for each item.
                 You can add as many as you need.
               </Typography>
               {errors?.multiple && (

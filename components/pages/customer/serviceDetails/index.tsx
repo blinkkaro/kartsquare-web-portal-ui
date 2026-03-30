@@ -4,13 +4,14 @@ import {
   Box,
   Container,
   Typography,
-  CircularProgress,
   useTheme,
   Divider,
 } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { Bookmark, Share } from "@mui/icons-material";
+import { Bookmark, Share, ChatOutlined } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
+import Image from "next/image";
 import ServiceImageCarousel from "../../../ServiceImageCarousel";
 import ProviderInfoCard from "../../../ProviderInfoCard";
 import ServiceCard from "../../../ServiceCard";
@@ -39,6 +40,11 @@ import RightDrawer from "@/components/common/RightDrawer";
 import ReviewDrawerContent from "./ReviewDrawerContent";
 import { review_type } from "@/services/providerDashboard/providerDashboard.interface";
 import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
+import axios from "axios";
+import toast from "react-hot-toast";
+import GetQuoteModal from "./GetQuoteModal";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 const CustomerServiceDetails = () => {
   const params = useParams();
@@ -52,6 +58,7 @@ const CustomerServiceDetails = () => {
   const dispatch = useDispatch();
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [descriptionDrawerOpen, setDescriptionDrawerOpen] = useState(false);
+  const [getQuoteModalOpen, setGetQuoteModalOpen] = useState(false);
 
   const handleBookNow = () => {
     const token = secureStorage.getItem("token");
@@ -59,6 +66,74 @@ const CustomerServiceDetails = () => {
       dispatch(openLoginModal());
     } else {
       router.push(`/services/${serviceId}/book`);
+    }
+  };
+
+  const handleWhatsApp = () => {
+    if (service?.provider_whatsapp_country_code && service?.provider_whatsapp_number) {
+      let code = service.provider_whatsapp_country_code;
+      if (code.startsWith("+")) {
+        code = code.substring(1);
+      }
+      const text = encodeURIComponent(`Hi, I am interested in your service: ${service.service_name}`);
+      const url = `https://wa.me/${code}${service.provider_whatsapp_number}?text=${text}`;
+      window.open(url, "_blank");
+    } else if (service?.provider_phone_number) {
+      // Fallback to phone number if specifically whatsapp is not there,
+      // assuming phone number might have whatsapp.
+      const url = `https://wa.me/${service.provider_phone_number.replace('+', '')}?text=${encodeURIComponent(`Hi, I am interested in your service: ${service.service_name}`)}`;
+      window.open(url, "_blank");
+    }
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: service?.service_name,
+          text: `Check out ${service?.service_name} on KartSquare!`,
+          url: window.location.href,
+        });
+      } catch (error) {
+        console.error("Error sharing", error);
+      }
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      toast.success("Link copied to clipboard!");
+    }
+  };
+
+  const handleChatClick = async () => {
+    const token = secureStorage.getItem("token");
+    if (!token) {
+      dispatch(openLoginModal());
+      return;
+    }
+
+    const targetUserId = service?.provider_id;
+
+    if (!targetUserId) {
+      toast.error("Provider ID not found for chatting.");
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        `${API_URL}/chat/conversations`,
+        {
+          participant2_id: targetUserId,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (res.data.status === "success") {
+        router.push(`/chat?conversationId=${res.data.data.id}`);
+      }
+    } catch (err) {
+      console.error("Failed to initialize chat", err);
+      toast.error("Could not start chat.");
     }
   };
 
@@ -121,19 +196,7 @@ const CustomerServiceDetails = () => {
   if (loading) {
     return (
       <MainLayout>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: "100vh",
-            bgcolor: isDark
-              ? COLORS.BACKGROUND.PRIMARY_DARK
-              : COLORS.BACKGROUND.SECONDARY_LIGHT,
-          }}
-        >
-          <CircularProgress />
-        </Box>
+        <CenteredLoader minHeight="100vh" py={0} />
       </MainLayout>
     );
   }
@@ -208,12 +271,13 @@ const CustomerServiceDetails = () => {
               alignItems: "start",
               width: "100%",
               maxWidth: "100%",
+              position: "relative",
             }}
           >
             <Box
               sx={{
                 position: { xs: "static", md: "sticky" },
-                order: { xs: 1, md: 1 },
+                order: { xs: 2, md: 1 },
                 width: "100%",
                 maxWidth: "100%",
                 overflow: "hidden",
@@ -228,6 +292,7 @@ const CustomerServiceDetails = () => {
                 priceCatalogUrls={service.price_catalog_url}
                 priceItems={service.price_items}
                 currency={service.currency}
+                onGetQuote={() => setGetQuoteModalOpen(true)}
               />
               {service.service_address?.latitude &&
                 service.service_address?.longitude && (
@@ -241,7 +306,7 @@ const CustomerServiceDetails = () => {
 
             <Box
               sx={{
-                order: { xs: 2, md: 2 },
+                order: { xs: 3, md: 2 },
                 bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "white",
                 borderRadius: "16px",
                 p: { xs: 1.5, sm: 2.5, md: 3 },
@@ -292,6 +357,11 @@ const CustomerServiceDetails = () => {
                     /* TODO: Implement */
                   }}
                   onBookNow={() => handleBookNow()}
+                  onWhatsApp={handleWhatsApp}
+                  showWhatsApp={
+                    !!(service.provider_whatsapp_country_code && service.provider_whatsapp_number) ||
+                    !!service.provider_phone_number
+                  }
                 />
               </Box>
 
@@ -430,14 +500,13 @@ const CustomerServiceDetails = () => {
               </Box>
             </Box>
 
-            {/* Right Column - Action Buttons - Mobile: Horizontal, Desktop: Vertical (Synced with Provider) 
             <Box
               sx={{
                 display: "flex",
                 flexDirection: { xs: "row", lg: "column" },
                 gap: { xs: 1, sm: 2 },
-                justifyContent: { xs: "flex-start", lg: "flex-start" },
-                order: { xs: 3, md: 3 },
+                justifyContent: { xs: "flex-end", lg: "flex-start" },
+                order: { xs: 1, md: 3 },
                 pt: { xs: 0, lg: 1 },
                 mb: { xs: 2, lg: 0 },
                 width: { xs: "100%", lg: "auto" },
@@ -445,51 +514,41 @@ const CustomerServiceDetails = () => {
               }}
             >
               <IconButton
-                onClick={() => {
-                  /* TODO: Implement save/bookmark 
-                
+                onClick={handleShare}
                 sx={{
-                  bgcolor: isDark
-                    ? "rgba(255, 255, 255, 0.08)"
-                    : "rgba(255, 255, 255, 0.9)",
-                  border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"}`,
-                  color: isDark
-                    ? COLORS.TEXT.PRIMARY_DARK
-                    : COLORS.TEXT.PRIMARY_LIGHT,
+                  backgroundColor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE,
+                  boxShadow: COLORS.SHADOW.DEFAULT,
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
                   "&:hover": {
-                    bgcolor: isDark
-                      ? "rgba(255, 255, 255, 0.12)"
-                      : "rgba(255, 255, 255, 1)",
+                    backgroundColor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.LIGHT_GRAY,
                   },
-                  width: { xs: 40, sm: 44 },
-                  height: { xs: 40, sm: 44 },
                 }}
               >
-                <Bookmark fontSize="small" />
+                <Share fontSize="small" sx={{ color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }} />
               </IconButton>
               <IconButton
-                onClick={() => {
-                  /* TODO: Implement share 
+                onClick={handleChatClick}
                 sx={{
-                  bgcolor: isDark
-                    ? "rgba(255, 255, 255, 0.08)"
-                    : "rgba(255, 255, 255, 0.9)",
-                  border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"}`,
-                  color: isDark
-                    ? COLORS.TEXT.PRIMARY_DARK
-                    : COLORS.TEXT.PRIMARY_LIGHT,
+                  backgroundColor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE,
+                  boxShadow: COLORS.SHADOW.DEFAULT,
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
                   "&:hover": {
-                    bgcolor: isDark
-                      ? "rgba(255, 255, 255, 0.12)"
-                      : "rgba(255, 255, 255, 1)",
+                    backgroundColor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.LIGHT_GRAY,
                   },
-                  width: { xs: 40, sm: 44 },
-                  height: { xs: 40, sm: 44 },
                 }}
               >
-                <Share fontSize="small" />
+                <Image
+                  src={isDark ? "/icons/darkThemeChat.svg" : "/icons/chat.svg"}
+                  alt="Chat"
+                  width={20}
+                  height={20}
+                />
               </IconButton>
-            </Box>*/}
+            </Box>
           </Box>
         </Container>
       </Box>
@@ -507,6 +566,14 @@ const CustomerServiceDetails = () => {
       >
         <ReviewDrawerContent service={service} onClose={handleReviewSubmit} />
       </RightDrawer>
+
+      <GetQuoteModal
+        open={getQuoteModalOpen}
+        onClose={() => setGetQuoteModalOpen(false)}
+        providerId={service.provider_id || ""}
+        serviceName={service.service_name || ""}
+        businessName={service.business_name || ""}
+      />
     </MainLayout>
   );
 };

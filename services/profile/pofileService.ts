@@ -171,6 +171,36 @@ class ProfileService {
       }
     }
   }
+
+  async getProviderReels(
+    id: string,
+    page?: number,
+    limit?: number,
+  ): Promise<providerPostsInterface> {
+    try {
+      const response = await GET<providerPostsInterface>(
+        APIENDPOINTS.GET_PROVIDER_REELS(id, page, limit || 10),
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateShowNumber(show_number: boolean): Promise<profileInterface> {
+    try {
+      const response = await PUT<profileInterface>(
+        APIENDPOINTS.UPDATE_SHOW_NUMBER,
+        {
+          show_number,
+        },
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export const profileService = new ProfileService();

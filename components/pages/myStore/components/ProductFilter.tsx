@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Stack, Typography, useTheme, useMediaQuery } from "@mui/material";
 import { useForm } from "react-hook-form";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
@@ -27,6 +27,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
   });
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const router = useRouter();
   const { t } = useTranslate();
 
@@ -48,13 +49,15 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
     <Box
       sx={{
         display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
         justifyContent: "space-between",
-        alignItems: "center",
-        flexWrap: "wrap",
+        alignItems: { xs: "stretch", sm: "center" },
         gap: 2,
         mb: 3,
-        p: 2,
-        bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
+        p: { xs: 1.5, sm: 2 },
+        bgcolor: isDark
+          ? COLORS.BACKGROUND.PRIMARY_DARK
+          : COLORS.BACKGROUND.PRIMARY_LIGHT,
         borderRadius: "16px",
       }}
     >
@@ -74,8 +77,16 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
         </Box>
       </Typography>
 
-      <Stack direction="row" spacing={2} alignItems="center">
-        <Box sx={{ width: 300 }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 2,
+          alignItems: "stretch",
+          width: { xs: "100%", sm: "auto" },
+        }}
+      >
+        <Box sx={{ width: { xs: "100%", sm: 300 } }}>
           <Input
             name="search"
             control={control}
@@ -84,28 +95,29 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "50px",
-                bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                bgcolor: isDark
+                  ? COLORS.BACKGROUND.SECONDARY_DARK
+                  : COLORS.BACKGROUND.SECONDARY_LIGHT,
                 "& fieldset": { border: "none" },
               },
+              width: "100%",
             }}
           />
         </Box>
-        {/* <Button
-          variant="outlined"
+
+        <Button
+          onClick={handleAddProduct}
+          startIcon={<AddIcon />}
+          fullWidth={isMobile}
           sx={{
-            minWidth: "40px",
-            width: "40px",
-            height: "40px",
-            p: 0,
-            borderRadius: "50%",
-            border: `1px solid ${COLORS.BORDER.DEFAULT_LIGHT}`,
+            whiteSpace: "nowrap",
+            height: "45px",
+            px: 3,
           }}
         >
-          <FilterListIcon />
-        </Button> */}
-
-        <Button onClick={handleAddProduct} startIcon={<AddIcon />}>{t("addNewProduct")}</Button>
-      </Stack>
+          {t("addNewProduct")}
+        </Button>
+      </Box>
     </Box>
   );
 };

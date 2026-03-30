@@ -3,12 +3,13 @@ import React from "react";
 import { Grid, Paper, Typography, Box } from "@mui/material";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useSupplierDashboard } from "@/hooks/useSupplier";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 
 export default function DashboardPage() {
     const { t } = useTranslate();
     const { data, isLoading } = useSupplierDashboard();
 
-    if (isLoading) return <Typography>Loading dashboard...</Typography>;
+    if (isLoading) return <CenteredLoader minHeight="400px" showText={true} />;
 
     return (
         <Box>

@@ -20,10 +20,10 @@ import StoryMedia from "./StoryMedia";
 import { Close, HeatPumpRounded, MoreVert, Send } from "@mui/icons-material";
 import { useViewStory, useDeleteStory } from "@/hooks/useStories";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
-import { RootState } from "@/store/store";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { secureStorage } from "@/helper/SecureStorage";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
+import { AppUserType } from "@/services/auth/auth.interface";
 
 interface StoryViewerProps {
   storiesList: StoriesList[];
@@ -39,6 +39,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
   const [currentUserIndex, setCurrentUserIndex] = useState(initialUserIndex);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const effectiveIsPaused = isPaused;
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
@@ -246,7 +247,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
                   duration={5000} // or variable if video
                   isActive={index === currentStoryIndex}
                   isCompleted={index < currentStoryIndex}
-                  isPaused={isPaused}
+                  isPaused={effectiveIsPaused}
                   onCompleted={handleNext}
                 />
               </Box>
@@ -269,12 +270,16 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Box
                 sx={{ display: "flex", alignItems: "center", gap: 1, cursor: "pointer" }}
-                onClick={
-                  isOwnStory
-                    ? () =>
-                        dispatch(openDrawer({ userId: currentUser.user_id }))
-                    : undefined
-                }
+                onClick={() => {
+                  dispatch(
+                    openDrawer({
+                      userId: currentUser.user_id,
+                      role: currentUser.upload_user_type as AppUserType,
+                      username: currentUser.user_username,
+                    }),
+                  );
+                  onClose();
+                }}
               >
                 <Avatar
                   src={currentUser.user_profile_image}
@@ -283,7 +288,7 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
                 <Typography
                   sx={{ color: "#fff", fontWeight: 600, fontSize: "0.9rem" }}
                 >
-                  {currentUser.user_name}
+                  {currentUser.business_name}
                 </Typography>
                 <Typography
                   sx={{ color: "rgba(255,255,255,0.7)", fontSize: "0.8rem" }}
@@ -354,8 +359,8 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
           >
             <StoryMedia
               story={currentStory}
-              isActive={!isPaused} // Should be isActive && !isPaused really, but isActive controls playing state in Media
-              isPaused={isPaused}
+              isActive={!effectiveIsPaused} // Should be isActive && !isPaused really, but isActive controls playing state in Media
+              isPaused={effectiveIsPaused}
               onMediaReady={() => {}} // Could start timer here
               onMediaEnd={handleNext} // For videos
             />

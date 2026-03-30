@@ -1,7 +1,8 @@
 "use client";
 import ProfileWrapper from "@/components/common/profile/profileWrapper";
 import React, { useEffect, useState } from "react";
-import { Box, Typography, CircularProgress } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import PreferenceCards from "@/components/pages/preferences/components/PreferenceCard";
 import {
   useGetUserPreference,
@@ -84,16 +85,7 @@ function MyPreferencesView() {
         </Typography>
 
         {isLoading ? (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              minHeight: "300px",
-            }}
-          >
-            <CircularProgress />
-          </Box>
+          <CenteredLoader />
         ) : (
           <Box
             sx={{

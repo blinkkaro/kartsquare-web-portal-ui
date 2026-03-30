@@ -51,7 +51,7 @@ function BusinessInfoView() {
 
 
     dispatch(logout());
-    router.push(`/freeListing`);
+    router.push(`/business-listing`);
   };
   return (
     <AuthWrapper>

@@ -5,8 +5,8 @@ import {
   Box,
   IconButton,
   Typography,
-  CircularProgress,
 } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { ArrowBack } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import { Posts } from "@/services/post/postInterfaces";
@@ -39,7 +39,7 @@ export default function ProfilePosts({
   if (isLoading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <CircularProgress sx={{ color: COLORS.PRIMARY_PURPLE }} />
+        <LogoLoader />
       </Box>
     );
   }

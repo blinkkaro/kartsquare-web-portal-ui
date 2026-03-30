@@ -7,4 +7,5 @@ export const APIENDPOINTS = {
     PRODUCT_BY_ID: (productId: string) => `/products/${productId}`,
     GET_SUPPLIER_PRODUCTS: `/products/supplier`,
     PRODUCT_STATUS: (productId: string) => `/products/status/${productId}`,
+    GET_ALL_BRANDS: `/product-brands`,
 }

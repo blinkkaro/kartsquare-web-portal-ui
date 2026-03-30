@@ -6,6 +6,7 @@ import {
   TextField,
   Autocomplete,
   Chip,
+  createFilterOptions,
 } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import { Category } from "@/services/serviceList/listInteraface";
@@ -44,6 +45,16 @@ const ServiceBasicInfo = ({
   description,
   onDescriptionChange,
 }: ServiceBasicInfoProps) => {
+  const filterCategoryOptions = createFilterOptions<Category>({
+    matchFrom: 'any',
+    stringify: (option) => option.name + " " + (option.description || ""),
+  });
+
+  const filterSubcategoryOptions = createFilterOptions<Subcategory>({
+    matchFrom: 'any',
+    stringify: (option) => option.name + " " + (option.description || ""),
+  });
+
   // Get the selected Category objects from their IDs
   const selectedCategories = categories.filter((cat) =>
     categoryIds.includes(cat.id)
@@ -68,6 +79,7 @@ const ServiceBasicInfo = ({
           options={categories}
           getOptionLabel={(option) => option.name}
           value={selectedCategories}
+          filterOptions={filterCategoryOptions}
           onChange={(_event, newValue) => {
             if (newValue.length <= MAX_CATEGORIES) {
               onCategoryChange(newValue.map((cat) => cat.id));
@@ -80,6 +92,57 @@ const ServiceBasicInfo = ({
           getOptionDisabled={() =>
             selectedCategories.length >= MAX_CATEGORIES
           }
+          renderOption={(props, option, { selected }) => {
+            const { key, ...otherProps } = props as any;
+            return (
+              <li key={key} {...otherProps} style={{ padding: 0 }}>
+                <Box 
+                  sx={{ 
+                    width: '100%', 
+                    py: 1.5, 
+                    px: 2, 
+                    borderBottom: `1px solid ${COLORS.BORDER.DEFAULT_LIGHT}`,
+                    bgcolor: selected ? `${COLORS.PRIMARY_PURPLE}08` : 'transparent',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    transition: 'background-color 0.2s',
+                    '&:hover': {
+                      bgcolor: `${COLORS.PRIMARY_PURPLE}15`,
+                    }
+                  }}
+                >
+                  <Typography 
+                    variant="subtitle2" 
+                    sx={{ 
+                      fontWeight: selected ? 700 : 600, 
+                      color: selected ? COLORS.PRIMARY_PURPLE : 'text.primary',
+                      fontSize: '0.9375rem',
+                      mb: option.description ? 0.5 : 0 
+                    }}
+                  >
+                    {option.name}
+                  </Typography>
+                  {option.description && (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'text.secondary',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        lineHeight: 1.4,
+                        fontSize: '0.8125rem'
+                      }}
+                    >
+                      {option.description}
+                    </Typography>
+                  )}
+                </Box>
+              </li>
+            );
+          }}
           renderTags={(value, getTagProps) =>
             value.map((option, index) => (
               <Chip
@@ -122,6 +185,7 @@ const ServiceBasicInfo = ({
           options={subcategories}
           getOptionLabel={(option) => option.name}
           value={selectedSubcategories}
+          filterOptions={filterSubcategoryOptions}
           onChange={(_event, newValue) => {
             if (newValue.length <= MAX_SUBCATEGORIES) {
               onSubcategoryChange(newValue.map((sub) => sub.id));
@@ -135,6 +199,57 @@ const ServiceBasicInfo = ({
           getOptionDisabled={() =>
             selectedSubcategories.length >= MAX_SUBCATEGORIES
           }
+          renderOption={(props, option, { selected }) => {
+            const { key, ...otherProps } = props as any;
+            return (
+              <li key={key} {...otherProps} style={{ padding: 0 }}>
+                <Box 
+                  sx={{ 
+                    width: '100%', 
+                    py: 1.5, 
+                    px: 2, 
+                    borderBottom: `1px solid ${COLORS.BORDER.DEFAULT_LIGHT}`,
+                    bgcolor: selected ? `${COLORS.PRIMARY_PURPLE}08` : 'transparent',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    transition: 'background-color 0.2s',
+                    '&:hover': {
+                      bgcolor: `${COLORS.PRIMARY_PURPLE}15`,
+                    }
+                  }}
+                >
+                  <Typography 
+                    variant="subtitle2" 
+                    sx={{ 
+                      fontWeight: selected ? 700 : 600, 
+                      color: selected ? COLORS.PRIMARY_PURPLE : 'text.primary',
+                      fontSize: '0.9375rem',
+                      mb: option.description ? 0.5 : 0 
+                    }}
+                  >
+                    {option.name}
+                  </Typography>
+                  {option.description && (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'text.secondary',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        lineHeight: 1.4,
+                        fontSize: '0.8125rem'
+                      }}
+                    >
+                      {option.description}
+                    </Typography>
+                  )}
+                </Box>
+              </li>
+            );
+          }}
           renderTags={(value, getTagProps) =>
             value.map((option, index) => (
               <Chip

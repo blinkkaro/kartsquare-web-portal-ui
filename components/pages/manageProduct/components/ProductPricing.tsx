@@ -13,7 +13,7 @@ import {
   TextField,
 } from "@mui/material";
 import Input from "@/components/common/Input";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useGetBrands } from "@/hooks/useProducts";
 import { Info, InfoOutline } from "@mui/icons-material";
@@ -25,10 +25,12 @@ const ProductPricing = () => {
     register,
     control,
     formState: { errors },
-    watch,
   } = useFormContext();
   const { t } = useTranslate();
-  const subCategoryId = watch("product_sub_category_id");
+  const subCategoryId = useWatch({
+    control,
+    name: "product_sub_category_id",
+  });
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
@@ -50,7 +52,11 @@ const ProductPricing = () => {
 
   return (
     <Box>
-      <Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={3}>
+      <Box
+        display="grid"
+        gridTemplateColumns={{ xs: "1fr", sm: "repeat(2, 1fr)" }}
+        gap={3}
+      >
         <Box>
           <Typography variant="subtitle2" mb={1} fontWeight={500}>
             {t("price") + "*"}

@@ -4,9 +4,9 @@ import {
   Box,
   Container,
   Typography,
-  CircularProgress,
   useTheme,
 } from "@mui/material";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { UserBooking } from "../../../services/booking/bookingInterface";
 import { COLORS } from "../../../constants/colors";
 import { english } from "../../../features/i18n/en";
@@ -132,15 +132,15 @@ const BookingsPage = () => {
           <Box
             sx={{
               display: "flex",
-              flexDirection: { xs: "column", md: "row" },
+              flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
-              alignItems: { xs: "stretch", md: "center" },
-              gap: { xs: 2, md: 0 },
-              mb: 3,
+              alignItems: { xs: "flex-start", sm: "center" },
+              gap: 2,
+              mb: { xs: 3, md: 4 },
             }}
           >
             <BookingsHeader />
-            <Box sx={{ width: { xs: "100%", md: "auto" } }}>
+            <Box sx={{ width: { xs: "100%", sm: "auto" } }}>
               <BookingsSearchBar
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
@@ -148,18 +148,31 @@ const BookingsPage = () => {
             </Box>
           </Box>
 
-          {/* Tabs */}
-          <BookingsTabs
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            counts={[
-              counts.pending,
-              counts.upcoming,
-              counts.in_progress,
-              counts.completed,
-              counts.cancelled,
-            ]}
-          />
+          {/* Tabs and Actions Row */}
+          <Box 
+            sx={{ 
+              display: "flex", 
+              flexDirection: { xs: "column", md: "row" },
+              justifyContent: "space-between",
+              alignItems: { xs: "stretch", md: "center" },
+              gap: 2,
+              mb: { xs: 2, md: 3 }
+            }}
+          >
+            <Box sx={{ flex: 1, overflow: "hidden" }}>
+              <BookingsTabs
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                counts={[
+                  counts.pending,
+                  counts.upcoming,
+                  counts.in_progress,
+                  counts.completed,
+                  counts.cancelled,
+                ]}
+              />
+            </Box>
+          </Box>
 
           {/* View Toggle - Hidden on mobile */}
           <Box
@@ -238,9 +251,7 @@ const BookingsPage = () => {
 
           {/* Bookings Content */}
           {loading ? (
-            <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
-              <CircularProgress />
-            </Box>
+            <CenteredLoader py={10} size={80} />
           ) : filteredBookings.length === 0 ? (
             <Box sx={{ textAlign: "center", py: 8 }}>
               <Typography
