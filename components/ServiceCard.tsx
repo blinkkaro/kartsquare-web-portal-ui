@@ -16,6 +16,7 @@ import {
   ArrowForwardIos,
   Verified,
   Bolt,
+  WorkspacePremium,
 } from "@mui/icons-material";
 import { COLORS } from "../constants/colors";
 import { Service, ServiceStatus } from "../services/serviceList/listInteraface";
@@ -332,28 +333,30 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
           </Box>
 
           {service.is_price_required ? (
-            <Typography
-              variant="subtitle1"
-              fontWeight="bold"
-              sx={{
-                color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-              }}
-            >
+            (service.price ?? 0) > 0 ? (
               <Typography
-                variant="body2"
-                component="span"
+                variant="subtitle1"
+                fontWeight="bold"
                 sx={{
-                  color: isDark
-                    ? COLORS.TEXT.SECONDARY_DARK
-                    : COLORS.TEXT.SECONDARY_LIGHT,
-                  mr: 0.5,
-                  fontSize: "0.85rem",
+                  color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
                 }}
               >
-                {service.currency}
+                <Typography
+                  variant="body2"
+                  component="span"
+                  sx={{
+                    color: isDark
+                      ? COLORS.TEXT.SECONDARY_DARK
+                      : COLORS.TEXT.SECONDARY_LIGHT,
+                    mr: 0.5,
+                    fontSize: "0.85rem",
+                  }}
+                >
+                  {service.currency}
+                </Typography>
+                {service.price}
               </Typography>
-              {service.price}
-            </Typography>
+            ) : null
           ) : (
             <Typography
               variant="subtitle1"
@@ -399,29 +402,32 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
           >
             {service.service_name}
           </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 0.3,
-              bgcolor: "#ECFDF5",
-              color: "#059669",
-              px: 0.6,
-              py: 0.1,
-              borderRadius: "4px",
-              border: "1px solid #10B98130",
-            }}
-          >
-            <Bolt sx={{ fontSize: "10px" }} />
-            <Typography
+          {userRole !== UserRole.SERVICE_PROVIDER && (
+            <Box
               sx={{
-                fontWeight: 900,
-                fontSize: "0.55rem",
+                display: "flex",
+                alignItems: "center",
+                gap: 0.4,
+                background: "linear-gradient(135deg, #059669 0%, #10B981 100%)",
+                color: "white",
+                px: 1,
+                py: 0.25,
+                borderRadius: "6px",
+                boxShadow: "0 2px 6px rgba(16, 185, 129, 0.3)",
               }}
             >
-              HIGH SUCCESS
-            </Typography>
-          </Box>
+              <WorkspacePremium sx={{ fontSize: "12px" }} />
+              <Typography
+                sx={{
+                  fontWeight: 800,
+                  fontSize: "0.6rem",
+                  letterSpacing: "0.03em",
+                }}
+              >
+                TRUSTED
+              </Typography>
+            </Box>
+          )}
         </Box>
 
         {/* Description */}
