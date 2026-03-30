@@ -4,6 +4,7 @@ import { useTranslate } from "@/hooks/useTranslate";
 import React, { useState, useMemo, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useGetUserPreference } from "@/hooks/usePreference";
+import { useCategories } from "@/hooks/useCategories";
 import PreferenceCard from "./components/PreferenceCard";
 import {
   Typography,
@@ -13,6 +14,7 @@ import {
   TextField,
   InputAdornment,
   useTheme,
+  Chip,
 } from "@mui/material";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
@@ -40,7 +42,25 @@ function PreferencesView() {
   const headerTitle =
     user?.role === "CUSTOMER" ? t("preferences") : t("category");
 
-  const { data: preferences, isLoading, error, isError } = useGetUserPreference();
+  const { data: rawPreferences, isLoading: isPrefLoading, error, isError } = useGetUserPreference();
+  const { data: categories, isLoading: isCatLoading } = useCategories();
+
+  const isLoading = isPrefLoading || isCatLoading;
+
+  const preferences = useMemo(() => {
+    if (user?.role === "CUSTOMER") {
+      return rawPreferences || [];
+    } else {
+      if (!categories) return [];
+      return categories.map((cat) => ({
+        id: cat.id,
+        preference_name: cat.name,
+        description: cat.description,
+        icon: "Category",
+        is_selected: rawPreferences?.some((p: any) => p.id === cat.id && p.is_selected) || false,
+      }));
+    }
+  }, [user?.role, rawPreferences, categories]);
 
   useEffect(() => {
     if (preferences) {
@@ -56,8 +76,8 @@ function PreferencesView() {
     if (!preferences) return [];
     if (!searchQuery.trim()) return preferences;
     const q = searchQuery.trim().toLowerCase();
-    return preferences.filter((p) =>
-      p.preference_name.toLowerCase().includes(q)
+    return preferences.filter((p: any) =>
+      p.preference_name?.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q)
     );
   }, [preferences, searchQuery]);
 
@@ -240,19 +260,60 @@ function PreferencesView() {
             "&::-webkit-scrollbar-thumb:hover": { bgcolor: theme.palette.mode === "dark" ? "grey.600" : "grey.500" },
           }}
         >
-          <Grid container spacing={2}>
-            {filteredPreferences.map((preference) => (
-              <Grid size={{ xs: 6, sm: 4, md: 4 }} key={preference.id}>
-                <PreferenceCard
-                  title={preference.preference_name}
-                  iconName={preference.icon}
-                  onPress={() => handleToggle(preference.id)}
-                  isSelected={selectedPreferenceIds.has(preference.id)}
-                  id={preference.id}
+          {user?.role === "CUSTOMER" ? (
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 1.5,
+                justifyContent: "center",
+                pt: 1,
+              }}
+            >
+              {filteredPreferences.map((preference: any) => (
+                <Chip
+                  key={preference.id}
+                  label={preference.preference_name}
+                  onClick={() => handleToggle(preference.id)}
+                  color={selectedPreferenceIds.has(preference.id) ? "primary" : "default"}
+                  variant={selectedPreferenceIds.has(preference.id) ? "filled" : "outlined"}
+                  sx={{
+                    px: 1,
+                    py: 2.25,
+                    borderRadius: "100px",
+                    fontSize: { xs: "0.875rem", sm: "0.9375rem" },
+                    fontWeight: selectedPreferenceIds.has(preference.id) ? 600 : 500,
+                    borderWidth: "2px",
+                    transition: "all 0.2s ease",
+                    borderColor: selectedPreferenceIds.has(preference.id) 
+                      ? "primary.main" 
+                      : (theme.palette.mode === "dark" ? "grey.700" : "grey.300"),
+                    "&:hover": {
+                      backgroundColor: selectedPreferenceIds.has(preference.id)
+                        ? "primary.dark"
+                        : theme.palette.mode === "dark"
+                        ? "grey.800"
+                        : "grey.100",
+                    },
+                  }}
                 />
-              </Grid>
-            ))}
-          </Grid>
+              ))}
+            </Box>
+          ) : (
+            <Grid container spacing={2}>
+              {filteredPreferences.map((preference: any) => (
+                <Grid size={{ xs: 12, sm: 6, md: 6 }} key={preference.id}>
+                  <PreferenceCard
+                    title={preference.preference_name}
+                    description={preference.description}
+                    onPress={() => handleToggle(preference.id)}
+                    isSelected={selectedPreferenceIds.has(preference.id)}
+                    id={preference.id}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          )}
           {filteredPreferences.length === 0 && (
             <Box
               sx={{
