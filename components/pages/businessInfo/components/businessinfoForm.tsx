@@ -20,6 +20,7 @@ import {
   useUpdateAddress,
   useDeleteAddress,
 } from "@/hooks/useAddress";
+import { useGetBusinessInfo } from "@/hooks/useBusinessInfo";
 import { Address } from "@/services/address/addressInterface";
 import { COLORS } from "@/constants/colors";
 import ErrorMessage from "@/components/common/ErrorMessage";
@@ -44,6 +45,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
   const [addressToEdit, setAddressToEdit] = useState<Address | null>(null);
   const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
 
+  const { data: businessInfo, isLoading: isBusinessLoading } = useGetBusinessInfo();
   const { data: addresses, isLoading: isAddressLoading } = useGetAddress();
   const updateAddressMutation = useUpdateAddress();
   const deleteAddressMutation = useDeleteAddress();
@@ -83,13 +85,13 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
     control,
     handleSubmit,
     setValue,
+    reset,
     watch,
     formState: { errors },
   } = useForm<BusinessInfoFormData>({
     resolver: yupResolver(BusinessInfoSchema(t)),
     defaultValues: {
       business_name: "",
-      //   description: "",
       address_id: "",
       business_images: [],
     },
@@ -98,18 +100,28 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
   const selectedAddressId = watch("address_id");
   const businessImages = watch("business_images") as (File | string)[];
 
+  // Load existing business info into the form
+  useEffect(() => {
+    if (businessInfo) {
+      reset({
+        business_name: businessInfo.business_name || "",
+        address_id: businessInfo.address_id || "",
+        business_images: businessInfo.business_images || [],
+      });
+    }
+  }, [businessInfo, reset]);
+
   const selectedAddress = addresses?.find(
     (addr: Address) => addr.id === selectedAddressId,
   );
 
-  // Sort addresses to show the newest one first and limit to 1
+  // Sort addresses to show the newest one first
   const displayedAddresses = addresses
     ? [...addresses]
         .sort(
           (a, b) =>
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
         )
-        .slice(0, 1)
     : [];
 
   useEffect(() => {
@@ -221,7 +233,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                 }`,
               }}
             >
-              {isAddressLoading ? (
+              {isAddressLoading || isBusinessLoading ? (
                 <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
                   <Typography>{t("loading")}</Typography>
                 </Box>

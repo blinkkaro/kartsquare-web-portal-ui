@@ -252,7 +252,9 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
               border: `1px solid ${isDark ? "rgba(211, 47, 47, 0.3)" : "rgba(211, 47, 47, 0.2)"}`,
             }}
           >
-            <Typography variant="body2">{error}</Typography>
+            <Typography variant="body2" sx={{ whiteSpace: "pre-line", lineHeight: 1.5 }}>
+              {error}
+            </Typography>
           </Paper>
         )}
 

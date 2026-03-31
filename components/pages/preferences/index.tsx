@@ -4,6 +4,8 @@ import { useTranslate } from "@/hooks/useTranslate";
 import React, { useState, useMemo, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useGetUserPreference } from "@/hooks/usePreference";
+import { COLORS } from "@/constants/colors";
+import { useCategories } from "@/hooks/useCategories";
 import PreferenceCard from "./components/PreferenceCard";
 import {
   Typography,
@@ -13,6 +15,7 @@ import {
   TextField,
   InputAdornment,
   useTheme,
+  Chip,
 } from "@mui/material";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
@@ -40,7 +43,25 @@ function PreferencesView() {
   const headerTitle =
     user?.role === "CUSTOMER" ? t("preferences") : t("category");
 
-  const { data: preferences, isLoading, error, isError } = useGetUserPreference();
+  const { data: rawPreferences, isLoading: isPrefLoading, error, isError } = useGetUserPreference();
+  const { data: categories, isLoading: isCatLoading } = useCategories();
+
+  const isLoading = isPrefLoading || isCatLoading;
+
+  const preferences = useMemo(() => {
+    if (user?.role === "CUSTOMER") {
+      return rawPreferences || [];
+    } else {
+      if (!categories) return [];
+      return categories.map((cat) => ({
+        id: cat.id,
+        preference_name: cat.name,
+        description: cat.description,
+        icon: "Category",
+        is_selected: rawPreferences?.some((p: any) => p.id === cat.id && p.is_selected) || false,
+      }));
+    }
+  }, [user?.role, rawPreferences, categories]);
 
   useEffect(() => {
     if (preferences) {
@@ -56,8 +77,8 @@ function PreferencesView() {
     if (!preferences) return [];
     if (!searchQuery.trim()) return preferences;
     const q = searchQuery.trim().toLowerCase();
-    return preferences.filter((p) =>
-      p.preference_name.toLowerCase().includes(q)
+    return preferences.filter((p: any) =>
+      p.preference_name?.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q)
     );
   }, [preferences, searchQuery]);
 
@@ -128,15 +149,16 @@ function PreferencesView() {
         }}
       >
         {/* Centered heading with subtitle */}
-        <Box sx={{ textAlign: "center", mb: 3 }}>
+        <Box sx={{ textAlign: "center", mb: 5 }}>
           <Typography
             variant="h2"
             sx={{
-              fontWeight: 700,
-              color: "text.primary",
-              fontSize: { xs: "1.75rem", sm: "2rem", md: "2.25rem" },
-              letterSpacing: "-0.02em",
-              lineHeight: 1.2,
+              fontWeight: 800,
+              color: COLORS.PRIMARY_BLUE,
+              fontSize: { xs: "2rem", sm: "2.5rem", md: "2.75rem" },
+              letterSpacing: "-0.04em",
+              lineHeight: 1.1,
+              mb: 0.5,
             }}
           >
             {headerTitle}
@@ -145,8 +167,9 @@ function PreferencesView() {
             variant="body2"
             sx={{
               color: "text.secondary",
-              mt: 1,
-              fontSize: { xs: "0.875rem", sm: "0.9375rem" },
+              mt: 2,
+              mb: 1,
+              fontSize: { xs: "1rem", sm: "1.0625rem" },
             }}
           >
             {user?.role === "CUSTOMER"
@@ -179,8 +202,8 @@ function PreferencesView() {
               },
               "&.Mui-focused fieldset": {
                 borderWidth: "2px",
-                borderColor: "primary.main",
-                boxShadow: "0 0 0 3px rgba(94, 24, 233, 0.08)",
+                borderColor: COLORS.PRIMARY_BLUE,
+                boxShadow: "0 0 0 3px rgba(59, 130, 246, 0.08)",
               },
             },
           }}
@@ -204,7 +227,7 @@ function PreferencesView() {
             variant="caption"
             sx={{
               display: "block",
-              color: "primary.main",
+              color: COLORS.PRIMARY_BLUE, // Use theme blue
               fontWeight: 600,
               mb: 1,
               fontSize: "0.8125rem",
@@ -240,19 +263,65 @@ function PreferencesView() {
             "&::-webkit-scrollbar-thumb:hover": { bgcolor: theme.palette.mode === "dark" ? "grey.600" : "grey.500" },
           }}
         >
-          <Grid container spacing={2}>
-            {filteredPreferences.map((preference) => (
-              <Grid size={{ xs: 6, sm: 4, md: 4 }} key={preference.id}>
-                <PreferenceCard
-                  title={preference.preference_name}
-                  iconName={preference.icon}
-                  onPress={() => handleToggle(preference.id)}
-                  isSelected={selectedPreferenceIds.has(preference.id)}
-                  id={preference.id}
+          {user?.role === "CUSTOMER" ? (
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 1.5,
+                justifyContent: "center",
+                pt: 1,
+              }}
+            >
+              {filteredPreferences.map((preference: any) => (
+                <Chip
+                  key={preference.id}
+                  label={preference.preference_name}
+                  onClick={() => handleToggle(preference.id)}
+                  sx={{
+                    px: 1,
+                    py: 2.25,
+                    borderRadius: "100px",
+                    fontSize: { xs: "0.875rem", sm: "0.9375rem" },
+                    backgroundColor: selectedPreferenceIds.has(preference.id) 
+                      ? COLORS.PRIMARY_BLUE 
+                      : "transparent",
+                    color: selectedPreferenceIds.has(preference.id) 
+                      ? "white" 
+                      : COLORS.PRIMARY_BLUE,
+                    fontWeight: selectedPreferenceIds.has(preference.id) ? 600 : 500,
+                    borderWidth: "2px",
+                    borderStyle: "solid",
+                    transition: "all 0.2s ease",
+                    borderColor: selectedPreferenceIds.has(preference.id) 
+                      ? COLORS.PRIMARY_BLUE 
+                      : (theme.palette.mode === "dark" ? "rgba(59, 130, 246, 0.4)" : "rgba(59, 130, 246, 0.2)"),
+                    "&:hover": {
+                      backgroundColor: selectedPreferenceIds.has(preference.id)
+                        ? COLORS.BUSINESS_PROFILE_BLUE_HOVER
+                        : theme.palette.mode === "dark"
+                        ? "grey.800"
+                        : "grey.100",
+                    },
+                  }}
                 />
-              </Grid>
-            ))}
-          </Grid>
+              ))}
+            </Box>
+          ) : (
+            <Grid container spacing={2}>
+              {filteredPreferences.map((preference: any) => (
+                <Grid size={{ xs: 12, sm: 6, md: 6 }} key={preference.id}>
+                  <PreferenceCard
+                    title={preference.preference_name}
+                    description={preference.description}
+                    onPress={() => handleToggle(preference.id)}
+                    isSelected={selectedPreferenceIds.has(preference.id)}
+                    id={preference.id}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          )}
           {filteredPreferences.length === 0 && (
             <Box
               sx={{
@@ -280,7 +349,6 @@ function PreferencesView() {
           )}
         </Box>
 
-        {/* Continue button - pill style, clear disabled state */}
         <Button
           variant="contained"
           disableElevation
@@ -292,14 +360,26 @@ function PreferencesView() {
             fontSize: "1rem",
             boxShadow: isContinueDisabled
               ? "none"
-              : "0 4px 14px rgba(94, 24, 233, 0.35)",
-            bgcolor: isContinueDisabled ? (theme.palette.mode === "dark" ? "action.disabledBackground" : "grey.300") : undefined,
-            color: isContinueDisabled ? (theme.palette.mode === "dark" ? "action.disabled" : "grey.600") : undefined,
+              : "0 4px 14px rgba(59, 130, 246, 0.35)",
+            bgcolor: isContinueDisabled
+              ? theme.palette.mode === "dark"
+                ? "action.disabledBackground"
+                : "grey.300"
+              : COLORS.PRIMARY_BLUE,
+            color: isContinueDisabled
+              ? theme.palette.mode === "dark"
+                ? "action.disabled"
+                : "grey.600"
+              : "white",
             "&:hover": {
               boxShadow: isContinueDisabled
                 ? "none"
-                : "0 6px 20px rgba(94, 24, 233, 0.4)",
-              bgcolor: isContinueDisabled ? (theme.palette.mode === "dark" ? "action.disabledBackground" : "grey.300") : undefined,
+                : "0 6px 20px rgba(59, 130, 246, 0.4)",
+              bgcolor: isContinueDisabled
+                ? theme.palette.mode === "dark"
+                  ? "action.disabledBackground"
+                  : "grey.300"
+                : COLORS.BUSINESS_PROFILE_BLUE_HOVER,
             },
           }}
           onClick={handleSave}

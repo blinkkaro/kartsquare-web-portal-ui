@@ -27,30 +27,32 @@ const ServiceDetailsHeader = ({
       <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1, flexWrap: "wrap" }}>
         <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
           {isPriceRequired ? (
-            <>
-              <Typography
-                sx={{
-                  color: isDark
-                    ? COLORS.TEXT.SECONDARY_DARK
-                    : COLORS.TEXT.SECONDARY_LIGHT,
-                  fontWeight: 300,
-                  fontSize: "1.1rem",
-                }}
-              >
-                {currency}
-              </Typography>
-              <Typography
-                variant="h5"
-                sx={{
-                  fontWeight: 700,
-                  color: isDark
-                    ? COLORS.TEXT.PRIMARY_DARK
-                    : COLORS.TEXT.PRIMARY_LIGHT,
-                }}
-              >
-                {price?.toFixed(2) || "0.00"}
-              </Typography>
-            </>
+            price > 0 ? (
+              <>
+                <Typography
+                  sx={{
+                    color: isDark
+                      ? COLORS.TEXT.SECONDARY_DARK
+                      : COLORS.TEXT.SECONDARY_LIGHT,
+                    fontWeight: 300,
+                    fontSize: "1.1rem",
+                  }}
+                >
+                  {currency}
+                </Typography>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: 700,
+                    color: isDark
+                      ? COLORS.TEXT.PRIMARY_DARK
+                      : COLORS.TEXT.PRIMARY_LIGHT,
+                  }}
+                >
+                  {price.toFixed(2)}
+                </Typography>
+              </>
+            ) : null
           ) : (
             <Typography
               sx={{

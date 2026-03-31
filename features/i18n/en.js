@@ -945,7 +945,7 @@ export const english = {
   service_name_label: "Service name",
   price_label: "Price (INR)",
   at_least_one_price_item:
-    "Add at least one service with price and description",
+    "Add at least one service with name and price",
   price_catalog_required: "Please upload a price catalog file",
   // Customer Service Details
   services: "Services",

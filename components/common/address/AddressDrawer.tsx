@@ -114,7 +114,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
       <Box sx={{ px: 3, pb: 3 }}>
         <ErrorMessage
           error={error || locationError || ""}
-          isVisible={!!error || !!locationError}
+          isVisible={(!!error || !!locationError) && open}
         />
       </Box>
       <Box sx={{ px: 3, pb: 3 }}>
