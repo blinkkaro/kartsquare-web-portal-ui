@@ -13,6 +13,7 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ onTabChange, role }) => {
   const [value, setValue] = useState(0);
   const { t } = useTranslate();
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
 
   const isSupplier = role === AppUserType.SUPPLIER;
   const tabs = isSupplier
@@ -54,10 +55,10 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({ onTabChange, role }) => {
           "& .MuiTab-root": {
             textTransform: "none",
             fontWeight: 600,
-            color: theme.palette.text.secondary,
+            color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
             fontSize: "1rem",
             "&.Mui-selected": {
-              color: theme.palette.primary.main,
+              color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
             },
           },
           "& .MuiTabs-indicator": {

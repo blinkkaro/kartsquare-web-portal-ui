@@ -8,8 +8,7 @@ import { useTranslate } from "@/hooks/useTranslate";
 interface CustomerServiceHeaderProps {
   price: number;
   currency: string;
-  categoryName: string;
-  subCategoryName?: string;
+  categoryName: string[];
   onBookmark?: () => void;
   onShare?: () => void;
   isPriceRequired: boolean;
@@ -20,7 +19,6 @@ const CustomerServiceHeader = ({
   isPriceRequired,
   currency,
   categoryName,
-  subCategoryName,
   onBookmark,
   onShare,
 }: CustomerServiceHeaderProps) => {
@@ -75,8 +73,8 @@ const CustomerServiceHeader = ({
       </Box>
       <Chip
         label={
-          subCategoryName
-            ? `${categoryName} • ${subCategoryName}`
+          categoryName
+            ? `${categoryName.join(", ")}`
             : categoryName
         }
         size="small"

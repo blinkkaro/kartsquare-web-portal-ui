@@ -131,15 +131,13 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({
               },
             }}
           >
-            <>
-              <ToggleButton value="list">
-                <List fontSize="small" />
-              </ToggleButton>
+            <ToggleButton value="list">
+              <List fontSize="small" />
+            </ToggleButton>
 
-              <ToggleButton value="grid">
-                <GridView fontSize="small" />
-              </ToggleButton>
-            </>
+            <ToggleButton value="grid">
+              <GridView fontSize="small" />
+            </ToggleButton>
           </ToggleButtonGroup>
         )}
       </Stack>

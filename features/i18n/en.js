@@ -1692,4 +1692,6 @@ export const english = {
   request_sent_successfully: "Request Sent Successfully",
   quote_request_description: "The service provider will get back to you with a quote soon.",
   marketing_tools: "Marketing Tools",
+  Enter_value: "Enter value",
+  Select_option: "Select option",
 };

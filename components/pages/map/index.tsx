@@ -9,9 +9,10 @@ import {
   ToggleButtonGroup,
   ToggleButton,
   Chip,
+  useMediaQuery,
 } from "@mui/material";
 import { GoogleMap, useJsApiLoader, OverlayView } from "@react-google-maps/api";
-import { ChevronLeft, ChevronRight, HomeRepairService, ShoppingBag } from "@mui/icons-material";
+import { ChevronLeft, ChevronRight, Close, HomeRepairService, ShoppingBag } from "@mui/icons-material";
 import { Service } from "@/services/serviceList/listInteraface";
 import { COLORS } from "@/constants/colors";
 import ServiceProviderCard from "./components/ServiceProviderCard";
@@ -21,16 +22,12 @@ import { useAutoGeolocation } from "@/hooks/useGeolocation";
 import { secureStorage } from "@/helper/SecureStorage";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useMapDetails } from "@/hooks/useMapDetails";
-import type { MapServiceItem, MapStoreItem } from "@/services/map/mapInterface";
+import type { MapServiceItem, MapStoreItem, SelectedItem } from "@/services/map/mapInterface";
 
 const LIBRARIES: "places"[] = ["places"];
 const SERVICE_COLOR = COLORS.PRIMARY_PURPLE;
 const STORE_COLOR = COLORS.PRIMARY_BLUE;
 
-type SelectedItem =
-  | { type: "service"; data: MapServiceItem }
-  | { type: "store"; data: MapStoreItem }
-  | null;
 
 const MapView: React.FC = () => {
   const theme = useTheme();
@@ -46,11 +43,19 @@ const MapView: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   // const router = useRouter();
   const { t } = useTranslate();
+  const tab =useMediaQuery(theme.breakpoints.down("md"));
 
+  
   const {
     data: mapData,
     isLoading: isMapLoading,
   } = useMapDetails({ limit: 30 });
+
+  const visibleCount =
+    filter === "services" ? (mapData?.services?.length ?? 0)
+    : filter === "stores"  ? (mapData?.stores?.length ?? 0)
+    : (mapData?.services?.length ?? 0) + (mapData?.stores?.length ?? 0);
+  const isShowArrows = tab ? false : visibleCount > 3;
 
   const services = mapData?.services ?? [];
   const stores = mapData?.stores ?? [];
@@ -220,6 +225,7 @@ const MapView: React.FC = () => {
                   onClick={() => handleServiceMarkerClick(service)}
                   showPopup={true}
                   directionsUrl={directionsUrl}
+                  setSelectedItem={setSelectedItem}
                 />
               </OverlayView>
             );
@@ -254,6 +260,7 @@ const MapView: React.FC = () => {
                   onClick={() => handleStoreMarkerClick(store)}
                   showPopup={true}
                   directionsUrl={directionsUrl}
+                  setSelectedItem={setSelectedItem}
                 />
               </OverlayView>
             );
@@ -383,6 +390,7 @@ const MapView: React.FC = () => {
           onClick={handleScrollLeft}
           sx={{
             position: "absolute",
+            display: isShowArrows ? "flex" : "none",
             left: 8,
             top: "50%",
             transform: "translateY(-50%)",
@@ -497,6 +505,7 @@ const MapView: React.FC = () => {
           onClick={handleScrollRight}
           sx={{
             position: "absolute",
+            display: isShowArrows ? "flex" : "none",
             right: 8,
             top: "50%",
             transform: "translateY(-50%)",

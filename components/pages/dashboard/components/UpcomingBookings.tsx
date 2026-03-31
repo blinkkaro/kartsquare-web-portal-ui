@@ -55,27 +55,27 @@ const UpcomingBookings: React.FC<UpcomingBookingsProps> = ({
           }}
         >
           {role === "SUPPLIER"
-            ? t("pendingEnquiries" as any)
+            ? t("pendingEnquiries")
             : t("upcomingBookings")}
         </Typography>
-        <Typography
-          variant="body2"
-          sx={{
-            color: COLORS.PRIMARY_PURPLE,
-            cursor: "pointer",
-            fontWeight: 500,
-            "&:hover": {
-              textDecoration: "underline",
-            },
-          }}
-          onClick={() =>
-            router.push(
-              role === "SUPPLIER" ? "/sup/orders" : "/spr/bookings",
-            )
-          }
-        >
-          {t("seeall")}
-        </Typography>
+        {bookings.length > 0 && (
+          <Typography
+            variant="body2"
+            sx={{
+              color: COLORS.PRIMARY_PURPLE,
+              cursor: "pointer",
+              fontWeight: 500,
+              "&:hover": {
+                textDecoration: "underline",
+              },
+            }}
+            onClick={() =>
+              router.push(role === "SUPPLIER" ? "/sup/orders" : "/spr/bookings")
+            }
+          >
+            {t("seeall")}
+          </Typography>
+        )}
       </Box>
       <Box
         sx={{

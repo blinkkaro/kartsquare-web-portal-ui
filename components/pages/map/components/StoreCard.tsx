@@ -40,6 +40,7 @@ const StoreCard: React.FC<StoreCardProps> = ({
   const details = store.store_details;
   const address = details?.store_address;
   const name = details?.store_name || "Store";
+  // const dis
 
   const handleClick = () => {
     if (onCardClick) {
@@ -47,6 +48,10 @@ const StoreCard: React.FC<StoreCardProps> = ({
     } else {
       router.push("/store");
     }
+  };
+
+  const nameClick = () => {
+    
   };
 
   const locationText = [address?.address, address?.city_town, address?.state]

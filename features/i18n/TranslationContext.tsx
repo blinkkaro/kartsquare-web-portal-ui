@@ -1265,6 +1265,9 @@ export type TranslationKey =
   | "request_sent_successfully"
   | "quote_request_description"
   | "marketing_tools"
+  | "pendingEnquiries"
+  | "Enter_value"
+  | "Select_option"
   ;
 
 // Sample dictionaries

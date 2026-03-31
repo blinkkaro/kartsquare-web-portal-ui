@@ -93,6 +93,7 @@ const PostCard = ({ post }: { post: Posts }) => {
                 width: 40,
                 height: 40,
                 border: "2px solid white",
+                mb: 1
               }}
               src={post.user.profile_pic || ""}
               alt={post.user.business_name}

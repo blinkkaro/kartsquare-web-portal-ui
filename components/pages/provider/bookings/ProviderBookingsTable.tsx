@@ -133,7 +133,7 @@ const ProviderBookingsTable: React.FC<ProviderBookingsTableProps> = ({ bookings,
                                         <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#6366F1' }} />
                                     )}
                                     <Typography variant="body2" fontWeight={700} sx={{ color: isDark ? "text.primary" : "#374151" }}>
-                                        {booking.currency} {booking.service_price.toFixed(2)}
+                                        {booking.service_price > 0 ? `${booking.currency} ${booking.service_price.toFixed(2)}` : "Get Quote"}
                                     </Typography>
                                 </Box>
                             </TableCell>

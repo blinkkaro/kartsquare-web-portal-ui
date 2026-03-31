@@ -81,3 +81,8 @@ export interface MapDetailsResponse {
   stores: MapStoreItem[];
   pagination: MapDetailsPagination;
 }
+
+export type SelectedItem =
+  | { type: "service"; data: MapServiceItem }
+  | { type: "store"; data: MapStoreItem }
+  | null;

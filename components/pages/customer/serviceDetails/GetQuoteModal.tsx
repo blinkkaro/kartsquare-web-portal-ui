@@ -22,8 +22,9 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { Close, RequestQuote } from "@mui/icons-material";
 import { TranslationKey } from "@/features/i18n/TranslationContext";
 import { countries } from "@/data/countries";
-import LeadService from "@/services/leads/lead.service";
 import SuccessModel from "@/components/common/SuccessModel";
+import { secureStorage } from "@/helper/SecureStorage";
+import LeadService from "@/services/leads/lead.service";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -123,10 +124,28 @@ const GetQuoteModal: React.FC<GetQuoteModalProps> = ({
     (c) => c.phone_code === selectedCountryCode,
   );
 
+  // Auto-fill form with user details if available
+  React.useEffect(() => {
+    const userDetails = secureStorage.getItem("user_details");
+    if (userDetails) {
+      reset({
+        first_name: userDetails.first_name || "",
+        last_name: userDetails.last_name || "",
+        email: userDetails.email || "",
+        phone_number: userDetails.phone_number || "",
+        country_code: userDetails.country_code || "+91",
+        message: serviceName
+          ? `Hi, I am interested in getting a quote for: ${serviceName}`
+          : "",
+      });
+    }
+  }, [reset, serviceName, open]);
+
   const onSubmit = async (data: ContactFormValues) => {
     try {
       setError(null);
       if (providerId) {
+
         await LeadService.createLead({
           ...data,
           provider_id: providerId,
