@@ -1694,4 +1694,6 @@ export const english = {
   marketing_tools: "Marketing Tools",
   Enter_value: "Enter value",
   Select_option: "Select option",
+  rate_your_experience: "Rate Your Experience",
+  please_provide_rating: "Please provide rating",
 };

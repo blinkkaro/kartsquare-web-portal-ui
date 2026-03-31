@@ -1268,6 +1268,8 @@ export type TranslationKey =
   | "pendingEnquiries"
   | "Enter_value"
   | "Select_option"
+  | "please_provide_rating"
+  | "rate_your_experience"
   ;
 
 // Sample dictionaries

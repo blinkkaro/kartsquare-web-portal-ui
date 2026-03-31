@@ -73,10 +73,10 @@ class ReviewService {
       throw error;
     }
   }
-  async getReviewQuestions(category_id: string, subcategory_id?: string): Promise<ReviewQuestions[]> {
+  async getReviewQuestions(subcategory_id: string[]): Promise<ReviewQuestions[]> {
     try {
       const response = await GET<ReviewQuestions[]>(
-        APIENDPOINT.GET_REVIEW_QUESTIONS(category_id, subcategory_id),
+        APIENDPOINT.GET_REVIEW_QUESTIONS(subcategory_id),
       );
       if (response.status === "success") {
         return response.data;

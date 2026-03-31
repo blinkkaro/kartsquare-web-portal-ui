@@ -41,7 +41,7 @@ export interface Review {
   user_id: string;
   review_event_type: review_type;
   review_event_id: string;
-  rating: string;
+  overall_rating: number;
   questions_and_answers: ReviewQuestionAnswer[];
   user: ReviewUser;
   created_at: string;
@@ -65,13 +65,13 @@ export interface ReviewResponse {
 
 export interface reviewUpdateParams {
   review_event_id: string;
-  rating?: number;
+  overall_rating?: number;
   questions_and_answers: ReviewQuestionAnswer[];
 }
 
 export interface reviewCreateParams {
   review_event_type: review_type;
   review_event_id: string;
-  rating?: number;
+  overall_rating?: number;
   questions_and_answers: ReviewQuestionAnswer[];
 }

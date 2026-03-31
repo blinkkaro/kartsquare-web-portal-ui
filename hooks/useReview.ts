@@ -14,14 +14,13 @@ import {
 } from "@/services/review/reviewInterface";
 
 export const useReviewQuestions = (
-  categoryId: string,
-  subCategoryId?: string,
+  subCategoryId: string[],
   enabled: boolean = true,
 ) => {
   return useQuery({
-    queryKey: ["review-questions", categoryId, subCategoryId],
-    queryFn: () => reviewService.getReviewQuestions(categoryId, subCategoryId),
-    enabled: enabled && !!categoryId,
+    queryKey: ["review-questions", subCategoryId],
+    queryFn: () => reviewService.getReviewQuestions(subCategoryId!),
+    enabled: enabled && !!subCategoryId,
     staleTime: 5 * 60 * 1000,
   });
 };
