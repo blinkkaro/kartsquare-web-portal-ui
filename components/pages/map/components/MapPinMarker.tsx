@@ -27,9 +27,9 @@ export interface MapPinMarkerProps {
   showPopup?: boolean;
   directionsUrl?: string;
   size?: "default" | "compact";
-  setSelectedItem: React.Dispatch<React.SetStateAction<SelectedItem | null>>;
-  role: AppUserType;
-  id: string;
+  setSelectedItem?: React.Dispatch<React.SetStateAction<SelectedItem | null>>;
+  role?: AppUserType;
+  id?: string;
   username?: string;
 }
 
@@ -65,8 +65,8 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
     e.stopPropagation();
     dispatch(
       openDrawer({
-        userId: id,
-        role: role,
+        userId: id || "",
+        role: role || AppUserType.SERVICE_PROVIDER,
         username: username || "",
       }),
     );
@@ -146,7 +146,9 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
           }}
         >
           <IconButton
-            onClick={() => setSelectedItem(null)}
+            onClick={() => {
+              if (setSelectedItem) setSelectedItem(null);
+            }}
             // size="small"
             sx={{
               position: "absolute",

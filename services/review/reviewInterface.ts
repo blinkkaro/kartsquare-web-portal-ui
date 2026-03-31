@@ -49,6 +49,7 @@ export interface Review {
   is_deleted: boolean;
   deleted_by: string | null;
   is_testimonials: boolean; 
+  rating: number;
 }
 
 export interface meta {
