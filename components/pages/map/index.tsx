@@ -23,6 +23,9 @@ import { secureStorage } from "@/helper/SecureStorage";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useMapDetails } from "@/hooks/useMapDetails";
 import type { MapServiceItem, MapStoreItem, SelectedItem } from "@/services/map/mapInterface";
+import ProfileDrawer from "@/components/common/ProfileDrawer";
+import { AppUserType } from "@/services/auth/auth.interface";
+
 
 const LIBRARIES: "places"[] = ["places"];
 const SERVICE_COLOR = COLORS.PRIMARY_PURPLE;
@@ -221,6 +224,8 @@ const MapView: React.FC = () => {
                   color={SERVICE_COLOR}
                   imageUrl={service.provider_image_url || service.image_urls?.[0]}
                   name={service.service_name}
+                  id={service.service_id}
+                  role={AppUserType.SERVICE_PROVIDER}
                   selected={isSelected}
                   onClick={() => handleServiceMarkerClick(service)}
                   showPopup={true}
@@ -261,6 +266,9 @@ const MapView: React.FC = () => {
                   showPopup={true}
                   directionsUrl={directionsUrl}
                   setSelectedItem={setSelectedItem}
+                  username={store.store_details?.username}
+                  id={store.supplier_id}
+                  role={AppUserType.SUPPLIER}
                 />
               </OverlayView>
             );
@@ -524,6 +532,7 @@ const MapView: React.FC = () => {
         </IconButton>
       </Box>
 
+      <ProfileDrawer />
     </Box>
   );
 };

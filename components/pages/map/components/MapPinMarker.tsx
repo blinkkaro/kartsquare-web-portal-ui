@@ -9,6 +9,9 @@ import {
 } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import type { SelectedItem } from "@/services/map/mapInterface";
+import { AppUserType } from "@/services/auth/auth.interface";
+import { useDispatch } from "react-redux";
+import { openDrawer } from "@/features/ui/profileDrawerSlice";
 
 const PIN_BUBBLE_SIZE = 42;
 const PIN_POINT_HEIGHT = 14;
@@ -25,6 +28,9 @@ export interface MapPinMarkerProps {
   directionsUrl?: string;
   size?: "default" | "compact";
   setSelectedItem: React.Dispatch<React.SetStateAction<SelectedItem | null>>;
+  role: AppUserType;
+  id: string;
+  username?: string;
 }
 
 const MapPinMarker: React.FC<MapPinMarkerProps> = ({
@@ -38,17 +44,32 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
   directionsUrl,
   size = "default",
   setSelectedItem,
+  role,
+  id,
+  username,
 }) => {
   const Icon = type === "store" ? ShoppingBag : HomeRepairService;
   const bubbleSize = size === "compact" ? 32 : PIN_BUBBLE_SIZE;
   const pointHeight = size === "compact" ? 12 : PIN_POINT_HEIGHT;
   const pinWidth = size === "compact" ? 30 : PIN_WIDTH;
   const theme = useTheme();
+  const dispatch = useDispatch();
 
   const handleDirections = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (directionsUrl)
       window.open(directionsUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const handleOpenDrawer = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    dispatch(
+      openDrawer({
+        userId: id,
+        role: role,
+        username: username || "",
+      }),
+    );
   };
 
   return (
@@ -179,6 +200,7 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
           </Box>
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography
+              onClick={handleOpenDrawer}
               variant="body2"
               sx={{
                 fontWeight: 800,
@@ -187,6 +209,9 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
                 fontSize: "0.85rem",
+                "&:hover": {
+                  textDecoration: "underline",
+                },
               }}
             >
               {name}

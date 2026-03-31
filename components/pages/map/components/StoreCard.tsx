@@ -16,6 +16,10 @@ import { useRouter } from "next/navigation";
 import type { MapStoreItem } from "@/services/map/mapInterface";
 import { useAutoGeolocation } from "@/hooks/useGeolocation";
 import { calculateDistance } from "@/helper/helper";
+import { useDispatch } from "react-redux";
+import { openDrawer } from "@/features/ui/profileDrawerSlice";
+import { AppUserType } from "@/services/auth/auth.interface";
+
 
 const STORE_ACCENT = COLORS.PRIMARY_BLUE;
 const MotionCard = motion(Card);
@@ -35,7 +39,9 @@ const StoreCard: React.FC<StoreCardProps> = ({
 }) => {
   const theme = useTheme();
   const router = useRouter();
+  const dispatch = useDispatch();
   const { coordinates } = useAutoGeolocation();
+
   const isSmall = size === "small";
   const details = store.store_details;
   const address = details?.store_address;
@@ -50,9 +56,17 @@ const StoreCard: React.FC<StoreCardProps> = ({
     }
   };
 
-  const nameClick = () => {
-    
+  const handleOpenDrawer = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    dispatch(
+      openDrawer({
+        userId: store.supplier_id,
+        role: AppUserType.SUPPLIER,
+        username: details?.username || "",
+      }),
+    );
   };
+
 
   const locationText = [address?.address, address?.city_town, address?.state]
     .filter(Boolean)
@@ -214,6 +228,7 @@ const StoreCard: React.FC<StoreCardProps> = ({
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.5 }}>
               <Typography
                 variant={isSmall ? "subtitle2" : "h6"}
+                onClick={handleOpenDrawer}
                 sx={{
                   fontWeight: 800,
                   color:
@@ -223,10 +238,15 @@ const StoreCard: React.FC<StoreCardProps> = ({
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
+                  cursor: "pointer",
+                  "&:hover": {
+                    textDecoration: "underline",
+                  },
                 }}
               >
                 {name}
               </Typography>
+
               {details?.is_verified && (
                 <Verified sx={{ fontSize: 16, color: COLORS.SUCCESS_GREEN }} titleAccess="Verified Store" />
               )}
@@ -286,13 +306,14 @@ const StoreCard: React.FC<StoreCardProps> = ({
                     alignItems: "center",
                     gap: 0.5,
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" }
+                    "&:hover": { textDecoration: "underline" },
                   }}
                 >
                   Visit Store <ShoppingBag sx={{ fontSize: 12 }} />
                 </Typography>
               </Box>
             )}
+
           </Box>
         </Box>
       </CardContent>

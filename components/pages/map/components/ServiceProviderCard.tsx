@@ -24,6 +24,9 @@ import { COLORS } from "@/constants/colors";
 import { useRouter } from "next/navigation";
 import { useTranslate } from "@/hooks/useTranslate";
 import { Service } from "@/services/serviceList/listInteraface";
+import { useDispatch } from "react-redux";
+import { openDrawer } from "@/features/ui/profileDrawerSlice";
+import { AppUserType } from "@/services/auth/auth.interface";
 
 interface ServiceProviderCardProps {
   service: Service;
@@ -48,6 +51,7 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
   const router = useRouter();
   const isSmall = size === "small";
   const { t } = useTranslate();
+  const dispatch = useDispatch();
   const { coordinates } = useAutoGeolocation();
 
   const handleCardClick = () => {
@@ -65,6 +69,17 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
     } else {
       router.push("/map");
     }
+  };
+
+  const handleOpenDrawer = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    dispatch(
+      openDrawer({
+        userId: service.provider_id,
+        role: AppUserType.SERVICE_PROVIDER,
+        username: service.provider_name,
+      }),
+    );
   };
 
   const getDistance = () => {
@@ -140,7 +155,7 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
               display: "flex",
               alignItems: "center",
               justifyContent: "flex-end",
-              mb: .5,
+              mb: 0.5,
             }}
           >
             <Box
@@ -201,6 +216,7 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
               <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Typography
                   variant={isSmall ? "subtitle2" : "h6"}
+                  onClick={handleOpenDrawer}
                   sx={{
                     fontWeight: 800,
                     lineHeight: 1.2,
@@ -211,6 +227,9 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
+                    "&:hover": {
+                      textDecoration: "underline",
+                    },
                   }}
                 >
                   {service.service_name}
@@ -223,17 +242,23 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
                     mt: 0.25,
                   }}
                 >
-                  <Typography
+                  {/* <Typography
                     variant="caption"
+                    
                     sx={{
                       fontWeight: 600,
                       color: accentColor,
                       fontSize: "0.75rem",
+                      cursor: "pointer",
+                      "&:hover": {
+                        textDecoration: "underline",
+                      },
                     }}
                   >
                     {service.provider_name}
-                  </Typography>
-                  <Verified sx={{ fontSize: 14, color: COLORS.PRIMARY_BLUE }} />
+                  </Typography> */}
+
+                  {/* <Verified sx={{ fontSize: 14, color: COLORS.PRIMARY_BLUE }} /> */}
                 </Box>
               </Box>
 
