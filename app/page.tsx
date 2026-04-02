@@ -3,8 +3,9 @@ import HomeView from "@/components/pages/home";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Home | kartsquare Portal",
-  description: "Welcome to the kartsquare Portal",
+  title: "Kartsquare – Discover Automotive Services & Products",
+  description:
+    "Explore Kartsquare to find trusted automotive services, products, and businesses near you. Connect with workshops, dealers, and service providers easily.",
 };
 
 export default function Home() {
