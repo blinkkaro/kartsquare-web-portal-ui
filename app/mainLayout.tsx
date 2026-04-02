@@ -47,7 +47,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             mx: "auto",
             width: "100%",
             px: { xs: 1, md: 0, lg: 0, xl: 0 },
-            mt: { xs: 9, sm: 10, md: 9, lg: 10 },
+            mt: { xs: 10, sm: 12, md: 10, lg: 12 },
             backgroundColor:
               theme.palette.mode === "dark"
                 ? COLORS.BACKGROUND.PAPER_DARK

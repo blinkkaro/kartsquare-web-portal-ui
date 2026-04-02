@@ -7,8 +7,7 @@ import { useTranslate } from "@/hooks/useTranslate";
 interface ServiceDetailsHeaderProps {
   price: number;
   currency: string;
-  categoryName: string;
-  subCategoryName?: string;
+  categoryName: string[];
   isPriceRequired: boolean;
 }
 
@@ -16,7 +15,6 @@ const ServiceDetailsHeader = ({
   price,
   currency,
   categoryName,
-  subCategoryName,
   isPriceRequired,
 }: ServiceDetailsHeaderProps) => {
   const theme = useTheme();
@@ -69,8 +67,8 @@ const ServiceDetailsHeader = ({
         </Box>
         <Chip
           label={
-            subCategoryName
-              ? `${categoryName} • ${subCategoryName}`
+            categoryName
+              ? `${categoryName.join(", ")}`  
               : categoryName
           }
           size="small"

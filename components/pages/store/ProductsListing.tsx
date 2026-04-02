@@ -237,6 +237,12 @@ const ProductsListingView: React.FC = () => {
               mobile: apiProd.supplier?.primary_mobile,
               id: apiProd.supplier?.store_id || apiProd.supplier?.id,
             },
+            whatsapp_number:
+              apiProd.supplier?.whatsapp_number ||
+              apiProd.supplier?.primary_mobile ||
+              apiProd.supplier?.contact_phone ||
+              "",
+            whatsapp_country_code: apiProd.supplier?.country_code || "91",
           }),
         );
         setProducts(mappedProducts);

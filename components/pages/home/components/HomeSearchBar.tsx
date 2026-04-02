@@ -123,7 +123,7 @@ const HomeSearchBar = forwardRef(({ value, onChange }: HomeSearchBarProps, ref) 
                     sx={{
                         flex: 1,
                         fontSize: "1rem",
-                        color: "text.primary",
+                        color: "black",
                         "& input::placeholder": {
                             opacity: 0.7
                         }

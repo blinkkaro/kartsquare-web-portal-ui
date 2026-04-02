@@ -177,6 +177,7 @@ const ProductPricing = () => {
           )}
         />
 
+      </Box>
         {/* Is Returnable Checkbox */}
         <Controller
           name="is_returnable"
@@ -219,7 +220,6 @@ const ProductPricing = () => {
             </FormControl>
           )}
         />
-      </Box>
     </Box>
   );
 };

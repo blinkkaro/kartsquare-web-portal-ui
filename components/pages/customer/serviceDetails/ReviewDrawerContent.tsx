@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Box,
   Typography,
@@ -38,16 +38,22 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
   const isDark = theme.palette.mode === "dark";
   const { t } = useTranslate();
 
-  const { data, isLoading } = useReviewQuestions(
-    service.category_id,
-    service.sub_category_id || undefined,
-  );
+  const subCategoryIds = useMemo(() => {
+    if (!service.sub_category_id) return [];
+    const ids = Array.isArray(service.sub_category_id)
+      ? service.sub_category_id
+      : [service.sub_category_id];
+    return ids.filter((id) => id && id.trim() !== "");
+  }, [service.sub_category_id]);
+
+  const { data, isLoading } = useReviewQuestions(subCategoryIds);
 
   const { mutate: submitReview, isPending: isSubmitting } = useCreateReview();
 
   const [answers, setAnswers] = useState<{ [key: string]: string | number }>(
     {},
   );
+  const [overallRating, setOverallRating] = useState<number>(0);
 
   const handleAnswerChange = (questionId: string, value: string | number) => {
     setAnswers((prev) => ({
@@ -66,11 +72,17 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
           input_type: q.input_type,
         }))
         .filter((q) => q.answer !== "" && q.answer !== 0) || [];
+    
+    if (overallRating === 0) {
+      toast.error(t("please_provide_rating"));
+      return;
+    }
 
     submitReview(
       {
         review_event_type: review_type.SERVICE,
         review_event_id: service.service_id,
+        overall_rating: overallRating,
         questions_and_answers: questionsAndAnswers,
       },
       {
@@ -95,13 +107,13 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
         Write a Review
       </Typography> */}
 
-      {/* <Box sx={{ mb: 4 }}>
+      <Box sx={{ mb: 4 }}>
         <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 500 }}>
-          Rate your experience
+          {t("rate_your_experience")}
         </Typography>
         <Rating
           value={overallRating}
-          onChange={(_, newValue) => setOverallRating(newValue)}
+          onChange={(_, newValue) => setOverallRating(newValue || 0)}
           size="large"
           sx={{
             "& .MuiRating-iconFilled": {
@@ -109,7 +121,7 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
             },
           }}
         />
-      </Box> */}
+      </Box>
 
       {data?.map((q) => (
         <Box key={q.review_question_id} sx={{ mb: 4 }}>

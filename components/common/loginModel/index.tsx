@@ -13,17 +13,17 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import toast from "react-hot-toast";
 
-import { closeLoginModal } from "@/features/ui/loginModalSlice";
-import { authService } from "@/services/auth/auth.service";
-import { secureStorage } from "@/helper/SecureStorage";
-
+import { setCredentials } from "@/features/ui/authSlice";
 import WarningView from "./components/WarningView";
 import GuestFormView from "./components/GuestFormView";
 import { guestLoginSchema, GuestLoginFormData } from "./guestLogin.schema";
+import { closeLoginModal } from "@/features/ui/loginModalSlice";
+import { secureStorage } from "@/helper/SecureStorage";
+import { authService } from "@/services/auth/auth.service";
 
 interface SafeAuthResponse {
   tokens?: { access_token: string; refresh_token: string };
-  user?: { role: string; register_step: number };
+  user?: { id: string; role: string; register_step: number; first_name: string, last_name: string, email: string, phone_number: string, profile_pic?: string };
   message?: string;
 }
 
@@ -84,11 +84,19 @@ function LoginModal() {
         secureStorage.setItem("refreshToken", resData.tokens.refresh_token);
         secureStorage.setItem("role", resData.user?.role || "");
         secureStorage.setItem("register_step", resData.user?.register_step?.toString() || "0");
-        secureStorage.setItem("user_details", JSON.stringify(resData.user || {}));
+        secureStorage.setItem("user_details", resData.user || {});
         
+        // Dispatch credentials to Redux to update UI instantly without refresh
+        if (resData.user) {
+          dispatch(setCredentials({
+            user: resData.user as any,
+            token: resData.tokens.access_token,
+            register_step: resData.user.register_step || 0
+          }));
+        }
+
         toast.success(resData.message || (res as any).message || "Guest Login Successful");
         handleClose();
-        window.location.href = "/"; // Refresh and redirect
       }
     } catch (error) {
       console.log(error);

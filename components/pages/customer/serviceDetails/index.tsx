@@ -316,7 +316,7 @@ const CustomerServiceDetails = () => {
                 overflow: "hidden",
               }}
             >
-              <Box sx={{ py: 2 }}>
+              <Box sx={{ pb: 2 }}>
                 <CustomerServiceHeader
                   isPriceRequired={
                     service.pricing_type === "noPrice"
@@ -325,8 +325,7 @@ const CustomerServiceDetails = () => {
                   }
                   price={service.price || 0}
                   currency={service.currency || "INR"}
-                  categoryName={service.category_name || ""}
-                  subCategoryName={service.sub_category_name || ""}
+                  categoryName={service.category_name || []}
                   onBookmark={() => {
                     /* TODO: Implement */
                   }}

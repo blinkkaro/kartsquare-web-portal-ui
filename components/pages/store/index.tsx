@@ -191,6 +191,8 @@ const StoreView: React.FC = () => {
               address: p.supplier?.store_address?.address || "",
               id: p.supplier?.store_id || p.supplier?.id || "",
             },
+            whatsapp_number: p.supplier?.whatsapp_number || p.supplier?.primary_mobile || p.supplier?.contact_phone || "",
+            whatsapp_country_code: p.supplier?.country_code || "91",
           }));
           setFeaturedProducts(mapped);
         }

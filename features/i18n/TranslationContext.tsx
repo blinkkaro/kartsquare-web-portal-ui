@@ -1264,6 +1264,12 @@ export type TranslationKey =
   | "submit_request"
   | "request_sent_successfully"
   | "quote_request_description"
+  | "marketing_tools"
+  | "pendingEnquiries"
+  | "Enter_value"
+  | "Select_option"
+  | "please_provide_rating"
+  | "rate_your_experience"
   ;
 
 // Sample dictionaries

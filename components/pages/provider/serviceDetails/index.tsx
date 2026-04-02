@@ -239,7 +239,6 @@ const ProviderServiceDetails = () => {
                   price={service.price || 0}
                   currency={service.currency || "INR"}
                   categoryName={service.category_name || ""}
-                  subCategoryName={service.sub_category_name || ""}
                   isPriceRequired={
                     service.pricing_type === "noPrice"
                       ? false

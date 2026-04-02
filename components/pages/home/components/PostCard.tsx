@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import {
   Avatar,
@@ -20,6 +20,8 @@ import Image from "next/image";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useLikePost } from "@/hooks/usePosts";
 import PostComment from "./PostComment";
+import { selectIsAuthenticated } from "@/features/ui/authSlice";
+import { openLoginModal } from "@/features/ui/loginModalSlice";
 
 const PostCard = ({ post }: { post: Posts }) => {
   const theme = useTheme();
@@ -27,16 +29,41 @@ const PostCard = ({ post }: { post: Posts }) => {
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const { t } = useTranslate();
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const [pendingAction, setPendingAction] = useState<"like" | "comment" | null>(
+    null
+  );
 
   const likeMutation = useLikePost(post.id);
 
   const handleLike = () => {
+    if (!isAuthenticated) {
+      setPendingAction("like");
+      dispatch(openLoginModal());
+      return;
+    }
     likeMutation.mutate();
   };
 
   const handleOpenComments = () => {
+    if (!isAuthenticated) {
+      setPendingAction("comment");
+      dispatch(openLoginModal());
+      return;
+    }
     setIsCommentModalOpen(true);
   };
+
+  useEffect(() => {
+    if (isAuthenticated && pendingAction) {
+      if (pendingAction === "like") {
+        handleLike();
+      } else if (pendingAction === "comment") {
+        handleOpenComments();
+      }
+      setPendingAction(null);
+    }
+  }, [isAuthenticated, pendingAction]);
 
   return (
     <Card sx={{ boxShadow: "none", background: "transparent" }}>
@@ -66,6 +93,7 @@ const PostCard = ({ post }: { post: Posts }) => {
                 width: 40,
                 height: 40,
                 border: "2px solid white",
+                mb: 1
               }}
               src={post.user.profile_pic || ""}
               alt={post.user.business_name}

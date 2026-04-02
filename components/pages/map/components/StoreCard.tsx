@@ -14,6 +14,12 @@ import { ShoppingBag, LocationOn, Verified } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import { useRouter } from "next/navigation";
 import type { MapStoreItem } from "@/services/map/mapInterface";
+import { useAutoGeolocation } from "@/hooks/useGeolocation";
+import { calculateDistance } from "@/helper/helper";
+import { useDispatch } from "react-redux";
+import { openDrawer } from "@/features/ui/profileDrawerSlice";
+import { AppUserType } from "@/services/auth/auth.interface";
+
 
 const STORE_ACCENT = COLORS.PRIMARY_BLUE;
 const MotionCard = motion(Card);
@@ -33,10 +39,14 @@ const StoreCard: React.FC<StoreCardProps> = ({
 }) => {
   const theme = useTheme();
   const router = useRouter();
+  const dispatch = useDispatch();
+  const { coordinates } = useAutoGeolocation();
+
   const isSmall = size === "small";
   const details = store.store_details;
   const address = details?.store_address;
   const name = details?.store_name || "Store";
+  // const dis
 
   const handleClick = () => {
     if (onCardClick) {
@@ -46,11 +56,41 @@ const StoreCard: React.FC<StoreCardProps> = ({
     }
   };
 
+  const handleOpenDrawer = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    dispatch(
+      openDrawer({
+        userId: store.supplier_id,
+        role: AppUserType.SUPPLIER,
+        username: details?.username || "",
+      }),
+    );
+  };
+
+
   const locationText = [address?.address, address?.city_town, address?.state]
     .filter(Boolean)
     .join(", ");
 
   const bannerUrl = details?.banner_url;
+
+    const getDistance = () => {
+      if (
+        coordinates?.latitude &&
+        coordinates?.longitude &&
+        address?.latitude &&
+        address?.longitude
+      ) {
+        const dist = calculateDistance(
+          coordinates.latitude,
+          coordinates.longitude,
+          address?.latitude,
+          address?.longitude,
+        );
+        return `${dist.toFixed(1)} km`;
+      }
+      return null;
+    };
 
   return (
     <MotionCard
@@ -125,6 +165,39 @@ const StoreCard: React.FC<StoreCardProps> = ({
       )}
 
       <CardContent sx={{ p: isSmall ? 1.5 : 2.5, "&:last-child": { pb: isSmall ? 1.5 : 2.5 } }}>
+        {getDistance() && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              mb: .5,
+            }}
+          >
+            <Box
+              sx={{
+                bgcolor: "rgba(0,0,0,0.03)",
+                px: 1,
+                py: 0.25,
+                borderRadius: "20px",
+              }}
+            >
+              <LocationOn
+                sx={{ fontSize: 14, color: COLORS.TEXT.SECONDARY_LIGHT }}
+              />
+              <Typography
+                variant="caption"
+                sx={{
+                  fontWeight: 600,
+                  color: COLORS.TEXT.SECONDARY_LIGHT,
+                  fontSize: "0.7rem",
+                }}
+              >
+                {getDistance()}
+              </Typography>
+            </Box>
+          </Box>
+        )}
         <Box sx={{ display: "flex", gap: 1.5, alignItems: isSmall ? "center" : "flex-start", mt: bannerUrl && !isSmall ? -4 : 0 }}>
           <Box sx={{ position: "relative", zIndex: 1 }}>
             <Box
@@ -155,6 +228,7 @@ const StoreCard: React.FC<StoreCardProps> = ({
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.5 }}>
               <Typography
                 variant={isSmall ? "subtitle2" : "h6"}
+                onClick={handleOpenDrawer}
                 sx={{
                   fontWeight: 800,
                   color:
@@ -164,10 +238,15 @@ const StoreCard: React.FC<StoreCardProps> = ({
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
+                  cursor: "pointer",
+                  "&:hover": {
+                    textDecoration: "underline",
+                  },
                 }}
               >
                 {name}
               </Typography>
+
               {details?.is_verified && (
                 <Verified sx={{ fontSize: 16, color: COLORS.SUCCESS_GREEN }} titleAccess="Verified Store" />
               )}
@@ -227,13 +306,14 @@ const StoreCard: React.FC<StoreCardProps> = ({
                     alignItems: "center",
                     gap: 0.5,
                     cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" }
+                    "&:hover": { textDecoration: "underline" },
                   }}
                 >
                   Visit Store <ShoppingBag sx={{ fontSize: 12 }} />
                 </Typography>
               </Box>
             )}
+
           </Box>
         </Box>
       </CardContent>
