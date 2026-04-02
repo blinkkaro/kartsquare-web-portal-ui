@@ -9,6 +9,7 @@ interface UseAddressMapProps {
   setValue: UseFormSetValue<AddressFormData>;
   coordinates: { latitude: number; longitude: number } | null | undefined;
   watch: any;
+  onReverseGeocodeComplete?: () => void;
 }
 
 export const useAddressMap = ({
@@ -16,12 +17,21 @@ export const useAddressMap = ({
   setValue,
   coordinates,
   watch,
+  onReverseGeocodeComplete,
 }: UseAddressMapProps) => {
   const [mapCoordinates, setMapCoordinates] = useState<{
     lat: number;
     lng: number;
   }>({ lat: 28.6139, lng: 77.209 }); // Default to New Delhi
   const [isInternalUpdate, setIsInternalUpdate] = useState(false);
+  const isTypingRef = useRef(false);
+
+  // Form values watched
+  const watchedAddress = watch("address");
+  const watchedLandmark = watch("landmark");
+  const watchedCityTown = watch("city_town");
+  const watchedState = watch("state");
+  const watchedPincode = watch("pincode");
 
   // Update map coordinates when geolocation coordinates change
   useEffect(() => {
@@ -102,7 +112,10 @@ export const useAddressMap = ({
       if (countryName) setValue("country", countryName, { shouldValidate: true });
       if (postalCode) setValue("pincode", postalCode, { shouldValidate: true });
       
-      setTimeout(() => setIsInternalUpdate(false), 1000);
+      setTimeout(() => {
+        setIsInternalUpdate(false);
+        if (onReverseGeocodeComplete) onReverseGeocodeComplete();
+      }, 1000);
 
     } catch (error) {
       // console.error("Error fetching address from coordinates:", error);
@@ -112,7 +125,7 @@ export const useAddressMap = ({
   // Form Population Logic (from Reverse Geocode) - DEBOUNCED
   useEffect(() => {
     // If we're currently geocoding from a manual form entry, don't reverse geocode
-    if (isInternalUpdate) return;
+    if (isInternalUpdate || isTypingRef.current) return;
 
     const timer = setTimeout(() => {
       if (mapCoordinates.lat && mapCoordinates.lng) {

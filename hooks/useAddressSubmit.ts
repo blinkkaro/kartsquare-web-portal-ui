@@ -27,20 +27,44 @@ export const useAddressSubmit = ({
     const fullAddress = `${data.building_no ? data.building_no + ", " : ""}${data.address}, ${data.city_town}, ${data.state}, ${data.pincode}, ${data.country}`;
 
     try {
-      const geocodeResult = await mapService.geocodeAddress(fullAddress);
+      let lat = data.latitude;
+      let lng = data.longitude;
 
-      if (!geocodeResult || !geocodeResult.geometry) {
-        onError("Please enter the full or correct address");
-        setValadating(false);
-        return;
+      // If we somehow don't have coordinates (e.g. they typed super fast, or specific address failed geocoding)
+      if (!lat || !lng) {
+        // Build varying levels of address specificity to ensure we get *some* valid coordinate fallback
+        const addressVariants = [
+          `${data.building_no ? data.building_no + ", " : ""}${data.address}, ${data.landmark ? data.landmark + ", " : ""}${data.city_town}, ${data.state}, ${data.pincode}, ${data.country}`,
+          `${data.address}, ${data.landmark ? data.landmark + ", " : ""}${data.city_town}, ${data.state}, ${data.pincode}, ${data.country}`,
+          `${data.landmark ? data.landmark + ", " : ""}${data.city_town}, ${data.state}, ${data.pincode}, ${data.country}`,
+          `${data.city_town}, ${data.state}, ${data.pincode}, ${data.country}`,
+          `${data.city_town}, ${data.state}, ${data.country}`
+        ].map(s => s.replace(/,\s*,/g, ',').trim());
+
+        let geocodeResult = null;
+        for (const variant of addressVariants) {
+          const result = await mapService.geocodeAddress(variant);
+          if (result && result.geometry && result.geometry.location) {
+            geocodeResult = result;
+            break; // Stop at first successful geocode
+          }
+        }
+
+        if (!geocodeResult || !geocodeResult.geometry) {
+          onError("Please enter a valid address, or adjust the pin on the map.");
+          setValadating(false);
+          return;
+        }
+
+        const location: any = geocodeResult.geometry.location;
+        lat = typeof location.lat === "function" ? location.lat() : location.lat;
+        lng = typeof location.lng === "function" ? location.lng() : location.lng;
       }
 
-      // Update coordinates from geocode result
-      const { lat, lng } = geocodeResult.geometry.location;
       const updatedData = {
         ...data,
-        latitude: lat(),
-        longitude: lng(),
+        latitude: Number(lat),
+        longitude: Number(lng),
       };
 
       if (mode === "add") {
