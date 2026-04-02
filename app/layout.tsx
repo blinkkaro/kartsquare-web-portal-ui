@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { Providers } from "./providers";
@@ -88,6 +89,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body style={{ fontFamily: "'Poppins', system-ui, -apple-system, sans-serif" }}>
+        <Script src="https://t.contentsquare.net/uxa/c3689fc1ad6ad.js" strategy="afterInteractive" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
