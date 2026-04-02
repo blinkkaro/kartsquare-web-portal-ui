@@ -1,4 +1,5 @@
 import { BookingStatus, UserBooking } from "../booking/bookingInterface";
+import { Review } from "../review/reviewInterface";
 
 export enum questions_input_type {
   STAR = "star_rating",
@@ -20,19 +21,6 @@ export interface ReviewUser {
   profile_pic: string;
 }
 
-export interface Review {
-  customer_review_id: string;
-  user_id: string;
-  review_event_type: review_type;
-  review_event_id: string;
-  rating: string;
-  questions_and_answers: ReviewQuestionAnswer[];
-  user: ReviewUser;
-  created_at: string;
-  updated_at: string;
-  is_deleted: boolean;
-  deleted_by: string | null;
-}
 
 export interface ReviewQuestionAnswer {
   question_id: string;

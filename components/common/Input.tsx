@@ -80,6 +80,16 @@ const Input: React.FC<InputProps> = ({
           type={inputType}
           error={!!error}
           helperText={error?.message}
+          FormHelperTextProps={{
+            sx: {
+              position: error ? "absolute" : "relative",
+              bottom: error ? "-18px" : "auto",
+              left: 0,
+              margin: 0,
+              fontSize: "0.75rem",
+              lineHeight: 1,
+            },
+          }}
           InputProps={{
             ...InputProps,
             startAdornment: startIcon ? (

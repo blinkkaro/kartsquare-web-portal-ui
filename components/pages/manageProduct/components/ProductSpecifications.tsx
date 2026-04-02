@@ -124,7 +124,31 @@ const ProductSpecifications = () => {
                     product_specifications_option_type.TEXT && (
                     <TextField
                       {...field}
-                      placeholder={t("Enter value" as any)}
+                      placeholder={t("Enter_value")}
+                      fullWidth
+                      value={
+                        Array.isArray(field.value) ? field.value[0] || "" : ""
+                      }
+                      onChange={(e) => field.onChange([e.target.value])}
+                      InputProps={{
+                        sx: {
+                          boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.05)",
+                          borderRadius: "50rem",
+                          bgcolor: isDark
+                            ? COLORS.BACKGROUND.PAPER_DARK
+                            : COLORS.BACKGROUND.PRIMARY_LIGHT,
+                          height: "2.5rem",
+                        },
+                      }}
+                    />
+                  )}
+
+                  {spec.product_specifications_option_type ===
+                    product_specifications_option_type.NUMBER && (
+                    <TextField
+                      {...field}
+                      type="number"
+                      placeholder={t("Enter_value")}
                       fullWidth
                       value={
                         Array.isArray(field.value) ? field.value[0] || "" : ""
@@ -164,7 +188,7 @@ const ProductSpecifications = () => {
                       }}
                     >
                       <MenuItem value="" disabled>
-                        {t("Select option" as any)}
+                        {t("Select_option")}
                       </MenuItem>
                       {Array.isArray(
                         spec.product_specifications_option_value,

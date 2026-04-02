@@ -456,20 +456,6 @@ const KycStep: React.FC<KycStepProps> = ({ onBack, onNext }) => {
             <Grid size={{ xs: 12, md: 6 }}>
               <ImageUpload
                 variant="document"
-                title={`${t("kyc_pan_card_image" )}*`}
-                hint={t("kyc_doc_hint_pan" )}
-                images={
-                  watch("pan_card_url") ? [watch("pan_card_url") as string] : []
-                }
-                onChange={(files) => handleImageChange(files, "pan_card_url")}
-                maxImages={1}
-                error={!!errors.pan_card_url}
-                helperText={errors.pan_card_url?.message as string}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <ImageUpload
-                variant="document"
                 title={`${t("kyc_id_proof_image" )}*`}
                 hint={t("kyc_doc_hint_id" )}
                 images={
@@ -499,6 +485,21 @@ const KycStep: React.FC<KycStepProps> = ({ onBack, onNext }) => {
                 helperText={errors.address_proof_url?.message as string}
               />
             </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <ImageUpload
+                variant="document"
+                title={`${t("kyc_pan_card_image" )}*`}
+                hint={t("kyc_doc_hint_pan" )}
+                images={
+                  watch("pan_card_url") ? [watch("pan_card_url") as string] : []
+                }
+                onChange={(files) => handleImageChange(files, "pan_card_url")}
+                maxImages={1}
+                error={!!errors.pan_card_url}
+                helperText={errors.pan_card_url?.message as string}
+              />
+            </Grid>
+            
           </Grid>
         </Box>
 

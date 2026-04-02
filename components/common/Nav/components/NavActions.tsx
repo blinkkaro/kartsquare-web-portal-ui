@@ -14,6 +14,7 @@ import {
   Search as SearchIcon,
   Login as LoginIcon,
   Business,
+  Campaign,
 } from "@mui/icons-material";
 import Image from "next/image";
 import { COLORS } from "../../../../constants/colors";
@@ -22,10 +23,16 @@ import { secureStorage } from "@/helper/SecureStorage";
 const ActionsContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: "0.5rem",
-  [theme.breakpoints.up("md")]: {
-    gap: "1rem",
-  },
+  gap: "0.25rem",
+  // [theme.breakpoints.up("md")]: {
+  //   gap: "0.5rem",
+  // },
+  // [theme.breakpoints.up("lg")]: {
+  //   gap: "0.75rem",
+  // },
+  // [theme.breakpoints.up("xl")]: {
+  //   gap: "0.25rem",
+  // },
 }));
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -64,6 +71,8 @@ interface NavActionsProps {
 
 import { useSocket } from "@/contexts/SocketContext";
 import { useTranslate } from "@/hooks/useTranslate";
+import { AppUserType } from "@/services/auth/auth.interface";
+import { useRouter } from "next/navigation";
 
 const NavActions: React.FC<NavActionsProps> = ({
   isAuthenticated,
@@ -82,6 +91,7 @@ const NavActions: React.FC<NavActionsProps> = ({
   const { unreadCount } = useSocket();
   const { t } = useTranslate();
   const isDark = mode === "dark";
+  const router = useRouter();
 
   if (isAuthenticated) {
     return (
@@ -96,14 +106,24 @@ const NavActions: React.FC<NavActionsProps> = ({
             <SearchIcon fontSize="small" />
           </StyledIconButton>
         )} */}
+
         {/* Free Listing */}
+        {(profile?.role?.toUpperCase() === AppUserType.SUPPLIER ||
+          profile?.role?.toUpperCase() === AppUserType.SERVICE_PROVIDER) && (
+          <StyledIconButton
+            size="small"
+            aria-label="marketing tools"
+            onClick={() => router.push("/spr/marketing-tools")}
+          >
+            <Campaign />
+          </StyledIconButton>
+        )}
 
         {/* Chat - Hide on mobile */}
         <StyledIconButton
           size="small"
           aria-label="chat"
-          onClick={() => window.location.href = "/chat"}
-          sx={{ display: { xs: "none", md: "inline-flex" } }}
+          onClick={() => router.push("/chat")}
         >
           <Badge badgeContent={0} color="error">
             <Image

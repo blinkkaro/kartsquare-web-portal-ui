@@ -21,11 +21,11 @@ import {
 } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import {
-  Review,
   questions_input_type,
 } from "@/services/providerDashboard/providerDashboard.interface";
 import { formatStringTimeForReview } from "@/helper/helper";
 import { useTranslate } from "@/hooks/useTranslate";
+import { Review } from "@/services/review/reviewInterface";
 
 interface ReviewCardProps {
   review: Review & { service_name?: string };

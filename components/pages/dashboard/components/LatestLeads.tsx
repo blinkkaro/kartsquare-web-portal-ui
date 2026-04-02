@@ -99,26 +99,27 @@ const LatestLeads = () => {
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             {t("latest_leads")}
           </Typography>
-
-          <TextField
-            size="small"
-            placeholder={t("search")}
-            value={search}
-            onChange={handleSearchChange}
-            sx={{
-              width: { xs: "100%", sm: "250px" },
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-              },
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon fontSize="small" />
-                </InputAdornment>
-              ),
-            }}
-          />
+          {leads.length > 0 && (
+            <TextField
+              size="small"
+              placeholder={t("search")}
+              value={search}
+              onChange={handleSearchChange}
+              sx={{
+                width: { xs: "100%", sm: "250px" },
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                },
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="small" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          )}
         </Box>
 
         {isLoading ? (

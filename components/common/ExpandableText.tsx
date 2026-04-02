@@ -37,7 +37,7 @@ const ExpandableText: React.FC<ExpandableTextProps> = ({
           setIsExpanded(!isExpanded);
         }}
         sx={{
-          color: COLORS.PRIMARY_PURPLE,
+          color: COLORS.ACCENT_BLUE_DARK,
           cursor: "pointer",
           fontWeight: 700,
           ml: 0.5,

@@ -14,6 +14,7 @@ export enum product_specifications_option_type {
   RANGE = "range",
   DATE = "date",
   CHECKBOX = "checkbox",
+  NUMBER = "number",
 }
 
 export interface Product {

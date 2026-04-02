@@ -28,6 +28,10 @@ import MobileSearchDrawer from "./components/MobileSearchDrawer";
 import NotificationList from "./components/NotificationList";
 import RightDrawer from "../RightDrawer";
 import { secureStorage } from "@/helper/SecureStorage";
+import {
+  selectIsAuthenticated,
+  selectCurrentUser,
+} from "@/features/ui/authSlice";
 
 // Styled Components
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -39,10 +43,11 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     theme.palette.mode === "dark"
       ? "0 1px 3px rgba(0, 0, 0, 0.3)"
       : "0 1px 3px rgba(0, 0, 0, 0.1)",
-  borderBottom: `1px solid ${theme.palette.mode === "dark"
-    ? COLORS.BORDER.DEFAULT_DARK
-    : COLORS.BORDER.DEFAULT_LIGHT
-    }`,
+  borderBottom: `1px solid ${
+    theme.palette.mode === "dark"
+      ? COLORS.BORDER.DEFAULT_DARK
+      : COLORS.BORDER.DEFAULT_LIGHT
+  }`,
   zIndex: 1200,
 }));
 
@@ -52,16 +57,22 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   alignItems: "center",
   padding: "1rem 1rem",
   [theme.breakpoints.up("md")]: {
+    padding: "0.5rem 1rem",
+    gap: "1rem",
+  },
+  [theme.breakpoints.up("lg")]: {
     padding: "0.5rem 2rem",
+    gap: "2rem",
   },
   [theme.breakpoints.up("xl")]: {
     padding: "1rem 12rem",
+    gap: "4rem",
   },
 }));
 
 const Nav = () => {
   const theme = useTheme();
-  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("lg"));
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const pathname = usePathname();
   const router = useRouter();
@@ -70,11 +81,13 @@ const Nav = () => {
   const dispatch = useAppDispatch();
   const [showNotificationDrawer, setShowNotificationDrawer] = useState(false);
 
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const user = useAppSelector(selectCurrentUser);
+  const role = user?.role || null;
+
   // Local state
-  const [role, setRole] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Get navigation items
   const desktopNavItems = useMemo(() => getDesktopNavItems(role, t), [role, t]);
@@ -82,14 +95,6 @@ const Nav = () => {
     () => getMobileNavItems(isAuthenticated, t, role),
     [isAuthenticated, t, role],
   );
-
-  // Initialize auth state
-  useEffect(() => {
-    const token = secureStorage.getItem("token");
-    const userRole = secureStorage.getItem("role");
-    setIsAuthenticated(!!token);
-    setRole(userRole);
-  }, []);
 
   // Handlers
   const handleProfileClick = () => {
@@ -138,7 +143,13 @@ const Nav = () => {
           </Box>
 
           {/* Right Section: Navigation Links and Actions */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: { md: "0.5rem", lg: "1.5rem" },
+            }}
+          >
             <DesktopNavLinks
               items={desktopNavItems}
               currentPath={pathname}

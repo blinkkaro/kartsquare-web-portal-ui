@@ -101,7 +101,7 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
           />
           <DetailItem
             label={t("date")}
-            value={dayjs(lead.created_at).format("MMM DD, YYYY HH:mm")}
+            value={dayjs(lead.created_at).format("MMM DD, YYYY")}
           />
         </Box>
         <Box sx={{ mt: 2 }}>

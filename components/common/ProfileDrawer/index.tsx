@@ -39,9 +39,6 @@ export function ProfileDrawer() {
   const router = useRouter();
   const { token } = useAppSelector((state) => state.auth);
 
-  console.log("role", role);
-  console.log("userId", userId);
-  console.log("username", username);
 
   const isSupplier = role === AppUserType.SUPPLIER;
 

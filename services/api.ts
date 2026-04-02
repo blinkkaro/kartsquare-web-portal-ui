@@ -104,6 +104,16 @@ api.interceptors.response.use(
     };
 
     if (error.response?.status === 401 && !originalRequest._retry) {
+      if(!secureStorage.getItem("token")){
+        store.dispatch(openLoginModal());
+        return Promise.resolve({
+          data: null,
+          errors: error,
+          status: "failed",
+          success: false,
+          message: "Authentication required",
+        } as unknown as AxiosResponse<ApiResponse>);
+      }
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject });
@@ -133,7 +143,16 @@ api.interceptors.response.use(
       try {
         const refreshToken = secureStorage.getItem("refreshToken");
         if (!refreshToken) {
-          throw error;
+          // No refresh token — clear session and show login modal
+          store.dispatch(logout());
+          store.dispatch(openLoginModal());
+          return Promise.resolve({
+            data: null,
+            errors: error,
+            status: "failed",
+            success: false,
+            message: "Authentication required",
+          } as unknown as AxiosResponse<ApiResponse>);
         }
 
         const response = await authService.refreshToken(refreshToken);
@@ -160,7 +179,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
 
-        // Dispatch logout action to clear Redux state and secureStorage
+        // Clear session and show login modal instead of redirecting
         store.dispatch(logout());
 
         // Redirect to login page

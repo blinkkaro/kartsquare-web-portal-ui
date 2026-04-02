@@ -48,11 +48,11 @@ export interface Service {
   provider_phone_number: string;
   provider_whatsapp_country_code: string;
   provider_whatsapp_number: string;
-
+  
   // Joined fields
   provider_name: string;
-  category_name: string;
-  sub_category_name: string | null;
+  category_name: string[];
+  sub_category_name: string[] | null;
   service_provider_address: string | null;
   service_address?: {
     building_no: string;

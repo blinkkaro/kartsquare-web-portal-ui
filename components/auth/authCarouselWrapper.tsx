@@ -64,10 +64,16 @@ function AuthCarouselWrapper({
         minHeight: "100vh",
         width: "100%",
         position: "relative",
-        bgcolor:
-          theme.palette.mode === "light"
-            ? COLORS.BACKGROUND.PRIMARY_LIGHT
-            : COLORS.BACKGROUND.PRIMARY_DARK,
+        background: {
+          xs:
+            theme.palette.mode === "light"
+              ? COLORS.PURPLECYAN
+              : COLORS.DARK_GRADIENT,
+          lg:
+            theme.palette.mode === "light"
+              ? COLORS.BACKGROUND.PRIMARY_LIGHT
+              : COLORS.BACKGROUND.PRIMARY_DARK,
+        },
       }}
     >
       {/* Left Side (Carousel) */}
@@ -89,10 +95,13 @@ function AuthCarouselWrapper({
       <Grid
         size={{ xs: 12, lg: 6 }}
         sx={{
-          background:
-            theme.palette.mode === "light"
-              ? COLORS.PURPLECYAN
-              : COLORS.DARK_GRADIENT,
+          background: {
+            xs: "transparent",
+            lg:
+              theme.palette.mode === "light"
+                ? COLORS.PURPLECYAN
+                : COLORS.DARK_GRADIENT,
+          },
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -291,10 +300,7 @@ function AuthCarouselWrapper({
         <Box
           sx={{
             background: {
-              xs:
-                theme.palette.mode === "light"
-                  ? COLORS.PURPLECYAN
-                  : COLORS.DARK_GRADIENT,
+              xs: "transparent",
               lg:
                 theme.palette.mode === "light"
                   ? COLORS.BACKGROUND.PRIMARY_LIGHT

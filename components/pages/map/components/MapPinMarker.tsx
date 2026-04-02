@@ -1,8 +1,17 @@
 "use client";
 import React from "react";
-import { Box, Typography } from "@mui/material";
-import { ShoppingBag, HomeRepairService, NorthEast } from "@mui/icons-material";
+import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import {
+  ShoppingBag,
+  HomeRepairService,
+  NorthEast,
+  Close,
+} from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
+import type { SelectedItem } from "@/services/map/mapInterface";
+import { AppUserType } from "@/services/auth/auth.interface";
+import { useDispatch } from "react-redux";
+import { openDrawer } from "@/features/ui/profileDrawerSlice";
 
 const PIN_BUBBLE_SIZE = 42;
 const PIN_POINT_HEIGHT = 14;
@@ -18,6 +27,10 @@ export interface MapPinMarkerProps {
   showPopup?: boolean;
   directionsUrl?: string;
   size?: "default" | "compact";
+  setSelectedItem?: React.Dispatch<React.SetStateAction<SelectedItem | null>>;
+  role?: AppUserType;
+  id?: string;
+  username?: string;
 }
 
 const MapPinMarker: React.FC<MapPinMarkerProps> = ({
@@ -30,15 +43,33 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
   showPopup = true,
   directionsUrl,
   size = "default",
+  setSelectedItem,
+  role,
+  id,
+  username,
 }) => {
   const Icon = type === "store" ? ShoppingBag : HomeRepairService;
   const bubbleSize = size === "compact" ? 32 : PIN_BUBBLE_SIZE;
   const pointHeight = size === "compact" ? 12 : PIN_POINT_HEIGHT;
   const pinWidth = size === "compact" ? 30 : PIN_WIDTH;
+  const theme = useTheme();
+  const dispatch = useDispatch();
 
   const handleDirections = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (directionsUrl) window.open(directionsUrl, "_blank", "noopener,noreferrer");
+    if (directionsUrl)
+      window.open(directionsUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const handleOpenDrawer = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    dispatch(
+      openDrawer({
+        userId: id || "",
+        role: role || AppUserType.SERVICE_PROVIDER,
+        username: username || "",
+      }),
+    );
   };
 
   return (
@@ -53,7 +84,9 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
         alignItems: "center",
         transform: "translate(-50%, -100%)",
         transition: "transform 0.2s ease",
-        "&:hover": onClick ? { transform: "translate(-50%, -100%) scale(1.1)" } : {},
+        "&:hover": onClick
+          ? { transform: "translate(-50%, -100%) scale(1.1)" }
+          : {},
         zIndex: selected ? 100 : 1,
       }}
     >
@@ -73,7 +106,10 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
             pointerEvents: "none",
             "@keyframes pinPulse": {
               "0%": { transform: "translate(-50%, 50%) scale(1)", opacity: 1 },
-              "100%": { transform: "translate(-50%, 50%) scale(1.6)", opacity: 0 },
+              "100%": {
+                transform: "translate(-50%, 50%) scale(1.6)",
+                opacity: 0,
+              },
             },
           }}
         />
@@ -106,9 +142,38 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
               borderLeft: "8px solid transparent",
               borderRight: "8px solid transparent",
               borderTop: `8px solid ${COLORS.WHITE}`,
-            }
+            },
           }}
         >
+          <IconButton
+            onClick={() => {
+              if (setSelectedItem) setSelectedItem(null);
+            }}
+            // size="small"
+            sx={{
+              position: "absolute",
+              top: -5,
+              right: -5,
+              zIndex: 20,
+              fontSize: "15px",
+              width: "20px",
+              height: "20px",
+              backgroundColor:
+                theme.palette.mode === "light"
+                  ? COLORS.WHITE
+                  : COLORS.BACKGROUND.PAPER_DARK,
+              boxShadow: `0 2px 8px ${COLORS.SHADOW.DEFAULT}`,
+              "&:hover": {
+                backgroundColor:
+                  theme.palette.mode === "light"
+                    ? "#f5f5f5"
+                    : COLORS.BACKGROUND.PAPER_DARK,
+                boxShadow: `0 4px 12px ${COLORS.SHADOW.DEFAULT}`,
+              },
+            }}
+          >
+            <Close fontSize="inherit" />
+          </IconButton>
           <Box
             sx={{
               width: 40,
@@ -137,6 +202,7 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
           </Box>
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography
+              onClick={handleOpenDrawer}
               variant="body2"
               sx={{
                 fontWeight: 800,
@@ -145,6 +211,9 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
                 fontSize: "0.85rem",
+                "&:hover": {
+                  textDecoration: "underline",
+                },
               }}
             >
               {name}
@@ -224,7 +293,12 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
               />
             </Box>
           ) : (
-            <Icon sx={{ fontSize: size === "compact" ? 18 : 24, color: COLORS.WHITE }} />
+            <Icon
+              sx={{
+                fontSize: size === "compact" ? 18 : 24,
+                color: COLORS.WHITE,
+              }}
+            />
           )}
 
           {/* Type Badge Overlay */}
@@ -268,7 +342,7 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
               width: pinWidth,
               height: 2,
               bgcolor: color,
-            }
+            },
           }}
         />
       </Box>
