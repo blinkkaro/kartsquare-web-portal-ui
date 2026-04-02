@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Home | kartsquare Portal",
-  description: "Welcome to kartsquare Portal",
+  description: "Welcome to the kartsquare Portal",
 };
 
 export default function Home() {
