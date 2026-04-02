@@ -102,7 +102,6 @@ function MyPreferencesView() {
             {preferencesData?.map((preference) => (
               <PreferenceCards
                 key={preference.id}
-                // iconName={preference.icon}
                 title={preference.preference_name}
                 isSelected={selectedPreferences.includes(preference.id)}
                 onPress={handlePreferenceToggle}
