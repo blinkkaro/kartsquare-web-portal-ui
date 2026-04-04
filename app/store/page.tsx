@@ -1,8 +1,10 @@
+import type { Metadata } from "next";
 import MainLayout from "@/app/mainLayout";
 import StoreView from "@/components/pages/store";
 import { seoPublic } from "@/lib/seo/buildMetadata";
+import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 
-export const metadata = seoPublic({
+const storeFallback = seoPublic({
   title: "Store — products from verified suppliers",
   description:
     "Browse wholesale and retail products on KartSquare — electronics, industrial supplies, textiles, chemicals, and more from verified Indian suppliers.",
@@ -14,6 +16,10 @@ export const metadata = seoPublic({
     "KartSquare store",
   ],
 });
+
+export async function generateMetadata(): Promise<Metadata> {
+  return sitePageSeoOrFallback("store", storeFallback);
+}
 
 export default function StorePage() {
   return (

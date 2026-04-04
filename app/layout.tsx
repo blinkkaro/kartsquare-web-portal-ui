@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { Providers } from "./providers";
@@ -8,6 +7,23 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  applicationName: "KartSquare",
+  appleWebApp: {
+    capable: true,
+    title: "KartSquare",
+    statusBarStyle: "default",
+  },
+  // ICO: only `app/favicon.ico` (Next injects one <link>). Do not repeat favicon.ico here or in
+  // manifest — auditors flag multiple ICO declarations.
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icons/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+      { url: "/icon.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+  },
   title: {
     default: "KartSquare – B2B Marketplace | Products & Services from Verified Suppliers",
     template: "%s | KartSquare",
@@ -89,7 +105,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body style={{ fontFamily: "'Poppins', system-ui, -apple-system, sans-serif" }}>
-        <Script src="https://t.contentsquare.net/uxa/c3689fc1ad6ad.js" strategy="afterInteractive" />
+        {/* Plain script avoids Turbopack chunk split issues from next/script in RootLayout */}
+        <script
+          async
+          src="https://t.contentsquare.net/uxa/c3689fc1ad6ad.js"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}

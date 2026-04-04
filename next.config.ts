@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         destination: "/termsConditions",
         permanent: true,
       },
+      {
+        source: "/services",
+        destination: "/cus/servicesList",
+        permanent: true,
+      },
     ];
   },
   images: {

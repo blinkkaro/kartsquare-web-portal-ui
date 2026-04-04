@@ -1,9 +1,10 @@
-import React, { use } from "react";
+import React from "react";
 import { Box, Typography, Card, CardContent, CardMedia } from "@mui/material";
 import { useRouter } from "next/navigation";
 
 interface BlogCardProps {
   id: string;
+  slug?: string;
   image: string;
   date: string;
   title: string;
@@ -12,15 +13,19 @@ interface BlogCardProps {
 
 const BlogCard: React.FC<BlogCardProps> = ({
   id,
+  slug,
   image,
   date,
   title,
   description,
 }) => {
   const router = useRouter();
+  const pathSegment = slug?.trim() || id;
   return (
     <Card
-      onClick={() => { router.push("/blogs/" + id) }}
+      onClick={() => {
+        router.push("/blogs/" + pathSegment);
+      }}
       sx={{
         borderRadius: "16px",
         boxShadow: "none",

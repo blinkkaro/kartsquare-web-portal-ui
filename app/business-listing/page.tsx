@@ -1,9 +1,11 @@
+import type { Metadata } from "next";
 import React from "react";
 import MainLayout from "../mainLayout";
 import ListingView from "@/components/pages/leading";
 import { seoPublic } from "@/lib/seo/buildMetadata";
+import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 
-export const metadata = seoPublic({
+const businessListingFallback = seoPublic({
   title: "List your business for free",
   description:
     "Register your company on KartSquare to reach buyers and service customers. Create a free business listing and grow visibility across India.",
@@ -15,6 +17,10 @@ export const metadata = seoPublic({
     "B2B visibility",
   ],
 });
+
+export async function generateMetadata(): Promise<Metadata> {
+  return sitePageSeoOrFallback("business_listing", businessListingFallback);
+}
 
 export default function FreeListing() {
   return (

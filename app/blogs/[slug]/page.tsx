@@ -9,13 +9,17 @@ function findBlog(slugOrId: string) {
   return blogs.find((b) => b.id === slugOrId || b.slug === slugOrId);
 }
 
+function canonicalBlogPath(blog: (typeof blogs)[number]): string {
+  return `/blogs/${blog.slug || blog.id}`;
+}
+
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { id } = await params;
-  const blog = findBlog(id);
+  const { slug } = await params;
+  const blog = findBlog(slug);
   if (!blog) {
     return {
       title: { absolute: "Blog post not found | KartSquare" },
@@ -24,22 +28,27 @@ export async function generateMetadata({
     };
   }
 
-  const path = `/blogs/${blog.slug || blog.id}`;
+  const path = canonicalBlogPath(blog);
   const canonical = `${SITE_URL}${path}`;
   const rawTitle = blog.metaTitle || blog.title;
   const titleText = /KartSquare/i.test(rawTitle)
     ? rawTitle
     : `${rawTitle} | KartSquare`;
   const keywords = blog.tags?.length ? blog.tags : undefined;
+  const description =
+    blog.metaDescription?.trim() ||
+    blog.excerpt?.trim() ||
+    blog.description?.slice(0, 160) ||
+    `Read ${blog.title} on the KartSquare blog.`;
 
   return {
     title: { absolute: titleText },
-    description: blog.metaDescription,
+    description,
     ...(keywords ? { keywords } : {}),
     alternates: { canonical },
     openGraph: {
       title: titleText,
-      description: blog.metaDescription,
+      description,
       url: canonical,
       siteName: "KartSquare",
       type: "article",
@@ -50,7 +59,7 @@ export async function generateMetadata({
     twitter: {
       card: blog.coverImage ? "summary_large_image" : "summary",
       title: titleText,
-      description: blog.metaDescription,
+      description,
       ...(blog.coverImage ? { images: [blog.coverImage] } : {}),
     },
     robots: { index: true, follow: true },
@@ -60,17 +69,17 @@ export async function generateMetadata({
 export default async function BlogDetailsPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-  const { id } = await params;
-  const blog = findBlog(id);
+  const { slug } = await params;
+  const blog = findBlog(slug);
 
   const jsonLd = blog
     ? JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
         headline: blog.title,
-        description: blog.metaDescription,
+        description: blog.metaDescription || blog.excerpt,
         image: blog.coverImage,
         datePublished: blog.date,
         author: { "@type": "Organization", name: blog.author || "KartSquare" },
@@ -81,7 +90,7 @@ export default async function BlogDetailsPage({
         },
         mainEntityOfPage: {
           "@type": "WebPage",
-          "@id": `${SITE_URL}/blogs/${blog.slug || blog.id}`,
+          "@id": `${SITE_URL}${canonicalBlogPath(blog)}`,
         },
       })
     : null;

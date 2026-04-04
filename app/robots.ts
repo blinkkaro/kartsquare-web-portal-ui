@@ -1,6 +1,8 @@
 import { MetadataRoute } from 'next';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://kartsquare.com';
+const BASE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com"
+).replace(/\/$/, "");
 
 /**
  * Robots.txt tuned for marketplace SEO:
@@ -33,7 +35,7 @@ export default function robots(): MetadataRoute.Robots {
           '/supplier/login',
           '/supplier/verify-otp',
           '/sup/',
-          '/cus/',
+          '/cus/bookings',
           '/spr/',
           '/chat',
         ],
@@ -57,7 +59,7 @@ export default function robots(): MetadataRoute.Robots {
           '/preferences',
           '/supplier/',
           '/sup/',
-          '/cus/',
+          '/cus/bookings',
           '/spr/',
           '/chat',
         ],

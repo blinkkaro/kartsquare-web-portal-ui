@@ -51,7 +51,15 @@ export async function fetchPublicProfileForSeo(
 }
 
 function str(v: unknown): string | undefined {
+  if (v == null) return undefined;
   return typeof v === "string" && v.trim() ? v : undefined;
+}
+
+function absolutizeMediaUrl(url: string): string {
+  const base = SITE_URL.replace(/\/$/, "");
+  if (/^https?:\/\//i.test(url)) return url;
+  const path = url.startsWith("/") ? url : `/${url}`;
+  return `${base}${path}`;
 }
 
 function displayName(
@@ -202,10 +210,11 @@ export function buildProfileMetadata(
   const keywordsRaw = str(profile.meta_keywords);
   const canonicalPath = `/in/${encodeURIComponent(username)}`;
 
-  const profilePic =
+  const profilePicRaw =
     str(profile.og_image) ||
     str(profile.profile_pic) ||
     str(profile.logo_url);
+  const profilePic = profilePicRaw ? absolutizeMediaUrl(profilePicRaw) : undefined;
 
   const ogTitle = str(profile.og_title) || title;
   const ogDesc = str(profile.og_description) || description;

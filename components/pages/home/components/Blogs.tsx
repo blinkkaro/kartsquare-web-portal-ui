@@ -16,6 +16,7 @@ import { blogs } from "@/data/blogs";
 
 interface BlogData {
   id: string;
+  slug?: string;
   image: string;
   date: string;
   title: string;
@@ -122,7 +123,7 @@ const BlogCard = ({ blog }: { blog: BlogData }) => {
           {blog.description}
         </Typography> */}
         <Link
-          href={`/blogs/${blog.id}`}
+          href={`/blogs/${blog.slug || blog.id}`}
           passHref
           style={{ textDecoration: "none" }}
         >
@@ -192,6 +193,7 @@ const Blogs = () => {
           key={blog.id}
           blog={{
             id: blog.id,
+            slug: blog.slug,
             image: blog.coverImage,
             date: blog.date,
             title: blog.title,

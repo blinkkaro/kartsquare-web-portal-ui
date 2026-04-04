@@ -28,10 +28,18 @@ export function seoPublic(opts: {
   keywords?: string[];
   image?: string;
   ogType?: "website" | "article";
+  /** Override Open Graph / Twitter title (e.g. from DB SEO) */
+  ogTitle?: string;
+  /** Override Open Graph / Twitter description */
+  ogDescription?: string;
 }): Metadata {
   const path = normalizePath(opts.path);
   const canonical = path === "/" ? SITE_URL : `${SITE_URL}${path}`;
   const absoluteTitle = brandTitle(opts.title);
+  const ogTitleResolved = opts.ogTitle
+    ? brandTitle(opts.ogTitle)
+    : absoluteTitle;
+  const ogDescResolved = opts.ogDescription ?? opts.description;
   const image = opts.image;
   const ogType = opts.ogType ?? "website";
 
@@ -41,8 +49,8 @@ export function seoPublic(opts: {
     ...(opts.keywords?.length ? { keywords: opts.keywords } : {}),
     alternates: { canonical },
     openGraph: {
-      title: absoluteTitle,
-      description: opts.description,
+      title: ogTitleResolved,
+      description: ogDescResolved,
       url: canonical,
       siteName: "KartSquare",
       type: ogType,
@@ -51,8 +59,8 @@ export function seoPublic(opts: {
     },
     twitter: {
       card: image ? "summary_large_image" : "summary",
-      title: absoluteTitle,
-      description: opts.description,
+      title: ogTitleResolved,
+      description: ogDescResolved,
       ...(image ? { images: [image] } : {}),
     },
     robots: {

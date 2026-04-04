@@ -54,6 +54,7 @@ const BlogView: React.FC = () => {
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={blog.id}>
             <BlogCard
               id={blog.id}
+              slug={blog.slug}
               image={blog.coverImage}
               date={blog.date}
               title={blog.title}
