@@ -156,7 +156,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                 p: 3, 
                 bgcolor: isDarkMode ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE, 
                 borderRadius: "24px", 
-                border: `1px solid ${isDarkMode ? COLORS.GREY.DARK : COLORS.BORDER.LIGHT}`,
+                border: `1px solid ${isDarkMode ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
                 boxShadow: `0 4px 24px ${COLORS.SHADOW.DEFAULT}` 
               }}>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
@@ -248,7 +248,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                               minWidth: '100px',
                               py: 1,
                               borderRadius: '12px',
-                              border: `1px solid ${isSelected ? COLORS.PRIMARY_PURPLE : (isDarkMode ? COLORS.BORDER.DARK : COLORS.BORDER.LIGHT)}`,
+                              border: `1px solid ${isSelected ? COLORS.PRIMARY_PURPLE : (isDarkMode ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT)}`,
                               bgcolor: isSelected ? bgSubtle : 'transparent',
                               color: isSelected ? COLORS.PRIMARY_PURPLE : (isDarkMode ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT),
                               fontWeight: isSelected ? 700 : 500,
@@ -316,7 +316,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                       p: 2, 
                       bgcolor: bgSubtle, 
                       borderRadius: '12px', 
-                      border: `1px solid ${isDarkMode ? COLORS.BORDER.DARK : COLORS.BORDER.LIGHT}` 
+                      border: `1px solid ${isDarkMode ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}` 
                     }}>
                       <Typography variant="body2" sx={{ fontWeight: 600, mb: 2, color: isDarkMode ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT }}>
                         Auto-filled Location Details
@@ -426,7 +426,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                 </Grid>
               </Box>
 
-              <Box sx={{ mt: 4, pt: 2, pb: 1, borderTop: `1px solid ${isDarkMode ? COLORS.BORDER.DARK : COLORS.BORDER.LIGHT}`}}>
+              <Box sx={{ mt: 4, pt: 2, pb: 1, borderTop: `1px solid ${isDarkMode ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`}}>
                 <Button
                   type="submit"
                   variant="contained"
@@ -441,7 +441,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                     fontSize: "1.05rem",
                     fontWeight: 700,
                     boxShadow: `0 8px 16px ${COLORS.PURPLE_ALPHA_04}`,
-                    "&:hover": { bgcolor: COLORS.SECONDARY_PURPLE },
+                    "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
                   }}
                 >
                   {isPending ? t("submitting") : mode === "add" ? "Save Address" : t("update")}
