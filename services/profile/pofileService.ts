@@ -134,6 +134,8 @@ class ProfileService {
     try {
       const response = await GET<ProviderProfileByUsernameResponse>(
         APIENDPOINTS.GET_PROVIDER_PROFILE_BY_USERNAME(username),
+        {},
+        false,
       );
       return response.data;
     } catch (error) {
@@ -147,6 +149,8 @@ class ProfileService {
     try {
       const response = await GET<ISupplierProfileResponse>(
         APIENDPOINTS.GET_SUPPLIER_PROFILE(username),
+        {},
+        false,
       );
       return response.data;
     } catch (error) {

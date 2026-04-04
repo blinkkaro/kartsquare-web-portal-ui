@@ -136,7 +136,7 @@ class ProductService {
   async getProductById(productId: string): Promise<SupplierProductDetail> {
     try {
       let url = APIENDPOINTS.PRODUCT_BY_ID(productId);
-      const response = await GET<SupplierProductDetail>(url);
+      const response = await GET<SupplierProductDetail>(url, {}, false);
       return response.data;
     } catch (error) {
       throw error;

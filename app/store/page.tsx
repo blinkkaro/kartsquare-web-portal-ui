@@ -1,11 +1,19 @@
 import MainLayout from "@/app/mainLayout";
 import StoreView from "@/components/pages/store";
-import type { Metadata } from "next";
+import { seoPublic } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Store | KartSquare Portal",
-  description: "KartSquare Store - Find quality products from verified suppliers across India. Browse electronics, machinery, textiles, chemicals, automotive parts and more.",
-};
+export const metadata = seoPublic({
+  title: "Store — products from verified suppliers",
+  description:
+    "Browse wholesale and retail products on KartSquare — electronics, industrial supplies, textiles, chemicals, and more from verified Indian suppliers.",
+  path: "/store",
+  keywords: [
+    "B2B products India",
+    "verified suppliers",
+    "wholesale marketplace",
+    "KartSquare store",
+  ],
+});
 
 export default function StorePage() {
   return (

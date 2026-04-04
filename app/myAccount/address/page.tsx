@@ -1,19 +1,16 @@
-import React from "react";
-import AddressView from "@/components/pages/address";
 import MainLayout from "@/app/mainLayout";
-import type { Metadata } from "next";
+import AddressView from "@/components/pages/address";
+import { pageTab } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Address | kartsquare Portal",
-  description: "List of addresses saved by user",
-};
+export const metadata = pageTab(
+  "Saved addresses",
+  "Manage delivery and service addresses for bookings and orders on KartSquare.",
+);
 
-function Address() {
+export default function Address() {
   return (
     <MainLayout>
       <AddressView />
     </MainLayout>
   );
 }
-
-export default Address;

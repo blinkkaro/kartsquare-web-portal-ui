@@ -1,16 +1,13 @@
-import MainLayout from "@/app/mainLayout";
 import CookiePolicyView from "@/components/pages/cookiePolicy";
-import type { Metadata } from "next";
+import { seoPublic } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Cookie Policy | KartSquare Portal",
-  description: "Learn about how KartSquare uses cookies",
-};
+export const metadata = seoPublic({
+  title: "Cookie Policy",
+  description:
+    "Learn which cookies KartSquare uses for sign-in, analytics, and preferences — and how you can control them.",
+  path: "/cookie-policy",
+});
 
-export default function CookiePolicyPage() {
-  return (
-    <MainLayout>
-      <CookiePolicyView />
-    </MainLayout>
-  );
+export default function CookiePolicy() {
+  return <CookiePolicyView />;
 }

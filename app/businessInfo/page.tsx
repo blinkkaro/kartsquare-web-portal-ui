@@ -1,14 +1,18 @@
-import React from "react";
+import MainLayout from "../mainLayout";
 import BusinessInfoView from "@/components/pages/businessInfo";
-import { Metadata } from "next";
+import { seoPublic } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-    title: "Business Info | kartsquare Portal",
-    description: "Business Info to register your business",
+export const metadata = seoPublic({
+  title: "Business information",
+  description:
+    "Tell KartSquare about your business — name, category, and contact details — to complete your profile and improve discovery.",
+  path: "/businessInfo",
+});
+
+export default function BusinessInfo() {
+  return (
+    <MainLayout>
+      <BusinessInfoView />
+    </MainLayout>
+  );
 }
-
-function BusinessInfo() {
-  return <BusinessInfoView />;
-}
-
-export default BusinessInfo;

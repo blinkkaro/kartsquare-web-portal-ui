@@ -1,10 +1,11 @@
 import VerifyDocumentsView from "@/components/pages/verifyDocuments";
-import type { Metadata } from "next";
+import { seoAuth } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Verify Documents | kartsquare Portal",
-  description: "Upload and verify your documents",
-};
+export const metadata = seoAuth({
+  title: "Verify documents",
+  description:
+    "Upload identity and business documents for KartSquare verification so customers can trust your profile.",
+});
 
 export default function VerifyDocuments() {
   return <VerifyDocumentsView />;

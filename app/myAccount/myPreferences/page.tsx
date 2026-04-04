@@ -1,19 +1,16 @@
 import MainLayout from "@/app/mainLayout";
 import MyPreferencesView from "@/components/pages/myPreferences";
-import React from "react";
-import { Metadata } from "next";
+import { pageTab } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "My Preferences| KartSquare Portal",
-  description: "Update and manage your preferences",
-};
+export const metadata = pageTab(
+  "Preferences",
+  "Customize categories, notifications, and content preferences on KartSquare.",
+);
 
-const Preferences = () => {
+export default function MyPreferences() {
   return (
     <MainLayout>
       <MyPreferencesView />
     </MainLayout>
   );
-};
-
-export default Preferences;
+}

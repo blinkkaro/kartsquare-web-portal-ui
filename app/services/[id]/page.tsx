@@ -1,56 +1,129 @@
 import type { Metadata } from "next";
 import CustomerServiceDetails from "../../../components/pages/customer/serviceDetails";
 import { serviceListService } from "@/services/serviceList/serviceListService";
+import { SITE_URL } from "@/lib/seo/buildMetadata";
 
 type Props = {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-export async function generateMetadata({
-  params,
-  searchParams,
-}: Props): Promise<Metadata> {
+function parseStructured(raw: unknown): Record<string, unknown> | null {
+  if (!raw) return null;
+  if (typeof raw === "object" && raw !== null && !Array.isArray(raw)) {
+    return raw as Record<string, unknown>;
+  }
+  if (typeof raw === "string") {
+    try {
+      const o = JSON.parse(raw) as unknown;
+      if (typeof o === "object" && o !== null) return o as Record<string, unknown>;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
+  const base = SITE_URL;
 
   try {
     const service = await serviceListService.getServiceById(id);
-
-    // Parse structured data if it exists as string or use object
-    let structuredData = null;
-    if (service.structured_data) {
-      structuredData =
-        typeof service.structured_data === "string"
-          ? JSON.parse(service.structured_data)
-          : service.structured_data;
-    }
+    const path = `/services/${service.slug || service.service_id || id}`;
+    const canonical = `${base}${path}`;
+    const titleText =
+      service.meta_title ||
+      `${service.service_name || "Service"} | KartSquare`;
+    const desc =
+      service.meta_description ||
+      service.service_desc ||
+      `Book ${service.service_name || "this service"} on KartSquare with verified providers and clear pricing.`;
+    const ogTitle =
+      service.og_title || service.meta_title || service.service_name || titleText;
+    const ogDesc =
+      service.og_description ||
+      service.meta_description ||
+      service.service_desc ||
+      desc;
+    const images = service.og_image
+      ? [service.og_image]
+      : service.image_urls?.length
+        ? service.image_urls
+        : [];
 
     return {
-      title: service.meta_title || service.service_name,
-      description: service.meta_description || service.service_desc,
-      keywords: service.meta_keywords?.split(","),
+      title: { absolute: titleText },
+      description: desc,
+      keywords: service.meta_keywords
+        ? service.meta_keywords.split(",").map((k) => k.trim()).filter(Boolean)
+        : undefined,
+      alternates: { canonical },
       openGraph: {
-        title: service.og_title || service.meta_title || service.service_name,
-        description:
-          service.og_description ||
-          service.meta_description ||
-          service.service_desc ||
-          "",
-        images: service.og_image ? [service.og_image] : service.image_urls,
+        title: ogTitle,
+        description: ogDesc,
+        url: canonical,
+        siteName: "KartSquare",
+        type: "website",
+        locale: "en_IN",
+        ...(images.length ? { images: images.map((url) => ({ url })) } : {}),
       },
-      alternates: {
-        canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://kartsquare.com'}/services/${service.slug || service.service_id}`,
+      twitter: {
+        card: images.length ? "summary_large_image" : "summary",
+        title: ogTitle,
+        description: ogDesc,
+        ...(images.length ? { images } : {}),
       },
-      other: {
-        "script:ld+json": structuredData ? JSON.stringify(structuredData) : "",
-      },
+      robots: { index: true, follow: true },
     };
-  } catch (error) {
+  } catch {
     return {
-      title: "Service Details | Kartsquare",
-      description: "Book professional services on Kartsquare",
+      title: { absolute: "Service details | KartSquare" },
+      description:
+        "Browse and book professional services from verified providers on KartSquare.",
+      robots: { index: false, follow: true },
     };
   }
 }
 
-export default CustomerServiceDetails;
+export default async function ServiceDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  let jsonLd: string | null = null;
+  try {
+    const service = await serviceListService.getServiceById(id);
+    const structured = parseStructured(service.structured_data);
+    const canonical = `${SITE_URL}/services/${service.slug || service.service_id || id}`;
+    const node =
+      structured
+        ? { ...structured, url: canonical, "@context": structured["@context"] || "https://schema.org" }
+        : {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: service.service_name,
+            description: service.service_desc || service.meta_description,
+            url: canonical,
+            provider: service.business_name
+              ? { "@type": "LocalBusiness", name: service.business_name }
+              : undefined,
+          };
+    jsonLd = JSON.stringify(node);
+  } catch {
+    jsonLd = null;
+  }
+
+  return (
+    <>
+      {jsonLd ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLd }}
+        />
+      ) : null}
+      <CustomerServiceDetails />
+    </>
+  );
+}

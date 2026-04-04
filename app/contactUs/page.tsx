@@ -1,11 +1,13 @@
 import MainLayout from "@/app/mainLayout";
 import ContactUsView from "@/components/pages/contactUs";
-import type { Metadata } from "next";
+import { seoPublic } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Contact Us | kartsquare Portal",
-  description: "Get in touch with us. We'd love to hear from you!",
-};
+export const metadata = seoPublic({
+  title: "Contact us",
+  description:
+    "Reach the KartSquare team for partnerships, support, press, or marketplace questions. We respond to business and customer enquiries.",
+  path: "/contactUs",
+});
 
 export default function ContactUs() {
   return (

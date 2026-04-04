@@ -1,11 +1,12 @@
-import ForgetPasswordView from "@/components/pages/forgetPassword";
-import type { Metadata } from "next";
+import ForgotPasswordView from "@/components/pages/forgetPassword";
+import { seoAuth } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Forgot Password | kartsquare Portal",
-  description: "Reset your kartsquare account password",
-};
+export const metadata = seoAuth({
+  title: "Forgot password",
+  description:
+    "Reset your KartSquare password securely. Enter your email to receive reset instructions.",
+});
 
-export default function ForgetPassword() {
-  return <ForgetPasswordView />;
+export default function ForgotPasswordPage() {
+  return <ForgotPasswordView />;
 }

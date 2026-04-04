@@ -6,7 +6,8 @@ import { useParams } from "next/navigation";
 
 function BlogsDetailView() {
   const params = useParams();
-  const blog = blogs.find((b) => b.id === params.id);
+  const id = params.id as string;
+  const blog = blogs.find((b) => b.id === id || b.slug === id);
   return <BlogDetailsContent blog={blog} />;
 }
 

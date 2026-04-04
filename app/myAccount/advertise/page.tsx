@@ -1,20 +1,16 @@
-import React from "react";
-import AdvertiseView from "@/components/pages/advertise";
-import { Metadata } from "next";
 import MainLayout from "@/app/mainLayout";
+import AdvertiseView from "@/components/pages/advertise";
+import { pageTab } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Advertise | KartSquare",
-  description:
-    "Add your brand to KartSquare and reach thousands of customers use Ads to promote your brand",
-};
+export const metadata = pageTab(
+  "Advertise",
+  "Promote your brand and reach more buyers and service customers on KartSquare.",
+);
 
-function Advertise() {
+export default function Advertise() {
   return (
     <MainLayout>
       <AdvertiseView />
     </MainLayout>
   );
 }
-
-export default Advertise;

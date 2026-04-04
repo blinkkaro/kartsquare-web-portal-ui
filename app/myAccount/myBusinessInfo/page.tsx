@@ -1,19 +1,16 @@
-import React from "react";
-import MyBusinessInfoView from "@/components/pages/myBusinessInfo";
-import { Metadata } from "next";
 import MainLayout from "@/app/mainLayout";
+import MyBusinessInfoView from "@/components/pages/myBusinessInfo";
+import { pageTab } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "My Business Info",
-  description: "My Business Info",
-};
+export const metadata = pageTab(
+  "Business profile",
+  "Update your business description, categories, and public profile details.",
+);
 
-function MyBusinessInfoPage() {
+export default function MyBusinessInfo() {
   return (
     <MainLayout>
       <MyBusinessInfoView />
     </MainLayout>
   );
 }
-
-export default MyBusinessInfoPage;

@@ -1,11 +1,11 @@
 import MainLayout from "@/app/mainLayout";
 import FAQView from "@/components/pages/FAQ";
-import type { Metadata } from "next";
+import { pageTab } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "FAQ | kartsquare Portal",
-  description: "Frequently asked questions",
-};
+export const metadata = pageTab(
+  "FAQ",
+  "Frequently asked questions about using KartSquare as a customer or provider.",
+);
 
 export default function FAQ() {
   return (

@@ -1,11 +1,12 @@
-import LoginView from '@/components/pages/Login';
-import type { Metadata } from 'next';
+import LoginView from "@/components/pages/Login";
+import { seoAuth } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-    title: 'Login | kartsquare Portal',
-    description: 'Login to your account',
-};
+export const metadata = seoAuth({
+  title: "Login",
+  description:
+    "Sign in to your KartSquare account to book services, manage orders, chat with suppliers, and update your business profile.",
+});
 
 export default function LoginPage() {
-    return <LoginView />;
+  return <LoginView />;
 }

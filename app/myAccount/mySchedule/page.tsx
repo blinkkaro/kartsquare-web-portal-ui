@@ -1,11 +1,11 @@
 import MainLayout from "@/app/mainLayout";
 import MyScheduleView from "@/components/pages/mySchedule";
-import type { Metadata } from "next";
+import { pageTab } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "My Schedule | kartsquare Portal",
-  description: "Manage your working hours and schedule",
-};
+export const metadata = pageTab(
+  "My schedule",
+  "View and manage your upcoming bookings and time slots on KartSquare.",
+);
 
 export default function MySchedule() {
   return (

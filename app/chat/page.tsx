@@ -1,16 +1,17 @@
-import { Metadata } from "next";
-import ChatView from "@/components/pages/chat";
 import MainLayout from "../mainLayout";
+import ChatView from "@/components/pages/chat";
+import { seoPrivate } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-    title: "Chat & Messages | KartSquare",
-    description: "Manage your conversations and stay connected with buyers and sellers on KartSquare.",
-};
+export const metadata = seoPrivate({
+  title: "Messages",
+  description:
+    "Chat with customers, suppliers, and service providers on KartSquare in one secure inbox.",
+});
 
 export default function ChatPage() {
-    return (
-        <MainLayout>
-            <ChatView />
-        </MainLayout>
-    );
+  return (
+    <MainLayout>
+      <ChatView />
+    </MainLayout>
+  );
 }

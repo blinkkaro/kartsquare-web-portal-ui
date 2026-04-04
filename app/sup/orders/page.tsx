@@ -1,19 +1,17 @@
 import MainLayout from "@/app/mainLayout";
 import SupplierOrderView from "@/components/pages/supplierOrder";
-import { Metadata } from "next";
+import { pageTab } from "@/lib/seo/buildMetadata";
 import React from "react";
 
-const metadata: Metadata = {
-  title: "Orders | KartSquare",
-  description: "Supplier Orders",
-};
+export const metadata = pageTab(
+  "Supplier orders",
+  "Track and fulfil orders from your KartSquare storefront.",
+);
 
-function Orders() {
+export default function Orders() {
   return (
     <MainLayout>
       <SupplierOrderView />
     </MainLayout>
   );
 }
-
-export default Orders;

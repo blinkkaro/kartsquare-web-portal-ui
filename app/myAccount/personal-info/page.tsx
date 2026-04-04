@@ -1,11 +1,11 @@
 import MainLayout from "@/app/mainLayout";
 import PersonalInfoView from "@/components/pages/personalInfo";
-import type { Metadata } from "next";
+import { pageTab } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Personal Info | kartsquare Portal",
-  description: "View and edit your personal information",
-};
+export const metadata = pageTab(
+  "Personal information",
+  "Update your name, photo, username, and contact details visible on KartSquare.",
+);
 
 export default function PersonalInfo() {
   return (

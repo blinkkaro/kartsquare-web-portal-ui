@@ -1,10 +1,11 @@
 import ResetPasswordView from "@/components/pages/resetPassword";
-import type { Metadata } from "next";
+import { seoAuth } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Reset Password | kartsquare Portal",
-  description: "Set a new password for your kartsquare account",
-};
+export const metadata = seoAuth({
+  title: "Reset password",
+  description:
+    "Choose a new secure password for your KartSquare account after verifying your reset link.",
+});
 
 export default function ResetPassword() {
   return <ResetPasswordView />;

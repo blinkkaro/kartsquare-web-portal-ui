@@ -37,7 +37,7 @@ async function getProductRoutes(): Promise<MetadataRoute.Sitemap> {
       next: { revalidate: 3600 },
       headers: { 'Accept': 'application/json' },
     });
-    if (!res.ok) return [{ url: `${BASE_URL}/error/products/${res.status}`, changeFrequency: 'monthly' as const }];
+    if (!res.ok) return [];
     const json = await res.json();
     const products = json?.data?.products ?? json?.data ?? json?.products ?? (Array.isArray(json) ? json : []);
     if (!Array.isArray(products)) return [];
@@ -47,8 +47,8 @@ async function getProductRoutes(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     }));
-  } catch (error: any) {
-    return [{ url: `${BASE_URL}/error/profile/${encodeURIComponent(error.message)}`, changeFrequency: 'monthly' as const }];
+  } catch {
+    return [];
   }
 }
 
@@ -68,8 +68,8 @@ async function getServiceRoutes(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     }));
-  } catch (error: any) {
-    return [{ url: `${BASE_URL}/error/profile/${encodeURIComponent(error.message)}`, changeFrequency: 'monthly' as const }];
+  } catch {
+    return [];
   }
 }
 
@@ -80,7 +80,7 @@ async function getProfileRoutes(): Promise<MetadataRoute.Sitemap> {
       next: { revalidate: 3600 },
       headers: { 'Accept': 'application/json' },
     });
-    if (!res.ok) return [{ url: `${BASE_URL}/error/profiles/${res.status}`, changeFrequency: 'monthly' as const }];
+    if (!res.ok) return [];
     const json = await res.json();
     const profiles = json?.data?.profiles ?? json?.data ?? json?.profiles ?? (Array.isArray(json) ? json : []);
     if (!Array.isArray(profiles)) return [];
@@ -90,8 +90,8 @@ async function getProfileRoutes(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'daily' as const,
       priority: 0.9,
     }));
-  } catch (error: any) {
-    return [{ url: `${BASE_URL}/error/profile/${encodeURIComponent(error.message)}`, changeFrequency: 'monthly' as const }];
+  } catch {
+    return [];
   }
 }
 

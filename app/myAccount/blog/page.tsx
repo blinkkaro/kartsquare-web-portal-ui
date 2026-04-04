@@ -1,11 +1,11 @@
 import MainLayout from "@/app/mainLayout";
 import BlogView from "@/components/pages/blog";
-import type { Metadata } from "next";
+import { pageTab } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Blog | kartsquare Portal",
-  description: "Read the latest blog posts",
-};
+export const metadata = pageTab(
+  "My blog",
+  "Create and manage blog posts linked to your KartSquare professional profile.",
+);
 
 export default function Blog() {
   return (

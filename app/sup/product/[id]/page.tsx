@@ -1,13 +1,18 @@
 import React from "react";
 import MainLayout from "@/app/mainLayout";
 import ProductDetailView from "@/components/pages/ProductDetail";
-import { Metadata } from "next";
+import { pageTab } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Product Details | KartSquare Store",
-  description: "View detailed product information from verified suppliers",
-};
-export default async function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
+export const metadata = pageTab(
+  "Product editor",
+  "Review and update how this product appears in your KartSquare supplier dashboard.",
+);
+
+export default async function ProductDetail({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   return (
     <MainLayout>
@@ -15,4 +20,3 @@ export default async function ProductDetail({ params }: { params: Promise<{ id: 
     </MainLayout>
   );
 }
-

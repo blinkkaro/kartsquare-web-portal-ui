@@ -47,7 +47,7 @@ class ServiceListService {
             const response = await GET<Service>(
                 SERVICE_API_ENDPOINTS.GET_SERVICE_BY_ID(id),
                 {},
-                true // requiresAuth = true for service details
+                false
             );
             return response.data;
         } catch (error) {

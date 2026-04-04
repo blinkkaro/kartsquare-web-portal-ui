@@ -1,13 +1,11 @@
-import React from "react";
-import { Metadata } from "next";
 import ReelsView from "@/components/pages/reels";
+import { pageTab } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-    title: "Reels | kartsquare Portal",
+export const metadata = pageTab(
+  "Reels",
+  "Watch and explore short videos from KartSquare providers and suppliers.",
+);
+
+export default function ReelsPage() {
+  return <ReelsView />;
 }
-
-function ReelsPage() {
-    return <ReelsView />
-}
-
-export default ReelsPage;

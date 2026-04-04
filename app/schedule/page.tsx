@@ -1,10 +1,11 @@
 import ScheduleView from "@/components/pages/Schedule";
-import type { Metadata } from "next";
+import { seoPrivate } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Schedule | kartsquare Portal",
-  description: "Manage your schedule",
-};
+export const metadata = seoPrivate({
+  title: "Availability schedule",
+  description:
+    "Set when you are available for bookings so customers can reserve the right time slots on KartSquare.",
+});
 
 export default function Schedule() {
   return <ScheduleView />;

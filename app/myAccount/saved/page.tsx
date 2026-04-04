@@ -1,11 +1,11 @@
 import MainLayout from "@/app/mainLayout";
 import SavedView from "@/components/pages/saved";
-import type { Metadata } from "next";
+import { pageTab } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Saved | kartsquare Portal",
-  description: "View your saved items",
-};
+export const metadata = pageTab(
+  "Saved items",
+  "Products and services you have saved for later on KartSquare.",
+);
 
 export default function Saved() {
   return (

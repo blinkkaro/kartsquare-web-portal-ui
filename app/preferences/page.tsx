@@ -1,10 +1,11 @@
 import PreferencesView from "@/components/pages/preferences";
-import type { Metadata } from "next";
+import { seoPrivate } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Preferences | kartsquare Portal",
-  description: "Set your account preferences",
-};
+export const metadata = seoPrivate({
+  title: "Preferences",
+  description:
+    "Manage notification, language, and display preferences for your KartSquare account.",
+});
 
 export default function Preferences() {
   return <PreferencesView />;

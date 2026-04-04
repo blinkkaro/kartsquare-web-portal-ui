@@ -1,19 +1,16 @@
 import MainLayout from "@/app/mainLayout";
 import MyReviewView from "@/components/pages/myReview";
-import { Metadata } from "next";
-import React from "react";
+import { pageTab } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "My Reviews",
-  description: "Add customer reviews to user profile testimonials",
-};
+export const metadata = pageTab(
+  "My reviews",
+  "See feedback from customers and manage your reputation on KartSquare.",
+);
 
-function MyReviewsPage() {
+export default function MyReviews() {
   return (
     <MainLayout>
       <MyReviewView />
     </MainLayout>
   );
 }
-
-export default MyReviewsPage;

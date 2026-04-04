@@ -1,19 +1,17 @@
 import MainLayout from "@/app/mainLayout";
 import MyStoreView from "@/components/pages/myStore";
-import { Metadata } from "next";
+import { pageTab } from "@/lib/seo/buildMetadata";
 import React from "react";
 
-export const metadata: Metadata = {
-  title: "My Store | KartSquare",
-  description: "My Store add your products to get more customers",
-};
+export const metadata = pageTab(
+  "My store",
+  "Manage your supplier storefront, branding, and catalogue visibility on KartSquare.",
+);
 
-function MyStore() {
+export default function MyStore() {
   return (
     <MainLayout>
       <MyStoreView />
     </MainLayout>
   );
 }
-
-export default MyStore;

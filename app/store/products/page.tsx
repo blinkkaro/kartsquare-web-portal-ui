@@ -1,16 +1,19 @@
 import MainLayout from "@/app/mainLayout";
-import ProductsListingView from "@/components/pages/store/ProductsListing";
-import type { Metadata } from "next";
+import StoreProductsView from "@/components/pages/store/ProductsListing";
+import { seoPublic } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Products | KartSquare Store",
-  description: "Browse products from verified suppliers across India",
-};
+export const metadata = seoPublic({
+  title: "Browse all products",
+  description:
+    "Search and filter products from KartSquare suppliers — compare prices, SKUs, and availability across categories.",
+  path: "/store/products",
+  keywords: ["product catalog", "supplier products", "B2B catalog India"],
+});
 
-export default function ProductsListingPage() {
+export default function StoreProductsPage() {
   return (
     <MainLayout>
-      <ProductsListingView />
+      <StoreProductsView />
     </MainLayout>
   );
 }

@@ -1,28 +1,18 @@
-"use client";
-import React from "react";
-import SupplierGuard from "@/components/supplier/SupplierGuard";
-import Nav from "@/components/common/Nav";
-import { Box } from "@mui/material";
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import { seoPrivate } from "@/lib/seo/buildMetadata";
+import SupplierDashboardClientLayout from "./SupplierDashboardClientLayout";
+
+export const metadata: Metadata = seoPrivate({
+  title: "Supplier dashboard",
+  description:
+    "Manage your KartSquare supplier store, products, orders, and marketing tools.",
+});
 
 export default function SupplierDashboardLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: ReactNode;
 }) {
-    return (
-        <SupplierGuard requireComplete={true}>
-            <Nav />
-            <Box
-                sx={{
-                    minHeight: "100vh",
-                    bgcolor: "#f5f5f5",
-                    pt: { xs: 8, md: 10 }, // Padding for fixed Nav
-                    pb: 4,
-                    px: { xs: 2, md: 4 }
-                }}
-            >
-                {children}
-            </Box>
-        </SupplierGuard>
-    );
+  return <SupplierDashboardClientLayout>{children}</SupplierDashboardClientLayout>;
 }

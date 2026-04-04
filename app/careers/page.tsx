@@ -1,13 +1,15 @@
-import MainLayout from "@/app/mainLayout";
+import MainLayout from "../mainLayout";
 import CareersView from "@/components/pages/careers";
-import type { Metadata } from "next";
+import { seoPublic } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Careers | KartSquare Portal",
-  description: "Join the KartSquare team and build your career with us",
-};
+export const metadata = seoPublic({
+  title: "Careers",
+  description:
+    "Explore career opportunities at KartSquare — build India's leading marketplace for products and professional services.",
+  path: "/careers",
+});
 
-export default function CareersPage() {
+export default function Careers() {
   return (
     <MainLayout>
       <CareersView />

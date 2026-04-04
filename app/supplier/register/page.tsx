@@ -1,11 +1,12 @@
 import MainLayout from "@/app/mainLayout";
 import BecomeServiceProviderView from "@/components/pages/becomeServiceProvider";
-import type { Metadata } from "next";
+import { seoAuth } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Become a Service Provider | KartSquare Portal",
-  description: "Join KartSquare as a service provider and grow your business",
-};
+export const metadata = seoAuth({
+  title: "Become a service provider",
+  description:
+    "Join KartSquare as a verified service provider — list services, get bookings, and grow your business on India's marketplace.",
+});
 
 export default function BecomeServiceProviderPage() {
   return (

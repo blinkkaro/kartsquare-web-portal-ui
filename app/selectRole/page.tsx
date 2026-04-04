@@ -1,12 +1,12 @@
-import React from "react";
-import type { Metadata } from "next";
-import SelectRole from "@/components/pages/selectRole";
+import SelectRoleView from "@/components/pages/selectRole";
+import { seoAuth } from "@/lib/seo/buildMetadata";
 
-export const metadata: Metadata = {
-  title: "Select Role | kartsquare Portal",
-  description: "Select your role",
-};
+export const metadata = seoAuth({
+  title: "Choose account type",
+  description:
+    "Select how you will use KartSquare — customer, service provider, or supplier — to personalize your experience.",
+});
 
-export default function page() {
-  return <SelectRole />;
+export default function SelectRole() {
+  return <SelectRoleView />;
 }

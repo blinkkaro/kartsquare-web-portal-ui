@@ -1,11 +1,11 @@
 import MainLayout from "@/app/mainLayout";
-import React from "react";
 import ManageProductView from "@/components/pages/manageProduct";
+import { pageTab } from "@/lib/seo/buildMetadata";
 
-export const metadata = {
-  title: "Manage Product|KartSquare",
-  description: "Add new product and manage existing products",
-};
+export const metadata = pageTab(
+  "Manage product",
+  "Create or edit product listings, pricing, images, and inventory for your KartSquare store.",
+);
 
 export default async function ManageProduct({
   searchParams,
