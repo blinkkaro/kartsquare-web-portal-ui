@@ -16,18 +16,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   try {
     const product = await productService.getProductById(id);
-    const productName = product.product_name || product.name || "Product";
+    const productName = product.product_name || (product as any).name || "Product";
+    
+    // Access brand and supplier name based on available interface properties
+    const brand = product.brand_name;
+    const supplierName = (product as any).supplier?.name || (product as any).business_name;
+    
+    // Dynamic branded title: "Product by Business | KartSquare"
+    const titleText = brand 
+      ? `Buy ${productName} by ${brand} | KartSquare`
+      : supplierName
+        ? `Buy ${productName} from ${supplierName} | KartSquare`
+        : `${productName} | KartSquare`;
+
     const productDesc =
       product.product_description ||
-      product.description ||
-      `Buy ${productName} from verified suppliers on KartSquare — quality products with clear pricing and secure checkout.`;
-    const productImages = product.product_images || product.images || [];
+      (product as any).description ||
+      `Buy ${productName} from ${supplierName || "verified suppliers"} on KartSquare. Discover quality products with clear pricing and secure business checkout.`;
+    
+    const productImages = product.product_images || (product as any).images || [];
     const mainImage =
       (Array.isArray(productImages) && productImages[0]) ||
-      product.image ||
+      (product as any).image ||
       "";
     const canonical = `${base}/store/product/${id}`;
-    const titleText = `${productName} | KartSquare`;
 
     return {
       title: { absolute: titleText },
@@ -68,24 +80,30 @@ export default async function ProductDetailPage({
   let jsonLd: string | null = null;
   try {
     const product = await productService.getProductById(id);
-    const productName = product.product_name || product.name || "Product";
+    const productName = product.product_name || (product as any).name || "Product";
     const productDesc =
-      product.product_description || product.description || "";
-    const productImages = product.product_images || product.images || [];
+      product.product_description || (product as any).description || "";
+    const productImages = product.product_images || (product as any).images || [];
     const mainImage =
       (Array.isArray(productImages) && productImages[0]) ||
-      product.image ||
+      (product as any).image ||
       "";
-    const canonical = `${SITE_URL}/store/product/${id}`;
+    
+    const supplierName = (product as any).supplier?.name || (product as any).business_name;
+    const brand = product.brand_name;
+
     const structuredData = {
       "@context": "https://schema.org",
       "@type": "Product",
       name: productName,
       image: mainImage || undefined,
       description: productDesc,
+      brand: brand ? { "@type": "Brand", name: brand } : undefined,
       offers: {
         "@type": "Offer",
-        url: canonical,
+        url: `${SITE_URL}/store/product/${id}`,
+        priceCurrency: product.currency || "INR",
+        price: product.price || undefined,
         availability: "https://schema.org/InStock",
       },
     };
