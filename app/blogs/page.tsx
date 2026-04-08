@@ -5,6 +5,8 @@ import BlogView from "../../components/pages/blogs";
 import { seoPublic } from "@/lib/seo/buildMetadata";
 import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 
+import { buildBreadcrumbJsonLd, BREADCRUMBS } from "@/lib/seo/breadcrumbs";
+
 const blogsFallback = seoPublic({
   title: "Blog — tips for services & marketplace",
   description:
@@ -23,8 +25,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function Blog() {
+  const jsonLd = buildBreadcrumbJsonLd(BREADCRUMBS.BLOGS);
+
   return (
     <MainLayout>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd }}
+      />
       <BlogView />
     </MainLayout>
   );

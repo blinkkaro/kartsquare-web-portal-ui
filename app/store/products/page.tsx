@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import MainLayout from "@/app/mainLayout";
 import StoreProductsView from "@/components/pages/store/ProductsListing";
+import { buildBreadcrumbJsonLd, BREADCRUMBS } from "@/lib/seo/breadcrumbs";
 import { seoPublic } from "@/lib/seo/buildMetadata";
 import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 
@@ -17,8 +18,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function StoreProductsPage() {
+  const jsonLd = buildBreadcrumbJsonLd(BREADCRUMBS.STORE);
+
   return (
     <MainLayout>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd }}
+      />
       <StoreProductsView />
     </MainLayout>
   );

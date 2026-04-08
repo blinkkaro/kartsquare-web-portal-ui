@@ -4,6 +4,7 @@ import MainLayout from "../../mainLayout";
 import { blogs } from "../../../data/blogs";
 import BlogsDetailView from "@/components/pages/blogDetails";
 import { SITE_URL } from "@/lib/seo/buildMetadata";
+import { buildBreadcrumbJsonLd, BREADCRUMBS } from "@/lib/seo/breadcrumbs";
 
 function findBlog(slugOrId: string) {
   return blogs.find((b) => b.id === slugOrId || b.slug === slugOrId);
@@ -95,12 +96,25 @@ export default async function BlogDetailsPage({
       })
     : null;
 
+  const breadcrumbJsonLd = blog
+    ? buildBreadcrumbJsonLd([
+        ...BREADCRUMBS.BLOGS,
+        { name: blog.title, item: canonicalBlogPath(blog) },
+      ])
+    : null;
+
   return (
     <MainLayout>
       {jsonLd ? (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: jsonLd }}
+        />
+      ) : null}
+      {breadcrumbJsonLd ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
         />
       ) : null}
       <BlogsDetailView />

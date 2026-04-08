@@ -7,6 +7,7 @@ import {
   buildProfileMetadata,
   fetchPublicProfileForSeo,
 } from "@/lib/seo/publicProfile";
+import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 
 interface ProfilePageProps {
   params: Promise<{
@@ -43,6 +44,16 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const { username } = await params;
   const seoPayload = await fetchPublicProfileForSeo(username);
   const jsonLd = seoPayload ? buildProfileJsonLd(seoPayload, username) : null;
+  const breadcrumbJsonLd = seoPayload
+    ? buildBreadcrumbJsonLd([
+        { name: "Home", item: "/" },
+        { name: "Profiles", item: "/business-listing" },
+        {
+          name: username,
+          item: `/in/${username}`,
+        },
+      ])
+    : null;
 
   return (
     <MainLayout>
@@ -50,6 +61,12 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      ) : null}
+      {breadcrumbJsonLd ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
         />
       ) : null}
       <ProviderProfilePage username={username} />

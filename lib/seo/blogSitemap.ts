@@ -16,7 +16,7 @@ export function slugFromBlogTitle(title: string): string {
     .slice(0, 96) || "post";
 }
 
-export function blogPostSitemapEntry(blog: BlogPost): MetadataRoute.Sitemap[0] | null {
+export function blogPostSitemapEntry(blog: BlogPost): any {
   const slug = blog.slug?.trim() || slugFromBlogTitle(blog.title);
   if (!slug) return null;
 
@@ -32,6 +32,8 @@ export function blogPostSitemapEntry(blog: BlogPost): MetadataRoute.Sitemap[0] |
     lastModified,
     changeFrequency: "monthly",
     priority: 0.78,
-    ...(cover ? { images: [cover] } : {}),
+    // Custom property for our specialized XML generator (app/sitemap.xml/route.ts)
+    // to include <image:image> tags.
+    cover: cover || null,
   };
 }

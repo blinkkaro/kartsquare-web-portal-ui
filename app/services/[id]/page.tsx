@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import CustomerServiceDetails from "../../../components/pages/customer/serviceDetails";
 import { serviceListService } from "@/services/serviceList/serviceListService";
 import { SITE_URL } from "@/lib/seo/buildMetadata";
+import { buildBreadcrumbJsonLd, BREADCRUMBS } from "@/lib/seo/breadcrumbs";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -111,19 +112,32 @@ export default async function ServiceDetailPage({
               : undefined,
           };
     jsonLd = JSON.stringify(node);
-  } catch {
-    jsonLd = null;
-  }
 
-  return (
-    <>
-      {jsonLd ? (
+    const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+      ...BREADCRUMBS.SERVICES,
+      {
+        name: service.service_name || "Service",
+        item: `/services/${service.slug || service.service_id || id}`,
+      },
+    ]);
+
+    return (
+      <>
+        {jsonLd ? (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: jsonLd }}
+          />
+        ) : null}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: jsonLd }}
+          dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
         />
-      ) : null}
-      <CustomerServiceDetails />
-    </>
-  );
+        <CustomerServiceDetails />
+      </>
+    );
+  } catch {
+    jsonLd = null;
+    return <CustomerServiceDetails />;
+  }
 }

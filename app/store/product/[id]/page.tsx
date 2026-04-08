@@ -3,6 +3,7 @@ import ProductDetailsView from "@/components/pages/store/ProductDetailsView";
 import type { Metadata } from "next";
 import { productService } from "@/services/product/product.service";
 import { SITE_URL } from "@/lib/seo/buildMetadata";
+import { buildBreadcrumbJsonLd, BREADCRUMBS } from "@/lib/seo/breadcrumbs";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -88,20 +89,33 @@ export default async function ProductDetailPage({
         availability: "https://schema.org/InStock",
       },
     };
-    jsonLd = JSON.stringify(structuredData);
-  } catch {
-    jsonLd = null;
-  }
+    const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+      ...BREADCRUMBS.STORE,
+      { name: productName, item: `/store/product/${id}` },
+    ]);
 
-  return (
-    <MainLayout>
-      {jsonLd ? (
+    jsonLd = JSON.stringify(structuredData);
+    return (
+      <MainLayout>
+        {jsonLd ? (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: jsonLd }}
+          />
+        ) : null}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: jsonLd }}
+          dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
         />
-      ) : null}
-      <ProductDetailsView productId={id} />
-    </MainLayout>
-  );
+        <ProductDetailsView productId={id} />
+      </MainLayout>
+    );
+  } catch {
+    jsonLd = null;
+    return (
+      <MainLayout>
+        <ProductDetailsView productId={id} />
+      </MainLayout>
+    );
+  }
 }

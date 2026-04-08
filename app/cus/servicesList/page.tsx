@@ -3,6 +3,8 @@ import { seoPublic } from "@/lib/seo/buildMetadata";
 import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 import ListOfServices from "../../../components/pages/servicesList";
 
+import { buildBreadcrumbJsonLd, BREADCRUMBS } from "@/lib/seo/breadcrumbs";
+
 const servicesListFallback = seoPublic({
   title: "Browse services — book home & professional help",
   description:
@@ -20,4 +22,16 @@ export async function generateMetadata(): Promise<Metadata> {
   return sitePageSeoOrFallback("services_list", servicesListFallback);
 }
 
-export default ListOfServices;
+export default function ServicesListPage() {
+  const jsonLd = buildBreadcrumbJsonLd(BREADCRUMBS.SERVICES);
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd }}
+      />
+      <ListOfServices />
+    </>
+  );
+}
