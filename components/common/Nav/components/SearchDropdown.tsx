@@ -22,6 +22,7 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { getUserRole, UserRole } from "../../../../utils/auth";
+import { getServiceRouteParam } from "@/utils/serviceRoute";
 
 interface SearchDropdownProps {
   open: boolean;
@@ -74,15 +75,16 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
     onClose();
   };
 
-  const handleServiceClick = (serviceId: string) => {
+  const handleServiceClick = (service: SearchService) => {
+    const serviceRoute = getServiceRouteParam(service);
     // Determine the route based on the user's role
     const role = getUserRole();
     if (role === UserRole.SERVICE_PROVIDER) {
       // Redirect to provider service detail page
-      router.push(`/spr/services/${serviceId}`);
+      router.push(`/spr/services/${service.id}`);
     } else {
       // Default detail page (customer view)
-      router.push(`/services/${serviceId}`);
+      router.push(`/services/${serviceRoute}`);
     }
     onClose();
   };
@@ -376,7 +378,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
                   {services.map((service) => (
                     <Card
                       key={service.id}
-                      onClick={() => handleServiceClick(service.id)}
+                      onClick={() => handleServiceClick(service)}
                       sx={{
                         cursor: "pointer",
                         borderRadius: "12px",

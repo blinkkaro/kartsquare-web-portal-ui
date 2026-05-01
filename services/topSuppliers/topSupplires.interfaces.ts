@@ -12,6 +12,7 @@ export interface TopProvider {
 
 export interface TopService {
   id: string;
+  slug?: string;
   name: string;
   image_urls: string[];
   rating: number;

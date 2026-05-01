@@ -43,6 +43,7 @@ import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
 import axios from "axios";
 import toast from "react-hot-toast";
 import GetQuoteModal from "./GetQuoteModal";
+import { getServiceRouteParam } from "@/utils/serviceRoute";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
@@ -159,8 +160,9 @@ const CustomerServiceDetails = () => {
 
   // Filter out current service from related services
   const relatedServices = useMemo(() => {
-    return providerServices.filter((s) => s.service_id !== serviceId);
-  }, [providerServices, serviceId]);
+    if (!service?.service_id) return providerServices;
+    return providerServices.filter((s) => s.service_id !== service.service_id);
+  }, [providerServices, service?.service_id]);
 
   const {
     data: reviewsData,
@@ -182,7 +184,8 @@ const CustomerServiceDetails = () => {
 
   const handleReviewSubmit = () => {
     setReviewModalOpen(false);
-    router.push(`/services/${serviceId}`);
+    const routeParam = getServiceRouteParam(service || { service_id: serviceId });
+    router.push(`/services/${routeParam}`);
   };
 
   const totalReviews = reviewsData?.pages[0]?.meta.total || 0;

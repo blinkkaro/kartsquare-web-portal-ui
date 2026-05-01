@@ -25,6 +25,7 @@ import { getUserRole, getUserId, UserRole } from "../utils/auth";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useDispatch } from "react-redux";
 import { closeDrawer } from "@/features/ui/profileDrawerSlice";
+import { getServiceRouteParam } from "@/utils/serviceRoute";
 
 interface ServiceCardProps {
   service: Service;
@@ -65,11 +66,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
   const handleCardClick = () => {
     // If service provider viewing their own service, go to provider details page
     dispatch(closeDrawer());
+    const serviceRoute = getServiceRouteParam(service);
     if (isOwner) {
       router.push(`/spr/services/${service.service_id}`);
     } else {
       // Otherwise (customer or provider viewing other services), go to customer details page
-      router.push(`/services/${service.service_id}`);
+      router.push(`/services/${serviceRoute}`);
     }
   };
 

@@ -71,6 +71,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     error: null,
   });
 
+  const [imageError, setImageError] = useState<string | null>(null);
+
   const userRole = getUserRole();
   const isServiceProvider = userRole === UserRole.SERVICE_PROVIDER;
 
@@ -153,6 +155,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setImageError(t("imageSizeTooLarge" as any));
+        return;
+      }
+      setImageError(null);
       setProfilePicFile(file);
       // Create preview URL for display
       const reader = new FileReader();
@@ -166,6 +173,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const handleBannerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setImageError(t("imageSizeTooLarge" as any));
+        return;
+      }
+      setImageError(null);
       setBannerFile(file);
       // Create preview URL for display
       const reader = new FileReader();
@@ -216,8 +228,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       >
         <Box sx={{ padding: "1rem" }}>
           <ErrorMessage
-            error={error?.response?.data?.message || error?.message}
-            isVisible={!!error}
+            error={error?.response?.data?.message || error?.message || imageError}
+            isVisible={!!error || !!imageError}
           />
           {/* Banner Image - Editable */}
           {role !== UserRole.CUSTOMER && (
@@ -374,23 +386,49 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             {/* First Name & Last Name */}
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 6 }}>
-                <Typography
-                  variant="body2"
+                <Box
                   sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                     mb: 0.5,
-                    color: isDark
-                      ? COLORS.TEXT.SECONDARY_DARK
-                      : COLORS.TEXT.SECONDARY_LIGHT,
                   }}
                 >
-                  {t("first_name")}
-                </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: isDark
+                        ? COLORS.TEXT.SECONDARY_DARK
+                        : COLORS.TEXT.SECONDARY_LIGHT,
+                    }}
+                  >
+                    {t("first_name")}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color:
+                        firstName.length > 50
+                          ? "error.main"
+                          : isDark
+                            ? COLORS.TEXT.SECONDARY_DARK
+                            : COLORS.TEXT.SECONDARY_LIGHT,
+                      opacity: 0.7,
+                    }}
+                  >
+                    {firstName.length}/50
+                  </Typography>
+                </Box>
                 <TextField
                   fullWidth
                   size="small"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   placeholder={t("first_name")}
+                  error={firstName.length > 50}
+                  helperText={
+                    firstName.length > 50 ? t("valFirstNameMax" as any) : ""
+                  }
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "8px",
@@ -402,23 +440,49 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 />
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
-                <Typography
-                  variant="body2"
+                <Box
                   sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                     mb: 0.5,
-                    color: isDark
-                      ? COLORS.TEXT.SECONDARY_DARK
-                      : COLORS.TEXT.SECONDARY_LIGHT,
                   }}
                 >
-                  {t("last_name")}
-                </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: isDark
+                        ? COLORS.TEXT.SECONDARY_DARK
+                        : COLORS.TEXT.SECONDARY_LIGHT,
+                    }}
+                  >
+                    {t("last_name")}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color:
+                        lastName.length > 50
+                          ? "error.main"
+                          : isDark
+                            ? COLORS.TEXT.SECONDARY_DARK
+                            : COLORS.TEXT.SECONDARY_LIGHT,
+                      opacity: 0.7,
+                    }}
+                  >
+                    {lastName.length}/50
+                  </Typography>
+                </Box>
                 <TextField
                   fullWidth
                   size="small"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   placeholder={t("last_name")}
+                  error={lastName.length > 50}
+                  helperText={
+                    lastName.length > 50 ? t("valLastNameMax" as any) : ""
+                  }
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "8px",
@@ -491,17 +555,39 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
             {/* Bio */}
             <Box>
-              <Typography
-                variant="body2"
+              <Box
                 sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                   mb: 0.5,
-                  color: isDark
-                    ? COLORS.TEXT.SECONDARY_DARK
-                    : COLORS.TEXT.SECONDARY_LIGHT,
                 }}
               >
-                {t("bio")}
-              </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: isDark
+                      ? COLORS.TEXT.SECONDARY_DARK
+                      : COLORS.TEXT.SECONDARY_LIGHT,
+                  }}
+                >
+                  {t("bio")}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color:
+                      bio.length > 500
+                        ? "error.main"
+                        : isDark
+                          ? COLORS.TEXT.SECONDARY_DARK
+                          : COLORS.TEXT.SECONDARY_LIGHT,
+                    opacity: 0.7,
+                  }}
+                >
+                  {bio.length}/500
+                </Typography>
+              </Box>
               <TextField
                 fullWidth
                 multiline
@@ -509,6 +595,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 placeholder={t("bioPlaceholder")}
+                error={bio.length > 500}
+                helperText={bio.length > 500 ? t("valBioMax" as any) : ""}
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "8px",
@@ -527,10 +615,15 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               onClick={handleSave}
               isLoading={isPending}
               disabled={
-                isServiceProvider &&
-                username !== originalUsernameRef.current &&
-                (usernameValidation.isValidating ||
-                  usernameValidation.isValid === false)
+                !firstName.trim() ||
+                !lastName.trim() ||
+                firstName.length > 50 ||
+                lastName.length > 50 ||
+                bio.length > 500 ||
+                (isServiceProvider &&
+                  username !== originalUsernameRef.current &&
+                  (usernameValidation.isValidating ||
+                    usernameValidation.isValid === false))
               }
               sx={{
                 mt: 2,

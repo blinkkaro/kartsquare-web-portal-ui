@@ -11,6 +11,7 @@ export interface SearchUser {
 
 export interface SearchService {
   id: string;
+  slug?: string;
   name: string;
   price: number;
   rating: number;

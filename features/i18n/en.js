@@ -1,5 +1,8 @@
 export const english = {
   // Global Validation Keys
+  valFirstNameMax: "First name cannot exceed 50 characters",
+  valLastNameMax: "Last name cannot exceed 50 characters",
+  valBioMax: "Bio cannot exceed 500 characters",
   valNameMax: "Name cannot exceed 100 characters",
   valDescMax: "Description cannot exceed 2000 characters",
   valPriceMax: "Price cannot exceed 10,000,000",
