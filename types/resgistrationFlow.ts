@@ -42,9 +42,9 @@ export const registrationStepMap: Record<AppUserType, UserFlowMap> = {
   SERVICE_PROVIDER: {
     [UserRegisterSteps.REGISTERED]: "VerifyEmail",
     [UserRegisterSteps.EMAIL_VERIFIED]: "BusinessInfo",
-    [UserRegisterSteps.BUSINESS_INFO]: "UploadDocuments",
+    [UserRegisterSteps.BUSINESS_INFO]: "ScheduleScreen",
     [UserRegisterSteps.DOCUMENT_VERIFIED]: "ScheduleScreen",
-    [UserRegisterSteps.SCHEDULE_ADDED]: "SetPreferences",
+    [UserRegisterSteps.SCHEDULE_ADDED]: undefined,
   },
   SUPPLIER: {
     [UserRegisterSteps.REGISTERED]: "VerifyEmail",

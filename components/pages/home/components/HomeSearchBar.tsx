@@ -12,7 +12,8 @@ import {
     ListItemText,
     Avatar,
     CircularProgress,
-    ClickAwayListener
+    ClickAwayListener,
+    useMediaQuery
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
@@ -83,6 +84,8 @@ const HomeSearchBar = forwardRef(({ value, onChange }: HomeSearchBarProps, ref) 
         }
     }, [value]);
 
+    const isMobile = useMediaQuery(theme => theme.breakpoints.down("sm"));
+
     const handleSearch = () => {
         if (value.trim()) {
             router.push(`/store?q=${encodeURIComponent(value.trim())}`);
@@ -120,10 +123,10 @@ const HomeSearchBar = forwardRef(({ value, onChange }: HomeSearchBarProps, ref) 
                 <SearchIcon sx={{ color: "text.secondary", fontSize: 24, mr: 1.5 }} />
                 <InputBase
                     inputRef={inputRef}
-                    placeholder={t("home_banner_search_placeholder")}
+                    placeholder={isMobile ? "Search..." : t("home_banner_search_placeholder")}
                     sx={{
                         flex: 1,
-                        fontSize: "1rem",
+                        fontSize: { xs: "0.9rem", sm: "1rem" },
                         color: "black",
                         "& input::placeholder": {
                             opacity: 0.7
@@ -139,25 +142,25 @@ const HomeSearchBar = forwardRef(({ value, onChange }: HomeSearchBarProps, ref) 
                 />
                 <Button
                     variant="contained"
-                    startIcon={<AutoAwesomeIcon />}
+                    startIcon={<AutoAwesomeIcon sx={{ mr: isMobile ? -1 : 0 }} />}
                     onClick={handleSearch}
                     sx={{
-                        borderRadius: "30px", // Inner pill
+                        borderRadius: "30px",
                         background: "linear-gradient(135deg, #6C5DD3 0%, #4D3CC1 100%)",
                         textTransform: "none",
                         boxShadow: "0 4px 15px rgba(108, 93, 211, 0.4)",
-                        px: 3,
-                        py: 1.2,
-                        fontSize: "0.95rem",
+                        px: isMobile ? 1.5 : 3,
+                        py: isMobile ? 0.8 : 1.2,
+                        fontSize: isMobile ? "0.85rem" : "0.95rem",
                         fontWeight: 600,
-                        minWidth: "120px",
+                        minWidth: isMobile ? "40px" : "120px",
                         "&:hover": {
                             background: "linear-gradient(135deg, #7A6BE0 0%, #5E4DD8 100%)",
                             boxShadow: "0 6px 20px rgba(108, 93, 211, 0.6)",
                         }
                     }}
                 >
-                    {t("home_banner_search_button")}
+                    {!isMobile && t("home_banner_search_button")}
                 </Button>
             </Paper>
 

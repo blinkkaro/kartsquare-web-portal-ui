@@ -7,6 +7,12 @@ import { english } from "./en";
 
 // Define translation keys (example)
 export type TranslationKey =
+  | "businessCategory"
+  | "businessSubCategory"
+  | "selectBusinessCategory"
+  | "selectSubCategory"
+  | "businessLocation"
+  | "addAnotherAddress"
   | "valNameMax"
   | "valDescMax"
   | "valPriceMax"

@@ -13,11 +13,14 @@ import {
   useTheme,
   Paper,
 } from "@mui/material";
+import { useJsApiLoader } from "@react-google-maps/api";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { Search, MyLocation, Place } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import { SearchResult } from "@/services/map/mapInterface";
+
+const LIBRARIES: "places"[] = ["places"];
 
 interface MapSearchSuggestionsProps {
   currentLocation: { lat: number; lng: number };
@@ -36,6 +39,12 @@ const MapSearchSuggestions: React.FC<MapSearchSuggestionsProps> = ({
 }) => {
   const { t } = useTranslationContext();
   const theme = useTheme();
+  
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries: LIBRARIES,
+  });
+
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,8 +55,8 @@ const MapSearchSuggestions: React.FC<MapSearchSuggestionsProps> = ({
   ); // Track last selected suggestion
   const isSelectingRef = React.useRef(false); // Track if we're selecting a suggestion
 
-  // Fixed radius for nearby search (10km)
-  const SEARCH_RADIUS_KM = 10;
+  // Fixed radius for nearby search (50km)
+  const SEARCH_RADIUS_KM = 50;
 
   // Debounce function
   const debounce = <T extends (...args: any[]) => any>(
@@ -85,8 +94,8 @@ const MapSearchSuggestions: React.FC<MapSearchSuggestionsProps> = ({
 
       try {
         // Check if Google Maps API is loaded
-        if (!window.google || !window.google.maps) {
-          throw new Error("Google Maps API not loaded");
+        if (!isLoaded || !window.google || !window.google.maps) {
+          return;
         }
 
         // Use AutocompleteService from Google Maps JavaScript SDK
@@ -116,21 +125,23 @@ const MapSearchSuggestions: React.FC<MapSearchSuggestionsProps> = ({
             }));
             setSuggestions(results);
             setShowSuggestions(true);
+            setError(null);
           } else if (
             status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS
           ) {
             setSuggestions([]);
-            setShowSuggestions(true);
+            setShowSuggestions(false);
+            setError(null);
           } else {
-            console.error("Place search failed:", status);
-            setError("Failed to search locations");
+            console.error("Place search failed with status:", status);
+            setError(`Search failed. Please try a different query.`);
             setSuggestions([]);
           }
           setIsLoading(false);
         });
-      } catch (err) {
+      } catch (err: any) {
         console.error("Search error:", err);
-        setError("Failed to search locations");
+        setError(`Search error: ${err.message || "Unknown error"}`);
         setSuggestions([]);
         setIsLoading(false);
       }
@@ -161,7 +172,7 @@ const MapSearchSuggestions: React.FC<MapSearchSuggestionsProps> = ({
 
     try {
       // Check if Google Maps API is loaded
-      if (!window.google || !window.google.maps) {
+      if (!isLoaded || !window.google || !window.google.maps) {
         throw new Error("Google Maps API not loaded");
       }
 

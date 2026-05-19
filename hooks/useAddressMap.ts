@@ -24,7 +24,9 @@ export const useAddressMap = ({
     lng: number;
   }>({ lat: 28.6139, lng: 77.209 }); // Default to New Delhi
   const [isInternalUpdate, setIsInternalUpdate] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
   const isTypingRef = useRef(false);
+  const lastFetchedCoordsRef = useRef<{ lat: number; lng: number } | null>(null);
 
   // Form values watched
   const watchedAddress = watch("address");
@@ -47,11 +49,14 @@ export const useAddressMap = ({
   useEffect(() => {
     if (initialData?.latitude && initialData?.longitude) {
       setMapCoordinates({
-        lat: initialData.latitude,
-        lng: initialData.longitude,
+        lat: Number(initialData.latitude),
+        lng: Number(initialData.longitude),
       });
+      // Also ensure form values are set
+      setValue("latitude", Number(initialData.latitude));
+      setValue("longitude", Number(initialData.longitude));
     }
-  }, [initialData]);
+  }, [initialData, setValue]);
 
   const handleMapLocationChange = (lat: number, lng: number) => {
     setMapCoordinates({ lat, lng });
@@ -66,6 +71,16 @@ export const useAddressMap = ({
     }
 
     try {
+      // Check if we already fetched for this exact location (with small threshold)
+      if (lastFetchedCoordsRef.current) {
+        const dLat = Math.abs(lastFetchedCoordsRef.current.lat - lat);
+        const dLng = Math.abs(lastFetchedCoordsRef.current.lng - lng);
+        if (dLat < 0.00001 && dLng < 0.00001) return;
+      }
+
+      setIsValidating(true);
+      lastFetchedCoordsRef.current = { lat, lng };
+      
       const addressData = await mapService.reverseGeocode(lat, lng);
 
       if (!addressData?.address_components) return;
@@ -89,22 +104,32 @@ export const useAddressMap = ({
 
       setIsInternalUpdate(true);
       
-      // Building No
       const finalBuildingNo = streetNumber || premise || "";
       if (finalBuildingNo) {
         setValue("building_no", finalBuildingNo, { shouldValidate: true });
       }
 
-      // Landmark
-      const finalLandmark = pointOfInterest || neighborhood || subLocality2 || "";
+      // Landmark/Area
+      const finalLandmark = pointOfInterest || neighborhood || "";
       if (finalLandmark) {
         setValue("landmark", finalLandmark, { shouldValidate: true });
       }
 
-      const streetAddress = [route, subLocality, subLocality2]
+      // Better Street Address Construction
+      // If we have a route, use it. Otherwise use sublocalities.
+      let streetAddress = [route, subLocality, subLocality2]
         .filter(Boolean)
         .join(", ");
-      if (streetAddress) setValue("address", streetAddress, { shouldValidate: true });
+      
+      // If the constructed address is too short or redundant, use formatted_address (cleaned up)
+      if (!streetAddress && addressData.formatted_address) {
+        // Strip city, state, country, pincode from formatted_address for the "Address" field
+        streetAddress = addressData.formatted_address.split(", " + locality)[0];
+      }
+
+      if (streetAddress) {
+        setValue("address", streetAddress, { shouldValidate: true });
+      }
 
       const finalCity = locality || subLocality || adminArea2;
       if (finalCity) setValue("city_town", finalCity, { shouldValidate: true });
@@ -114,10 +139,12 @@ export const useAddressMap = ({
       
       setTimeout(() => {
         setIsInternalUpdate(false);
+        setIsValidating(false);
         if (onReverseGeocodeComplete) onReverseGeocodeComplete();
       }, 1000);
 
     } catch (error) {
+      setIsValidating(false);
       // console.error("Error fetching address from coordinates:", error);
     }
   };
@@ -127,14 +154,27 @@ export const useAddressMap = ({
     // If we're currently geocoding from a manual form entry, don't reverse geocode
     if (isInternalUpdate || isTypingRef.current) return;
 
+    // Skip if we are in edit mode and just loaded (to prevent overwriting existing data)
+    // We only want to reverse geocode if the coordinates actually change from the map movement
+    
     const timer = setTimeout(() => {
       if (mapCoordinates.lat && mapCoordinates.lng) {
-        fetchAddressFromCoordinates(mapCoordinates.lat, mapCoordinates.lng);
+        // Only fetch if coordinates are different from what's currently in        // Fetch if coordinates changed from map movement
+        const currentLat = watch("latitude");
+        const currentLng = watch("longitude");
+        
+        // Final safety check against last fetched
+        const dLat = lastFetchedCoordsRef.current ? Math.abs(lastFetchedCoordsRef.current.lat - mapCoordinates.lat) : 1;
+        const dLng = lastFetchedCoordsRef.current ? Math.abs(lastFetchedCoordsRef.current.lng - mapCoordinates.lng) : 1;
+
+        if (dLat > 0.0001 || dLng > 0.0001) {
+          fetchAddressFromCoordinates(mapCoordinates.lat, mapCoordinates.lng);
+        }
       }
-    }, 1000); // 1s debounce for map movement
+    }, 1500); // 1.5s debounce for map movement to ensure user is done dragging
 
     return () => clearTimeout(timer);
-  }, [mapCoordinates.lat, mapCoordinates.lng]);
+  }, [mapCoordinates.lat, mapCoordinates.lng, isInternalUpdate]);
 
   const refreshAddressFromMap = () => {
     fetchAddressFromCoordinates(mapCoordinates.lat, mapCoordinates.lng);
@@ -190,6 +230,7 @@ export const useAddressMap = ({
     setMapCoordinates,
     handleMapLocationChange,
     handleLocationSelect,
-    refreshAddressFromMap
+    refreshAddressFromMap,
+    isValidating
   };
 };

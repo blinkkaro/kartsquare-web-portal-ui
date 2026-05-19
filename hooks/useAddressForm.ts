@@ -63,8 +63,8 @@ export const useAddressForm = ({
         state: stateValue,
         country: countryValue,
         is_default: initialData.is_default || false,
-        latitude: initialData.latitude,
-        longitude: initialData.longitude,
+        latitude: Number(initialData.latitude),
+        longitude: Number(initialData.longitude),
       });
     } else if (mode === "add") {
       // For "add" mode, we only reset when the drawer opens to clear previous state

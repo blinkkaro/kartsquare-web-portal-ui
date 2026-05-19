@@ -19,10 +19,10 @@ export const useAddressSubmit = ({
 }: UseAddressSubmitProps) => {
   const addAddressMutation = useAddAddress();
   const updateAddressMutation = useUpdateAddress();
-  const [valadating, setValadating] = useState(false);
+  const [validating, setValidating] = useState(false);
 
   const handleFormSubmit = async (data: AddressFormData) => {
-    setValadating(true);
+    setValidating(true);
     // Combine address fields to get a full address string for geocoding
     const fullAddress = `${data.building_no ? data.building_no + ", " : ""}${data.address}, ${data.city_town}, ${data.state}, ${data.pincode}, ${data.country}`;
 
@@ -35,11 +35,10 @@ export const useAddressSubmit = ({
         // Build varying levels of address specificity to ensure we get *some* valid coordinate fallback
         const addressVariants = [
           `${data.building_no ? data.building_no + ", " : ""}${data.address}, ${data.landmark ? data.landmark + ", " : ""}${data.city_town}, ${data.state}, ${data.pincode}, ${data.country}`,
-          `${data.address}, ${data.landmark ? data.landmark + ", " : ""}${data.city_town}, ${data.state}, ${data.pincode}, ${data.country}`,
-          `${data.landmark ? data.landmark + ", " : ""}${data.city_town}, ${data.state}, ${data.pincode}, ${data.country}`,
+          `${data.address}, ${data.city_town}, ${data.state}, ${data.pincode}, ${data.country}`,
           `${data.city_town}, ${data.state}, ${data.pincode}, ${data.country}`,
           `${data.city_town}, ${data.state}, ${data.country}`
-        ].map(s => s.replace(/,\s*,/g, ',').trim());
+        ].map(s => s.replace(/,\s*,/g, ',').replace(/\s\s+/g, ' ').trim());
 
         let geocodeResult = null;
         for (const variant of addressVariants) {
@@ -52,7 +51,7 @@ export const useAddressSubmit = ({
 
         if (!geocodeResult || !geocodeResult.geometry) {
           onError("Please enter a valid address, or adjust the pin on the map.");
-          setValadating(false);
+          setValidating(false);
           return;
         }
 
@@ -79,12 +78,12 @@ export const useAddressSubmit = ({
                 "Something went wrong",
             );
           },
-          onSettled: () => setValadating(false),
+          onSettled: () => setValidating(false),
         });
       } else {
         if (!initialData?.id) {
           onError("Address ID is missing");
-          setValadating(false);
+          setValidating(false);
           return;
         }
 
@@ -101,14 +100,14 @@ export const useAddressSubmit = ({
                   "Something went wrong",
               );
             },
-            onSettled: () => setValadating(false),
+            onSettled: () => setValidating(false),
           },
         );
       }
     } catch (error) {
       console.error("Validation error:", error);
       onError("Failed to validate address. Please try again.");
-      setValadating(false);
+      setValidating(false);
     }
   };
 
@@ -117,6 +116,6 @@ export const useAddressSubmit = ({
     isPending:
       addAddressMutation.isPending ||
       updateAddressMutation.isPending ||
-      valadating,
+      validating,
   };
 };

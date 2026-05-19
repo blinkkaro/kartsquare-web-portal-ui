@@ -90,7 +90,8 @@ export interface IBusinessInfo {
   description: string;
   business_images: File[] | string[];
   address_id: string;
-}
+  category?: string;
+  sub_category?: string[] | string;}
 
 export interface IFreeLeadParams {
   whatsapp_country_code: string;
