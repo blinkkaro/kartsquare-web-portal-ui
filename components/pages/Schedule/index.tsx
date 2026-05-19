@@ -122,6 +122,28 @@ const ScheduleView = () => {
   const onSave = async () => {
     setLoading(true);
     setError("");
+
+    // Validation: End time must be after start time for all active days
+    const invalidDays: string[] = [];
+    schedule.forEach((item, index) => {
+      if (item.is_active) {
+        const start = item.start_time.split(":").map(Number);
+        const end = item.end_time.split(":").map(Number);
+        const startMinutes = start[0] * 60 + start[1];
+        const endMinutes = end[0] * 60 + end[1];
+
+        if (endMinutes <= startMinutes) {
+          invalidDays.push(DAYS[index].name);
+        }
+      }
+    });
+
+    if (invalidDays.length > 0) {
+      setError(`End time must be after start time for: ${invalidDays.join(", ")}`);
+      setLoading(false);
+      return;
+    }
+
     try {
       await workingHoursService.addBulkWorkingHours(schedule);
       handleRegistrationStepNavigation(

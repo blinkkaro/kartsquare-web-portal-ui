@@ -11,19 +11,21 @@ const MobileNavContainer = styled(Box)(({ theme }) => ({
   alignItems: "center",
   backgroundColor:
     theme.palette.mode === "dark"
-      ? COLORS.BACKGROUND.PAPER_DARK
-      : COLORS.BACKGROUND.PAPER_LIGHT,
-  width: "100%",
+      ? "rgba(17, 24, 39, 0.85)"
+      : "rgba(255, 255, 255, 0.85)",
+  backdropFilter: "blur(12px)",
+  width: "92%",
   position: "fixed",
-  bottom: 0,
-  left: 0,
-  right: 0,
+  bottom: "16px",
+  left: "4%",
+  right: "4%",
   zIndex: 1000,
-  padding: "0.75rem 0",
-  boxShadow: "0 -2px 10px rgba(0,0,0,0.1)",
-  borderTop: `1px solid ${theme.palette.mode === "dark"
-      ? COLORS.BORDER.DEFAULT_DARK
-      : COLORS.BORDER.DEFAULT_LIGHT
+  padding: "0.5rem 0",
+  borderRadius: "20px",
+  boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+  border: `1px solid ${theme.palette.mode === "dark"
+      ? "rgba(255,255,255,0.08)"
+      : "rgba(0,0,0,0.05)"
     }`,
 }));
 
@@ -31,24 +33,47 @@ const MobileNavItem = styled(Link)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  gap: "0.25rem",
+  justifyContent: "center",
+  gap: "2px",
   textDecoration: "none",
   color:
     theme.palette.mode === "dark"
-      ? COLORS.TEXT.SECONDARY_DARK
-      : COLORS.TEXT.SECONDARY_LIGHT,
-  transition: "all 0.2s ease",
+      ? "rgba(255,255,255,0.5)"
+      : "rgba(0,0,0,0.5)",
+  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+  flex: 1,
+  position: "relative",
   "&.active": {
     color: COLORS.PRIMARY_PURPLE,
+    transform: "translateY(-2px)",
   },
   "& .MuiSvgIcon-root": {
-    fontSize: "1.5rem",
-    marginBottom: "2px",
+    fontSize: "1.25rem",
+    transition: "transform 0.3s ease",
   },
-  "& span": {
-    fontSize: "0.7rem",
-    fontWeight: 500,
+  "&.active .MuiSvgIcon-root": {
+    transform: "scale(1.1)",
   },
+  "& .label": {
+    fontSize: "0.6rem",
+    fontWeight: 600,
+    textTransform: "uppercase",
+    letterSpacing: "0.02em",
+  },
+  "&::after": {
+    content: '""',
+    position: "absolute",
+    bottom: "-4px",
+    width: "4px",
+    height: "4px",
+    borderRadius: "50%",
+    backgroundColor: COLORS.PRIMARY_PURPLE,
+    opacity: 0,
+    transition: "opacity 0.3s ease",
+  },
+  "&.active::after": {
+    opacity: 1,
+  }
 }));
 
 interface MobileBottomNavProps {
@@ -62,20 +87,25 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 }) => {
   return (
     <MobileNavContainer>
-      {items.map((item) => (
-        <MobileNavItem
-          key={item.label}
-          href={item.href}
-          className={currentPath === item.href ? "active" : ""}
-        >
-          {currentPath === item.href ? (
-            <GradientIcon>{item.icon}</GradientIcon>
-          ) : (
-            item.icon
-          )}
-          {item.label}
-        </MobileNavItem>
-      ))}
+      {items.map((item) => {
+        const isActive = currentPath === item.href;
+        return (
+          <MobileNavItem
+            key={item.label}
+            href={item.href}
+            className={isActive ? "active" : ""}
+          >
+            {isActive ? (
+              <GradientIcon sx={{ fontSize: "1.25rem" }}>{item.icon}</GradientIcon>
+            ) : (
+              React.cloneElement(item.icon as React.ReactElement, { sx: { fontSize: "1.25rem" } })
+            )}
+            <Box component="span" className="label">
+              {item.label}
+            </Box>
+          </MobileNavItem>
+        );
+      })}
     </MobileNavContainer>
   );
 };

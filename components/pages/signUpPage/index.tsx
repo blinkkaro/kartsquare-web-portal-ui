@@ -17,6 +17,8 @@ import { useQuery } from "@tanstack/react-query";
 import { authService } from "@/services/auth/auth.service";
 import { secureStorage } from "@/helper/SecureStorage";
 import RegistrationForm from "./components/RegesitrationForm";
+import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
+import { UserRegisterSteps } from "@/types/resgistrationFlow";
 
 function SignUpView() {
   const { t } = useTranslate();
@@ -93,24 +95,47 @@ function SignUpView() {
       setLoading(true);
       setError("");
 
-      const registerData = {
+      const isSpOrSupplier =
+        role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER;
+
+      const baseData = {
         first_name: data.first_name,
-        last_name: data.last_name,
+        last_name: isSpOrSupplier ? "" : (data.last_name ?? ""),
         email: data.email,
-        phone_number: data.phone_number,
-        country_code: data.country_code,
+        phone_number: isSpOrSupplier
+          ? initialData.whatsapp_number || data.phone_number || ""
+          : data.phone_number,
+        country_code: isSpOrSupplier
+          ? initialData.whatsapp_country_code || data.country_code || "+91"
+          : data.country_code,
         password: data.password,
-        gender: data.gender,
-        country: data.country,
         role: role,
-        birth_date: data.birth_date,
         whatsapp_number: data.whatsapp_number || "",
         whatsapp_country_code: data.whatsapp_country_code || "",
       };
 
-      await dispatch(registerUser(registerData)).unwrap();
-      // Redirect to email verification immediately after successful signup
-      router.replace("/emailVerfication");
+      // For SP/Supplier: don't send fields we don't collect (gender, birth_date, country)
+      const registerData = isSpOrSupplier
+        ? baseData
+        : {
+            ...baseData,
+            gender: data.gender,
+            country: data.country ?? "India",
+            birth_date: data.birth_date ?? "",
+          };
+
+      await dispatch(registerUser(registerData as any)).unwrap();
+
+      if (isSpOrSupplier) {
+        // Email already verified on backend — go straight to next step
+        handleRegistrationStepNavigation(
+          dispatch,
+          router,
+          UserRegisterSteps.EMAIL_VERIFIED
+        );
+      } else {
+        router.replace("/emailVerfication");
+      }
     } catch (error: any) {
       setError(
         typeof error === "string"

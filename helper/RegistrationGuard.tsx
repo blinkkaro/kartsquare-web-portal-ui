@@ -84,6 +84,8 @@ export default function RegistrationGuard({
         currentRegisterStep !== null &&
         (currentRegisterStep === UserRegisterSteps.COMPLETED ||
           currentRegisterStep === UserRegisterSteps.PREFERENCES_ADDED ||
+          (currentRole === AppUserType.SERVICE_PROVIDER &&
+            currentRegisterStep === UserRegisterSteps.SCHEDULE_ADDED) ||
           (currentRole === AppUserType.SUPPLIER &&
             currentRegisterStep === UserRegisterSteps.SUPPLIER_KYC_SUBMITTED));
 
