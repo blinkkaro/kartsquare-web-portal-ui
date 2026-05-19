@@ -408,7 +408,8 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                       {/* Custom Selected Chips Below */}
                       {Array.isArray(value) && value.length > 0 && (
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1.5 }}>
-                          {value.map((id: string) => {
+                          {value.map((id: string | undefined) => {
+                            if (!id) return null;
                             const subCat = subCategories?.find(s => s.id === id);
                             if (!subCat) return null;
                             return (
@@ -416,7 +417,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                                 key={id}
                                 label={subCat.name}
                                 onDelete={() => {
-                                  onChange(value.filter((val: string) => val !== id));
+                                  onChange(value.filter((val: string | undefined) => val !== id));
                                 }}
                                 deleteIcon={<CloseIcon sx={{ fontSize: '14px !important', color: COLORS.PRIMARY_PURPLE }} />}
                                 sx={{

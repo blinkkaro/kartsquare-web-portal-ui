@@ -11,7 +11,7 @@ import {
   IconButton,
   Grid as MuiGrid,
   Zoom,
-  TransitionProps,
+
   Divider,
   Button,
   Radio,
@@ -19,6 +19,7 @@ import {
   FormControlLabel,
   Rating
 } from "@mui/material";
+import { TransitionProps } from "@mui/material/transitions";
 import { Close, Tune, Sort, Star, Widgets } from "@mui/icons-material";
 import { Category } from "../../../services/serviceList/listInteraface";
 import { COLORS } from "../../../constants/colors";

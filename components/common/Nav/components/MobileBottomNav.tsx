@@ -98,7 +98,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             {isActive ? (
               <GradientIcon sx={{ fontSize: "1.25rem" }}>{item.icon}</GradientIcon>
             ) : (
-              React.cloneElement(item.icon as React.ReactElement, { sx: { fontSize: "1.25rem" } })
+              React.cloneElement(item.icon as any, { sx: { fontSize: "1.25rem" } })
             )}
             <Box component="span" className="label">
               {item.label}
