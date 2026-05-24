@@ -3,11 +3,12 @@ import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Box, Typography, Autocomplete, TextField, Grid } from "@mui/material";
+import { Box, Typography, Autocomplete, TextField, Grid, useTheme } from "@mui/material";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import { useTranslate } from "@/hooks/useTranslate";
+import { COLORS } from "@/constants/colors";
 import {
   useSupplierProfile,
   useUpdateSupplierProfile,
@@ -22,6 +23,7 @@ const BusinessProfileStep: React.FC<BusinessProfileStepProps> = ({
   onNext,
 }) => {
   const { t } = useTranslate();
+  const theme = useTheme();
   const { data: profileArgs, isLoading: isLoadingProfile } =
     useSupplierProfile();
   const updateProfile = useUpdateSupplierProfile();
@@ -132,8 +134,25 @@ const BusinessProfileStep: React.FC<BusinessProfileStepProps> = ({
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-      <Typography variant="h3" mb={2}>
-        Business Details
+      <Typography
+        variant="h2"
+        sx={{
+          fontWeight: 700,
+          lineHeight: 1.2,
+          mb: 2,
+          fontSize: {
+            xs: "1.75rem",
+            sm: "2rem",
+            md: "2.25rem",
+            lg: "2.5rem",
+            xl: "3.5rem",
+          },
+        }}
+      >
+        <span style={{ color: COLORS.PRIMARY_PURPLE }}>Business</span>{" "}
+        <span style={{ color: theme.palette.mode === "dark" ? COLORS.WHITE : "#000000", fontSize: "0.85em" }}>
+          Details
+        </span>
       </Typography>
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 6 }}>

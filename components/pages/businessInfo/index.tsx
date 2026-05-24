@@ -2,13 +2,13 @@
 
 import AuthWrapper from "@/components/auth/authWrapper";
 import React, { useState } from "react";
-import Title from "@/components/auth/title";
 import { useTranslate } from "@/hooks/useTranslate";
 import BusinessInfoForm from "./components/businessinfoForm";
 import { BusinessInfoFormData } from "./businessInfoSchema";
 import { useRouter } from "next/navigation";
 import ErrorMessage from "@/components/common/ErrorMessage";
-import { Box } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
+import { COLORS } from "@/constants/colors";
 import { businessInfoService } from "@/services/auth/businessInfo.service";
 import BackButton from "@/components/common/BackButton";
 import { secureStorage } from "@/helper/SecureStorage";
@@ -19,6 +19,7 @@ import { UserRegisterSteps } from "@/types/resgistrationFlow";
 
 function BusinessInfoView() {
   const { t } = useTranslate();
+  const theme = useTheme();
   const router = useRouter();
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -55,10 +56,28 @@ function BusinessInfoView() {
   };
   return (
     <AuthWrapper>
-      <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1.5, sm: 2 }, mb: { xs: 2, sm: 3 } }}>
         <BackButton onClick={handleBack} />
+        <Typography
+          variant="h2"
+          sx={{
+            fontWeight: 700,
+            lineHeight: 1.2,
+            fontSize: {
+              xs: "1.75rem",
+              sm: "2rem",
+              md: "2.25rem",
+              lg: "2.5rem",
+              xl: "3.5rem",
+            },
+          }}
+        >
+          <span style={{ color: COLORS.PRIMARY_PURPLE }}>Business</span>{" "}
+          <span style={{ color: theme.palette.mode === "dark" ? COLORS.WHITE : "#000000", fontSize: "0.85em" }}>
+            Details
+          </span>
+        </Typography>
       </Box>
-      <Title title={t("businessInfo")} />
       <Box sx={{ mb: 2 }}>
         <ErrorMessage error={error} isVisible={!!error} />
       </Box>

@@ -1,4 +1,3 @@
-import MainLayout from "../mainLayout";
 import BusinessInfoView from "@/components/pages/businessInfo";
 import { seoPublic } from "@/lib/seo/buildMetadata";
 
@@ -11,8 +10,6 @@ export const metadata = seoPublic({
 
 export default function BusinessInfo() {
   return (
-    <MainLayout>
-      <BusinessInfoView />
-    </MainLayout>
+    <BusinessInfoView />
   );
 }
