@@ -15,6 +15,7 @@ interface MapViewProps {
   longitude?: number;
   onLocationChange?: (lat: number, lng: number) => void;
   height?: string;
+  isValidating?: boolean;
 }
 
 const MapView: React.FC<MapViewProps> = ({
@@ -22,6 +23,7 @@ const MapView: React.FC<MapViewProps> = ({
   longitude = 77.209,
   onLocationChange,
   height = "200px",
+  isValidating = false,
 }) => {
   const [center, setCenter] = useState({
     lat: latitude,
@@ -158,6 +160,30 @@ const MapView: React.FC<MapViewProps> = ({
         options={mapOptions}
       />
 
+      {/* Loading Pulse on Map */}
+      {isValidating && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "150px",
+            height: "150px",
+            bgcolor: "rgba(94, 24, 233, 0.1)",
+            borderRadius: "50%",
+            border: `2px solid ${COLORS.PRIMARY_PURPLE}`,
+            animation: `${keyframes`
+              0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+              50% { opacity: 0.3; }
+              100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+            `} 2s infinite ease-out`,
+            pointerEvents: "none",
+            zIndex: 5,
+          }}
+        />
+      )}
+
       {/* Fixed Center Marker */}
       {isMapLoaded && (
         <Box
@@ -186,26 +212,47 @@ const MapView: React.FC<MapViewProps> = ({
                 left: "50%",
                 width: "40px",
                 height: "40px",
-                bgcolor: COLORS.PRIMARY_PURPLE,
+                bgcolor: isValidating ? COLORS.TEXT.SECONDARY_LIGHT : COLORS.PRIMARY_PURPLE,
                 borderRadius: "50% 50% 50% 0",
                 transform: "translateX(-50%) rotate(-45deg)",
                 boxShadow: `0 4px 12px ${COLORS.SHADOW.DEFAULT}`,
                 border: `3px solid ${COLORS.WHITE}`,
+                transition: 'all 0.3s ease',
               }}
             >
+              {isValidating && (
+                <Box sx={{ 
+                  position: 'absolute', 
+                  top: '20%', 
+                  left: '20%', 
+                  width: '60%', 
+                  height: '60%', 
+                  borderRadius: '50%',
+                  border: `2px solid ${COLORS.WHITE}`,
+                  borderTopColor: 'transparent',
+                  animation: `${keyframes`
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  `} 0.8s linear infinite`,
+                  transform: 'rotate(45deg)'
+                }} />
+              )}
+              
               {/* Inner Dot */}
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: "12px",
-                  height: "12px",
-                  bgcolor: COLORS.WHITE,
-                  borderRadius: "50%",
-                }}
-              />
+              {!isValidating && (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: "12px",
+                    height: "12px",
+                    bgcolor: COLORS.WHITE,
+                    borderRadius: "50%",
+                  }}
+                />
+              )}
             </Box>
 
             {/* Shadow/Pulse Effect */}

@@ -64,6 +64,7 @@ const RightDrawer = ({
           variant="h5"
           sx={{
             fontWeight: 700,
+            fontSize: { xs: "1.15rem", sm: "1.5rem" },
             color:
               theme.palette.mode === "dark"
                 ? COLORS.TEXT.PRIMARY_DARK

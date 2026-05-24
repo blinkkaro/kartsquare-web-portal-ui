@@ -132,7 +132,7 @@ const BusinessProfileStep: React.FC<BusinessProfileStepProps> = ({
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-      <Typography variant="h6" mb={2}>
+      <Typography variant="h3" mb={2}>
         Business Details
       </Typography>
       <Grid container spacing={3}>

@@ -8,6 +8,7 @@ import {
   Chip,
   IconButton,
   InputAdornment,
+  InputBase,
 } from "@mui/material";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { Send, AutoAwesome, SmartToy, Mic } from "@mui/icons-material";
@@ -25,85 +26,44 @@ export default function ChatInterface() {
   const [chatHistory, setChatHistory] = useState<AIMessage[]>([]);
   const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  type SpeechRecognitionInstance = {
-    continuous: boolean;
-    interimResults: boolean;
-    lang: string;
-    start: () => void;
-    stop: () => void;
-    onresult:
-    | ((e: {
-      results: { isFinal: boolean;[0]: { transcript: string } }[];
-      resultIndex: number;
-    }) => void)
-    | null;
-    onend: (() => void) | null;
-    onerror: (() => void) | null;
-  };
-  const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+  
   const { search, isLoading } = useAISearch();
+  const recognitionRef = useRef<any>(null);
 
-  // Speech-to-text: check support and create recognition instance
-  const getSpeechRecognition =
-    useCallback((): SpeechRecognitionInstance | null => {
-      if (typeof window === "undefined") return null;
-      const SpeechRecognitionAPI =
-        (window as any).SpeechRecognition ||
-        (window as any).webkitSpeechRecognition;
-      if (!SpeechRecognitionAPI) return null;
-      const recognition =
-        new SpeechRecognitionAPI() as SpeechRecognitionInstance;
-      recognition.continuous = false; // stop when user stops talking
-      recognition.interimResults = true;
-      recognition.lang = "en-US";
-      return recognition;
-    }, []);
+  const getSpeechRecognition = useCallback(() => {
+    if (typeof window === "undefined") return null;
+    const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognitionAPI) return null;
+    const recognition = new SpeechRecognitionAPI();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+    return recognition;
+  }, []);
 
   const startListening = useCallback(() => {
     const recognition = getSpeechRecognition();
-    if (!recognition) {
-      return; // Voice not supported — mic still shown for consistency
-    }
+    if (!recognition) return;
     if (recognitionRef.current) recognitionRef.current.stop();
     recognitionRef.current = recognition;
-    recognition.onresult = (event: {
-      results: { isFinal: boolean;[0]: { transcript: string } }[];
-      resultIndex: number;
-    }) => {
+    recognition.onresult = (event: any) => {
       let final = "";
       for (let i = event.resultIndex; i < event.results.length; i++) {
         if (event.results[i].isFinal) final += event.results[i][0].transcript;
       }
-      if (final)
-        setSearchValue((prev) => (prev ? prev + " " + final : final).trim());
+      if (final) setSearchValue((prev) => (prev ? prev + " " + final : final).trim());
     };
-    recognition.onend = () => {
-      setIsListening(false);
-      recognitionRef.current = null;
-    };
-    recognition.onerror = () => {
-      setIsListening(false);
-      recognitionRef.current = null;
-    };
+    recognition.onend = () => { setIsListening(false); recognitionRef.current = null; };
+    recognition.onerror = () => { setIsListening(false); recognitionRef.current = null; };
     recognition.start();
     setIsListening(true);
   }, [getSpeechRecognition]);
 
   const stopListening = useCallback(() => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      recognitionRef.current = null;
-    }
+    if (recognitionRef.current) { recognitionRef.current.stop(); recognitionRef.current = null; }
     setIsListening(false);
   }, []);
 
-  useEffect(() => {
-    return () => {
-      if (recognitionRef.current) recognitionRef.current.stop();
-    };
-  }, []);
-
-  // Add default greeting message on mount
   useEffect(() => {
     const greetingMessage: AIMessage = {
       id: "greeting",
@@ -114,548 +74,229 @@ export default function ChatInterface() {
     setChatHistory([greetingMessage]);
   }, []);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  useEffect(() => { scrollToBottom(); }, [chatHistory, isLoading]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [chatHistory, isLoading]);
+  const handleSearch = async (queryParam?: string) => {
+    const query = queryParam || searchValue;
+    if (!query.trim()) return;
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  };
-
-  const handleSearch = async () => {
-    if (!searchValue.trim()) return;
-
-    // Add user message
     const userMessage: AIMessage = {
       id: Date.now().toString(),
       role: "user",
-      content: searchValue,
+      content: query,
       timestamp: new Date(),
     };
     setChatHistory((prev) => [...prev, userMessage]);
-    const query = searchValue;
     setSearchValue("");
 
     try {
-      // Call AI search service
       const response = await search(query);
-
       if (!response) return;
 
-      // Add assistant response to chat
       const assistantMessage: AIMessage = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
         content: response.message || t("ai_services_found"),
         timestamp: new Date(),
         services: "services" in response ? response.services : undefined,
-        suggestedCategories:
-          "suggestedCategories" in response
-            ? response.suggestedCategories
-            : undefined,
+        suggestedCategories: "suggestedCategories" in response ? response.suggestedCategories : undefined,
       };
       setChatHistory((prev) => [...prev, assistantMessage]);
     } catch (error) {
-      const errorMessage: AIMessage = {
+      setChatHistory((prev) => [...prev, {
         id: (Date.now() + 1).toString(),
         role: "assistant",
         content: t("ai_error_message"),
         timestamp: new Date(),
-      };
-      setChatHistory((prev) => [...prev, errorMessage]);
+      }]);
     }
   };
 
-  const handleSuggestion = (suggestion: string) => {
-    setSearchValue(suggestion);
-    // Automatically send the suggestion
-    setTimeout(() => handleSearch(), 100);
-  };
-
   const suggestionChips = [
-    `${t("find")} ${t("plumber")} ${t("neatMyArea")}`,
-    `${t("find")} ${t("electrician")} ${t("neatMyArea")}`,
-    `${t("find")} ${t("cleaner")} ${t("neatMyArea")}`,
-    `${t("find")} ${t("gardener")} ${t("neatMyArea")}`,
-    `${t("find")} ${t("carpenter")} ${t("neatMyArea")}`,
-    `${t("find")} ${t("painter")} ${t("neatMyArea")}`,
+    `${t("find")} ${t("plumber")}`,
+    `${t("find")} ${t("electrician")}`,
+    `${t("find")} ${t("cleaner")}`,
+    `${t("find")} ${t("painter")}`,
   ];
 
-  const assistantBg = dark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.WHITE;
-  const assistantBorder = dark
-    ? COLORS.BORDER.DEFAULT_DARK
-    : COLORS.BORDER.DEFAULT_LIGHT;
-  const inputBg = dark
-    ? COLORS.BACKGROUND.SECONDARY_DARK
-    : COLORS.BACKGROUND.SECONDARY_LIGHT;
-
   return (
-    <>
-      <Box
-        sx={{
-          flexGrow: 1,
-          overflowY: "auto",
-          px: { xs: 2, sm: 3 },
-          pt: 2,
-          pb: 24,
-          display: "flex",
-          flexDirection: "column",
-          gap: 2.5,
-        }}
-      >
-        {chatHistory.map((msg, idx) => {
-          const isGreeting = msg.id === "greeting";
-          return (
-            <Box
-              key={msg.id}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-                width: "100%",
-              }}
-            >
-              {/* Message bubble — user: gradient pill; assistant: card with optional icon */}
-              <Box
-                sx={{
-                  maxWidth: "88%",
-                  p: isGreeting ? 2.5 : 2,
-                  borderRadius: 2.5,
-                  borderTopRightRadius: msg.role === "user" ? 1 : 2.5,
-                  borderTopLeftRadius: msg.role === "user" ? 2.5 : 1,
-                  background:
-                    msg.role === "user"
-                      ? `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE} 0%, ${COLORS.PURPLE_HOVER} 100%)`
-                      : undefined,
-                  backgroundColor:
-                    msg.role === "assistant" ? assistantBg : undefined,
-                  color:
-                    msg.role === "user"
-                      ? COLORS.WHITE
-                      : dark
-                        ? COLORS.TEXT.PRIMARY_DARK
-                        : COLORS.TEXT.PRIMARY_LIGHT,
-                  boxShadow:
-                    msg.role === "user"
-                      ? `0 4px 14px ${COLORS.PURPLE_ALPHA_30}`
-                      : dark
-                        ? "0 2px 12px rgba(0,0,0,0.2)"
-                        : "0 2px 12px rgba(94, 24, 233, 0.08)",
-                  border:
-                    msg.role === "assistant"
-                      ? `1px solid ${assistantBorder}`
-                      : "none",
-                  alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
-                }}
-              >
-                {msg.role === "assistant" && !isGreeting && (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 0.75,
-                      mb: 1,
-                    }}
-                  >
-                    <SmartToy
-                      sx={{ fontSize: 18, color: COLORS.PRIMARY_PURPLE }}
-                    />
-                    <Typography
-                      variant="caption"
-                      sx={{ fontWeight: 600, color: COLORS.PRIMARY_PURPLE }}
-                    >
-                      Kart AI
-                    </Typography>
-                  </Box>
-                )}
-                {isGreeting && (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      mb: 1.5,
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: 2,
-                        background: `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE}, ${COLORS.PURPLE_HOVER})`,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <AutoAwesome sx={{ color: COLORS.WHITE, fontSize: 20 }} />
-                    </Box>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        fontWeight: 700,
-                        color: dark
-                          ? COLORS.TEXT.PRIMARY_DARK
-                          : COLORS.TEXT.PRIMARY_LIGHT,
-                      }}
-                    >
-                      {t("kartAi")}
-                    </Typography>
-                  </Box>
-                )}
-                <Typography
-                  variant="body1"
-                  sx={{ lineHeight: 1.5, whiteSpace: "pre-wrap" }}
-                >
-                  {msg.content}
-                </Typography>
-              </Box>
-
-              {/* Services found */}
-              {msg.services && msg.services.length > 0 && (
-                <Box sx={{ width: "100%", mt: 1.5 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      display: "block",
-                      mb: 1.5,
-                      fontWeight: 700,
-                      color: dark
-                        ? COLORS.TEXT.SECONDARY_DARK
-                        : COLORS.TEXT.SECONDARY_LIGHT,
-                      textTransform: "uppercase",
-                      letterSpacing: 0.5,
-                    }}
-                  >
-                    {t("ai_services_label")}
-                  </Typography>
-                  <Grid container spacing={2}>
-                    {msg.services.map((service) => (
-                      <Grid size={{ xs: 12, sm: 6 }} key={service.service_id}>
-                        <ServiceCard service={service} />
-                      </Grid>
-                    ))}
-                  </Grid>
-                </Box>
-              )}
-
-              {/* Suggested categories */}
-              {msg.suggestedCategories &&
-                msg.suggestedCategories.length > 0 && (
-                  <Box sx={{ mt: 1.5, width: "100%" }}>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        display: "block",
-                        mb: 1.5,
-                        fontWeight: 700,
-                        color: dark
-                          ? COLORS.TEXT.SECONDARY_DARK
-                          : COLORS.TEXT.SECONDARY_LIGHT,
-                        textTransform: "uppercase",
-                        letterSpacing: 0.5,
-                      }}
-                    >
-                      {t("ai_explore_categories")}
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        flexWrap: "wrap",
-                        gap: 1.5,
-                      }}
-                    >
-                      {msg.suggestedCategories.map((category) => (
-                        <Box
-                          key={category.id}
-                          sx={{
-                            p: 2,
-                            borderRadius: 2,
-                            backgroundColor: dark
-                              ? COLORS.BACKGROUND.PRIMARY_DARK
-                              : COLORS.WHITE,
-                            border: `1px solid ${assistantBorder}`,
-                            flex: "1 1 auto",
-                            minWidth: "180px",
-                            transition: "all 0.2s ease",
-                            "&:hover": {
-                              borderColor: COLORS.PRIMARY_PURPLE,
-                              boxShadow: `0 2px 12px ${COLORS.PURPLE_ALPHA_10}`,
-                            },
-                          }}
-                        >
-                          <Typography
-                            variant="subtitle2"
-                            sx={{
-                              fontWeight: 700,
-                              mb: 1.25,
-                              color: dark
-                                ? COLORS.TEXT.PRIMARY_DARK
-                                : COLORS.TEXT.PRIMARY_LIGHT,
-                            }}
-                          >
-                            {category.name}
-                          </Typography>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              flexWrap: "wrap",
-                              gap: 0.75,
-                            }}
-                          >
-                            {category.subcategories.map((subcat) => (
-                              <Chip
-                                key={subcat.id}
-                                label={subcat.name}
-                                size="small"
-                                onClick={() => handleSuggestion(subcat.name)}
-                                sx={{
-                                  backgroundColor: COLORS.PURPLE_ALPHA_10,
-                                  color: COLORS.PRIMARY_PURPLE,
-                                  fontWeight: 600,
-                                  fontSize: "0.75rem",
-                                  "&:hover": {
-                                    backgroundColor: COLORS.PURPLE_ALPHA_20,
-                                  },
-                                }}
-                              />
-                            ))}
-                          </Box>
-                        </Box>
-                      ))}
-                    </Box>
-                  </Box>
-                )}
-            </Box>
-          );
-        })}
-
-        {/* Typing indicator */}
-        {isLoading && (
+    <Box sx={{ 
+      display: "flex", 
+      flexDirection: "column", 
+      height: "100%", 
+      bgcolor: dark ? "#0a0a0a" : "#f8fafc",
+      position: "relative"
+    }}>
+      {/* Messages Container */}
+      <Box sx={{ 
+        flexGrow: 1, 
+        overflowY: "auto", 
+        px: 2, 
+        pt: 2, 
+        pb: 12, 
+        display: "flex", 
+        flexDirection: "column", 
+        gap: 1.5,
+        scrollbarWidth: "none",
+        "&::-webkit-scrollbar": { display: "none" }
+      }}>
+        {chatHistory.map((msg) => (
           <Box
+            key={msg.id}
             sx={{
               display: "flex",
               flexDirection: "column",
-              alignItems: "flex-start",
+              alignItems: msg.role === "user" ? "flex-end" : "flex-start",
               width: "100%",
             }}
           >
+            {/* Assistant Header */}
+            {msg.role === "assistant" && msg.id !== "greeting" && (
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.5, ml: 1 }}>
+                <SmartToy sx={{ fontSize: 14, color: COLORS.PRIMARY_PURPLE }} />
+                <Typography variant="caption" sx={{ fontWeight: 700, color: COLORS.PRIMARY_PURPLE, fontSize: '0.65rem' }}>
+                  KART AI
+                </Typography>
+              </Box>
+            )}
+
             <Box
               sx={{
-                p: 2,
-                borderRadius: 2.5,
-                borderTopLeftRadius: 1,
-                backgroundColor: assistantBg,
-                border: `1px solid ${assistantBorder}`,
-                display: "flex",
-                alignItems: "center",
-                gap: 1.5,
-                boxShadow: dark
-                  ? "0 2px 12px rgba(0,0,0,0.2)"
-                  : "0 2px 12px rgba(94, 24, 233, 0.08)",
+                maxWidth: "85%",
+                p: 1.5,
+                borderRadius: "16px",
+                borderTopRightRadius: msg.role === "user" ? "4px" : "16px",
+                borderTopLeftRadius: msg.role === "assistant" ? "4px" : "16px",
+                background: msg.role === "user" 
+                  ? `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE}, ${COLORS.PURPLE_HOVER})`
+                  : (dark ? "rgba(255,255,255,0.05)" : "#fff"),
+                color: msg.role === "user" ? "#fff" : (dark ? "#eee" : "#1e293b"),
+                boxShadow: msg.role === "user" 
+                  ? "0 4px 12px rgba(94, 24, 233, 0.2)" 
+                  : "0 2px 8px rgba(0,0,0,0.05)",
+                border: msg.role === "assistant" ? `1px solid ${dark ? "rgba(255,255,255,0.08)" : "#e2e8f0"}` : "none",
               }}
             >
-              <LogoLoader size={20} />
-              <Typography
-                variant="body2"
-                sx={{
-                  color: dark
-                    ? COLORS.TEXT.SECONDARY_DARK
-                    : COLORS.TEXT.SECONDARY_LIGHT,
-                  fontWeight: 500,
-                }}
-              >
-                {t("ai_thinking")}
+              <Typography variant="body2" sx={{ fontSize: "0.9rem", lineHeight: 1.45, fontWeight: msg.role === "user" ? 500 : 400 }}>
+                {msg.content}
               </Typography>
-              <Box sx={{ display: "flex", gap: 0.5, ml: 0.5 }}>
-                {[0, 1, 2].map((i) => (
-                  <Box
-                    key={i}
-                    sx={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: "50%",
-                      bgcolor: COLORS.PRIMARY_PURPLE,
-                      opacity: 0.7,
-                      animation: "chatBounce 1.4s ease-in-out infinite",
-                      animationDelay: `${i * 0.16}s`,
-                    }}
+            </Box>
+
+            {/* Services Results */}
+            {msg.services && msg.services.length > 0 && (
+              <Box sx={{ width: "100%", mt: 1, px: 0.5 }}>
+                <Grid container spacing={1.5}>
+                  {msg.services.map((service) => (
+                    <Grid size={{ xs: 12 }} key={service.service_id}>
+                      <ServiceCard service={service} />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+            )}
+
+            {/* Suggested Categories */}
+            {msg.suggestedCategories && msg.suggestedCategories.length > 0 && (
+              <Box sx={{ mt: 1, width: "100%", display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                {msg.suggestedCategories.map((cat) => (
+                  <Chip 
+                    key={cat.id} 
+                    label={cat.name} 
+                    size="small" 
+                    onClick={() => handleSearch(cat.name)}
+                    sx={{ 
+                      bgcolor: COLORS.PURPLE_ALPHA_10, 
+                      color: COLORS.PRIMARY_PURPLE, 
+                      fontWeight: 700,
+                      fontSize: '0.75rem',
+                      borderRadius: '8px'
+                    }} 
                   />
                 ))}
               </Box>
-            </Box>
+            )}
+          </Box>
+        ))}
+        {isLoading && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 1 }}>
+            <LogoLoader size={16} />
+            <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 500 }}>Thinking...</Typography>
           </Box>
         )}
-
         <div ref={messagesEndRef} />
       </Box>
 
-      {/* Bottom Input Area */}
-      <Box
-        sx={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          p: 2,
-          backgroundColor: dark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.WHITE,
-          borderTop: `1px solid ${assistantBorder}`,
-          zIndex: 10,
-        }}
-      >
-        <Typography
-          variant="caption"
-          sx={{
-            display: "block",
-            mb: 1,
-            fontWeight: 600,
-            color: dark
-              ? COLORS.TEXT.SECONDARY_DARK
-              : COLORS.TEXT.SECONDARY_LIGHT,
-            fontSize: "0.75rem",
-          }}
-        >
-          {t("ai_try_asking")}
-        </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            overflowX: "auto",
-            gap: 1,
-            mb: 2,
-            pb: 0.5,
-            "&::-webkit-scrollbar": { display: "none" },
-            msOverflowStyle: "none",
-            scrollbarWidth: "none",
-          }}
-        >
-          {suggestionChips.map((suggestion) => (
-            <Chip
-              key={suggestion}
-              label={suggestion}
-              onClick={() => handleSuggestion(suggestion)}
-              disabled={isLoading}
-              size="small"
-              sx={{
-                flexShrink: 0,
-                backgroundColor: inputBg,
-                border: `1px solid ${assistantBorder}`,
-                fontWeight: 500,
-                "&:hover": {
-                  backgroundColor: COLORS.PURPLE_ALPHA_10,
-                  color: COLORS.PRIMARY_PURPLE,
-                  borderColor: COLORS.PRIMARY_PURPLE,
-                },
-              }}
-            />
-          ))}
-        </Box>
+      {/* Input Area */}
+      <Box sx={{ 
+        position: "absolute", 
+        bottom: 0, 
+        left: 0, 
+        right: 0, 
+        p: 2, 
+        background: dark ? "rgba(10,10,10,0.8)" : "rgba(248,250,252,0.8)",
+        backdropFilter: "blur(12px)",
+        borderTop: `1px solid ${dark ? "rgba(255,255,255,0.08)" : "#e2e8f0"}`
+      }}>
+        {/* Quick Suggestions */}
+        {chatHistory.length < 3 && (
+          <Box sx={{ display: 'flex', gap: 1, mb: 2, overflowX: 'auto', pb: 0.5, "&::-webkit-scrollbar": { display: "none" } }}>
+            {suggestionChips.map(s => (
+              <Chip 
+                key={s} 
+                label={s} 
+                onClick={() => handleSearch(s)} 
+                sx={{ 
+                  bgcolor: dark ? "rgba(255,255,255,0.05)" : "#fff", 
+                  border: `1px solid ${dark ? "rgba(255,255,255,0.1)" : "#e2e8f0"}`,
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_04, borderColor: COLORS.PRIMARY_PURPLE }
+                }} 
+              />
+            ))}
+          </Box>
+        )}
 
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <TextField
+        <Box sx={{ 
+          display: "flex", 
+          alignItems: "center", 
+          gap: 1, 
+          bgcolor: dark ? "rgba(255,255,255,0.05)" : "#fff", 
+          borderRadius: "24px",
+          p: "4px 4px 4px 16px",
+          border: `1px solid ${dark ? "rgba(255,255,255,0.1)" : "#e2e8f0"}`,
+          boxShadow: "0 2px 10px rgba(0,0,0,0.05)"
+        }}>
+          <InputBase
             fullWidth
-            placeholder={t("ask_anything_placeholder")}
+            placeholder="Ask Kart AI..."
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            onKeyPress={handleKeyPress}
-            disabled={isLoading}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end" sx={{ mr: 0.25 }}>
-                  <IconButton
-                    size="small"
-                    onClick={isListening ? stopListening : startListening}
-                    disabled={isLoading}
-                    title={
-                      isListening ? t("ai_voice_listening") : t("ai_voice_tap")
-                    }
-                    sx={{
-                      bgcolor: isListening ? "#c62828" : "transparent",
-                      color: isListening
-                        ? COLORS.WHITE
-                        : dark
-                          ? COLORS.TEXT.SECONDARY_DARK
-                          : COLORS.TEXT.SECONDARY_LIGHT,
-                      "&:hover": {
-                        bgcolor: isListening
-                          ? "#b71c1c"
-                          : COLORS.PURPLE_ALPHA_20,
-                        color: isListening
-                          ? COLORS.WHITE
-                          : COLORS.PRIMARY_PURPLE,
-                      },
-                    }}
-                  >
-                    <Mic sx={{ fontSize: 20 }} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: 3,
-                backgroundColor: inputBg,
-                pr: 0.5,
-                "& fieldset": { borderColor: assistantBorder },
-                "&:hover fieldset": { borderColor: COLORS.PRIMARY_PURPLE },
-                "&.Mui-focused fieldset": {
-                  borderWidth: 2,
-                  borderColor: COLORS.PRIMARY_PURPLE,
-                },
-              },
-            }}
+            onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+            sx={{ fontSize: "0.95rem", color: dark ? "#fff" : "#1e293b" }}
           />
+          <IconButton 
+            size="small" 
+            onClick={isListening ? stopListening : startListening}
+            sx={{ color: isListening ? COLORS.PRIMARY_PURPLE : "text.secondary" }}
+          >
+            <Mic sx={{ fontSize: 20 }} />
+          </IconButton>
           <IconButton
-            onClick={handleSearch}
-            disabled={isLoading || !searchValue.trim()}
-            title="Send"
-            sx={{
-              width: 48,
-              height: 48,
-              bgcolor:
-                isLoading || !searchValue.trim()
-                  ? dark
-                    ? COLORS.BACKGROUND.SECONDARY_DARK
-                    : COLORS.BACKGROUND.SECONDARY_LIGHT
-                  : COLORS.PRIMARY_PURPLE,
-              color:
-                isLoading || !searchValue.trim()
-                  ? dark
-                    ? COLORS.TEXT.SECONDARY_DARK
-                    : COLORS.TEXT.SECONDARY_LIGHT
-                  : COLORS.WHITE,
-              "&:hover": {
-                bgcolor:
-                  isLoading || !searchValue.trim()
-                    ? undefined
-                    : COLORS.PURPLE_HOVER,
-              },
-              "&.Mui-disabled": { bgcolor: "transparent", color: "inherit" },
+            onClick={() => handleSearch()}
+            disabled={!searchValue.trim() && !isLoading}
+            sx={{ 
+              bgcolor: COLORS.PRIMARY_PURPLE, 
+              color: "#fff",
+              "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
+              "&.Mui-disabled": { bgcolor: dark ? "rgba(255,255,255,0.05)" : "#f1f5f9", color: "text.disabled" }
             }}
           >
-            {isLoading ? (
-              <LogoLoader size={24} />
-            ) : (
-              <Send sx={{ fontSize: 22 }} />
-            )}
+            <Send sx={{ fontSize: 18 }} />
           </IconButton>
         </Box>
       </Box>
-
-      {/* Keyframes for typing dots — inject once */}
-      <style>{`
-        @keyframes chatBounce {
-          0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
-          40% { transform: scale(1); opacity: 1; }
-        }
-      `}</style>
-    </>
+    </Box>
   );
 }

@@ -28,9 +28,8 @@ const ServicesSearchBar: React.FC<ServicesSearchBarProps> = ({
             component="form"
             onSubmit={onSearchSubmit}
             sx={{
-                minWidth: { xs: "100%", sm: 320 },
                 width: "100%",
-                maxWidth: { sm: 420 },
+                maxWidth: { xs: "100%", sm: 500 },
             }}
         >
             <TextField
@@ -44,8 +43,9 @@ const ServicesSearchBar: React.FC<ServicesSearchBarProps> = ({
                         <InputAdornment position="start">
                             <Search
                                 sx={{
-                                    color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                                    fontSize: 22,
+                                    color: COLORS.PRIMARY_PURPLE,
+                                    fontSize: 20,
+                                    ml: 0.5
                                 }}
                             />
                         </InputAdornment>
@@ -53,18 +53,22 @@ const ServicesSearchBar: React.FC<ServicesSearchBarProps> = ({
                 }}
                 sx={{
                     "& .MuiOutlinedInput-root": {
-                        borderRadius: 3,
+                        borderRadius: "50px",
                         bgcolor: inputBg,
-                        fontSize: { xs: "0.9rem", sm: "1rem" },
+                        fontSize: "0.95rem",
+                        p: "4px 8px",
+                        boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
                         "& fieldset": {
-                            borderWidth: "1px",
-                            borderColor,
+                            borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
                         },
                         "&:hover fieldset": {
                             borderColor: COLORS.PRIMARY_PURPLE,
                         },
+                        "&.Mui-focused": {
+                            boxShadow: "0 4px 20px rgba(94, 24, 233, 0.12)",
+                        },
                         "&.Mui-focused fieldset": {
-                            borderWidth: 2,
+                            borderWidth: "1.5px",
                             borderColor: COLORS.PRIMARY_PURPLE,
                         },
                     },

@@ -12,8 +12,9 @@ import {
   IconButton,
 } from "@mui/material";
 import { Controller } from "react-hook-form";
+import { Skeleton } from "@mui/material";
 import { State, City } from "country-state-city";
-import { HomeOutlined, WorkOutline, LocationOnOutlined, LocationOn } from "@mui/icons-material";
+import { HomeOutlined, WorkOutline, LocationOnOutlined, LocationOn, MyLocation } from "@mui/icons-material";
 import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
 import RightDrawer from "@/components/common/RightDrawer";
@@ -85,6 +86,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
     mapCoordinates,
     handleMapLocationChange,
     handleLocationSelect,
+    isValidating
   } = useAddressMap({
     initialData,
     setValue,
@@ -122,7 +124,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
     <RightDrawer
       open={open}
       onClose={closeDrawer}
-      title={step === "map" ? "Select Delivery Location" : (mode === "add" ? t("addNewAddress") : t("editAddress"))}
+      title={step === "map" ? "Select Location" : (mode === "add" ? t("addNewAddress") : t("editAddress"))}
       width={600}
     >
       <Box sx={{ px: 3, pb: 3, display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -134,13 +136,14 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
         <form onSubmit={handleSubmit(handleFormSubmit)} style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
           
           {step === "map" && (
-            <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, height: "calc(100vh - 180px)" }}>
-              <Box sx={{ position: "relative", flexGrow: 1, borderRadius: "16px", overflow: "hidden", mb: 3 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, height: { xs: "calc(100vh - 120px)", sm: "calc(100vh - 180px)" } }}>
+              <Box sx={{ position: "relative", flexGrow: 1, borderRadius: "16px", overflow: "hidden", mb: { xs: 1.5, sm: 3 } }}>
                 <MapView
                   latitude={mapCoordinates.lat}
                   longitude={mapCoordinates.lng}
                   onLocationChange={handleMapLocationChange}
                   height="100%"
+                  isValidating={isValidating}
                 />
                 
                 <Box sx={{ position: "absolute", top: 16, left: 16, right: 16, zIndex: 1000 }}>
@@ -153,21 +156,32 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
 
               {/* Bottom Target Sheet */}
               <Box sx={{ 
-                p: 3, 
+                p: { xs: 2, sm: 3 }, 
                 bgcolor: isDarkMode ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE, 
                 borderRadius: "24px", 
                 border: `1px solid ${isDarkMode ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
                 boxShadow: `0 4px 24px ${COLORS.SHADOW.DEFAULT}` 
               }}>
-                <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
-                  <LocationOn sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 32, mr: 2, mt: 0.5 }} />
-                  <Box>
-                    <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2, mb: 0.5 }}>
-                      {watch("city_town") || "Locating..."}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                      {watch("address") || watch("landmark") || "Move the pin to set your exact location"}
-                    </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: { xs: 1.5, sm: 3 } }}>
+                  <LocationOn sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: { xs: 24, sm: 32 }, mr: 1.5, mt: 0.5 }} />
+                  <Box sx={{ flex: 1 }}>
+                    {isValidating ? (
+                      <>
+                        <Skeleton variant="text" width="60%" height={32} />
+                        <Skeleton variant="text" width="90%" height={20} />
+                      </>
+                    ) : (
+                      <>
+                        <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2, mb: 0.5, fontSize: { xs: '1rem', sm: '1.25rem' } }}>
+                          {watch("landmark") || watch("building_no") || watch("address")?.split(',')[0] || "Locating..."}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                          {[watch("building_no"), watch("address"), watch("city_town")]
+                            .filter(Boolean)
+                            .join(", ")}
+                        </Typography>
+                      </>
+                    )}
                   </Box>
                 </Box>
                 
@@ -175,16 +189,41 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                   variant="contained"
                   fullWidth
                   onClick={() => setStep("form")}
+                  disabled={isValidating}
                   sx={{ 
-                    py: 1.8, 
+                    py: { xs: 1.2, sm: 1.8 }, 
                     borderRadius: "12px", 
                     bgcolor: COLORS.PRIMARY_PURPLE,
                     color: COLORS.WHITE,
                     fontWeight: 700,
-                    fontSize: '1rem',
+                    fontSize: { xs: '0.85rem', sm: '1rem' },
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      bgcolor: COLORS.PURPLE_HOVER,
+                      transform: 'translateY(-2px)',
+                      boxShadow: `0 4px 12px ${COLORS.SHADOW.DEFAULT}`
+                    }
                   }}
                 >
-                  Confirm Location & Proceed
+                  {isValidating ? "Fetching address..." : "Confirm Location & Proceed"}
+                </Button>
+                
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  onClick={() => getCoordinates()}
+                  sx={{ 
+                    mt: 1,
+                    py: { xs: 1, sm: 1.2 }, 
+                    borderRadius: "12px", 
+                    borderColor: COLORS.PRIMARY_PURPLE,
+                    color: COLORS.PRIMARY_PURPLE,
+                    fontWeight: 600,
+                    fontSize: { xs: '0.8rem', sm: '0.9rem' }
+                  }}
+                >
+                  <MyLocation sx={{ mr: 1, fontSize: 20 }} />
+                  Use Current Location
                 </Button>
               </Box>
             </Box>
@@ -198,6 +237,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                   latitude={mapCoordinates.lat}
                   longitude={mapCoordinates.lng}
                   height="100%"
+                  isValidating={isValidating}
                 />
                 <Box sx={{ position: 'absolute', inset: 0, zIndex: 10, ...(!isDarkMode && { bgcolor: 'rgba(255,255,255,0.1)' }) }} />
                 <Button 
@@ -238,24 +278,25 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                             key={tag}
                             onClick={() => {
                               if (tag === 'Other') {
-                                if (tagValue === 'Home' || tagValue === 'Work') setValue("address_name", "", { shouldValidate: true });
+                                setValue("address_name", "", { shouldValidate: false });
                               } else {
                                 setValue("address_name", tag, { shouldValidate: true });
                               }
                             }}
                             sx={{
                               flex: 1,
-                              minWidth: '100px',
+                              minWidth: '90px',
                               py: 1,
                               borderRadius: '12px',
                               border: `1px solid ${isSelected ? COLORS.PRIMARY_PURPLE : (isDarkMode ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT)}`,
-                              bgcolor: isSelected ? bgSubtle : 'transparent',
+                              bgcolor: isSelected ? bgSubtle : (isDarkMode ? 'rgba(255,255,255,0.02)' : COLORS.WHITE),
                               color: isSelected ? COLORS.PRIMARY_PURPLE : (isDarkMode ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT),
                               fontWeight: isSelected ? 700 : 500,
                               textTransform: 'none',
+                              transition: 'all 0.2s',
                               '&:hover': {
                                 borderColor: COLORS.PRIMARY_PURPLE,
-                                bgcolor: bgSubtle
+                                bgcolor: isSelected ? bgSubtle : (isDarkMode ? 'rgba(255,255,255,0.05)' : COLORS.PURPLE_ALPHA_04)
                               }
                             }}
                           >
@@ -274,6 +315,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                           control={control}
                           placeholder="e.g. Friend's House"
                           size="small"
+                          autoFocus={tagValue === ""}
                         />
                       </Box>
                     )}
@@ -438,7 +480,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                     py: 1.8,
                     borderRadius: "12px",
                     textTransform: "none",
-                    fontSize: "1.05rem",
+                    fontSize: { xs: '0.9rem', sm: '1.05rem' },
                     fontWeight: 700,
                     boxShadow: `0 8px 16px ${COLORS.PURPLE_ALPHA_04}`,
                     "&:hover": { bgcolor: COLORS.PURPLE_HOVER },

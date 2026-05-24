@@ -18,6 +18,7 @@ interface InputProps extends Omit<TextFieldProps, "name"> {
   startIcon?: ReactNode;
   endIcon?: ReactNode;
   disableUnderline?: boolean;
+  children?: ReactNode;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -27,6 +28,7 @@ const Input: React.FC<InputProps> = ({
   endIcon,
   sx,
   InputProps,
+  children,
   ...props
 }) => {
   const theme = useTheme();
@@ -135,7 +137,9 @@ const Input: React.FC<InputProps> = ({
             borderRadius: "12px",
             ...sx,
           }}
-        />
+        >
+          {children}
+        </TextField>
       )}
     />
   );

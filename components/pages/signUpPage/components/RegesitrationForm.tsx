@@ -55,7 +55,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 }) => {
   const { t } = useTranslate();
   const [showPassword, setShowPassword] = useState(false);
-  // const [isSameAsPhone, setIsSameAsPhone] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const birthDateRef = useRef<HTMLInputElement>(null);
 
   // Calculate max date (13 years ago)
@@ -67,6 +67,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   )
     .toISOString()
     .split("T")[0];
+
+  const isServiceProvider =
+    role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER;
 
   const {
     control,
@@ -80,9 +83,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       first_name: "",
       last_name: "",
       email: "",
-      phone_number: "",
-      country_code: "+91",
-      gender: undefined,
+      confirm_password: "",
+      phone_number: isServiceProvider ? (initialData?.whatsapp_number || "") : "",
+      country_code: isServiceProvider ? (initialData?.whatsapp_country_code || "+91") : "+91",
+      gender: isServiceProvider ? ("PREFER_NOT_TO_SAY" as SignUpFormData["gender"]) : undefined,
       country: "India",
       birth_date: maxDate,
       role: role,
@@ -96,22 +100,23 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
     if (initialData.first_name) setValue("first_name", initialData.first_name);
     if (initialData.last_name) setValue("last_name", initialData.last_name);
     if (initialData.email) setValue("email", initialData.email);
-    if (initialData.phone_number)
-      setValue("phone_number", initialData.phone_number);
-    if (initialData.country_code)
-      setValue("country_code", initialData.country_code);
-    if (initialData.country) setValue("country", initialData.country);
-    if (initialData.birth_date) {
-      // Convert ISO date string to YYYY-MM-DD format for the date input
-      setValue("birth_date", initialData.birth_date.split("T")[0]);
+    // Always sync hidden fields from lead data for service providers
+    if (isServiceProvider) {
+      setValue("phone_number", initialData.whatsapp_number || initialData.phone_number || "");
+      setValue("country_code", initialData.whatsapp_country_code || initialData.country_code || "+91");
+      setValue("country", "India");
+      setValue("birth_date", maxDate);
+      setValue("gender", "PREFER_NOT_TO_SAY" as SignUpFormData["gender"]);
+    } else {
+      if (initialData.phone_number) setValue("phone_number", initialData.phone_number);
+      if (initialData.country_code) setValue("country_code", initialData.country_code);
+      if (initialData.country) setValue("country", initialData.country);
+      if (initialData.birth_date) setValue("birth_date", initialData.birth_date.split("T")[0]);
+      if (initialData.gender) setValue("gender", initialData.gender as SignUpFormData["gender"]);
     }
-    if (initialData.gender)
-      setValue("gender", initialData.gender as SignUpFormData["gender"]);
-    if (initialData.whatsapp_number)
-      setValue("whatsapp_number", initialData.whatsapp_number);
-    if (initialData.whatsapp_country_code)
-      setValue("whatsapp_country_code", initialData.whatsapp_country_code);
-  }, [initialData, setValue]);
+    if (initialData.whatsapp_number) setValue("whatsapp_number", initialData.whatsapp_number);
+    if (initialData.whatsapp_country_code) setValue("whatsapp_country_code", initialData.whatsapp_country_code);
+  }, [initialData, setValue, isServiceProvider, maxDate]);
 
   const selectedCountryCode = watch("country_code");
   const whatsappCountryCode = watch("whatsapp_country_code");
@@ -142,66 +147,74 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   //   }
   // };
 
-  const isServiceProvider =
-    role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER;
-
   return (
     <Box
       component="form"
       onSubmit={handleSubmit(onSubmit)}
       noValidate
       sx={{
-        width: { xl: "100%" },
+        width: "100%",
+        mt: 2
       }}
     >
-      <Grid container spacing={2}>
-        {/* First Name & Last Name */}
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography
-            variant="body2"
-            sx={{
-              mb: 1,
-              fontWeight: 500,
-              fontSize: { lg: "0.875rem", xl: "1rem" },
-            }}
-          >
-            {t("first_name")}*
-          </Typography>
-          <Input
-            name="first_name"
-            control={control}
-            placeholder="Arjun"
-            startIcon={<PersonIcon />}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography
-            variant="body2"
-            sx={{
-              mb: 1,
-              fontWeight: 500,
-              fontSize: { lg: "0.875rem", xl: "1rem" },
-            }}
-          >
-            {t("last_name")}*
-          </Typography>
-          <Input
-            name="last_name"
-            control={control}
-            placeholder="Sharma"
-            startIcon={<PersonIcon />}
-          />
-        </Grid>
+      <Grid container spacing={3}>
+        {/* Section: Personal Identity */}
 
-        {/* Email */}
-        <Grid size={{ xs: 12, sm: 6 }}>
+        {isServiceProvider ? (
+          <Grid size={{ xs: 12 }}>
+            <Typography
+              variant="body2"
+              sx={{ mb: 1, fontWeight: 600, color: '#374151', fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
+            >
+              Full Name*
+            </Typography>
+            <Input
+              name="first_name"
+              control={control}
+              placeholder="Arjun Sharma"
+              startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+            />
+          </Grid>
+        ) : (
+          <>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography
+                variant="body2"
+                sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
+              >
+                {t("first_name")}*
+              </Typography>
+              <Input
+                name="first_name"
+                control={control}
+                placeholder="Arjun"
+                startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography
+                variant="body2"
+                sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
+              >
+                {t("last_name")}*
+              </Typography>
+              <Input
+                name="last_name"
+                control={control}
+                placeholder="Sharma"
+                startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+              />
+            </Grid>
+          </>
+        )}
+
+        <Grid size={{ xs: 12 }}>
           <Typography
             variant="body2"
-            sx={{
-              mb: 1,
-              fontWeight: 500,
-              fontSize: { lg: "0.875rem", xl: "1rem" },
-            }}
+            sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
           >
             {t("email_address")}*
           </Typography>
@@ -209,18 +222,15 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             name="email"
             control={control}
             placeholder="arjun.sharma@mail.in"
-            startIcon={<EmailIcon />}
+            startIcon={<EmailIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
           />
         </Grid>
-        {/* Password */}
+
         <Grid size={{ xs: 12, sm: 6 }}>
           <Typography
             variant="body2"
-            sx={{
-              mb: 1,
-              fontWeight: 500,
-              fontSize: { lg: "0.875rem", xl: "1rem" },
-            }}
+            sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
           >
             {t("password")}*
           </Typography>
@@ -229,7 +239,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             control={control}
             type={showPassword ? "text" : "password"}
             placeholder="********"
-            startIcon={<LockIcon />}
+            startIcon={<LockIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -238,7 +249,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                     onClick={() => setShowPassword(!showPassword)}
                     edge="end"
                   >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                    {showPassword ? <VisibilityOff sx={{ fontSize: 20 }} /> : <Visibility sx={{ fontSize: 20 }} />}
                   </IconButton>
                 </InputAdornment>
               ),
@@ -246,286 +257,210 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           />
         </Grid>
 
-        {/* WhatsApp Number — hidden, number is used to prefill phone field */}
-        {/* {isServiceProvider && (
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography
-              variant="body2"
-              sx={{
-                mb: 1,
-                fontWeight: 500,
-                fontSize: { lg: "0.875rem", xl: "1rem" },
-              }}
-            >
-              {t("whatsapp_number")}*
-            </Typography>
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <Box
-                sx={{
-                  width: { sm: "70px", lg: "95px", md: "105px" },
-                }}
-              >
-                <Input
-                  name="whatsapp_country_code"
-                  control={control}
-                  select
-                  disabled={!!initialData?.whatsapp_country_code}
-                >
-                  {countries.map((option) => (
-                    <MenuItem key={option.code} value={option.phone_code}>
-                      {option.phone_code}
-                    </MenuItem>
-                  ))}
-                </Input>
-              </Box>
-              <Box sx={{ flex: 1 }}>
-                <Input
-                  name="whatsapp_number"
-                  control={control}
-                  placeholder="98765 43210"
-                  type="tel"
-                  InputProps={{ readOnly: !!initialData?.whatsapp_number }}
-                  inputProps={{ maxLength: 10, inputMode: "numeric", pattern: "[0-9]*" }}
-                />
-              </Box>
-            </Box>
-          </Grid>
-        )} */}
-        {/* Phone Number */}
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 1,
-            }}
+          <Typography
+            variant="body2"
+            sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
           >
-            <Typography
-              variant="body2"
-              sx={{
-                fontWeight: 500,
-                fontSize: { lg: "0.875rem", xl: "1rem" },
-              }}
-            >
-              {t("phone_number")}*
-            </Typography>
-            {/* Same-as-WhatsApp checkbox removed — phone is prefilled from lead */}
-            {/* {isServiceProvider && (
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isSameAsPhone}
-                    onChange={handleCheckboxChange}
-                    size="small"
-                    sx={{ padding: 0, mr: 1 }}
+            Confirm Password*
+          </Typography>
+          <Input
+            name="confirm_password"
+            control={control}
+            type={showConfirmPassword ? "text" : "password"}
+            placeholder="********"
+            startIcon={<LockIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle confirm password visibility"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    edge="end"
+                  >
+                    {showConfirmPassword ? <VisibilityOff sx={{ fontSize: 20 }} /> : <Visibility sx={{ fontSize: 20 }} />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+
+        {/* Customer Specific Fields */}
+        {!isServiceProvider && (
+          <>
+            <Grid size={{ xs: 12 }} sx={{ mt: 1 }}>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700, color: COLORS.PRIMARY_PURPLE, textTransform: 'uppercase', letterSpacing: 1, fontSize: '0.75rem' }}>
+                Additional Details
+              </Typography>
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography
+                variant="body2"
+                sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
+              >
+                {t("phone_number")}*
+              </Typography>
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <Box sx={{ width: "90px" }}>
+                  <Input
+                    name="country_code"
+                    control={control}
+                    select
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                  >
+                    {countries.map((option) => (
+                      <MenuItem key={option.code} value={option.phone_code}>
+                        {option.phone_code}
+                      </MenuItem>
+                    ))}
+                  </Input>
+                </Box>
+                <Box sx={{ flex: 1 }}>
+                  <Input
+                    name="phone_number"
+                    control={control}
+                    placeholder="98765 43210"
+                    type="tel"
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                    inputProps={{
+                      maxLength: 10,
+                      inputMode: "numeric",
+                      pattern: "[0-9]*",
+                    }}
+                  />
+                </Box>
+              </Box>
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography
+                variant="body2"
+                sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
+              >
+                {t("birth_date")}*
+              </Typography>
+              <Input
+                name="birth_date"
+                control={control}
+                type="date"
+                inputRef={birthDateRef}
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                InputProps={{
+                  inputProps: { max: maxDate },
+                }}
+                startIcon={
+                  <CalendarIcon
+                    sx={{ cursor: "pointer", color: COLORS.PRIMARY_PURPLE }}
+                    onClick={() => birthDateRef.current?.showPicker()}
                   />
                 }
-                label={
-                  <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
-                    {t("same_as_whatsapp")}
-                  </Typography>
-                }
-                sx={{ margin: 0 }}
               />
-            )} */}
-          </Box>
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Box
-              sx={{
-                width: { sm: "70px", lg: "95px", md: "105px" },
-              }}
-            >
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography
+                variant="body2"
+                sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
+              >
+                {t("country")}*
+              </Typography>
               <Input
-                name="country_code"
+                name="country"
                 control={control}
                 select
-                disabled={!!initialData?.phone_number}
-                InputProps={{
-                  sx: {
-                    bgcolor: initialData?.phone_number
-                      ? "rgba(0, 0, 0, 0.05)"
-                      : "transparent",
-                    "& .MuiSelect-select": {
-                      paddingLeft: "8px !important",
-                      paddingRight: "24px !important",
-                    },
+                placeholder="Select Country"
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                SelectProps={{
+                  renderValue: (selected: any) => {
+                    const country = countries.find((c) => c.name === selected);
+                    return (
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <span style={{ marginRight: 8 }}>{country?.flag}</span>
+                        {selected}
+                      </Box>
+                    );
                   },
                 }}
               >
                 {countries.map((option) => (
-                  <MenuItem key={option.code} value={option.phone_code}>
-                    {option.phone_code}
+                  <MenuItem key={option.code} value={option.name}>
+                    <span style={{ marginRight: 8 }}>{option.flag}</span>{" "}
+                    {option.name}
                   </MenuItem>
                 ))}
               </Input>
-            </Box>
-            <Box sx={{ flex: 1 }}>
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography
+                variant="body2"
+                sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
+              >
+                {t("gender")}*
+              </Typography>
               <Input
-                name="phone_number"
+                name="gender"
                 control={control}
-                placeholder="98765 43210"
-                type="tel"
-                InputProps={{
-                  readOnly: !!initialData?.phone_number,
-                  sx: {
-                    bgcolor: initialData?.phone_number
-                      ? "rgba(0, 0, 0, 0.05)"
-                      : "transparent",
+                select
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                SelectProps={{
+                  displayEmpty: true,
+                  renderValue: (selected: any) => {
+                    if (!selected) {
+                      return (
+                        <Typography color="textSecondary" sx={{ fontSize: '0.875rem' }}>
+                          {t("select_gender")}
+                        </Typography>
+                      );
+                    }
+                    const genderOptions: Record<string, string> = {
+                      MALE: t("male"),
+                      FEMALE: t("female"),
+                      OTHER: t("other"),
+                      PREFER_NOT_TO_SAY: t("prefer_not_to_say"),
+                    };
+                    return genderOptions[selected] || selected;
                   },
                 }}
-                inputProps={{
-                  maxLength: 10,
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                }}
-              />
-            </Box>
-          </Box>
-        </Grid>
-
-        {/* Birth Date */}
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography
-            variant="body2"
-            sx={{
-              mb: 1,
-              fontWeight: 500,
-              fontSize: { lg: "0.875rem", xl: "1rem" },
-            }}
-          >
-            {t("birth_date")}*
-          </Typography>
-          <Input
-            name="birth_date"
-            control={control}
-            type="date"
-            inputRef={birthDateRef}
-            InputProps={{
-              inputProps: { max: maxDate },
-            }}
-            startIcon={
-              <CalendarIcon
-                sx={{ cursor: "pointer" }}
-                onClick={() => birthDateRef.current?.showPicker()}
-              />
-            }
-          />
-        </Grid>
-
-        <>
-          {/* Country */}
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography
-              variant="body2"
-              sx={{
-                mb: 1,
-                fontWeight: 500,
-                fontSize: { lg: "0.875rem", xl: "1rem" },
-              }}
-            >
-              {t("country")}*
-            </Typography>
-            <Input
-              name="country"
-              control={control}
-              select
-              placeholder="Select Country"
-              SelectProps={{
-                renderValue: (selected: any) => {
-                  const country = countries.find((c) => c.name === selected);
-                  return (
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <span style={{ marginRight: 8 }}>{country?.flag}</span>
-                      {selected}
-                    </Box>
-                  );
-                },
-              }}
-            >
-              {countries.map((option) => (
-                <MenuItem key={option.code} value={option.name}>
-                  <span style={{ marginRight: 8 }}>{option.flag}</span>{" "}
-                  {option.name}
+                startIcon={gender === "MALE" ? <MaleIcon sx={{ color: COLORS.PRIMARY_PURPLE }} /> : <FemaleIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+              >
+                <MenuItem value="MALE">{t("male")}</MenuItem>
+                <MenuItem value="FEMALE">{t("female")}</MenuItem>
+                <MenuItem value="OTHER">{t("other")}</MenuItem>
+                <MenuItem value="PREFER_NOT_TO_SAY">
+                  {t("prefer_not_to_say")}
                 </MenuItem>
-              ))}
-            </Input>
-          </Grid>
-          {/* Gender */}
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography
-              variant="body2"
-              sx={{
-                mb: 1,
-                fontWeight: 500,
-                fontSize: { lg: "0.875rem", xl: "1rem" },
-              }}
-            >
-              {t("gender")}
-            </Typography>
-            <Input
-              name="gender"
-              control={control}
-              select
-              SelectProps={{
-                displayEmpty: true,
-                renderValue: (selected: any) => {
-                  if (!selected) {
-                    return (
-                      <Typography color="textSecondary">
-                        {t("select_gender")}*
-                      </Typography>
-                    );
-                  }
-                  const genderOptions: Record<string, string> = {
-                    MALE: t("male"),
-                    FEMALE: t("female"),
-                    OTHER: t("other"),
-                    PREFER_NOT_TO_SAY: t("prefer_not_to_say"),
-                  };
-                  return genderOptions[selected] || selected;
-                },
-              }}
-              startIcon={gender === "MALE" ? <MaleIcon /> : <FemaleIcon />}
-            >
-              <MenuItem value="MALE">{t("male")}</MenuItem>
-              <MenuItem value="FEMALE">{t("female")}</MenuItem>
-              <MenuItem value="OTHER">{t("other")}</MenuItem>
-              <MenuItem value="PREFER_NOT_TO_SAY">
-                {t("prefer_not_to_say")}
-              </MenuItem>
-            </Input>
-          </Grid>
-        </>
+              </Input>
+            </Grid>
+          </>
+        )}
       </Grid>
+
       <Typography
-        variant="body1"
+        variant="body2"
         color="textSecondary"
         sx={{
-          mt: { xs: 2, sm: 3 },
+          mt: 4,
           display: "block",
           textAlign: "center",
-          fontSize: { lg: "0.75rem", xl: "0.875rem" },
+          fontSize: '0.8rem',
+          lineHeight: 1.6
         }}
       >
         {t("by_signup_to_accept")}{" "}
-        <span style={{ textDecoration: "underline", fontWeight: 600 }}>
+        <span style={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700, cursor: 'pointer' }}>
           {t("privacy_policy")}
         </span>{" "}
         and{" "}
-        <span style={{ textDecoration: "underline", fontWeight: 600 }}>
+        <span style={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700, cursor: 'pointer' }}>
           {t("termsConditionsTitle")}
         </span>
       </Typography>
 
-      <Box
-        sx={{
-          mt: { xs: 3, sm: 4 },
-          display: "flex",
-          gap: 2,
-          flexDirection: "column",
-        }}
-      >
+      <Box sx={{ mt: 4 }}>
         <Button
           fullWidth
           size="large"
@@ -533,7 +468,16 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           isLoading={loading}
           variant="contained"
           sx={{
-            borderRadius: "50px",
+            borderRadius: "12px",
+            py: 1.8,
+            fontSize: { xs: '0.9rem', sm: '1rem' },
+            fontWeight: 700,
+            bgcolor: COLORS.PRIMARY_PURPLE,
+            boxShadow: `0 8px 20px rgba(94, 24, 233, 0.25)`,
+            '&:hover': {
+              bgcolor: '#4c14c0',
+              boxShadow: `0 10px 25px rgba(94, 24, 233, 0.35)`,
+            }
           }}
         >
           {t("signup")}

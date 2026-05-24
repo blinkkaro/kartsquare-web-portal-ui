@@ -9,12 +9,16 @@ import { Service, Category } from "../../../services/serviceList/listInteraface"
 import { COLORS } from "../../../constants/colors";
 import ServicesHeader from "./ServicesHeader";
 import ServicesSearchBar from "./ServicesSearchBar";
-import CategoryFilter from "./CategoryFilter";
+import ServiceFilterDrawer from "./ServiceFilterDrawer";
 import ServiceGrid from "./ServiceGrid";
 import ServicesPagination from "./ServicesPagination";
 import { useCategories } from "@/hooks/useCategories";
+import { useTranslate } from "@/hooks/useTranslate";
+import { Button } from "@mui/material";
+import { Tune } from "@mui/icons-material";
 
 const ListOfServices = () => {
+    const { t } = useTranslate();
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark";
     const surfaceBg = isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT;
@@ -29,6 +33,7 @@ const ListOfServices = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [total, setTotal] = useState(0);
+    const [showCategoriesPopup, setShowCategoriesPopup] = useState(false);
     const limit = 12;
 
     // Use TanStack Query hook for categories
@@ -89,43 +94,62 @@ const ListOfServices = () => {
                 }}
             >
                 <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
-                    {/* Header + Search in a card */}
-                    <Paper
-                        elevation={0}
+                    <Box
                         sx={{
-                            p: { xs: 2, sm: 3 },
-                            mb: { xs: 2, sm: 3 },
-                            borderRadius: 3,
-                            border: `1px solid ${borderColor}`,
-                            bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.WHITE,
+                            mb: { xs: 3, sm: 4 },
+                            display: "flex",
+                            flexDirection: { xs: "column", md: "row" },
+                            justifyContent: "space-between",
+                            alignItems: { xs: "flex-start", md: "flex-end" },
+                            gap: 2,
                         }}
                     >
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: { xs: "column", sm: "row" },
-                                justifyContent: "space-between",
-                                alignItems: { xs: "stretch", sm: "center" },
-                                gap: 2,
-                            }}
-                        >
-                            <ServicesHeader />
-                            <Box sx={{ width: { xs: "100%", sm: "auto" }, flexShrink: 0 }}>
-                                <ServicesSearchBar
-                                    searchInput={searchInput}
-                                    onSearchChange={setSearchInput}
-                                    onSearchSubmit={handleSearchSubmit}
-                                />
-                            </Box>
+                        <ServicesHeader />
+                        <Box sx={{ 
+                            display: "flex", 
+                            alignItems: "center", 
+                            gap: 1.5, 
+                            width: { xs: "100%", md: "auto" } 
+                        }}>
+                            <Button
+                                variant="outlined"
+                                startIcon={<Tune />}
+                                onClick={() => setShowCategoriesPopup(true)}
+                                sx={{
+                                    borderRadius: "50px",
+                                    height: 44,
+                                    px: 2.5,
+                                    color: COLORS.PRIMARY_PURPLE,
+                                    borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
+                                    bgcolor: isDark ? "rgba(255,255,255,0.03)" : "#fff",
+                                    textTransform: "none",
+                                    fontWeight: 700,
+                                    fontSize: "0.85rem",
+                                    whiteSpace: "nowrap",
+                                    minWidth: "fit-content",
+                                    "&:hover": {
+                                        bgcolor: COLORS.PURPLE_ALPHA_04,
+                                        borderColor: COLORS.PRIMARY_PURPLE,
+                                    }
+                                }}
+                            >
+                                {t("filters")}
+                            </Button>
+                            <ServicesSearchBar
+                                searchInput={searchInput}
+                                onSearchChange={setSearchInput}
+                                onSearchSubmit={handleSearchSubmit}
+                            />
                         </Box>
-                    </Paper>
+                    </Box>
 
-                    {/* Categories */}
-                    <CategoryFilter
+                    <ServiceFilterDrawer
                         categories={categories}
                         selectedCategory={selectedCategory}
                         loading={categoriesLoading}
                         onCategoryClick={handleCategoryClick}
+                        open={showCategoriesPopup}
+                        onClose={() => setShowCategoriesPopup(false)}
                     />
 
                     {/* Loading State */}
