@@ -19,7 +19,7 @@ import ErrorMessage from "@/components/common/ErrorMessage";
 import ImageUpload from "./component/ImageUpload";
 import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
 import { useRouter } from "next/navigation";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useAppDispatch } from "@/store/hooks";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { logout } from "@/features/ui/authSlice";
 import { secureStorage } from "@/helper/SecureStorage";
