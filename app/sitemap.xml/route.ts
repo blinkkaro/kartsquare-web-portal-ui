@@ -32,7 +32,7 @@ export async function GET() {
   // 1. Static Routes
   const staticRoutes = [
     { url: "/", priority: "1.0", changefreq: "daily" },
-    { url: "/cus/servicesList", priority: "0.95", changefreq: "daily" },
+    { url: "/services", priority: "0.95", changefreq: "daily" },
     { url: "/cus/reels", priority: "0.85", changefreq: "daily" },
     { url: "/store", priority: "0.95", changefreq: "daily" },
     { url: "/store/products", priority: "0.9", changefreq: "daily" },
@@ -42,10 +42,16 @@ export async function GET() {
     { url: "/business-listing", priority: "0.8", changefreq: "weekly" },
     { url: "/blogs", priority: "0.88", changefreq: "weekly" },
     { url: "/careers", priority: "0.6", changefreq: "weekly" },
+    // Legal & policy
     { url: "/termsConditions", priority: "0.5", changefreq: "monthly" },
     { url: "/privacyPolicy", priority: "0.5", changefreq: "monthly" },
     { url: "/cookie-policy", priority: "0.5", changefreq: "monthly" },
-    { url: "/businessInfo", priority: "0.55", changefreq: "monthly" },
+    // External public pages (used inside mobile app webviews + public web)
+    { url: "/External/JoinAsProvider", priority: "0.7", changefreq: "monthly" },
+    { url: "/External/GlobalAboutUs", priority: "0.65", changefreq: "monthly" },
+    { url: "/External/GlobalContactUs", priority: "0.6", changefreq: "monthly" },
+    // NOTE: /businessInfo removed — it is a registration-step page (noindex)
+    // NOTE: /External/DeleteAccount removed — it is an auth/utility page (noindex)
   ];
 
   // 2. Fetch Dynamic Data

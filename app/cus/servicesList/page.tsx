@@ -6,15 +6,17 @@ import ListOfServices from "../../../components/pages/servicesList";
 import { buildBreadcrumbJsonLd, BREADCRUMBS } from "@/lib/seo/breadcrumbs";
 
 const servicesListFallback = seoPublic({
-  title: "Browse services — book home & professional help",
+  title: "Browse services \u2014 book home & professional help",
   description:
     "Discover and book home repairs, cleaning, beauty, wellness, and professional services from verified KartSquare providers across India.",
-  path: "/cus/servicesList",
+  path: "/services",
   keywords: [
     "book services online India",
     "home services near me",
     "KartSquare services",
     "verified technicians",
+    "professional services India",
+    "home repair booking",
   ],
 });
 
