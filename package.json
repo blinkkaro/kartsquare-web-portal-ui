@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "generate-favicon": "node scripts/generate-favicon.cjs"
+    "generate-favicon": "node scripts/generate-favicon.cjs",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -42,13 +44,17 @@
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/papaparse": "^5.5.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
+    "jest": "^30.4.2",
+    "jest-environment-node": "^30.4.1",
     "png2icons": "^2.0.1",
+    "ts-jest": "^29.4.11",
     "typescript": "^5.9.3"
   }
 }

@@ -9,6 +9,7 @@ import {
   useTheme,
   MenuItem,
   Grid,
+  Skeleton,
 } from "@mui/material";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -19,12 +20,27 @@ import Image from "next/image";
 import { useTranslate } from "@/hooks/useTranslate";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import dynamic from "next/dynamic";
+
+// LeadCaptureForm is code-split: yup + react-hook-form + countries data (~35KB)
+// are loaded after the hero shell renders. A skeleton prevents layout shift.
+const LeadCaptureForm = dynamic(() => import("./LeadCaptureForm"), {
+  ssr: false,
+  loading: () => (
+    <Box sx={{ width: "100%" }}>
+      <Skeleton variant="rounded" height={52} sx={{ mb: 2, borderRadius: 2 }} />
+      <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, mb: 2 }}>
+        <Skeleton variant="rounded" height={80} sx={{ borderRadius: 2 }} />
+        <Skeleton variant="rounded" height={80} sx={{ borderRadius: 2 }} />
+      </Box>
+      <Skeleton variant="rounded" height={56} sx={{ borderRadius: 2 }} />
+    </Box>
+  ),
+});
 
 const PURPLE = COLORS.PRIMARY_PURPLE;
 const PURPLE_HOVER = COLORS.PURPLE_HOVER;
 const PURPLE_ALPHA_04 = COLORS.PURPLE_ALPHA_04;
-
-import LeadCaptureForm from "./LeadCaptureForm";
 
 const Hero: React.FC = () => {
   const { t } = useTranslate();
@@ -260,8 +276,10 @@ const Hero: React.FC = () => {
                           <Image
                             src="/auth/Home.JPG"
                             alt=""
+                            aria-hidden="true"
                             fill
                             sizes="120px"
+                            loading="lazy"
                             style={{
                               objectFit: "cover",
                               objectPosition: imagePositions[i],
@@ -355,13 +373,15 @@ const Hero: React.FC = () => {
                         : "0 12px 28px rgba(0,0,0,0.08)",
                     }}
                   >
-                    <Image
-                      src="/auth/Home.JPG"
-                      alt=""
-                      fill
-                      sizes="100px"
-                      style={{ objectFit: "cover", objectPosition: "center 70%" }}
-                    />
+                     <Image
+                       src="/auth/Home.JPG"
+                       alt=""
+                       aria-hidden="true"
+                       fill
+                       sizes="100px"
+                       loading="lazy"
+                       style={{ objectFit: "cover", objectPosition: "center 70%" }}
+                     />
                   </Box>
                 </motion.div>
               </Box>

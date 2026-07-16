@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   Box,
   Typography,
   Container,
   useTheme,
 } from "@mui/material";
+import Image from "next/image";
 import { keyframes } from "@mui/system";
 import { getSuccessStories } from "./constants";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -24,10 +25,22 @@ const scrollDown = keyframes`
   100% { transform: translateY(0); }
 `;
 
-const MarqueeColumn = ({ stories, speed, reverse = false, isDark }: any) => {
+const MarqueeColumn = ({
+  stories,
+  speed,
+  reverse = false,
+  isDark,
+  paused,
+}: {
+  stories: ReturnType<typeof getSuccessStories>;
+  speed: number;
+  reverse?: boolean;
+  isDark: boolean;
+  paused: boolean;
+}) => {
   const content = (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pb: 3 }}>
-      {stories.map((story: any, index: number) => (
+      {stories.map((story, index) => (
         <Box
           key={index}
           sx={{
@@ -44,7 +57,7 @@ const MarqueeColumn = ({ stories, speed, reverse = false, isDark }: any) => {
             transition: "transform 0.3s ease",
             "&:hover": {
               transform: "translateY(-4px)",
-            }
+            },
           }}
         >
           <Typography
@@ -60,17 +73,26 @@ const MarqueeColumn = ({ stories, speed, reverse = false, isDark }: any) => {
           </Typography>
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            {/* Use Next.js Image for automatic WebP conversion + lazy loading */}
             <Box
-              component="img"
-              src={story.image}
-              alt={story.name}
               sx={{
                 width: 48,
                 height: 48,
                 borderRadius: "50%",
-                objectFit: "cover",
+                overflow: "hidden",
+                position: "relative",
+                flexShrink: 0,
               }}
-            />
+            >
+              <Image
+                src={story.image}
+                alt={story.name}
+                fill
+                sizes="48px"
+                style={{ objectFit: "cover" }}
+                loading="lazy"
+              />
+            </Box>
             <Box>
               <Typography
                 variant="subtitle2"
@@ -103,6 +125,8 @@ const MarqueeColumn = ({ stories, speed, reverse = false, isDark }: any) => {
       sx={{
         display: "flex",
         flexDirection: "column",
+        // Pause the CSS animation when the section is off-screen or on hover
+        animationPlayState: paused ? "paused" : "running",
         animation: `${reverse ? scrollDown : scrollUp} ${speed}s linear infinite`,
         "&:hover": {
           animationPlayState: "paused",
@@ -110,6 +134,7 @@ const MarqueeColumn = ({ stories, speed, reverse = false, isDark }: any) => {
       }}
     >
       {content}
+      {/* Duplicate for seamless loop */}
       {content}
     </Box>
   );
@@ -120,6 +145,21 @@ const SuccessStories = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const stories = getSuccessStories(t);
+  const containerRef = useRef<HTMLDivElement>(null);
+  // Pause all animations when section is not in the viewport to save GPU cycles
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.01 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   // Divide into 3 columns
   const col1 = stories.filter((_, i) => i % 3 === 0);
@@ -146,28 +186,28 @@ const SuccessStories = () => {
         </Box>
 
         <Box
+          ref={containerRef}
           sx={{
             display: "grid",
             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "1fr 1fr 1fr" },
             gap: 3,
             height: { xs: 500, md: 700 },
             overflow: "hidden",
-            // Fading mask at the top and bottom
             maskImage: "linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
             WebkitMaskImage: "linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
           }}
         >
           {/* Column 1: Scrolls Up */}
           <Box sx={{ display: "block" }}>
-            <MarqueeColumn stories={col1} speed={25} isDark={isDark} />
+            <MarqueeColumn stories={col1} speed={25} isDark={isDark} paused={!isVisible} />
           </Box>
           {/* Column 2: Scrolls Down (Reverse) */}
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            <MarqueeColumn stories={col2} speed={30} reverse isDark={isDark} />
+            <MarqueeColumn stories={col2} speed={30} reverse isDark={isDark} paused={!isVisible} />
           </Box>
           {/* Column 3: Scrolls Up */}
           <Box sx={{ display: { xs: "none", md: "block" } }}>
-            <MarqueeColumn stories={col3} speed={28} isDark={isDark} />
+            <MarqueeColumn stories={col3} speed={28} isDark={isDark} paused={!isVisible} />
           </Box>
         </Box>
 

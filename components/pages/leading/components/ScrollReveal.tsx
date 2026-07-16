@@ -66,6 +66,8 @@ export function ScrollReveal({
 }: ScrollRevealProps) {
   const ref = React.useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-60px", amount });
+  // Track whether animation has finished so we can remove willChange
+  const [animDone, setAnimDone] = React.useState(false);
 
   const variantConfig = variants[variant];
   const visibleTransition =
@@ -84,7 +86,11 @@ export function ScrollReveal({
       animate={isInView ? "visible" : "hidden"}
       variants={{ hidden: variantConfig.hidden, visible: visibleWithDelay }}
       className={className}
-      style={{ willChange: "opacity, transform" }}
+      // willChange is ONLY active during the animation window.
+      // After the animation completes (onAnimationComplete) we reset to "auto"
+      // so the browser can release the GPU compositing layer.
+      style={{ willChange: animDone ? "auto" : "opacity, transform" }}
+      onAnimationComplete={() => setAnimDone(true)}
     >
       {children}
     </motion.div>
@@ -105,6 +111,7 @@ export function ScrollStagger({
 }: ScrollStaggerProps) {
   const ref = React.useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-40px", amount: 0.1 });
+  const [animDone, setAnimDone] = React.useState(false);
 
   return (
     <motion.div
@@ -118,6 +125,8 @@ export function ScrollStagger({
         },
       }}
       className={className}
+      style={{ willChange: animDone ? "auto" : "opacity, transform" }}
+      onAnimationComplete={() => setAnimDone(true)}
     >
       {children}
     </motion.div>

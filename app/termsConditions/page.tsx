@@ -5,7 +5,7 @@ export const metadata = seoPublic({
   title: "Terms & Conditions",
   description:
     "Read KartSquare's official terms and conditions for using the marketplace, booking services, supplier policies, and user responsibilities.",
-  path: "/termsConditions",
+  path: "/terms-conditions",
 });
 
 const termsWebPageJsonLd = {
@@ -14,7 +14,7 @@ const termsWebPageJsonLd = {
   name: "Terms & Conditions",
   description:
     "KartSquare terms of use: marketplace rules, bookings, supplier obligations, and user responsibilities.",
-  url: `${SITE_URL}/termsConditions`,
+  url: `${SITE_URL}/terms-conditions`,
   isPartOf: {
     "@type": "WebSite",
     name: "KartSquare",

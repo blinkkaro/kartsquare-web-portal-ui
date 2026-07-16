@@ -40,14 +40,23 @@ export function seoPublic(opts: {
     ? brandTitle(opts.ogTitle)
     : absoluteTitle;
   const ogDescResolved = opts.ogDescription ?? opts.description;
-  const image = opts.image;
+  // Always provide an OG image — fall back to the global og-image.png so every
+  // page gets a social card even when no page-specific image is passed.
+  const image = opts.image ?? `${SITE_URL}/og-image.png`;
   const ogType = opts.ogType ?? "website";
 
   return {
     title: { absolute: absoluteTitle },
     description: opts.description,
     ...(opts.keywords?.length ? { keywords: opts.keywords } : {}),
-    alternates: { canonical },
+    alternates: {
+      canonical,
+      // Establish hreflang now for future international expansion.
+      // en-IN signals to Google this content is English for India.
+      languages: {
+        "en-IN": canonical,
+      },
+    },
     openGraph: {
       title: ogTitleResolved,
       description: ogDescResolved,
@@ -55,13 +64,13 @@ export function seoPublic(opts: {
       siteName: "KartSquare",
       type: ogType,
       locale: "en_IN",
-      ...(image ? { images: [{ url: image }] } : {}),
+      images: [{ url: image, width: 1200, height: 630, alt: ogTitleResolved }],
     },
     twitter: {
-      card: image ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title: ogTitleResolved,
       description: ogDescResolved,
-      ...(image ? { images: [image] } : {}),
+      images: [image],
     },
     robots: {
       index: true,

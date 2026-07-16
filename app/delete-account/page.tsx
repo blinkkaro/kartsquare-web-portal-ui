@@ -1,5 +1,5 @@
 import MainLayout from "@/app/mainLayout";
-import DeleteAccountView from "@/components/pages/deleteAccount";
+import DeleteAccountView from "@/components/pages/DeleteAccount";
 import { seoPublic } from "@/lib/seo/buildMetadata";
 
 export const metadata = seoPublic({

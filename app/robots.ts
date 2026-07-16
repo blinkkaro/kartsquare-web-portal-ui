@@ -46,18 +46,16 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
+        // Single wildcard rule — Googlebot (and all other crawlers) inherit from '*'.
+        // A duplicate Googlebot block with identical rules wastes robots.txt space and
+        // can confuse some parsers. Removed.
         userAgent: '*',
         allow: '/',
         disallow: [...privateDisallow],
       },
-      {
-        // Googlebot gets the same rules — explicit declaration lets Search Console show them clearly
-        userAgent: 'Googlebot',
-        allow: '/',
-        disallow: [...privateDisallow],
-      },
     ],
+    // NOTE: 'host' is NOT a valid robots.txt directive (it was a Yandex-specific extension).
+    // Next.js outputs "Host: ..." which some crawlers reject entirely. Removed.
     sitemap: `${BASE_URL}/sitemap.xml`,
-    host: BASE_URL,
   };
 }
