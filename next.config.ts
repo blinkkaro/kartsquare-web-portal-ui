@@ -1,6 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  compress: true, // gzip responses
+  poweredByHeader: false, // remove X-Powered-By header
+  experimental: {
+    optimizePackageImports: [
+      // tree-shake heavy packages
+      "@mui/material",
+      "@mui/icons-material",
+      "framer-motion",
+    ],
+  },
   async redirects() {
     return [
       // ── Services: /services → /cus/servicesList ──────────────────────────

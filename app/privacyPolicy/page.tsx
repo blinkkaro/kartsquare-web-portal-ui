@@ -3,6 +3,7 @@ import { seoPublic } from "@/lib/seo/buildMetadata";
 
 export const metadata = seoPublic({
   title: "Privacy Policy | KartSquare",
+  title: "Privacy Policy | KartSquare",
   description:
     "How KartSquare collects, uses, and protects your personal data across our marketplace, bookings, and supplier tools.",
   path: "/privacy-policy",

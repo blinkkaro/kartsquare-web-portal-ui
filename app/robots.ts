@@ -1,8 +1,6 @@
-import { MetadataRoute } from 'next';
+import { MetadataRoute } from "next";
 
-const BASE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com"
-).replace(/\/$/, "");
+const BASE_URL = "https://kartsquare.com".replace(/\/$/, "");
 
 /**
  * Robots.txt tuned for marketplace SEO:
