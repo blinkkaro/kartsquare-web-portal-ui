@@ -46,10 +46,8 @@ export async function sitePageSeoOrFallback(
           .map((k) => k.trim())
           .filter(Boolean)
       : undefined;
-    const image =
-      row.og_image && /^https?:\/\//i.test(row.og_image)
-        ? row.og_image
-        : undefined;
+    // Accept relative paths too — seoPublic will absolutize via SITE_URL fallback
+    const image = row.og_image?.trim() || undefined;
 
     return seoPublic({
       title: row.meta_title.trim(),

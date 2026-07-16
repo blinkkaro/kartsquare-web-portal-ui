@@ -1,11 +1,10 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   Box, Container, Typography, Grid, Card, CardContent,
   TextField, MenuItem, InputAdornment, Divider, Alert,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
@@ -20,8 +19,6 @@ import StoreIcon from "@mui/icons-material/Store";
 import PhoneAndroidOutlinedIcon from "@mui/icons-material/PhoneAndroidOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
 import ExternalLogo from "@/components/common/Nav/components/ExternalLogo";
 import { COLORS } from "@/constants/colors";
@@ -32,9 +29,7 @@ import VideoLibraryOutlinedIcon from "@mui/icons-material/VideoLibraryOutlined";
 import WebOutlinedIcon from "@mui/icons-material/WebOutlined";
 import SmartToyOutlinedIcon from "@mui/icons-material/SmartToyOutlined";
 import CheckIcon from "@mui/icons-material/Check";
-
-const fadeUp = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
-const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const stats = [
   { value: "2M+", label: "Monthly Customers" },
@@ -123,23 +118,7 @@ export default function JoinAsProviderView() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  const heroRef = useRef(null);
-  const statsRef = useRef(null);
-  const benefitsRef = useRef(null);
-  const stepsRef = useRef(null);
-  const payoutRef = useRef(null);
-  const premiumRef = useRef(null);
-  const testimonialsRef = useRef(null);
-  const formRef = useRef(null);
-
-  const heroInView = useInView(heroRef, { once: true, amount: 0.2 });
-  const statsInView = useInView(statsRef, { once: true, amount: 0.2 });
-  const benefitsInView = useInView(benefitsRef, { once: true, amount: 0.1 });
-  const stepsInView = useInView(stepsRef, { once: true, amount: 0.1 });
-  const payoutInView = useInView(payoutRef, { once: true, amount: 0.1 });
-  const premiumInView = useInView(premiumRef, { once: true, amount: 0.05 });
-  const testimonialsInView = useInView(testimonialsRef, { once: true, amount: 0.05 });
-  const formInView = useInView(formRef, { once: true, amount: 0.05 });
+  const pageRef = useScrollReveal();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
@@ -175,11 +154,11 @@ export default function JoinAsProviderView() {
   };
 
   return (
-    <Box sx={{ bgcolor: pageBg, minHeight: "100vh" }}>
+    <Box ref={pageRef} sx={{ bgcolor: pageBg, minHeight: "100vh" }}>
 
       {/* ── HERO ── */}
       <Box
-        ref={heroRef}
+        data-animate
         sx={{
           position: "relative", overflow: "hidden",
           background: isDark
@@ -199,12 +178,11 @@ export default function JoinAsProviderView() {
         </Box>
 
         <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
-          <motion.div initial="hidden" animate={heroInView ? "visible" : "hidden"} variants={stagger}>
             <Grid container spacing={{ xs: 4, md: 8 }} alignItems="center">
 
               {/* LEFT COPY */}
               <Grid size={{ xs: 12, md: 6 }}>
-                <motion.div variants={fadeUp}>
+                <Box data-animate data-delay="100">
                   {/* Badge */}
                   <Box sx={{ display: "inline-flex", alignItems: "center", gap: 1, px: 2, py: 0.75, borderRadius: "100px", bgcolor: isDark ? COLORS.PURPLE_ALPHA_10 : COLORS.PURPLE_ALPHA_04, border: `1px solid ${COLORS.PURPLE_ALPHA_20}`, mb: 3 }}>
                     <BusinessCenterIcon sx={{ fontSize: 15, color: COLORS.PRIMARY_PURPLE }} />
@@ -272,18 +250,18 @@ export default function JoinAsProviderView() {
                       How It Works
                     </Box>
                   </Box>
-                </motion.div>
+                </Box>
               </Grid>
 
               {/* RIGHT — Visual */}
               <Grid size={{ xs: 12, md: 6 }}>
-                <motion.div variants={fadeUp}>
+                <Box data-animate data-delay="200">
                   <Box sx={{ position: "relative" }}>
                     <Box sx={{
                       borderRadius: "24px", overflow: "hidden", height: { xs: 280, md: 460 }, position: "relative",
                       boxShadow: isDark ? `0 24px 64px ${COLORS.PRIMARY_PURPLE}30` : "0 24px 64px rgba(94,24,233,0.2)",
                     }}>
-                      <Image src="/providers/electrician.png" alt="KartSquare Provider" fill style={{ objectFit: "cover" }} />
+                      <Image src="/providers/electrician.png" alt="KartSquare Provider" fill priority style={{ objectFit: "cover" }} />
                       <Box sx={{ position: "absolute", inset: 0, background: "linear-gradient(to top,rgba(94,24,233,0.55) 0%,transparent 55%)" }} />
                       <Box sx={{ position: "absolute", bottom: 24, left: 24, right: 24 }}>
                         <Typography variant="body2" sx={{ color: "#fff", fontStyle: "italic", lineHeight: 1.65, textShadow: "0 1px 4px rgba(0,0,0,0.5)", mb: 0.5 }}>
@@ -315,49 +293,43 @@ export default function JoinAsProviderView() {
                       <Typography variant="caption" sx={{ color: secondaryTxt }}>Monthly Customers</Typography>
                     </Box>
                   </Box>
-                </motion.div>
+                </Box>
               </Grid>
 
             </Grid>
-          </motion.div>
         </Container>
       </Box>
 
       {/* ── STATS ── */}
-      <Box ref={statsRef} sx={{ bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.PRIMARY_PURPLE, py: { xs: 4, md: 5 } }}>
+      <Box data-animate sx={{ bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.PRIMARY_PURPLE, py: { xs: 4, md: 5 } }}>
         <Container maxWidth="lg">
-          <motion.div initial="hidden" animate={statsInView ? "visible" : "hidden"} variants={stagger}>
             <Grid container spacing={2} justifyContent="center">
               {stats.map((s, i) => (
                 <Grid size={{ xs: 6, sm: 3 }} key={i}>
-                  <motion.div variants={fadeUp}>
-                    <Box sx={{ textAlign: "center" }}>
-                      <Typography sx={{ fontSize: { xs: "2rem", md: "2.75rem" }, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{s.value}</Typography>
-                      <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)", mt: 0.5 }}>{s.label}</Typography>
-                    </Box>
-                  </motion.div>
+                  <Box data-animate data-delay={String(i * 80)} sx={{ textAlign: "center" }}>
+                    <Typography sx={{ fontSize: { xs: "2rem", md: "2.75rem" }, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{s.value}</Typography>
+                    <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)", mt: 0.5 }}>{s.label}</Typography>
+                  </Box>
                 </Grid>
               ))}
             </Grid>
-          </motion.div>
         </Container>
       </Box>
 
       <Container maxWidth="lg" sx={{ py: { xs: 6, md: 9 } }}>
 
         {/* ── BENEFITS ── */}
-        <Box ref={benefitsRef} sx={{ mb: { xs: 8, md: 10 } }}>
-          <motion.div initial="hidden" animate={benefitsInView ? "visible" : "hidden"} variants={stagger}>
-            <motion.div variants={fadeUp}>
+        <Box sx={{ mb: { xs: 8, md: 10 } }}>
+            <Box data-animate>
               <Typography variant="h4" sx={{ fontWeight: 800, color: primaryTxt, textAlign: "center", mb: 1 }}>Why Join KartSquare?</Typography>
               <Typography variant="body1" sx={{ color: secondaryTxt, textAlign: "center", mb: 5, maxWidth: 500, mx: "auto" }}>
                 Everything you need to grow your service business in one place.
               </Typography>
-            </motion.div>
+            </Box>
             <Grid container spacing={3}>
               {benefits.map((b, i) => (
                 <Grid size={{ xs: 12, sm: 6, md: 3 }} key={i}>
-                  <motion.div variants={fadeUp}>
+                  <Box data-animate data-delay={String(i * 80)}>
                     <Card elevation={0} sx={{
                       height: "100%", bgcolor: cardBg, border: `1px solid ${border}`, borderRadius: "16px",
                       p: 0.5, transition: "all 0.3s ease", position: "relative", overflow: "hidden",
@@ -372,26 +344,24 @@ export default function JoinAsProviderView() {
                         <Typography variant="body2" sx={{ color: secondaryTxt, lineHeight: 1.65 }}>{b.desc}</Typography>
                       </CardContent>
                     </Card>
-                  </motion.div>
+                  </Box>
                 </Grid>
               ))}
             </Grid>
-          </motion.div>
         </Box>
 
         {/* ── HOW IT WORKS ── */}
-        <Box ref={stepsRef} sx={{ mb: { xs: 8, md: 10 } }}>
-          <motion.div initial="hidden" animate={stepsInView ? "visible" : "hidden"} variants={stagger}>
-            <motion.div variants={fadeUp}>
+        <Box sx={{ mb: { xs: 8, md: 10 } }}>
+            <Box data-animate>
               <Typography variant="h4" sx={{ fontWeight: 800, color: primaryTxt, textAlign: "center", mb: 1 }}>How It Works</Typography>
               <Typography variant="body1" sx={{ color: secondaryTxt, textAlign: "center", mb: 6, maxWidth: 460, mx: "auto" }}>
                 Get started in minutes. It's simple and completely free.
               </Typography>
-            </motion.div>
+            </Box>
             <Grid container spacing={4} justifyContent="center">
               {steps.map((s, i) => (
                 <Grid size={{ xs: 12, sm: 4 }} key={i}>
-                  <motion.div variants={fadeUp}>
+                  <Box data-animate data-delay={String(i * 100)}>
                     <Box sx={{ textAlign: "center", px: 2 }}>
                       <Box sx={{
                         width: 72, height: 72, borderRadius: "50%", mx: "auto", mb: 2.5,
@@ -404,26 +374,24 @@ export default function JoinAsProviderView() {
                       <Typography variant="h6" sx={{ fontWeight: 700, color: primaryTxt, mb: 1 }}>{s.title}</Typography>
                       <Typography variant="body2" sx={{ color: secondaryTxt, lineHeight: 1.7 }}>{s.desc}</Typography>
                     </Box>
-                  </motion.div>
+                  </Box>
                 </Grid>
               ))}
             </Grid>
-          </motion.div>
         </Box>
 
         {/* ── GENUINE CALLS + INSTANT PAYOUT ── */}
-        <Box ref={payoutRef} sx={{ mb: { xs: 8, md: 10 } }}>
-          <motion.div initial="hidden" animate={payoutInView ? "visible" : "hidden"} variants={stagger}>
-            <motion.div variants={fadeUp}>
+        <Box sx={{ mb: { xs: 8, md: 10 } }}>
+            <Box data-animate>
               <Typography variant="h4" sx={{ fontWeight: 800, color: primaryTxt, textAlign: "center", mb: 1 }}>Built for Your Peace of Mind</Typography>
               <Typography variant="body1" sx={{ color: secondaryTxt, textAlign: "center", mb: 5, maxWidth: 520, mx: "auto" }}>
                 No surprises, no delays. KartSquare is designed around what matters most to providers.
               </Typography>
-            </motion.div>
+            </Box>
             <Grid container spacing={3}>
               {payoutFeatures.map((f, i) => (
                 <Grid size={{ xs: 12, sm: 6 }} key={i}>
-                  <motion.div variants={fadeUp}>
+                  <Box data-animate data-delay={String(i * 100)}>
                     <Box sx={{
                       bgcolor: cardBg, border: `2px solid ${f.color}30`, borderRadius: "20px", p: { xs: 3, sm: 4 },
                       position: "relative", overflow: "hidden", height: "100%",
@@ -439,26 +407,24 @@ export default function JoinAsProviderView() {
                       <Typography variant="h5" sx={{ fontWeight: 800, color: primaryTxt, mb: 1.5 }}>{f.title}</Typography>
                       <Typography variant="body1" sx={{ color: secondaryTxt, lineHeight: 1.75 }}>{f.desc}</Typography>
                     </Box>
-                  </motion.div>
+                  </Box>
                 </Grid>
               ))}
             </Grid>
-          </motion.div>
         </Box>
 
         {/* ── PREMIUM SERVICES ── */}
-        <Box ref={premiumRef} sx={{ mb: { xs: 8, md: 10 } }}>
-          <motion.div initial="hidden" animate={premiumInView ? "visible" : "hidden"} variants={stagger}>
-            <motion.div variants={fadeUp}>
+        <Box sx={{ mb: { xs: 8, md: 10 } }}>
+            <Box data-animate>
               <Typography variant="h4" sx={{ fontWeight: 800, color: primaryTxt, textAlign: "center", mb: 1 }}>Supercharge Your Growth</Typography>
               <Typography variant="body1" sx={{ color: secondaryTxt, textAlign: "center", mb: 5, maxWidth: 560, mx: "auto" }}>
                 Free tools get you started. Our premium add-ons take your business to the next level.
               </Typography>
-            </motion.div>
+            </Box>
             <Grid container spacing={3}>
               {premiumServices.map((s, i) => (
                 <Grid size={{ xs: 12, sm: 6 }} key={i}>
-                  <motion.div variants={fadeUp}>
+                  <Box data-animate data-delay={String(i * 80)}>
                     <Card elevation={0} sx={{
                       height: "100%", bgcolor: cardBg, border: `1px solid ${border}`, borderRadius: "20px",
                       transition: "all 0.3s ease",
@@ -487,26 +453,24 @@ export default function JoinAsProviderView() {
                         </Box>
                       </CardContent>
                     </Card>
-                  </motion.div>
+                  </Box>
                 </Grid>
               ))}
             </Grid>
-          </motion.div>
         </Box>
 
         {/* ── TESTIMONIALS ── */}
-        <Box ref={testimonialsRef} sx={{ mb: { xs: 8, md: 10 } }}>
-          <motion.div initial="hidden" animate={testimonialsInView ? "visible" : "hidden"} variants={stagger}>
-            <motion.div variants={fadeUp}>
+        <Box sx={{ mb: { xs: 8, md: 10 } }}>
+            <Box data-animate>
               <Typography variant="h4" sx={{ fontWeight: 800, color: primaryTxt, textAlign: "center", mb: 1 }}>Providers Who Trust Us</Typography>
               <Typography variant="body1" sx={{ color: secondaryTxt, textAlign: "center", mb: 5 }}>
                 Real stories from real service providers across India.
               </Typography>
-            </motion.div>
+            </Box>
             <Grid container spacing={3}>
               {testimonials.map((t, i) => (
                 <Grid size={{ xs: 12, sm: 6, md: 3 }} key={i}>
-                  <motion.div variants={fadeUp}>
+                  <Box data-animate data-delay={String(i * 80)}>
                     <Card elevation={0} sx={{
                       height: "100%", bgcolor: cardBg, border: `1px solid ${border}`, borderRadius: "16px",
                       transition: "all 0.25s ease",
@@ -525,7 +489,7 @@ export default function JoinAsProviderView() {
                         <Divider sx={{ borderColor: border, mb: 2 }} />
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                           <Box sx={{ width: 48, height: 48, borderRadius: "50%", overflow: "hidden", flexShrink: 0, border: `2px solid ${COLORS.PURPLE_ALPHA_20}` }}>
-                            <Image src={t.img} alt={t.name} width={48} height={48} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+                            <Image src={t.img} alt={t.name} width={48} height={48} loading="lazy" style={{ objectFit: "cover", width: "100%", height: "100%" }} />
                           </Box>
                           <Box>
                             <Typography variant="body2" sx={{ fontWeight: 700, color: primaryTxt, lineHeight: 1.2 }}>{t.name}</Typography>
@@ -534,17 +498,15 @@ export default function JoinAsProviderView() {
                         </Box>
                       </CardContent>
                     </Card>
-                  </motion.div>
+                  </Box>
                 </Grid>
               ))}
             </Grid>
-          </motion.div>
         </Box>
 
         {/* ── REGISTRATION FORM ── */}
-        <Box id="registration-form" ref={formRef}>
-          <motion.div initial="hidden" animate={formInView ? "visible" : "hidden"} variants={stagger}>
-            <motion.div variants={fadeUp}>
+        <Box id="registration-form">
+          <Box data-animate>
               <Box sx={{
                 bgcolor: cardBg, border: `2px solid ${COLORS.PRIMARY_PURPLE}`,
                 borderRadius: "24px", p: { xs: 3, sm: 5 },
@@ -639,8 +601,7 @@ export default function JoinAsProviderView() {
                   </Box>
                 )}
               </Box>
-            </motion.div>
-          </motion.div>
+          </Box>
         </Box>
 
       </Container>

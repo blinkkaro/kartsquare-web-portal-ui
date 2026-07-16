@@ -73,6 +73,46 @@
     }
 }
 
+/* ── Scroll-reveal system (replaces framer-motion on External/WebView pages) ── */
+@keyframes ks-fade-up {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ks-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Default hidden state — elements with data-animate start invisible */
+[data-animate] {
+    opacity: 0;
+    transform: translateY(28px);
+}
+
+/* Triggered by IntersectionObserver in useScrollReveal */
+[data-animate].ks-visible {
+    animation: ks-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Variant: fade only (no Y movement) — use data-animate="fade" */
+[data-animate="fade"] {
+    opacity: 0;
+    transform: none;
+}
+[data-animate="fade"].ks-visible {
+    animation: ks-fade-in 0.5s ease forwards;
+}
+
+/* Respect user preference */
+@media (prefers-reduced-motion: reduce) {
+    [data-animate], [data-animate="fade"] {
+        opacity: 1;
+        transform: none;
+        animation: none !important;
+    }
+}
+
 html {
     scroll-behavior: smooth;
 }

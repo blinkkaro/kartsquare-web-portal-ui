@@ -32,8 +32,7 @@ export async function GET() {
   // 1. Static Routes
   const staticRoutes = [
     { url: "/", priority: "1.0", changefreq: "daily" },
-    { url: "/services", priority: "0.95", changefreq: "daily" },
-    { url: "/cus/reels", priority: "0.85", changefreq: "daily" },
+
     { url: "/store", priority: "0.95", changefreq: "daily" },
     { url: "/store/products", priority: "0.9", changefreq: "daily" },
     { url: "/search", priority: "0.85", changefreq: "weekly" },
@@ -46,12 +45,6 @@ export async function GET() {
     { url: "/termsConditions", priority: "0.5", changefreq: "monthly" },
     { url: "/privacyPolicy", priority: "0.5", changefreq: "monthly" },
     { url: "/cookie-policy", priority: "0.5", changefreq: "monthly" },
-    // External public pages (used inside mobile app webviews + public web)
-    { url: "/External/JoinAsProvider", priority: "0.7", changefreq: "monthly" },
-    { url: "/External/GlobalAboutUs", priority: "0.65", changefreq: "monthly" },
-    { url: "/External/GlobalContactUs", priority: "0.6", changefreq: "monthly" },
-    // NOTE: /businessInfo removed — it is a registration-step page (noindex)
-    // NOTE: /External/DeleteAccount removed — it is an auth/utility page (noindex)
   ];
 
   // 2. Fetch Dynamic Data

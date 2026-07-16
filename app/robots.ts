@@ -1,8 +1,6 @@
-import { MetadataRoute } from 'next';
+import { MetadataRoute } from "next";
 
-const BASE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com"
-).replace(/\/$/, "");
+const BASE_URL = "https://kartsquare.com".replace(/\/$/, "");
 
 /**
  * Robots.txt tuned for marketplace SEO:
@@ -13,51 +11,46 @@ const BASE_URL = (
 export default function robots(): MetadataRoute.Robots {
   /** Paths that should never be indexed — shared across all user agents */
   const privateDisallow = [
-    '/api/',
-    '/_next/',
+    "/api/",
+    "/_next/",
     // ── Auth & onboarding flows ──────────────────────────────────────────
-    '/login',
-    '/signUp',
-    '/resetPassword',
-    '/forgotPassword',
-    '/emailVerification',
-    '/verifyDocuments',
-    '/selectRole',
-    '/preferences',
-    '/businessInfo',
-    '/unsubscribe',
+    "/login",
+    "/signUp",
+    "/resetPassword",
+    "/forgotPassword",
+    "/emailVerification",
+    "/verifyDocuments",
+    "/selectRole",
+    "/preferences",
+    "/businessInfo",
+    "/unsubscribe",
     // ── Customer private areas ───────────────────────────────────────────
-    '/dashboard',
-    '/schedule',
-    '/chat',
-    '/myAccount/',
-    '/cus/bookings',
-    '/cus/notifications',
+    "/dashboard",
+    "/schedule",
+    "/chat",
+    "/myAccount/",
+    "/cus/bookings",
+    "/cus/notifications",
     // ── Service booking checkout (transactional, not for indexing) ────────
-    '/services/*/book',
+    "/services/*/book",
     // ── Service provider private dashboard ──────────────────────────────
-    '/spr/',
+    "/spr/",
     // ── Supplier (customer-alias) private area ────────────────────────────
-    '/sup/',
+    "/sup/",
     // ── Supplier portal — full prefix (auth pages + dashboard) ────────────
-    '/supplier/',
+    "/supplier/",
+    // ── WebView-only pages (mobile app internal, not for web indexing) ────
+    "/External/",
   ] as const;
 
   return {
     rules: [
       {
-        userAgent: '*',
-        allow: '/',
-        disallow: [...privateDisallow],
-      },
-      {
-        // Googlebot gets the same rules — explicit declaration lets Search Console show them clearly
-        userAgent: 'Googlebot',
-        allow: '/',
+        userAgent: "*",
+        allow: "/",
         disallow: [...privateDisallow],
       },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,
-    host: BASE_URL,
   };
 }
