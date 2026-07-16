@@ -6,10 +6,11 @@ import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { seoPublic } from "@/lib/seo/buildMetadata";
 
 export const metadata = seoPublic({
-  title: "Search",
+  title: "Search Products & Services",
   description:
     "Search KartSquare for products, services, suppliers, and providers. Filter results and compare options in one place.",
   path: "/search",
+  keywords: ["search products India", "find services online", "KartSquare search"],
 });
 
 export default function SearchPage() {

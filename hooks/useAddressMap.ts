@@ -105,15 +105,11 @@ export const useAddressMap = ({
       setIsInternalUpdate(true);
       
       const finalBuildingNo = streetNumber || premise || "";
-      if (finalBuildingNo) {
-        setValue("building_no", finalBuildingNo, { shouldValidate: true });
-      }
+      setValue("building_no", finalBuildingNo, { shouldValidate: true, shouldDirty: true });
 
       // Landmark/Area
       const finalLandmark = pointOfInterest || neighborhood || "";
-      if (finalLandmark) {
-        setValue("landmark", finalLandmark, { shouldValidate: true });
-      }
+      setValue("landmark", finalLandmark, { shouldValidate: true, shouldDirty: true });
 
       // Better Street Address Construction
       // If we have a route, use it. Otherwise use sublocalities.
@@ -127,15 +123,13 @@ export const useAddressMap = ({
         streetAddress = addressData.formatted_address.split(", " + locality)[0];
       }
 
-      if (streetAddress) {
-        setValue("address", streetAddress, { shouldValidate: true });
-      }
+      setValue("address", streetAddress || "", { shouldValidate: true, shouldDirty: true });
 
-      const finalCity = locality || subLocality || adminArea2;
-      if (finalCity) setValue("city_town", finalCity, { shouldValidate: true });
-      if (adminArea1) setValue("state", adminArea1, { shouldValidate: true });
-      if (countryName) setValue("country", countryName, { shouldValidate: true });
-      if (postalCode) setValue("pincode", postalCode, { shouldValidate: true });
+      const finalCity = locality || subLocality || adminArea2 || "";
+      setValue("city_town", finalCity, { shouldValidate: true, shouldDirty: true });
+      setValue("state", adminArea1 || "", { shouldValidate: true, shouldDirty: true });
+      setValue("country", countryName || "India", { shouldValidate: true, shouldDirty: true });
+      setValue("pincode", postalCode || "", { shouldValidate: true, shouldDirty: true });
       
       setTimeout(() => {
         setIsInternalUpdate(false);
@@ -209,17 +203,30 @@ export const useAddressMap = ({
       const neighborhood = findComponent("neighborhood");
 
       setIsInternalUpdate(true);
-      if (streetNumber || route) setValue("address", `${streetNumber} ${route}`.trim());
-      else if (location.address) setValue("address", location.address);
-
-      if (premise || streetNumber) setValue("building_no", premise || streetNumber);
-      if (locality || sublocality) setValue("city_town", locality || sublocality);
-      if (administrativeArea) setValue("state", administrativeArea);
-      if (country) setValue("country", country);
-      if (postalCode) setValue("pincode", postalCode);
       
-      const finalLandmark = pointOfInterest || neighborhood || sublocality2;
-      if (finalLandmark) setValue("landmark", finalLandmark);
+      // Override/Clear fields with fallbacks to avoid leaking old/current address details
+      setValue("building_no", premise || streetNumber || "", { shouldValidate: true, shouldDirty: true });
+      setValue("floor", "", { shouldValidate: false, shouldDirty: true });
+
+      let streetAddress = [streetNumber, route, sublocality, sublocality2]
+        .filter(Boolean)
+        .join(", ");
+      
+      if (!streetAddress && location.address) {
+        streetAddress = location.address;
+        if (locality && streetAddress.includes(locality)) {
+          streetAddress = streetAddress.split(", " + locality)[0];
+        }
+      }
+      
+      setValue("address", streetAddress || "", { shouldValidate: true, shouldDirty: true });
+      setValue("city_town", locality || sublocality || "", { shouldValidate: true, shouldDirty: true });
+      setValue("state", administrativeArea || "", { shouldValidate: true, shouldDirty: true });
+      setValue("country", country || "India", { shouldValidate: true, shouldDirty: true });
+      setValue("pincode", postalCode || "", { shouldValidate: true, shouldDirty: true });
+      
+      const finalLandmark = pointOfInterest || neighborhood || sublocality2 || "";
+      setValue("landmark", finalLandmark, { shouldValidate: true, shouldDirty: true });
       
       setTimeout(() => setIsInternalUpdate(false), 500);
     }

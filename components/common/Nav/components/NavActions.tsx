@@ -174,6 +174,7 @@ const NavActions: React.FC<NavActionsProps> = ({
             width: { xs: 32, md: 36 },
             height: { xs: 32, md: 36 },
             cursor: "pointer",
+            ml: 1,
             transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
             boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
             "&:hover": {

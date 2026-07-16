@@ -36,6 +36,6 @@ export const BREADCRUMBS = {
   ],
   SERVICES: [
     { name: "Home", item: "/" },
-    { name: "Services", item: "/cus/servicesList" },
+    { name: "Services", item: "/services" },
   ],
 };

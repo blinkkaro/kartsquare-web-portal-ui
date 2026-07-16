@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "generate-favicon": "node scripts/generate-favicon.cjs"
+    "generate-favicon": "node scripts/generate-favicon.cjs",
+    "update-assetlinks": "node scripts/update-assetlinks.cjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

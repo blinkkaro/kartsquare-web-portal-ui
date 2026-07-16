@@ -173,22 +173,38 @@ const ScheduleView = () => {
 
   return (
     <AuthWrapper>
-      {/* Header */}
-      <Box
+      {/* Header & Title Inline */}
+      <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1.5, sm: 2 }, mb: 0.5 }}>
+        <BackButton onClick={() => handleBack()} />
+        <Typography
+          variant="h2"
+          sx={{
+            fontWeight: 700,
+            color: "text.primary",
+            fontSize: {
+              xs: "1.75rem",
+              sm: "2rem",
+              md: "2.25rem",
+              lg: "2.5rem",
+              xl: "3.5rem",
+            },
+            lineHeight: 1.2,
+          }}
+        >
+          {t("setYourSchedule")}
+        </Typography>
+      </Box>
+      <Typography
+        variant="body1"
+        color="text.secondary"
         sx={{
           mb: { xs: 2, md: 4 },
-          display: "flex",
-          alignItems: "center",
-          gap: 2,
+          ml: { xs: 5.5, sm: 6.5 }, // Visual offset to align perfectly under the title text
+          fontSize: { xs: "0.8rem", lg: "0.875rem", xl: "1.1rem" },
         }}
       >
-        <BackButton onClick={() => handleBack()} />
-      </Box>
-
-      <Title
-        title={t("setYourSchedule")}
-        subtitle={t("defineYourAvailability")}
-      />
+        {t("defineYourAvailability")}
+      </Typography>
 
       <ErrorMessage isVisible={!!error} error={error} />
 

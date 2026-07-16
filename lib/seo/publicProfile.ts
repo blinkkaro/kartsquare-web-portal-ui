@@ -210,14 +210,16 @@ export function buildProfileMetadata(
   const keywordsRaw = str(profile.meta_keywords);
   const canonicalPath = `/in/${encodeURIComponent(username)}`;
 
+  const ogTitle = str(profile.og_title) || title;
+  const ogDesc = str(profile.og_description) || description;
+
   const profilePicRaw =
     str(profile.og_image) ||
     str(profile.profile_pic) ||
     str(profile.logo_url);
-  const profilePic = profilePicRaw ? absolutizeMediaUrl(profilePicRaw) : undefined;
-
-  const ogTitle = str(profile.og_title) || title;
-  const ogDesc = str(profile.og_description) || description;
+  const profilePic = profilePicRaw
+    ? absolutizeMediaUrl(profilePicRaw)
+    : `${SITE_URL}/og?title=${encodeURIComponent(ogTitle)}&desc=${encodeURIComponent(ogDesc.slice(0, 120))}`;
 
   return {
     title: { absolute: title },
@@ -234,13 +236,13 @@ export function buildProfileMetadata(
       siteName: "KartSquare",
       title: ogTitle,
       description: ogDesc,
-      ...(profilePic ? { images: [{ url: profilePic }] } : {}),
+      images: [{ url: profilePic, width: 1200, height: 630, alt: ogTitle }],
     },
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
       description: ogDesc,
-      ...(profilePic ? { images: [profilePic] } : {}),
+      images: [profilePic],
     },
     robots: { index: true, follow: true },
   };

@@ -40,7 +40,8 @@ export function seoPublic(opts: {
     ? brandTitle(opts.ogTitle)
     : absoluteTitle;
   const ogDescResolved = opts.ogDescription ?? opts.description;
-  const image = opts.image;
+  // Always fall back to the dynamic OG image so every public page has a correct 1200x630 image
+  const image = opts.image ?? `${SITE_URL}/og?title=${encodeURIComponent(opts.title)}&desc=${encodeURIComponent(opts.description.slice(0, 120))}`;
   const ogType = opts.ogType ?? "website";
 
   return {
@@ -55,13 +56,13 @@ export function seoPublic(opts: {
       siteName: "KartSquare",
       type: ogType,
       locale: "en_IN",
-      ...(image ? { images: [{ url: image }] } : {}),
+      images: [{ url: image, width: 1200, height: 630, alt: ogTitleResolved }],
     },
     twitter: {
-      card: image ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title: ogTitleResolved,
       description: ogDescResolved,
-      ...(image ? { images: [image] } : {}),
+      images: [image],
     },
     robots: {
       index: true,

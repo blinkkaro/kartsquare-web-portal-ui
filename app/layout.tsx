@@ -1,9 +1,20 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { Providers } from "./providers";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com";
+
+/** Viewport — must be exported separately from metadata in Next.js 14+ */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#172023" },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -53,6 +64,8 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   openGraph: {
@@ -63,11 +76,22 @@ export const metadata: Metadata = {
     title: "KartSquare – B2B Marketplace | Products & Services from Verified Suppliers",
     description:
       "India's B2B marketplace for products and services. Discover and buy from verified suppliers. Book professional services online.",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "KartSquare – India's B2B Marketplace",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
+    site: "@kartsquare",
+    creator: "@kartsquare",
     title: "KartSquare – B2B Marketplace",
     description: "Products & services from verified suppliers. Buy and book online.",
+    images: [`${SITE_URL}/og-image.png`],
   },
   alternates: {
     canonical: SITE_URL,
@@ -80,10 +104,12 @@ const organizationJsonLd = {
   "@type": "Organization",
   name: "KartSquare",
   url: SITE_URL,
-  logo: `${SITE_URL}/logo.png`,
+  // /icon.png (192×192) is the verified PWA icon present in /public
+  logo: `${SITE_URL}/icon.png`,
   description: "B2B marketplace for products and services from verified suppliers.",
   sameAs: [],
 };
+
 
 const websiteJsonLd = {
   "@context": "https://schema.org",

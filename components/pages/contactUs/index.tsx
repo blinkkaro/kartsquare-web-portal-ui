@@ -82,7 +82,6 @@ function ContactUsView() {
     setIsSubmitting(true);
     try {
       setError("");
-      // Map form data to API interface
       const apiData = {
         name: data.name,
         email: data.email,
@@ -90,8 +89,6 @@ function ContactUsView() {
         phone: data.phone,
         message: data.message,
       };
-
-      // Call the contact us API
       await contactUsService.contactUs(apiData);
       reset();
       setShowSuccess(true);
@@ -102,7 +99,6 @@ function ContactUsView() {
           error.message ||
           "Failed to send message. Please try again.",
       );
-      // Show error message
     } finally {
       setIsSubmitting(false);
     }
@@ -112,26 +108,13 @@ function ContactUsView() {
   const email = "contact@kartsquare.com";
   const address = "Dubai, United Arab Emirates";
 
-  // Contact-related images with descriptions
-
   return (
     <ProfileWrapper showBackButton>
       <Box
         sx={{
           px: { xs: 2, sm: 3, md: 4, lg: 5, xl: 8 },
-          // py: { xs: 3, sm: 4, md: 5 },
         }}
       >
-        {/* Back Button - Mobile */}
-        {/* <Box sx={{ display: { xs: "block", lg: "none" }, mb: 2 }}>
-          <BackButton />
-        </Box>
-
-        {/* Back Button - Desktop */}
-        {/* <Box sx={{ display: { xs: "none", lg: "block" }, mb: 2 }}>
-          <BackButton />
-        </Box> */}
-
         <Box sx={{ mb: { xs: 3, sm: 4 } }}>
           <Typography
             variant="h4"
@@ -212,7 +195,6 @@ function ContactUsView() {
           </Typography>
 
           <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
-            {/* First Name */}
             <Grid size={{ xs: 12, sm: 6 }}>
               <Box sx={{ mb: { xs: 0, sm: 1 } }}>
                 <Typography
@@ -244,7 +226,6 @@ function ContactUsView() {
               </Box>
             </Grid>
 
-            {/* Last Name */}
             <Grid size={{ xs: 12, sm: 6 }}>
               <Box sx={{ mb: { xs: 0, sm: 1 } }}>
                 <Typography
@@ -277,7 +258,6 @@ function ContactUsView() {
               </Box>
             </Grid>
 
-            {/* Country Code */}
             <Grid size={{ xs: 12, sm: 6 }}>
               <Box sx={{ mb: { xs: 0, sm: 1 } }}>
                 <Typography
@@ -312,15 +292,9 @@ function ContactUsView() {
                             ? COLORS.BORDER.DEFAULT_DARK
                             : COLORS.BORDER.DEFAULT_LIGHT
                         }`,
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          border: "none",
-                        },
-                        "&:hover .MuiOutlinedInput-notchedOutline": {
-                          border: "none",
-                        },
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          border: "none",
-                        },
+                        "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+                        "&:hover .MuiOutlinedInput-notchedOutline": { border: "none" },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": { border: "none" },
                       }}
                     >
                       {countries.map((country) => (
@@ -334,7 +308,6 @@ function ContactUsView() {
               </Box>
             </Grid>
 
-            {/* Phone Number */}
             <Grid size={{ xs: 12, sm: 6 }}>
               <Box sx={{ mb: { xs: 0, sm: 1 } }}>
                 <Typography
@@ -355,9 +328,7 @@ function ContactUsView() {
                   control={control}
                   placeholder={t("phoneNumber")}
                   type="tel"
-                  inputProps={{
-                    maxLength: 10,
-                  }}
+                  inputProps={{ maxLength: 10 }}
                   InputProps={{
                     sx: {
                       borderRadius: "12px",
@@ -370,7 +341,6 @@ function ContactUsView() {
               </Box>
             </Grid>
 
-            {/* Message */}
             <Grid size={{ xs: 12 }}>
               <Box sx={{ mb: { xs: 1, sm: 2 } }}>
                 <Typography
@@ -413,7 +383,6 @@ function ContactUsView() {
             </Grid>
           </Grid>
 
-          {/* Submit Button */}
           <Box
             sx={{
               display: "flex",
@@ -435,13 +404,8 @@ function ContactUsView() {
                 fontSize: { xs: "0.875rem", sm: "0.9375rem", md: "1rem" },
                 fontWeight: 600,
                 borderRadius: "12px",
-                "&:hover": {
-                  background: COLORS.PURPLE_HOVER,
-                },
-                "&:disabled": {
-                  background: COLORS.PRIMARY_PURPLE,
-                  opacity: 0.6,
-                },
+                "&:hover": { background: COLORS.PURPLE_HOVER },
+                "&:disabled": { background: COLORS.PRIMARY_PURPLE, opacity: 0.6 },
               }}
             >
               {isSubmitting ? t("loading") || "Loading..." : t("sendMessage")}
@@ -450,7 +414,6 @@ function ContactUsView() {
         </Box>
       </Box>
 
-      {/* Success Modal */}
       <SuccessModel
         open={showSuccess}
         onClose={() => setShowSuccess(false)}
