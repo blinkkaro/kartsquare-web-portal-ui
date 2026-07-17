@@ -4,7 +4,6 @@ import { seoPublic } from "@/lib/seo/buildMetadata";
 
 export const metadata = seoPublic({
   title: "Contact KartSquare — Support, Partnerships & Enquiries",
-  title: "Contact KartSquare — Support, Partnerships & Enquiries",
   description:
     "Reach the KartSquare team for partnerships, support, press, or marketplace questions. We respond to business and customer enquiries promptly.",
   path: "/contact-us",
