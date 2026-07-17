@@ -5,7 +5,7 @@ export const metadata = seoPublic({
   title: "Privacy Policy | KartSquare",
   description:
     "How KartSquare collects, uses, and protects your personal data across our marketplace, bookings, and supplier tools.",
-  path: "/privacyPolicy",
+  path: "/privacy-policy",
   keywords: [
     "KartSquare privacy policy",
     "data protection India",

@@ -95,6 +95,10 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: SITE_URL,
+    // Establish hreflang for India locale — signals to Google this is English content for IN.
+    languages: {
+      "en-IN": SITE_URL,
+    },
   },
   category: "marketplace",
 };
@@ -107,7 +111,13 @@ const organizationJsonLd = {
   // /icon.png (192×192) is the verified PWA icon present in /public
   logo: `${SITE_URL}/icon.png`,
   description: "B2B marketplace for products and services from verified suppliers.",
-  sameAs: [],
+  // sameAs: Add social profiles to boost entity recognition in Google's Knowledge Graph.
+  // Add or remove handles as your actual social presence dictates.
+  sameAs: [
+    "https://twitter.com/kartsquare",
+    "https://www.linkedin.com/company/kartsquare",
+    "https://www.instagram.com/kartsquare",
+  ],
 };
 
 

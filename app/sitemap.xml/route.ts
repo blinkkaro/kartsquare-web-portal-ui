@@ -32,19 +32,24 @@ export async function GET() {
   // 1. Static Routes
   const staticRoutes = [
     { url: "/", priority: "1.0", changefreq: "daily" },
-
+    // NOTE: /services removed — app/services/page.tsx does not exist (only /services/[id]).
+    // A 404 URL in the sitemap signals bad quality to Google and wastes crawl budget.
     { url: "/store", priority: "0.95", changefreq: "daily" },
     { url: "/store/products", priority: "0.9", changefreq: "daily" },
     { url: "/search", priority: "0.85", changefreq: "weekly" },
     { url: "/map", priority: "0.75", changefreq: "weekly" },
-    { url: "/contactUs", priority: "0.7", changefreq: "monthly" },
+    { url: "/contact-us", priority: "0.7", changefreq: "monthly" },
     { url: "/business-listing", priority: "0.8", changefreq: "weekly" },
     { url: "/blogs", priority: "0.88", changefreq: "weekly" },
     { url: "/careers", priority: "0.6", changefreq: "weekly" },
     // Legal & policy
-    { url: "/termsConditions", priority: "0.5", changefreq: "monthly" },
-    { url: "/privacyPolicy", priority: "0.5", changefreq: "monthly" },
+    { url: "/terms-conditions", priority: "0.5", changefreq: "monthly" },
+    { url: "/privacy-policy", priority: "0.5", changefreq: "monthly" },
     { url: "/cookie-policy", priority: "0.5", changefreq: "monthly" },
+    // NOTE: /cus/reels removed — /cus/ is disallowed in robots.txt.
+    // Having a disallowed URL in the sitemap is a direct contradiction that confuses Googlebot.
+    // NOTE: /External/* removed — these are thin-content webview pages for the mobile app.
+    // They are marked noindex in their page metadata; including them in the sitemap is misleading.
   ];
 
   // 2. Fetch Dynamic Data

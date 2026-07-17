@@ -13,18 +13,15 @@ import { COLORS } from "@/constants/colors";
 import Image from "next/image";
 import SectionHeading from "./SectionHeading";
 import SectionCTA from "./SectionCTA";
+import { ScrollStagger, staggerItemVariants } from "./ScrollReveal";
 
 const PURPLE = COLORS.PRIMARY_PURPLE;
 const PURPLE_HOVER = COLORS.PURPLE_HOVER;
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 28 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.12, duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] as const },
-  }),
-};
+// Individual card animation — used as staggerItemVariants child inside ScrollStagger
+// This replaces per-card whileInView observers (was 3 IntersectionObserver instances)
+// with a single shared ScrollStagger observer.
+const cardVariants = staggerItemVariants;
 
 const ShowWhatYouOfferSection = () => {
   const { t } = useTranslate();
@@ -101,6 +98,8 @@ const ShowWhatYouOfferSection = () => {
         </Box>
 
         {/* Bento: hero card left, two compact cards right (desktop) | stacked (mobile) */}
+        {/* ScrollStagger: single IntersectionObserver for all 3 cards vs per-card observers */}
+        <ScrollStagger>
         <Box
           sx={{
             display: "grid",
@@ -113,10 +112,6 @@ const ShowWhatYouOfferSection = () => {
           {/* Hero card — large, spans 2 rows on desktop */}
           <Box sx={{ gridRow: { md: "1 / 3" }, minHeight: 0 }}>
           <motion.div
-            custom={0}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
             variants={cardVariants}
             style={{ height: "100%" }}
           >
@@ -249,10 +244,6 @@ const ShowWhatYouOfferSection = () => {
             return (
               <motion.div
                 key={i}
-                custom={index}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
                 variants={cardVariants}
               >
                 <Box
@@ -290,6 +281,7 @@ const ShowWhatYouOfferSection = () => {
                       src={card.image}
                       alt={card.imageAlt}
                       fill
+                      loading="lazy"
                       style={{ objectFit: "contain", objectPosition: "center" }}
                     />
                     <Typography
@@ -371,6 +363,7 @@ const ShowWhatYouOfferSection = () => {
             );
           })}
         </Box>
+        </ScrollStagger>
 
         <Box sx={{ display: "flex", justifyContent: "center", mt: { xs: 6, md: 8 } }}>
           <SectionCTA labelKey="getStartedNow" variant="contained" size="large" />

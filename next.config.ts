@@ -13,34 +13,38 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      // ── Services: make /services the canonical URL ──────────────────────
-      // Previously /services → /cus/servicesList. Reversed: /cus/servicesList
-      // now redirects to /services so Google indexes the clean top-level path.
+      // ── Services: /services → /cus/servicesList ──────────────────────────
       {
-        source: "/cus/servicesList",
-        destination: "/services",
+        source: "/services",
+        destination: "/cus/servicesList",
         permanent: true,
       },
-      // ── Kebab-case aliases for camelCase legal pages ─────────────────────
-      // Google prefers kebab-case; these redirects capture natural traffic.
+      // ── camelCase → kebab-case (Google prefers kebab-case) ───────────────
+      // kebab-case is the canonical destination; camelCase pages are kept as
+      // redirect sources so any existing inbound links still resolve correctly.
       {
-        source: "/contact-us",
-        destination: "/contactUs",
+        source: "/contactUs",
+        destination: "/contact-us",
         permanent: true,
       },
       {
-        source: "/privacy-policy",
-        destination: "/privacyPolicy",
+        source: "/privacyPolicy",
+        destination: "/privacy-policy",
+        permanent: true,
+      },
+      {
+        source: "/termsConditions",
+        destination: "/terms-conditions",
         permanent: true,
       },
       {
         source: "/terms-and-conditions",
-        destination: "/termsConditions",
+        destination: "/terms-conditions",
         permanent: true,
       },
       {
         source: "/terms",
-        destination: "/termsConditions",
+        destination: "/terms-conditions",
         permanent: true,
       },
       {
@@ -49,12 +53,20 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       // ── Old blog numeric ID redirect (also handled by middleware) ─────────
-      // Keep here as a safety net for external links
       {
         source: "/blog",
         destination: "/blogs",
         permanent: true,
       },
+    ];
+  },
+  async rewrites() {
+    return [
+      // Serve the existing camelCase page files at kebab-case canonical URLs.
+      // This avoids duplicating page files while making kebab-case the public URL.
+      { source: "/contact-us", destination: "/contactUs" },
+      { source: "/privacy-policy", destination: "/privacyPolicy" },
+      { source: "/terms-conditions", destination: "/termsConditions" },
     ];
   },
   images: {

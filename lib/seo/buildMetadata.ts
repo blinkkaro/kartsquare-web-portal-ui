@@ -40,15 +40,23 @@ export function seoPublic(opts: {
     ? brandTitle(opts.ogTitle)
     : absoluteTitle;
   const ogDescResolved = opts.ogDescription ?? opts.description;
-  // Always fall back to the dynamic OG image so every public page has a correct 1200x630 image
-  const image = opts.image ?? `${SITE_URL}/og?title=${encodeURIComponent(opts.title)}&desc=${encodeURIComponent(opts.description.slice(0, 120))}`;
+  // Always provide an OG image — fall back to the global og-image.png so every
+  // page gets a social card even when no page-specific image is passed.
+  const image = opts.image ?? `${SITE_URL}/og-image.png`;
   const ogType = opts.ogType ?? "website";
 
   return {
     title: { absolute: absoluteTitle },
     description: opts.description,
     ...(opts.keywords?.length ? { keywords: opts.keywords } : {}),
-    alternates: { canonical },
+    alternates: {
+      canonical,
+      // Establish hreflang now for future international expansion.
+      // en-IN signals to Google this content is English for India.
+      languages: {
+        "en-IN": canonical,
+      },
+    },
     openGraph: {
       title: ogTitleResolved,
       description: ogDescResolved,

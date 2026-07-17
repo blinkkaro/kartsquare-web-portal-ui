@@ -11,46 +11,49 @@ const BASE_URL = "https://kartsquare.com".replace(/\/$/, "");
 export default function robots(): MetadataRoute.Robots {
   /** Paths that should never be indexed — shared across all user agents */
   const privateDisallow = [
-    "/api/",
-    "/_next/",
+    '/api/',
+    '/_next/',
     // ── Auth & onboarding flows ──────────────────────────────────────────
-    "/login",
-    "/signUp",
-    "/resetPassword",
-    "/forgotPassword",
-    "/emailVerification",
-    "/verifyDocuments",
-    "/selectRole",
-    "/preferences",
-    "/businessInfo",
-    "/unsubscribe",
+    '/login',
+    '/signUp',
+    '/resetPassword',
+    '/forgotPassword',
+    '/emailVerification',
+    '/verifyDocuments',
+    '/selectRole',
+    '/preferences',
+    '/businessInfo',
+    '/unsubscribe',
     // ── Customer private areas ───────────────────────────────────────────
-    "/dashboard",
-    "/schedule",
-    "/chat",
-    "/myAccount/",
-    "/cus/bookings",
-    "/cus/notifications",
+    '/dashboard',
+    '/schedule',
+    '/chat',
+    '/myAccount/',
+    '/cus/bookings',
+    '/cus/notifications',
     // ── Service booking checkout (transactional, not for indexing) ────────
-    "/services/*/book",
+    '/services/*/book',
     // ── Service provider private dashboard ──────────────────────────────
-    "/spr/",
+    '/spr/',
     // ── Supplier (customer-alias) private area ────────────────────────────
-    "/sup/",
+    '/sup/',
     // ── Supplier portal — full prefix (auth pages + dashboard) ────────────
-    "/supplier/",
-    // ── WebView-only pages (mobile app internal, not for web indexing) ────
-    "/External/",
+    '/supplier/',
   ] as const;
 
   return {
     rules: [
       {
-        userAgent: "*",
-        allow: "/",
+        // Single wildcard rule — Googlebot (and all other crawlers) inherit from '*'.
+        // A duplicate Googlebot block with identical rules wastes robots.txt space and
+        // can confuse some parsers. Removed.
+        userAgent: '*',
+        allow: '/',
         disallow: [...privateDisallow],
       },
     ],
+    // NOTE: 'host' is NOT a valid robots.txt directive (it was a Yandex-specific extension).
+    // Next.js outputs "Host: ..." which some crawlers reject entirely. Removed.
     sitemap: `${BASE_URL}/sitemap.xml`,
   };
 }

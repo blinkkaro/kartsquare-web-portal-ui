@@ -1,10 +1,14 @@
 "use client";
-import React from "react";
+import React, { useRef } from "react";
 import { Box, Container, Typography, Grid, Card, CardContent, Divider } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import EmojiObjectsOutlinedIcon from "@mui/icons-material/EmojiObjectsOutlined";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import HandshakeOutlinedIcon from "@mui/icons-material/HandshakeOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
@@ -14,7 +18,9 @@ import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
 import SmartToyOutlinedIcon from "@mui/icons-material/SmartToyOutlined";
 import ExternalLogo from "@/components/common/Nav/components/ExternalLogo";
 import { COLORS } from "@/constants/colors";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
+
+const fadeUp = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
+const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
 
 const stats = [
   { value: "2M+", label: "Monthly Users" },
@@ -49,7 +55,21 @@ export default function GlobalAboutUsView() {
   const isDark = theme.palette.mode === "dark";
   const router = useRouter();
 
-  const pageRef = useScrollReveal();
+  const heroRef = useRef(null);
+  const missionRef = useRef(null);
+  const statsRef = useRef(null);
+  const storyRef = useRef(null);
+  const valuesRef = useRef(null);
+  const teamRef = useRef(null);
+  const ctaRef = useRef(null);
+
+  const heroInView = useInView(heroRef, { once: true, amount: 0.2 });
+  const missionInView = useInView(missionRef, { once: true, amount: 0.1 });
+  const statsInView = useInView(statsRef, { once: true, amount: 0.2 });
+  const storyInView = useInView(storyRef, { once: true, amount: 0.05 });
+  const valuesInView = useInView(valuesRef, { once: true, amount: 0.05 });
+  const teamInView = useInView(teamRef, { once: true, amount: 0.1 });
+  const ctaInView = useInView(ctaRef, { once: true, amount: 0.2 });
 
   const pageBg = isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT;
   const cardBg = isDark ? COLORS.BACKGROUND.PRIMARY_DARK : "#ffffff";
@@ -58,10 +78,10 @@ export default function GlobalAboutUsView() {
   const secondaryTxt = isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT;
 
   return (
-    <Box ref={pageRef} sx={{ bgcolor: pageBg, minHeight: "100vh" }}>
+    <Box sx={{ bgcolor: pageBg, minHeight: "100vh" }}>
 
       {/* ── HERO ── */}
-      <Box data-animate sx={{
+      <Box ref={heroRef} sx={{
         position: "relative", overflow: "hidden",
         background: isDark
           ? "linear-gradient(135deg,#0d0520 0%,#1a0a35 50%,#0a1628 100%)"
@@ -77,13 +97,14 @@ export default function GlobalAboutUsView() {
         </Box>
 
         <Container maxWidth="md" sx={{ position: "relative", zIndex: 1, textAlign: "center" }}>
-            <Box data-animate data-delay="0">
+          <motion.div initial="hidden" animate={heroInView ? "visible" : "hidden"} variants={stagger}>
+            <motion.div variants={fadeUp}>
               <Box sx={{ display: "inline-flex", alignItems: "center", gap: 1, px: 2, py: 0.75, borderRadius: "100px", bgcolor: isDark ? COLORS.PURPLE_ALPHA_10 : COLORS.PURPLE_ALPHA_04, border: `1px solid ${COLORS.PURPLE_ALPHA_20}`, mb: 2.5 }}>
                 <InfoOutlinedIcon sx={{ fontSize: 15, color: COLORS.PRIMARY_PURPLE }} />
                 <Typography variant="caption" sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700, letterSpacing: 0.8, fontSize: "0.7rem" }}>OUR STORY</Typography>
               </Box>
-            </Box>
-            <Box data-animate data-delay="100">
+            </motion.div>
+            <motion.div variants={fadeUp}>
               <Typography component="h1" sx={{
                 fontSize: { xs: "2.25rem", sm: "3rem", md: "4rem" }, fontWeight: 800, lineHeight: 1.1, mb: 2,
                 background: `linear-gradient(130deg,${COLORS.PRIMARY_PURPLE} 0%,#00bcff 100%)`,
@@ -91,46 +112,52 @@ export default function GlobalAboutUsView() {
               }}>
                 Connecting India, One Service at a Time
               </Typography>
-            </Box>
-            <Box data-animate data-delay="200">
+            </motion.div>
+            <motion.div variants={fadeUp}>
               <Typography variant="h6" sx={{ color: secondaryTxt, fontWeight: 400, maxWidth: 580, mx: "auto", lineHeight: 1.75, fontSize: { xs: "1rem", md: "1.1rem" } }}>
                 KartSquare is India's fastest-growing marketplace for local services — built to empower small businesses and deliver trusted professionals to every doorstep.
               </Typography>
-            </Box>
+            </motion.div>
+          </motion.div>
         </Container>
       </Box>
 
       {/* ── STATS BAR ── */}
-      <Box data-animate sx={{ bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.PRIMARY_PURPLE, py: { xs: 4, md: 5 } }}>
+      <Box ref={statsRef} sx={{ bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.PRIMARY_PURPLE, py: { xs: 4, md: 5 } }}>
         <Container maxWidth="lg">
+          <motion.div initial="hidden" animate={statsInView ? "visible" : "hidden"} variants={stagger}>
             <Grid container spacing={2} justifyContent="center">
               {stats.map((s, i) => (
                 <Grid size={{ xs: 6, sm: 3 }} key={i}>
-                  <Box data-animate data-delay={String(i * 80)} sx={{ textAlign: "center" }}>
-                    <Typography sx={{ fontSize: { xs: "2rem", md: "2.75rem" }, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{s.value}</Typography>
-                    <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)", mt: 0.5 }}>{s.label}</Typography>
-                  </Box>
+                  <motion.div variants={fadeUp}>
+                    <Box sx={{ textAlign: "center" }}>
+                      <Typography sx={{ fontSize: { xs: "2rem", md: "2.75rem" }, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{s.value}</Typography>
+                      <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)", mt: 0.5 }}>{s.label}</Typography>
+                    </Box>
+                  </motion.div>
                 </Grid>
               ))}
             </Grid>
+          </motion.div>
         </Container>
       </Box>
 
       <Container maxWidth="lg" sx={{ py: { xs: 6, md: 9 } }}>
 
         {/* ── MISSION & VISION ── */}
-        <Box sx={{ mb: { xs: 8, md: 10 } }}>
+        <Box ref={missionRef} sx={{ mb: { xs: 8, md: 10 } }}>
+          <motion.div initial="hidden" animate={missionInView ? "visible" : "hidden"} variants={stagger}>
             <Grid container spacing={4} alignItems="center">
               <Grid size={{ xs: 12, md: 6 }}>
-                <Box data-animate>
+                <motion.div variants={fadeUp}>
                   <Box sx={{ borderRadius: "24px", overflow: "hidden", height: { xs: 280, md: 420 }, position: "relative" }}>
-                    <Image src="/about/team.png" alt="KartSquare Team" fill priority style={{ objectFit: "cover" }} />
+                    <Image src="/about/team.png" alt="KartSquare Team" fill style={{ objectFit: "cover" }} />
                     <Box sx={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(94,24,233,0.4) 0%, transparent 60%)" }} />
                   </Box>
-                </Box>
+                </motion.div>
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
-                <Box data-animate data-delay="150">
+                <motion.div variants={fadeUp}>
                   <Box sx={{ display: "inline-flex", alignItems: "center", gap: 1, px: 2, py: 0.75, borderRadius: "100px", bgcolor: isDark ? COLORS.PURPLE_ALPHA_10 : COLORS.PURPLE_ALPHA_04, border: `1px solid ${COLORS.PURPLE_ALPHA_20}`, mb: 2 }}>
                     <TrackChangesIcon sx={{ fontSize: 15, color: COLORS.PRIMARY_PURPLE }} />
                     <Typography variant="caption" sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700, letterSpacing: 0.5, fontSize: "0.7rem" }}>MISSION & VISION</Typography>
@@ -144,24 +171,26 @@ export default function GlobalAboutUsView() {
                   <Typography variant="body1" sx={{ color: secondaryTxt, lineHeight: 1.8 }}>
                     We envision a future where every local business in India has the tools to compete, grow, and thrive digitally — from a verified listing to AI-targeted marketing, all in one place.
                   </Typography>
-                </Box>
+                </motion.div>
               </Grid>
             </Grid>
+          </motion.div>
         </Box>
 
         {/* ── OUR STORY TIMELINE ── */}
-        <Box sx={{ mb: { xs: 8, md: 10 } }}>
-            <Box data-animate>
+        <Box ref={storyRef} sx={{ mb: { xs: 8, md: 10 } }}>
+          <motion.div initial="hidden" animate={storyInView ? "visible" : "hidden"} variants={stagger}>
+            <motion.div variants={fadeUp}>
               <Typography variant="h4" sx={{ fontWeight: 800, color: primaryTxt, textAlign: "center", mb: 1 }}>Our Journey</Typography>
               <Typography variant="body1" sx={{ color: secondaryTxt, textAlign: "center", mb: 6, maxWidth: 480, mx: "auto" }}>
                 From a startup idea in Dubai to India's fastest-growing service marketplace.
               </Typography>
-            </Box>
+            </motion.div>
             <Box sx={{ position: "relative" }}>
               {/* Vertical line */}
               <Box sx={{ position: "absolute", left: { xs: 20, md: "50%" }, top: 0, bottom: 0, width: 2, bgcolor: isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT, transform: { md: "translateX(-50%)" } }} />
               {timeline.map((item, i) => (
-                <Box data-animate data-delay={String(i * 100)} key={i}>
+                <motion.div key={i} variants={fadeUp}>
                   <Box sx={{
                     display: "flex",
                     flexDirection: { xs: "row", md: i % 2 === 0 ? "row" : "row-reverse" },
@@ -187,23 +216,25 @@ export default function GlobalAboutUsView() {
                     {/* Spacer for alternating layout */}
                     <Box sx={{ display: { xs: "none", md: "block" }, width: "45%" }} />
                   </Box>
-                </Box>
+                </motion.div>
               ))}
             </Box>
+          </motion.div>
         </Box>
 
         {/* ── CORE VALUES ── */}
-        <Box sx={{ mb: { xs: 8, md: 10 } }}>
-            <Box data-animate>
+        <Box ref={valuesRef} sx={{ mb: { xs: 8, md: 10 } }}>
+          <motion.div initial="hidden" animate={valuesInView ? "visible" : "hidden"} variants={stagger}>
+            <motion.div variants={fadeUp}>
               <Typography variant="h4" sx={{ fontWeight: 800, color: primaryTxt, textAlign: "center", mb: 1 }}>What We Stand For</Typography>
               <Typography variant="body1" sx={{ color: secondaryTxt, textAlign: "center", mb: 5, maxWidth: 480, mx: "auto" }}>
                 Our values drive every product decision and every partnership.
               </Typography>
-            </Box>
+            </motion.div>
             <Grid container spacing={3}>
               {values.map((v, i) => (
                 <Grid size={{ xs: 12, sm: 6, md: 4 }} key={i}>
-                  <Box data-animate data-delay={String(i * 80)}>
+                  <motion.div variants={fadeUp}>
                     <Card elevation={0} sx={{
                       height: "100%", bgcolor: cardBg, border: `1px solid ${border}`, borderRadius: "18px", p: 0.5,
                       transition: "all 0.3s ease", position: "relative", overflow: "hidden",
@@ -218,31 +249,33 @@ export default function GlobalAboutUsView() {
                         <Typography variant="body2" sx={{ color: secondaryTxt, lineHeight: 1.7 }}>{v.desc}</Typography>
                       </CardContent>
                     </Card>
-                  </Box>
+                  </motion.div>
                 </Grid>
               ))}
             </Grid>
+          </motion.div>
         </Box>
 
         {/* ── LEADERSHIP ── */}
-        <Box sx={{ mb: { xs: 8, md: 10 } }}>
-            <Box data-animate>
+        <Box ref={teamRef} sx={{ mb: { xs: 8, md: 10 } }}>
+          <motion.div initial="hidden" animate={teamInView ? "visible" : "hidden"} variants={stagger}>
+            <motion.div variants={fadeUp}>
               <Typography variant="h4" sx={{ fontWeight: 800, color: primaryTxt, textAlign: "center", mb: 1 }}>Leadership Team</Typography>
               <Typography variant="body1" sx={{ color: secondaryTxt, textAlign: "center", mb: 5 }}>
                 The people driving KartSquare's vision forward.
               </Typography>
-            </Box>
+            </motion.div>
             <Grid container spacing={4} justifyContent="center">
               {leadership.map((l, i) => (
                 <Grid size={{ xs: 12, sm: 6, md: 4 }} key={i}>
-                  <Box data-animate data-delay={String(i * 120)}>
+                  <motion.div variants={fadeUp}>
                     <Card elevation={0} sx={{
                       bgcolor: cardBg, border: `1px solid ${border}`, borderRadius: "20px", overflow: "hidden",
                       transition: "all 0.3s ease",
                       "&:hover": { transform: "translateY(-6px)", boxShadow: `0 20px 48px ${COLORS.PRIMARY_PURPLE}20` },
                     }}>
                       <Box sx={{ height: 280, position: "relative" }}>
-                        <Image src={l.img} alt={l.name} fill loading="lazy" style={{ objectFit: "cover" }} />
+                        <Image src={l.img} alt={l.name} fill style={{ objectFit: "cover" }} />
                         <Box sx={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(94,24,233,0.55) 0%, transparent 50%)" }} />
                       </Box>
                       <CardContent sx={{ p: "20px !important" }}>
@@ -252,14 +285,16 @@ export default function GlobalAboutUsView() {
                         <Typography variant="body2" sx={{ color: secondaryTxt, lineHeight: 1.65 }}>{l.bio}</Typography>
                       </CardContent>
                     </Card>
-                  </Box>
+                  </motion.div>
                 </Grid>
               ))}
             </Grid>
+          </motion.div>
         </Box>
 
         {/* ── CTA ── */}
-        <Box data-animate sx={{ mb: 4 }}>
+        <Box ref={ctaRef} sx={{ mb: 4 }}>
+          <motion.div initial="hidden" animate={ctaInView ? "visible" : "hidden"} variants={fadeUp}>
             <Box sx={{
               borderRadius: "24px", p: { xs: 4, md: 7 }, textAlign: "center", position: "relative", overflow: "hidden",
               background: isDark
@@ -291,6 +326,7 @@ export default function GlobalAboutUsView() {
                 </Box>
               </Box>
             </Box>
+          </motion.div>
         </Box>
 
       </Container>

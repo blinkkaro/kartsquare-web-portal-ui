@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import { Box, useTheme } from "@mui/material";
 import Hero from "./components/Hero";
 import TakeChargeSection from "./components/TakeChargeSection";
@@ -10,16 +10,34 @@ import SuccessStories from "./components/SuccessStories";
 import HowItWorks from "./components/HowItWorks";
 import FAQ from "./components/FAQ";
 import ScrollReveal from "./components/ScrollReveal";
-import BenefitsSection from "./components/BenefitsSection";
+// BenefitsSection import removed — JSX is commented out; dead import was adding ~24KB to bundle
 import BottomCTASection from "./components/BottomCTASection";
 import { COLORS } from "@/constants/colors";
 import { SECTION_IDS } from "./components/sectionIds";
-import Aibot from "./components/Aibot";
+
+// Aibot is lazy-loaded and deferred — it's a floating widget that the user may
+// never interact with. Eager-loading added ~15KB + infinite Framer animation on mount.
+const Aibot = lazy(() => import("./components/Aibot"));
 
 function ListingView() {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const [expandedFaq, setExpandedFaq] = useState<string | false>("faq0");
+  // Defer Aibot mount until the browser is idle — it's a floating widget that
+  // should never block the critical render path.
+  const [showAibot, setShowAibot] = useState(false);
+
+  React.useEffect(() => {
+    // requestIdleCallback defers until the browser has spare cycles.
+    // Fallback to a short setTimeout for Safari (no rIC support).
+    if (typeof requestIdleCallback !== "undefined") {
+      const id = requestIdleCallback(() => setShowAibot(true), { timeout: 3000 });
+      return () => cancelIdleCallback(id);
+    } else {
+      const t = setTimeout(() => setShowAibot(true), 2000);
+      return () => clearTimeout(t);
+    }
+  }, []);
 
   const handleFaqChange =
     (panel: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
@@ -32,6 +50,7 @@ function ListingView() {
 
   return (
     <Box
+      component="main"
       sx={{
         bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
         minHeight: "100vh",
@@ -58,12 +77,7 @@ function ListingView() {
         </ScrollReveal>
       </Box>
 
-      {/* 4. Benefits - Value Proposition before diving into features */}
-      {/* <Box component="section" id={SECTION_IDS.BENEFITS} sx={{ borderTop: sectionBorder }}>
-        <ScrollReveal variant="fadeRight" delay={0}>
-          <BenefitsSection />
-        </ScrollReveal>
-      </Box> */}
+      {/* 4. Benefits - Value Proposition (commented out — BenefitsSection import removed) */}
 
       {/* 5. Show What You Offer - Feature deep dive */}
       <Box component="section" id={SECTION_IDS.SHOW_WHAT_YOU_OFFER} sx={{ borderTop: sectionBorder }}>
@@ -71,9 +85,6 @@ function ListingView() {
           <ShowWhatYouOfferSection />
         </ScrollReveal>
       </Box>
-
-      {/* 5. Take Charge - Feature deep dive */}
-
 
       {/* 6. Easily connect - Benefits */}
       <Box component="section" id={SECTION_IDS.CONNECT} sx={{ borderTop: sectionBorder }}>
@@ -93,10 +104,15 @@ function ListingView() {
           <FAQ expandedFaq={expandedFaq} handleFaqChange={handleFaqChange} />
         </ScrollReveal>
       </Box>
-      {/* 9. Aibot - AI Chatbot */}
-      <Box sx={{ position: "fixed", bottom: {xs: 100, md: 30}, left: {xs: 20, md: 30}, zIndex: 1000 }}>
-        <Aibot />
-      </Box>
+
+      {/* 9. Aibot — lazy-loaded after browser idle to avoid blocking critical render */}
+      {showAibot && (
+        <Box sx={{ position: "fixed", bottom: { xs: 100, md: 30 }, left: { xs: 20, md: 30 }, zIndex: 1000 }}>
+          <Suspense fallback={null}>
+            <Aibot />
+          </Suspense>
+        </Box>
+      )}
     </Box>
   );
 }

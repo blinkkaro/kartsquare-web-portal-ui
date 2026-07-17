@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Box, Typography, Container, Grid, useTheme } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import CheckIcon from "@mui/icons-material/Check";
@@ -16,6 +16,9 @@ export default function ConnectWithCustomersSection() {
   const isDark = theme.palette.mode === "dark";
   const [activeStep, setActiveStep] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  // Track viewport visibility — only run the auto-step interval when visible
+  const [isInViewport, setIsInViewport] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   const benefits = getFreeListingBenefits(t) || [];
   const steps = [
@@ -30,22 +33,37 @@ export default function ConnectWithCustomersSection() {
     {
       title: t("completeBusinessProfile"),
       desc: benefits[2] || "Connect seamlessly and drive more engagement online",
-    }
+    },
   ];
 
-  // Auto-play steps
+  // Watch viewport entry — only start the interval when section is visible.
+  // This avoids running setInterval during initial page load (section is below fold).
   useEffect(() => {
-    if (isPaused) return;
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInViewport(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Auto-play steps — only when section is visible AND not paused by hover
+  useEffect(() => {
+    if (!isInViewport || isPaused) return;
 
     const interval = setInterval(() => {
       setActiveStep((prev) => (prev + 1) % steps.length);
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [isPaused, steps.length]);
+  }, [isPaused, isInViewport, steps.length]);
 
   return (
     <Box
+      ref={sectionRef}
       sx={{
         py: { xs: 6, md: 8 },
         bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,

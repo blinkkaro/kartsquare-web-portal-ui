@@ -45,6 +45,23 @@ const FAQ: React.FC<FAQProps> = ({ expandedFaq, handleFaqChange }) => {
         bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : "#fff",
       }}
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faqItems.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: faq.answer,
+              },
+            })),
+          }),
+        }}
+      />
       <Container maxWidth="md">
         <Box sx={{ mb: 4 }}>
           <SectionHeading

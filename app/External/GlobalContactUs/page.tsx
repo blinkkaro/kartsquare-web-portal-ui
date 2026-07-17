@@ -1,6 +1,7 @@
 import GlobalContactUsView from "@/components/pages/GlobalContactUs";
 import { seoAuth } from "@/lib/seo/buildMetadata";
 
+
 export const metadata = seoAuth({
   title: "Contact Us | KartSquare",
   description:

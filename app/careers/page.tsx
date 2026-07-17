@@ -1,6 +1,6 @@
 import MainLayout from "../mainLayout";
 import CareersView from "@/components/pages/careers";
-import { seoPublic } from "@/lib/seo/buildMetadata";
+import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
 
 export const metadata = seoPublic({
   title: "Careers at KartSquare — Jobs in India's B2B Marketplace",
@@ -16,9 +16,27 @@ export const metadata = seoPublic({
   ],
 });
 
+/**
+ * WebPage JSON-LD for the careers listing page.
+ * NOTE: Individual job listings should use JobPosting schema on their detail pages.
+ */
+const careersWebPageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Careers at KartSquare — Jobs in India's B2B Marketplace",
+  description:
+    "Explore career opportunities at KartSquare — build India's leading marketplace for products and professional services. Join our growing team.",
+  url: `${SITE_URL}/careers`,
+  isPartOf: { "@type": "WebSite", url: SITE_URL, name: "KartSquare" },
+};
+
 export default function Careers() {
   return (
     <MainLayout>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(careersWebPageJsonLd) }}
+      />
       <CareersView />
     </MainLayout>
   );
