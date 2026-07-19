@@ -12,7 +12,7 @@ import { useAppSelector } from "@/store/hooks";
 import ConversationList from "./components/ConversationList";
 import ChatWindow from "./components/ChatWindow";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
 export default function ChatView() {
     const theme = useTheme();

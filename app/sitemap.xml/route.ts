@@ -3,7 +3,7 @@ import { blogs } from "@/data/blogs";
 import { blogPostSitemapEntry } from "@/lib/seo/blogSitemap";
 
 const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com").replace(/\/$/, "");
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
 /**
  * Escapes special XML characters in a string.

@@ -45,7 +45,7 @@ import toast from "react-hot-toast";
 import GetQuoteModal from "./GetQuoteModal";
 import { getServiceRouteParam } from "@/utils/serviceRoute";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
 const CustomerServiceDetails = () => {
   const params = useParams();
