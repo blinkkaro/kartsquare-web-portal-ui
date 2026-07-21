@@ -190,19 +190,21 @@ const ProviderServiceDetails = () => {
               alignItems: "start",
             }}
           >
-            {/* Left Column - Images Only (Square) */}
             <Box
               sx={{
+                display: { xs: "contents", md: "block" },
                 position: { xs: "static", md: "sticky" },
                 top: { md: 80 },
-                order: { xs: 1, md: 1 },
+                order: { md: 1 },
               }}
             >
-              <ServiceImageCarousel
-                images={images}
-                serviceName={service.service_name}
-              />
-              <Box sx={{ py: 2 }}>
+              <Box sx={{ order: { xs: 2, md: "unset" }, width: "100%" }}>
+                <ServiceImageCarousel
+                  images={images}
+                  serviceName={service.service_name}
+                />
+              </Box>
+              <Box sx={{ py: 2, order: { xs: 3, md: "unset" }, width: "100%" }}>
                 <CustomerServicePricing
                   pricingType={service.pricing_type}
                   priceCatalogUrls={service.price_catalog_url}
@@ -226,7 +228,7 @@ const ProviderServiceDetails = () => {
             {/* Middle Column - All Content */}
             <Box
               sx={{
-                order: { xs: 2, md: 2 },
+                order: { xs: 1, md: 2 },
                 bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "white",
                 borderRadius: "16px",
                 p: { xs: 2, sm: 3 },
@@ -325,7 +327,7 @@ const ProviderServiceDetails = () => {
                 flexDirection: { xs: "row", lg: "column" },
                 gap: { xs: 1, sm: 2 },
                 justifyContent: { xs: "flex-start", lg: "flex-start" },
-                order: { xs: 3, md: 3 },
+                order: { xs: 4, md: 3 },
                 pt: { xs: 0, lg: 1 },
                 mb: { xs: 2, lg: 0 },
               }}
