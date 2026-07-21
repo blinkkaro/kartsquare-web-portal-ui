@@ -279,37 +279,45 @@ const CustomerServiceDetails = () => {
           >
             <Box
               sx={{
+                display: { xs: "contents", md: "block" },
                 position: { xs: "static", md: "sticky" },
-                order: { xs: 2, md: 1 },
+                top: { md: 80 },
+                order: { md: 1 },
                 width: "100%",
                 maxWidth: "100%",
                 overflow: "hidden",
               }}
             >
-              <ServiceImageCarousel
+              <Box sx={{ order: { xs: 2, md: "unset" }, width: "100%" }}>
+                <ServiceImageCarousel
                 images={images}
                 serviceName={service.service_name || ""}
-              />
-              <CustomerServicePricing
-                pricingType={service.pricing_type}
-                priceCatalogUrls={service.price_catalog_url}
-                priceItems={service.price_items}
-                currency={service.currency}
-                onGetQuote={() => setGetQuoteModalOpen(true)}
-              />
-              {service.service_address?.latitude &&
-                service.service_address?.longitude && (
-                  <ServiceDetailsMap
-                    latitude={service.service_address.latitude}
-                    longitude={service.service_address.longitude}
-                    providerName={service.business_name || ""}
-                  />
-                )}
+                />
+              </Box>
+              <Box sx={{ py: 2, order: { xs: 3, md: "unset" }, width: "100%" }}>
+                <CustomerServicePricing
+                  pricingType={service.pricing_type}
+                  priceCatalogUrls={service.price_catalog_url}
+                  priceItems={service.price_items}
+                  currency={service.currency}
+                  onGetQuote={() => setGetQuoteModalOpen(true)}
+                />
+                {service.service_address?.latitude &&
+                  service.service_address?.longitude && (
+                    <Box sx={{ mt: 2 }}>
+                      <ServiceDetailsMap
+                        latitude={service.service_address.latitude}
+                        longitude={service.service_address.longitude}
+                        providerName={service.business_name || ""}
+                      />
+                    </Box>
+                  )}
+              </Box>
             </Box>
 
             <Box
               sx={{
-                order: { xs: 3, md: 2 },
+                order: { xs: 1, md: 2 },
                 bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "white",
                 borderRadius: "16px",
                 p: { xs: 1.5, sm: 2.5, md: 3 },
@@ -508,7 +516,7 @@ const CustomerServiceDetails = () => {
                 flexDirection: { xs: "row", lg: "column" },
                 gap: { xs: 1, sm: 2 },
                 justifyContent: { xs: "flex-end", lg: "flex-start" },
-                order: { xs: 1, md: 3 },
+                order: { xs: 4, md: 3 },
                 pt: { xs: 0, lg: 1 },
                 mb: { xs: 2, lg: 0 },
                 width: { xs: "100%", lg: "auto" },
