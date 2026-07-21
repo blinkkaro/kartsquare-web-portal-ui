@@ -95,11 +95,14 @@ function EmailVerificationView() {
     }
   };
 
-  const OnSubmit = async () => {
+  const OnSubmit = async (currentOtp?: string) => {
+    const otpToVerify = typeof currentOtp === "string" ? currentOtp : otp;
+    if (otpToVerify.length !== 6) return;
+
     try {
       setLoading(true);
       setError("");
-      await otpService.verifyOtp(otp);
+      await otpService.verifyOtp(otpToVerify);
       localStorage.removeItem(OTP_EXPIRY_KEY);
       setOpenSuccessModal(true);
     } catch (error: any) {

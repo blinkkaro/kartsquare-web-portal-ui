@@ -2,10 +2,7 @@ import type { Metadata } from "next";
 import { SITE_URL } from "./buildMetadata";
 
 export function getApiBaseUrl(): string {
-  const raw =
-    process.env.API_BASE_URL ||
-    process.env.NEXT_PUBLIC_API_URL ||
-    "http://localhost:5500/api/v1";
+  const raw = process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_URL as string;
   return raw.replace(/\/$/, "");
 }
 

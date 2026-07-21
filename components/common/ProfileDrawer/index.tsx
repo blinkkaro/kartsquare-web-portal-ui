@@ -27,8 +27,7 @@ import ReelFeedGrid from "../../pages/myAccount/components/post/ReelFeedGrid";
 import ReelViewModal from "../../pages/myAccount/components/post/ReelViewModal";
 import { Posts } from "@/services/post/postInterfaces";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
 export function ProfileDrawer() {
   const dispatch = useDispatch();

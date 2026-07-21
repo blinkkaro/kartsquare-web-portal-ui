@@ -48,8 +48,7 @@ export interface CustomAxiosInstance extends AxiosInstance {
 }
 
 const api: CustomAxiosInstance = axios.create({
-  baseURL:
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1", // Fallback to local
+  baseURL: process.env.NEXT_PUBLIC_API_URL as string,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -104,7 +103,7 @@ api.interceptors.response.use(
     };
 
     if (error.response?.status === 401 && !originalRequest._retry) {
-      if(!secureStorage.getItem("token")){
+      if (!secureStorage.getItem("token")) {
         store.dispatch(openLoginModal());
         return Promise.resolve({
           data: null,
