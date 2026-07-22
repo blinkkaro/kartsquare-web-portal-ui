@@ -93,7 +93,7 @@ export const useSocket = () => {
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 // Socket.io needs the base URL (e.g. localhost:8000) not the API path
-const SOCKET_URL = API_URL.replace(/\/api\/v1\/?$/, "");
+const SOCKET_URL = String(API_URL).replace(/\/api\/v1\/?$/, "");
 
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   children,

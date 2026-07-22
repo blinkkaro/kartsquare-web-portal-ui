@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 /** Normalized site origin (no trailing slash). */
-export const SITE_URL = (
+export const SITE_URL = String(
   process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com"
 ).replace(/\/$/, "");
 

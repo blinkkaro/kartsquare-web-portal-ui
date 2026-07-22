@@ -38,7 +38,7 @@ export const useAddressSubmit = ({
           `${data.address}, ${data.city_town}, ${data.state}, ${data.pincode}, ${data.country}`,
           `${data.city_town}, ${data.state}, ${data.pincode}, ${data.country}`,
           `${data.city_town}, ${data.state}, ${data.country}`
-        ].map(s => s.replace(/,\s*,/g, ',').replace(/\s\s+/g, ' ').trim());
+        ].map(s => String(s || "").replace(/,\s*,/g, ',').replace(/\s\s+/g, ' ').trim());
 
         let geocodeResult = null;
         for (const variant of addressVariants) {

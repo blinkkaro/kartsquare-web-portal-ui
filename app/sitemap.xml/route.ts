@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { blogs } from "@/data/blogs";
 import { blogPostSitemapEntry } from "@/lib/seo/blogSitemap";
 
-const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com").replace(/\/$/, "");
+const BASE_URL = String(process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com").replace(/\/$/, "");
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
 
 /**

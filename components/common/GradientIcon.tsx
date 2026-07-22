@@ -18,8 +18,8 @@ const GradientIcon: React.FC<GradientIconProps> = ({
   sx,
   ...props
 }) => {
-  const generatedId = React.useId();
-  const uniqueId = gradientId || `gradient-${generatedId.replace(/:/g, "")}`;
+  const generatedId = React.useId() || "";
+  const uniqueId = gradientId || `gradient-${String(generatedId).replace(/:/g, "")}`;
   const theme = useTheme();
   return (
     <>

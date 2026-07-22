@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import type { BlogPost } from "@/data/blogs";
 
-const BASE_URL = (
+const BASE_URL = String(
   process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com"
 ).replace(/\/$/, "");
 

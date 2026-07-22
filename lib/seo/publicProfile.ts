@@ -6,7 +6,7 @@ export function getApiBaseUrl(): string {
     process.env.API_BASE_URL ||
     process.env.NEXT_PUBLIC_API_URL ||
     "http://localhost:5500/api/v1";
-  return raw.replace(/\/$/, "");
+  return String(raw).replace(/\/$/, "");
 }
 
 export type PublicProfileVariant = "provider" | "supplier";
@@ -56,7 +56,7 @@ function str(v: unknown): string | undefined {
 }
 
 function absolutizeMediaUrl(url: string): string {
-  const base = SITE_URL.replace(/\/$/, "");
+  const base = String(SITE_URL).replace(/\/$/, "");
   if (/^https?:\/\//i.test(url)) return url;
   const path = url.startsWith("/") ? url : `/${url}`;
   return `${base}${path}`;
@@ -168,7 +168,7 @@ function buildGeoJsonLd(
     postal.provider = {
       "@type": "Person",
       name: personName,
-      url: `${SITE_URL.replace(/\/$/, "")}/in/${uname}`,
+      url: `${String(SITE_URL).replace(/\/$/, "")}/in/${uname}`,
     };
   }
 
@@ -180,7 +180,7 @@ export function buildProfileJsonLd(
   username: string,
 ): Record<string, unknown> | null {
   const { profile, variant } = payload;
-  const canonicalUrl = `${SITE_URL.replace(/\/$/, "")}/in/${encodeURIComponent(username)}`;
+  const canonicalUrl = `${String(SITE_URL).replace(/\/$/, "")}/in/${encodeURIComponent(username)}`;
   const display = displayName(profile, variant);
   const description = descriptionFromProfile(profile, display);
 
@@ -228,11 +228,11 @@ export function buildProfileMetadata(
       ? { keywords: keywordsRaw.split(",").map((k) => k.trim()).filter(Boolean) }
       : {}),
     alternates: {
-      canonical: `${SITE_URL.replace(/\/$/, "")}${canonicalPath}`,
+      canonical: `${String(SITE_URL).replace(/\/$/, "")}${canonicalPath}`,
     },
     openGraph: {
       type: "profile",
-      url: `${SITE_URL.replace(/\/$/, "")}${canonicalPath}`,
+      url: `${String(SITE_URL).replace(/\/$/, "")}${canonicalPath}`,
       siteName: "KartSquare",
       title: ogTitle,
       description: ogDesc,
