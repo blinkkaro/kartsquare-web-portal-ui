@@ -44,7 +44,7 @@ const StyledInput = styled("input")(({ theme }) => ({
 interface OtpInputProps {
   length?: number;
   onChange: (otp: string) => void;
-  onEnter?: () => void;
+  onEnter?: (otp: string) => void;
 }
 
 function OtpInput({ length = OTP_LENGTH, onChange, onEnter }: OtpInputProps) {
@@ -87,8 +87,9 @@ function OtpInput({ length = OTP_LENGTH, onChange, onEnter }: OtpInputProps) {
         inputRefs.current[index - 1]?.focus();
       }
     } else if (e.key === "Enter") {
+      e.preventDefault();
       if (onEnter) {
-        onEnter();
+        onEnter(otp.join(""));
       }
     }
   };
@@ -127,6 +128,7 @@ function OtpInput({ length = OTP_LENGTH, onChange, onEnter }: OtpInputProps) {
           inputMode="numeric"
           maxLength={1}
           value={digit}
+          autoFocus={index === 0}
           onChange={(e) => handleChange(e, index)}
           onKeyDown={(e) => handleKeyDown(e, index)}
           onPaste={handlePaste}

@@ -90,8 +90,7 @@ export const useSocket = () => {
 };
 
 // Base URL handling
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 // Socket.io needs the base URL (e.g. localhost:8000) not the API path
 const SOCKET_URL = String(API_URL).replace(/\/api\/v1\/?$/, "");
 
