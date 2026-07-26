@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Box,
-  Typography,
   ToggleButton,
   ToggleButtonGroup,
   useTheme,
@@ -13,6 +12,7 @@ import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useForm } from "react-hook-form";
 import Input from "@/components/common/Input";
+import PageHeading from "@/components/common/PageHeading";
 
 interface OrderHeaderProps {
   onSearch: (search: string) => void;
@@ -65,21 +65,28 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({
         borderRadius: "16px",
       }}
     >
-      <Typography variant="h5" fontWeight="bold">
-        {t("enquiries")}{" "}
-        <Box
-          component="span"
-          sx={{
-            bgcolor: COLORS.PURPLE_ALPHA_10,
-            color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-            borderRadius: "8px",
-            px: 1,
-            fontSize: "0.8em",
-          }}
-        >
-          {totalCount || 0}
-        </Box>
-      </Typography>
+      <PageHeading
+        sx={{ mb: 0 }}
+        title={
+          <>
+            {t("enquiries")}{" "}
+            <Box
+              component="span"
+              sx={{
+                bgcolor: COLORS.PURPLE_ALPHA_10,
+                color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+                borderRadius: "8px",
+                px: 1,
+                fontSize: "0.8em",
+                WebkitTextFillColor: "initial",
+                background: "none",
+              }}
+            >
+              {totalCount || 0}
+            </Box>
+          </>
+        }
+      />
 
       <Stack
         direction={{ xs: "column", sm: "row" }}

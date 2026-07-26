@@ -119,11 +119,9 @@ const BookingsPage = () => {
     <MainLayout>
       <Box
         sx={{
-          bgcolor: isDark
-            ? COLORS.BACKGROUND.PRIMARY_DARK
-            : COLORS.BACKGROUND.PRIMARY_LIGHT,
+          bgcolor: "background.default",
           minHeight: "100%",
-          pt: { xs: 8, md: 10 },
+          pt: { xs: 2, sm: 4, md: 6 },
           pb: 4,
         }}
       >
@@ -192,18 +190,10 @@ const BookingsPage = () => {
                       ? COLORS.BACKGROUND.PAPER_DARK
                       : COLORS.PURPLE_ALPHA_10
                     : "transparent",
-                color:
-                  viewMode === "table"
-                    ? COLORS.PRIMARY_PURPLE
-                    : isDark
-                      ? COLORS.TEXT.SECONDARY_DARK
-                      : COLORS.TEXT.SECONDARY_LIGHT,
-                border: `1px solid ${viewMode === "table"
-                    ? COLORS.PRIMARY_PURPLE
-                    : isDark
-                      ? COLORS.BORDER.DEFAULT_DARK
-                      : COLORS.BORDER.DEFAULT_LIGHT
-                  }`,
+                color: viewMode === "table" ? COLORS.PRIMARY_PURPLE : "text.secondary",
+                borderColor: viewMode === "table" ? COLORS.PRIMARY_PURPLE : "divider",
+                borderStyle: "solid",
+                borderWidth: "1px",
                 borderRadius: "8px",
                 "&:hover": {
                   bgcolor: isDark
@@ -224,18 +214,10 @@ const BookingsPage = () => {
                       ? COLORS.BACKGROUND.PAPER_DARK
                       : COLORS.PURPLE_ALPHA_10
                     : "transparent",
-                color:
-                  viewMode === "card"
-                    ? COLORS.PRIMARY_PURPLE
-                    : isDark
-                      ? COLORS.TEXT.SECONDARY_DARK
-                      : COLORS.TEXT.SECONDARY_LIGHT,
-                border: `1px solid ${viewMode === "card"
-                    ? COLORS.PRIMARY_PURPLE
-                    : isDark
-                      ? COLORS.BORDER.DEFAULT_DARK
-                      : COLORS.BORDER.DEFAULT_LIGHT
-                  }`,
+                color: viewMode === "card" ? COLORS.PRIMARY_PURPLE : "text.secondary",
+                borderColor: viewMode === "card" ? COLORS.PRIMARY_PURPLE : "divider",
+                borderStyle: "solid",
+                borderWidth: "1px",
                 borderRadius: "8px",
                 "&:hover": {
                   bgcolor: isDark
@@ -254,14 +236,7 @@ const BookingsPage = () => {
             <CenteredLoader py={10} size={80} />
           ) : filteredBookings.length === 0 ? (
             <Box sx={{ textAlign: "center", py: 8 }}>
-              <Typography
-                variant="h6"
-                sx={{
-                  color: isDark
-                    ? COLORS.TEXT.SECONDARY_DARK
-                    : COLORS.TEXT.SECONDARY_LIGHT,
-                }}
-              >
+              <Typography variant="h6" color="text.secondary">
                 <EmptyState
                   titleKey="no_bookings_found"
                   descriptionKey="no_bookings_found_description"

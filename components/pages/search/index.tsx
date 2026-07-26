@@ -25,6 +25,7 @@ import ServiceCard from "@/components/ServiceCard";
 import { Service } from "@/services/serviceList/listInteraface";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
+import PageHeading from "@/components/common/PageHeading";
 
 const SearchResultsView: React.FC = () => {
   const theme = useTheme();
@@ -196,26 +197,14 @@ const SearchResultsView: React.FC = () => {
     <Box sx={{ py: 3 , backgroundColor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT , padding: 3 , height: "100%" }}>
       {/* Search Header */}
       <Box sx={{ mb: 4 }}>
-        <Typography
-          variant="h4"
-          sx={{
-            fontWeight: 700,
-            color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-            mb: 1,
-          }}
-        >
-          {t("searchResults")}
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{
-            color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-          }}
-        >
-          {hasResults
-            ? `${t("searchResultsFor")} "${searchQuery}"`
-            : `${t("noResultsFound")} "${searchQuery}"`}
-        </Typography>
+        <PageHeading
+          title={t("searchResults")}
+          subtitle={
+            hasResults
+              ? `${t("searchResultsFor")} "${searchQuery}"`
+              : `${t("noResultsFound")} "${searchQuery}"`
+          }
+        />
       </Box>
 
       {!hasResults && !loading ? (

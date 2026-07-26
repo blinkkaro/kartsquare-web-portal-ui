@@ -6,6 +6,7 @@ import BackButton from "@/components/common/BackButton";
 import ProfileWrapper from "@/components/common/profile/profileWrapper";
 import DocumentCard from "./components/DocumentCard";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
+import PageHeading from "@/components/common/PageHeading";
 
 // Dummy data based on the user's provided image
 const DUMMY_DOCUMENTS = [
@@ -29,13 +30,7 @@ function MyDocumentsView() {
   return (
     <ProfileWrapper showBackButton>
       <Box sx={{ mb: 4 }}>
-        <Typography
-          variant="h4"
-          component="h1"
-          sx={{ fontWeight: "bold", mb: 1 }}
-        >
-          {t("myDocuments")}
-        </Typography>
+        <PageHeading title={t("myDocuments")} component="h1" />
       </Box>
 
       <Box>

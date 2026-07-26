@@ -413,7 +413,7 @@ const StoreView: React.FC = () => {
             fontWeight={900}
             sx={{
               mb: 2,
-              color: isDark ? "text.primary" : "#0f172a",
+              color: "text.primary",
               letterSpacing: -1,
               fontSize: { xs: "1.75rem", md: "2.8rem" },
             }}
@@ -505,7 +505,7 @@ const StoreView: React.FC = () => {
               variant="h5"
               fontWeight={800}
               sx={{
-                color: isDark ? "text.primary" : "#30263E",
+                color: "text.primary",
                 letterSpacing: -0.5,
               }}
             >
@@ -628,7 +628,7 @@ const StoreView: React.FC = () => {
                 variant="h5"
                 fontWeight={800}
                 sx={{
-                  color: isDark ? "text.primary" : "#30263E",
+                  color: "text.primary",
                   letterSpacing: -0.5,
                 }}
               >
@@ -777,7 +777,7 @@ const StoreView: React.FC = () => {
                 variant="h5"
                 fontWeight={800}
                 sx={{
-                  color: isDark ? "text.primary" : "#30263E",
+                  color: "text.primary",
                   letterSpacing: -0.5,
                 }}
               >
@@ -886,7 +886,7 @@ const StoreView: React.FC = () => {
                             sx={{
                               flex: 1,
                               pr: 1,
-                              color: isDark ? "text.primary" : "#1a1a2e",
+                              color: "text.primary",
                             }}
                           >
                             {cat.category_name}
@@ -980,7 +980,7 @@ const StoreView: React.FC = () => {
                   variant="h5"
                   fontWeight={900}
                   sx={{
-                    color: isDark ? "text.primary" : "#1e293b",
+                    color: "text.primary",
                     letterSpacing: -0.5,
                   }}
                 >
@@ -1097,7 +1097,7 @@ const StoreView: React.FC = () => {
                         <Typography
                           variant="subtitle1"
                           fontWeight={800}
-                          sx={{ color: isDark ? "text.primary" : "#1e293b" }}
+                          sx={{ color: "text.primary" }}
                         >
                           {activity.text}
                         </Typography>
@@ -1144,7 +1144,7 @@ const StoreView: React.FC = () => {
                   variant="h5"
                   fontWeight={900}
                   sx={{
-                    color: isDark ? "text.primary" : "#1e293b",
+                    color: "text.primary",
                     letterSpacing: -0.5,
                   }}
                 >
@@ -1237,7 +1237,7 @@ const StoreView: React.FC = () => {
                         <Typography
                           variant="subtitle1"
                           fontWeight={900}
-                          sx={{ color: isDark ? "text.primary" : "#1e293b" }}
+                          sx={{ color: "text.primary" }}
                         >
                           {review.name}
                         </Typography>
@@ -1262,7 +1262,7 @@ const StoreView: React.FC = () => {
                   <Typography
                     variant="body1"
                     sx={{
-                      color: isDark ? "text.secondary" : "#64748b",
+                      color: "text.secondary",
                       lineHeight: 1.8,
                       fontWeight: 500,
                       fontStyle: "italic",
@@ -1293,7 +1293,7 @@ const StoreView: React.FC = () => {
               <Typography
                 variant="h5"
                 fontWeight={800}
-                sx={{ color: isDark ? "text.primary" : "#30263E", letterSpacing: -0.5 }}
+                sx={{ color: "text.primary", letterSpacing: -0.5 }}
               >
                 Top Brands in Store
               </Typography>

@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Box, Container, Paper, useTheme } from "@mui/material";
+import { Box, Container, useTheme } from "@mui/material";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import MainLayout from "@/app/mainLayout";
 import { serviceListService } from "../../../services/serviceList/serviceListService";
-import { Service, Category } from "../../../services/serviceList/listInteraface";
+import { Service } from "../../../services/serviceList/listInteraface";
 import { COLORS } from "../../../constants/colors";
 import ServicesHeader from "./ServicesHeader";
 import ServicesSearchBar from "./ServicesSearchBar";
@@ -22,7 +22,6 @@ const ListOfServices = () => {
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark";
     const surfaceBg = isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT;
-    const borderColor = isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT;
 
     // State
     const [services, setServices] = useState<Service[]>([]);

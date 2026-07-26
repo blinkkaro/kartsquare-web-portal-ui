@@ -16,7 +16,9 @@ const MobileNavContainer = styled(Box)(({ theme }) => ({
   backdropFilter: "blur(12px)",
   width: "92%",
   position: "fixed",
-  bottom: "16px",
+  // 16px base clearance, plus the device's home-indicator inset (0 on non-notched
+  // devices, so this degrades to the old fixed 16px there).
+  bottom: "calc(16px + env(safe-area-inset-bottom, 0px))",
   left: "4%",
   right: "4%",
   zIndex: 1000,

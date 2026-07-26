@@ -29,6 +29,10 @@ const ReelPlayer: React.FC<ReelPlayerProps> = ({
   const [progress, setProgress] = useState(0);
   // userPaused: true only when the user explicitly taps to pause
   const [userPaused, setUserPaused] = useState(false);
+  // Reels always start muted — browsers block unmuted autoplay outright, which was
+  // freezing every reel on its raw first frame instead of playing. Users can unmute
+  // with one click, same convention as TikTok/Instagram/YouTube Shorts.
+  const [isMuted, setIsMuted] = useState(true);
   const bufferingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ---------------------  playback control  ---------------------
@@ -153,6 +157,11 @@ const ReelPlayer: React.FC<ReelPlayerProps> = ({
     }
   }, [hasError, isPlaying]);
 
+  const handleMuteToggle = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMuted((prev) => !prev);
+  }, []);
+
   // ---------------------  overlay helpers  ---------------------
   // Show loading overlay only when active AND video hasn't started playing yet
   const showLoadingOverlay = isActive && !isVideoReady && !hasError;
@@ -178,6 +187,7 @@ const ReelPlayer: React.FC<ReelPlayerProps> = ({
         src={videoUrl}
         loop
         autoPlay={isActive}
+        muted={isMuted}
         playsInline
         preload={preload}
         style={{
@@ -186,6 +196,33 @@ const ReelPlayer: React.FC<ReelPlayerProps> = ({
           objectFit: "contain",
         }}
       />
+
+      {/* ---------- Mute Toggle ---------- */}
+      <Box
+        onClick={handleMuteToggle}
+        sx={{
+          position: "absolute",
+          top: 16,
+          right: 16,
+          zIndex: 6,
+          width: 36,
+          height: 36,
+          borderRadius: "50%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          bgcolor: "rgba(0, 0, 0, 0.4)",
+          backdropFilter: "blur(4px)",
+          cursor: "pointer",
+          "&:hover": { bgcolor: "rgba(0, 0, 0, 0.55)" },
+        }}
+      >
+        {isMuted ? (
+          <VolumeOffIcon sx={{ color: "white", fontSize: 20 }} />
+        ) : (
+          <VolumeUpIcon sx={{ color: "white", fontSize: 20 }} />
+        )}
+      </Box>
 
       {/* ---------- Loading / Buffering Overlay ---------- */}
       {showLoadingOverlay && (

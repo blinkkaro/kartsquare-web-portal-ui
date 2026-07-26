@@ -1,7 +1,6 @@
 import React from "react";
-import { Box, Typography, useTheme } from "@mui/material";
-import { COLORS } from "../../../constants/colors";
 import { english } from "../../../features/i18n/en";
+import PageHeading from "@/components/common/PageHeading";
 
 interface BookingsHeaderProps {
     title?: string;
@@ -10,23 +9,7 @@ interface BookingsHeaderProps {
 const BookingsHeader: React.FC<BookingsHeaderProps> = ({
     title = english.orders_bookings
 }) => {
-    const theme = useTheme();
-    const isDark = theme.palette.mode === "dark";
-
-    return (
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-            <Typography
-                variant="h4"
-                sx={{
-                    fontWeight: 700,
-                    fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2.125rem" },
-                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : "#1F2937",
-                }}
-            >
-                {title}
-            </Typography>
-        </Box>
-    );
+    return <PageHeading title={title} sx={{ mb: 0 }} />;
 };
 
 export default BookingsHeader;

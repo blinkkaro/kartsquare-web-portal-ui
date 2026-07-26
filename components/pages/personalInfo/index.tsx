@@ -1,6 +1,6 @@
 "use client";
 import ProfileWrapper from "@/components/common/profile/profileWrapper";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import React, { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { COLORS } from "@/constants/colors";
@@ -14,6 +14,7 @@ import EditProfileModal from "./components/EditProfileModal";
 import WarningModel from "@/components/common/WarningModel";
 import { getUserRole, UserRole } from "@/utils/auth";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
+import PageHeading from "@/components/common/PageHeading";
 
 function PersonalInfoView() {
   const theme = useTheme();
@@ -41,18 +42,7 @@ function PersonalInfoView() {
           justifyContent: "space-between",
         }}
       >
-        <Typography
-          variant="h4"
-          sx={{
-            fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
-            fontWeight: "500",
-            color: isDark
-              ? COLORS.TEXT.PRIMARY_DARK
-              : COLORS.TEXT.PRIMARY_LIGHT,
-          }}
-        >
-          {t("personalInfoTitle")}
-        </Typography>
+        <PageHeading title={t("personalInfoTitle")} sx={{ mb: 0 }} />
         <Box
           onClick={() => setIsEditModalOpen(true)}
           sx={{

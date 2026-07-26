@@ -11,6 +11,7 @@ import { useAppSelector } from "@/store/hooks";
 // Sub-components to be created
 import ConversationList from "./components/ConversationList";
 import ChatWindow from "./components/ChatWindow";
+import PageHeading from "@/components/common/PageHeading";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
@@ -83,9 +84,7 @@ export default function ChatView() {
     return (
         <Box sx={{ p: isMobile ? 0 : 3, height: "100vh", display: "flex", flexDirection: "column" }}>
             <Box sx={{ mb: 2, display: isMobile ? "none" : "flex", alignItems: "center" }}>
-                <Typography variant="h4" fontWeight={700} color="text.primary">
-                    Chat
-                </Typography>
+                <PageHeading title="Chat" sx={{ mb: 0 }} />
                 <Box sx={{ ml: 2, px: 2, py: 0.5, bgcolor: "rgba(59, 94, 219, 0.1)", color: "#3B5EDB", borderRadius: 3, fontSize: "0.875rem", fontWeight: 600 }}>
                     Messages
                 </Box>

@@ -38,7 +38,7 @@ const BookingsTable: React.FC<BookingsTableProps> = ({ bookings, activeTab, onVi
     // Reusable Table Cell Styles
     const cellStyle = {
         borderBottom: 'none',
-        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+        color: "text.primary",
         fontSize: '0.875rem',
         py: 2
     };

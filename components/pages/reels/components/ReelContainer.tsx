@@ -76,52 +76,108 @@ const ReelContainer: React.FC<ReelContainerProps> = ({
         sx={{
           display: "flex",
           flexDirection: isDesktop ? "row" : "column",
-          height: isDesktop ? "calc(100% - 2px)" : "calc(100% - 2px)",
+          alignItems: isDesktop ? "center" : "stretch",
+          gap: isDesktop ? 2 : 0,
+          height: "calc(100% - 2px)",
           mb: isDesktop ? 0 : 8,
           width: "auto",
           maxWidth: "100%",
           position: "relative",
-          // bgcolor: isDesktop ? '#1a1a1a' : 'black',
-          borderRadius: isDesktop ? 2 : 0,
-          overflow: "hidden",
         }}
       >
-        {/* Video Area */}
         <Box
           sx={{
-            position: "relative",
-            aspectRatio: "9/16",
+            display: "flex",
+            flexDirection: "row",
             height: "100%",
-            // bgcolor: 'black',
+            borderRadius: isDesktop ? "24px" : 0,
+            overflow: "hidden",
+            boxShadow: isDesktop
+              ? theme.palette.mode === "dark"
+                ? "0 12px 40px rgba(0,0,0,0.5)"
+                : "0 12px 40px rgba(17,24,39,0.18)"
+              : "none",
           }}
         >
-          <ReelPlayer
-            videoUrl={videoUrl}
-            isActive={isActive}
-            isPaused={isDrawerOpen}
-            preload={preloadHint}
-          />
-
-          <ReelOverlay
-            userName={
-              reel.user.business_name ||
-              `${reel.user.first_name} ${reel.user.last_name}`
-            }
-            profilePic={reel.user.profile_pic}
-            caption={reel.caption}
-            isFollowing={reel.is_following}
-            onFollow={handleFollow}
-            onProfileClick={handleProfileClick}
-            isOwnReel={isOwnReel}
-          />
-
-          {/* Actions Overlay for Mobile/Video Side */}
+          {/* Video Area */}
           <Box
             sx={{
-              position: "absolute",
-              right: 8,
-              bottom: 100,
-              zIndex: 3,
+              position: "relative",
+              aspectRatio: "9/16",
+              height: "100%",
+              bgcolor: "black",
+            }}
+          >
+            <ReelPlayer
+              videoUrl={videoUrl}
+              isActive={isActive}
+              isPaused={isDrawerOpen}
+              preload={preloadHint}
+            />
+
+            <ReelOverlay
+              userName={
+                reel.user.business_name ||
+                `${reel.user.first_name} ${reel.user.last_name}`
+              }
+              profilePic={reel.user.profile_pic}
+              caption={reel.caption}
+              isFollowing={reel.is_following}
+              onFollow={handleFollow}
+              onProfileClick={handleProfileClick}
+              isOwnReel={isOwnReel}
+            />
+
+            {/* Actions Overlay — mobile only; desktop gets its own rail beside the card */}
+            {!isDesktop && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  right: 8,
+                  bottom: 100,
+                  zIndex: 3,
+                }}
+              >
+                <ReelActions
+                  postId={reel.id}
+                  likesCount={reel.likes_count}
+                  commentsCount={reel.comments_count}
+                  isLiked={reel.is_liked}
+                  onCommentClick={() => setIsCommentsOpen(!isCommentsOpen)}
+                />
+              </Box>
+            )}
+          </Box>
+
+          {/* Side Comments for Desktop */}
+          {isDesktop && (
+            <Box
+              sx={{
+                width: isCommentsOpen ? 350 : 0,
+                transition: "width 0.3s ease",
+                overflow: "hidden",
+                bgcolor: "background.paper",
+              }}
+            >
+              <ReelComments
+                post={reel}
+                open={isCommentsOpen}
+                onClose={() => setIsCommentsOpen(false)}
+              />
+            </Box>
+          )}
+        </Box>
+
+        {/* Actions rail — desktop only, sits beside the card instead of on top of it */}
+        {isDesktop && (
+          <Box
+            sx={{
+              flexShrink: 0,
+              bgcolor: "rgba(0, 0, 0, 0.55)",
+              backdropFilter: "blur(6px)",
+              borderRadius: "24px",
+              py: 2,
+              px: 0.5,
             }}
           >
             <ReelActions
@@ -130,24 +186,6 @@ const ReelContainer: React.FC<ReelContainerProps> = ({
               commentsCount={reel.comments_count}
               isLiked={reel.is_liked}
               onCommentClick={() => setIsCommentsOpen(!isCommentsOpen)}
-            />
-          </Box>
-        </Box>
-
-        {/* Side Comments for Desktop */}
-        {isDesktop && (
-          <Box
-            sx={{
-              width: isCommentsOpen ? 350 : 0,
-              transition: "width 0.3s ease",
-              overflow: "hidden",
-              bgcolor: "background.paper",
-            }}
-          >
-            <ReelComments
-              post={reel}
-              open={isCommentsOpen}
-              onClose={() => setIsCommentsOpen(false)}
             />
           </Box>
         )}

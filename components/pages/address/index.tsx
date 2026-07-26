@@ -15,6 +15,7 @@ import {
 import { Address } from "@/services/address/addressInterface";
 import WarningModel from "@/components/common/WarningModel";
 import AddressDrawer from "@/components/common/address/AddressDrawer";
+import PageHeading from "@/components/common/PageHeading";
 
 function AddressView() {
   const { t } = useTranslationContext();
@@ -72,9 +73,7 @@ function AddressView() {
             mb: 3,
           }}
         >
-          <Typography variant="h4" fontWeight={600}>
-            {t("addresses")}
-          </Typography>
+          <PageHeading title={t("addresses")} sx={{ mb: 0 }} />
           <Button
             variant="contained"
             onClick={() => setIsAddModalOpen(true)}

@@ -4,6 +4,7 @@ import { Box, Typography, Button, useTheme } from "@mui/material";
 import { Bolt, Verified } from "@mui/icons-material";
 import { COLORS } from "../../../../constants/colors";
 import { english } from "../../../../features/i18n/en";
+import PageHeading from "@/components/common/PageHeading";
 
 interface CustomerServiceInfoProps {
   serviceName: string;
@@ -25,18 +26,7 @@ const CustomerServiceInfo = ({
     <>
       {/* Service Title */}
       <Box sx={{ mb: 2 }}>
-        <Typography
-          variant="h4"
-          sx={{
-            fontWeight: 800,
-            mb: 1.5,
-            color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-            fontSize: { xs: "1.75rem", sm: "2.25rem" },
-            lineHeight: 1.2,
-          }}
-        >
-          {serviceName}
-        </Typography>
+        <PageHeading title={serviceName} sx={{ mb: 1.5 }} />
 
         {/* Service Quality Badges */}
         <Box

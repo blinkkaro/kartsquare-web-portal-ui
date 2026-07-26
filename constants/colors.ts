@@ -1,5 +1,3 @@
-import { Light } from "@mui/icons-material";
-
 export const COLORS = {
   // Primary Colors
   PRIMARY_PURPLE: "#5e18e9",
@@ -9,7 +7,10 @@ export const COLORS = {
   PURPLE_ALPHA_20: "rgba(94, 24, 233, 0.2)",
   PURPLE_ALPHA_30: "rgba(94, 24, 233, 0.3)",
   SECONDARY_ORANGE: "#f97316",
+  SECONDARY_CYAN: "#00B2FF",
   PRIMARY_BLUE: "#3b82f6",
+  INFO_BLUE: "#3b82f6",
+  WARNING_AMBER: "#f59e0b",
   // Google Business Profile–style (free listing page)
   BUSINESS_PROFILE_BLUE: "#1a73e8",
   BUSINESS_PROFILE_BLUE_HOVER: "#1557b0",
@@ -50,6 +51,9 @@ export const COLORS = {
     SECONDARY_DARK: "#1e2930",
     PAPER_LIGHT: "#f5f4fa",
     PAPER_DARK: "#1e2930",
+    // Card/surface tone for dark mode — deliberately lighter than PAPER_DARK (the
+    // page background) so cards read as raised, not as a darker hole in the page.
+    ELEVATED_DARK: "#28343d",
   },
 
   // Border Colors

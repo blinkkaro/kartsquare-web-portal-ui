@@ -36,11 +36,14 @@ const ServiceImageCarousel: React.FC<ServiceImageCarouselProps> = ({
           position: "relative",
           width: "100%",
           height: { xs: "300px", md: "400px" },
-          borderRadius: "16px",
+          borderRadius: "18px",
           overflow: "hidden",
           bgcolor: isDark
             ? COLORS.BACKGROUND.SECONDARY_DARK
             : COLORS.BACKGROUND.SECONDARY_LIGHT,
+          boxShadow: isDark
+            ? "0 4px 16px rgba(0,0,0,0.5)"
+            : "0 4px 16px rgba(17,24,39,0.08)",
         }}
       >
         <Box

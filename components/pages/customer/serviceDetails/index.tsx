@@ -44,6 +44,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import GetQuoteModal from "./GetQuoteModal";
 import { getServiceRouteParam } from "@/utils/serviceRoute";
+import SectionCard from "@/components/common/SectionCard";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
@@ -315,13 +316,11 @@ const CustomerServiceDetails = () => {
               </Box>
             </Box>
 
-            <Box
+            <SectionCard
+              size="lg"
               sx={{
                 order: { xs: 1, md: 2 },
-                bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "white",
-                borderRadius: "16px",
                 p: { xs: 1.5, sm: 2.5, md: 3 },
-                border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.04)"}`,
                 width: "100%",
                 maxWidth: "100%",
                 overflow: "hidden",
@@ -508,7 +507,7 @@ const CustomerServiceDetails = () => {
                   onAddReview={handleWriteReview}
                 />
               </Box>
-            </Box>
+            </SectionCard>
 
             <Box
               sx={{

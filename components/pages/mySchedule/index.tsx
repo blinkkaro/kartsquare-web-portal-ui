@@ -21,6 +21,7 @@ import { formatTo12Hour, convert12To24 } from "@/helper/helper";
 import DayScheduleCard from "./components/DayScheduleCard";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import SuccessModel from "@/components/common/SuccessModel";
+import PageHeading from "@/components/common/PageHeading";
 
 interface DaySchedule {
   id?: string;
@@ -194,15 +195,7 @@ function MyScheduleView() {
             mb: 3,
           }}
         >
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: 600,
-              color: "text.primary",
-            }}
-          >
-            {t("mySchedule")}
-          </Typography>
+          <PageHeading title={t("mySchedule")} sx={{ mb: 0 }} />
 
           <Button
             variant="contained"

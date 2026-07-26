@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Box, Typography, Tabs, Tab, Container, Grid } from "@mui/material";
 import BackButton from "@/components/common/BackButton";
+import PageHeading from "@/components/common/PageHeading";
 import SavedCard from "./components/SavedCard";
 import {
   useTranslationContext,
@@ -46,13 +47,7 @@ function SavedView() {
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Box sx={{ mb: 4 }}>
         <BackButton sx={{ mb: 2 }} />
-        <Typography
-          variant="h4"
-          component="h1"
-          sx={{ fontWeight: "bold", mb: 3 }}
-        >
-          {t("saved")}
-        </Typography>
+        <PageHeading title={t("saved")} component="h1" sx={{ mb: 3 }} />
 
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs

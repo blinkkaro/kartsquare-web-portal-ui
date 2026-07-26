@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { useTranslate } from "@/hooks/useTranslate";
-import { COLORS } from "@/constants/colors";
-import { useTheme } from "@mui/material";
 import CustomBox from "./components/CustomBox";
 import { myAccountNav, myAccountSettingNav } from "@/constants/myAccount";
 import { AppUserType } from "@/services/auth/auth.interface";
@@ -16,9 +14,9 @@ import ChangePassword from "./components/changePassword";
 import RightDrawer from "@/components/common/RightDrawer";
 import { secureStorage } from "@/helper/SecureStorage";
 import PostModel from "./components/post/postModel";
+import PageHeading from "@/components/common/PageHeading";
 
 function MyAccountView() {
-  const theme = useTheme();
   const { t } = useTranslate();
   const role = secureStorage.getItem("role");
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -27,8 +25,6 @@ function MyAccountView() {
   const [isPostsModalOpen, setIsPostsModalOpen] = useState(false);
 
   const { handleLogout } = useLogout();
-
-  const isDark = theme.palette.mode === "dark";
 
   const MyAccount = useMemo(
     () => myAccountNav(role as AppUserType, t),
@@ -43,19 +39,7 @@ function MyAccountView() {
   return (
     <ProfileWrapper showProfileOnMobile={true}>
       <Box>
-        <Typography
-          variant="h4"
-          sx={{
-            fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
-            fontWeight: "500",
-            color:
-              theme.palette.mode === "dark"
-                ? COLORS.TEXT.PRIMARY_DARK
-                : COLORS.TEXT.PRIMARY_LIGHT,
-          }}
-        >
-          {t("myAccount")}
-        </Typography>
+        <PageHeading title={t("myAccount")} />
         <Box
           sx={{
             display: "flex",
@@ -100,19 +84,7 @@ function MyAccountView() {
         </Box>
       </Box>
       <Box sx={{ mt: 8 }}>
-        <Typography
-          variant="h4"
-          sx={{
-            fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
-            fontWeight: "500",
-            color:
-              theme.palette.mode === "dark"
-                ? COLORS.TEXT.PRIMARY_DARK
-                : COLORS.TEXT.PRIMARY_LIGHT,
-          }}
-        >
-          {t("settings")}
-        </Typography>
+        <PageHeading title={t("settings")} />
         <Box
           sx={{
             display: "flex",
@@ -168,12 +140,8 @@ function MyAccountView() {
               onClick={() => setIsLogoutModalOpen(false)}
               sx={{
                 flex: 1,
-                borderColor: isDark
-                  ? COLORS.BORDER.DEFAULT_DARK
-                  : COLORS.BORDER.DEFAULT_LIGHT,
-                color: isDark
-                  ? COLORS.TEXT.PRIMARY_DARK
-                  : COLORS.TEXT.PRIMARY_LIGHT,
+                borderColor: "divider",
+                color: "text.primary",
               }}
             >
               {t("logoutCancel")}

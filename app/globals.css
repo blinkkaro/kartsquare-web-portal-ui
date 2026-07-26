@@ -115,6 +115,56 @@
 
 html {
     scroll-behavior: smooth;
+    /* Stop iOS auto-resizing text on orientation change — one more thing that
+       makes a mobile web page feel like a page, not an app. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* ── Native app feel (mobile) ──────────────────────────────────────────────
+   A handful of browser defaults make web pages read as "a website" instead
+   of "an app": the long-press callout menu on every tap-and-hold, draggable
+   images, and Safari auto-zooming the page when you focus a small-text
+   input. None of this touches desktop.
+   Note: overscroll-behavior-y:none on html/body was tried here to stop
+   scroll-chaining but it broke normal page scrolling on mobile browsers
+   (root-level overscroll-behavior is unreliable on iOS Safari) — removed.
+   Apply overscroll-behavior: contain on specific inner scroll containers
+   (e.g. the Reels feed) instead, if that effect is still wanted there. */
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Real buttons/links only — deliberately not applied to `*`, so body text,
+   captions, etc. stay selectable/copyable like a normal page. */
+button,
+a,
+[role="button"],
+.MuiButtonBase-root {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    /* Removes the legacy 300ms tap delay and stops double-tap-to-zoom from
+       firing on controls; doesn't affect pinch-zoom elsewhere (e.g. maps). */
+    touch-action: manipulation;
+}
+
+/* Native apps don't let you drag a photo off a card — this does the same. */
+img {
+    -webkit-user-drag: none;
+}
+
+/* iOS Safari zooms the whole page in when focusing an input with computed
+   font-size under 16px. Scoped to mobile widths so desktop typography is
+   untouched; !important is needed to beat MUI's own generated input styles. */
+@media (max-width: 768px) {
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -126,6 +176,10 @@ html {
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+    /* Mobile Safari/Chrome flash a gray highlight square on any tap by default —
+       every custom button/card in this app is a div with an onClick, so it showed
+       up constantly. This is purely visual; it doesn't affect click behavior. */
+    -webkit-tap-highlight-color: transparent;
 }
 
 html,

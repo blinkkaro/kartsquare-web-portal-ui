@@ -1,7 +1,7 @@
 "use client";
 import ProfileWrapper from "@/components/common/profile/profileWrapper";
 import React, { useEffect, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import PreferenceCards from "@/components/pages/preferences/components/PreferenceCard";
 import {
@@ -11,6 +11,7 @@ import {
 } from "@/hooks/usePreference";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import { secureStorage } from "@/helper/SecureStorage";
+import PageHeading from "@/components/common/PageHeading";
 
 function MyPreferencesView() {
   const { t } = useTranslationContext();
@@ -73,16 +74,7 @@ function MyPreferencesView() {
   return (
     <ProfileWrapper showBackButton>
       <Box sx={{ p: { xs: 2, md: 3 } }}>
-        <Typography
-          variant="h4"
-          sx={{
-            mb: 4,
-            fontWeight: 600,
-            fontSize: { xs: "1.5rem", md: "2rem" },
-          }}
-        >
-          {getTitle()}
-        </Typography>
+        <PageHeading title={getTitle()} sx={{ mb: 4 }} />
 
         {isLoading ? (
           <CenteredLoader />

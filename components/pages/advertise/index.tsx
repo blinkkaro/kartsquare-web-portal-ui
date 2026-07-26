@@ -6,7 +6,6 @@ import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import {
   Box,
-  Typography,
   useTheme,
   Button,
   Pagination,
@@ -27,6 +26,7 @@ import EmptyState from "@/components/common/EmptyState";
 import WarningModel from "@/components/common/WarningModel";
 import RightDrawer from "@/components/common/RightDrawer";
 import AdForm from "./components/AdForm";
+import PageHeading from "@/components/common/PageHeading";
 
 function AdvertiseView() {
   const { t } = useTranslate();
@@ -153,18 +153,7 @@ function AdvertiseView() {
           gap: 2,
         }}
       >
-        <Typography
-          variant="h4"
-          sx={{
-            fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
-            fontWeight: "500",
-            color: isDark
-              ? COLORS.TEXT.PRIMARY_DARK
-              : COLORS.TEXT.PRIMARY_LIGHT,
-          }}
-        >
-          {t("advertisement")}
-        </Typography>
+        <PageHeading title={t("advertisement")} sx={{ mb: 0 }} />
         <Button
           variant="contained"
           startIcon={<Add />}

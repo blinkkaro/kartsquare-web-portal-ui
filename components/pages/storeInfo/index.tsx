@@ -18,6 +18,7 @@ import AddressCard from "@/components/pages/address/components/AddressCard";
 import Labels from "../personalInfo/components/labels";
 import EditStoreInfoModal from "./components/EditStoreInfoModal";
 import { SupplierStore } from "@/services/supplier/supplier.service";
+import PageHeading from "@/components/common/PageHeading";
 
 function StoreInfoView() {
   const theme = useTheme();
@@ -49,18 +50,7 @@ function StoreInfoView() {
           justifyContent: "space-between",
         }}
       >
-        <Typography
-          variant="h4"
-          sx={{
-            fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
-            fontWeight: "500",
-            color: isDark
-              ? COLORS.TEXT.PRIMARY_DARK
-              : COLORS.TEXT.PRIMARY_LIGHT,
-          }}
-        >
-          {t("storeInfo" as any) || "Store Info"}
-        </Typography>
+        <PageHeading title={t("storeInfo" as any) || "Store Info"} sx={{ mb: 0 }} />
         <Box
           onClick={() => setIsEditModalOpen(true)}
           sx={{

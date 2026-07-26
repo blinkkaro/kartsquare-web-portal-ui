@@ -19,6 +19,7 @@ import { useProviderDashboard } from "@/hooks/useProviderDashboard";
 import { useSupplierDashboard } from "@/hooks/useSupplierDashboard";
 import ProviderBookingDetailsDrawer from "../provider/bookings/ProviderBookingDetailsDrawer";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
+import PageHeading from "@/components/common/PageHeading";
 
 function DashboardView() {
   const theme = useTheme();
@@ -110,16 +111,7 @@ function DashboardView() {
           mb: { xs: 3, md: 4 },
         }}
       >
-        <Typography
-          variant="h4"
-          sx={{
-            fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
-            fontWeight: 600,
-            color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-          }}
-        >
-          {t("dashboard")}
-        </Typography>
+        <PageHeading title={t("dashboard")} sx={{ mb: 0 }} />
 
         {/* Quick Tools Strip */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

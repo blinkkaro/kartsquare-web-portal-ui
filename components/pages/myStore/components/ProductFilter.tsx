@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Stack, Typography, useTheme, useMediaQuery } from "@mui/material";
+import { Box, useTheme, useMediaQuery } from "@mui/material";
 import { useForm } from "react-hook-form";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
@@ -10,6 +10,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { COLORS } from "@/constants/colors";
 import { useRouter } from "next/navigation";
 import { useTranslate } from "@/hooks/useTranslate";
+import PageHeading from "@/components/common/PageHeading";
 
 interface ProductFilterProps {
   onSearch: (search: string) => void;
@@ -61,21 +62,28 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
         borderRadius: "16px",
       }}
     >
-      <Typography variant="h5" fontWeight="bold">
-        {t("my_store")}{" "}
-        <Box
-          component="span"
-          sx={{
-            bgcolor: COLORS.PURPLE_ALPHA_10,
-            color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-            borderRadius: "8px",
-            px: 1,
-            fontSize: "0.8em",
-          }}
-        >
-          {totalCount || 0}
-        </Box>
-      </Typography>
+      <PageHeading
+        sx={{ mb: 0 }}
+        title={
+          <>
+            {t("my_store")}{" "}
+            <Box
+              component="span"
+              sx={{
+                bgcolor: COLORS.PURPLE_ALPHA_10,
+                color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+                borderRadius: "8px",
+                px: 1,
+                fontSize: "0.8em",
+                WebkitTextFillColor: "initial",
+                background: "none",
+              }}
+            >
+              {totalCount || 0}
+            </Box>
+          </>
+        }
+      />
 
       <Box
         sx={{

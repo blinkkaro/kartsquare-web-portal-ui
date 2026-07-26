@@ -18,16 +18,15 @@ const ServiceGrid: React.FC<ServiceGridProps> = ({ services, total }) => {
     const theme = useTheme();
     const { t } = useTranslate();
     const isDark = theme.palette.mode === "dark";
-    const textSecondary = isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT;
 
     return (
         <>
             {/* Results Count */}
             <Typography
                 variant="body2"
+                color="text.secondary"
                 sx={{
                     mb: { xs: 1.5, sm: 2 },
-                    color: textSecondary,
                     fontSize: { xs: "0.8rem", sm: "0.875rem" },
                     fontWeight: 600,
                 }}
@@ -72,8 +71,8 @@ const ServiceGrid: React.FC<ServiceGridProps> = ({ services, total }) => {
                     />
                     <Typography
                         variant="body2"
+                        color="text.secondary"
                         sx={{
-                            color: textSecondary,
                             fontSize: "0.875rem",
                             textAlign: "center",
                             mt: 2,

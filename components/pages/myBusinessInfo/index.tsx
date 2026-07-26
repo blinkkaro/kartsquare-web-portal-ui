@@ -21,6 +21,7 @@ import { IBusinessInfo } from "@/services/auth/auth.interface";
 import Labels from "../personalInfo/components/labels";
 import AddressCard from "../address/components/AddressCard";
 import { Address } from "@/services/address/addressInterface";
+import PageHeading from "@/components/common/PageHeading";
 
 function MyBusinessInfoView() {
   const theme = useTheme();
@@ -53,18 +54,7 @@ function MyBusinessInfoView() {
           justifyContent: "space-between",
         }}
       >
-        <Typography
-          variant="h4"
-          sx={{
-            fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
-            fontWeight: "500",
-            color: isDark
-              ? COLORS.TEXT.PRIMARY_DARK
-              : COLORS.TEXT.PRIMARY_LIGHT,
-          }}
-        >
-          {t("businessInfo")}
-        </Typography>
+        <PageHeading title={t("businessInfo")} sx={{ mb: 0 }} />
         <Box
           onClick={() => setIsEditModalOpen(true)}
           sx={{
