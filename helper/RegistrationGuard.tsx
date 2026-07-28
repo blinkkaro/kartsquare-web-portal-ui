@@ -30,6 +30,13 @@ const ONBOARDING_PATHS = [
   "/supplier/onboarding",
 ];
 
+function isBlockingPath(pathname: string): boolean {
+  return (
+    RESTRICTED_AUTH_PATHS.some((path) => pathname.startsWith(path)) ||
+    ONBOARDING_PATHS.some((path) => pathname.startsWith(path))
+  );
+}
+
 export default function RegistrationGuard({
   children,
 }: {
@@ -38,8 +45,12 @@ export default function RegistrationGuard({
   const router = useRouter();
   const pathname = usePathname();
 
-  // 2. State to handle "checking" status to prevent content flash
-  const [isChecking, setIsChecking] = useState(true);
+  // 2. Only block first paint on auth/onboarding routes (already noindex'd — see
+  // robots.txt). Every other route — marketing, store, services, blogs — must
+  // render its real content on the server so crawlers and AI engines that don't
+  // execute JS still see it. Blocking globally here previously meant every public
+  // page's server HTML was just the "Hold on !!" loader.
+  const [isChecking, setIsChecking] = useState(() => isBlockingPath(pathname));
 
   const { user, isAuthenticated: isAuthRedux } = useAppSelector(
     (state) => state.auth,
@@ -59,6 +70,12 @@ export default function RegistrationGuard({
       const isOnboardingPath = ONBOARDING_PATHS.some((path) =>
         pathname.startsWith(path),
       );
+
+      // Re-arm the blocking loader on client-side navigation into an
+      // auth/onboarding route (the initial-state check only covers first paint).
+      if (isRestrictedPath || isOnboardingPath) {
+        setIsChecking(true);
+      }
 
       // --- UNAUTHENTICATED: allow them to stay on any public/auth page ---
       if (!isAuthenticated) {

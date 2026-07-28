@@ -56,6 +56,7 @@ const HomeBanner = () => {
                 <Grid size={{ xs: 12, md: 8, lg: 12 }}>
                     <Typography
                         variant="h2"
+                        component="h1"
                         fontWeight="bold"
                         sx={{
                             mb: { xs: 0.5, md: 1.5 },

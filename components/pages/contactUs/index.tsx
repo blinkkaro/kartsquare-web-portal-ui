@@ -149,18 +149,25 @@ function ContactUsView() {
           spacing={{ xs: 2, sm: 3 }}
           sx={{ mb: { xs: 3, sm: 4, md: 5 } }}
         >
-          <Grid size={{ xs: 12, sm: 6, md: 6 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <ContactCard
               icon={LocalPhoneIcon}
               title={phoneNumber}
               subtitle={t("customerService")}
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 6 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <ContactCard
               icon={EmailIcon}
               title={email}
               subtitle={t("writeUsAt")}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <ContactCard
+              icon={LocationOnIcon}
+              title={address}
+              subtitle={t("ourLocation")}
             />
           </Grid>
         </Grid>

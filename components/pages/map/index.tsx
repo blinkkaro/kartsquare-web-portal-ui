@@ -180,6 +180,12 @@ const MapView: React.FC = () => {
           bgcolor: COLORS.BACKGROUND.PAPER_LIGHT,
         }}
       >
+        {/* Google Maps only loads client-side, so this branch is what the
+            server always renders — the H1 needs to live here too, not just
+            in the loaded-map branch below. */}
+        <Typography component="h1" sx={{ position: "absolute", width: 1, height: 1, p: 0, m: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
+          Find businesses & services near you on the KartSquare map
+        </Typography>
         <p>{t("loadingMap")}</p>
       </Box>
     );
@@ -193,6 +199,9 @@ const MapView: React.FC = () => {
         height: "calc(100vh - 10rem)",
       }}
     >
+      <Typography component="h1" sx={{ position: "absolute", width: 1, height: 1, p: 0, m: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
+        Find businesses & services near you on the KartSquare map
+      </Typography>
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={
