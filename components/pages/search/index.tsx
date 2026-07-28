@@ -34,10 +34,15 @@ const SearchResultsView: React.FC = () => {
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
   
-  const [searchQuery, setSearchQuery] = useState("");
+  // Read the initial query synchronously (not just in the effect below) so the
+  // first render — server and client — already matches reality: a query-less
+  // visit shows the prompt immediately instead of always rendering a spinner
+  // with no text or heading until the effect runs.
+  const initialQuery = searchParams.get("q") || "";
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [users, setUsers] = useState<SearchUser[]>([]);
   const [services, setServices] = useState<SearchServiceType[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!!initialQuery.trim());
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -145,7 +150,16 @@ const SearchResultsView: React.FC = () => {
   };
 
   if (loading && users.length === 0 && services.length === 0) {
-    return <CenteredLoader minHeight="400px" size={60} />;
+    return (
+      <>
+        {/* Results fetch is client-only, so this is what SSR always renders
+            when a query is present — keep a real H1 in it. */}
+        <Typography component="h1" sx={{ position: "absolute", width: 1, height: 1, p: 0, m: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
+          {`Search results for "${searchQuery}"`}
+        </Typography>
+        <CenteredLoader minHeight="400px" size={60} />
+      </>
+    );
   }
 
   if (!searchQuery.trim()) {
@@ -170,6 +184,7 @@ const SearchResultsView: React.FC = () => {
         />
         <Typography
           variant="h5"
+          component="h1"
           sx={{
             fontWeight: 600,
             color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
@@ -198,6 +213,7 @@ const SearchResultsView: React.FC = () => {
       <Box sx={{ mb: 4 }}>
         <Typography
           variant="h4"
+          component="h1"
           sx={{
             fontWeight: 700,
             color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,

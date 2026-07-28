@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import MainLayout from "../mainLayout";
 import ChatView from "@/components/pages/chat";
 import { seoPrivate } from "@/lib/seo/buildMetadata";
@@ -11,7 +12,9 @@ export const metadata = seoPrivate({
 export default function ChatPage() {
   return (
     <MainLayout>
-      <ChatView />
+      <Suspense>
+        <ChatView />
+      </Suspense>
     </MainLayout>
   );
 }

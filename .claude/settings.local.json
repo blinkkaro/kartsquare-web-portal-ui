@@ -62,7 +62,9 @@
       "Bash(curl -s http://localhost:3000/ -o /tmp/home_h1.html)",
       "Bash(curl -s \"http://localhost:3000/map\" -o /tmp/map3.html)",
       "Bash(curl -s \"http://localhost:3000/\" -o /tmp/h.html)",
-      "Bash(curl -s \"http://localhost:3000/blogs/what-is-kartsquare-everything-you-need-to-know\" -o /tmp/b.html)"
+      "Bash(curl -s \"http://localhost:3000/blogs/what-is-kartsquare-everything-you-need-to-know\" -o /tmp/b.html)",
+      "Bash(curl -s \"http://localhost:3001/search\" -o /tmp/search2.html)",
+      "Bash(curl -s \"http://localhost:3001/search?q=plumber\" -o /tmp/search3.html)"
     ]
   }
 }
