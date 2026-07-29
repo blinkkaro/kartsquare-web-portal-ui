@@ -106,7 +106,7 @@ function ContactUsView() {
 
   const phoneNumber = "8005673985";
   const email = "contact@kartsquare.com";
-  const address = "Dubai, United Arab Emirates";
+  const address = "Jaipur, Rajasthan, India";
 
   return (
     <ProfileWrapper showBackButton>

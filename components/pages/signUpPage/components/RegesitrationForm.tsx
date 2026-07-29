@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useRef } from "react";
+import NextLink from "next/link";
 import {
   Grid,
   MenuItem,
@@ -8,6 +9,7 @@ import {
   Box,
   Checkbox,
   FormControlLabel,
+  Link,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -476,25 +478,35 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             sx={{ fontSize: "0.8rem", lineHeight: 1.6 }}
           >
             {t("by_signup_to_accept")}{" "}
-            <span
-              style={{
+            <Link
+              component={NextLink}
+              href="/privacyPolicy"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              sx={{
                 color: COLORS.PRIMARY_PURPLE,
                 fontWeight: 700,
                 cursor: "pointer",
               }}
             >
               {t("privacy_policy")}
-            </span>{" "}
+            </Link>{" "}
             and{" "}
-            <span
-              style={{
+            <Link
+              component={NextLink}
+              href="/termsConditions"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              sx={{
                 color: COLORS.PRIMARY_PURPLE,
                 fontWeight: 700,
                 cursor: "pointer",
               }}
             >
               {t("termsConditionsTitle")}
-            </span>
+            </Link>
           </Typography>
         }
       />

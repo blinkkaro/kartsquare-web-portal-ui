@@ -1,17 +1,12 @@
-import MainLayout from "@/app/mainLayout";
-import BecomeServiceProviderView from "@/components/pages/becomeServiceProvider";
+import JoinAsProviderView from "@/components/pages/JoinAsProvider";
 import { seoAuth } from "@/lib/seo/buildMetadata";
 
 export const metadata = seoAuth({
-  title: "Become a service provider",
+  title: "Join as an Automotive Service Provider | KartSquare",
   description:
-    "Join KartSquare as a verified service provider — list services, get bookings, and grow your business on India's marketplace.",
+    "Register your garage, EV service centre, car wash, or automotive business on KartSquare and reach millions of vehicle owners across India.",
 });
 
 export default function BecomeServiceProviderPage() {
-  return (
-    <MainLayout>
-      <BecomeServiceProviderView />
-    </MainLayout>
-  );
+  return <JoinAsProviderView />;
 }

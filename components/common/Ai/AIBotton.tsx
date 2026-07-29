@@ -19,7 +19,10 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
   const role: AppUserType = secureStorage.getItem("role");
   const { data: appAIServiceConfig } = useAppAIServiceConfig();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
+  // noSsr: without it, MUI deliberately returns `false` on the very first client
+  // render (to avoid a hydration mismatch), so mobile users briefly saw the old
+  // desktop pill variant before this flipped to the circular mobile button.
+  const isMobile = useMediaQuery(theme.breakpoints.down("lg"), { noSsr: true });
 
   const services = [
     t("plumber"),
@@ -49,19 +52,18 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
   }
 
   if (isMobile) {
-    // Sits at the right edge of the same centered dock as MobileBottomNav
-    // (dock width: min(94vw, 440px)), so it stays aligned as one unit at any width.
-    const DOCK = "min(94vw, 440px)";
+    // Pinned to the screen's right edge — independent of the nav dock's own
+    // width (the dock sizes to fit its tabs, so tying this to a shared "dock
+    // width" constant drifted out of sync and clipped/overlapped the dock).
     const AI_SIZE = "48px";
     return (
       <Box
         sx={{
           position: "fixed",
           bottom: "14px",
-          left: "50%",
+          right: "16px",
           width: AI_SIZE,
           height: AI_SIZE,
-          transform: `translateX(calc(${DOCK} * 0.5 - ${AI_SIZE}))`,
           zIndex: 1000,
         }}
       >

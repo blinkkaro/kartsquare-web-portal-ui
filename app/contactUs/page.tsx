@@ -42,8 +42,9 @@ const contactPageJsonLd = {
     ],
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Dubai",
-      addressCountry: "AE",
+      addressLocality: "Jaipur",
+      addressRegion: "Rajasthan",
+      addressCountry: "IN",
     },
   },
 };
