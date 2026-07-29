@@ -11,18 +11,22 @@ const RightDrawer = ({
   open,
   onClose,
   title,
+  titleContent,
   children,
   width = 1000,
   titleStyle,
   headerStyle,
+  closeButtonStyle,
 }: {
   open: boolean;
   onClose: () => void;
   title: string;
+  titleContent?: React.ReactNode;
   children: React.ReactNode;
   width?: number;
   titleStyle?: SxProps<Theme>;
   headerStyle?: SxProps<Theme>;
+  closeButtonStyle?: SxProps<Theme>;
 }) => {
   const theme = useTheme();
   return (
@@ -60,20 +64,22 @@ const RightDrawer = ({
           ...headerStyle,
         }}
       >
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: 700,
-            fontSize: { xs: "1.15rem", sm: "1.5rem" },
-            color:
-              theme.palette.mode === "dark"
-                ? COLORS.TEXT.PRIMARY_DARK
-                : COLORS.TEXT.PRIMARY_LIGHT,
-            ...titleStyle,
-          }}
-        >
-          {title}
-        </Typography>
+        {titleContent ?? (
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 700,
+              fontSize: { xs: "1.15rem", sm: "1.5rem" },
+              color:
+                theme.palette.mode === "dark"
+                  ? COLORS.TEXT.PRIMARY_DARK
+                  : COLORS.TEXT.PRIMARY_LIGHT,
+              ...titleStyle,
+            }}
+          >
+            {title}
+          </Typography>
+        )}
         <IconButton
           onClick={onClose}
           size="small"
@@ -86,12 +92,14 @@ const RightDrawer = ({
             width: "40px",
             height: "40px",
             borderRadius: "50%",
+            flexShrink: 0,
             "&:hover": {
               backgroundColor:
                 theme.palette.mode === "dark"
                   ? COLORS.BACKGROUND.PRIMARY_DARK
                   : COLORS.LIGHT_GRAY,
             },
+            ...closeButtonStyle,
           }}
         >
           <Close

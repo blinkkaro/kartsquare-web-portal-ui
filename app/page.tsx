@@ -7,7 +7,7 @@ import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 const homeFallback = seoPublic({
   title: "KartSquare – B2B marketplace & local services",
   description:
-    "KartSquare connects you with verified suppliers, technicians, and service providers across India — from home repairs and cleaning to industrial supplies and wholesale products. Book services and discover businesses you can trust.",
+    "KartSquare connects you with verified suppliers and technicians across India — home repairs, cleaning, industrial supplies, and wholesale products.",
   path: "/",
   keywords: [
     "KartSquare",

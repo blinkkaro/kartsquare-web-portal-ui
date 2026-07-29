@@ -430,6 +430,7 @@ export type TranslationKey =
   | "findYourServicesDescription"
   | "ask_anything_placeholder"
   | "kartAi"
+  | "ai_powered_assistant"
   | "kartAiGreeting"
   | "find"
   | "neatMyArea"

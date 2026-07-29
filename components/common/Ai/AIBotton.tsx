@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
+import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { secureStorage } from "@/helper/SecureStorage";
@@ -17,6 +18,8 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
   const pathname = usePathname();
   const role: AppUserType = secureStorage.getItem("role");
   const { data: appAIServiceConfig } = useAppAIServiceConfig();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
   const services = [
     t("plumber"),
@@ -43,6 +46,70 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
   // Check visibility AFTER all hooks have been called
   if (!shouldShowAIBot(pathname, role, appAIServiceConfig)) {
     return null;
+  }
+
+  if (isMobile) {
+    // Sits at the right edge of the same centered dock as MobileBottomNav
+    // (dock width: min(94vw, 440px)), so it stays aligned as one unit at any width.
+    const DOCK = "min(94vw, 440px)";
+    const AI_SIZE = "48px";
+    return (
+      <Box
+        sx={{
+          position: "fixed",
+          bottom: "14px",
+          left: "50%",
+          width: AI_SIZE,
+          height: AI_SIZE,
+          transform: `translateX(calc(${DOCK} * 0.5 - ${AI_SIZE}))`,
+          zIndex: 1000,
+        }}
+      >
+        <Box
+          onClick={() => setOpen(true)}
+          sx={{
+            position: "relative",
+            width: "100%",
+            height: "100%",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            background: `linear-gradient(135deg, ${COLORS.ICON_GRADIENT.Light.START} 0%, ${COLORS.ICON_GRADIENT.Light.END} 100%)`,
+            boxShadow: `0 8px 24px ${COLORS.PRIMARY_PURPLE}55, 0 2px 8px rgba(0,0,0,0.15)`,
+            border: `2px solid ${
+              theme.palette.mode === "dark" ? "rgba(23,20,34,0.9)" : "#ffffff"
+            }`,
+            transition: "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+            animation: "aiFloat 3s ease-in-out infinite",
+            "@keyframes aiFloat": {
+              "0%, 100%": { transform: "translateY(0px)" },
+              "50%": { transform: "translateY(-6px)" },
+            },
+            "&::before": {
+              content: '""',
+              position: "absolute",
+              inset: "-5px",
+              borderRadius: "50%",
+              border: `1.5px solid ${COLORS.PRIMARY_PURPLE}66`,
+              animation: "aiRing 2.2s ease-out infinite",
+            },
+            "@keyframes aiRing": {
+              "0%": { transform: "scale(0.85)", opacity: 0.9 },
+              "100%": { transform: "scale(1.25)", opacity: 0 },
+            },
+            "&:active": {
+              transform: "scale(0.94)",
+            },
+          }}
+        >
+          <AutoAwesomeRoundedIcon
+            sx={{ fontSize: 22, color: "#fff", position: "relative", zIndex: 1 }}
+          />
+        </Box>
+      </Box>
+    );
   }
 
   return (

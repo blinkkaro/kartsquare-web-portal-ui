@@ -37,7 +37,7 @@ const Input: React.FC<InputProps> = ({
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>,
+    event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
   };
@@ -50,7 +50,7 @@ const Input: React.FC<InputProps> = ({
     : props.type;
 
   const defaultInputSx = {
-    borderRadius: "12px",
+    borderRadius: "10px",
     bgcolor: "transparent",
     "& input:-webkit-autofill": {
       WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.paper} inset`,
@@ -58,13 +58,20 @@ const Input: React.FC<InputProps> = ({
       caretColor: theme.palette.text.primary,
     },
     "& .MuiInputBase-input": {
-      padding: "10px 14px",
+      padding: "8.5px 10px",
+      fontSize: "0.85rem",
       [theme.breakpoints.up("lg")]: {
         fontSize: "0.875rem",
       },
       [theme.breakpoints.up("xl")]: {
-        fontSize: "1rem",
+        fontSize: "0.95rem",
       },
+    },
+    "& .MuiInputAdornment-root .MuiSvgIcon-root": {
+      fontSize: "1.15rem",
+    },
+    "& .MuiInputAdornment-root .MuiIconButton-root": {
+      padding: "4px",
     },
   };
 
@@ -84,18 +91,15 @@ const Input: React.FC<InputProps> = ({
           helperText={error?.message}
           FormHelperTextProps={{
             sx: {
-              position: error ? "absolute" : "relative",
-              bottom: error ? "-18px" : "auto",
-              left: 0,
-              margin: 0,
-              fontSize: "0.75rem",
-              lineHeight: 1,
+              margin: "4px 2px 0",
+              fontSize: "0.72rem",
+              lineHeight: 1.3,
             },
           }}
           InputProps={{
             ...InputProps,
             startAdornment: startIcon ? (
-              <InputAdornment position="start" sx={{ mr: 0.5 }}>
+              <InputAdornment position="start" sx={{ mr: 0 }}>
                 {startIcon}
               </InputAdornment>
             ) : (
@@ -108,8 +112,13 @@ const Input: React.FC<InputProps> = ({
                   onClick={handleClickShowPassword}
                   onMouseDown={handleMouseDownPassword}
                   edge="end"
+                  size="small"
                 >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                  {showPassword ? (
+                    <VisibilityOff sx={{ fontSize: "1.15rem" }} />
+                  ) : (
+                    <Visibility sx={{ fontSize: "1.15rem" }} />
+                  )}
                 </IconButton>
               </InputAdornment>
             ) : endIcon ? (
@@ -133,7 +142,10 @@ const Input: React.FC<InputProps> = ({
               {
                 colorScheme: theme.palette.mode === "dark" ? "dark" : "light",
               },
-            bgcolor: theme.palette.mode === "dark" ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.WHITE,
+            bgcolor:
+              theme.palette.mode === "dark"
+                ? COLORS.BACKGROUND.PRIMARY_DARK
+                : COLORS.WHITE,
             borderRadius: "12px",
             ...sx,
           }}

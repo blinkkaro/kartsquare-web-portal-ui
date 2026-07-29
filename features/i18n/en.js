@@ -18,7 +18,7 @@ export const english = {
   forgot_password: "Forgot Password?",
   login: "Login",
   continue_with_google: "Continue with Google",
-  no_account: "You don't have an account?",
+  no_account: "Don't have an account?",
   sign_up: "Sign up",
   brand_tagline: "Kartsquare — Where Your Needs Meet Solutions",
   continue_as: "Continue as",
@@ -28,8 +28,10 @@ export const english = {
   login_subtitle: "Enter your email & password to login.",
   home_banner_eyebrow: "Your All-in-One Local Marketplace",
   home_banner_title: "Hire Experts, Buy Products. All in One Place.",
-  home_banner_subtitle: "Instantly connect with the best local professionals and discover quality goods, all in one trusted platform.",
-  home_banner_search_placeholder: "Find unique services and premium products...",
+  home_banner_subtitle:
+    "Instantly connect with the best local professionals and discover quality goods, all in one trusted platform.",
+  home_banner_search_placeholder:
+    "Find unique services and premium products...",
   home_banner_search_button: "AI Search",
   home_banner_trusted_by: "Trusted by 10k+ locals",
   home_banner_verified_guarantee: "Verified Providers Guarantee",
@@ -67,7 +69,7 @@ export const english = {
   email_verification_success: "Your email address is verified successfully.",
   email_verification_success_description: "You can now login to your account.",
   signUp: "Sign Up",
-  signUpSubtitle: "Enter your personal information to sign up with us.",
+  signUpSubtitle: "Enter your personal information.",
   firstNameRequired: "First name is required",
   firstNameMin: "First name must be at least 2 characters",
   lastNameRequired: "Last name is required",
@@ -145,10 +147,13 @@ export const english = {
   businessSubCategory: "Business Sub Category",
   selectSubCategory: "Select sub category",
   businessLocation: "Business Location",
-  businessLocationDescription: "Select your primary business location. This will be used to show your business to local customers.",
-  businessImagesDescription: "Upload up to 5 high-quality images of your business, storefront, or services.",
+  businessLocationDescription:
+    "Select your primary business location. This will be used to show your business to local customers.",
+  businessImagesDescription:
+    "Upload up to 5 high-quality images of your business, storefront, or services.",
   businessClassification: "Business Classification",
-  businessClassificationDescription: "Select the category that best describes your business.",
+  businessClassificationDescription:
+    "Select the category that best describes your business.",
   addAnotherAddress: "Add Another Address",
   updateBusinessProfile: "Add Business Profile",
   something_went_wrong: "Something went wrong",
@@ -410,7 +415,8 @@ export const english = {
   maxImagesReached: "Maximum 10 images allowed",
   invalidImageFormat:
     "Invalid image format. Only JPG, PNG, and GIF are allowed",
-  invalidMediaFormat: "Invalid media format. Only JPG, PNG, GIF, MP4, WEBM, and OGG are allowed",
+  invalidMediaFormat:
+    "Invalid media format. Only JPG, PNG, GIF, MP4, WEBM, and OGG are allowed",
   imageSizeTooLarge: "Image size too large. Maximum size allowed is 5MB",
   uploadingPost: "Uploading post...",
   compressingVideo: "Compressing video...",
@@ -457,6 +463,7 @@ export const english = {
     "Let AI help you discover the perfect service tailored to your needs",
   ask_anything_placeholder: "Ask anything about services...",
   kartAi: "Kart AI",
+  ai_powered_assistant: "AI-powered assistant",
   kartAiGreeting:
     "Hi there! I’m Kart AI, your personal AI assistant. Let’s get you the perfect service.",
   find: "Find a",
@@ -619,7 +626,8 @@ export const english = {
   contactUsSuccess: "Thank you for contacting us! We'll get back to you soon.",
   get_quote: "Get a Quote",
   submit_request: "Submit Request",
-  quote_request_description: "The service provider will get back to you with a quote soon.",
+  quote_request_description:
+    "The service provider will get back to you with a quote soon.",
   request_sent_successfully: "Request Sent Successfully",
   support: "Support",
   becomeServiceProvider: "Become a Service Provider",
@@ -717,7 +725,8 @@ export const english = {
   qualityServiceDelivery: "Commitment to quality service delivery",
   responsiveCustomerService: "Responsive customer service and communication",
   complianceWithStandards: "Compliance with industry standards and regulations",
-  joinThousands: "Thousands of Indian shop owners and service professionals are already getting direct leads every single day. Join them for free.",
+  joinThousands:
+    "Thousands of Indian shop owners and service professionals are already getting direct leads every single day. Join them for free.",
   readyToStandOut: "Ready to Multiply Your Business?",
   providerSuccessStory:
     "Join a community of successful service providers who have grown their businesses with KartSquare. From freelancers to established businesses, our platform helps you reach more customers and scale your operations.",
@@ -958,8 +967,7 @@ export const english = {
   clear_all_catalog: "Clear all",
   service_name_label: "Service name",
   price_label: "Price (INR)",
-  at_least_one_price_item:
-    "Add at least one service with name and price",
+  at_least_one_price_item: "Add at least one service with name and price",
   price_catalog_required: "Please upload a price catalog file",
   // Customer Service Details
   services: "Services",
@@ -1078,7 +1086,8 @@ export const english = {
   guest_login_error: "Something went wrong during guest login",
   country_code: "Country Code",
   country_code_placeholder: "+91",
-  country_code_invalid: "Country code must start with + followed by digits (e.g. +91)",
+  country_code_invalid:
+    "Country code must start with + followed by digits (e.g. +91)",
 
   // Phone & Password Validation
   phoneNumberInvalid: "Phone number must contain 8–15 digits",
@@ -1088,7 +1097,8 @@ export const english = {
   passwordMaxLength: "Password must be at most 64 characters",
   passwordUppercase: "Password must contain at least one uppercase letter",
   passwordNumber: "Password must contain at least one number",
-  passwordSpecialChar: "Password must contain at least one special character (@$!%*?&#)",
+  passwordSpecialChar:
+    "Password must contain at least one special character (@$!%*?&#)",
   nameLettersOnly: "Name must contain letters only",
   firstNameMax: "First name must be at most 50 characters",
   lastNameMax: "Last name must be at most 50 characters",
@@ -1162,7 +1172,8 @@ export const english = {
   heroBenefit1: "Get discovered by customers searching for your services",
   heroBenefit2: "Manage reviews and respond to questions in one place",
   heroBenefit3: "Showcase your services, photos, and business info",
-  standOutHeadline: "Grow Your Vyapar Online — Get Customers From Your Locality",
+  standOutHeadline:
+    "Grow Your Vyapar Online — Get Customers From Your Locality",
   standOutHighlight: "Grow Your Vyapar Online",
   standOutRest: " — Get Customers From Your Locality",
   standOutSubtext:
@@ -1231,30 +1242,39 @@ export const english = {
   stepManage: "3. Get Direct Enquiries",
   stepManageDesc:
     "Receive direct calls and WhatsApp messages from customers nearby. You close the deal, you keep 100% of the money.",
-  
+
   // Benefits Section
   benefitWhyChooseUs: "Why Choose KartSquare",
   benefitHeading1: "Built for Indian ",
   benefitHeading2: "Local Growth",
-  benefitSubheading: "Grow your dhanda with tools designed specifically for Indian service professionals and local shop owners.",
+  benefitSubheading:
+    "Grow your dhanda with tools designed specifically for Indian service professionals and local shop owners.",
   benefitServiceTitle: "For Service Professionals",
-  benefitServiceSub: "Stop relying purely on word-of-mouth. Put your skills in front of customers actively looking to hire right now.",
+  benefitServiceSub:
+    "Stop relying purely on word-of-mouth. Put your skills in front of customers actively looking to hire right now.",
   benefitShopTitle: "For Shop Owners",
-  benefitShopSub: "Your digital dukaan is always open. Connect with nearby buyers and boost your daily sales without paying marketing fees.",
-  
+  benefitShopSub:
+    "Your digital dukaan is always open. Connect with nearby buyers and boost your daily sales without paying marketing fees.",
+
   benefitSpl1Title: "Local Dominance",
-  benefitSpl1Desc: "Focus on your neighborhood. Be the first result when someone nearby searches for your exact services.",
+  benefitSpl1Desc:
+    "Focus on your neighborhood. Be the first result when someone nearby searches for your exact services.",
   benefitSpl2Title: "Direct WhatsApp Leads",
-  benefitSpl2Desc: "Skip the middleman. Customers call or WhatsApp you directly so you can negotiate and close the deal on your terms.",
+  benefitSpl2Desc:
+    "Skip the middleman. Customers call or WhatsApp you directly so you can negotiate and close the deal on your terms.",
   benefitSpl3Title: "0% Commission Always",
-  benefitSpl3Desc: "Stop paying 20-30% cuts to aggregators. You keep 100% of the money you earn from KartSquare leads.",
-  
+  benefitSpl3Desc:
+    "Stop paying 20-30% cuts to aggregators. You keep 100% of the money you earn from KartSquare leads.",
+
   benefitSup1Title: "More Local Footfall",
-  benefitSup1Desc: "Turn digital searches into physical visits. Draw in nearby customers who didn't even know your shop existed.",
+  benefitSup1Desc:
+    "Turn digital searches into physical visits. Draw in nearby customers who didn't even know your shop existed.",
   benefitSup2Title: "Instant UPI & Cash",
-  benefitSup2Desc: "Take payments directly from your customers via Cash or UPI. No waiting for weekly payouts from delivery apps.",
+  benefitSup2Desc:
+    "Take payments directly from your customers via Cash or UPI. No waiting for weekly payouts from delivery apps.",
   benefitSup3Title: "Build Repeat Business",
-  benefitSup3Desc: "Turn one-time walk-ins into loyal regulars by sharing stock updates, festive offers, and your digital catalog.",
+  benefitSup3Desc:
+    "Turn one-time walk-ins into loyal regulars by sharing stock updates, festive offers, and your digital catalog.",
 
   threeSimpleSteps:
     "Reach more customers in three simple steps with your free Business Profile.",
@@ -1625,7 +1645,8 @@ export const english = {
   this_service_have_a_specific_duration:
     "Does this service have a specific duration?",
   guest_login: "Guest Login",
-  guest_login_description: "Provide your details quickly to explore as a guest.",
+  guest_login_description:
+    "Provide your details quickly to explore as a guest.",
   continue_as_guest: "Continue as Guest",
   auth_required_title: "Authentication Required",
   auth_required_description: "Please log in to continue.",
@@ -1681,7 +1702,8 @@ export const english = {
   whatsappNumber: "WhatsApp Number",
   whatsappNumberRequired: "WhatsApp number is required",
   deleteAddress: "Delete Address?",
-  deleteAddressDescription: "Are you sure you want to delete this address? This action cannot be undone.",
+  deleteAddressDescription:
+    "Are you sure you want to delete this address? This action cannot be undone.",
   store_setup_logo_required: "Store logo is required",
   store_setup_banner_required: "Store banner is required",
   store_setup_operating_locations_required: "Operating locations is required",
@@ -1689,22 +1711,29 @@ export const english = {
   store_setup_website_url_required: "Website URL is required",
   websiteUrl: "Website URL",
   // Aibot
-  aibot_greeting: "Hi there! 👋 I'm your KartSquare assistant. How can I help grow your business today?",
+  aibot_greeting:
+    "Hi there! 👋 I'm your KartSquare assistant. How can I help grow your business today?",
   aibot_tooltip: "Hi there! 👋 I'm your KartSquare assistant.",
   aibot_header_title: "KartSquare Assistant",
   aibot_online_now: "Online Now",
   aibot_thinking: "KartSquare is thinking...",
   aibot_input_placeholder: "Ask about business benefits...",
   aibot_powered_by: "Powered by KartSquare AI",
-  aibot_benefit_response: "KartSquare helps businesses reach more customers, manage listings easily, and boost sales with integrated marketing tools.",
-  aibot_cost_response: "We offer flexible pricing plans tailored for businesses of all sizes, starting from a free tier for local shops!",
-  aibot_feature_response: "Our platform includes AI-driven search, reel integration, booking management, and detailed analytics.",
-  aibot_reach_response: "With KartSquare, you can tap into a network of thousands of active shoppers looking for services like yours.",
-  aibot_default_response: "That's a great question! KartSquare is designed to grow your digital presence. Would you like to know more about our pricing or key features?",
+  aibot_benefit_response:
+    "KartSquare helps businesses reach more customers, manage listings easily, and boost sales with integrated marketing tools.",
+  aibot_cost_response:
+    "We offer flexible pricing plans tailored for businesses of all sizes, starting from a free tier for local shops!",
+  aibot_feature_response:
+    "Our platform includes AI-driven search, reel integration, booking management, and detailed analytics.",
+  aibot_reach_response:
+    "With KartSquare, you can tap into a network of thousands of active shoppers looking for services like yours.",
+  aibot_default_response:
+    "That's a great question! KartSquare is designed to grow your digital presence. Would you like to know more about our pricing or key features?",
   showNumberInServices: "Make Number Visible on Platform",
   submit_request: "Submit Request",
   request_sent_successfully: "Request Sent Successfully",
-  quote_request_description: "The service provider will get back to you with a quote soon.",
+  quote_request_description:
+    "The service provider will get back to you with a quote soon.",
   marketing_tools: "Marketing Tools",
   Enter_value: "Enter value",
   Select_option: "Select option",

@@ -1,6 +1,7 @@
 import MainLayout from "../mainLayout";
 import CareersView from "@/components/pages/careers";
 import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
+import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 
 export const metadata = seoPublic({
   title: "Careers at KartSquare — Jobs in India's B2B Marketplace",
@@ -31,11 +32,20 @@ const careersWebPageJsonLd = {
 };
 
 export default function Careers() {
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Home", item: "/" },
+    { name: "Careers", item: "/careers" },
+  ]);
+
   return (
     <MainLayout>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(careersWebPageJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
       />
       <CareersView />
     </MainLayout>

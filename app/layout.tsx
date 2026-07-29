@@ -154,23 +154,10 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "BreadcrumbList",
-              itemListElement: [
-                {
-                  "@type": "ListItem",
-                  position: 1,
-                  name: "Home",
-                  item: SITE_URL,
-                },
-              ],
-            }),
-          }}
-        />
+        {/* No global BreadcrumbList here — pages that have a real trail (blogs,
+            store, services, business listings) emit their own via
+            lib/seo/breadcrumbs.ts. A single sitewide "Home"-only entry would
+            duplicate/conflict with those page-specific breadcrumbs. */}
         <Providers>{children}</Providers>
         <SpeedInsights />
       </body>

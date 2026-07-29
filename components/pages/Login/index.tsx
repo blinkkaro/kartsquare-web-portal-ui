@@ -54,9 +54,7 @@ export default function LoginView() {
       // const Role = role.toString().toUpperCase();
 
       // Dispatch loginUser thunk
-      const result = await dispatch(
-        loginUser({ ...data }),
-      ).unwrap();
+      const result = await dispatch(loginUser({ ...data })).unwrap();
 
       if (result) {
         const user = result.user;
@@ -76,7 +74,7 @@ export default function LoginView() {
         handleRegistrationStepNavigation(
           dispatch,
           router,
-          registerStep as UserRegisterSteps,
+          registerStep as UserRegisterSteps
         );
       }
     } catch (error: any) {
@@ -101,9 +99,9 @@ export default function LoginView() {
           display: "flex",
           justifyContent: "flex-end",
           alignItems: "center",
-          gap: 1,
-          mb: { xs: 2, sm: 3 },
-          mt: { xs: 6, lg: 8 },
+          // gap: 1,
+          // // mb: { xs: 2, sm: 3 },
+          // // mt: { xs: 6, lg: 8 },
         }}
       >
         <Link

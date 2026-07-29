@@ -410,6 +410,7 @@ const StoreView: React.FC = () => {
         <Box sx={{ mb: { xs: 6, md: 10 }, textAlign: "center" }}>
           <Typography
             variant="h4"
+            component="h1"
             fontWeight={900}
             sx={{
               mb: 2,

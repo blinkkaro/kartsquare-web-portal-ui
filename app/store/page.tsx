@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import { Box, Typography } from "@mui/material";
 import MainLayout from "@/app/mainLayout";
 import StoreView from "@/components/pages/store";
 import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
@@ -31,6 +33,27 @@ const storeItemListJsonLd = {
   url: `${SITE_URL}/store`,
 };
 
+/**
+ * StoreView reads useSearchParams, which requires a Suspense boundary so this
+ * route can still prerender. The fallback carries real page copy (not a blank
+ * spinner) so crawlers that see the pre-hydration frame still get an H1 and
+ * text instead of nothing.
+ */
+function StoreFallback() {
+  return (
+    <Box sx={{ textAlign: "center", py: { xs: 6, md: 10 } }}>
+      <Typography variant="h4" component="h1" fontWeight={900} sx={{ mb: 2 }}>
+        Store — products from verified suppliers
+      </Typography>
+      <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600, mx: "auto" }}>
+        Browse wholesale and retail products on KartSquare — electronics,
+        industrial supplies, textiles, chemicals, and more from verified
+        Indian suppliers.
+      </Typography>
+    </Box>
+  );
+}
+
 export default function StorePage() {
   return (
     <MainLayout>
@@ -38,7 +61,9 @@ export default function StorePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(storeItemListJsonLd) }}
       />
-      <StoreView />
+      <Suspense fallback={<StoreFallback />}>
+        <StoreView />
+      </Suspense>
     </MainLayout>
   );
 }
