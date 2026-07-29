@@ -57,7 +57,11 @@ const MessageBubble = ({ message }: { message: Message }) => {
           color: isBot ? "#8800FF" : "#00B2FF",
         }}
       >
-        {isBot ? <BotIcon sx={{ fontSize: 16 }} /> : <UserIcon sx={{ fontSize: 16 }} />}
+        {isBot ? (
+          <BotIcon sx={{ fontSize: 16 }} />
+        ) : (
+          <UserIcon sx={{ fontSize: 16 }} />
+        )}
       </Avatar>
       <Paper
         elevation={0}
@@ -71,37 +75,66 @@ const MessageBubble = ({ message }: { message: Message }) => {
           boxShadow: isBot ? "none" : "0 4px 12px rgba(0, 178, 255, 0.25)",
         }}
       >
-        <Box sx={{ fontFamily: "Inter", lineHeight: 1.5, fontSize: "0.875rem" }}>
+        <Box
+          sx={{ fontFamily: "Inter", lineHeight: 1.5, fontSize: "0.875rem" }}
+        >
           {isBot ? (
             <ReactMarkdown
               components={{
                 p: ({ children }) => (
-                  <Typography variant="body2" sx={{ mb: 1, "&:last-child": { mb: 0 }, fontSize: "inherit" }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      mb: 1,
+                      "&:last-child": { mb: 0 },
+                      fontSize: "inherit",
+                    }}
+                  >
                     {children}
                   </Typography>
                 ),
                 h1: ({ children }) => (
-                  <Typography variant="h6" sx={{ mt: 1.5, mb: 1, fontWeight: 700, fontSize: "1.1rem" }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ mt: 1.5, mb: 1, fontWeight: 700, fontSize: "1.1rem" }}
+                  >
                     {children}
                   </Typography>
                 ),
                 h2: ({ children }) => (
-                  <Typography variant="subtitle1" sx={{ mt: 1.5, mb: 1, fontWeight: 700, fontSize: "1rem" }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ mt: 1.5, mb: 1, fontWeight: 700, fontSize: "1rem" }}
+                  >
                     {children}
                   </Typography>
                 ),
                 h3: ({ children }) => (
-                  <Typography variant="subtitle2" sx={{ mt: 1.2, mb: 0.8, fontWeight: 700, fontSize: "0.9rem" }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{
+                      mt: 1.2,
+                      mb: 0.8,
+                      fontWeight: 700,
+                      fontSize: "0.9rem",
+                    }}
+                  >
                     {children}
                   </Typography>
                 ),
                 ul: ({ children }) => (
-                  <Box component="ul" sx={{ pl: 2, mb: 1, "&:last-child": { mb: 0 } }}>
+                  <Box
+                    component="ul"
+                    sx={{ pl: 2, mb: 1, "&:last-child": { mb: 0 } }}
+                  >
                     {children}
                   </Box>
                 ),
                 ol: ({ children }) => (
-                  <Box component="ol" sx={{ pl: 2, mb: 1, "&:last-child": { mb: 0 } }}>
+                  <Box
+                    component="ol"
+                    sx={{ pl: 2, mb: 1, "&:last-child": { mb: 0 } }}
+                  >
                     {children}
                   </Box>
                 ),
@@ -132,7 +165,10 @@ const MessageBubble = ({ message }: { message: Message }) => {
             textAlign: isBot ? "left" : "right",
           }}
         >
-          {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+          {message.timestamp.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
         </Typography>
       </Paper>
     </Box>
@@ -143,8 +179,6 @@ const Aibot: React.FC = () => {
   const { t } = useTranslationContext();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-
-
 
   const getBotResponse = async (question: string): Promise<string> => {
     const res = await aiService.aibot(question);
@@ -198,7 +232,7 @@ const Aibot: React.FC = () => {
   return (
     <Box>
       {/* AI Assistance Tooltip (visible when closed) */}
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {!isOpen && (
           <motion.div
             initial={{ opacity: 0, x: 20, scale: 0.8 }}
@@ -265,13 +299,10 @@ const Aibot: React.FC = () => {
             </Paper>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
 
       {/* Toggle Button */}
-      <motion.div
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
+      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
         <Fab
           onClick={() => setIsOpen(!isOpen)}
           sx={{
@@ -320,7 +351,8 @@ const Aibot: React.FC = () => {
               <Box
                 sx={{
                   p: 2.5,
-                  background: "linear-gradient(135deg, #8800FF 0%, #00B2FF 100%)",
+                  background:
+                    "linear-gradient(135deg, #8800FF 0%, #00B2FF 100%)",
                   color: "white",
                   display: "flex",
                   alignItems: "center",
@@ -347,7 +379,9 @@ const Aibot: React.FC = () => {
                     >
                       {t("aibot_header_title")}
                     </Typography>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+                    >
                       <Box
                         sx={{
                           width: 8,
@@ -377,7 +411,8 @@ const Aibot: React.FC = () => {
                   overflowY: "auto",
                   display: "flex",
                   flexDirection: "column",
-                  background: "linear-gradient(to bottom, rgba(248, 250, 252, 0.5), transparent)",
+                  background:
+                    "linear-gradient(to bottom, rgba(248, 250, 252, 0.5), transparent)",
                   "&::-webkit-scrollbar": { width: "4px" },
                   "&::-webkit-scrollbar-thumb": {
                     bgcolor: "rgba(0,0,0,0.1)",
@@ -390,9 +425,20 @@ const Aibot: React.FC = () => {
                 ))}
 
                 {isTyping && (
-                  <Box sx={{ display: "flex", gap: 1, alignItems: "center", color: "#8800FF", mb: 2 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      alignItems: "center",
+                      color: "#8800FF",
+                      mb: 2,
+                    }}
+                  >
                     <CircularProgress size={12} color="inherit" />
-                    <Typography variant="caption" sx={{ fontStyle: "italic", opacity: 0.7 }}>
+                    <Typography
+                      variant="caption"
+                      sx={{ fontStyle: "italic", opacity: 0.7 }}
+                    >
                       {t("aibot_thinking")}
                     </Typography>
                   </Box>
@@ -400,7 +446,13 @@ const Aibot: React.FC = () => {
               </Box>
 
               {/* Input Area */}
-              <Box sx={{ p: 2, bgcolor: "white", borderTop: "1px solid rgba(0,0,0,0.05)" }}>
+              <Box
+                sx={{
+                  p: 2,
+                  bgcolor: "white",
+                  borderTop: "1px solid rgba(0,0,0,0.05)",
+                }}
+              >
                 <TextField
                   fullWidth
                   placeholder={t("aibot_input_placeholder")}
@@ -414,7 +466,9 @@ const Aibot: React.FC = () => {
                       borderRadius: "16px",
                       bgcolor: "#F8FAFC",
                       "& fieldset": { borderColor: "transparent" },
-                      "&:hover fieldset": { borderColor: "rgba(136, 0, 255, 0.2)" },
+                      "&:hover fieldset": {
+                        borderColor: "rgba(136, 0, 255, 0.2)",
+                      },
                       "&.Mui-focused fieldset": { borderColor: "#8800FF" },
                     },
                   }}
@@ -431,7 +485,8 @@ const Aibot: React.FC = () => {
                             color: "white",
                             "&:hover": {
                               opacity: 0.9,
-                              background: "linear-gradient(135deg, #8800FF 0%, #00B2FF 100%)",
+                              background:
+                                "linear-gradient(135deg, #8800FF 0%, #00B2FF 100%)",
                             },
                             "&.Mui-disabled": {
                               bgcolor: "#F1F5F9",
@@ -439,7 +494,11 @@ const Aibot: React.FC = () => {
                             },
                           }}
                         >
-                          {isTyping ? <CircularProgress size={20} color="inherit" /> : <SendIcon sx={{ fontSize: 18 }} />}
+                          {isTyping ? (
+                            <CircularProgress size={20} color="inherit" />
+                          ) : (
+                            <SendIcon sx={{ fontSize: 18 }} />
+                          )}
                         </IconButton>
                       </InputAdornment>
                     ),

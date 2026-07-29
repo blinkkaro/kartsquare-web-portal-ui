@@ -12,7 +12,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { COLORS } from "../../../constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { toggleTheme, setAiOpen } from "@/features/ui/uiSlice";
+import { toggleTheme } from "@/features/ui/uiSlice";
 import {
   getDesktopNavItems,
   getMobileNavItems,
@@ -127,10 +127,6 @@ const Nav = () => {
     router.push("/business-listing");
   };
 
-  const handleOpenAi = () => {
-    dispatch(setAiOpen(true));
-  };
-
   // Measure the fixed AppBar's real rendered height (it varies by breakpoint/content
   // wrapping) and reserve exactly that much space via a spacer, instead of guessing
   // per-breakpoint margin-top values that drift out of sync and let content slide
@@ -190,7 +186,6 @@ const Nav = () => {
               loginText={t("login")}
               onNotificationToggle={toggleNotificationDrawer}
               onFreeListingClick={handleFreeListingClick}
-              onOpenAi={handleOpenAi}
             />
           </Box>
 
