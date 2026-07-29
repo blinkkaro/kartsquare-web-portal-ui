@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -80,6 +80,8 @@ const Nav = () => {
   const mode = useAppSelector((state) => state.ui.mode);
   const dispatch = useAppDispatch();
   const [showNotificationDrawer, setShowNotificationDrawer] = useState(false);
+  const appBarRef = useRef<HTMLElement>(null);
+  const [appBarHeight, setAppBarHeight] = useState(0);
 
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const user = useAppSelector(selectCurrentUser);
@@ -125,9 +127,25 @@ const Nav = () => {
     router.push("/business-listing");
   };
 
+  // Measure the fixed AppBar's real rendered height (it varies by breakpoint/content
+  // wrapping) and reserve exactly that much space via a spacer, instead of guessing
+  // per-breakpoint margin-top values that drift out of sync and let content slide
+  // underneath the fixed header.
+  useLayoutEffect(() => {
+    const node = appBarRef.current;
+    if (!node) return;
+
+    const updateHeight = () => setAppBarHeight(node.offsetHeight);
+    updateHeight();
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [isMobile, isTablet]);
+
   return (
     <>
-      <StyledAppBar position="fixed" elevation={0}>
+      <StyledAppBar position="fixed" elevation={0} ref={appBarRef}>
         <StyledToolbar>
           {/* Left Section: Logo and Search */}
           <Box sx={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
@@ -177,6 +195,10 @@ const Nav = () => {
           )}
         </StyledToolbar>
       </StyledAppBar>
+
+      {/* Reserves the exact space the fixed AppBar occupies so page content never
+          slides underneath it, regardless of breakpoint or content wrapping. */}
+      <Box sx={{ height: appBarHeight }} />
 
       {/* Mobile Search Drawer */}
       {(isMobile || isTablet) && (

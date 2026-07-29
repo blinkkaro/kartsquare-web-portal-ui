@@ -1,5 +1,6 @@
 "use client";
 import AuthWrapper from "@/components/auth/authWrapper";
+import AuthHeader from "@/components/auth/AuthHeader";
 import React from "react";
 import { useTranslate } from "@/hooks/useTranslate";
 import Title from "@/components/auth/title";
@@ -12,7 +13,6 @@ import { Box, Typography } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import { formatTime } from "@/helper/helper";
 import SuccessModel from "@/components/common/SuccessModel";
-import BackButton from "@/components/common/BackButton";
 import { useAppDispatch } from "@/store/hooks";
 import { logout } from "@/features/ui/authSlice";
 import { useRouter } from "next/navigation";
@@ -144,10 +144,8 @@ function EmailVerificationView() {
   };
 
   return (
-    <AuthWrapper>
-      <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 10 }}>
-        <BackButton onClick={handleBack} />
-      </Box>
+    <AuthWrapper align="top">
+      <AuthHeader showBack onBack={handleBack} />
       <Title
         title={t("email_verification")}
         subtitle={t("email_verification_subtitle")}

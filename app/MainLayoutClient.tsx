@@ -8,6 +8,8 @@ import Ai from "@/components/common/Ai";
 import AIBotton from "@/components/common/Ai/AIBotton";
 import LoginModal from "@/components/common/loginModel";
 import { COLORS } from "@/constants/colors";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setAiOpen } from "@/features/ui/uiSlice";
 
 export default function MainLayoutClient({
   children,
@@ -15,7 +17,8 @@ export default function MainLayoutClient({
   children: React.ReactNode;
 }) {
   const theme = useTheme();
-  const [aiOpen, setAiOpen] = React.useState(false);
+  const dispatch = useAppDispatch();
+  const aiOpen = useAppSelector((state) => state.ui.isAiOpen);
 
   return (
     <>
@@ -40,7 +43,9 @@ export default function MainLayoutClient({
             mx: "auto",
             width: "100%",
             px: { xs: 1, md: 0 },
-            mt: { xs: 10, sm: 12, md: 10, lg: 12 },
+            // Nav already reserves the AppBar's exact measured height via its own
+            // spacer, so this is just breathing room, not a breakpoint guess.
+            mt: 2,
             backgroundColor:
               theme.palette.mode === "dark"
                 ? COLORS.BACKGROUND.PAPER_DARK
@@ -48,10 +53,10 @@ export default function MainLayoutClient({
           }}
         >
           {children}
-          <AIBotton setOpen={setAiOpen} />
+          <AIBotton setOpen={(open) => dispatch(setAiOpen(open))} />
         </Box>
         <ProfileDrawer />
-        <Ai open={aiOpen} onClose={() => setAiOpen(false)} />
+        <Ai open={aiOpen} onClose={() => dispatch(setAiOpen(false))} />
       </Box>
       <LoginModal />
       <Footer />

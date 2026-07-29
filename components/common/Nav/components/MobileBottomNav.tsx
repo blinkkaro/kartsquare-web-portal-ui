@@ -7,25 +7,31 @@ import { NavItem } from "../../../../constants/navRoutes";
 
 const MobileNavContainer = styled(Box)(({ theme }) => ({
   display: "flex",
-  justifyContent: "space-around",
+  justifyContent: "center",
   alignItems: "center",
+  gap: "2px",
   backgroundColor:
     theme.palette.mode === "dark"
-      ? "rgba(17, 24, 39, 0.85)"
-      : "rgba(255, 255, 255, 0.85)",
-  backdropFilter: "blur(12px)",
-  width: "92%",
+      ? "rgba(23, 20, 34, 0.9)"
+      : "rgba(255, 255, 255, 0.92)",
+  backdropFilter: "blur(16px) saturate(180%)",
+  WebkitBackdropFilter: "blur(16px) saturate(180%)",
   position: "fixed",
-  bottom: "16px",
-  left: "4%",
-  right: "4%",
+  bottom: "14px",
+  left: "50%",
+  width: "fit-content",
+  maxWidth: "calc(94vw - 60px)",
+  transform: "translateX(-50%)",
   zIndex: 1000,
-  padding: "0.5rem 0",
-  borderRadius: "20px",
-  boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+  padding: "4px",
+  borderRadius: "22px",
+  boxShadow:
+    theme.palette.mode === "dark"
+      ? "0 10px 30px rgba(0,0,0,0.45)"
+      : "0 10px 30px rgba(94, 24, 233, 0.14)",
   border: `1px solid ${theme.palette.mode === "dark"
       ? "rgba(255,255,255,0.08)"
-      : "rgba(0,0,0,0.05)"
+      : "rgba(94, 24, 233, 0.06)"
     }`,
 }));
 
@@ -34,46 +40,37 @@ const MobileNavItem = styled(Link)(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  gap: "2px",
+  gap: "1px",
   textDecoration: "none",
   color:
     theme.palette.mode === "dark"
       ? "rgba(255,255,255,0.5)"
-      : "rgba(0,0,0,0.5)",
-  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-  flex: 1,
+      : "rgba(0,0,0,0.45)",
+  transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+  flex: "0 0 auto",
+  padding: "6px 12px",
   position: "relative",
+  borderRadius: "14px",
   "&.active": {
     color: COLORS.PRIMARY_PURPLE,
-    transform: "translateY(-2px)",
+    backgroundColor:
+      theme.palette.mode === "dark"
+        ? "rgba(130, 72, 247, 0.16)"
+        : COLORS.PURPLE_ALPHA_10,
   },
   "& .MuiSvgIcon-root": {
     fontSize: "1.25rem",
-    transition: "transform 0.3s ease",
+    transition: "transform 0.25s ease",
   },
   "&.active .MuiSvgIcon-root": {
-    transform: "scale(1.1)",
+    transform: "scale(1.08)",
   },
   "& .label": {
-    fontSize: "0.6rem",
+    fontSize: "0.58rem",
     fontWeight: 600,
-    textTransform: "uppercase",
-    letterSpacing: "0.02em",
+    lineHeight: 1,
+    whiteSpace: "nowrap",
   },
-  "&::after": {
-    content: '""',
-    position: "absolute",
-    bottom: "-4px",
-    width: "4px",
-    height: "4px",
-    borderRadius: "50%",
-    backgroundColor: COLORS.PRIMARY_PURPLE,
-    opacity: 0,
-    transition: "opacity 0.3s ease",
-  },
-  "&.active::after": {
-    opacity: 1,
-  }
 }));
 
 interface MobileBottomNavProps {
@@ -94,6 +91,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             key={item.label}
             href={item.href}
             className={isActive ? "active" : ""}
+            aria-label={item.label}
           >
             {isActive ? (
               <GradientIcon sx={{ fontSize: "1.25rem" }}>{item.icon}</GradientIcon>
