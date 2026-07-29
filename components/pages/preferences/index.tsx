@@ -15,7 +15,6 @@ import {
   TextField,
   InputAdornment,
   useTheme,
-  Chip,
 } from "@mui/material";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
@@ -147,7 +146,7 @@ function PreferencesView() {
   const isContinueDisabled = isSaving || selectedCount === 0;
 
   return (
-    <AuthWrapper>
+    <AuthWrapper align="top">
       <Box
         sx={{
           maxWidth: 720,
@@ -157,9 +156,9 @@ function PreferencesView() {
         }}
       >
         {/* Centered heading with subtitle */}
-        <Box sx={{ textAlign: "center", mb: 5 }}>
+        <Box sx={{ textAlign: "center", mb: 2.5 }}>
           <Typography
-            variant="h2"
+            variant="subtitle2"
             sx={{
               fontWeight: 800,
               background: `linear-gradient(135deg, ${COLORS.ICON_GRADIENT.Light.START} 0%, ${COLORS.ICON_GRADIENT.Light.END} 100%)`,
@@ -168,7 +167,7 @@ function PreferencesView() {
               backgroundClip: "text",
               fontSize: { xs: "2rem", sm: "2.5rem", md: "2.75rem" },
               letterSpacing: "-0.04em",
-              lineHeight: 1.1,
+              // lineHeight: 1.1,
               mb: 0.5,
             }}
           >
@@ -178,7 +177,7 @@ function PreferencesView() {
             variant="body2"
             sx={{
               color: "text.secondary",
-              mt: 2,
+              mt: 1,
               mb: 1,
               fontSize: { xs: "1rem", sm: "1.0625rem" },
             }}
@@ -198,7 +197,7 @@ function PreferencesView() {
           variant="outlined"
           size="small"
           sx={{
-            mb: 2,
+            mb: 1,
             "& .MuiOutlinedInput-root": {
               borderRadius: "24px",
               bgcolor: "background.paper",
@@ -258,7 +257,7 @@ function PreferencesView() {
         {/* Preferences container - scrollable with custom scrollbar */}
         <Box
           sx={{
-            height: 440,
+            height: 300,
             overflowY: "auto",
             overflowX: "hidden",
             borderRadius: "20px",
@@ -287,80 +286,19 @@ function PreferencesView() {
             },
           }}
         >
-          {user?.role === "CUSTOMER" ? (
-            <Box
-              sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 1.5,
-                justifyContent: "center",
-                pt: 1,
-              }}
-            >
-              {filteredPreferences.map((preference: any) => {
-                const isSelected = selectedPreferenceIds.has(preference.id);
-                return (
-                  <Chip
-                    key={preference.id}
-                    label={preference.preference_name}
-                    icon={
-                      isSelected ? (
-                        <CheckRoundedIcon
-                          sx={{
-                            fontSize: "1rem !important",
-                            color: "white !important",
-                          }}
-                        />
-                      ) : undefined
-                    }
-                    onClick={() => handleToggle(preference.id)}
-                    sx={{
-                      px: 1,
-                      py: 2.25,
-                      borderRadius: "100px",
-                      fontSize: { xs: "0.875rem", sm: "0.9375rem" },
-                      background: isSelected
-                        ? `linear-gradient(135deg, ${COLORS.ICON_GRADIENT.Light.START} 0%, ${COLORS.ICON_GRADIENT.Light.END} 100%)`
-                        : "transparent",
-                      color: isSelected ? "white" : COLORS.PRIMARY_PURPLE,
-                      fontWeight: isSelected ? 600 : 500,
-                      borderWidth: "2px",
-                      borderStyle: "solid",
-                      transition: "all 0.2s ease",
-                      boxShadow: isSelected
-                        ? `0 4px 12px ${COLORS.PRIMARY_PURPLE}30`
-                        : "none",
-                      borderColor: isSelected
-                        ? "transparent"
-                        : theme.palette.mode === "dark"
-                        ? "rgba(130, 72, 247, 0.4)"
-                        : COLORS.PURPLE_ALPHA_20,
-                      "&:hover": {
-                        backgroundColor: isSelected
-                          ? undefined
-                          : COLORS.PURPLE_ALPHA_04,
-                        transform: "translateY(-1px)",
-                      },
-                    }}
-                  />
-                );
-              })}
-            </Box>
-          ) : (
-            <Grid container spacing={1.5}>
-              {filteredPreferences.map((preference: any) => (
-                <Grid size={{ xs: 6, sm: 4, md: 4 }} key={preference.id}>
-                  <PreferenceCard
-                    title={preference.preference_name}
-                    description={preference.description}
-                    onPress={() => handleToggle(preference.id)}
-                    isSelected={selectedPreferenceIds.has(preference.id)}
-                    id={preference.id}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          )}
+          <Grid container spacing={1.5}>
+            {filteredPreferences.map((preference: any) => (
+              <Grid size={{ xs: 6, sm: 4, md: 4 }} key={preference.id}>
+                <PreferenceCard
+                  title={preference.preference_name}
+                  description={preference.description}
+                  onPress={() => handleToggle(preference.id)}
+                  isSelected={selectedPreferenceIds.has(preference.id)}
+                  id={preference.id}
+                />
+              </Grid>
+            ))}
+          </Grid>
           {filteredPreferences.length === 0 && (
             <Box
               sx={{

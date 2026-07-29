@@ -33,7 +33,7 @@ export default function ResetPasswordView() {
   };
 
   return (
-    <AuthWrapper>
+    <AuthWrapper align="top">
       <AuthHeader showBack />
       <Title title={t("resetPassword")} subtitle={t("resetPasswordSubtitle")} />
       <ErrorMessage isVisible={!!errorMessage} error={errorMessage} />

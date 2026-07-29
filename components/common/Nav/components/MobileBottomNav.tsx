@@ -7,7 +7,7 @@ import { NavItem } from "../../../../constants/navRoutes";
 
 const MobileNavContainer = styled(Box)(({ theme }) => ({
   display: "flex",
-  justifyContent: "space-between",
+  justifyContent: "center",
   alignItems: "center",
   gap: "2px",
   backgroundColor:
@@ -19,8 +19,9 @@ const MobileNavContainer = styled(Box)(({ theme }) => ({
   position: "fixed",
   bottom: "14px",
   left: "50%",
-  width: "calc(min(94vw, 440px) - 60px)",
-  transform: "translateX(calc(min(94vw, 440px) * -0.5))",
+  width: "fit-content",
+  maxWidth: "calc(94vw - 60px)",
+  transform: "translateX(-50%)",
   zIndex: 1000,
   padding: "4px",
   borderRadius: "22px",
@@ -46,9 +47,8 @@ const MobileNavItem = styled(Link)(({ theme }) => ({
       ? "rgba(255,255,255,0.5)"
       : "rgba(0,0,0,0.45)",
   transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
-  flex: 1,
-  minWidth: 0,
-  padding: "6px 2px",
+  flex: "0 0 auto",
+  padding: "6px 12px",
   position: "relative",
   borderRadius: "14px",
   "&.active": {

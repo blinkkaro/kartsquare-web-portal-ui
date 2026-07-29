@@ -120,7 +120,7 @@ function AuthWrapper({ children, align = "center" }: AuthWrapperProps) {
             minHeight: "100vh",
             px: { xs: 1.5, lg: 10 },
             py: { xs: 3, lg: 2 },
-            pt: align === "top" ? { xs: 5, lg: 8 } : { xs: 3, lg: 2 },
+            pt: align === "top" ? { xs: 6, lg: 8 } : { xs: 3, lg: 2 },
             transition: "background 0.3s ease-in-out",
           }}
         >
@@ -146,8 +146,8 @@ function AuthWrapper({ children, align = "center" }: AuthWrapperProps) {
               },
               overflow: "hidden",
               position: "relative",
-              px: { xs: 3, sm: 4, lg: 0 },
-              py: { xs: 3, sm: 4, lg: 0 },
+              px: { xs: 3.5, sm: 4.5, lg: 0 },
+              py: { xs: 3.5, sm: 4.5, lg: 0 },
             }}
           >
             {/* Decorative blob — mobile card only */}

@@ -151,7 +151,7 @@ function SignUpView() {
     }
   };
   return (
-    <AuthWrapper>
+    <AuthWrapper align="top">
       <AuthHeader showSkip skipHref="/" />
       <Title title={t("signUp")} subtitle={t("signUpSubtitle")} />
       <Error isVisible={!!error} error={error} />

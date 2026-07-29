@@ -144,7 +144,7 @@ function EmailVerificationView() {
   };
 
   return (
-    <AuthWrapper>
+    <AuthWrapper align="top">
       <AuthHeader showBack onBack={handleBack} />
       <Title
         title={t("email_verification")}

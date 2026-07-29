@@ -162,7 +162,7 @@ export default function LoginForm({
             style={{
               color: "inherit",
               textDecoration: "underline",
-              fontWeight: 900,
+              fontWeight: 700,
             }}
           >
             {t("sign_up")}
@@ -178,9 +178,8 @@ export default function LoginForm({
           }}
         >
           <Typography
-            variant="body2"
             color="text.secondary"
-            sx={{ fontSize: { xs: "0.8rem", lg: "0.875rem" }, fontWeight: 900 }}
+            sx={{ fontSize: { xs: "0.8rem", lg: "0.875rem" }, fontWeight: 700 }}
           >
             {t("forgot_password")}
           </Typography>
