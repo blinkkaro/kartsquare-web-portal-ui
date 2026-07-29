@@ -105,7 +105,7 @@ export default function ForgetPasswordView() {
           }}
           fullWidth
         >
-          {t("forgetPassword")}
+          {t("forgetPasswordSubmit")}
         </Button>
       </form>
     </AuthWrapper>
