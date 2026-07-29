@@ -2,10 +2,12 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface UiState {
   mode: "light" | "dark";
+  isAiOpen: boolean;
 }
 
 const initialState: UiState = {
   mode: "light", // Default to light, but will be hydrated from localStorage/system
+  isAiOpen: false,
 };
 
 export const uiSlice = createSlice({
@@ -47,8 +49,11 @@ export const uiSlice = createSlice({
         }
       }
     },
+    setAiOpen: (state, action: PayloadAction<boolean>) => {
+      state.isAiOpen = action.payload;
+    },
   },
 });
 
-export const { toggleTheme, setTheme, hydrateTheme } = uiSlice.actions;
+export const { toggleTheme, setTheme, hydrateTheme, setAiOpen } = uiSlice.actions;
 export default uiSlice.reducer;

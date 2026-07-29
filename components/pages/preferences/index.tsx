@@ -20,6 +20,7 @@ import {
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import { prefranceService } from "@/services/auth/preference.service";
 import { useRouter } from "next/navigation";
 import ErrorMessage from "@/components/common/ErrorMessage";
@@ -43,7 +44,12 @@ function PreferencesView() {
   const headerTitle =
     user?.role === "CUSTOMER" ? t("preferences") : t("category");
 
-  const { data: rawPreferences, isLoading: isPrefLoading, error, isError } = useGetUserPreference();
+  const {
+    data: rawPreferences,
+    isLoading: isPrefLoading,
+    error,
+    isError,
+  } = useGetUserPreference();
   const { data: categories, isLoading: isCatLoading } = useCategories();
 
   const isLoading = isPrefLoading || isCatLoading;
@@ -58,7 +64,9 @@ function PreferencesView() {
         preference_name: cat.name,
         description: cat.description,
         icon: "Category",
-        is_selected: rawPreferences?.some((p: any) => p.id === cat.id && p.is_selected) || false,
+        is_selected:
+          rawPreferences?.some((p: any) => p.id === cat.id && p.is_selected) ||
+          false,
       }));
     }
   }, [user?.role, rawPreferences, categories]);
@@ -72,13 +80,14 @@ function PreferencesView() {
     }
   }, [preferences]);
 
-
   const filteredPreferences = useMemo(() => {
     if (!preferences) return [];
     if (!searchQuery.trim()) return preferences;
     const q = searchQuery.trim().toLowerCase();
-    return preferences.filter((p: any) =>
-      p.preference_name?.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q)
+    return preferences.filter(
+      (p: any) =>
+        p.preference_name?.toLowerCase().includes(q) ||
+        p.description?.toLowerCase().includes(q)
     );
   }, [preferences, searchQuery]);
 
@@ -101,12 +110,12 @@ function PreferencesView() {
     setErrorMsg("");
     try {
       await prefranceService.addPreferenceForTheUser(
-        Array.from(selectedPreferenceIds),
+        Array.from(selectedPreferenceIds)
       );
       handleRegistrationStepNavigation(
         dispatch,
         router,
-        UserRegisterSteps.COMPLETED,
+        UserRegisterSteps.COMPLETED
       );
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to save preferences");
@@ -142,10 +151,9 @@ function PreferencesView() {
       <Box
         sx={{
           maxWidth: 720,
-          mx: "auto",
           width: "100%",
-          px: { xs: 2, sm: 3 },
-          py: { xs: 2, sm: 4 },
+          px: { xs: 1, sm: 1 },
+          py: { xs: 1, sm: 1 },
         }}
       >
         {/* Centered heading with subtitle */}
@@ -154,7 +162,10 @@ function PreferencesView() {
             variant="h2"
             sx={{
               fontWeight: 800,
-              color: COLORS.PRIMARY_BLUE,
+              background: `linear-gradient(135deg, ${COLORS.ICON_GRADIENT.Light.START} 0%, ${COLORS.ICON_GRADIENT.Light.END} 100%)`,
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
               fontSize: { xs: "2rem", sm: "2.5rem", md: "2.75rem" },
               letterSpacing: "-0.04em",
               lineHeight: 1.1,
@@ -202,8 +213,8 @@ function PreferencesView() {
               },
               "&.Mui-focused fieldset": {
                 borderWidth: "2px",
-                borderColor: COLORS.PRIMARY_BLUE,
-                boxShadow: "0 0 0 3px rgba(59, 130, 246, 0.08)",
+                borderColor: COLORS.PRIMARY_PURPLE,
+                boxShadow: `0 0 0 3px ${COLORS.PURPLE_ALPHA_10}`,
               },
             },
           }}
@@ -223,44 +234,57 @@ function PreferencesView() {
 
         {/* Selection count chip (when any selected) */}
         {selectedCount > 0 && (
-          <Typography
-            variant="caption"
+          <Box
             sx={{
-              display: "block",
-              color: COLORS.PRIMARY_BLUE, // Use theme blue
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 0.5,
+              px: 1.5,
+              py: 0.5,
+              mb: 1.5,
+              borderRadius: "100px",
+              bgcolor: COLORS.PURPLE_ALPHA_10,
+              color: COLORS.PRIMARY_PURPLE,
               fontWeight: 600,
-              mb: 1,
               fontSize: "0.8125rem",
             }}
           >
+            <CheckRoundedIcon sx={{ fontSize: 15 }} />
             {selectedCount} {selectedCount === 1 ? "category" : "categories"}{" "}
             selected
-          </Typography>
+          </Box>
         )}
 
         {/* Preferences container - scrollable with custom scrollbar */}
         <Box
           sx={{
-            height: 400,
+            height: 440,
             overflowY: "auto",
             overflowX: "hidden",
             borderRadius: "20px",
-            p: 2,
+            p: 1.5,
             mb: 3,
-            bgcolor: theme.palette.mode === "dark" ? "background.default" : "grey.50",
+            bgcolor:
+              theme.palette.mode === "dark" ? "background.default" : "grey.50",
             border: "1px solid",
             borderColor: theme.palette.mode === "dark" ? "divider" : "grey.200",
-            boxShadow: theme.palette.mode === "dark" ? "none" : "inset 0 1px 2px rgba(0,0,0,0.04)",
+            boxShadow:
+              theme.palette.mode === "dark"
+                ? "none"
+                : "inset 0 1px 2px rgba(0,0,0,0.04)",
             "&::-webkit-scrollbar": { width: 8 },
             "&::-webkit-scrollbar-track": {
-              bgcolor: theme.palette.mode === "dark" ? "background.paper" : "grey.100",
+              bgcolor:
+                theme.palette.mode === "dark" ? "background.paper" : "grey.100",
               borderRadius: 4,
             },
             "&::-webkit-scrollbar-thumb": {
               bgcolor: theme.palette.mode === "dark" ? "grey.700" : "grey.400",
               borderRadius: 4,
             },
-            "&::-webkit-scrollbar-thumb:hover": { bgcolor: theme.palette.mode === "dark" ? "grey.600" : "grey.500" },
+            "&::-webkit-scrollbar-thumb:hover": {
+              bgcolor: theme.palette.mode === "dark" ? "grey.600" : "grey.500",
+            },
           }}
         >
           {user?.role === "CUSTOMER" ? (
@@ -273,44 +297,59 @@ function PreferencesView() {
                 pt: 1,
               }}
             >
-              {filteredPreferences.map((preference: any) => (
-                <Chip
-                  key={preference.id}
-                  label={preference.preference_name}
-                  onClick={() => handleToggle(preference.id)}
-                  sx={{
-                    px: 1,
-                    py: 2.25,
-                    borderRadius: "100px",
-                    fontSize: { xs: "0.875rem", sm: "0.9375rem" },
-                    backgroundColor: selectedPreferenceIds.has(preference.id) 
-                      ? COLORS.PRIMARY_BLUE 
-                      : "transparent",
-                    color: selectedPreferenceIds.has(preference.id) 
-                      ? "white" 
-                      : COLORS.PRIMARY_BLUE,
-                    fontWeight: selectedPreferenceIds.has(preference.id) ? 600 : 500,
-                    borderWidth: "2px",
-                    borderStyle: "solid",
-                    transition: "all 0.2s ease",
-                    borderColor: selectedPreferenceIds.has(preference.id) 
-                      ? COLORS.PRIMARY_BLUE 
-                      : (theme.palette.mode === "dark" ? "rgba(59, 130, 246, 0.4)" : "rgba(59, 130, 246, 0.2)"),
-                    "&:hover": {
-                      backgroundColor: selectedPreferenceIds.has(preference.id)
-                        ? COLORS.BUSINESS_PROFILE_BLUE_HOVER
+              {filteredPreferences.map((preference: any) => {
+                const isSelected = selectedPreferenceIds.has(preference.id);
+                return (
+                  <Chip
+                    key={preference.id}
+                    label={preference.preference_name}
+                    icon={
+                      isSelected ? (
+                        <CheckRoundedIcon
+                          sx={{
+                            fontSize: "1rem !important",
+                            color: "white !important",
+                          }}
+                        />
+                      ) : undefined
+                    }
+                    onClick={() => handleToggle(preference.id)}
+                    sx={{
+                      px: 1,
+                      py: 2.25,
+                      borderRadius: "100px",
+                      fontSize: { xs: "0.875rem", sm: "0.9375rem" },
+                      background: isSelected
+                        ? `linear-gradient(135deg, ${COLORS.ICON_GRADIENT.Light.START} 0%, ${COLORS.ICON_GRADIENT.Light.END} 100%)`
+                        : "transparent",
+                      color: isSelected ? "white" : COLORS.PRIMARY_PURPLE,
+                      fontWeight: isSelected ? 600 : 500,
+                      borderWidth: "2px",
+                      borderStyle: "solid",
+                      transition: "all 0.2s ease",
+                      boxShadow: isSelected
+                        ? `0 4px 12px ${COLORS.PRIMARY_PURPLE}30`
+                        : "none",
+                      borderColor: isSelected
+                        ? "transparent"
                         : theme.palette.mode === "dark"
-                        ? "grey.800"
-                        : "grey.100",
-                    },
-                  }}
-                />
-              ))}
+                        ? "rgba(130, 72, 247, 0.4)"
+                        : COLORS.PURPLE_ALPHA_20,
+                      "&:hover": {
+                        backgroundColor: isSelected
+                          ? undefined
+                          : COLORS.PURPLE_ALPHA_04,
+                        transform: "translateY(-1px)",
+                      },
+                    }}
+                  />
+                );
+              })}
             </Box>
           ) : (
-            <Grid container spacing={2}>
+            <Grid container spacing={1.5}>
               {filteredPreferences.map((preference: any) => (
-                <Grid size={{ xs: 12, sm: 6, md: 6 }} key={preference.id}>
+                <Grid size={{ xs: 6, sm: 4, md: 4 }} key={preference.id}>
                   <PreferenceCard
                     title={preference.preference_name}
                     description={preference.description}
@@ -360,12 +399,12 @@ function PreferencesView() {
             fontSize: "1rem",
             boxShadow: isContinueDisabled
               ? "none"
-              : "0 4px 14px rgba(59, 130, 246, 0.35)",
-            bgcolor: isContinueDisabled
+              : `0 6px 20px ${COLORS.PRIMARY_PURPLE}40`,
+            background: isContinueDisabled
               ? theme.palette.mode === "dark"
                 ? "action.disabledBackground"
                 : "grey.300"
-              : COLORS.PRIMARY_BLUE,
+              : `linear-gradient(135deg, ${COLORS.ICON_GRADIENT.Light.START} 0%, ${COLORS.ICON_GRADIENT.Light.END} 100%)`,
             color: isContinueDisabled
               ? theme.palette.mode === "dark"
                 ? "action.disabled"
@@ -374,12 +413,13 @@ function PreferencesView() {
             "&:hover": {
               boxShadow: isContinueDisabled
                 ? "none"
-                : "0 6px 20px rgba(59, 130, 246, 0.4)",
-              bgcolor: isContinueDisabled
+                : `0 8px 26px ${COLORS.PRIMARY_PURPLE}55`,
+              background: isContinueDisabled
                 ? theme.palette.mode === "dark"
                   ? "action.disabledBackground"
                   : "grey.300"
-                : COLORS.BUSINESS_PROFILE_BLUE_HOVER,
+                : `linear-gradient(135deg, ${COLORS.ICON_GRADIENT.Light.START} 0%, ${COLORS.ICON_GRADIENT.Light.END} 100%)`,
+              filter: isContinueDisabled ? "none" : "brightness(1.08)",
             },
           }}
           onClick={handleSave}

@@ -119,25 +119,6 @@ export default function LoginForm({
           />
         </Box>
 
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <Link href={`/forgotPassword?role=${role}`}>
-            <Typography
-              variant="body2"
-              sx={{
-                color: "primary.main",
-                fontWeight: 600,
-                textDecoration: "none",
-                fontSize: { lg: "0.875rem", xl: "1rem" },
-                "&:hover": {
-                  textDecoration: "underline",
-                },
-              }}
-            >
-              {t("forgot_password")}
-            </Typography>
-          </Link>
-        </Box>
-
         <Button isLoading={loading} type="submit">
           {t("login")}
         </Button>
@@ -160,31 +141,50 @@ export default function LoginForm({
         </Button> */}
       </Stack>
 
-      <Box sx={{ mt: { xs: 3, sm: 4 }, textAlign: "center" }}>
+      <Box
+        sx={{
+          mt: { xs: 2.5, sm: 3 },
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 1,
+        }}
+      >
         <Typography
           variant="body2"
           color="text.secondary"
-          sx={{ fontSize: { lg: "0.875rem", xl: "1rem" } }}
+          sx={{ fontSize: { xs: "0.8rem", lg: "0.875rem" } }}
         >
-          {t("no_account")}
-          <Link href={`/signUp?role=${role}`}>
-            <Typography
-              component="span"
-              sx={{
-                ml: 1,
-                fontWeight: 700,
-                color: "text.primary",
-                textDecoration: "none",
-                fontSize: { lg: "0.875rem", xl: "1rem" },
-                "&:hover": {
-                  textDecoration: "underline",
-                },
-              }}
-            >
-              {t("sign_up")}
-            </Typography>
+          {t("no_account")}{" "}
+          <Link
+            href={`/signUp?role=${role}`}
+            style={{
+              color: "inherit",
+              textDecoration: "underline",
+              fontWeight: 900,
+            }}
+          >
+            {t("sign_up")}
           </Link>
         </Typography>
+
+        <Link
+          href={`/forgotPassword?role=${role}`}
+          style={{
+            color: "inherit",
+            textDecoration: "underline",
+            fontWeight: 700,
+          }}
+        >
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ fontSize: { xs: "0.8rem", lg: "0.875rem" }, fontWeight: 900 }}
+          >
+            {t("forgot_password")}
+          </Typography>
+        </Link>
       </Box>
     </Box>
   );

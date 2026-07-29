@@ -9,7 +9,8 @@ import {
   Checkbox,
   FormControlLabel,
 } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SignUpSchema, SignUpFormData } from "../signUpSchema";
 import Input from "@/components/common/Input";
@@ -56,6 +57,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   const { t } = useTranslate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(true);
+  const [agreeError, setAgreeError] = useState(false);
   const birthDateRef = useRef<HTMLInputElement>(null);
 
   // Calculate max date (13 years ago)
@@ -63,7 +66,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   const maxDate = new Date(
     today.getFullYear() - 13,
     today.getMonth(),
-    today.getDate(),
+    today.getDate()
   )
     .toISOString()
     .split("T")[0];
@@ -84,9 +87,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       last_name: "",
       email: "",
       confirm_password: "",
-      phone_number: isServiceProvider ? (initialData?.whatsapp_number || "") : "",
-      country_code: isServiceProvider ? (initialData?.whatsapp_country_code || "+91") : "+91",
-      gender: isServiceProvider ? ("PREFER_NOT_TO_SAY" as SignUpFormData["gender"]) : undefined,
+      phone_number: isServiceProvider ? initialData?.whatsapp_number || "" : "",
+      country_code: isServiceProvider
+        ? initialData?.whatsapp_country_code || "+91"
+        : "+91",
+      gender: isServiceProvider
+        ? ("PREFER_NOT_TO_SAY" as SignUpFormData["gender"])
+        : undefined,
       country: "India",
       birth_date: maxDate,
       role: role,
@@ -102,20 +109,32 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
     if (initialData.email) setValue("email", initialData.email);
     // Always sync hidden fields from lead data for service providers
     if (isServiceProvider) {
-      setValue("phone_number", initialData.whatsapp_number || initialData.phone_number || "");
-      setValue("country_code", initialData.whatsapp_country_code || initialData.country_code || "+91");
+      setValue(
+        "phone_number",
+        initialData.whatsapp_number || initialData.phone_number || ""
+      );
+      setValue(
+        "country_code",
+        initialData.whatsapp_country_code || initialData.country_code || "+91"
+      );
       setValue("country", "India");
       setValue("birth_date", maxDate);
       setValue("gender", "PREFER_NOT_TO_SAY" as SignUpFormData["gender"]);
     } else {
-      if (initialData.phone_number) setValue("phone_number", initialData.phone_number);
-      if (initialData.country_code) setValue("country_code", initialData.country_code);
-      if (initialData.country) setValue("country", initialData.country);
-      if (initialData.birth_date) setValue("birth_date", initialData.birth_date.split("T")[0]);
-      if (initialData.gender) setValue("gender", initialData.gender as SignUpFormData["gender"]);
+      if (initialData.phone_number)
+        setValue("phone_number", initialData.phone_number);
+      if (initialData.country_code)
+        setValue("country_code", initialData.country_code);
+      setValue("country", "India");
+      if (initialData.birth_date)
+        setValue("birth_date", initialData.birth_date.split("T")[0]);
+      if (initialData.gender)
+        setValue("gender", initialData.gender as SignUpFormData["gender"]);
     }
-    if (initialData.whatsapp_number) setValue("whatsapp_number", initialData.whatsapp_number);
-    if (initialData.whatsapp_country_code) setValue("whatsapp_country_code", initialData.whatsapp_country_code);
+    if (initialData.whatsapp_number)
+      setValue("whatsapp_number", initialData.whatsapp_number);
+    if (initialData.whatsapp_country_code)
+      setValue("whatsapp_country_code", initialData.whatsapp_country_code);
   }, [initialData, setValue, isServiceProvider, maxDate]);
 
   const selectedCountryCode = watch("country_code");
@@ -123,10 +142,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   const gender = watch("gender");
   const whatsappNumber = watch("whatsapp_number");
   const selectedCountry = countries.find(
-    (c) => c.phone_code === selectedCountryCode,
+    (c) => c.phone_code === selectedCountryCode
   );
   const selectedWhatsappCountry = countries.find(
-    (c) => c.phone_code === whatsappCountryCode,
+    (c) => c.phone_code === whatsappCountryCode
   );
 
   // React.useEffect(() => {
@@ -147,24 +166,38 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   //   }
   // };
 
+  const handleFormSubmit = handleSubmit((data) => {
+    if (!agreedToTerms) {
+      setAgreeError(true);
+      return;
+    }
+    setAgreeError(false);
+    onSubmit(data);
+  });
+
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleFormSubmit}
       noValidate
       sx={{
         width: "100%",
-        mt: 2
+        // mt: 2,
       }}
     >
-      <Grid container spacing={3}>
+      <Grid container spacing={2}>
         {/* Section: Personal Identity */}
 
         {isServiceProvider ? (
           <Grid size={{ xs: 12 }}>
             <Typography
-              variant="body2"
-              sx={{ mb: 1, fontWeight: 600, color: '#374151', fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
+              variant="caption"
+              sx={{
+                mb: 1,
+                fontWeight: 600,
+                color: "#374151",
+                fontSize: { xs: "0.8rem", sm: "0.875rem" },
+              }}
             >
               Full Name*
             </Typography>
@@ -173,15 +206,15 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
               control={control}
               placeholder="Arjun Sharma"
               startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+              sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
             />
           </Grid>
         ) : (
           <>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 6 }}>
               <Typography
-                variant="body2"
-                sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
+                variant="caption"
+                sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
               >
                 {t("first_name")}*
               </Typography>
@@ -190,13 +223,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 control={control}
                 placeholder="Arjun"
                 startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 6 }}>
               <Typography
-                variant="body2"
-                sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
+                variant="caption"
+                sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
               >
                 {t("last_name")}*
               </Typography>
@@ -205,7 +238,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 control={control}
                 placeholder="Sharma"
                 startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
               />
             </Grid>
           </>
@@ -213,8 +246,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
         <Grid size={{ xs: 12 }}>
           <Typography
-            variant="body2"
-            sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
+            variant="caption"
+            sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
           >
             {t("email_address")}*
           </Typography>
@@ -223,14 +256,14 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             control={control}
             placeholder="arjun.sharma@mail.in"
             startIcon={<EmailIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
           />
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6 }}>
           <Typography
-            variant="body2"
-            sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
+            variant="caption"
+            sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
           >
             {t("password")}*
           </Typography>
@@ -240,7 +273,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             type={showPassword ? "text" : "password"}
             placeholder="********"
             startIcon={<LockIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -249,7 +282,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                     onClick={() => setShowPassword(!showPassword)}
                     edge="end"
                   >
-                    {showPassword ? <VisibilityOff sx={{ fontSize: 20 }} /> : <Visibility sx={{ fontSize: 20 }} />}
+                    {showPassword ? (
+                      <VisibilityOff sx={{ fontSize: 20 }} />
+                    ) : (
+                      <Visibility sx={{ fontSize: 20 }} />
+                    )}
                   </IconButton>
                 </InputAdornment>
               ),
@@ -259,8 +296,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
         <Grid size={{ xs: 12, sm: 6 }}>
           <Typography
-            variant="body2"
-            sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
+            variant="caption"
+            sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
           >
             Confirm Password*
           </Typography>
@@ -270,7 +307,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             type={showConfirmPassword ? "text" : "password"}
             placeholder="********"
             startIcon={<LockIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -279,7 +316,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     edge="end"
                   >
-                    {showConfirmPassword ? <VisibilityOff sx={{ fontSize: 20 }} /> : <Visibility sx={{ fontSize: 20 }} />}
+                    {showConfirmPassword ? (
+                      <VisibilityOff sx={{ fontSize: 20 }} />
+                    ) : (
+                      <Visibility sx={{ fontSize: 20 }} />
+                    )}
                   </IconButton>
                 </InputAdornment>
               ),
@@ -290,16 +331,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         {/* Customer Specific Fields */}
         {!isServiceProvider && (
           <>
-            <Grid size={{ xs: 12 }} sx={{ mt: 1 }}>
-              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700, color: COLORS.PRIMARY_PURPLE, textTransform: 'uppercase', letterSpacing: 1, fontSize: '0.75rem' }}>
-                Additional Details
-              </Typography>
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12 }}>
               <Typography
-                variant="body2"
-                sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
+                variant="caption"
+                sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
               >
                 {t("phone_number")}*
               </Typography>
@@ -309,7 +344,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                     name="country_code"
                     control={control}
                     select
-                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": { borderRadius: "12px" },
+                    }}
                   >
                     {countries.map((option) => (
                       <MenuItem key={option.code} value={option.phone_code}>
@@ -324,7 +361,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                     control={control}
                     placeholder="98765 43210"
                     type="tel"
-                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": { borderRadius: "12px" },
+                    }}
                     inputProps={{
                       maxLength: 10,
                       inputMode: "numeric",
@@ -335,10 +374,10 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
               </Box>
             </Grid>
 
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 6 }}>
               <Typography
-                variant="body2"
-                sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
+                variant="caption"
+                sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
               >
                 {t("birth_date")}*
               </Typography>
@@ -347,57 +386,23 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 control={control}
                 type="date"
                 inputRef={birthDateRef}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
                 InputProps={{
                   inputProps: { max: maxDate },
                 }}
-                startIcon={
-                  <CalendarIcon
-                    sx={{ cursor: "pointer", color: COLORS.PRIMARY_PURPLE }}
-                    onClick={() => birthDateRef.current?.showPicker()}
-                  />
-                }
+                // startIcon={
+                //   <CalendarIcon
+                //     sx={{ cursor: "pointer", color: COLORS.PRIMARY_PURPLE }}
+                //     onClick={() => birthDateRef.current?.showPicker()}
+                //   />
+                // }
               />
             </Grid>
 
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 6 }}>
               <Typography
-                variant="body2"
-                sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
-              >
-                {t("country")}*
-              </Typography>
-              <Input
-                name="country"
-                control={control}
-                select
-                placeholder="Select Country"
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
-                SelectProps={{
-                  renderValue: (selected: any) => {
-                    const country = countries.find((c) => c.name === selected);
-                    return (
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <span style={{ marginRight: 8 }}>{country?.flag}</span>
-                        {selected}
-                      </Box>
-                    );
-                  },
-                }}
-              >
-                {countries.map((option) => (
-                  <MenuItem key={option.code} value={option.name}>
-                    <span style={{ marginRight: 8 }}>{option.flag}</span>{" "}
-                    {option.name}
-                  </MenuItem>
-                ))}
-              </Input>
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Typography
-                variant="body2"
-                sx={{ mb: 1, fontWeight: 600, color: '#374151' }}
+                variant="caption"
+                sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
               >
                 {t("gender")}*
               </Typography>
@@ -405,13 +410,16 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 name="gender"
                 control={control}
                 select
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
                 SelectProps={{
                   displayEmpty: true,
                   renderValue: (selected: any) => {
                     if (!selected) {
                       return (
-                        <Typography color="textSecondary" sx={{ fontSize: '0.875rem' }}>
+                        <Typography
+                          color="textSecondary"
+                          sx={{ fontSize: "0.875rem" }}
+                        >
                           {t("select_gender")}
                         </Typography>
                       );
@@ -425,7 +433,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                     return genderOptions[selected] || selected;
                   },
                 }}
-                startIcon={gender === "MALE" ? <MaleIcon sx={{ color: COLORS.PRIMARY_PURPLE }} /> : <FemaleIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+                // startIcon={
+                //   gender === "MALE" ? (
+                //     <MaleIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />
+                //   ) : (
+                //     <FemaleIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />
+                //   )
+                // }
               >
                 <MenuItem value="MALE">{t("male")}</MenuItem>
                 <MenuItem value="FEMALE">{t("female")}</MenuItem>
@@ -439,45 +453,71 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         )}
       </Grid>
 
-      <Typography
-        variant="body2"
-        color="textSecondary"
-        sx={{
-          mt: 4,
-          display: "block",
-          textAlign: "center",
-          fontSize: '0.8rem',
-          lineHeight: 1.6
-        }}
-      >
-        {t("by_signup_to_accept")}{" "}
-        <span style={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700, cursor: 'pointer' }}>
-          {t("privacy_policy")}
-        </span>{" "}
-        and{" "}
-        <span style={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700, cursor: 'pointer' }}>
-          {t("termsConditionsTitle")}
-        </span>
-      </Typography>
+      <FormControlLabel
+        sx={{ mt: 2, alignItems: "flex-start", ml: 0 }}
+        control={
+          <Checkbox
+            checked={agreedToTerms}
+            onChange={(e) => {
+              setAgreedToTerms(e.target.checked);
+              if (e.target.checked) setAgreeError(false);
+            }}
+            sx={{
+              color: agreeError ? COLORS.ERROR_RED : COLORS.PRIMARY_PURPLE,
+              "&.Mui-checked": { color: COLORS.PRIMARY_PURPLE },
+              pt: 0,
+            }}
+          />
+        }
+        label={
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            sx={{ fontSize: "0.8rem", lineHeight: 1.6 }}
+          >
+            {t("by_signup_to_accept")}{" "}
+            <span
+              style={{
+                color: COLORS.PRIMARY_PURPLE,
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              {t("privacy_policy")}
+            </span>{" "}
+            and{" "}
+            <span
+              style={{
+                color: COLORS.PRIMARY_PURPLE,
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              {t("termsConditionsTitle")}
+            </span>
+          </Typography>
+        }
+      />
 
-      <Box sx={{ mt: 4 }}>
+      <Box sx={{ mt: 2 }}>
         <Button
           fullWidth
-          size="large"
+          size="medium"
           type="submit"
           isLoading={loading}
           variant="contained"
+          endIcon={<ArrowForwardIcon />}
           sx={{
             borderRadius: "12px",
             py: 1.8,
-            fontSize: { xs: '0.9rem', sm: '1rem' },
+            fontSize: { xs: "0.9rem", sm: "1rem" },
             fontWeight: 700,
             bgcolor: COLORS.PRIMARY_PURPLE,
             boxShadow: `0 8px 20px rgba(94, 24, 233, 0.25)`,
-            '&:hover': {
-              bgcolor: '#4c14c0',
+            "&:hover": {
+              bgcolor: "#4c14c0",
               boxShadow: `0 10px 25px rgba(94, 24, 233, 0.35)`,
-            }
+            },
           }}
         >
           {t("signup")}

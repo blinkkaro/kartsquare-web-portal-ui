@@ -6,6 +6,7 @@ import {
   Avatar,
   Button,
   Typography,
+  Tooltip,
   styled,
 } from "@mui/material";
 import {
@@ -15,6 +16,7 @@ import {
   Login as LoginIcon,
   Business,
   Campaign,
+  AutoAwesomeRounded,
 } from "@mui/icons-material";
 import Image from "next/image";
 import { COLORS } from "../../../../constants/colors";
@@ -67,7 +69,43 @@ interface NavActionsProps {
   loginText: string;
   onNotificationToggle: () => void;
   onFreeListingClick: () => void;
+  onOpenAi: () => void;
 }
+
+const KartAiButton = ({ onClick }: { onClick: () => void }) => (
+  <Tooltip
+    title="Ask Kart AI to find services, compare prices & book faster"
+    arrow
+  >
+    <Box
+      onClick={onClick}
+      role="button"
+      aria-label="Open Kart AI"
+      sx={{
+        display: { xs: "none", md: "flex" },
+        alignItems: "center",
+        gap: 0.75,
+        cursor: "pointer",
+        px: 1.5,
+        py: 0.75,
+        borderRadius: "20px",
+        background: `linear-gradient(135deg, ${COLORS.ICON_GRADIENT.Light.START} 0%, ${COLORS.ICON_GRADIENT.Light.END} 100%)`,
+        color: "#fff",
+        fontWeight: 700,
+        fontSize: "0.8rem",
+        boxShadow: `0 4px 14px ${COLORS.PRIMARY_PURPLE}40`,
+        transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+        "&:hover": {
+          transform: "translateY(-2px)",
+          boxShadow: `0 6px 18px ${COLORS.PRIMARY_PURPLE}55`,
+        },
+      }}
+    >
+      <AutoAwesomeRounded sx={{ fontSize: 16 }} />
+      Kart AI
+    </Box>
+  </Tooltip>
+);
 
 import { useSocket } from "@/contexts/SocketContext";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -86,6 +124,7 @@ const NavActions: React.FC<NavActionsProps> = ({
   loginText,
   onNotificationToggle,
   onFreeListingClick,
+  onOpenAi,
 }) => {
   const profile = secureStorage.getItem("user_details");
   const { unreadCount } = useSocket();
@@ -118,6 +157,8 @@ const NavActions: React.FC<NavActionsProps> = ({
             <Campaign />
           </StyledIconButton>
         )}
+
+        <KartAiButton onClick={onOpenAi} />
 
         {/* Chat - Hide on mobile */}
         <StyledIconButton
@@ -313,6 +354,8 @@ const NavActions: React.FC<NavActionsProps> = ({
           <SearchIcon fontSize="small" />
         </StyledIconButton>
       )}
+
+      <KartAiButton onClick={onOpenAi} />
 
       {/* Theme Toggle */}
       <StyledIconButton

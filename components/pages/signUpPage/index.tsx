@@ -1,5 +1,6 @@
 "use client";
 import AuthWrapper from "@/components/auth/authWrapper";
+import AuthHeader from "@/components/auth/AuthHeader";
 import Title from "@/components/auth/title";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -8,7 +9,7 @@ import { SignUpFormData } from "./signUpSchema";
 import { registerUser } from "@/features/ui/authSlice";
 import { AppUserType, RegisterData } from "@/services/auth/auth.interface";
 import Error from "@/components/common/ErrorMessage";
-import { Box, Link, Typography } from "@mui/material";
+import { Box, Divider, Link, Typography } from "@mui/material";
 import NextLink from "next/link";
 
 import { useAppDispatch } from "@/store/hooks";
@@ -27,7 +28,7 @@ function SignUpView() {
   const dispatch = useAppDispatch();
   const roleParam = searchParams.get("role")?.toUpperCase();
   const role: AppUserType = Object.values(AppUserType).includes(
-    roleParam as AppUserType,
+    roleParam as AppUserType
   )
     ? (roleParam as AppUserType)
     : AppUserType.CUSTOMER;
@@ -56,7 +57,10 @@ function SignUpView() {
   }, [registerDetails]);
 
   useEffect(() => {
-    if (role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER) {
+    if (
+      role === AppUserType.SERVICE_PROVIDER ||
+      role === AppUserType.SUPPLIER
+    ) {
       const busLeadId = sessionStorage.getItem("bus_lead_id");
       if (!busLeadId) {
         router.replace("/business-listing");
@@ -100,7 +104,7 @@ function SignUpView() {
 
       const baseData = {
         first_name: data.first_name,
-        last_name: isSpOrSupplier ? "" : (data.last_name ?? ""),
+        last_name: isSpOrSupplier ? "" : data.last_name ?? "",
         email: data.email,
         phone_number: isSpOrSupplier
           ? initialData.whatsapp_number || data.phone_number || ""
@@ -140,7 +144,7 @@ function SignUpView() {
       setError(
         typeof error === "string"
           ? error
-          : error?.message || "An unexpected error occurred",
+          : error?.message || "An unexpected error occurred"
       );
     } finally {
       setLoading(false);
@@ -148,32 +152,7 @@ function SignUpView() {
   };
   return (
     <AuthWrapper>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          gap: 1,
-          mb: { xs: 2, sm: 3 },
-          mt: { xs: 6, lg: 8 },
-        }}
-      >
-        <Link
-          component={NextLink}
-          href="/"
-          style={{
-            textDecoration: "none",
-            color: "inherit",
-            fontWeight: 700,
-            borderBottom: "1px solid",
-          }}
-          sx={{
-            fontSize: { xs: "0.875rem", sm: "1rem" },
-          }}
-        >
-          {t("skip")}
-        </Link>
-      </Box>
+      <AuthHeader showSkip skipHref="/" />
       <Title title={t("signUp")} subtitle={t("signUpSubtitle")} />
       <Error isVisible={!!error} error={error} />
       <RegistrationForm
@@ -187,9 +166,23 @@ function SignUpView() {
         role={role}
         initialData={initialData}
       />
+      {/* <Divider
+        sx={{
+          mt: { xs: 2, sm: 4 },
+          "&::before, &::after": { borderColor: "divider" },
+        }}
+      >
+        <Typography
+          variant="caption"
+          color="textSecondary"
+          sx={{ px: 1, letterSpacing: "0.05em" }}
+        >
+          OR
+        </Typography>
+      </Divider> */}
       <Box
         sx={{
-          mt: { xs: 3, sm: 4 },
+          mt: { xs: 2, sm: 2 },
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
