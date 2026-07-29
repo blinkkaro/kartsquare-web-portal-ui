@@ -18,7 +18,6 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { LoginSchema } from "../loginSchema";
 import { LoginFormData } from "../loginSchema";
 import ErrorMessage from "@/components/common/ErrorMessage";
-import Title from "@/components/auth/title";
 import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
 
@@ -58,9 +57,6 @@ export default function LoginForm({
       onSubmit={handleSubmit(onSubmit)}
       sx={{ width: "100%" }}
     >
-      <Box sx={{ mb: { xs: 2, sm: 3, md: 4, lg: 5, xl: 6 } }}>
-        <Title title={t("welcome_back")} subtitle={t("login_subtitle")} />
-      </Box>
       <ErrorMessage isVisible={!!error} error={error!} />
       <Stack spacing={{ xs: 2, sm: 3, lg: 2, xl: 3 }}>
         <Box>

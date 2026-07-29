@@ -18,7 +18,7 @@ export const english = {
   forgot_password: "Forgot Password?",
   login: "Login",
   continue_with_google: "Continue with Google",
-  no_account: "Don't have an account?",
+  no_account: "New here?",
   sign_up: "Sign up",
   brand_tagline: "Kartsquare — Where Your Needs Meet Solutions",
   continue_as: "Continue as",
@@ -100,6 +100,7 @@ export const english = {
   signup: "Signup",
   skip: "SKIP",
   forgetPassword: "Forget Password?",
+  forgetPasswordSubmit: "Submit",
   forgetPasswordSubtitle:
     "Please enter your register email address, we'll send you reset password link to your email.",
   resetPassword: "Reset Password",
