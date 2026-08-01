@@ -18,7 +18,12 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
 
-function AuthWrapper({ children }: { children: React.ReactNode }) {
+interface AuthWrapperProps {
+  children: React.ReactNode;
+  align?: "center" | "top";
+}
+
+function AuthWrapper({ children, align = "center" }: AuthWrapperProps) {
   const { t, locale, changeLanguage } = useTranslate();
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const router = useRouter();
@@ -34,12 +39,6 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
     }
   }, [isAuthenticated, user, router]);
 
-  const handleLanguageChange = useCallback(
-    (event: SelectChangeEvent<string>) => {
-      changeLanguage(event.target.value as any);
-    },
-    []
-  );
   return (
     <Grid
       container
@@ -65,7 +64,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
           justifyContent: "center",
           alignItems: "center",
           minHeight: "100vh",
-          p: 4,
+          // p: 1,
           position: "relative",
           transition: "background 0.3s ease-in-out",
         }}
@@ -78,7 +77,13 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
             gap: 3,
           }}
         >
-          <Image src="/logo.svg" alt="auth" width={isLargeScreen ? 200 : 150} height={isLargeScreen ? 200 : 150} priority />
+          <Image
+            src="/logo.svg"
+            alt="auth"
+            width={isLargeScreen ? 200 : 150}
+            height={isLargeScreen ? 200 : 150}
+            priority
+          />
           <Typography
             sx={{
               fontWeight: "bold",
@@ -95,20 +100,6 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
 
       {/* Right Side (Form) */}
       <Grid size={{ xs: 12, lg: 6 }}>
-        {/* <Box sx={{ position: "absolute", top: 24, right: 24 }}>
-          <Select
-            value={locale}
-            onChange={handleLanguageChange}
-            size="small"
-            variant="standard"
-            disableUnderline
-            sx={{ fontWeight: "bold" }}
-          >
-            <MenuItem value="en">🇺🇸 EN</MenuItem>
-            <MenuItem value="es">🇪🇸 ES</MenuItem>
-            <MenuItem value="hi">🇮🇳 HI</MenuItem>
-          </Select>
-        </Box> */}
         <Box
           sx={{
             background: {
@@ -124,14 +115,58 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
             display: "flex",
             flexDirection: "column",
             margin: "auto",
-            justifyContent: "center",
+            justifyContent: align === "top" ? "flex-start" : "center",
+            alignItems: "center",
             minHeight: "100vh",
-            px: { xs: 4, lg: 10 },
-            py: { xs: 4, lg: 2 },
+            px: { xs: 1.5, lg: 10 },
+            py: { xs: 3, lg: 2 },
+            pt: align === "top" ? { xs: 6, lg: 8 } : { xs: 3, lg: 2 },
             transition: "background 0.3s ease-in-out",
           }}
         >
-          {children}
+          {/* Card wrapper — matches reference design on mobile/tablet; desktop keeps the plain panel */}
+          <Box
+            sx={{
+              width: "100%",
+              maxWidth: { xs: 480, lg: "none" },
+              bgcolor: {
+                xs:
+                  theme.palette.mode === "light"
+                    ? COLORS.BACKGROUND.PRIMARY_LIGHT
+                    : COLORS.BACKGROUND.SECONDARY_DARK,
+                lg: "transparent",
+              },
+              borderRadius: { xs: "24px", lg: 0 },
+              boxShadow: {
+                xs:
+                  theme.palette.mode === "light"
+                    ? "0 20px 60px rgba(94, 24, 233, 0.12)"
+                    : "0 20px 60px rgba(0, 0, 0, 0.4)",
+                lg: "none",
+              },
+              overflow: "hidden",
+              position: "relative",
+              px: { xs: 3.5, sm: 4.5, lg: 0 },
+              py: { xs: 3.5, sm: 4.5, lg: 0 },
+            }}
+          >
+            {/* Decorative blob — mobile card only */}
+            <Box
+              sx={{
+                display: { xs: "block", lg: "none" },
+                position: "absolute",
+                top: -40,
+                right: -40,
+                width: 160,
+                height: 160,
+                borderRadius: "50%",
+                background: COLORS.PURPLECYAN,
+                opacity: theme.palette.mode === "light" ? 0.5 : 0.15,
+                pointerEvents: "none",
+              }}
+            />
+            <Box sx={{ position: "relative" }}>{children}</Box>
+          </Box>
         </Box>
       </Grid>
     </Grid>

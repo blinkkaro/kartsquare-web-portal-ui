@@ -105,6 +105,7 @@ export type TranslationKey =
   | "signup"
   | "skip"
   | "forgetPassword"
+  | "forgetPasswordSubmit"
   | "forgetPasswordSubtitle"
   | "codeRequired"
   | "codeMin"
@@ -430,6 +431,7 @@ export type TranslationKey =
   | "findYourServicesDescription"
   | "ask_anything_placeholder"
   | "kartAi"
+  | "ai_powered_assistant"
   | "kartAiGreeting"
   | "find"
   | "neatMyArea"
@@ -1275,8 +1277,7 @@ export type TranslationKey =
   | "Enter_value"
   | "Select_option"
   | "please_provide_rating"
-  | "rate_your_experience"
-  ;
+  | "rate_your_experience";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
@@ -1339,7 +1340,7 @@ interface TranslationContextType {
 }
 
 const TranslationContext = createContext<TranslationContextType | undefined>(
-  undefined,
+  undefined
 );
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
@@ -1347,7 +1348,7 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
 
   const t = (
     key: TranslationKey,
-    params?: Record<string, string | number>,
+    params?: Record<string, string | number>
   ): string => {
     let text = dictionaries[locale][key] || key;
     if (params) {
@@ -1369,7 +1370,7 @@ export function useTranslationContext() {
   const context = useContext(TranslationContext);
   if (context === undefined) {
     throw new Error(
-      "useTranslationContext must be used within a TranslationProvider",
+      "useTranslationContext must be used within a TranslationProvider"
     );
   }
   return context;

@@ -19,6 +19,7 @@ import {
   Stack,
   Rating,
   IconButton,
+  Avatar,
 } from "@mui/material";
 import {
   Search,
@@ -250,6 +251,13 @@ const StoreView: React.FC = () => {
     router.push(`/store/product/${productId}`);
   };
 
+  const handleSearchSubmit = () => {
+    const query = searchQuery.trim();
+    if (!query) return;
+    setShowSuggestions(false);
+    router.push(`/store/products?search=${encodeURIComponent(query)}`);
+  };
+
   return (
     <Box
       sx={{
@@ -410,6 +418,7 @@ const StoreView: React.FC = () => {
         <Box sx={{ mb: { xs: 6, md: 10 }, textAlign: "center" }}>
           <Typography
             variant="h4"
+            component="h1"
             fontWeight={900}
             sx={{
               mb: 2,
@@ -442,9 +451,12 @@ const StoreView: React.FC = () => {
           >
             <TextField
               fullWidth
-              placeholder="What would you like to source today?"
+              placeholder="Search products, machinery, raw materials, suppliers..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearchSubmit();
+              }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -453,10 +465,32 @@ const StoreView: React.FC = () => {
                     />
                   </InputAdornment>
                 ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button
+                      onClick={handleSearchSubmit}
+                      variant="contained"
+                      disableElevation
+                      sx={{
+                        borderRadius: "18px",
+                        bgcolor: COLORS.PRIMARY_PURPLE,
+                        textTransform: "none",
+                        fontWeight: 700,
+                        px: { xs: 2, md: 3.5 },
+                        py: 1,
+                        fontSize: { xs: "0.85rem", md: "1rem" },
+                        "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
+                      }}
+                    >
+                      Search
+                    </Button>
+                  </InputAdornment>
+                ),
                 sx: {
                   borderRadius: "24px",
                   bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "white",
                   p: 1.5,
+                  pr: 1,
                   fontSize: { xs: "1rem", md: "1.25rem" },
                   fontWeight: 500,
                   boxShadow: isDark
@@ -494,6 +528,49 @@ const StoreView: React.FC = () => {
                   setShowSuggestions(false);
                 }}
               />
+            )}
+
+            {/* Popular categories — real product categories, sourced live so the
+                chips never drift out of sync with what's actually in the catalog. */}
+            {!!homeData?.categories?.length && (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 1,
+                  mt: 3,
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontWeight: 700, mr: 0.5 }}
+                >
+                  Popular:
+                </Typography>
+                {homeData.categories.slice(0, 6).map((cat) => (
+                  <Chip
+                    key={cat.product_category_id}
+                    clickable
+                    onClick={() => handleCategoryClick(cat.product_category_id)}
+                    avatar={
+                      <Avatar src={cat.category_image} alt={cat.category_name} />
+                    }
+                    label={cat.category_name}
+                    sx={{
+                      fontWeight: 600,
+                      bgcolor: isDark ? "rgba(255,255,255,0.04)" : "#fff",
+                      border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "#e2e8f0"}`,
+                      "&:hover": {
+                        borderColor: COLORS.PRIMARY_PURPLE,
+                        bgcolor: COLORS.PURPLE_ALPHA_04,
+                      },
+                    }}
+                  />
+                ))}
+              </Box>
             )}
           </Box>
         </Box>

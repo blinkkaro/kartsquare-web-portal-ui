@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Box, Container, useTheme } from "@mui/material";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import MainLayout from "@/app/mainLayout";
 import { serviceListService } from "../../../services/serviceList/serviceListService";
@@ -14,19 +15,25 @@ import ServiceGrid from "./ServiceGrid";
 import ServicesPagination from "./ServicesPagination";
 import { useCategories } from "@/hooks/useCategories";
 import { useTranslate } from "@/hooks/useTranslate";
-import { Button } from "@mui/material";
-import { Tune } from "@mui/icons-material";
+import { Button, Chip } from "@mui/material";
+import { Tune, Close } from "@mui/icons-material";
 
 const ListOfServices = () => {
     const { t } = useTranslate();
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark";
     const surfaceBg = isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT;
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
 
-    // State
+    // State — category can arrive pre-applied via ?category=<id> (e.g. from the
+    // home page category grid), so it seeds from the URL on first render.
     const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(
+        () => searchParams.get("category")
+    );
     const [search, setSearch] = useState("");
     const [searchInput, setSearchInput] = useState("");
     const [page, setPage] = useState(1);
@@ -37,6 +44,7 @@ const ListOfServices = () => {
 
     // Use TanStack Query hook for categories
     const { data: categories = [], isLoading: categoriesLoading } = useCategories();
+    const selectedCategoryName = categories.find((cat) => cat.id === selectedCategory)?.name;
 
     // Fetch services when filters change
     useEffect(() => {
@@ -68,6 +76,16 @@ const ListOfServices = () => {
     const handleCategoryClick = (categoryId: string | null) => {
         setSelectedCategory(categoryId);
         setPage(1); // Reset to first page when category changes
+
+        // Keep the URL shareable/bookmarkable with the applied category filter.
+        const params = new URLSearchParams(searchParams.toString());
+        if (categoryId) {
+            params.set("category", categoryId);
+        } else {
+            params.delete("category");
+        }
+        const query = params.toString();
+        router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
     };
 
     const handleSearchSubmit = (e: React.FormEvent) => {
@@ -134,6 +152,26 @@ const ListOfServices = () => {
                             >
                                 {t("filters")}
                             </Button>
+                            {selectedCategoryName && (
+                                <Chip
+                                    label={selectedCategoryName}
+                                    onDelete={() => handleCategoryClick(null)}
+                                    deleteIcon={<Close sx={{ fontSize: "16px !important" }} />}
+                                    sx={{
+                                        height: 44,
+                                        borderRadius: "50px",
+                                        px: 0.5,
+                                        fontWeight: 700,
+                                        fontSize: "0.85rem",
+                                        bgcolor: COLORS.PURPLE_ALPHA_04,
+                                        color: COLORS.PRIMARY_PURPLE,
+                                        "& .MuiChip-deleteIcon": {
+                                            color: COLORS.PRIMARY_PURPLE,
+                                            "&:hover": { color: COLORS.PURPLE_HOVER },
+                                        },
+                                    }}
+                                />
+                            )}
                             <ServicesSearchBar
                                 searchInput={searchInput}
                                 onSearchChange={setSearchInput}

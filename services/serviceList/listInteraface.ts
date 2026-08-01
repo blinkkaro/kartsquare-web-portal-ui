@@ -97,7 +97,7 @@ export interface ServiceListResponse {
 export interface ServiceFilters {
   page?: number;
   limit?: number;
-  category_id?: string;
+  category_id?: string | string[];
   sub_category_id?: string;
   search?: string;
   status?: ServiceStatus;

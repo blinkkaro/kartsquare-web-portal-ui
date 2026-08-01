@@ -18,7 +18,6 @@ class ServiceListService {
 
             if (filters?.page) params.page = filters.page;
             if (filters?.limit) params.limit = filters.limit;
-            if (filters?.category_id) params.category_id = filters.category_id;
             if (filters?.sub_category_id) params.sub_category_id = filters.sub_category_id;
             if (filters?.search) params.search = filters.search;
             if (filters?.status) params.status = filters.status;
@@ -26,8 +25,21 @@ class ServiceListService {
             if (filters?.max_price) params.max_price = filters.max_price;
             if (filters?.provider_id) params.provider_id = filters.provider_id;
 
+            // The API requires category_id as an array — a bare `category_id=X` query
+            // param collapses to a string server-side and fails validation, so a
+            // single selected category still has to go through bracket notation.
+            const categoryIds = filters?.category_id
+                ? ([] as string[]).concat(filters.category_id)
+                : [];
+            const categoryQuery = categoryIds
+                .map((id) => `category_id[]=${encodeURIComponent(id)}`)
+                .join("&");
+            const endpoint = categoryQuery
+                ? `${SERVICE_API_ENDPOINTS.GET_SERVICES}?${categoryQuery}`
+                : SERVICE_API_ENDPOINTS.GET_SERVICES;
+
             const response = await GET<ServiceListResponse>(
-                SERVICE_API_ENDPOINTS.GET_SERVICES,
+                endpoint,
                 params,
                 false // requiresAuth = false for public services list
             );

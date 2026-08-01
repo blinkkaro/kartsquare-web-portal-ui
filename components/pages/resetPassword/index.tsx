@@ -1,5 +1,6 @@
 "use client";
 import AuthWrapper from "@/components/auth/authWrapper";
+import AuthHeader from "@/components/auth/AuthHeader";
 import Title from "@/components/auth/title";
 import { useTranslate } from "@/hooks/useTranslate";
 import ResetPassForm from "./component/ResetPassForm";
@@ -8,8 +9,6 @@ import { changePassService } from "@/services/auth/changePassword.service";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import ErrorMessage from "@/components/common/ErrorMessage";
-import { Box } from "@mui/material";
-import BackButton from "@/components/common/BackButton";
 
 export default function ResetPasswordView() {
   const { t } = useTranslate();
@@ -34,10 +33,8 @@ export default function ResetPasswordView() {
   };
 
   return (
-    <AuthWrapper>
-      <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 10 }}>
-        <BackButton />
-      </Box>
+    <AuthWrapper align="top">
+      <AuthHeader showBack />
       <Title title={t("resetPassword")} subtitle={t("resetPasswordSubtitle")} />
       <ErrorMessage isVisible={!!errorMessage} error={errorMessage} />
       <ResetPassForm onSubmit={onSubmit} loading={loading} />

@@ -55,7 +55,7 @@ const LoginForm = () => {
         secureStorage.setItem("token", response.data.tokens.access_token);
         secureStorage.setItem(
           "refreshToken",
-          response.data.tokens.refresh_token,
+          response.data.tokens.refresh_token
         );
         secureStorage.setItem("user_details", response.data.user);
         secureStorage.setItem("role", response.data.user.role);

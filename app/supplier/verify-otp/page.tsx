@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import OTPVerification from "@/components/supplier/OTPVerification";
 import { Box, Container } from "@mui/material";
 import Nav from "@/components/common/Nav";
@@ -26,7 +26,9 @@ export default function SupplierOTPPage() {
         }}
       >
         <Container maxWidth="sm">
-          <OTPVerification />
+          <Suspense fallback={null}>
+            <OTPVerification />
+          </Suspense>
         </Container>
       </Box>
     </>

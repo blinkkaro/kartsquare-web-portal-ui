@@ -21,7 +21,7 @@ const TopRatedExpertsSection = () => {
   const dispatch = useDispatch();
   const swiperRef = useRef<SwiperClass | null>(null);
 
-  const { provider, isLoading } = useTopSuggestions("10");
+  const { provider, isLoading } = useTopSuggestions("20");
 
   const experts = (provider || []).filter(
     (item, index, self) => index === self.findIndex((p) => p.id === item.id),
@@ -33,8 +33,10 @@ const TopRatedExpertsSection = () => {
 
   if (isLoading || experts.length === 0) return null;
 
-  // Arrows only add value once there's more than a screenful of cards to page through.
-  const showArrows = experts.length > 3;
+  // This section lives in a narrow (~60%) column next to the map, so even the
+  // widest breakpoint rarely shows a full screenful of cards — arrows add value
+  // as soon as there's more than one card to page through.
+  const showArrows = experts.length > 1;
 
   return (
     <Box>

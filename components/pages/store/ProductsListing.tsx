@@ -525,6 +525,7 @@ const ProductsListingView: React.FC = () => {
               <Box>
                 <Typography
                   variant="h3"
+                  component="h1"
                   fontWeight={900}
                   sx={{
                     color: isDark ? "text.primary" : "#0f172a",

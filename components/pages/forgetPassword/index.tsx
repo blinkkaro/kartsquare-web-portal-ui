@@ -1,6 +1,7 @@
 "use client";
 
 import AuthWrapper from "@/components/auth/authWrapper";
+import AuthHeader from "@/components/auth/AuthHeader";
 import Title from "@/components/auth/title";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useState } from "react";
@@ -13,8 +14,9 @@ import * as yup from "yup";
 import { TranslationKey } from "@/features/i18n/TranslationContext";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { changePassService } from "@/services/auth/changePassword.service";
-import BackButton from "@/components/common/BackButton";
-import { Box } from "@mui/material";
+import { Typography } from "@mui/material";
+import EmailIcon from "@mui/icons-material/EmailOutlined";
+import { COLORS } from "@/constants/colors";
 
 const getForgetPasswordSchema = (t: (key: TranslationKey) => string) =>
   yup.object({
@@ -57,10 +59,8 @@ export default function ForgetPasswordView() {
   };
 
   return (
-    <AuthWrapper>
-      <Box sx={{ display: "flex", justifyContent: "flex-start", mb: 10 }}>
-        <BackButton />
-      </Box>
+    <AuthWrapper align="top">
+      <AuthHeader showBack />
       <Title
         title={t("forgetPassword")}
         subtitle={t("forgetPasswordSubtitle")}
@@ -71,20 +71,41 @@ export default function ForgetPasswordView() {
         onSubmit={handleSubmit(handleForgetPassword)}
         style={{ width: "100%" }}
       >
+        <Typography
+          variant="body2"
+          sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
+        >
+          {t("email_address")}*
+        </Typography>
         <Input
-          label={t("email_address")}
           type="email"
           name="email"
           control={control}
+          placeholder="arjun.sharma@mail.in"
+          startIcon={<EmailIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+          sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
         />
         <Button
           type="submit"
-          loading={loading}
+          isLoading={loading}
           disabled={loading}
-          sx={{ mt: 3 }}
+          variant="contained"
+          sx={{
+            mt: 3,
+            borderRadius: "12px",
+            py: 1.8,
+            fontSize: { xs: "0.9rem", sm: "1rem" },
+            fontWeight: 700,
+            bgcolor: COLORS.PRIMARY_PURPLE,
+            boxShadow: `0 8px 20px rgba(94, 24, 233, 0.25)`,
+            "&:hover": {
+              bgcolor: "#4c14c0",
+              boxShadow: `0 10px 25px rgba(94, 24, 233, 0.35)`,
+            },
+          }}
           fullWidth
         >
-          {t("forgetPassword")}
+          {t("forgetPasswordSubmit")}
         </Button>
       </form>
     </AuthWrapper>

@@ -18,7 +18,6 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { LoginSchema } from "../loginSchema";
 import { LoginFormData } from "../loginSchema";
 import ErrorMessage from "@/components/common/ErrorMessage";
-import Title from "@/components/auth/title";
 import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
 
@@ -58,9 +57,6 @@ export default function LoginForm({
       onSubmit={handleSubmit(onSubmit)}
       sx={{ width: "100%" }}
     >
-      <Box sx={{ mb: { xs: 2, sm: 3, md: 4, lg: 5, xl: 6 } }}>
-        <Title title={t("welcome_back")} subtitle={t("login_subtitle")} />
-      </Box>
       <ErrorMessage isVisible={!!error} error={error!} />
       <Stack spacing={{ xs: 2, sm: 3, lg: 2, xl: 3 }}>
         <Box>
@@ -119,25 +115,6 @@ export default function LoginForm({
           />
         </Box>
 
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <Link href={`/forgotPassword?role=${role}`}>
-            <Typography
-              variant="body2"
-              sx={{
-                color: "primary.main",
-                fontWeight: 600,
-                textDecoration: "none",
-                fontSize: { lg: "0.875rem", xl: "1rem" },
-                "&:hover": {
-                  textDecoration: "underline",
-                },
-              }}
-            >
-              {t("forgot_password")}
-            </Typography>
-          </Link>
-        </Box>
-
         <Button isLoading={loading} type="submit">
           {t("login")}
         </Button>
@@ -160,31 +137,49 @@ export default function LoginForm({
         </Button> */}
       </Stack>
 
-      <Box sx={{ mt: { xs: 3, sm: 4 }, textAlign: "center" }}>
+      <Box
+        sx={{
+          mt: { xs: 2.5, sm: 3 },
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 1,
+        }}
+      >
         <Typography
           variant="body2"
           color="text.secondary"
-          sx={{ fontSize: { lg: "0.875rem", xl: "1rem" } }}
+          sx={{ fontSize: { xs: "0.8rem", lg: "0.875rem" } }}
         >
-          {t("no_account")}
-          <Link href={`/signUp?role=${role}`}>
-            <Typography
-              component="span"
-              sx={{
-                ml: 1,
-                fontWeight: 700,
-                color: "text.primary",
-                textDecoration: "none",
-                fontSize: { lg: "0.875rem", xl: "1rem" },
-                "&:hover": {
-                  textDecoration: "underline",
-                },
-              }}
-            >
-              {t("sign_up")}
-            </Typography>
+          {t("no_account")}{" "}
+          <Link
+            href={`/signUp?role=${role}`}
+            style={{
+              color: "inherit",
+              textDecoration: "underline",
+              fontWeight: 700,
+            }}
+          >
+            {t("sign_up")}
           </Link>
         </Typography>
+
+        <Link
+          href={`/forgotPassword?role=${role}`}
+          style={{
+            color: "inherit",
+            textDecoration: "underline",
+            fontWeight: 700,
+          }}
+        >
+          <Typography
+            color="text.secondary"
+            sx={{ fontSize: { xs: "0.8rem", lg: "0.875rem" }, fontWeight: 700 }}
+          >
+            {t("forgot_password")}
+          </Typography>
+        </Link>
       </Box>
     </Box>
   );

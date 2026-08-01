@@ -8,6 +8,8 @@ import ProfileDrawer from "@/components/common/ProfileDrawer";
 import Ai from "@/components/common/Ai";
 import AIBotton from "@/components/common/Ai/AIBotton";
 import LoginModal from "@/components/common/loginModel";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setAiOpen } from "@/features/ui/uiSlice";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -15,7 +17,8 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const dispatch = useAppDispatch();
+  const aiOpen = useAppSelector((state) => state.ui.isAiOpen);
 
   return (
     <>
@@ -25,8 +28,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
           display: "flex",
           flexDirection: "column",
           // Responsive padding
-          px: { xs: 0, sm: 1.5, md: 3, lg: 4, xl: 5 },
-          pt: { xs: 0, md: 0 },
+          px: { xs: 0, sm: 1.5, md: 1, lg: 2, xl: 3 },
+          pt: { xs: 0, sm: 1.5, md: 1, lg: 3, xl: 3 },
+
           // pb: { xs: 4, md: 6 },
           backgroundColor:
             theme.palette.mode === "dark"
@@ -46,8 +50,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
             // maxWidth: { lg: "1500px", xl: "2000px" },
             mx: "auto",
             width: "100%",
-            px: { xs: 1, md: 0, lg: 0, xl: 0 },
-            mt: { xs: 10, sm: 12, md: 10, lg: 12 },
+            px: { xs: 1, md: 0 },
+            // Nav already reserves the AppBar's exact measured height via its own
+            // spacer, so this is just breathing room, not a breakpoint guess.
+
             backgroundColor:
               theme.palette.mode === "dark"
                 ? COLORS.BACKGROUND.PAPER_DARK
@@ -55,10 +61,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
           }}
         >
           {children}
-          <AIBotton setOpen={setOpen} />
+          <AIBotton setOpen={(open) => dispatch(setAiOpen(open))} />
         </Box>
         <ProfileDrawer />
-        <Ai open={open} onClose={() => setOpen(false)} />
+        <Ai open={aiOpen} onClose={() => dispatch(setAiOpen(false))} />
       </Box>
       <LoginModal />
       <Footer />

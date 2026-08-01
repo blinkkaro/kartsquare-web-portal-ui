@@ -176,10 +176,8 @@ img {
     box-sizing: border-box;
     padding: 0;
     margin: 0;
-    /* Mobile Safari/Chrome flash a gray highlight square on any tap by default —
-       every custom button/card in this app is a div with an onClick, so it showed
-       up constantly. This is purely visual; it doesn't affect click behavior. */
     -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
 }
 
 html,

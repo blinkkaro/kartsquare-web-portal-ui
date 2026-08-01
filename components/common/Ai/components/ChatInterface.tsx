@@ -11,7 +11,7 @@ import {
   InputBase,
 } from "@mui/material";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
-import { Send, AutoAwesome, SmartToy, Mic } from "@mui/icons-material";
+import { Send, AutoAwesome, Mic } from "@mui/icons-material";
 import { AIMessage } from "@/services/ai/aiInterface";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -121,11 +121,13 @@ export default function ChatInterface() {
   ];
 
   return (
-    <Box sx={{ 
-      display: "flex", 
-      flexDirection: "column", 
-      height: "100%", 
-      bgcolor: dark ? "#0a0a0a" : "#f8fafc",
+    <Box sx={{
+      display: "flex",
+      flexDirection: "column",
+      height: "100%",
+      background: dark
+        ? `linear-gradient(180deg, ${COLORS.BACKGROUND.PRIMARY_DARK} 0%, #0d0a17 100%)`
+        : `linear-gradient(180deg, ${COLORS.PURPLE_ALPHA_04} 0%, #f8fafc 220px)`,
       position: "relative"
     }}>
       {/* Messages Container */}
@@ -151,36 +153,53 @@ export default function ChatInterface() {
               width: "100%",
             }}
           >
-            {/* Assistant Header */}
-            {msg.role === "assistant" && msg.id !== "greeting" && (
-              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.5, ml: 1 }}>
-                <SmartToy sx={{ fontSize: 14, color: COLORS.PRIMARY_PURPLE }} />
-                <Typography variant="caption" sx={{ fontWeight: 700, color: COLORS.PRIMARY_PURPLE, fontSize: '0.65rem' }}>
-                  KART AI
-                </Typography>
-              </Box>
-            )}
-
             <Box
               sx={{
-                maxWidth: "85%",
-                p: 1.5,
-                borderRadius: "16px",
-                borderTopRightRadius: msg.role === "user" ? "4px" : "16px",
-                borderTopLeftRadius: msg.role === "assistant" ? "4px" : "16px",
-                background: msg.role === "user" 
-                  ? `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE}, ${COLORS.PURPLE_HOVER})`
-                  : (dark ? "rgba(255,255,255,0.05)" : "#fff"),
-                color: msg.role === "user" ? "#fff" : (dark ? "#eee" : "#1e293b"),
-                boxShadow: msg.role === "user" 
-                  ? "0 4px 12px rgba(94, 24, 233, 0.2)" 
-                  : "0 2px 8px rgba(0,0,0,0.05)",
-                border: msg.role === "assistant" ? `1px solid ${dark ? "rgba(255,255,255,0.08)" : "#e2e8f0"}` : "none",
+                display: "flex",
+                flexDirection: msg.role === "user" ? "row-reverse" : "row",
+                alignItems: "flex-end",
+                gap: 1,
+                maxWidth: "92%",
               }}
             >
-              <Typography variant="body2" sx={{ fontSize: "0.9rem", lineHeight: 1.45, fontWeight: msg.role === "user" ? 500 : 400 }}>
-                {msg.content}
-              </Typography>
+              {msg.role === "assistant" && (
+                <Box
+                  sx={{
+                    flexShrink: 0,
+                    width: 26,
+                    height: 26,
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: `linear-gradient(135deg, ${COLORS.ICON_GRADIENT.Light.START} 0%, ${COLORS.ICON_GRADIENT.Light.END} 100%)`,
+                    boxShadow: `0 2px 8px ${COLORS.PRIMARY_PURPLE}40`,
+                  }}
+                >
+                  <AutoAwesome sx={{ fontSize: 14, color: "#fff" }} />
+                </Box>
+              )}
+              <Box
+                sx={{
+                  maxWidth: "100%",
+                  p: 1.5,
+                  borderRadius: "16px",
+                  borderTopRightRadius: msg.role === "user" ? "4px" : "16px",
+                  borderTopLeftRadius: msg.role === "assistant" ? "4px" : "16px",
+                  background: msg.role === "user"
+                    ? `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE}, ${COLORS.PURPLE_HOVER})`
+                    : (dark ? "rgba(130, 72, 247, 0.08)" : "#fff"),
+                  color: msg.role === "user" ? "#fff" : (dark ? "#eee" : "#1e293b"),
+                  boxShadow: msg.role === "user"
+                    ? "0 4px 12px rgba(94, 24, 233, 0.2)"
+                    : "0 2px 8px rgba(94, 24, 233, 0.06)",
+                  border: msg.role === "assistant" ? `1px solid ${dark ? "rgba(130, 72, 247, 0.2)" : COLORS.PURPLE_ALPHA_10}` : "none",
+                }}
+              >
+                <Typography variant="body2" sx={{ fontSize: "0.9rem", lineHeight: 1.45, fontWeight: msg.role === "user" ? 500 : 400 }}>
+                  {msg.content}
+                </Typography>
+              </Box>
             </Box>
 
             {/* Services Results */}
@@ -234,40 +253,47 @@ export default function ChatInterface() {
         left: 0, 
         right: 0, 
         p: 2, 
-        background: dark ? "rgba(10,10,10,0.8)" : "rgba(248,250,252,0.8)",
+        background: dark ? "rgba(10,10,10,0.85)" : "rgba(248,250,252,0.85)",
         backdropFilter: "blur(12px)",
-        borderTop: `1px solid ${dark ? "rgba(255,255,255,0.08)" : "#e2e8f0"}`
+        borderTop: `1px solid ${dark ? "rgba(130, 72, 247, 0.15)" : COLORS.PURPLE_ALPHA_10}`
       }}>
         {/* Quick Suggestions */}
         {chatHistory.length < 3 && (
           <Box sx={{ display: 'flex', gap: 1, mb: 2, overflowX: 'auto', pb: 0.5, "&::-webkit-scrollbar": { display: "none" } }}>
             {suggestionChips.map(s => (
-              <Chip 
-                key={s} 
-                label={s} 
-                onClick={() => handleSearch(s)} 
-                sx={{ 
-                  bgcolor: dark ? "rgba(255,255,255,0.05)" : "#fff", 
-                  border: `1px solid ${dark ? "rgba(255,255,255,0.1)" : "#e2e8f0"}`,
+              <Chip
+                key={s}
+                label={s}
+                onClick={() => handleSearch(s)}
+                sx={{
+                  bgcolor: dark ? "rgba(130, 72, 247, 0.1)" : "#fff",
+                  border: `1px solid ${dark ? "rgba(130, 72, 247, 0.25)" : COLORS.PURPLE_ALPHA_20}`,
+                  color: COLORS.PRIMARY_PURPLE,
                   fontSize: '0.75rem',
                   fontWeight: 600,
                   "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_04, borderColor: COLORS.PRIMARY_PURPLE }
-                }} 
+                }}
               />
             ))}
           </Box>
         )}
 
-        <Box sx={{ 
-          display: "flex", 
-          alignItems: "center", 
-          gap: 1, 
-          bgcolor: dark ? "rgba(255,255,255,0.05)" : "#fff", 
+        <Box sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          bgcolor: dark ? "rgba(130, 72, 247, 0.08)" : "#fff",
           borderRadius: "24px",
-          p: "4px 4px 4px 16px",
-          border: `1px solid ${dark ? "rgba(255,255,255,0.1)" : "#e2e8f0"}`,
-          boxShadow: "0 2px 10px rgba(0,0,0,0.05)"
+          p: "4px 4px 4px 14px",
+          border: `1.5px solid ${dark ? "rgba(130, 72, 247, 0.25)" : COLORS.PURPLE_ALPHA_20}`,
+          boxShadow: "0 2px 10px rgba(94, 24, 233, 0.06)",
+          transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+          "&:focus-within": {
+            borderColor: COLORS.PRIMARY_PURPLE,
+            boxShadow: `0 0 0 3px ${COLORS.PURPLE_ALPHA_10}`,
+          },
         }}>
+          <AutoAwesome sx={{ fontSize: 16, color: COLORS.PRIMARY_PURPLE, opacity: 0.7 }} />
           <InputBase
             fullWidth
             placeholder="Ask Kart AI..."

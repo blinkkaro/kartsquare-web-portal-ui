@@ -6,7 +6,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { createCustomTheme } from "@/utils/theme";
 import { useAppSelector } from "@/store/hooks";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { TranslationProvider } from "@/features/i18n/TranslationContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -24,11 +24,11 @@ function ThemeWrapper({ children }: { children: React.ReactNode }) {
 
   const theme = useMemo(() => createCustomTheme(mode), [mode]);
 
-  // Sync mode with document body attribute for global CSS
-  useMemo(() => {
-    if (typeof document !== 'undefined') {
-      document.body.setAttribute('data-theme', mode);
-    }
+  // Sync mode with document body attribute for global CSS.
+  // Runs in an effect (post-hydration) rather than during render, since
+  // mutating the server-rendered <body> during render triggers a hydration mismatch.
+  useEffect(() => {
+    document.body.setAttribute('data-theme', mode);
   }, [mode]);
 
   return (

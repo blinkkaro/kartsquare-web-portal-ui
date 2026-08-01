@@ -14,6 +14,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { loginUser } from "@/features/ui/authSlice";
 import { useTranslate } from "@/hooks/useTranslate";
 import { Box, Link } from "@mui/material";
+import Title from "@/components/auth/title";
 
 export default function LoginView() {
   const router = useRouter();
@@ -54,9 +55,7 @@ export default function LoginView() {
       // const Role = role.toString().toUpperCase();
 
       // Dispatch loginUser thunk
-      const result = await dispatch(
-        loginUser({ ...data }),
-      ).unwrap();
+      const result = await dispatch(loginUser({ ...data })).unwrap();
 
       if (result) {
         const user = result.user;
@@ -76,7 +75,7 @@ export default function LoginView() {
         handleRegistrationStepNavigation(
           dispatch,
           router,
-          registerStep as UserRegisterSteps,
+          registerStep as UserRegisterSteps
         );
       }
     } catch (error: any) {
@@ -99,13 +98,12 @@ export default function LoginView() {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "center",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
           gap: 1,
-          mb: { xs: 2, sm: 3 },
-          mt: { xs: 6, lg: 8 },
         }}
       >
+        <Title title={t("welcome_back")} subtitle={t("login_subtitle")} />
         <Link
           component={NextLink}
           href="/"
@@ -114,9 +112,11 @@ export default function LoginView() {
             color: "inherit",
             fontWeight: 700,
             borderBottom: "1px solid",
+            whiteSpace: "nowrap",
           }}
           sx={{
             fontSize: { xs: "0.875rem", sm: "1rem" },
+            mt: 0.5,
           }}
         >
           {t("skip")}

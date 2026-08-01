@@ -1,46 +1,17 @@
 "use client";
 import React, { useRef, useState } from "react";
-import { Box, Typography, IconButton, useTheme, useMediaQuery } from "@mui/material";
+import { Box, Typography, useTheme, useMediaQuery } from "@mui/material";
 import { useRouter } from "next/navigation";
-import HomeRepairServiceIcon from "@mui/icons-material/HomeRepairService";
-import FaceRetouchingNaturalIcon from "@mui/icons-material/FaceRetouchingNatural";
-import DevicesOtherIcon from "@mui/icons-material/DevicesOther";
-import SpaIcon from "@mui/icons-material/Spa";
-import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
-import SchoolIcon from "@mui/icons-material/School";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { Swiper, SwiperSlide } from "swiper/react";
-import type { Swiper as SwiperClass } from "swiper";
-import "swiper/css";
 import { COLORS } from "@/constants/colors";
 import { useCategories } from "@/hooks/useCategories";
 import { useActiveAdvertisements } from "@/hooks/useAdvertisements";
 import { advertiseService } from "@/services/advertise/advertiseServies";
 import HomeSearchBar from "./HomeSearchBar";
 import PromoCarousel from "./PromoCarousel";
-import SectionCard from "@/components/common/SectionCard";
+import { CategoryTile, MoreCategoriesTile, HomeCategory } from "./categories/CategoryTile";
+import CategoryDrawer from "./categories/CategoryDrawer";
 
-const CATEGORY_ICON_MATCHERS: Array<[RegExp, React.ElementType]> = [
-  [/beaut|makeup|salon|spa/i, FaceRetouchingNaturalIcon],
-  [/tech|electronic|gadget|repair.*device|it\b/i, DevicesOtherIcon],
-  [/wellness|health|yoga|fitness/i, SpaIcon],
-  [/clean/i, CleaningServicesIcon],
-  [/tutor|educat|class/i, SchoolIcon],
-];
-
-const CATEGORY_COLORS = [
-  { bg: "#e7ecfd", fg: COLORS.PRIMARY_PURPLE },
-  { bg: "#fde7ea", fg: "#e0446b" },
-  { bg: "#e2f8ee", fg: "#1fa971" },
-  { bg: "#e6f2ff", fg: COLORS.PRIMARY_BLUE },
-];
-
-const renderCategoryIcon = (name: string) => {
-  const match = CATEGORY_ICON_MATCHERS.find(([re]) => re.test(name));
-  const Icon = match ? match[1] : HomeRepairServiceIcon;
-  return <Icon fontSize="small" />;
-};
+const SERVICES_LIST_PATH = "/cus/servicesList";
 
 // No "seasonal offer" API exists yet, so this is a static, month-based fallback shown
 // whenever there's no active ad to fill the promo slot — keeps the hero's right column
@@ -136,61 +107,15 @@ const getOrderedSeasonal = <T extends { months: number[] }>(items: T[]): T[] => 
   return [items[currentIndex], ...items.filter((_, index) => index !== currentIndex)];
 };
 
-const CategoryTile = ({
-  category,
-  index,
-  onClick,
-}: {
-  category: { id: string; name: string };
-  index: number;
-  onClick: () => void;
-}) => {
-  const palette = CATEGORY_COLORS[index % CATEGORY_COLORS.length];
-  return (
-    <SectionCard
-      size="md"
-      onClick={onClick}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 1,
-        py: 2,
-        px: 1.5,
-        cursor: "pointer",
-        transition: "transform 0.15s, box-shadow 0.15s",
-        "&:hover": { transform: "translateY(-2px)" },
-      }}
-    >
-      <Box
-        sx={{
-          width: 44,
-          height: 44,
-          borderRadius: "50%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          bgcolor: palette.bg,
-          color: palette.fg,
-        }}
-      >
-        {renderCategoryIcon(category.name)}
-      </Box>
-      <Typography variant="caption" color="text.primary" sx={{ fontWeight: 600, textAlign: "center" }}>
-        {category.name}
-      </Typography>
-    </SectionCard>
-  );
-};
-
 const HeroSection = () => {
   const theme = useTheme();
   const router = useRouter();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
 
   const [searchQuery, setSearchQuery] = useState("");
   const searchRef = useRef<{ focus: () => void }>(null);
-  const categorySwiperRef = useRef<SwiperClass | null>(null);
+  const [categoryDrawerOpen, setCategoryDrawerOpen] = useState(false);
 
   const { data: categories } = useCategories();
   const { data: ad } = useActiveAdvertisements(1);
@@ -232,6 +157,16 @@ const HeroSection = () => {
     })),
   ];
 
+  // Desktop grid uses 5 columns at sm, 6 columns from md up (matches the flex-basis
+  // percentages below) — cap at 4 rows (measured to end level with the promo carousel
+  // stack on the right) and reserve the last slot for a "More" tile.
+  const desktopColumns = isMdUp ? 6 : 5;
+  const desktopMaxDisplay = desktopColumns * 4;
+  const showDesktopMore = !!categories && categories.length > desktopMaxDisplay;
+  const desktopCategories = categories
+    ? categories.slice(0, showDesktopMore ? desktopMaxDisplay - 1 : desktopMaxDisplay)
+    : [];
+
   const productPromoSlides = getOrderedSeasonal(SEASONAL_PRODUCT_PROMOS).map((promo) => ({
     key: promo.badge,
     badge: promo.badge,
@@ -241,6 +176,10 @@ const HeroSection = () => {
     ctaLabel: "Shop Now",
     onClick: () => router.push(`/store?q=${encodeURIComponent(promo.searchTerm)}`),
   }));
+
+  const goToCategory = (category: HomeCategory) => {
+    router.push(`${SERVICES_LIST_PATH}?category=${category.id}`);
+  };
 
   return (
     <Box
@@ -272,62 +211,45 @@ const HeroSection = () => {
         {categories && categories.length > 0 && (
           <>
             {isMobile ? (
-              <Box sx={{ mt: 3 }}>
-                <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mb: 1.5 }}>
-                  <IconButton
-                    size="small"
-                    onClick={() => categorySwiperRef.current?.slidePrev()}
-                    sx={{
-                      bgcolor: (theme) => theme.palette.mode === "dark" ? COLORS.BACKGROUND.ELEVATED_DARK : COLORS.WHITE,
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
-                    }}
-                  >
-                    <ChevronLeftIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    onClick={() => categorySwiperRef.current?.slideNext()}
-                    sx={{
-                      bgcolor: (theme) => theme.palette.mode === "dark" ? COLORS.BACKGROUND.ELEVATED_DARK : COLORS.WHITE,
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
-                    }}
-                  >
-                    <ChevronRightIcon fontSize="small" />
-                  </IconButton>
-                </Box>
-                <Swiper
-                  onSwiper={(swiper) => {
-                    categorySwiperRef.current = swiper;
-                  }}
-                  slidesPerView={3.2}
-                  spaceBetween={12}
-                  loop
-                >
-                  {categories.slice(0, 20).map((category, index) => (
-                    <SwiperSlide key={category.id}>
-                      <CategoryTile
-                        category={category}
-                        index={index}
-                        onClick={() => router.push(`/store?category=${category.id}`)}
-                      />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+              <Box
+                sx={{
+                  mt: 3,
+                  display: "grid",
+                  gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+                  gap: 1.25,
+                }}
+              >
+                {categories.slice(0, 7).map((category, index) => (
+                  <CategoryTile
+                    key={category.id}
+                    category={category}
+                    index={index}
+                    onClick={() => goToCategory(category)}
+                  />
+                ))}
+                {categories.length > 7 && (
+                  <MoreCategoriesTile onClick={() => setCategoryDrawerOpen(true)} />
+                )}
               </Box>
             ) : (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5, mt: 3 }}>
-                {categories.slice(0, 20).map((category, index) => (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 3 }}>
+                {desktopCategories.map((category, index) => (
                   <Box
                     key={category.id}
-                    sx={{ flex: { sm: "1 1 calc(25% - 12px)", md: "1 1 calc(20% - 12px)" } }}
+                    sx={{ flex: { sm: "1 1 calc((100% - 32px) / 5)", md: "1 1 calc((100% - 40px) / 6)" } }}
                   >
                     <CategoryTile
                       category={category}
                       index={index}
-                      onClick={() => router.push(`/store?category=${category.id}`)}
+                      onClick={() => goToCategory(category)}
                     />
                   </Box>
                 ))}
+                {showDesktopMore && (
+                  <Box sx={{ flex: { sm: "1 1 calc((100% - 32px) / 5)", md: "1 1 calc((100% - 40px) / 6)" } }}>
+                    <MoreCategoriesTile onClick={() => setCategoryDrawerOpen(true)} />
+                  </Box>
+                )}
               </Box>
             )}
           </>
@@ -344,6 +266,7 @@ const HeroSection = () => {
           display: "flex",
           flexDirection: "column",
           gap: 2,
+          mt: { xs: 0, md: 2 },
         }}
       >
         <Box>
@@ -359,6 +282,16 @@ const HeroSection = () => {
           <PromoCarousel slides={productPromoSlides} />
         </Box>
       </Box>
+
+      {categories && (categories.length > 7 || showDesktopMore) && (
+        <CategoryDrawer
+          open={categoryDrawerOpen}
+          onClose={() => setCategoryDrawerOpen(false)}
+          categories={categories}
+          isMobile={isMobile}
+          onCategoryClick={goToCategory}
+        />
+      )}
     </Box>
   );
 };
