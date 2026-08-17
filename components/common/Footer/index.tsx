@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
 
   const footerLinks = {
     company: [
-      { label: t("aboutUs"), href: "https://www.kartsquare.com/en/aboutus" },
+      { label: t("aboutUs"), href: "/about-us" },
       { label: t("careers"), href: "/careers" },
       { label: t("blogs"), href: "/blogs" },
       { label: t("contactUs"), href: "/contactUs" },

@@ -27,6 +27,22 @@ const nextConfig: NextConfig = {
         destination: "/contact-us",
         permanent: true,
       },
+      // legacy locale-prefixed about-us URL (old site: kartsquare.com/en/aboutus)
+      {
+        source: "/en/aboutus",
+        destination: "/about-us",
+        permanent: true,
+      },
+      {
+        source: "/aboutus",
+        destination: "/about-us",
+        permanent: true,
+      },
+      {
+        source: "/aboutUs",
+        destination: "/about-us",
+        permanent: true,
+      },
       {
         source: "/privacyPolicy",
         destination: "/privacy-policy",
@@ -56,6 +72,12 @@ const nextConfig: NextConfig = {
       {
         source: "/blog",
         destination: "/blogs",
+        permanent: true,
+      },
+      // ── Join-as-provider: old standalone External page → canonical route ──
+      {
+        source: "/External/JoinAsProvider",
+        destination: "/supplier/register",
         permanent: true,
       },
     ];

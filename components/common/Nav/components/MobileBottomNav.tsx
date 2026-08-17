@@ -20,7 +20,9 @@ const MobileNavContainer = styled(Box)(({ theme }) => ({
   bottom: "14px",
   left: "50%",
   width: "fit-content",
-  maxWidth: "calc(94vw - 60px)",
+  // Capped well short of the viewport edge so the centered dock can't reach
+  // under the separately-positioned AI button (fixed to the right edge).
+  maxWidth: "calc(100vw - 140px)",
   transform: "translateX(-50%)",
   zIndex: 1000,
   padding: "4px",
@@ -48,7 +50,7 @@ const MobileNavItem = styled(Link)(({ theme }) => ({
       : "rgba(0,0,0,0.45)",
   transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
   flex: "0 0 auto",
-  padding: "6px 12px",
+  padding: "6px 8px",
   position: "relative",
   borderRadius: "14px",
   "&.active": {

@@ -67,7 +67,13 @@
       "Bash(curl -s \"http://localhost:3001/search?q=plumber\" -o /tmp/search3.html)",
       "Bash(git fetch *)",
       "Bash(git rev-list *)",
-      "Bash(npx vercel *)"
+      "Bash(npx vercel *)",
+      "Bash(curl -s http://localhost:3000/about-us)",
+      "Bash(gh api *)",
+      "Bash(curl -s https://raw.githubusercontent.com/nextlevelbuilder/ui-ux-pro-max-skill/main/README.md)",
+      "Bash(npm install *)",
+      "Bash(pkill -f \"npm run dev\")",
+      "Bash(npx eslint *)"
     ]
   }
 }
