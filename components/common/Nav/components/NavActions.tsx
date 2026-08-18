@@ -19,6 +19,7 @@ import {
 import Image from "next/image";
 import { COLORS } from "../../../../constants/colors";
 import { secureStorage } from "@/helper/SecureStorage";
+import LiveStatusChip from "@/components/liveLocation/LiveStatusChip";
 
 const ActionsContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -106,6 +107,10 @@ const NavActions: React.FC<NavActionsProps> = ({
             <SearchIcon fontSize="small" />
           </StyledIconButton>
         )} */}
+
+        {/* Renders only while broadcasting — being live must never be a state
+            the provider can forget they are in, on any screen. */}
+        <LiveStatusChip />
 
         {/* Free Listing */}
         {(profile?.role?.toUpperCase() === AppUserType.SUPPLIER ||

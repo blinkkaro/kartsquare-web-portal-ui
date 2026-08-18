@@ -1740,4 +1740,42 @@ export const english = {
   Select_option: "Select option",
   rate_your_experience: "Rate Your Experience",
   please_provide_rating: "Please provide rating",
+
+  // Live location
+  liveLocationTitle: "Live location",
+  liveLocationLive: "Live",
+  liveLocationOnBody:
+    "Customers nearby see you where you are now instead of your registered address.",
+  liveLocationOffBody:
+    "Customers see your registered address. Turn this on when you are working somewhere else.",
+  liveLocationToggleAria: "Go live",
+  liveLocationThrottled:
+    "This tab is in the background, so your location may stop updating. Switch back to keep it current.",
+  liveLocationRadius: "Visible within",
+  liveLocationRadiusDefault: "Service radius",
+  liveLocationLastUpdate: "Last update",
+  liveLocationAccuracy: "Accuracy",
+  liveLocationQueued: "Waiting to send",
+  liveLocationChipTooltip:
+    "Customers nearby can find you at your current location.",
+  liveLocationExpiresIn: "Expires in",
+  liveLocationConsentTitle: "Share your live location?",
+  liveLocationConsentIntro:
+    "Going live helps customers nearby find you when you are working away from your registered address.",
+  liveLocationConsentWhatTitle: "What is shared",
+  liveLocationConsentWhatBody:
+    "Your current position, while you are live. It replaces your registered address in search results so nearby customers can find you where you actually are.",
+  liveLocationConsentWhoTitle: "Who can see it",
+  liveLocationConsentWhoBody:
+    "Customers browsing search see an approximate area, never an exact pin. Only a customer with a confirmed booking sees your precise location, and only until that booking ends.",
+  liveLocationConsentExpiryTitle: "It expires on its own",
+  liveLocationConsentExpiryBody:
+    "If your device stops sending updates, your live position expires within minutes and customers see your registered address again.",
+  liveLocationConsentStopTitle: "You can stop any time",
+  liveLocationConsentStopBody:
+    "Turning off Go Live stops sharing immediately. Closing this tab stops it too.",
+  liveLocationConsentBrowserNote:
+    "Keep this tab open while you are live. Browsers pause background tabs, so your position may stop updating if you switch away for a long time.",
+  liveLocationConsentAccept: "Share my location",
+  notNow: "Not now",
 };
