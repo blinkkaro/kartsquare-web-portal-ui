@@ -4,16 +4,16 @@ import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
 import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 
 export const metadata = seoPublic({
-  title: "Contact KartSquare — Support, Partnerships & Enquiries",
+  title: "Contact kartsquare — Support, Partnerships & Enquiries",
   description:
-    "Reach the KartSquare team for partnerships, support, press, or marketplace questions. We respond to business and customer enquiries promptly.",
+    "Reach the kartsquare team for partnerships, support, press, or marketplace questions. We respond to business and customer enquiries promptly.",
   path: "/contact-us",
   keywords: [
-    "KartSquare contact",
+    "kartsquare contact",
     "contact support India",
     "marketplace help",
     "business enquiry",
-    "KartSquare helpdesk",
+    "kartsquare helpdesk",
   ],
 });
 
@@ -24,11 +24,11 @@ export const metadata = seoPublic({
 const contactPageJsonLd = {
   "@context": "https://schema.org",
   "@type": "ContactPage",
-  name: "Contact KartSquare",
+  name: "Contact kartsquare",
   url: `${SITE_URL}/contact-us`,
   about: {
     "@type": "Organization",
-    name: "KartSquare",
+    name: "kartsquare",
     url: SITE_URL,
     contactPoint: [
       {

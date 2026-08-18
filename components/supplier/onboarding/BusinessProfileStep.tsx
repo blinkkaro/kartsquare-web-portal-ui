@@ -140,13 +140,6 @@ const BusinessProfileStep: React.FC<BusinessProfileStepProps> = ({
           fontWeight: 700,
           lineHeight: 1.2,
           mb: 2,
-          fontSize: {
-            xs: "1.75rem",
-            sm: "2rem",
-            md: "2.25rem",
-            lg: "2.5rem",
-            xl: "3.5rem",
-          },
         }}
       >
         <span style={{ color: COLORS.PRIMARY_PURPLE }}>Business</span>{" "}

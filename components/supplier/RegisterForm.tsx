@@ -151,7 +151,6 @@ const RegisterForm = () => {
         fontWeight="700"
         mb={1}
         textAlign="center"
-        fontSize={{ xs: "1.5rem", sm: "2.125rem" }}
       >
         {t("supplier_registration_title")}
       </Typography>

@@ -5,7 +5,7 @@ import { pageTab } from "@/lib/seo/buildMetadata";
 
 export const metadata = pageTab(
   "Product editor",
-  "Review and update how this product appears in your KartSquare supplier dashboard.",
+  "Review and update how this product appears in your kartsquare supplier dashboard.",
 );
 
 export default async function ProductDetail({

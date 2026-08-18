@@ -100,7 +100,6 @@ const SuccessModel: React.FC<SuccessModelProps> = ({
               fontWeight: 700,
               color: "text.primary",
               lineHeight: 1.3,
-              fontSize: { xs: "1.5rem", sm: "1.8rem" },
             }}
           >
             {title}

@@ -20,7 +20,6 @@ const ProviderServicesHeader = () => {
             fontWeight="bold"
             sx={{
                 color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                fontSize: { xs: "1.25rem", sm: "1.5rem", md: "2rem" },
                 lineHeight: { xs: 1.3, sm: 1.4 },
             }}
         >

@@ -109,7 +109,7 @@ const BlogDetailsContent: React.FC<{ blog: any }> = ({ blog }) => {
             K
           </Avatar>
           <Typography fontWeight={600}>
-            By Kartsquare Team • 15/1/2024
+            By kartsquare Team • 15/1/2024
           </Typography>
         </Box>
       </Box>

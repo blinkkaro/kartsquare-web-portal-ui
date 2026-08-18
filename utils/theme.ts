@@ -57,6 +57,69 @@ const getDesignTokens = (mode: "light" | "dark"): ThemeOptions => ({
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"',
     ].join(","),
+    // Fluid scale via clamp() — one definition per level, no per-page overrides needed.
+    // Tiers: h1 hero > h2 page title > h3 section title > h4 subsection/card group title
+    // > h5 card title > h6 small label heading > subtitle > body > caption.
+    h1: {
+      fontSize: "clamp(2.25rem, 1.6rem + 2.6vw, 4rem)",
+      fontWeight: 700,
+      lineHeight: 1.15,
+    },
+    h2: {
+      fontSize: "clamp(1.875rem, 1.45rem + 1.8vw, 3rem)",
+      fontWeight: 700,
+      lineHeight: 1.2,
+    },
+    h3: {
+      fontSize: "clamp(1.625rem, 1.35rem + 1.2vw, 2.375rem)",
+      fontWeight: 600,
+      lineHeight: 1.25,
+    },
+    h4: {
+      fontSize: "clamp(1.375rem, 1.2rem + 0.8vw, 1.875rem)",
+      fontWeight: 600,
+      lineHeight: 1.3,
+    },
+    h5: {
+      fontSize: "clamp(1.125rem, 1.03rem + 0.4vw, 1.375rem)",
+      fontWeight: 600,
+      lineHeight: 1.35,
+    },
+    h6: {
+      fontSize: "clamp(1rem, 0.95rem + 0.25vw, 1.125rem)",
+      fontWeight: 600,
+      lineHeight: 1.4,
+    },
+    subtitle1: {
+      fontSize: "1rem",
+      fontWeight: 500,
+      lineHeight: 1.5,
+    },
+    subtitle2: {
+      fontSize: "0.875rem",
+      fontWeight: 600,
+      lineHeight: 1.45,
+    },
+    body1: {
+      fontSize: "1rem",
+      fontWeight: 400,
+      lineHeight: 1.6,
+    },
+    body2: {
+      fontSize: "0.875rem",
+      fontWeight: 400,
+      lineHeight: 1.55,
+    },
+    button: {
+      fontSize: "0.875rem",
+      fontWeight: 600,
+      textTransform: "none",
+    },
+    caption: {
+      fontSize: "0.75rem",
+      fontWeight: 400,
+      lineHeight: 1.5,
+    },
   },
   components: {
     MuiButton: {

@@ -3,7 +3,7 @@ import ProviderServiceDetails from "../../../../components/pages/provider/servic
 
 export const metadata = pageTab(
   "Edit service",
-  "Update pricing, description, media, and availability for this KartSquare listing.",
+  "Update pricing, description, media, and availability for this kartsquare listing.",
 );
 
 export default ProviderServiceDetails;

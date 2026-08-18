@@ -4,8 +4,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://kartsquare.com';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'KartSquare – B2B Marketplace',
-    short_name: 'KartSquare',
+    name: 'kartsquare – B2B Marketplace',
+    short_name: 'kartsquare',
     description: 'Products and services from verified suppliers. Buy and book online.',
     start_url: '/',
     scope: '/',

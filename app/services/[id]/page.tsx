@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const path = `/services/${service.slug || service.service_id || id}`;
     const canonical = `${base}${path}`;
     
-    // Dynamic branded & localized title: "Service in City by Business | KartSquare"
+    // Dynamic branded & localized title: "Service in City by Business | kartsquare"
     const serviceName = service.service_name || "Service";
     const bizName = service.business_name || service.provider_name;
     const city = service.service_address?.city_town;
@@ -42,18 +42,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     let titleText = service.meta_title;
     if (!titleText) {
       if (bizName && city) {
-        titleText = `${serviceName} in ${city} by ${bizName} | KartSquare`;
+        titleText = `${serviceName} in ${city} by ${bizName} | kartsquare`;
       } else if (bizName) {
-        titleText = `${serviceName} by ${bizName} | KartSquare`;
+        titleText = `${serviceName} by ${bizName} | kartsquare`;
       } else {
-        titleText = `${serviceName} | KartSquare`;
+        titleText = `${serviceName} | kartsquare`;
       }
     }
 
     const desc =
       service.meta_description ||
       service.service_desc ||
-      `Book ${serviceName}${city ? ` in ${city}` : ""} by ${bizName || "verified providers"} on KartSquare. Enjoy professional services with clear pricing and secure booking.`;
+      `Book ${serviceName}${city ? ` in ${city}` : ""} by ${bizName || "verified providers"} on kartsquare. Enjoy professional services with clear pricing and secure booking.`;
     
     const ogTitle =
       service.og_title || titleText;
@@ -76,7 +76,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title: ogTitle,
         description: ogDesc.slice(0, 200),
         url: canonical,
-        siteName: "KartSquare",
+        siteName: "kartsquare",
         type: "website",
         locale: "en_IN",
         ...(images.length ? { images: images.map((url) => ({ url })) } : {}),
@@ -91,9 +91,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   } catch {
     return {
-      title: { absolute: "Service details | KartSquare" },
+      title: { absolute: "Service details | kartsquare" },
       description:
-        "Browse and book professional services from verified providers on KartSquare.",
+        "Browse and book professional services from verified providers on kartsquare.",
       robots: { index: false, follow: true },
     };
   }

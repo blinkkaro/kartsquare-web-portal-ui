@@ -71,7 +71,6 @@ export default function BottomCTASection() {
                                     fontFamily: "var(--font-heading)",
                                     fontWeight: 800,
                                     color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                                    fontSize: { xs: "2.25rem", md: "2.75rem", lg: "3.5rem" },
                                     letterSpacing: "-0.02em",
                                     mb: 2.5,
                                     lineHeight: 1.15,

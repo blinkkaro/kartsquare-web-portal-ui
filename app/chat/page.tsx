@@ -6,7 +6,7 @@ import { seoPrivate } from "@/lib/seo/buildMetadata";
 export const metadata = seoPrivate({
   title: "Messages",
   description:
-    "Chat with customers, suppliers, and service providers on KartSquare in one secure inbox.",
+    "Chat with customers, suppliers, and service providers on kartsquare in one secure inbox.",
 });
 
 export default function ChatPage() {

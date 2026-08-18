@@ -121,7 +121,6 @@ function ContactUsView() {
             component="h1"
             sx={{
               fontWeight: "bold",
-              fontSize: { xs: "1.75rem", sm: "2rem", md: "2.25rem" },
               color: isDark
                 ? COLORS.TEXT.PRIMARY_DARK
                 : COLORS.TEXT.PRIMARY_LIGHT,
@@ -192,7 +191,6 @@ function ContactUsView() {
             sx={{
               fontWeight: 600,
               mb: { xs: 2.5, sm: 3 },
-              fontSize: { xs: "1.125rem", sm: "1.25rem", md: "1.5rem" },
               color: isDark
                 ? COLORS.TEXT.PRIMARY_DARK
                 : COLORS.TEXT.PRIMARY_LIGHT,

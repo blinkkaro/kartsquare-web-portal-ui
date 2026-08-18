@@ -9,9 +9,9 @@ import type { Metadata } from "next";
 import NotFoundClient from "./not-found-client";
 
 export const metadata: Metadata = {
-  title: { absolute: "404 — Page Not Found | KartSquare" },
+  title: { absolute: "404 — Page Not Found | kartsquare" },
   description:
-    "The page you are looking for does not exist. Return to KartSquare's homepage to browse products, services, and verified suppliers.",
+    "The page you are looking for does not exist. Return to kartsquare's homepage to browse products, services, and verified suppliers.",
   robots: {
     index: false,
     follow: true,

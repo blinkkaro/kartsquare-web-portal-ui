@@ -4,7 +4,7 @@ import DashboardOverview from "@/components/marketing-tools/email-marketing/Dash
 
 export const metadata = pageTab(
   "Email marketing",
-  "Overview of your email marketing performance — opens, clicks, and subscriber stats on KartSquare.",
+  "Overview of your email marketing performance — opens, clicks, and subscriber stats on kartsquare.",
 );
 
 

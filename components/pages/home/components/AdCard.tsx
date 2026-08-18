@@ -152,7 +152,6 @@ const AdCard = ({ ad }: AdCardProps) => {
                     color: COLORS.TEXT.PRIMARY_DARK,
                     fontWeight: 600,
                     mb: ad.description ? 0.5 : 0,
-                    fontSize: { xs: "1rem", sm: "1.25rem" },
                   }}
                 >
                   {ad.title}

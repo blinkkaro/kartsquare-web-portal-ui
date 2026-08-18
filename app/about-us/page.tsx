@@ -4,27 +4,27 @@ import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
 import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 
 export const metadata = seoPublic({
-  title: "About KartSquare — India's Marketplace for Local Services",
+  title: "About kartsquare — India's Marketplace for Local Services",
   description:
-    "KartSquare was founded in Jaipur to connect verified local service providers with millions of customers across India. Learn our story, mission, and values.",
+    "kartsquare was founded in Jaipur to connect verified local service providers with millions of customers across India. Learn our story, mission, and values.",
   path: "/about-us",
   keywords: [
-    "about KartSquare",
-    "KartSquare Jaipur",
-    "KartSquare story",
+    "about kartsquare",
+    "kartsquare Jaipur",
+    "kartsquare story",
     "service marketplace India",
-    "KartSquare mission",
+    "kartsquare mission",
   ],
 });
 
 const aboutPageJsonLd = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
-  name: "About KartSquare",
+  name: "About kartsquare",
   url: `${SITE_URL}/about-us`,
   about: {
     "@type": "Organization",
-    name: "KartSquare",
+    name: "kartsquare",
     url: SITE_URL,
     foundingDate: "2022",
     address: {

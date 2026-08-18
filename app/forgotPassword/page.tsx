@@ -4,7 +4,7 @@ import { seoAuth } from "@/lib/seo/buildMetadata";
 export const metadata = seoAuth({
   title: "Forgot password",
   description:
-    "Reset your KartSquare password securely. Enter your email to receive reset instructions.",
+    "Reset your kartsquare password securely. Enter your email to receive reset instructions.",
 });
 
 export default function ForgotPasswordPage() {

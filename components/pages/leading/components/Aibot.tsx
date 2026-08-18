@@ -96,7 +96,7 @@ const MessageBubble = ({ message }: { message: Message }) => {
                 h1: ({ children }) => (
                   <Typography
                     variant="h6"
-                    sx={{ mt: 1.5, mb: 1, fontWeight: 700, fontSize: "1.1rem" }}
+                    sx={{ mt: 1.5, mb: 1, fontWeight: 700 }}
                   >
                     {children}
                   </Typography>

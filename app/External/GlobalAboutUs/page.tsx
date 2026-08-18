@@ -3,9 +3,9 @@ import { seoAuth } from "@/lib/seo/buildMetadata";
 
 
 export const metadata = seoAuth({
-  title: "About Us | KartSquare",
+  title: "About Us | kartsquare",
   description:
-    "Learn about KartSquare — India's fastest-growing marketplace connecting customers with verified local service providers.",
+    "Learn about kartsquare — India's fastest-growing marketplace connecting customers with verified local service providers.",
 });
 
 export default function GlobalAboutUs() {

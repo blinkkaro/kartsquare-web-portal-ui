@@ -4,12 +4,12 @@ import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
 import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 
 export const metadata = seoPublic({
-  title: "Careers at KartSquare — Jobs in India's B2B Marketplace",
+  title: "Careers at kartsquare — Jobs in India's B2B Marketplace",
   description:
-    "Explore career opportunities at KartSquare — build India's leading marketplace for products and professional services. Join our growing team.",
+    "Explore career opportunities at kartsquare — build India's leading marketplace for products and professional services. Join our growing team.",
   path: "/careers",
   keywords: [
-    "KartSquare careers",
+    "kartsquare careers",
     "jobs India marketplace",
     "startup jobs Jaipur",
     "B2B company jobs",
@@ -24,11 +24,11 @@ export const metadata = seoPublic({
 const careersWebPageJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Careers at KartSquare — Jobs in India's B2B Marketplace",
+  name: "Careers at kartsquare — Jobs in India's B2B Marketplace",
   description:
-    "Explore career opportunities at KartSquare — build India's leading marketplace for products and professional services. Join our growing team.",
+    "Explore career opportunities at kartsquare — build India's leading marketplace for products and professional services. Join our growing team.",
   url: `${SITE_URL}/careers`,
-  isPartOf: { "@type": "WebSite", url: SITE_URL, name: "KartSquare" },
+  isPartOf: { "@type": "WebSite", url: SITE_URL, name: "kartsquare" },
 };
 
 export default function Careers() {

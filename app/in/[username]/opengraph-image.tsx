@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { fetchPublicProfileForSeo } from "@/lib/seo/publicProfile";
 import { COLORS } from "@/constants/colors";
 
-export const alt = "KartSquare Verified Profile";
+export const alt = "kartsquare Verified Profile";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -36,7 +36,7 @@ export default async function Image({
             fontFamily: "sans-serif",
           }}
         >
-          KartSquare Profile
+          kartsquare Profile
         </div>
       ),
       { ...size }
@@ -162,7 +162,7 @@ export default async function Image({
                 overflow: "hidden",
               }}
             >
-              {(profile.tagline as string) || (profile.bio as string) || `View ${displayName}'s profile and offerings on KartSquare.`}
+              {(profile.tagline as string) || (profile.bio as string) || `View ${displayName}'s profile and offerings on kartsquare.`}
             </p>
           </div>
         </div>

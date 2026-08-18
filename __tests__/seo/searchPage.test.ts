@@ -26,9 +26,9 @@ describe("Search page generateMetadata()", () => {
     const baseSearchMetadata = seoPublic({
       title: "Search Products & Services",
       description:
-        "Search KartSquare for products, services, suppliers, and providers. Filter results and compare options in one place.",
+        "Search kartsquare for products, services, suppliers, and providers. Filter results and compare options in one place.",
       path: "/search",
-      keywords: ["search products India", "find services online", "KartSquare search"],
+      keywords: ["search products India", "find services online", "kartsquare search"],
     });
 
     const hasQuery = Boolean(q);

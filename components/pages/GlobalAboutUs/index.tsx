@@ -30,16 +30,16 @@ const stats = [
 ];
 
 const values = [
-  { icon: HandshakeOutlinedIcon, title: "Trust First", desc: "Every provider is manually verified. Every review is genuine. We built KartSquare on transparency.", color: COLORS.PRIMARY_PURPLE },
+  { icon: HandshakeOutlinedIcon, title: "Trust First", desc: "Every provider is manually verified. Every review is genuine. We built kartsquare on transparency.", color: COLORS.PRIMARY_PURPLE },
   { icon: SecurityOutlinedIcon, title: "Customer Safety", desc: "Secure payments, verified professionals, and a dedicated support team available around the clock.", color: "#00bcff" },
   { icon: LightbulbOutlinedIcon, title: "Innovation", desc: "AI-powered discovery, reels, and portfolio pages — we build tools that actually help providers grow.", color: COLORS.SECONDARY_ORANGE },
-  { icon: GroupsOutlinedIcon, title: "Community", desc: "We believe in India's small business owners. KartSquare exists to amplify their reach and income.", color: "#22c55e" },
+  { icon: GroupsOutlinedIcon, title: "Community", desc: "We believe in India's small business owners. kartsquare exists to amplify their reach and income.", color: "#22c55e" },
   { icon: PublicOutlinedIcon, title: "Accessibility", desc: "Our platform is available in multiple languages and works seamlessly on any device, anywhere.", color: "#ec4899" },
   { icon: SmartToyOutlinedIcon, title: "AI-Driven", desc: "Smart matching connects customers to the right provider based on location, rating, and availability.", color: "#7c3aed" },
 ];
 
 const timeline = [
-  { year: "2022", title: "KartSquare Founded", desc: "Started in Dubai with a vision to digitise India's unorganised service sector and connect local providers with customers." },
+  { year: "2022", title: "kartsquare Founded", desc: "Started in Dubai with a vision to digitise India's unorganised service sector and connect local providers with customers." },
   { year: "2023", title: "Launched in India", desc: "Expanded operations across 50+ Indian cities. Onboarded 10,000 verified service providers in the first 6 months." },
   { year: "2024", title: "AI Discovery & Reels", desc: "Launched AI-powered location-based customer matching and video reel marketing for provider profiles." },
   { year: "2025", title: "50K Providers & Growing", desc: "Crossed 50,000 active verified providers and 2 million monthly users across 200+ cities." },
@@ -47,7 +47,7 @@ const timeline = [
 
 const leadership = [
   { name: "Arjun Mehta", role: "Co-Founder & CEO", bio: "Visionary entrepreneur with 12+ years in tech and marketplace businesses across UAE and India.", img: "/about/ceo.png" },
-  { name: "Priya Nair", role: "Co-Founder & CTO", bio: "Engineering leader who built the AI discovery engine powering KartSquare's intelligent matching system.", img: "/about/cto.png" },
+  { name: "Priya Nair", role: "Co-Founder & CTO", bio: "Engineering leader who built the AI discovery engine powering kartsquare's intelligent matching system.", img: "/about/cto.png" },
 ];
 
 export default function GlobalAboutUsView() {
@@ -105,8 +105,8 @@ export default function GlobalAboutUsView() {
               </Box>
             </motion.div>
             <motion.div variants={fadeUp}>
-              <Typography component="h1" sx={{
-                fontSize: { xs: "2.25rem", sm: "3rem", md: "4rem" }, fontWeight: 800, lineHeight: 1.1, mb: 2,
+              <Typography variant="h1" component="h1" sx={{
+                fontWeight: 800, lineHeight: 1.1, mb: 2,
                 background: `linear-gradient(130deg,${COLORS.PRIMARY_PURPLE} 0%,#00bcff 100%)`,
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
               }}>
@@ -114,8 +114,8 @@ export default function GlobalAboutUsView() {
               </Typography>
             </motion.div>
             <motion.div variants={fadeUp}>
-              <Typography variant="h6" sx={{ color: secondaryTxt, fontWeight: 400, maxWidth: 580, mx: "auto", lineHeight: 1.75, fontSize: { xs: "1rem", md: "1.1rem" } }}>
-                KartSquare is India's fastest-growing marketplace for local services — built to empower small businesses and deliver trusted professionals to every doorstep.
+              <Typography variant="h6" sx={{ color: secondaryTxt, fontWeight: 400, maxWidth: 580, mx: "auto", lineHeight: 1.75 }}>
+                kartsquare is India's fastest-growing marketplace for local services — built to empower small businesses and deliver trusted professionals to every doorstep.
               </Typography>
             </motion.div>
           </motion.div>
@@ -151,7 +151,7 @@ export default function GlobalAboutUsView() {
               <Grid size={{ xs: 12, md: 6 }}>
                 <motion.div variants={fadeUp}>
                   <Box sx={{ borderRadius: "24px", overflow: "hidden", height: { xs: 280, md: 420 }, position: "relative" }}>
-                    <Image src="/about/team.png" alt="KartSquare Team" fill style={{ objectFit: "cover" }} />
+                    <Image src="/about/team.png" alt="kartsquare Team" fill style={{ objectFit: "cover" }} />
                     <Box sx={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(94,24,233,0.4) 0%, transparent 60%)" }} />
                   </Box>
                 </motion.div>
@@ -204,7 +204,7 @@ export default function GlobalAboutUsView() {
                           <Box sx={{ display: "inline-block", px: 1.5, py: 0.5, borderRadius: "8px", bgcolor: isDark ? COLORS.PURPLE_ALPHA_10 : COLORS.PURPLE_ALPHA_04, border: `1px solid ${COLORS.PURPLE_ALPHA_20}`, mb: 1 }}>
                             <Typography variant="caption" sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700 }}>{item.year}</Typography>
                           </Box>
-                          <Typography variant="h6" sx={{ fontWeight: 700, color: primaryTxt, mb: 0.75, fontSize: "1rem" }}>{item.title}</Typography>
+                          <Typography variant="h6" sx={{ fontWeight: 700, color: primaryTxt, mb: 0.75 }}>{item.title}</Typography>
                           <Typography variant="body2" sx={{ color: secondaryTxt, lineHeight: 1.65 }}>{item.desc}</Typography>
                         </CardContent>
                       </Card>
@@ -245,7 +245,7 @@ export default function GlobalAboutUsView() {
                         <Box sx={{ width: 50, height: 50, borderRadius: "14px", bgcolor: `${v.color}15`, display: "flex", alignItems: "center", justifyContent: "center", mb: 2 }}>
                           <v.icon sx={{ color: v.color, fontSize: 24 }} />
                         </Box>
-                        <Typography variant="h6" sx={{ fontWeight: 700, color: primaryTxt, mb: 1, fontSize: "1rem" }}>{v.title}</Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 700, color: primaryTxt, mb: 1 }}>{v.title}</Typography>
                         <Typography variant="body2" sx={{ color: secondaryTxt, lineHeight: 1.7 }}>{v.desc}</Typography>
                       </CardContent>
                     </Card>
@@ -262,7 +262,7 @@ export default function GlobalAboutUsView() {
             <motion.div variants={fadeUp}>
               <Typography variant="h4" sx={{ fontWeight: 800, color: primaryTxt, textAlign: "center", mb: 1 }}>Leadership Team</Typography>
               <Typography variant="body1" sx={{ color: secondaryTxt, textAlign: "center", mb: 5 }}>
-                The people driving KartSquare's vision forward.
+                The people driving kartsquare's vision forward.
               </Typography>
             </motion.div>
             <Grid container spacing={4} justifyContent="center">
@@ -304,10 +304,10 @@ export default function GlobalAboutUsView() {
             }}>
               <Box sx={{ position: "absolute", top: -60, right: -60, width: 250, height: 250, borderRadius: "50%", bgcolor: `${COLORS.PRIMARY_PURPLE}12`, filter: "blur(60px)", pointerEvents: "none" }} />
               <Typography variant="h4" sx={{ fontWeight: 800, color: primaryTxt, mb: 1.5, position: "relative", zIndex: 1 }}>
-                Join the KartSquare Family
+                Join the kartsquare Family
               </Typography>
               <Typography variant="body1" sx={{ color: secondaryTxt, mb: 4, maxWidth: 500, mx: "auto", position: "relative", zIndex: 1 }}>
-                Whether you're a customer looking for trusted services or a provider ready to grow — KartSquare is the platform for you.
+                Whether you're a customer looking for trusted services or a provider ready to grow — kartsquare is the platform for you.
               </Typography>
               <Box sx={{ display: "flex", gap: 2, justifyContent: "center", flexWrap: "wrap", position: "relative", zIndex: 1 }}>
                 <Box

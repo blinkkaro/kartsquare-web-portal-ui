@@ -81,12 +81,12 @@ const schema = yup.object().shape({
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 const issueItems = [
-  { id: "registered", label: "I am a Registered Customer of KartSquare.", icon: PersonOutlineIcon, href: "/helpSupport" },
-  { id: "business_listed", label: "My business is listed on KartSquare.", icon: BusinessOutlinedIcon, href: "/helpSupport" },
-  { id: "feedback_info", label: "Feedback on information provided by KartSquare.", icon: InfoOutlinedIcon, href: "/helpSupport" },
-  { id: "feedback_staff", label: "Feedback on KartSquare staff.", icon: PeopleOutlineIcon, href: "/helpSupport" },
+  { id: "registered", label: "I am a Registered Customer of kartsquare.", icon: PersonOutlineIcon, href: "/helpSupport" },
+  { id: "business_listed", label: "My business is listed on kartsquare.", icon: BusinessOutlinedIcon, href: "/helpSupport" },
+  { id: "feedback_info", label: "Feedback on information provided by kartsquare.", icon: InfoOutlinedIcon, href: "/helpSupport" },
+  { id: "feedback_staff", label: "Feedback on kartsquare staff.", icon: PeopleOutlineIcon, href: "/helpSupport" },
   { id: "online_orders", label: "Issues with Online orders.", icon: ShoppingCartOutlinedIcon, href: "/helpSupport" },
-  { id: "new_listing", label: "New Listing with KartSquare.", icon: AddBusinessOutlinedIcon, href: "/business-listing" },
+  { id: "new_listing", label: "New Listing with kartsquare.", icon: AddBusinessOutlinedIcon, href: "/business-listing" },
   { id: "ui_suggestion", label: "Suggestions with User Interface.", icon: DesktopMacOutlinedIcon, href: "/helpSupport" },
   { id: "opt_out", label: "Opt Out Request", icon: BlockOutlinedIcon, href: "/helpSupport" },
   { id: "other", label: "Any other issue.", icon: HelpOutlineIcon, href: "/helpSupport" },
@@ -206,9 +206,9 @@ export default function GlobalContactUsView() {
             {/* Heading */}
             <motion.div variants={fadeUp}>
               <Typography
+                variant="h1"
                 component="h1"
                 sx={{
-                  fontSize: { xs: "2.25rem", sm: "3rem", md: "4rem" },
                   fontWeight: 800,
                   lineHeight: 1.1,
                   mb: 2,
@@ -224,7 +224,7 @@ export default function GlobalContactUsView() {
 
             {/* Subtitle */}
             <motion.div variants={fadeUp}>
-              <Typography variant="h6" sx={{ color: secondaryTxt, fontWeight: 400, maxWidth: 520, mx: "auto", lineHeight: 1.75, fontSize: { xs: "1rem", md: "1.1rem" } }}>
+              <Typography variant="h6" sx={{ color: secondaryTxt, fontWeight: 400, maxWidth: 520, mx: "auto", lineHeight: 1.75 }}>
                 Choose your issue from the list below, or send us a message directly. We respond within 24 hours.
               </Typography>
             </motion.div>

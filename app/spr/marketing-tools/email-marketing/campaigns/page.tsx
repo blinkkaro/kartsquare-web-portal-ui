@@ -4,7 +4,7 @@ import CampaignList from "@/components/marketing-tools/email-marketing/CampaignL
 
 export const metadata = pageTab(
   "Campaigns",
-  "View and manage all your email campaigns sent through KartSquare marketing tools.",
+  "View and manage all your email campaigns sent through kartsquare marketing tools.",
 );
 
 

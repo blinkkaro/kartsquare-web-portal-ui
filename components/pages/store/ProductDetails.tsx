@@ -72,7 +72,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           /\D/g,
           "",
         );
-      const message = `Hi, I found your listing for ${product.name} on KartSquare. I am interested to know more.`;
+      const message = `Hi, I found your listing for ${product.name} on kartsquare. I am interested to know more.`;
       const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, "_blank");
       setAnimatingContact(null);
@@ -368,7 +368,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 sx={{
                   color: isDark ? "text.primary" : "#1a1a2e",
                   letterSpacing: "-0.5px",
-                  fontSize: { xs: "1.5rem", md: "2rem" },
                   textTransform: "uppercase",
                 }}
               >

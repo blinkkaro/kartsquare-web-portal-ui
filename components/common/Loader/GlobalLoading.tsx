@@ -71,7 +71,7 @@ const GlobalLoading: React.FC<GlobalLoadingProps> = ({ open, message }) => {
                 textTransform: "uppercase",
               }}
             >
-              Kartsquare
+              kartsquare
             </Typography>
           </Box>
         </Backdrop>

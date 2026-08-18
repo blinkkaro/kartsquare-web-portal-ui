@@ -5,12 +5,12 @@ import { seoPublic } from "@/lib/seo/buildMetadata";
 import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 
 const homeFallback = seoPublic({
-  title: "KartSquare – B2B marketplace & local services",
+  title: "kartsquare – B2B marketplace & local services",
   description:
-    "KartSquare connects you with verified suppliers and technicians across India — home repairs, cleaning, industrial supplies, and wholesale products.",
+    "kartsquare connects you with verified suppliers and technicians across India — home repairs, cleaning, industrial supplies, and wholesale products.",
   path: "/",
   keywords: [
-    "KartSquare",
+    "kartsquare",
     "B2B marketplace India",
     "book services online",
     "verified suppliers",

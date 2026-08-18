@@ -5,7 +5,7 @@ import { seoPrivate } from "@/lib/seo/buildMetadata";
 export const metadata: Metadata = seoPrivate({
   title: "Enquiries",
   description:
-    "Review and respond to buyer enquiries about your products and services on KartSquare.",
+    "Review and respond to buyer enquiries about your products and services on kartsquare.",
 });
 
 export default function SupplierEnquiriesLayout({ children }: { children: ReactNode }) {

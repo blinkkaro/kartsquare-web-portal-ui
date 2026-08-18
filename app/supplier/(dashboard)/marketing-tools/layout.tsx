@@ -4,7 +4,7 @@ import { pageTab } from "@/lib/seo/buildMetadata";
 
 export const metadata: Metadata = pageTab(
   "Marketing tools",
-  "Email marketing and campaigns for your KartSquare supplier store.",
+  "Email marketing and campaigns for your kartsquare supplier store.",
 );
 
 export default function SupplierMarketingToolsLayout({

@@ -134,7 +134,6 @@ const BenefitsSection = () => {
                         <Typography
                             variant="h1"
                             sx={{
-                                fontSize: { xs: "3rem", md: "4.5rem" },
                                 fontWeight: 800,
                                 fontFamily: "var(--font-heading)",
                                 color: "#ffffff",
@@ -283,7 +282,7 @@ const BenefitsSection = () => {
                                                             <item.Icon sx={{ fontSize: 28 }} />
                                                         </Box>
                                                         <Box>
-                                                            <Typography variant="h6" fontWeight={700} sx={{ mb: 1, color: "#fff", fontSize: "1.25rem" }}>
+                                                            <Typography variant="h6" fontWeight={700} sx={{ mb: 1, color: "#fff" }}>
                                                                 {item.title}
                                                             </Typography>
                                                             <Typography variant="body1" sx={{ color: "rgba(255,255,255,0.6)", lineHeight: 1.6 }}>
@@ -347,7 +346,7 @@ const BenefitsSection = () => {
                                                             <item.Icon sx={{ fontSize: 28 }} />
                                                         </Box>
                                                         <Box>
-                                                            <Typography variant="h6" fontWeight={700} sx={{ mb: 1, color: "#fff", fontSize: "1.25rem" }}>
+                                                            <Typography variant="h6" fontWeight={700} sx={{ mb: 1, color: "#fff" }}>
                                                                 {item.title}
                                                             </Typography>
                                                             <Typography variant="body1" sx={{ color: "rgba(255,255,255,0.6)", lineHeight: 1.6 }}>

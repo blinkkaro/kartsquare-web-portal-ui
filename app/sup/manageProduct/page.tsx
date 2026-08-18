@@ -4,7 +4,7 @@ import { pageTab } from "@/lib/seo/buildMetadata";
 
 export const metadata = pageTab(
   "Manage product",
-  "Create or edit product listings, pricing, images, and inventory for your KartSquare store.",
+  "Create or edit product listings, pricing, images, and inventory for your kartsquare store.",
 );
 
 export default async function ManageProduct({

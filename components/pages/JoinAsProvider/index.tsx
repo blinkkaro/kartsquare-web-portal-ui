@@ -161,7 +161,7 @@ const verificationSteps = [
 
 const faqs = [
   { q: "How long does approval take?", a: "Our team typically verifies and approves new provider accounts within 24 hours of receiving complete documents." },
-  { q: "Is there any joining fee?", a: "No. Creating your business profile and listing your services on KartSquare is completely free." },
+  { q: "Is there any joining fee?", a: "No. Creating your business profile and listing your services on kartsquare is completely free." },
   { q: "How do I receive payments?", a: "Payments are settled digitally to your linked bank account as soon as a job is marked complete." },
   { q: "Can I edit my services?", a: "Yes — you can add, edit or remove services and categories anytime from your provider dashboard." },
   { q: "How do bookings work?", a: "Customers browse verified providers, check availability, and book directly. You get notified instantly." },
@@ -388,14 +388,14 @@ export default function JoinAsProviderView() {
               <Typography component="h1" sx={{ fontSize: { xs: "2.4rem", sm: "3rem", md: "4rem" }, fontWeight: 800, lineHeight: 1.08, letterSpacing: "-0.02em", color: primaryTxt, mb: 2.5 }}>
                 Grow Your Business with{" "}
                 <Box component="span" sx={{ background: `linear-gradient(90deg, ${COLORS.PRIMARY_PURPLE}, #00bcff)`, backgroundClip: "text", WebkitBackgroundClip: "text", color: "transparent" }}>
-                  KartSquare
+                  kartsquare
                 </Box>
               </Typography>
             </motion.div>
 
             <motion.div variants={fadeUp}>
               <Typography sx={{ color: secondaryTxt, fontSize: { xs: "1.02rem", md: "1.2rem" }, lineHeight: 1.65, maxWidth: 600, mx: "auto", mb: 4.5 }}>
-                Join trusted automotive service providers on KartSquare and get more customers, increase bookings, and grow your revenue.
+                Join trusted automotive service providers on kartsquare and get more customers, increase bookings, and grow your revenue.
               </Typography>
             </motion.div>
 
@@ -447,7 +447,7 @@ export default function JoinAsProviderView() {
 
         {/* ══════════════════════ SECTION 2 — WHY JOIN ══════════════════════ */}
         <Box sx={{ mb: { xs: 9, md: 12 } }}>
-          <SectionHeading kicker="Why Join KartSquare" title="Everything you need to grow" sub="Built for automotive service businesses that want more customers, less idle time." primaryTxt={primaryTxt} secondaryTxt={secondaryTxt} />
+          <SectionHeading kicker="Why Join kartsquare" title="Everything you need to grow" sub="Built for automotive service businesses that want more customers, less idle time." primaryTxt={primaryTxt} secondaryTxt={secondaryTxt} />
           <Reveal variants={stagger}>
             <Grid container spacing={2.5}>
               {whyJoin.map((b, i) => (
@@ -609,13 +609,13 @@ export default function JoinAsProviderView() {
 
         {/* ══════════════════════ SECTION 7 — EARN MORE ══════════════════════ */}
         <Box sx={{ mb: { xs: 9, md: 12 } }}>
-          <SectionHeading kicker="Earn More" title="Without KartSquare vs. With KartSquare" primaryTxt={primaryTxt} secondaryTxt={secondaryTxt} />
+          <SectionHeading kicker="Earn More" title="Without kartsquare vs. With kartsquare" primaryTxt={primaryTxt} secondaryTxt={secondaryTxt} />
           <Reveal variants={stagger}>
             <Grid container spacing={2.5}>
               <Grid size={{ xs: 12, md: 6 }}>
                 <motion.div variants={fadeUp} style={{ height: "100%" }}>
                   <Box sx={{ border: `1.5px solid ${border}`, borderRadius: "20px", p: { xs: 3, md: 3.5 }, height: "100%" }}>
-                    <Typography sx={{ fontWeight: 800, fontSize: "1.05rem", color: secondaryTxt, mb: 2.25 }}>Without KartSquare</Typography>
+                    <Typography sx={{ fontWeight: 800, fontSize: "1.05rem", color: secondaryTxt, mb: 2.25 }}>Without kartsquare</Typography>
                     {withoutUs.map((t, i) => (
                       <Box key={i} sx={{ display: "flex", gap: 1.5, alignItems: "flex-start", mb: 1.5 }}>
                         <CloseIcon sx={{ color: "#e63946", fontSize: 18, mt: 0.2, flexShrink: 0 }} />
@@ -628,7 +628,7 @@ export default function JoinAsProviderView() {
               <Grid size={{ xs: 12, md: 6 }}>
                 <motion.div variants={fadeUp} style={{ height: "100%" }}>
                   <Box sx={{ border: `1.5px solid ${COLORS.PRIMARY_PURPLE}`, borderRadius: "20px", p: { xs: 3, md: 3.5 }, height: "100%", bgcolor: COLORS.PURPLE_ALPHA_04 }}>
-                    <Typography sx={{ fontWeight: 800, fontSize: "1.05rem", color: COLORS.PRIMARY_PURPLE, mb: 2.25 }}>With KartSquare</Typography>
+                    <Typography sx={{ fontWeight: 800, fontSize: "1.05rem", color: COLORS.PRIMARY_PURPLE, mb: 2.25 }}>With kartsquare</Typography>
                     {withUs.map((t, i) => (
                       <Box key={i} sx={{ display: "flex", gap: 1.5, alignItems: "flex-start", mb: 1.5 }}>
                         <CheckIcon sx={{ color: "#0d9488", fontSize: 18, mt: 0.2, flexShrink: 0 }} />
@@ -683,7 +683,7 @@ export default function JoinAsProviderView() {
                 { icon: ReceiptLongIcon, title: "No Hidden Fees", desc: "Joining and listing your business is free. What you see is what you pay." },
                 { icon: BarChartIcon, title: "Transparent Commission", desc: "Commission on completed bookings is shown upfront on your dashboard, always." },
                 { icon: BoltIcon, title: "Fast Payouts", desc: "Payments settle digitally as soon as a job is marked complete." },
-                { icon: ShieldIcon, title: "Secure Payments", desc: "Every transaction runs through KartSquare's secure payment infrastructure." },
+                { icon: ShieldIcon, title: "Secure Payments", desc: "Every transaction runs through kartsquare's secure payment infrastructure." },
                 { icon: WorkspacePremiumIcon, title: "Optional Premium Plans", desc: "Boost visibility further with optional paid add-ons — never required to get started." },
               ].map((p, i) => (
                 <Grid size={{ xs: 12, sm: 6, md: 4 }} key={i}>
@@ -752,7 +752,7 @@ export default function JoinAsProviderView() {
 
         {/* ══════════════════════ SECTION 14 — JOIN FORM ══════════════════════ */}
         <Box id="registration-form" sx={{ mb: { xs: 9, md: 12 } }}>
-          <SectionHeading kicker="Join KartSquare" title="Register your business" primaryTxt={primaryTxt} secondaryTxt={secondaryTxt} />
+          <SectionHeading kicker="Join kartsquare" title="Register your business" primaryTxt={primaryTxt} secondaryTxt={secondaryTxt} />
           <Reveal>
             <Box sx={{
               bgcolor: cardBg, border: `2px solid ${COLORS.PRIMARY_PURPLE}`, borderRadius: "24px",
@@ -767,7 +767,7 @@ export default function JoinAsProviderView() {
                     Our team will verify your business and get in touch within 24 hours.
                   </Typography>
                   <Box onClick={() => router.push("/External/GlobalAboutUs")} sx={{ display: "inline-block", px: 5, py: 1.5, bgcolor: COLORS.PRIMARY_PURPLE, color: "#fff", borderRadius: "12px", cursor: "pointer", fontWeight: 700, "&:hover": { bgcolor: COLORS.PURPLE_HOVER } }}>
-                    Learn More About KartSquare
+                    Learn More About kartsquare
                   </Box>
                 </Box>
               ) : (
@@ -900,7 +900,7 @@ export default function JoinAsProviderView() {
                               {agreed && <CheckIcon sx={{ fontSize: 14, color: "#fff" }} />}
                             </Box>
                             <Typography sx={{ fontSize: "0.85rem", color: secondaryTxt }}>
-                              I agree to KartSquare&apos;s Terms of Service and Privacy Policy.
+                              I agree to kartsquare&apos;s Terms of Service and Privacy Policy.
                             </Typography>
                           </Box>
                         </Grid>
@@ -949,7 +949,7 @@ export default function JoinAsProviderView() {
                 Ready to Grow Your Automotive Business?
               </Typography>
               <Typography sx={{ color: "rgba(255,255,255,0.8)", mb: 4, maxWidth: 460, mx: "auto", fontSize: "1.02rem" }}>
-                Join KartSquare and start reaching customers already searching for what you do.
+                Join kartsquare and start reaching customers already searching for what you do.
               </Typography>
               <Box sx={{ display: "flex", gap: 2, justifyContent: "center", flexWrap: "wrap" }}>
                 <Box onClick={scrollToForm} sx={{ px: 4.5, py: 1.75, borderRadius: "100px", cursor: "pointer", fontWeight: 700, fontSize: "1rem", color: COLORS.PRIMARY_PURPLE, bgcolor: "#fff", transition: "transform 0.15s", "&:hover": { transform: "scale(1.04)" } }}>
@@ -974,7 +974,7 @@ export default function JoinAsProviderView() {
         href={`https://wa.me/${CONTACT_PHONE.replace("+", "")}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Chat with KartSquare on WhatsApp"
+        aria-label="Chat with kartsquare on WhatsApp"
         sx={{
           position: "fixed", bottom: { xs: 82, md: 24 }, right: 20, zIndex: 40,
           width: 54, height: 54, borderRadius: "50%", bgcolor: "#25D366", display: "flex",

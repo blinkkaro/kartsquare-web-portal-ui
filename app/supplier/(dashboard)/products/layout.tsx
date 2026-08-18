@@ -5,7 +5,7 @@ import { seoPrivate } from "@/lib/seo/buildMetadata";
 export const metadata: Metadata = seoPrivate({
   title: "Products",
   description:
-    "Manage your product listings, pricing, stock, and images from your KartSquare supplier store.",
+    "Manage your product listings, pricing, stock, and images from your kartsquare supplier store.",
 });
 
 export default function SupplierProductsLayout({ children }: { children: ReactNode }) {

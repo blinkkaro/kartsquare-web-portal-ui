@@ -7,10 +7,10 @@ export const SITE_URL = String(
 
 function brandTitle(title: string): string {
   const s = title.trim();
-  if (!s) return "KartSquare";
-  if (/\|\s*KartSquare\s*$/i.test(s)) return s;
-  if (/^KartSquare(\s|$|–|-)/i.test(s)) return s;
-  return `${s} | KartSquare`;
+  if (!s) return "kartsquare";
+  if (/\|\s*kartsquare\s*$/i.test(s)) return s;
+  if (/^kartsquare(\s|$|–|-)/i.test(s)) return s;
+  return `${s} | kartsquare`;
 }
 
 function normalizePath(path: string): string {
@@ -61,7 +61,7 @@ export function seoPublic(opts: {
       title: ogTitleResolved,
       description: ogDescResolved,
       url: canonical,
-      siteName: "KartSquare",
+      siteName: "kartsquare",
       type: ogType,
       locale: "en_IN",
       images: [{ url: image, width: 1200, height: 630, alt: ogTitleResolved }],

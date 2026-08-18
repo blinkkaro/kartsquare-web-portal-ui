@@ -151,7 +151,6 @@ export default function ConnectWithCustomersSection() {
                             fontWeight: 700,
                             mb: 1,
                             color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                            fontSize: "1.125rem",
                             lineHeight: 1.2,
                           }}
                         >

@@ -23,7 +23,6 @@ const ServicesHeader: React.FC<ServicesHeaderProps> = ({ title }) => {
         variant="h4"
         sx={{
           color: textPrimary,
-          fontSize: { xs: "1.25rem", sm: "1.5rem", md: "1.75rem" },
           fontWeight: 900,
           lineHeight: 1.2,
           letterSpacing: "-0.03em",

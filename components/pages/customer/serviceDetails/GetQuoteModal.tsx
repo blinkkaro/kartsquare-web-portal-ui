@@ -234,7 +234,6 @@ const GetQuoteModal: React.FC<GetQuoteModalProps> = ({
               fontWeight: 800,
               color: textPrimary,
               mb: 1,
-              fontSize: { xs: "1.5rem", sm: "1.75rem" },
             }}
           >
             {t("getQuote")}

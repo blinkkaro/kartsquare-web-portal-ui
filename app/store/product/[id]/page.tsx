@@ -22,17 +22,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const brand = product.brand_name;
     const supplierName = (product as any).supplier?.name || (product as any).business_name;
     
-    // Dynamic branded title: "Product by Business | KartSquare"
+    // Dynamic branded title: "Product by Business | kartsquare"
     const titleText = brand 
-      ? `Buy ${productName} by ${brand} | KartSquare`
+      ? `Buy ${productName} by ${brand} | kartsquare`
       : supplierName
-        ? `Buy ${productName} from ${supplierName} | KartSquare`
-        : `${productName} | KartSquare`;
+        ? `Buy ${productName} from ${supplierName} | kartsquare`
+        : `${productName} | kartsquare`;
 
     const productDesc =
       product.product_description ||
       (product as any).description ||
-      `Buy ${productName} from ${supplierName || "verified suppliers"} on KartSquare. Discover quality products with clear pricing and secure business checkout.`;
+      `Buy ${productName} from ${supplierName || "verified suppliers"} on kartsquare. Discover quality products with clear pricing and secure business checkout.`;
     
     const productImages = product.product_images || (product as any).images || [];
     const mainImage =
@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title: titleText,
         description: productDesc.slice(0, 200),
         url: canonical,
-        siteName: "KartSquare",
+        siteName: "kartsquare",
         type: "website",
         locale: "en_IN",
         ...(mainImage ? { images: [{ url: String(mainImage) }] } : {}),
@@ -64,8 +64,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   } catch {
     return {
-      title: { absolute: "Product | KartSquare" },
-      description: "Browse products from verified suppliers on KartSquare.",
+      title: { absolute: "Product | kartsquare" },
+      description: "Browse products from verified suppliers on kartsquare.",
       robots: { index: false, follow: true },
     };
   }

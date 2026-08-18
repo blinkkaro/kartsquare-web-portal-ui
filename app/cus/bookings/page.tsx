@@ -3,7 +3,7 @@ import BookingsPage from "../../../components/pages/bookings";
 
 export const metadata = pageTab(
   "My bookings",
-  "Track upcoming and past service bookings you have made on KartSquare.",
+  "Track upcoming and past service bookings you have made on kartsquare.",
 );
 
 export default BookingsPage;

@@ -5,7 +5,7 @@ import { seoAuth } from "@/lib/seo/buildMetadata";
 export const metadata: Metadata = seoAuth({
   title: "Supplier onboarding",
   description:
-    "Complete store setup and KYC steps to start selling on KartSquare as a verified supplier.",
+    "Complete store setup and KYC steps to start selling on kartsquare as a verified supplier.",
 });
 
 export default function SupplierOnboardingLayout({

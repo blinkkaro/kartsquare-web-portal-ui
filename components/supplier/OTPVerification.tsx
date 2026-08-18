@@ -117,7 +117,6 @@ const OTPVerification = () => {
         variant="h4"
         fontWeight="700"
         mb={2}
-        fontSize={{ xs: "1.5rem", sm: "2rem" }}
       >
         {t("email_verification") || "Verify Email"}
       </Typography>

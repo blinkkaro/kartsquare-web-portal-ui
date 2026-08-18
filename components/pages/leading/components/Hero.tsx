@@ -115,7 +115,6 @@ const Hero: React.FC = () => {
                     color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                     lineHeight: 1.18,
                     mb: 1.5,
-                    fontSize: { xs: "1.875rem", sm: "2.125rem", md: "2.5rem" },
                     letterSpacing: "-0.025em",
                   }}
                 >
@@ -213,7 +212,7 @@ const Hero: React.FC = () => {
                   >
                     <Image
                       src="/auth/Home.JPG"
-                      alt="KartSquare app"
+                      alt="kartsquare app"
                       fill
                       sizes="360px"
                       style={{ objectFit: "cover", objectPosition: "center top" }}

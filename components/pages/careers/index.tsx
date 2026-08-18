@@ -180,7 +180,6 @@ const CareersView: React.FC = () => {
             <Typography
               variant="h1"
               sx={{
-                fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem", lg: "4rem" },
                 fontWeight: 700,
                 mb: 2,
                 background: `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE} 0%, #00B2FF 100%)`,
@@ -197,7 +196,6 @@ const CareersView: React.FC = () => {
             <Typography
               variant="h5"
               sx={{
-                fontSize: { xs: "1rem", md: "1.25rem" },
                 color: isDark
                   ? COLORS.TEXT.SECONDARY_DARK
                   : COLORS.TEXT.SECONDARY_LIGHT,
@@ -250,7 +248,6 @@ const CareersView: React.FC = () => {
             <Typography
               variant="h3"
               sx={{
-                fontSize: { xs: "1.75rem", md: "2.5rem" },
                 fontWeight: 700,
                 mb: 1,
                 textAlign: "center",
@@ -339,7 +336,6 @@ const CareersView: React.FC = () => {
                         sx={{
                           fontWeight: 700,
                           mb: 1.5,
-                          fontSize: { xs: "1.125rem", md: "1.25rem" },
                           color: isDark
                             ? COLORS.TEXT.PRIMARY_DARK
                             : COLORS.TEXT.PRIMARY_LIGHT,
@@ -401,7 +397,6 @@ const CareersView: React.FC = () => {
               <Typography
                 variant="h3"
                 sx={{
-                  fontSize: { xs: "1.75rem", md: "2.5rem" },
                   fontWeight: 700,
                   mb: 3,
                   textAlign: "center",
@@ -455,7 +450,6 @@ const CareersView: React.FC = () => {
               <Typography
                 variant="h3"
                 sx={{
-                  fontSize: { xs: "1.75rem", md: "2.5rem" },
                   fontWeight: 700,
                   mb: 2,
                   background: `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE} 0%, #00B2FF 100%)`,

@@ -18,10 +18,10 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  applicationName: "KartSquare",
+  applicationName: "kartsquare",
   appleWebApp: {
     capable: true,
-    title: "KartSquare",
+    title: "kartsquare",
     statusBarStyle: "default",
   },
   // ICO: only `app/favicon.ico` (Next injects one <link>). Do not repeat favicon.ico here or in
@@ -36,16 +36,14 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
   },
   title: {
-    default: "KartSquare – B2B Marketplace | Products & Services from Verified Suppliers",
-    template: "%s | KartSquare",
+    default: "kartsquare – B2B Marketplace | Products & Services from Verified Suppliers",
+    template: "%s | kartsquare",
   },
   description:
-    "KartSquare is India's B2B marketplace for products and services. Discover electronics, machinery, textiles, chemicals, automotive parts and professional services from verified suppliers. Buy and book online.",
+    "kartsquare is India's B2B marketplace for products and services. Discover electronics, machinery, textiles, chemicals, automotive parts and professional services from verified suppliers. Buy and book online.",
   keywords: [
     "B2B marketplace",
-    "KartSquare",
     "kartsquare",
-    "Kart Square",
     "products India",
     "services marketplace",
     "verified suppliers",
@@ -55,9 +53,9 @@ export const metadata: Metadata = {
     "home services",
     "professional services",
   ],
-  authors: [{ name: "KartSquare", url: SITE_URL }],
-  creator: "KartSquare",
-  publisher: "KartSquare",
+  authors: [{ name: "kartsquare", url: SITE_URL }],
+  creator: "kartsquare",
+  publisher: "kartsquare",
   robots: {
     index: true,
     follow: true,
@@ -72,8 +70,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     url: SITE_URL,
-    siteName: "KartSquare",
-    title: "KartSquare – B2B Marketplace | Products & Services from Verified Suppliers",
+    siteName: "kartsquare",
+    title: "kartsquare – B2B Marketplace | Products & Services from Verified Suppliers",
     description:
       "India's B2B marketplace for products and services. Discover and buy from verified suppliers. Book professional services online.",
     images: [
@@ -81,7 +79,7 @@ export const metadata: Metadata = {
         url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "KartSquare – India's B2B Marketplace",
+        alt: "kartsquare – India's B2B Marketplace",
       },
     ],
   },
@@ -89,7 +87,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@kartsquare",
     creator: "@kartsquare",
-    title: "KartSquare – B2B Marketplace",
+    title: "kartsquare – B2B Marketplace",
     description: "Products & services from verified suppliers. Buy and book online.",
     images: [`${SITE_URL}/og-image.png`],
   },
@@ -106,7 +104,7 @@ export const metadata: Metadata = {
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "KartSquare",
+  name: "kartsquare",
   url: SITE_URL,
   // /icon.png (192×192) is the verified PWA icon present in /public
   logo: `${SITE_URL}/icon.png`,
@@ -124,7 +122,7 @@ const organizationJsonLd = {
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "KartSquare",
+  name: "kartsquare",
   url: SITE_URL,
   potentialAction: {
     "@type": "SearchAction",

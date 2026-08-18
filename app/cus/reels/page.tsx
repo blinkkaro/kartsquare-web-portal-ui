@@ -6,10 +6,10 @@ import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 const reelsFallback = seoPublic({
   title: "Reels — short videos from providers & suppliers",
   description:
-    "Watch and explore short videos from KartSquare service providers and suppliers. Discover local businesses and products in seconds.",
+    "Watch and explore short videos from kartsquare service providers and suppliers. Discover local businesses and products in seconds.",
   path: "/cus/reels",
   keywords: [
-    "KartSquare reels",
+    "kartsquare reels",
     "business videos India",
     "local services video",
     "supplier shorts",

@@ -4,7 +4,7 @@ import MarketingToolsLanding from "@/components/marketing-tools/MarketingToolsLa
 
 export const metadata = pageTab(
   "Marketing tools",
-  "Create campaigns, manage email marketing, and grow your audience as a KartSquare service provider.",
+  "Create campaigns, manage email marketing, and grow your audience as a kartsquare service provider.",
 );
 
 

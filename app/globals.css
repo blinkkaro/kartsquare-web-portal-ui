@@ -38,10 +38,9 @@
     --spacing-8xl: 87.5rem;
     /* 1400px */
 
-    /* Premium display font for business listing & headings (H1 weight 800) */
-    --font-heading: "Plus Jakarta Sans", "Inter", "Poppins", system-ui, sans-serif;
-    /* Body: high-end contrast — weight 300 for body */
-    --font-body: "Inter", "Plus Jakarta Sans", system-ui, sans-serif;
+    /* Matches utils/theme.ts MUI typography.fontFamily — single font system app-wide */
+    --font-heading: "Poppins", "Roboto", "Nunito", "Lato", "Mulish", "Rubik", "Ubuntu", "Fira Sans", system-ui, sans-serif;
+    --font-body: "Poppins", "Roboto", "Nunito", "Lato", "Mulish", "Rubik", "Ubuntu", "Fira Sans", system-ui, sans-serif;
     /* Electric violet gradient for borders/glow */
     --gradient-border: linear-gradient(135deg, rgba(94, 24, 233, 0.4) 0%, rgba(94, 24, 233, 0.1) 50%, rgba(94, 24, 233, 0.4) 100%);
     --gradient-border-dark: linear-gradient(135deg, rgba(148, 99, 255, 0.25) 0%, rgba(94, 24, 233, 0.1) 50%, rgba(148, 99, 255, 0.25) 100%);

@@ -169,7 +169,6 @@ const HowItWorks = () => {
                         fontFamily: "var(--font-heading)",
                         letterSpacing: "-0.02em",
                         color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                        fontSize: "1.125rem",
                         lineHeight: 1.25,
                         mb: 1,
                       }}

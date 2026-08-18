@@ -58,7 +58,6 @@ export default function SectionHeading({
               : "none",
             backgroundClip: variant === "gradient" ? "text" : "unset",
             WebkitBackgroundClip: variant === "gradient" ? "text" : "unset",
-            fontSize: { xs: "1.75rem", sm: "2rem", md: "2.25rem" },
           }}
         >
           {title}

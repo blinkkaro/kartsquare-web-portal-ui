@@ -397,7 +397,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             component="h3"
             sx={{
               fontWeight: 800,
-              fontSize: "1rem",
               lineHeight: 1.2,
               color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
             }}

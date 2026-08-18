@@ -4,7 +4,7 @@ import SmtpSettings from "@/components/marketing-tools/email-marketing/SmtpSetti
 
 export const metadata = pageTab(
   "SMTP settings",
-  "Configure your custom SMTP server to send email campaigns through your KartSquare supplier account.",
+  "Configure your custom SMTP server to send email campaigns through your kartsquare supplier account.",
 );
 
 

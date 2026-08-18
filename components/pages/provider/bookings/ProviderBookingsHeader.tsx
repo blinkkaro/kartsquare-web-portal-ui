@@ -19,7 +19,6 @@ const ProviderBookingsHeader: React.FC<ProviderBookingsHeaderProps> = ({
                 variant="h4"
                 sx={{
                     fontWeight: 700,
-                    fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2.125rem" },
                     color: isDark ? COLORS.TEXT.PRIMARY_DARK : "#1F2937",
                 }}
             >

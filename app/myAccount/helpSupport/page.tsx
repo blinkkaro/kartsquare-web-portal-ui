@@ -4,7 +4,7 @@ import { pageTab } from "@/lib/seo/buildMetadata";
 
 export const metadata = pageTab(
   "Help & support",
-  "Get answers about bookings, payments, listings, and KartSquare account issues.",
+  "Get answers about bookings, payments, listings, and kartsquare account issues.",
 );
 
 export default function HelpSupport() {

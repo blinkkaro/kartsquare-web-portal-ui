@@ -36,7 +36,7 @@ const NavLogo: React.FC<NavLogoProps> = ({ isMobile, mode }) => {
               : COLORS.TEXT.PRIMARY_LIGHT,
         }}
       >
-        Kartsquare
+        kartsquare
       </Box>
     </LogoContainer>
   );

@@ -34,7 +34,6 @@ const ProviderServicesGrid = ({
                     sx={{
                         color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                         mb: 1,
-                        fontSize: { xs: "1rem", sm: "1.25rem" },
                     }}
                 >
                    

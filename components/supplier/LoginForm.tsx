@@ -87,7 +87,6 @@ const LoginForm = () => {
         fontWeight="700"
         mb={1}
         textAlign="center"
-        fontSize={{ xs: "1.5rem", sm: "2rem" }}
       >
         {t("login") || "Login"}
       </Typography>

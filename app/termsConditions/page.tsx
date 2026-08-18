@@ -4,7 +4,7 @@ import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
 export const metadata = seoPublic({
   title: "Terms & Conditions",
   description:
-    "Read KartSquare's official terms and conditions for using the marketplace, booking services, supplier policies, and user responsibilities.",
+    "Read kartsquare's official terms and conditions for using the marketplace, booking services, supplier policies, and user responsibilities.",
   path: "/terms-conditions",
 });
 
@@ -13,11 +13,11 @@ const termsWebPageJsonLd = {
   "@type": "WebPage",
   name: "Terms & Conditions",
   description:
-    "KartSquare terms of use: marketplace rules, bookings, supplier obligations, and user responsibilities.",
+    "kartsquare terms of use: marketplace rules, bookings, supplier obligations, and user responsibilities.",
   url: `${SITE_URL}/terms-conditions`,
   isPartOf: {
     "@type": "WebSite",
-    name: "KartSquare",
+    name: "kartsquare",
     url: SITE_URL,
   },
 };

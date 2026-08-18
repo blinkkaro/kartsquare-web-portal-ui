@@ -9,12 +9,12 @@ import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 const businessListingFallback = seoPublic({
   title: "List your business for free",
   description:
-    "Register your company on KartSquare to reach buyers and service customers. Create a free business listing and grow visibility across India.",
+    "Register your company on kartsquare to reach buyers and service customers. Create a free business listing and grow visibility across India.",
   path: "/business-listing",
   keywords: [
     "free business listing",
     "list company India",
-    "KartSquare registration",
+    "kartsquare registration",
     "B2B visibility",
   ],
 });
@@ -27,11 +27,11 @@ export async function generateMetadata(): Promise<Metadata> {
 const businessListingWebPageJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "List Your Business for Free | KartSquare",
+  name: "List Your Business for Free | kartsquare",
   description:
-    "Register your company on KartSquare to reach buyers and service customers. Create a free business listing and grow visibility across India.",
+    "Register your company on kartsquare to reach buyers and service customers. Create a free business listing and grow visibility across India.",
   url: `${SITE_URL}/business-listing`,
-  isPartOf: { "@type": "WebSite", url: SITE_URL, name: "KartSquare" },
+  isPartOf: { "@type": "WebSite", url: SITE_URL, name: "kartsquare" },
 };
 
 export default function FreeListing() {

@@ -68,7 +68,6 @@ const TakeChargeSection = () => {
                       fontWeight={700}
                       sx={{
                         fontFamily: "var(--font-heading)",
-                        fontSize: "1.0625rem",
                         color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                         mb: 1,
                         letterSpacing: "-0.01em",

@@ -87,7 +87,7 @@ function descriptionFromProfile(
     str(profile.meta_description) ||
     str(profile.description) ||
     str(profile.bio) ||
-    `View ${display} on KartSquare — book services, see work, and connect with a verified business profile.`
+    `View ${display} on kartsquare — book services, see work, and connect with a verified business profile.`
   );
 }
 
@@ -205,7 +205,7 @@ export function buildProfileMetadata(
   const { profile, variant } = payload;
   const display = displayName(profile, variant);
   const title =
-    str(profile.meta_title) || `${display} | KartSquare`;
+    str(profile.meta_title) || `${display} | kartsquare`;
   const description = descriptionFromProfile(profile, display);
   const keywordsRaw = str(profile.meta_keywords);
   const canonicalPath = `/in/${encodeURIComponent(username)}`;
@@ -233,7 +233,7 @@ export function buildProfileMetadata(
     openGraph: {
       type: "profile",
       url: `${String(SITE_URL).replace(/\/$/, "")}${canonicalPath}`,
-      siteName: "KartSquare",
+      siteName: "kartsquare",
       title: ogTitle,
       description: ogDesc,
       images: [{ url: profilePic, width: 1200, height: 630, alt: ogTitle }],

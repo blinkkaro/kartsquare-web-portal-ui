@@ -193,7 +193,6 @@ const ShowWhatYouOfferSection = () => {
                   fontWeight={800}
                   sx={{
                     fontFamily: "var(--font-heading)",
-                    fontSize: "1.375rem",
                     letterSpacing: "-0.02em",
                     color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                     mb: 1.25,
@@ -320,7 +319,6 @@ const ShowWhatYouOfferSection = () => {
                       fontWeight={700}
                       sx={{
                         fontFamily: "var(--font-heading)",
-                        fontSize: "1rem",
                         letterSpacing: "-0.01em",
                         color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                         mb: 0.5,

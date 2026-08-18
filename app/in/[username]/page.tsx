@@ -27,8 +27,8 @@ export async function generateMetadata(
       // Profile genuinely not found — signal 404 to metadata. The page component
       // will call notFound() and Next.js will serve the not-found page.
       return {
-        title: { absolute: "Profile not found | KartSquare" },
-        description: "This KartSquare profile could not be found.",
+        title: { absolute: "Profile not found | kartsquare" },
+        description: "This kartsquare profile could not be found.",
         // Let the not-found page be indexed so Google understands it's a 404,
         // but don't follow further links from this error state.
         robots: { index: false, follow: false },
@@ -41,9 +41,9 @@ export async function generateMetadata(
     // once the API recovers, a fresh crawl will re-index via the sitemap.
     // A permanently-down profile should be handled with 503 at the infra level.
     return {
-      title: { absolute: "Profile | KartSquare" },
+      title: { absolute: "Profile | kartsquare" },
       description:
-        "Discover service providers and suppliers on KartSquare — India's marketplace for products and professional services.",
+        "Discover service providers and suppliers on kartsquare — India's marketplace for products and professional services.",
       robots: { index: false, follow: true },
     };
   }

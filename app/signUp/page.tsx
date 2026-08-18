@@ -4,7 +4,7 @@ import { seoAuth } from "@/lib/seo/buildMetadata";
 export const metadata = seoAuth({
   title: "Create account",
   description:
-    "Join KartSquare to book trusted services, buy from verified suppliers, and list your business on India's B2B marketplace.",
+    "Join kartsquare to book trusted services, buy from verified suppliers, and list your business on India's B2B marketplace.",
 });
 
 export default function SignUp() {

@@ -11,23 +11,28 @@ import {
   FormControlLabel,
   Checkbox,
   FormHelperText,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  Divider,
 } from "@mui/material";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useForm, Controller } from "react-hook-form";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import WarningIcon from "@mui/icons-material/WarningAmber";
-import InfoIcon from "@mui/icons-material/InfoOutlined";
-import ChevronIcon from "@mui/icons-material/ChevronRight";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForeverRounded";
+import DatabaseIcon from "@mui/icons-material/StorageRounded";
+import StorefrontIcon from "@mui/icons-material/StorefrontRounded";
+import EventBusyIcon from "@mui/icons-material/EventBusyRounded";
+import CheckIcon from "@mui/icons-material/Check";
 import { COLORS } from "@/constants/colors";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import BackButton from "@/components/common/BackButton";
-import contactUsService from "@/services/contantUs/contactUs.service";
+import PageTitle from "@/components/common/PageTitle";
+import SectionTitle from "@/components/common/SectionTitle";
+import deleteAccountService from "@/services/deleteAccount/deleteAccount.service";
 import { countries } from "@/data/countries";
 import SuccessModel from "@/components/common/SuccessModel";
 import { useRouter } from "next/navigation";
@@ -42,6 +47,40 @@ interface DeletionFormData {
   reasonDetail: string;
   consent: boolean;
 }
+
+const REASON_OPTIONS = [
+  { value: "Privacy Concerns", label: "I am concerned about my privacy / data safety" },
+  { value: "Duplicate Account", label: "I have a duplicate account" },
+  { value: "No Longer Using", label: "I no longer use kartsquare" },
+  { value: "Too Many Notifications", label: "I receive too many notifications / emails" },
+  { value: "Other", label: "Other (please specify below)" },
+];
+
+const IMPACTS = [
+  {
+    icon: DatabaseIcon,
+    title: "Permanent data loss",
+    description: "All your profile information, settings, configurations, and user history will be permanently wiped out.",
+  },
+  {
+    icon: StorefrontIcon,
+    title: "Listings, services & products removed",
+    description: "Any business profiles, services, product listings, or active promotions you created will be deleted and cannot be recovered.",
+  },
+  {
+    icon: EventBusyIcon,
+    title: "Active orders & bookings cancelled",
+    description: "Active service bookings, ongoing chats with clients/suppliers, and open business enquiries will be permanently terminated.",
+  },
+];
+
+type Stage = "details" | "review" | "submitted";
+
+const STAGES: { key: Stage; label: string }[] = [
+  { key: "details", label: "Details" },
+  { key: "review", label: "Review" },
+  { key: "submitted", label: "Submitted" },
+];
 
 const createDeletionSchema = (t: any) =>
   yup.object().shape({
@@ -67,6 +106,91 @@ const createDeletionSchema = (t: any) =>
       .required("Consent is required"),
   });
 
+// Shared label + control wrapper — this form repeats the same label/field
+// pattern for every field, so it's factored out once, here, rather than
+// promoted to a shared component (the layout is specific to this page).
+function FormField({
+  label,
+  htmlFor,
+  children,
+}: {
+  label: string;
+  htmlFor?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Box sx={{ mb: 1 }}>
+      <Typography
+        component="label"
+        htmlFor={htmlFor}
+        variant="subtitle2"
+        sx={{ display: "block", mb: 1 }}
+      >
+        {label}
+      </Typography>
+      {children}
+    </Box>
+  );
+}
+
+function ProgressRail({ stage }: { stage: Stage }) {
+  const activeIndex = STAGES.findIndex((s) => s.key === stage);
+
+  return (
+    <Box sx={{ display: "flex", alignItems: "center", mb: { xs: 3, sm: 4 } }}>
+      {STAGES.map((s, i) => {
+        const done = i < activeIndex;
+        const active = i === activeIndex;
+        return (
+          <React.Fragment key={s.key}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Box
+                sx={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                  fontSize: "0.75rem",
+                  fontWeight: 700,
+                  transition: "background-color 0.2s ease, color 0.2s ease",
+                  bgcolor: done || active ? COLORS.ERROR_RED : "action.selected",
+                  color: done || active ? COLORS.WHITE : "text.secondary",
+                }}
+              >
+                {done ? <CheckIcon sx={{ fontSize: 14 }} /> : i + 1}
+              </Box>
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: active ? 700 : 500,
+                  color: active ? "text.primary" : "text.secondary",
+                  display: { xs: i === activeIndex ? "block" : "none", sm: "block" },
+                }}
+              >
+                {s.label}
+              </Typography>
+            </Box>
+            {i < STAGES.length - 1 && (
+              <Box
+                sx={{
+                  flex: 1,
+                  height: "2px",
+                  mx: { xs: 1, sm: 1.5 },
+                  bgcolor: i < activeIndex ? COLORS.ERROR_RED : "divider",
+                  transition: "background-color 0.2s ease",
+                }}
+              />
+            )}
+          </React.Fragment>
+        );
+      })}
+    </Box>
+  );
+}
+
 function DeleteAccountView() {
   const { t } = useTranslate();
   const router = useRouter();
@@ -75,6 +199,8 @@ function DeleteAccountView() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingData, setPendingData] = useState<DeletionFormData | null>(null);
 
   const {
     control,
@@ -96,34 +222,32 @@ function DeleteAccountView() {
   });
 
   const selectedReason = watch("reason");
+  const stage: Stage = showSuccess ? "submitted" : showConfirm ? "review" : "details";
 
-  const onSubmit = async (data: DeletionFormData) => {
+  // Validate + open the confirmation dialog. The actual API call only
+  // happens once the user explicitly confirms in the dialog.
+  const openConfirm = (data: DeletionFormData) => {
+    setPendingData(data);
+    setShowConfirm(true);
+  };
+
+  const confirmDeletion = async () => {
+    if (!pendingData) return;
+    const data = pendingData;
     setIsSubmitting(true);
     try {
       setError("");
-      
-      const details = selectedReason === "Other" && data.reasonDetail
-        ? `${data.reason} (${data.reasonDetail})`
-        : data.reason;
 
-      const messageContent = `[Account Deletion Request]
-Name: ${data.name}
-Email: ${data.email}
-Phone: ${data.country_code} ${data.phone}
-Reason: ${details}
-Consent: Confirmed irreversible account and data deletion.`;
-
-      // Skip the network call for now
-      /*
-      await contactUsService.contactUs({
-        name: data.name,
+      await deleteAccountService.submitRequest({
+        full_name: data.name,
         email: data.email,
         country_code: data.country_code,
         phone: data.phone,
-        message: messageContent,
+        reason: data.reason,
+        reason_detail: data.reason === "Other" ? data.reasonDetail : undefined,
       });
-      */
 
+      setShowConfirm(false);
       reset();
       setShowSuccess(true);
     } catch (err: any) {
@@ -133,6 +257,7 @@ Consent: Confirmed irreversible account and data deletion.`;
         err?.message ||
         "Failed to submit deletion request. Please try again."
       );
+      setShowConfirm(false);
       toast.error("Failed to submit deletion request. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -146,58 +271,37 @@ Consent: Confirmed irreversible account and data deletion.`;
         <BackButton />
       </Box>
       <Box>
-        
+
         {/* Header Section */}
-        <Box sx={{ mb: { xs: 4, sm: 5 } }}>
-          <Typography
-            variant="h4"
-            component="h1"
-            sx={{
-              fontWeight: "bold",
-              fontSize: { xs: "1.75rem", sm: "2rem", md: "2.25rem" },
-              color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-              mb: 1,
-            }}
+        <Box sx={{ mb: { xs: 3, sm: 4 } }}>
+          <PageTitle
+            subtitle="Please fill out the form below to request the permanent deletion of your account and personal data from our platform."
           >
             Delete Account
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-              fontSize: { xs: "0.875rem", sm: "1rem" },
-            }}
-          >
-            Please fill out the form below to request the permanent deletion of your account and personal data from our platform.
-          </Typography>
+          </PageTitle>
         </Box>
+
+        <ProgressRail stage={stage} />
 
         {/* Outer Grid Layout (Form on Left, Important Notes on Right) */}
         <Grid container spacing={{ xs: 4, md: 4, lg: 5 }}>
-          
+
           {/* Left Column: Form Section */}
           <Grid size={{ xs: 12, md: 7, lg: 8 }} order={{ xs: 2, md: 1 }}>
             <Box
               component="form"
-              onSubmit={handleSubmit(onSubmit)}
+              onSubmit={handleSubmit(openConfirm)}
               sx={{
                 bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
-                borderRadius: { xs: "12px", sm: "16px" },
+                borderRadius: { xs: "16px", sm: "20px" },
                 p: { xs: 2.5, sm: 3, md: 4 },
                 border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+                boxShadow: isDark ? "none" : "0 1px 2px rgba(16, 24, 40, 0.04)",
               }}
             >
-              <Typography
-                variant="h5"
-                sx={{
-                  fontWeight: 600,
-                  mb: { xs: 2.5, sm: 3 },
-                  fontSize: { xs: "1.125rem", sm: "1.25rem", md: "1.5rem" },
-                  color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                }}
-              >
+              <SectionTitle sx={{ mb: { xs: 2.5, sm: 3 } }}>
                 Deletion Request Form
-              </Typography>
+              </SectionTitle>
 
               {error && (
                 <Box
@@ -215,78 +319,33 @@ Consent: Confirmed irreversible account and data deletion.`;
               )}
 
               <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
-                
+
                 {/* Full Name */}
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Box sx={{ mb: 1 }}>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        mb: 1,
-                        fontWeight: 600,
-                        fontSize: { xs: "0.8125rem", sm: "0.875rem" },
-                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                      }}
-                    >
-                      Full Name
-                    </Typography>
+                  <FormField label="Full Name">
                     <Input
                       name="name"
                       control={control}
                       placeholder="Enter your registered name"
-                      InputProps={{
-                        sx: {
-                          borderRadius: "12px",
-                          bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
-                        },
-                      }}
                     />
-                  </Box>
+                  </FormField>
                 </Grid>
 
                 {/* Email Address */}
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Box sx={{ mb: 1 }}>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        mb: 1,
-                        fontWeight: 600,
-                        fontSize: { xs: "0.8125rem", sm: "0.875rem" },
-                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                      }}
-                    >
-                      Registered Email Address
-                    </Typography>
+                  <FormField label="Registered Email Address">
                     <Input
                       name="email"
                       control={control}
                       placeholder="Enter your registered email"
                       type="email"
-                      InputProps={{
-                        sx: {
-                          borderRadius: "12px",
-                          bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
-                        },
-                      }}
                     />
-                  </Box>
+                  </FormField>
                 </Grid>
 
                 {/* Country Code */}
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Box sx={{ mb: 1 }}>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        mb: 1,
-                        fontWeight: 600,
-                        fontSize: { xs: "0.8125rem", sm: "0.875rem" },
-                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                      }}
-                    >
-                      {t("countryCode")}
-                    </Typography>
+                  <FormField label={t("countryCode")}>
                     <Controller
                       name="country_code"
                       control={control}
@@ -296,19 +355,9 @@ Consent: Confirmed irreversible account and data deletion.`;
                           fullWidth
                           displayEmpty
                           sx={{
-                            height: "48px",
-                            borderRadius: "12px",
-                            bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
-                            border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              border: "none",
-                            },
-                            "&:hover .MuiOutlinedInput-notchedOutline": {
-                              border: "none",
-                            },
-                            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                              border: "none",
-                            },
+                            height: "44px",
+                            borderRadius: "10px",
+                            bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.WHITE,
                           }}
                         >
                           {countries.map((country) => (
@@ -319,55 +368,25 @@ Consent: Confirmed irreversible account and data deletion.`;
                         </Select>
                       )}
                     />
-                  </Box>
+                  </FormField>
                 </Grid>
 
                 {/* Phone Number */}
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Box sx={{ mb: 1 }}>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        mb: 1,
-                        fontWeight: 600,
-                        fontSize: { xs: "0.8125rem", sm: "0.875rem" },
-                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                      }}
-                    >
-                      Registered Phone Number
-                    </Typography>
+                  <FormField label="Registered Phone Number">
                     <Input
                       name="phone"
                       control={control}
                       placeholder="Enter your registered number"
                       type="tel"
-                      inputProps={{
-                        maxLength: 10,
-                      }}
-                      InputProps={{
-                        sx: {
-                          borderRadius: "12px",
-                          bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
-                        },
-                      }}
+                      inputProps={{ maxLength: 10 }}
                     />
-                  </Box>
+                  </FormField>
                 </Grid>
 
                 {/* Reason for Deletion */}
                 <Grid size={{ xs: 12 }}>
-                  <Box sx={{ mb: 1 }}>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        mb: 1,
-                        fontWeight: 600,
-                        fontSize: { xs: "0.8125rem", sm: "0.875rem" },
-                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                      }}
-                    >
-                      Reason for Deletion
-                    </Typography>
+                  <FormField label="Reason for Deletion">
                     <Controller
                       name="reason"
                       control={control}
@@ -376,114 +395,90 @@ Consent: Confirmed irreversible account and data deletion.`;
                           {...field}
                           fullWidth
                           displayEmpty
+                          error={!!errors.reason}
                           sx={{
-                            height: "48px",
-                            borderRadius: "12px",
-                            bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
-                            border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              border: "none",
-                            },
-                            "&:hover .MuiOutlinedInput-notchedOutline": {
-                              border: "none",
-                            },
-                            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                              border: "none",
-                            },
+                            height: "44px",
+                            borderRadius: "10px",
+                            bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.WHITE,
                           }}
                         >
                           <MenuItem value="" disabled>
                             Select a reason
                           </MenuItem>
-                          <MenuItem value="Privacy Concerns">I am concerned about my privacy / data safety</MenuItem>
-                          <MenuItem value="Duplicate Account">I have a duplicate account</MenuItem>
-                          <MenuItem value="No Longer Using">I no longer use KartSquare</MenuItem>
-                          <MenuItem value="Too Many Notifications">I receive too many notifications / emails</MenuItem>
-                          <MenuItem value="Other">Other (Please specify below)</MenuItem>
+                          {REASON_OPTIONS.map((opt) => (
+                            <MenuItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </MenuItem>
+                          ))}
                         </Select>
                       )}
                     />
                     {errors.reason && (
                       <FormHelperText error>{errors.reason.message}</FormHelperText>
                     )}
-                  </Box>
+                  </FormField>
                 </Grid>
 
                 {/* Optional Reason Detail */}
                 {selectedReason === "Other" && (
                   <Grid size={{ xs: 12 }}>
-                    <Box sx={{ mb: 1 }}>
-                      <Typography
-                        variant="subtitle2"
-                        sx={{
-                          mb: 1,
-                          fontWeight: 600,
-                          fontSize: { xs: "0.8125rem", sm: "0.875rem" },
-                          color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                        }}
-                      >
-                        Please specify reason
-                      </Typography>
+                    <FormField label="Please specify reason">
                       <Input
                         name="reasonDetail"
                         control={control}
                         placeholder="Describe your reason for deletion"
                         multiline
                         rows={3}
-                        InputProps={{
-                          sx: {
-                            borderRadius: "12px",
-                            bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
-                          },
-                        }}
                       />
-                    </Box>
+                    </FormField>
                   </Grid>
                 )}
 
                 {/* Consent Checkbox */}
                 <Grid size={{ xs: 12 }}>
-                  <Box sx={{ mt: 1 }}>
+                  <Box
+                    sx={{
+                      mt: 1,
+                      p: 1.5,
+                      borderRadius: "10px",
+                      bgcolor: isDark ? "rgba(255,255,255,0.03)" : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                    }}
+                  >
                     <Controller
                       name="consent"
                       control={control}
                       render={({ field }) => (
                         <FormControlLabel
+                          sx={{ alignItems: "flex-start", ml: 0 }}
                           control={
                             <Checkbox
                               {...field}
                               checked={field.value}
                               onChange={(e) => field.onChange(e.target.checked)}
                               color="error"
+                              sx={{ mt: -0.5 }}
                             />
                           }
                           label={
                             <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-                              I confirm that I want to delete my KartSquare account and all associated personal data. I understand that this action is permanent and cannot be undone.
+                              I confirm that I want to delete my kartsquare account and all associated personal data. I understand that this action is permanent and cannot be undone.
                             </Typography>
                           }
                         />
                       )}
                     />
                     {errors.consent && (
-                      <FormHelperText error>{errors.consent.message}</FormHelperText>
+                      <FormHelperText error sx={{ ml: 4.5 }}>{errors.consent.message}</FormHelperText>
                     )}
                   </Box>
                 </Grid>
               </Grid>
 
               {/* Submit Button */}
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  mt: { xs: 3, sm: 4 },
-                }}
-              >
+              <Box sx={{ display: "flex", justifyContent: "flex-start", mt: { xs: 3, sm: 4 } }}>
                 <Button
                   type="submit"
                   variant="contained"
-                  disabled={isSubmitting}
                   sx={{
                     width: "auto",
                     minWidth: { xs: "100%", sm: "240px" },
@@ -491,19 +486,12 @@ Consent: Confirmed irreversible account and data deletion.`;
                     color: "white",
                     py: { xs: 1.25, sm: 1.5 },
                     px: { xs: 3, sm: 4 },
-                    fontSize: { xs: "0.875rem", sm: "0.9375rem", md: "1rem" },
                     fontWeight: 600,
                     borderRadius: "12px",
-                    "&:hover": {
-                      background: "#e03b3b",
-                    },
-                    "&:disabled": {
-                      background: COLORS.ERROR_RED,
-                      opacity: 0.6,
-                    },
+                    "&:hover": { background: "#e03b3b" },
                   }}
                 >
-                  {isSubmitting ? "Submitting..." : "Submit Deletion Request"}
+                  Review & Submit Request
                 </Button>
               </Box>
             </Box>
@@ -513,59 +501,157 @@ Consent: Confirmed irreversible account and data deletion.`;
           <Grid size={{ xs: 12, md: 5, lg: 4 }} order={{ xs: 1, md: 2 }}>
             <Box
               sx={{
-                bgcolor: isDark ? "rgba(255, 77, 79, 0.08)" : "rgba(255, 77, 79, 0.04)",
-                border: `1px solid ${COLORS.ERROR_RED}`,
-                borderRadius: { xs: "12px", sm: "16px" },
+                border: `1px solid ${isDark ? "rgba(255,77,79,0.35)" : "rgba(255,77,79,0.25)"}`,
+                borderRadius: { xs: "16px", sm: "20px" },
                 p: { xs: 2.5, sm: 3 },
                 height: "fit-content",
               }}
             >
-              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5, mb: 2 }}>
-                <WarningIcon sx={{ color: COLORS.ERROR_RED }} />
-                <Typography variant="subtitle1" fontWeight="bold" color="error.main">
-                  Important: What happens when your account is deleted?
+              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5, mb: 2.5 }}>
+                <WarningIcon sx={{ color: COLORS.ERROR_RED, mt: "2px" }} />
+                <Typography variant="subtitle1" fontWeight={700} color="error.main">
+                  What happens when your account is deleted?
                 </Typography>
               </Box>
-              <List dense sx={{ pl: 0, py: 0 }}>
-                <ListItem disableGutters sx={{ alignItems: "flex-start", py: 0.5 }}>
-                  <ListItemIcon sx={{ minWidth: 24, mt: 0.3 }}>
-                    <ChevronIcon sx={{ fontSize: 16, color: COLORS.ERROR_RED }} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Permanent Data Loss"
-                    secondary="All your profile information, settings, configurations, and user history will be permanently wiped out."
-                    primaryTypographyProps={{ variant: "body2", fontWeight: 600, color: isDark ? "grey.300" : "grey.800" }}
-                    secondaryTypographyProps={{ variant: "caption", color: isDark ? "grey.400" : "grey.600" }}
-                  />
-                </ListItem>
-                <ListItem disableGutters sx={{ alignItems: "flex-start", py: 0.5 }}>
-                  <ListItemIcon sx={{ minWidth: 24, mt: 0.3 }}>
-                    <ChevronIcon sx={{ fontSize: 16, color: COLORS.ERROR_RED }} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Listings, Services, and Products Removal"
-                    secondary="Any business profiles, services, product listings, or active promotions you created will be deleted and cannot be recovered."
-                    primaryTypographyProps={{ variant: "body2", fontWeight: 600, color: isDark ? "grey.300" : "grey.800" }}
-                    secondaryTypographyProps={{ variant: "caption", color: isDark ? "grey.400" : "grey.600" }}
-                  />
-                </ListItem>
-                <ListItem disableGutters sx={{ alignItems: "flex-start", py: 0.5 }}>
-                  <ListItemIcon sx={{ minWidth: 24, mt: 0.3 }}>
-                    <ChevronIcon sx={{ fontSize: 16, color: COLORS.ERROR_RED }} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Active Orders & Bookings Cancellation"
-                    secondary="Active service bookings, ongoing chats with clients/suppliers, and open business enquiries will be permanently terminated."
-                    primaryTypographyProps={{ variant: "body2", fontWeight: 600, color: isDark ? "grey.300" : "grey.800" }}
-                    secondaryTypographyProps={{ variant: "caption", color: isDark ? "grey.400" : "grey.600" }}
-                  />
-                </ListItem>
-              </List>
+
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                {IMPACTS.map((impact) => {
+                  const Icon = impact.icon;
+                  return (
+                    <Box
+                      key={impact.title}
+                      sx={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 1.5,
+                        p: 1.5,
+                        borderRadius: "12px",
+                        bgcolor: isDark ? "rgba(255, 77, 79, 0.08)" : "rgba(255, 77, 79, 0.05)",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: "8px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0,
+                          bgcolor: isDark ? "rgba(255,77,79,0.18)" : "rgba(255,77,79,0.12)",
+                        }}
+                      >
+                        <Icon sx={{ fontSize: 18, color: COLORS.ERROR_RED }} />
+                      </Box>
+                      <Box>
+                        <Typography variant="body2" fontWeight={600} sx={{ mb: 0.25 }}>
+                          {impact.title}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: "block", lineHeight: 1.5 }}>
+                          {impact.description}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  );
+                })}
+              </Box>
             </Box>
           </Grid>
-          
+
         </Grid>
       </Box>
+
+      {/* Confirmation Dialog — final gate before the destructive API call */}
+      <Dialog
+        open={showConfirm}
+        onClose={() => !isSubmitting && setShowConfirm(false)}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: "20px" } }}
+      >
+        <DialogContent sx={{ p: { xs: 3, sm: 4 }, textAlign: "center" }}>
+          <Box
+            sx={{
+              width: 56,
+              height: 56,
+              borderRadius: "50%",
+              bgcolor: isDark ? "rgba(255,77,79,0.15)" : "rgba(255,77,79,0.08)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mx: "auto",
+              mb: 2,
+            }}
+          >
+            <DeleteForeverIcon sx={{ fontSize: 28, color: COLORS.ERROR_RED }} />
+          </Box>
+          <Typography variant="h5" fontWeight={700} sx={{ mb: 1 }}>
+            Delete your account?
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            This is your last chance to cancel. Once submitted, this request cannot be undone.
+          </Typography>
+
+          {pendingData && (
+            <Box
+              sx={{
+                textAlign: "left",
+                borderRadius: "12px",
+                border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+                p: 2,
+                mb: 1,
+              }}
+            >
+              {[
+                { label: "Name", value: pendingData.name },
+                { label: "Email", value: pendingData.email },
+                { label: "Phone", value: `${pendingData.country_code} ${pendingData.phone}` },
+                {
+                  label: "Reason",
+                  value: REASON_OPTIONS.find((o) => o.value === pendingData.reason)?.label || pendingData.reason,
+                },
+              ].map((row, i) => (
+                <Box key={row.label}>
+                  {i > 0 && <Divider sx={{ my: 1 }} />}
+                  <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
+                    {row.label}
+                  </Typography>
+                  <Typography variant="body2" fontWeight={500}>
+                    {row.value}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ px: { xs: 3, sm: 4 }, pb: { xs: 3, sm: 4 }, pt: 0, flexDirection: "column", gap: 1.5 }}>
+          <Button
+            fullWidth
+            variant="contained"
+            disabled={isSubmitting}
+            onClick={confirmDeletion}
+            sx={{
+              background: COLORS.ERROR_RED,
+              color: "white",
+              py: 1.25,
+              fontWeight: 600,
+              borderRadius: "12px",
+              "&:hover": { background: "#e03b3b" },
+            }}
+          >
+            {isSubmitting ? "Submitting..." : "Yes, delete my account"}
+          </Button>
+          <Button
+            fullWidth
+            variant="outlined"
+            disabled={isSubmitting}
+            onClick={() => setShowConfirm(false)}
+            sx={{ py: 1.25, fontWeight: 600, borderRadius: "12px" }}
+          >
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Success Modal */}
       <SuccessModel

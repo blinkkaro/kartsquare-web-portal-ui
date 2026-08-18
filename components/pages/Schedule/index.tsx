@@ -181,13 +181,6 @@ const ScheduleView = () => {
           sx={{
             fontWeight: 700,
             color: "text.primary",
-            fontSize: {
-              xs: "1.75rem",
-              sm: "2rem",
-              md: "2.25rem",
-              lg: "2.5rem",
-              xl: "3.5rem",
-            },
             lineHeight: 1.2,
           }}
         >

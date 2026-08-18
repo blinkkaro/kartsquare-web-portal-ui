@@ -4,7 +4,7 @@ import CreateCampaign from "@/components/marketing-tools/email-marketing/CreateC
 
 export const metadata = pageTab(
   "Create campaign",
-  "Build and launch a new email campaign to reach your subscribers from your KartSquare supplier account.",
+  "Build and launch a new email campaign to reach your subscribers from your kartsquare supplier account.",
 );
 
 

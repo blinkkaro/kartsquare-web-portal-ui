@@ -46,7 +46,6 @@ function MyAccountView() {
         <Typography
           variant="h4"
           sx={{
-            fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
             fontWeight: "500",
             color:
               theme.palette.mode === "dark"
@@ -103,7 +102,6 @@ function MyAccountView() {
         <Typography
           variant="h4"
           sx={{
-            fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
             fontWeight: "500",
             color:
               theme.palette.mode === "dark"

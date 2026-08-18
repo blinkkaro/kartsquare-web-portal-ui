@@ -67,7 +67,6 @@ const SuggestionSection = ({
           variant="h6"
           sx={{
             fontWeight: 700,
-            fontSize: "1.1rem",
             color:
               theme.palette.mode === "dark"
                 ? COLORS.TEXT.PRIMARY_DARK

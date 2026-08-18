@@ -92,7 +92,7 @@ const CustomerServiceDetails = () => {
       try {
         await navigator.share({
           title: service?.service_name,
-          text: `Check out ${service?.service_name} on KartSquare!`,
+          text: `Check out ${service?.service_name} on kartsquare!`,
           url: window.location.href,
         });
       } catch (error) {

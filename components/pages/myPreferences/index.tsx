@@ -78,7 +78,6 @@ function MyPreferencesView() {
           sx={{
             mb: 4,
             fontWeight: 600,
-            fontSize: { xs: "1.5rem", md: "2rem" },
           }}
         >
           {getTitle()}

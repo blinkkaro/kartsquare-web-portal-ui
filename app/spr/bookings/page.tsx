@@ -3,7 +3,7 @@ import ProviderBookingsPage from "../../../components/pages/provider/bookings";
 
 export const metadata = pageTab(
   "Bookings",
-  "Manage customer bookings, statuses, and schedules for your KartSquare services.",
+  "Manage customer bookings, statuses, and schedules for your kartsquare services.",
 );
 
 export default ProviderBookingsPage;

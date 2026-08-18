@@ -33,7 +33,6 @@ const ServiceDetailsInfo = ({
                     fontWeight: 700,
                     mb: 0.5,
                     color: COLORS.PRIMARY_PURPLE,
-                    fontSize: { xs: "1.25rem", sm: "1.5rem", md: "2rem" },
                     lineHeight: { xs: 1.3, sm: 1.4 },
                 }}
             >

@@ -7,7 +7,7 @@ import { seoAuth } from "@/lib/seo/buildMetadata";
 export const metadata = seoAuth({
   title: "Verify OTP",
   description:
-    "Enter the one-time code sent to your phone or email to verify your KartSquare supplier account.",
+    "Enter the one-time code sent to your phone or email to verify your kartsquare supplier account.",
 });
 
 export default function SupplierOTPPage() {

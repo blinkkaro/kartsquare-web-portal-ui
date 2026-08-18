@@ -93,7 +93,6 @@ export default function NotFoundClient() {
                 ? COLORS.TEXT.PRIMARY_DARK
                 : COLORS.TEXT.PRIMARY_LIGHT,
               mb: 2,
-              fontSize: { xs: "24px", sm: "28px", md: "32px" },
             }}
           >
             {t("page_not_found")}

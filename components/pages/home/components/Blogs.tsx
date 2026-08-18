@@ -180,7 +180,6 @@ const Blogs = () => {
               : COLORS.TEXT.PRIMARY_LIGHT,
           fontWeight: 600,
           mb: 3,
-          fontSize: "1.1rem",
         }}
       >
         {t("home_latest_blogs_title")}

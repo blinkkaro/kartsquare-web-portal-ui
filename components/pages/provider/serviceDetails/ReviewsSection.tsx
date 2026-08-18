@@ -71,7 +71,6 @@ const ReviewsSection = ({
               color: isDark
                 ? COLORS.TEXT.PRIMARY_DARK
                 : COLORS.TEXT.PRIMARY_LIGHT,
-              fontSize: { xs: "1rem", sm: "1.25rem" },
             }}
           >
             {totalReviews} {t("reviews")}

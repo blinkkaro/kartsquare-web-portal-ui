@@ -4,7 +4,7 @@ import { pageTab } from "@/lib/seo/buildMetadata";
 
 export const metadata = pageTab(
   "My documents",
-  "Upload and track verification documents for your KartSquare profile.",
+  "Upload and track verification documents for your kartsquare profile.",
 );
 
 export default function MyDocuments() {

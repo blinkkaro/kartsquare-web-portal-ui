@@ -38,7 +38,7 @@ function AuthHeader({ showBack, onBack, showSkip, skipHref = "/" }: AuthHeaderPr
         >
           <Image
             src="/logo.svg"
-            alt="Kartsquare"
+            alt="kartsquare"
             width={28}
             height={28}
             priority
@@ -50,7 +50,7 @@ function AuthHeader({ showBack, onBack, showSkip, skipHref = "/" }: AuthHeaderPr
               letterSpacing: "-0.02em",
             }}
           >
-            Kartsquare
+            kartsquare
           </Typography>
         </Box>
       </Box>

@@ -4,7 +4,7 @@ import { pageTab } from "@/lib/seo/buildMetadata";
 
 export const metadata = pageTab(
   "Personal information",
-  "Update your name, photo, username, and contact details visible on KartSquare.",
+  "Update your name, photo, username, and contact details visible on kartsquare.",
 );
 
 export default function PersonalInfo() {

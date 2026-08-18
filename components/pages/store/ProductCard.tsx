@@ -80,7 +80,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           /\D/g,
           "",
         );
-      const message = `Hi, I found your listing for ${product.name} on KartSquare. I am interested to know more.`;
+      const message = `Hi, I found your listing for ${product.name} on kartsquare. I am interested to know more.`;
       const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, "_blank");
       setAnimatingContact(null);
@@ -333,7 +333,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 variant="h5"
                 color={COLORS.PRIMARY_PURPLE}
                 fontWeight={900}
-                sx={{ lineHeight: 1, fontSize: "1.25rem" }}
+                sx={{ lineHeight: 1 }}
               >
                 {product.price}
               </Typography>

@@ -102,7 +102,6 @@ const Benefits = () => {
                     variant="h6"
                     sx={{
                       fontWeight: 500,
-                      fontSize: "1.125rem",
                       color: isDark ? COLORS.TEXT.PRIMARY_DARK : "#111827",
                       mb: 1,
                     }}

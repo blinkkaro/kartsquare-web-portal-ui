@@ -5,7 +5,7 @@ import React from "react";
 
 export const metadata = pageTab(
   "My store",
-  "Manage your supplier storefront, branding, and catalogue visibility on KartSquare.",
+  "Manage your supplier storefront, branding, and catalogue visibility on kartsquare.",
 );
 
 export default function MyStore() {

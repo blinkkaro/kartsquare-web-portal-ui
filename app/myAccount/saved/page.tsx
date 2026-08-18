@@ -4,7 +4,7 @@ import { pageTab } from "@/lib/seo/buildMetadata";
 
 export const metadata = pageTab(
   "Saved items",
-  "Products and services you have saved for later on KartSquare.",
+  "Products and services you have saved for later on kartsquare.",
 );
 
 export default function Saved() {

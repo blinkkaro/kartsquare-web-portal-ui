@@ -3,7 +3,7 @@ import ProviderServicesList from "../../../components/pages/provider/servicesLis
 
 export const metadata = pageTab(
   "My services",
-  "Create, edit, and publish the services you offer on KartSquare.",
+  "Create, edit, and publish the services you offer on kartsquare.",
 );
 
 export default ProviderServicesList;

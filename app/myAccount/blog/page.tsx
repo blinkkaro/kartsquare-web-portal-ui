@@ -4,7 +4,7 @@ import { pageTab } from "@/lib/seo/buildMetadata";
 
 export const metadata = pageTab(
   "My blog",
-  "Create and manage blog posts linked to your KartSquare professional profile.",
+  "Create and manage blog posts linked to your kartsquare professional profile.",
 );
 
 export default function Blog() {

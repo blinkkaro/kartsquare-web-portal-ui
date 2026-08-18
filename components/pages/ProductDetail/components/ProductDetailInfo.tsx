@@ -132,7 +132,6 @@ const ProductDetailInfo: React.FC<ProductDetailInfoProps> = ({
               fontWeight: 800,
               mb: 1.5,
               color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-              fontSize: { xs: "1.75rem", sm: "2.25rem" },
               lineHeight: 1.2,
             }}
           >

@@ -361,7 +361,7 @@ const Footer: React.FC = () => {
               fontSize: "0.875rem",
             }}
           >
-            © {currentYear} KartSquare. {t("allRightsReserved")}.
+            © {currentYear} kartsquare. {t("allRightsReserved")}.
           </Typography>
 
           <Box

@@ -9,13 +9,13 @@ import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 const storeFallback = seoPublic({
   title: "Store — products from verified suppliers",
   description:
-    "Browse wholesale and retail products on KartSquare — electronics, industrial supplies, textiles, chemicals, and more from verified Indian suppliers.",
+    "Browse wholesale and retail products on kartsquare — electronics, industrial supplies, textiles, chemicals, and more from verified Indian suppliers.",
   path: "/store",
   keywords: [
     "B2B products India",
     "verified suppliers",
     "wholesale marketplace",
-    "KartSquare store",
+    "kartsquare store",
   ],
 });
 
@@ -27,9 +27,9 @@ export async function generateMetadata(): Promise<Metadata> {
 const storeItemListJsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  name: "KartSquare Store — Products from Verified Suppliers",
+  name: "kartsquare Store — Products from Verified Suppliers",
   description:
-    "Browse wholesale and retail products on KartSquare — electronics, industrial supplies, textiles, chemicals, and more from verified Indian suppliers.",
+    "Browse wholesale and retail products on kartsquare — electronics, industrial supplies, textiles, chemicals, and more from verified Indian suppliers.",
   url: `${SITE_URL}/store`,
 };
 
@@ -46,7 +46,7 @@ function StoreFallback() {
         Store — products from verified suppliers
       </Typography>
       <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600, mx: "auto" }}>
-        Browse wholesale and retail products on KartSquare — electronics,
+        Browse wholesale and retail products on kartsquare — electronics,
         industrial supplies, textiles, chemicals, and more from verified
         Indian suppliers.
       </Typography>

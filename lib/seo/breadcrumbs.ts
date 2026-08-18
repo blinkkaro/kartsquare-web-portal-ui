@@ -22,7 +22,7 @@ export function buildBreadcrumbJsonLd(items: BreadcrumbEntry[]) {
 }
 
 /**
- * Common breadcrumb trails for KartSquare
+ * Common breadcrumb trails for kartsquare
  */
 export const BREADCRUMBS = {
   HOME: [{ name: "Home", item: "/" }],

@@ -184,7 +184,7 @@ const MapView: React.FC = () => {
             server always renders — the H1 needs to live here too, not just
             in the loaded-map branch below. */}
         <Typography component="h1" sx={{ position: "absolute", width: 1, height: 1, p: 0, m: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
-          Find businesses & services near you on the KartSquare map
+          Find businesses & services near you on the kartsquare map
         </Typography>
         <p>{t("loadingMap")}</p>
       </Box>
@@ -200,7 +200,7 @@ const MapView: React.FC = () => {
       }}
     >
       <Typography component="h1" sx={{ position: "absolute", width: 1, height: 1, p: 0, m: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
-        Find businesses & services near you on the KartSquare map
+        Find businesses & services near you on the kartsquare map
       </Typography>
       <GoogleMap
         mapContainerStyle={mapContainerStyle}

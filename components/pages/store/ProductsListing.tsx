@@ -344,7 +344,7 @@ const ProductsListingView: React.FC = () => {
           /\D/g,
           "",
         );
-      const message = `Hi, I found your listing for ${product.name} on KartSquare. I am interested to know more.`;
+      const message = `Hi, I found your listing for ${product.name} on kartsquare. I am interested to know more.`;
       const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, "_blank");
       setAnimatingContact(null);

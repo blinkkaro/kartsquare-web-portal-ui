@@ -4,7 +4,7 @@ import { pageTab } from "@/lib/seo/buildMetadata";
 
 export const metadata = pageTab(
   "Saved addresses",
-  "Manage delivery and service addresses for bookings and orders on KartSquare.",
+  "Manage delivery and service addresses for bookings and orders on kartsquare.",
 );
 
 export default function Address() {

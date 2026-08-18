@@ -163,7 +163,6 @@ export default function SupplierProductsPage() {
                         fontWeight="800"
                         sx={{
                             color: isDark ? "white" : COLORS.PRIMARY_PURPLE,
-                            fontSize: { xs: '2rem', md: '2.5rem' },
                             mb: 1
                         }}
                     >

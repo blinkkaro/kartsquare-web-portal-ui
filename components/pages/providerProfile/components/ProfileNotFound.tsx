@@ -111,7 +111,6 @@ const ProfileNotFound = () => {
                         variant="h1"
                         sx={{
                             position: "absolute",
-                            fontSize: "8rem",
                             fontWeight: 900,
                             color: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)",
                             zIndex: 0

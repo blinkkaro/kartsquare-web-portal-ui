@@ -172,7 +172,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                       </>
                     ) : (
                       <>
-                        <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2, mb: 0.5, fontSize: { xs: '1rem', sm: '1.25rem' } }}>
+                        <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2, mb: 0.5 }}>
                           {watch("landmark") || watch("building_no") || watch("address")?.split(',')[0] || "Locating..."}
                         </Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
@@ -255,7 +255,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
               </Box>
 
               <Box sx={{ flexGrow: 1 }}>
-                <Typography variant="h6" sx={{ mb: 2.5, fontWeight: 700, fontSize: '1.25rem' }}>
+                <Typography variant="h6" sx={{ mb: 2.5, fontWeight: 700 }}>
                   Enter complete address
                 </Typography>
 

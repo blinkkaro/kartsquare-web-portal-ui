@@ -10,7 +10,7 @@ import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 const storeProductsFallback = seoPublic({
   title: "Browse all products",
   description:
-    "Search and filter products from KartSquare suppliers — compare prices, SKUs, and availability across categories.",
+    "Search and filter products from kartsquare suppliers — compare prices, SKUs, and availability across categories.",
   path: "/store/products",
   keywords: ["product catalog", "supplier products", "B2B catalog India"],
 });
@@ -27,7 +27,7 @@ function StoreProductsFallback() {
         Browse all products
       </Typography>
       <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600, mx: "auto" }}>
-        Search and filter products from KartSquare suppliers — compare
+        Search and filter products from kartsquare suppliers — compare
         prices, SKUs, and availability across categories.
       </Typography>
     </Box>

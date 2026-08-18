@@ -104,7 +104,7 @@ export default function PostModel({ onClose }: { onClose: () => void }) {
           <IconButton onClick={handleBackToGrid} size="small">
             <ArrowBack />
           </IconButton>
-          <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: 600 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
             {activeTab === 0 ? t("myPosts") : (t as any)("myReels")}
           </Typography>
         </Box>

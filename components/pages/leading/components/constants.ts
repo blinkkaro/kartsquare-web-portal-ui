@@ -41,7 +41,7 @@ export const getSuccessStories = (t: any) => [
   {
     name: "Rajesh Kumar",
     role: "Kirana Store Owner",
-    tagline: "Since listing on KartSquare, my daily footfall has doubled. People in my locality now find my shop easily when they search for groceries online.",
+    tagline: "Since listing on kartsquare, my daily footfall has doubled. People in my locality now find my shop easily when they search for groceries online.",
     image:
       "https://images.unsplash.com/photo-1596484552834-6a58f84cc235?w=500&auto=format&fit=crop&q=60", // Indian man smiling
   },

@@ -6,7 +6,7 @@ import SupplierDashboardClientLayout from "./SupplierDashboardClientLayout";
 export const metadata: Metadata = seoPrivate({
   title: "Supplier dashboard",
   description:
-    "Manage your KartSquare supplier store, products, orders, and marketing tools.",
+    "Manage your kartsquare supplier store, products, orders, and marketing tools.",
 });
 
 export default function SupplierDashboardLayout({

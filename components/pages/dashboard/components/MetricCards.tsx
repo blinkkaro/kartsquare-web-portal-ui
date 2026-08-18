@@ -137,7 +137,6 @@ const MetricCard: React.FC<MetricCardProps> = ({
                     : isDark
                       ? COLORS.TEXT.PRIMARY_DARK
                       : COLORS.TEXT.PRIMARY_LIGHT,
-                  fontSize: { xs: "1.25rem", md: "1.5rem" },
                 }}
               >
                 {value}

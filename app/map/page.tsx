@@ -9,9 +9,9 @@ import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 const mapFallback = seoPublic({
   title: "Map — find businesses & services",
   description:
-    "Explore KartSquare providers, suppliers, and service areas on an interactive map. Discover local professionals near you.",
+    "Explore kartsquare providers, suppliers, and service areas on an interactive map. Discover local professionals near you.",
   path: "/map",
-  keywords: ["service map", "local providers India", "business map KartSquare"],
+  keywords: ["service map", "local providers India", "business map kartsquare"],
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,11 +21,11 @@ export async function generateMetadata(): Promise<Metadata> {
 const mapWebPageJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Map — find businesses & services | KartSquare",
+  name: "Map — find businesses & services | kartsquare",
   description:
-    "Explore KartSquare providers, suppliers, and service areas on an interactive map. Discover local professionals near you.",
+    "Explore kartsquare providers, suppliers, and service areas on an interactive map. Discover local professionals near you.",
   url: `${SITE_URL}/map`,
-  isPartOf: { "@type": "WebSite", url: SITE_URL, name: "KartSquare" },
+  isPartOf: { "@type": "WebSite", url: SITE_URL, name: "kartsquare" },
 };
 
 export default function MapPage() {

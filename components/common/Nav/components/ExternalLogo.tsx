@@ -19,7 +19,7 @@ const ExternalLogo: React.FC<ExternalLogoProps> = ({ mode }) => {
     <LogoContainer>
       <Image
         src="/logo.svg"
-        alt="Kartsquare Logo"
+        alt="kartsquare Logo"
         width={44}
         height={44}
         priority
@@ -36,7 +36,7 @@ const ExternalLogo: React.FC<ExternalLogoProps> = ({ mode }) => {
               : COLORS.TEXT.PRIMARY_LIGHT,
         }}
       >
-        Kartsquare
+        kartsquare
       </Box>
     </LogoContainer>
   );

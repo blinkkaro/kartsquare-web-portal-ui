@@ -4,7 +4,7 @@ import { pageTab } from "@/lib/seo/buildMetadata";
 
 export const metadata = pageTab(
   "My account",
-  "Overview of your KartSquare profile, shortcuts, and account activity.",
+  "Overview of your kartsquare profile, shortcuts, and account activity.",
 );
 
 export default function MyAccount() {

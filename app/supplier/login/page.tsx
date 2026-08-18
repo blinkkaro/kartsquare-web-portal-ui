@@ -7,7 +7,7 @@ import { seoAuth } from "@/lib/seo/buildMetadata";
 export const metadata = seoAuth({
   title: "Supplier login",
   description:
-    "Sign in to your KartSquare supplier account to manage products, orders, and your storefront.",
+    "Sign in to your kartsquare supplier account to manage products, orders, and your storefront.",
 });
 
 export default function SupplierLoginPage() {

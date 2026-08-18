@@ -73,7 +73,15 @@
       "Bash(curl -s https://raw.githubusercontent.com/nextlevelbuilder/ui-ux-pro-max-skill/main/README.md)",
       "Bash(npm install *)",
       "Bash(pkill -f \"npm run dev\")",
-      "Bash(npx eslint *)"
+      "Bash(npx eslint *)",
+      "Bash(awk -F/ '{print $1\"/\"$2}')",
+      "Bash(grep -rlE 'variant=\"h[1-6]\"' components --include=\"*.tsx\" -maxdepth 1)",
+      "Bash(sed -i '' -e 's/KartSquare/kartsquare/g' -- \"app/layout.tsx\")",
+      "Bash(echo \"exit=$?\")",
+      "Bash(curl -sf -o /dev/null -w \"%{http_code}\" http://localhost:3000/delete-account --max-time 3)",
+      "Bash(gh repo *)",
+      "Bash(curl -s http://localhost:5800/api/v1/appConfig/getAppPrivacyPolicy --max-time 5)",
+      "Bash(curl -s http://localhost:5800/api/v1/appConfig/getAppTermsAndConditions --max-time 5)"
     ]
   }
 }

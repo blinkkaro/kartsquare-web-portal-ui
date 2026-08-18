@@ -176,7 +176,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
   const handleSocialShare = (platform: string) => {
     const url = encodeURIComponent(getProfileUrl());
     const text = encodeURIComponent(
-      `Check out ${profile?.first_name} ${profile?.last_name}'s profile on Kartsquare!`,
+      `Check out ${profile?.first_name} ${profile?.last_name}'s profile on kartsquare!`,
     );
 
     let shareUrl = "";
@@ -407,7 +407,6 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                 sx={{
                   fontWeight: 800,
                   color: COLORS.WHITE,
-                  fontSize: { xs: "1.35rem", sm: "1.6rem", md: "1.75rem" },
                   lineHeight: 1.2,
                 }}
               >
@@ -464,7 +463,6 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     color: textPrimary,
                     textAlign: "center",
                     mb: 1,
-                    fontSize: { xs: "1.1rem", sm: "1.2rem" },
                     lineHeight: 1.3,
                   }}
                 >
@@ -502,7 +500,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       (isSupplier
                         ? (profile as ISupplierProfile).description
                         : "") ||
-                      "Professional service provider on Kartsquare.";
+                      "Professional service provider on kartsquare.";
                     const words = bioText.split(" ");
                     const WORD_LIMIT = 12;
                     const isLongBio = words.length > WORD_LIMIT;
@@ -858,7 +856,6 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   fontWeight: 700,
                   color: textPrimary,
                   mb: 0.5,
-                  fontSize: "1.35rem",
                 }}
               >
                 {isSupplier
@@ -1261,7 +1258,6 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       sx={{
                         fontWeight: 700,
                         color: textPrimary,
-                        fontSize: { xs: "1.1rem", md: "1.25rem" },
                       }}
                     >
                       Our location
@@ -1323,7 +1319,6 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       sx={{
                         fontWeight: 700,
                         color: textPrimary,
-                        fontSize: { xs: "1.1rem", md: "1.25rem" },
                       }}
                     >
                       {t("contactUs") || "Contact us"}

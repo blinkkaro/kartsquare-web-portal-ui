@@ -5,7 +5,7 @@ import React from "react";
 
 export const metadata = pageTab(
   "Supplier orders",
-  "Track and fulfil orders from your KartSquare storefront.",
+  "Track and fulfil orders from your kartsquare storefront.",
 );
 
 export default function Orders() {

@@ -10,13 +10,6 @@ function Title({ title, subtitle }: { title: string; subtitle?: string }) {
         sx={{
           fontWeight: 700,
           color: "text.primary",
-          fontSize: {
-            xs: "1.5rem",
-            sm: "1.75rem",
-            md: "2rem",
-            lg: "2.5rem",
-            xl: "4rem",
-          },
           lineHeight: 1.2,
         }}
       >

@@ -185,7 +185,7 @@ export default function SmtpSettings({ role }: SmtpSettingsProps) {
                     <TextField
                       {...field}
                       label={translate("from_name", "From Name")}
-                      placeholder="Kartsquare Shop"
+                      placeholder="kartsquare Shop"
                       fullWidth
                       error={!!fieldState.error}
                       helperText={fieldState.error?.message}

@@ -5,7 +5,7 @@ import { seoPrivate } from "@/lib/seo/buildMetadata";
 export const metadata: Metadata = seoPrivate({
   title: "Settings",
   description:
-    "Update your business profile, KYC details, and bank information for your KartSquare supplier account.",
+    "Update your business profile, KYC details, and bank information for your kartsquare supplier account.",
 });
 
 export default function SupplierSettingsLayout({ children }: { children: ReactNode }) {

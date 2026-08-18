@@ -8,7 +8,7 @@ export function GET(req: NextRequest) {
   const titleRaw = searchParams.get("title") ?? "";
   const descRaw = searchParams.get("desc") ?? "";
 
-  const heading = (titleRaw ? decodeURIComponent(titleRaw) : "KartSquare – B2B Marketplace").slice(0, 80);
+  const heading = (titleRaw ? decodeURIComponent(titleRaw) : "kartsquare – B2B Marketplace").slice(0, 80);
   const sub = (descRaw ? decodeURIComponent(descRaw) : "Products & services from verified suppliers. Buy and book online.").slice(0, 120);
 
   return new ImageResponse(
@@ -65,7 +65,7 @@ export function GET(req: NextRequest) {
               letterSpacing: "-0.5px",
             }}
           >
-            KartSquare
+            kartsquare
           </div>
           <div
             style={{

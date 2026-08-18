@@ -58,7 +58,7 @@ const storySteps = [
   { title: "How the founders met", text: "Pratham, Yash and Gaurang grew up watching Jaipur's local businesses hustle for word-of-mouth — and knew technology owed them better distribution." },
   { title: "The first idea", text: "What if every local service provider got the same discovery, trust and reviews that changed how India orders food — built for services instead?" },
   { title: "Building the MVP", text: "A lean, scrappy first version — verified provider profiles, real reviews, and a search that actually understood 'electrician near me'." },
-  { title: "The first customer", text: "A Jaipur electrician got his first booking through KartSquare within a week of signing up. That phone call is still the reason we ship what we ship." },
+  { title: "The first customer", text: "A Jaipur electrician got his first booking through kartsquare within a week of signing up. That phone call is still the reason we ship what we ship." },
   { title: "Growth", text: "Word spread between providers before it spread between customers. Referrals compounded across categories and cities." },
   { title: "Today", text: "50,000+ verified providers and 2 million monthly customers across 200+ cities — still led out of Jaipur." },
 ];
@@ -162,12 +162,12 @@ const categories = [
 ];
 
 const faqs = [
-  { q: "What is KartSquare?", a: "KartSquare is a marketplace connecting verified local service providers — electricians, salons, tutors and more — with customers searching for them, across 200+ Indian cities." },
+  { q: "What is kartsquare?", a: "kartsquare is a marketplace connecting verified local service providers — electricians, salons, tutors and more — with customers searching for them, across 200+ Indian cities." },
   { q: "How does provider verification work?", a: "Every provider goes through a checks before they can appear in search results and receive bookings, so customers know they're dealing with a real, accountable business." },
-  { q: "Is KartSquare free for customers?", a: "Yes. Searching, browsing profiles and reviews, and contacting providers is free for customers." },
+  { q: "Is kartsquare free for customers?", a: "Yes. Searching, browsing profiles and reviews, and contacting providers is free for customers." },
   { q: "How do providers get paid?", a: "Providers receive payouts directly and quickly — no 30-day waits, no chasing invoices." },
-  { q: "Which cities is KartSquare available in?", a: "We're live in 200+ cities across India and growing, with new cities added regularly." },
-  { q: "How do I list my business on KartSquare?", a: "Head to the Business Listing page from the navbar to create a free provider profile and start getting discovered." },
+  { q: "Which cities is kartsquare available in?", a: "We're live in 200+ cities across India and growing, with new cities added regularly." },
+  { q: "How do I list my business on kartsquare?", a: "Head to the Business Listing page from the navbar to create a free provider profile and start getting discovered." },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -352,7 +352,7 @@ export default function AboutUsView() {
 
             <motion.div variants={fadeUp}>
               <Typography sx={{ color: secondaryTxt, fontSize: { xs: "1.05rem", md: "1.3rem" }, lineHeight: 1.65, maxWidth: 640, mx: "auto", mb: 5 }}>
-                Millions of people search for a trustworthy electrician, salon or tutor every day — and can&apos;t tell who&apos;s real. KartSquare verifies local service providers and puts them in front of the customers already looking.
+                Millions of people search for a trustworthy electrician, salon or tutor every day — and can&apos;t tell who&apos;s real. kartsquare verifies local service providers and puts them in front of the customers already looking.
               </Typography>
             </motion.div>
 
@@ -527,7 +527,7 @@ export default function AboutUsView() {
 
         {/* ══════════════════════════ SECTION 5 — OUR SOLUTION ══════════════════════════ */}
         <Box sx={{ mb: { xs: 10, md: 14 } }}>
-          <SectionHeading kicker="Our Solution" title="What KartSquare does differently" primaryTxt={primaryTxt} secondaryTxt={secondaryTxt} />
+          <SectionHeading kicker="Our Solution" title="What kartsquare does differently" primaryTxt={primaryTxt} secondaryTxt={secondaryTxt} />
           <Reveal variants={stagger}>
             <Grid container spacing={2.5} sx={{ mb: 6 }}>
               {solutionFeatures.map((f, i) => (
@@ -553,7 +553,7 @@ export default function AboutUsView() {
               <Grid size={{ xs: 12, md: 6 }}>
                 <motion.div variants={fadeUp} style={{ height: "100%" }}>
                   <Box sx={{ border: `1.5px solid ${border}`, borderRadius: "24px", p: { xs: 3, md: 3.5 }, height: "100%" }}>
-                    <Typography sx={{ fontWeight: 800, fontSize: "1.1rem", color: secondaryTxt, mb: 2.5 }}>Before KartSquare</Typography>
+                    <Typography sx={{ fontWeight: 800, fontSize: "1.1rem", color: secondaryTxt, mb: 2.5 }}>Before kartsquare</Typography>
                     {beforeAfter.before.map((t, i) => (
                       <Box key={i} sx={{ display: "flex", gap: 1.5, alignItems: "flex-start", mb: 1.75 }}>
                         <CloseIcon sx={{ color: "#e63946", fontSize: 18, mt: 0.2, flexShrink: 0 }} />
@@ -569,7 +569,7 @@ export default function AboutUsView() {
                     border: `1.5px solid ${COLORS.PRIMARY_PURPLE}`, borderRadius: "24px", p: { xs: 3, md: 3.5 }, height: "100%",
                     bgcolor: COLORS.PURPLE_ALPHA_04,
                   }}>
-                    <Typography sx={{ fontWeight: 800, fontSize: "1.1rem", color: COLORS.PRIMARY_PURPLE, mb: 2.5 }}>With KartSquare</Typography>
+                    <Typography sx={{ fontWeight: 800, fontSize: "1.1rem", color: COLORS.PRIMARY_PURPLE, mb: 2.5 }}>With kartsquare</Typography>
                     {beforeAfter.after.map((t, i) => (
                       <Box key={i} sx={{ display: "flex", gap: 1.5, alignItems: "flex-start", mb: 1.75 }}>
                         <CheckIcon sx={{ color: "#0d9488", fontSize: 18, mt: 0.2, flexShrink: 0 }} />
@@ -585,7 +585,7 @@ export default function AboutUsView() {
 
         {/* ══════════════════════════ CATEGORIES ══════════════════════════ */}
         <Box sx={{ mb: { xs: 10, md: 14 } }}>
-          <SectionHeading kicker="What's on KartSquare" title="Whatever the job, it's here" primaryTxt={primaryTxt} secondaryTxt={secondaryTxt} />
+          <SectionHeading kicker="What's on kartsquare" title="Whatever the job, it's here" primaryTxt={primaryTxt} secondaryTxt={secondaryTxt} />
           <Reveal variants={stagger}>
             <Grid container spacing={2}>
               {categories.map((c, i) => (
@@ -640,7 +640,7 @@ export default function AboutUsView() {
 
         {/* ══════════════════════════ SECTION 7 — FOUNDERS ══════════════════════════ */}
         <Box sx={{ mb: { xs: 10, md: 14 } }}>
-          <SectionHeading kicker="Meet the Founders" title="The trio behind KartSquare" sub="Pratham leads KartSquare, building alongside co-founders Yash and Gaurang." primaryTxt={primaryTxt} secondaryTxt={secondaryTxt} />
+          <SectionHeading kicker="Meet the Founders" title="The trio behind kartsquare" sub="Pratham leads kartsquare, building alongside co-founders Yash and Gaurang." primaryTxt={primaryTxt} secondaryTxt={secondaryTxt} />
           <Reveal variants={stagger}>
             <Grid container spacing={3}>
               {founders.map((f, i) => (
@@ -850,7 +850,7 @@ export default function AboutUsView() {
                 Ready to build the future with us?
               </Typography>
               <Typography sx={{ color: "rgba(255,255,255,0.8)", mb: 4, maxWidth: 480, mx: "auto", fontSize: "1.05rem", position: "relative" }}>
-                Whether you need a service or provide one — KartSquare is where India connects.
+                Whether you need a service or provide one — kartsquare is where India connects.
               </Typography>
               <Box sx={{ display: "flex", gap: 2, justifyContent: "center", flexWrap: "wrap", position: "relative" }}>
                 <Box

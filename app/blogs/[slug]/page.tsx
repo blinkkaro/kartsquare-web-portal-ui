@@ -23,7 +23,7 @@ export async function generateMetadata({
   const blog = findBlog(slug);
   if (!blog) {
     return {
-      title: { absolute: "Blog post not found | KartSquare" },
+      title: { absolute: "Blog post not found | kartsquare" },
       description: "The article you are looking for is not available.",
       robots: { index: false, follow: true },
     };
@@ -32,15 +32,15 @@ export async function generateMetadata({
   const path = canonicalBlogPath(blog);
   const canonical = `${SITE_URL}${path}`;
   const rawTitle = blog.metaTitle || blog.title;
-  const titleText = /KartSquare/i.test(rawTitle)
+  const titleText = /kartsquare/i.test(rawTitle)
     ? rawTitle
-    : `${rawTitle} | KartSquare`;
+    : `${rawTitle} | kartsquare`;
   const keywords = blog.tags?.length ? blog.tags : undefined;
   const description =
     blog.metaDescription?.trim() ||
     blog.excerpt?.trim() ||
     blog.description?.slice(0, 160) ||
-    `Read ${blog.title} on the KartSquare blog.`;
+    `Read ${blog.title} on the kartsquare blog.`;
 
   return {
     title: { absolute: titleText },
@@ -51,7 +51,7 @@ export async function generateMetadata({
       title: titleText,
       description,
       url: canonical,
-      siteName: "KartSquare",
+      siteName: "kartsquare",
       type: "article",
       locale: "en_IN",
       publishedTime: blog.date,
@@ -83,10 +83,10 @@ export default async function BlogDetailsPage({
         description: blog.metaDescription || blog.excerpt,
         image: blog.coverImage,
         datePublished: blog.date,
-        author: { "@type": "Organization", name: blog.author || "KartSquare" },
+        author: { "@type": "Organization", name: blog.author || "kartsquare" },
         publisher: {
           "@type": "Organization",
-          name: "KartSquare",
+          name: "kartsquare",
           url: SITE_URL,
         },
         mainEntityOfPage: {

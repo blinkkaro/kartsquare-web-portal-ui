@@ -361,7 +361,6 @@ const StoreView: React.FC = () => {
                         mt: 2,
                         mb: 1,
                         lineHeight: 1.1,
-                        fontSize: { xs: "1.75rem", md: "3.2rem" },
                         letterSpacing: -1,
                         textShadow: "0 2px 10px rgba(0,0,0,0.3)",
                       }}
@@ -374,7 +373,6 @@ const StoreView: React.FC = () => {
                         mb: 3,
                         opacity: 0.9,
                         fontWeight: 500,
-                        fontSize: { xs: "0.9rem", md: "1.1rem" },
                         maxWidth: 500,
                       }}
                     >
@@ -416,7 +414,6 @@ const StoreView: React.FC = () => {
               mb: 2,
               color: isDark ? "text.primary" : "#0f172a",
               letterSpacing: -1,
-              fontSize: { xs: "1.75rem", md: "2.8rem" },
             }}
           >
             Search Across{" "}

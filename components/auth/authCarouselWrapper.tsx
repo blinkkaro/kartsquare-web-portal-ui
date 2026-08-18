@@ -139,7 +139,7 @@ function AuthCarouselWrapper({
             >
               <Image
                 src="/logo.svg"
-                alt="KartSquare Logo"
+                alt="kartsquare Logo"
                 fill
                 style={{ objectFit: "contain" }}
                 priority
@@ -156,7 +156,7 @@ function AuthCarouselWrapper({
                 fontSize: { xs: "1.1rem", lg: "3rem", xl: "4rem" },
               }}
             >
-              Kartsquare
+              kartsquare
             </Typography>
           </Box>
 

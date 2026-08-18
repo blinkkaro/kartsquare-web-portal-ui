@@ -146,7 +146,7 @@ export default function ChatWindow({ conversation, currentUserId, token, socket,
                         <ArrowBackIcon />
                     </IconButton>
                     <Avatar src={otherUserAvatar} alt={title} sx={{ width: 44, height: 44, mr: 2 }} />
-                    <Typography variant="h6" sx={{ fontWeight: 600, fontSize: "1.1rem" }}>{title}</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>{title}</Typography>
                 </Box>
                 <IconButton>
                     <MoreVertIcon sx={{ color: "text.secondary" }} />
