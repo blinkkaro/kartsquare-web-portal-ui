@@ -26,7 +26,15 @@ export default function ChatInterface() {
   const [chatHistory, setChatHistory] = useState<AIMessage[]>([]);
   const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
+  // One id per chat session so the backend can remember what we were just
+  // talking about (e.g. "sasta wala dikhao" after a search) without us
+  // having to resend the whole conversation on every message.
+  const sessionIdRef = useRef<string>(
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`
+  );
+
   const { search, isLoading } = useAISearch();
   const recognitionRef = useRef<any>(null);
 
@@ -91,7 +99,7 @@ export default function ChatInterface() {
     setSearchValue("");
 
     try {
-      const response = await search(query);
+      const response = await search(query, sessionIdRef.current);
       if (!response) return;
 
       const assistantMessage: AIMessage = {
