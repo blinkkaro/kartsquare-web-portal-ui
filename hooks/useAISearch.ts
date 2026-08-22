@@ -14,7 +14,7 @@ interface UseAISearchReturn {
   suggestedCategories: SuggestedCategory[];
   isLoading: boolean;
   error: string | null;
-  search: (query: string) => Promise<AgenticSearchResponse | undefined>;
+  search: (query: string, sessionId?: string) => Promise<AgenticSearchResponse | undefined>;
   messages: string;
 }
 
@@ -27,7 +27,8 @@ export const useAISearch = (): UseAISearchReturn => {
   const [error, setError] = useState<string | null>(null);
 
   const mutation = useMutation({
-    mutationFn: (query: string) => aiService.agenticSearch(query),
+    mutationFn: ({ query, sessionId }: { query: string; sessionId?: string }) =>
+      aiService.agenticSearch(query, sessionId),
     onSuccess: (data: AgenticSearchResponse) => {
       setError(null);
       if (isSuccessResponse(data)) {
@@ -48,9 +49,9 @@ export const useAISearch = (): UseAISearchReturn => {
     },
   });
 
-  const search = async (query: string) => {
+  const search = async (query: string, sessionId?: string) => {
     if (!query.trim()) return;
-    return await mutation.mutateAsync(query);
+    return await mutation.mutateAsync({ query, sessionId });
   };
 
   return {

@@ -17,16 +17,16 @@ export const aiService = {
    */
   async agenticSearch(
     searchQuery: string,
+    sessionId?: string,
   ): Promise<AgenticSearchResponse> {
-    const payload: AgenticSearchRequest = { searchQuery };
-    
+    const payload: AgenticSearchRequest = { searchQuery, sessionId };
+
     // apiClient.post returns ApiResponse<T> where data is T
     // The backend response is already in response.data
     const response = await POST<AgenticSearchResponse>(
       AI_ENDPOINTS.AGENTIC_SEARCH,
       payload,
     );
-    console.log(response);
     // response.data contains the actual backend response
     return response.data;
   },
