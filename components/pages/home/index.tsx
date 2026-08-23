@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useMemo, useState } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import {
   Box,
   Typography,
@@ -22,8 +22,6 @@ import Blogs from "./components/Blogs";
 import TopSuggestions from "./components/TopSuggestions";
 import { useGetStories } from "@/hooks/useStories";
 import CompactMapView from "./components/CompactMapView";
-import GoLiveToggle from "@/components/liveLocation/GoLiveToggle";
-import { getUserRole } from "@/utils/auth";
 import { Posts, Visibility } from "@/services/post/postInterfaces";
 import AdvertisementSlider from "./components/AdvertisementSlider";
 import { AdvertiseActiveAd } from "@/services/advertise/advertise.intreface";
@@ -57,18 +55,6 @@ function HomeView() {
     limit: 10,
   });
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
-  // The map moves between the sidebar and the feed column at lg; the Go Live
-  // card follows it so it always sits directly above the map the user can see.
-  const isLgUp = useMediaQuery((theme) => theme.breakpoints.up("lg"));
-
-  // Only providers and suppliers may broadcast. Read after mount: the role
-  // lives in encrypted browser storage, so reading it during render would make
-  // the server and client markup disagree on a page that is server-rendered.
-  const [canBroadcast, setCanBroadcast] = useState(false);
-  useEffect(() => {
-    const role = getUserRole();
-    setCanBroadcast(role === "SERVICE_PROVIDER" || role === "SUPPLIER");
-  }, []);
 
   // Ref for the loader element at the bottom
   const loaderRef = useRef<HTMLDivElement>(null);
@@ -178,12 +164,6 @@ function HomeView() {
             }}
           >
             <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              {/* Live location — rendered here only on lg, where this is the
-                  visible map. Exactly one instance may mount: a second would
-                  open its own geolocation watch and fight over the same
-                  broadcast state. */}
-              {canBroadcast && isLgUp && <GoLiveToggle />}
-
               {/* Compact Map View */}
               <CompactMapView height="300px" />
               <Blogs />
@@ -212,13 +192,10 @@ function HomeView() {
             {/* Compact Map - Mobile/Tablet View */}
             <Box
               sx={{
-                display: { xs: "flex", lg: "none" },
-                flexDirection: "column",
-                gap: 2,
+                display: { lg: "none", md: "block" },
                 mt: 3,
               }}
             >
-              {canBroadcast && !isLgUp && <GoLiveToggle />}
               <CompactMapView height="300px" />
             </Box>
 
