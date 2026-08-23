@@ -1277,34 +1277,7 @@ export type TranslationKey =
   | "Enter_value"
   | "Select_option"
   | "please_provide_rating"
-  | "rate_your_experience"
-  // Live location
-  | "liveLocationTitle"
-  | "liveLocationLive"
-  | "liveLocationOnBody"
-  | "liveLocationOffBody"
-  | "liveLocationToggleAria"
-  | "liveLocationThrottled"
-  | "liveLocationRadius"
-  | "liveLocationRadiusDefault"
-  | "liveLocationLastUpdate"
-  | "liveLocationAccuracy"
-  | "liveLocationQueued"
-  | "liveLocationChipTooltip"
-  | "liveLocationExpiresIn"
-  | "liveLocationConsentTitle"
-  | "liveLocationConsentIntro"
-  | "liveLocationConsentWhatTitle"
-  | "liveLocationConsentWhatBody"
-  | "liveLocationConsentWhoTitle"
-  | "liveLocationConsentWhoBody"
-  | "liveLocationConsentExpiryTitle"
-  | "liveLocationConsentExpiryBody"
-  | "liveLocationConsentStopTitle"
-  | "liveLocationConsentStopBody"
-  | "liveLocationConsentBrowserNote"
-  | "liveLocationConsentAccept"
-  | "notNow";
+  | "rate_your_experience";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
