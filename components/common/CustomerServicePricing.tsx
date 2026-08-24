@@ -28,6 +28,7 @@ interface CustomerServicePricingProps {
   priceItems?: ServicePriceItem[];
   currency?: string;
   onGetQuote?: () => void;
+  hideHeader?: boolean;
 }
 
 const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
@@ -36,6 +37,7 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
   priceItems,
   currency = "INR",
   onGetQuote,
+  hideHeader = false,
 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -131,8 +133,8 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
     priceCatalogUrls.length > 0
   ) {
     return (
-      <Box sx={{ mt: 3 }}>
-        {renderSectionHeader("price_catalog_subtitle")}
+      <Box sx={{ mt: hideHeader ? 0 : 3 }}>
+        {!hideHeader && renderSectionHeader("price_catalog_subtitle")}
 
         <Typography
           variant="caption"
@@ -289,71 +291,70 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
     priceItems &&
     priceItems.length > 0
   ) {
+    const currencySymbol = currency === "INR" ? "₹" : `${currency} `;
+
     return (
-      <Box sx={{ mt: 3 }}>
-        {renderSectionHeader("price_catalog_list_subtitle")}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <Box sx={{ mt: hideHeader ? 0 : 3 }}>
+        {!hideHeader && renderSectionHeader("price_catalog_list_subtitle")}
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.25 }}>
           {priceItems.map((item, index) => (
-            <Paper
+            <Box
               key={index}
-              variant="outlined"
               sx={{
                 p: 2,
-                bgcolor: isDark
-                  ? "transparent"
-                  : COLORS.BACKGROUND.SECONDARY_LIGHT,
-                borderLeft: `4px solid ${COLORS.PRIMARY_PURPLE}`,
-                borderColor: borderColor,
-                borderRadius: 2,
-                transition: "box-shadow 0.2s ease",
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "space-between",
+                gap: 2,
+                bgcolor: isDark ? "rgba(255,255,255,0.03)" : "white",
+                border: `1px solid ${borderColor}`,
+                borderRadius: "14px",
+                transition: "transform 0.15s ease, box-shadow 0.15s ease",
                 "&:hover": {
+                  transform: "translateY(-1px)",
                   boxShadow: isDark
-                    ? "0 2px 12px rgba(0,0,0,0.2)"
-                    : `0 2px 12px ${COLORS.PURPLE_ALPHA_10}`,
+                    ? "0 4px 16px rgba(0,0,0,0.25)"
+                    : `0 4px 16px ${COLORS.PURPLE_ALPHA_10}`,
+                  borderColor: isDark ? "rgba(255,255,255,0.16)" : COLORS.PURPLE_ALPHA_20,
                 },
               }}
             >
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  mb: item.service_desc ? 1 : 0,
-                  gap: 1,
-                }}
-              >
+              <Box sx={{ minWidth: 0 }}>
                 <Typography
-                  variant="subtitle2"
                   fontWeight={700}
-                  sx={{ color: textPrimary, fontSize: "0.95rem" }}
+                  sx={{ color: textPrimary, fontSize: "0.95rem", mb: item.service_desc ? 0.4 : 0 }}
                 >
                   {item.service_name}
                 </Typography>
-                <Typography
-                  variant="subtitle2"
-                  fontWeight={700}
-                  sx={{
-                    color: COLORS.PRIMARY_PURPLE,
-                    fontSize: "0.95rem",
-                    flexShrink: 0,
-                  }}
-                >
-                  {currency} {item.price}
-                </Typography>
+                {item.service_desc && (
+                  <Typography
+                    sx={{
+                      color: textSecondary,
+                      fontSize: "0.82rem",
+                      lineHeight: 1.45,
+                    }}
+                  >
+                    {item.service_desc}
+                  </Typography>
+                )}
               </Box>
-              {item.service_desc && (
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: textSecondary,
-                    fontSize: "0.875rem",
-                    lineHeight: 1.45,
-                  }}
-                >
-                  {item.service_desc}
-                </Typography>
-              )}
-            </Paper>
+              <Box
+                sx={{
+                  flexShrink: 0,
+                  bgcolor: isDark ? "rgba(130, 72, 247, 0.14)" : COLORS.PURPLE_ALPHA_10,
+                  color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+                  borderRadius: "10px",
+                  px: 1.4,
+                  py: 0.6,
+                  fontWeight: 800,
+                  fontSize: "0.9rem",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {currencySymbol}
+                {item.price}
+              </Box>
+            </Box>
           ))}
         </Box>
       </Box>

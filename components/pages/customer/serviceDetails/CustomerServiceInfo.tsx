@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Box, Typography, Button, useTheme } from "@mui/material";
+import { Box, Typography, Button, Chip, useTheme } from "@mui/material";
 import { Bolt, Verified } from "@mui/icons-material";
 import { COLORS } from "../../../../constants/colors";
 import { english } from "../../../../features/i18n/en";
@@ -13,7 +13,6 @@ interface CustomerServiceInfoProps {
 }
 
 const CustomerServiceInfo = ({
-  serviceName,
   serviceDesc,
   onContinueReading,
   showContinueReading,
@@ -23,92 +22,37 @@ const CustomerServiceInfo = ({
 
   return (
     <>
-      {/* Service Title */}
-      <Box sx={{ mb: 2 }}>
-        <Typography
-          variant="h4"
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap", mb: 1.5 }}>
+        <Chip
+          icon={<Verified sx={{ fontSize: "15px !important" }} />}
+          label={english.verified_service}
+          size="small"
           sx={{
+            bgcolor: isDark ? "rgba(29, 78, 216, 0.16)" : "#EFF6FF",
+            color: "#1D4ED8",
             fontWeight: 800,
-            mb: 1.5,
-            color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-            lineHeight: 1.2,
+            fontSize: "0.7rem",
           }}
-        >
-          {serviceName}
-        </Typography>
-
-        {/* Service Quality Badges */}
-        <Box
+        />
+        <Chip
+          icon={<Bolt sx={{ fontSize: "14px !important" }} />}
+          label={english.high_success_rate}
+          size="small"
           sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1.5,
-            flexWrap: "wrap",
-            mb: 1,
+            bgcolor: isDark ? "rgba(16, 185, 129, 0.16)" : "#ECFDF5",
+            color: "#059669",
+            fontWeight: 800,
+            fontSize: "0.7rem",
           }}
-        >
-          {/* Verified Service Badge */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 0.5,
-              color: "#1D4ED8",
-              fontWeight: 800,
-              cursor: "default",
-            }}
-          >
-            <Verified sx={{ fontSize: "16px" }} />
-            <Typography
-              sx={{
-                fontWeight: 900,
-                fontSize: "0.75rem",
-                fontStyle: "italic",
-                textTransform: "uppercase",
-                letterSpacing: "0.02em",
-              }}
-            >
-              {english.verified_service}
-            </Typography>
-          </Box>
-
-          {/* High Success Rate Badge */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 0.5,
-              bgcolor: "#ECFDF5", // Light Green
-              color: "#059669", // Success Green
-              px: 1,
-              py: 0.4,
-              borderRadius: "6px",
-              border: "1px solid #10B98130",
-            }}
-          >
-            <Bolt sx={{ fontSize: "14px" }} />
-            <Typography
-              sx={{
-                fontWeight: 800,
-                fontSize: "0.65rem",
-                letterSpacing: "0.04em",
-              }}
-            >
-              {english.high_success_rate}
-            </Typography>
-          </Box>
-        </Box>
+        />
       </Box>
 
-      {/* Description */}
       <Typography
         variant="body1"
         sx={{
-          mb: 1,
-          lineHeight: 1.6,
-          color: isDark
-            ? COLORS.TEXT.SECONDARY_DARK
-            : COLORS.TEXT.SECONDARY_LIGHT,
+          mb: showContinueReading ? 0.5 : 0,
+          lineHeight: 1.65,
+          color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
           display: "-webkit-box",
           WebkitLineClamp: 10,
           WebkitBoxOrient: "vertical",
@@ -119,15 +63,14 @@ const CustomerServiceInfo = ({
         {serviceDesc || english.no_description_available}
       </Typography>
 
-      {/* Continue Reading Link */}
       {showContinueReading && (
         <Button
           onClick={onContinueReading}
           sx={{
             textTransform: "none",
+            fontWeight: 700,
             color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
             p: 0,
-            mb: 3,
             "&:hover": {
               bgcolor: "transparent",
               textDecoration: "underline",

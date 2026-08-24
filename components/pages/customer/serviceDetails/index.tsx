@@ -1,15 +1,9 @@
 "use client";
 import React, { useState, useMemo, useEffect } from "react";
-import {
-  Box,
-  Container,
-  Typography,
-  useTheme,
-  Divider,
-} from "@mui/material";
+import { Box, Container, Typography, useTheme } from "@mui/material";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { Bookmark, Share, ChatOutlined } from "@mui/icons-material";
+import { Share, InfoOutlined, Sell, Room, StarBorder } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import Image from "next/image";
 import ServiceImageCarousel from "../../../ServiceImageCarousel";
@@ -17,11 +11,14 @@ import ProviderInfoCard from "../../../ProviderInfoCard";
 import ServiceCard from "../../../ServiceCard";
 import { COLORS } from "../../../../constants/colors";
 import CustomerServiceBreadcrumb from "./CustomerServiceBreadcrumb";
-import CustomerServiceHeader from "./CustomerServiceHeader";
 import CustomerServiceInfo from "./CustomerServiceInfo";
-import CustomerServiceActions from "./CustomerServiceActions";
 import CustomerServiceDetailsGrid from "./CustomerServiceDetailsGrid";
 import CustomerServicePricing from "../../../common/CustomerServicePricing";
+import ServiceTitleBlock from "./ServiceTitleBlock";
+import ServiceStatPills from "./ServiceStatPills";
+import ServiceAccordionSection from "./ServiceAccordionSection";
+import ServiceBookingSidebar from "./ServiceBookingSidebar";
+import ServiceMobileStickyBar from "./ServiceMobileStickyBar";
 import DescriptionDialog from "../../provider/serviceDetails/DescriptionDialog";
 import ReviewsSection from "../../provider/serviceDetails/ReviewsSection";
 import ServiceLocation from "../../provider/serviceDetails/ServiceLocation";
@@ -46,6 +43,7 @@ import GetQuoteModal from "./GetQuoteModal";
 import { getServiceRouteParam } from "@/utils/serviceRoute";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
+const NEW_LISTING_WINDOW_DAYS = 30;
 
 const CustomerServiceDetails = () => {
   const params = useParams();
@@ -84,6 +82,12 @@ const CustomerServiceDetails = () => {
       // assuming phone number might have whatsapp.
       const url = `https://wa.me/${service.provider_phone_number.replace('+', '')}?text=${encodeURIComponent(`Hi, I am interested in your service: ${service.service_name}`)}`;
       window.open(url, "_blank");
+    }
+  };
+
+  const handleCall = () => {
+    if (service?.provider_phone_number) {
+      window.location.href = `tel:${service.provider_phone_number}`;
     }
   };
 
@@ -236,6 +240,18 @@ const CustomerServiceDetails = () => {
           "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         ];
 
+  const isPriceRequired =
+    service.pricing_type === "noPrice" ? false : service.is_price_required;
+
+  const isNewListing =
+    !!service.created_at &&
+    Date.now() - new Date(service.created_at).getTime() <
+      NEW_LISTING_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+
+  const showWhatsApp =
+    !!(service.provider_whatsapp_country_code && service.provider_whatsapp_number) ||
+    !!service.provider_phone_number;
+
   return (
     <MainLayout>
       <Box
@@ -245,7 +261,7 @@ const CustomerServiceDetails = () => {
             : COLORS.BACKGROUND.SECONDARY_LIGHT,
           minHeight: "100vh",
           pt: { xs: 2, sm: 4, md: 10 },
-          pb: { xs: 8, sm: 8, md: 4 },
+          pb: { xs: 12, md: 4 },
           px: { xs: 0.5, sm: 1, md: 2 },
           width: "100%",
           maxWidth: "100%",
@@ -260,95 +276,81 @@ const CustomerServiceDetails = () => {
             maxWidth: "100%",
           }}
         >
-          <CustomerServiceBreadcrumb serviceName={service.service_name || ""} />
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2, mb: 1 }}>
+            <CustomerServiceBreadcrumb serviceName={service.service_name || ""} />
+            <Box sx={{ display: "flex", gap: 1, flexShrink: 0 }}>
+              <IconButton
+                onClick={handleShare}
+                size="small"
+                sx={{
+                  bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
+                  border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)"}`,
+                }}
+              >
+                <Share fontSize="small" sx={{ color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }} />
+              </IconButton>
+              <IconButton
+                onClick={handleChatClick}
+                size="small"
+                sx={{
+                  bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
+                  border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)"}`,
+                }}
+              >
+                <Image
+                  src={isDark ? "/icons/darkThemeChat.svg" : "/icons/chat.svg"}
+                  alt="Chat"
+                  width={18}
+                  height={18}
+                />
+              </IconButton>
+            </Box>
+          </Box>
 
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                md: "1fr 1fr",
-                lg: "1fr 1fr auto",
-              },
-              gap: { xs: 2, sm: 3, md: 4 },
+              gridTemplateColumns: { xs: "1fr", md: "1.7fr 1fr" },
+              gap: { xs: 3, md: 4 },
               alignItems: "start",
               width: "100%",
               maxWidth: "100%",
-              position: "relative",
             }}
           >
-            <Box
-              sx={{
-                display: { xs: "contents", md: "block" },
-                position: { xs: "static", md: "sticky" },
-                top: { md: 80 },
-                order: { md: 1 },
-                width: "100%",
-                maxWidth: "100%",
-                overflow: "hidden",
-              }}
-            >
-              <Box sx={{ order: { xs: 2, md: "unset" }, width: "100%" }}>
-                <ServiceImageCarousel
-                images={images}
-                serviceName={service.service_name || ""}
-                />
-              </Box>
-              <Box sx={{ py: 2, order: { xs: 3, md: "unset" }, width: "100%" }}>
-                <CustomerServicePricing
-                  pricingType={service.pricing_type}
-                  priceCatalogUrls={service.price_catalog_url}
-                  priceItems={service.price_items}
-                  currency={service.currency}
-                  onGetQuote={() => setGetQuoteModalOpen(true)}
-                />
-                {service.service_address?.latitude &&
-                  service.service_address?.longitude && (
-                    <Box sx={{ mt: 2 }}>
-                      <ServiceDetailsMap
-                        latitude={service.service_address.latitude}
-                        longitude={service.service_address.longitude}
-                        providerName={service.business_name || ""}
-                      />
-                    </Box>
-                  )}
-              </Box>
-            </Box>
+            {/* Main column */}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 3, minWidth: 0 }}>
+              <ServiceImageCarousel images={images} serviceName={service.service_name || ""} />
 
-            <Box
-              sx={{
-                order: { xs: 1, md: 2 },
-                bgcolor: isDark ? "rgba(255, 255, 255, 0.04)" : "white",
-                borderRadius: "16px",
-                p: { xs: 1.5, sm: 2.5, md: 3 },
-                border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.04)"}`,
-                width: "100%",
-                maxWidth: "100%",
-                overflow: "hidden",
-              }}
-            >
-              <Box sx={{ pb: 2 }}>
-                <CustomerServiceHeader
-                  isPriceRequired={
-                    service.pricing_type === "noPrice"
-                      ? false
-                      : service.is_price_required
-                  }
-                  price={service.price || 0}
-                  currency={service.currency || "INR"}
-                  categoryName={service.category_name || []}
-                  onBookmark={() => {
-                    /* TODO: Implement */
-                  }}
-                  onShare={() => {
-                    /* TODO: Implement */
-                  }}
+              <ServiceTitleBlock
+                name={service.business_name || service.service_name || ""}
+                categoryName={service.category_name || []}
+                city={service.service_address?.city_town}
+                isNew={isNewListing}
+                avgRating={service.avg_service_rating}
+                reviewCount={totalReviews}
+              />
+
+              <ServiceStatPills
+                currency={service.currency}
+                visitingCharge={service.visiting_charge}
+                serviceRadius={service.service_radius}
+                serviceDuration={service.service_duration}
+                hasServiceDuration={service.has_service_duration}
+                serviceAtLocation={service.service_at_location}
+              />
+
+              {service.has_service_duration && (
+                <CustomerServiceDetailsGrid
+                  serviceDuration={service.service_duration || 0}
+                  haveSlots={service.have_slots}
                 />
-              </Box>
+              )}
 
-              <Divider sx={{ opacity: 0.6 }} />
-
-              <Box sx={{ py: 2 }}>
+              <ServiceAccordionSection
+                title="About This Service"
+                icon={<InfoOutlined sx={{ fontSize: 17 }} />}
+                defaultExpanded
+              >
                 <CustomerServiceInfo
                   serviceName={service.service_name || ""}
                   serviceDesc={service.service_desc || ""}
@@ -357,40 +359,24 @@ const CustomerServiceDetails = () => {
                     !!(service.service_desc && service.service_desc.length > 50)
                   }
                 />
-              </Box>
+              </ServiceAccordionSection>
 
-              <Divider sx={{ opacity: 0.6 }} />
-
-              <Box sx={{ py: 2 }}>
-                <CustomerServiceActions
-                  onAddToCart={() => {
-                    /* TODO: Implement */
-                  }}
-                  onBookNow={() => handleBookNow()}
-                  onWhatsApp={handleWhatsApp}
-                  showWhatsApp={
-                    !!(service.provider_whatsapp_country_code && service.provider_whatsapp_number) ||
-                    !!service.provider_phone_number
-                  }
+              <ServiceAccordionSection
+                title="Services & Pricing"
+                icon={<Sell sx={{ fontSize: 16 }} />}
+                defaultExpanded
+              >
+                <CustomerServicePricing
+                  pricingType={service.pricing_type}
+                  priceCatalogUrls={service.price_catalog_url}
+                  priceItems={service.price_items}
+                  currency={service.currency}
+                  onGetQuote={() => setGetQuoteModalOpen(true)}
+                  hideHeader
                 />
-              </Box>
+              </ServiceAccordionSection>
 
-              {service.has_service_duration && (
-                <>
-                  <Divider sx={{ opacity: 0.6 }} />
-
-                  <Box sx={{ py: 2 }}>
-                    <CustomerServiceDetailsGrid
-                      serviceDuration={service.service_duration || 0}
-                      haveSlots={service.have_slots}
-                    />
-                  </Box>
-                </>
-              )}
-
-              <Divider sx={{ opacity: 0.6 }} />
-
-              <Box sx={{ py: 2 }}>
+              <ServiceAccordionSection title="Location" icon={<Room sx={{ fontSize: 17 }} />}>
                 <ServiceLocation
                   address={{
                     address: service.service_address?.address || "",
@@ -408,96 +394,75 @@ const CustomerServiceDetails = () => {
                   visitingCharge={service.visiting_charge}
                   serviceRadius={service.service_radius}
                 />
-              </Box>
+                {service.service_address?.latitude && service.service_address?.longitude && (
+                  <Box sx={{ mt: 2 }}>
+                    <ServiceDetailsMap
+                      latitude={service.service_address.latitude}
+                      longitude={service.service_address.longitude}
+                      providerName={service.business_name || ""}
+                    />
+                  </Box>
+                )}
+              </ServiceAccordionSection>
 
-              <Divider sx={{ opacity: 0.6 }} />
-
-              <Box sx={{ py: 3 }}>
-                {/* <Typography
-                                    variant="caption"
-                                    sx={{
-                                        fontWeight: 800,
-                                        mb: 2,
-                                        display: "block",
-                                        letterSpacing: "0.1em",
-                                        color: "#94A3B8"
-                                    }}
-                                >
-                                    {service.provider_name?.toUpperCase() || "SERVICE PROVIDER"} INFO.
-                                </Typography> */}
-                <ProviderInfoCard
-                  providerId={service.provider_id || ""}
-                  providerName={service.provider_name || ""}
-                  providerImageUrl={service.provider_image_url || ""}
-                  isHotSeller={true}
-                  providerPhoneNumber={service.provider_phone_number || ""}
-                  businessName={service.business_name || ""}
-                  isFollowing={service.is_following}
-                />
-              </Box>
+              <ProviderInfoCard
+                providerId={service.provider_id || ""}
+                providerName={service.provider_name || ""}
+                providerImageUrl={service.provider_image_url || ""}
+                isHotSeller={true}
+                providerPhoneNumber={service.provider_phone_number || ""}
+                businessName={service.business_name || ""}
+                isFollowing={service.is_following}
+              />
 
               {relatedServices.length > 0 && (
-                <>
-                  <Divider sx={{ opacity: 0.6 }} />
-                  <Box sx={{ py: 3 }}>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontWeight: 700,
-                        mb: 2,
-                        color: isDark
-                          ? COLORS.TEXT.PRIMARY_DARK
-                          : COLORS.TEXT.PRIMARY_LIGHT,
-                      }}
-                    >
-                      {t("other_services")}
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        gap: 2,
-                        overflowX: "auto",
-                        pb: 2,
-                        "&::-webkit-scrollbar": {
-                          height: "8px",
-                        },
-                        "&::-webkit-scrollbar-track": {
-                          bgcolor: isDark
-                            ? COLORS.BACKGROUND.SECONDARY_DARK
-                            : COLORS.BACKGROUND.SECONDARY_LIGHT,
-                          borderRadius: "4px",
-                        },
-                        "&::-webkit-scrollbar-thumb": {
-                          bgcolor: isDark
-                            ? COLORS.BORDER.DEFAULT_DARK
-                            : COLORS.BORDER.DEFAULT_LIGHT,
-                          borderRadius: "4px",
-                          "&:hover": {
-                            bgcolor: COLORS.PRIMARY_PURPLE,
-                          },
-                        },
-                      }}
-                    >
-                      {relatedServices.map((relatedService) => (
-                        <Box
-                          key={relatedService.service_id}
-                          sx={{
-                            minWidth: "280px",
-                            maxWidth: "280px",
-                            flexShrink: 0,
-                          }}
-                        >
-                          <ServiceCard service={relatedService} />
-                        </Box>
-                      ))}
-                    </Box>
+                <Box>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 700,
+                      mb: 2,
+                      color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                    }}
+                  >
+                    {t("other_services")}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 2,
+                      overflowX: "auto",
+                      pb: 2,
+                      "&::-webkit-scrollbar": { height: "8px" },
+                      "&::-webkit-scrollbar-track": {
+                        bgcolor: isDark
+                          ? COLORS.BACKGROUND.SECONDARY_DARK
+                          : COLORS.BACKGROUND.SECONDARY_LIGHT,
+                        borderRadius: "4px",
+                      },
+                      "&::-webkit-scrollbar-thumb": {
+                        bgcolor: isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT,
+                        borderRadius: "4px",
+                        "&:hover": { bgcolor: COLORS.PRIMARY_PURPLE },
+                      },
+                    }}
+                  >
+                    {relatedServices.map((relatedService) => (
+                      <Box
+                        key={relatedService.service_id}
+                        sx={{ minWidth: "280px", maxWidth: "280px", flexShrink: 0 }}
+                      >
+                        <ServiceCard service={relatedService} />
+                      </Box>
+                    ))}
                   </Box>
-                </>
+                </Box>
               )}
 
-              <Divider sx={{ opacity: 0.6 }} />
-
-              <Box sx={{ py: 3 }}>
+              <ServiceAccordionSection
+                title={`Reviews (${totalReviews})`}
+                icon={<StarBorder sx={{ fontSize: 17 }} />}
+              >
                 <ReviewsSection
                   reviews={reviews}
                   totalReviews={totalReviews}
@@ -507,61 +472,39 @@ const CustomerServiceDetails = () => {
                   showLoadMore={hasNextPage || false}
                   onAddReview={handleWriteReview}
                 />
-              </Box>
+              </ServiceAccordionSection>
             </Box>
 
+            {/* Sticky booking sidebar - desktop only */}
             <Box
               sx={{
-                display: "flex",
-                flexDirection: { xs: "row", lg: "column" },
-                gap: { xs: 1, sm: 2 },
-                justifyContent: { xs: "flex-end", lg: "flex-start" },
-                order: { xs: 4, md: 3 },
-                pt: { xs: 0, lg: 1 },
-                mb: { xs: 2, lg: 0 },
-                width: { xs: "100%", lg: "auto" },
-                maxWidth: { xs: "100%", lg: "auto" },
+                display: { xs: "none", md: "block" },
+                position: "sticky",
+                top: 96,
               }}
             >
-              <IconButton
-                onClick={handleShare}
-                sx={{
-                  backgroundColor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE,
-                  boxShadow: COLORS.SHADOW.DEFAULT,
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "50%",
-                  "&:hover": {
-                    backgroundColor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.LIGHT_GRAY,
-                  },
-                }}
-              >
-                <Share fontSize="small" sx={{ color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }} />
-              </IconButton>
-              <IconButton
-                onClick={handleChatClick}
-                sx={{
-                  backgroundColor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE,
-                  boxShadow: COLORS.SHADOW.DEFAULT,
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "50%",
-                  "&:hover": {
-                    backgroundColor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.LIGHT_GRAY,
-                  },
-                }}
-              >
-                <Image
-                  src={isDark ? "/icons/darkThemeChat.svg" : "/icons/chat.svg"}
-                  alt="Chat"
-                  width={20}
-                  height={20}
-                />
-              </IconButton>
+              <ServiceBookingSidebar
+                isPriceRequired={isPriceRequired}
+                price={service.price || 0}
+                currency={service.currency || "INR"}
+                onBookNow={handleBookNow}
+                onWhatsApp={handleWhatsApp}
+                showWhatsApp={showWhatsApp}
+                onCall={handleCall}
+                showCall={!!service.provider_phone_number}
+                onGetQuote={() => setGetQuoteModalOpen(true)}
+              />
             </Box>
           </Box>
         </Container>
       </Box>
+
+      <ServiceMobileStickyBar
+        isPriceRequired={isPriceRequired}
+        price={service.price || 0}
+        currency={service.currency || "INR"}
+        onBookNow={handleBookNow}
+      />
 
       <DescriptionDialog
         open={descriptionDrawerOpen}

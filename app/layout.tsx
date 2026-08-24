@@ -138,7 +138,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body style={{ fontFamily: "'Poppins', system-ui, -apple-system, sans-serif" }}>
+      <body
+        style={{ fontFamily: "'Poppins', system-ui, -apple-system, sans-serif" }}
+        suppressHydrationWarning
+      >
         {/* Plain script avoids Turbopack chunk split issues from next/script in RootLayout */}
         <script
           async
@@ -146,10 +149,12 @@ export default function RootLayout({
         />
         <script
           type="application/ld+json"
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
         <script
           type="application/ld+json"
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
         {/* No global BreadcrumbList here — pages that have a real trail (blogs,

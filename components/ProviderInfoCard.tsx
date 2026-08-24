@@ -6,7 +6,6 @@ import {
   Button,
   Chip,
   useTheme,
-  Stack,
 } from "@mui/material";
 import { useFollowUser, useUnfollowUser } from "@/hooks/useFollow";
 import { getUserId } from "@/utils/auth";
@@ -14,9 +13,9 @@ import { openLoginModal } from "@/features/ui/loginModalSlice";
 import {
   Person,
   PersonAdd,
-  Message,
   CheckCircle,
   Call,
+  WorkspacePremium,
 } from "@mui/icons-material";
 import { COLORS } from "../constants/colors";
 import { english } from "../features/i18n/en";
@@ -43,7 +42,6 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
   providerId,
   providerName,
   providerImageUrl,
-  isHotSeller = false,
   businessName,
   isFollowing = false,
   providerPhoneNumber,
@@ -99,10 +97,11 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
   return (
     <Box
       sx={{
-        bgcolor: isDark ? "rgba(94, 24, 233, 0.08)" : "rgba(94, 24, 233, 0.05)",
+        bgcolor: isDark ? "rgba(255, 255, 255, 0.05)" : "white",
+        border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)"}`,
         borderRadius: "16px",
+        boxShadow: isDark ? "none" : "0 1px 3px rgba(30, 20, 60, 0.05), 0 8px 24px rgba(30, 20, 60, 0.04)",
         p: { xs: 2, sm: 2.5 },
-        border: `1px dashed ${COLORS.PRIMARY_PURPLE}40`,
         display: "flex",
         flexDirection: { xs: "column", sm: "row" },
         alignItems: { xs: "flex-start", sm: "center" },
@@ -110,116 +109,72 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
         gap: 2,
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2, minWidth: 0 }}>
         <Avatar
           src={providerImageUrl || undefined}
           sx={{
-            width: 56,
-            height: 56,
-            border: `2px solid ${isDark ? "rgba(255,255,255,0.1)" : "white"}`,
-            boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+            width: 60,
+            height: 60,
+            flexShrink: 0,
+            border: `2px solid ${isDark ? "rgba(255,255,255,0.1)" : COLORS.PURPLE_ALPHA_10}`,
           }}
         >
           {providerName.charAt(0).toUpperCase()}
         </Avatar>
-        <Box>
+        <Box sx={{ minWidth: 0 }}>
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: 1.5,
+              gap: 1,
               mb: 0.5,
               flexWrap: "wrap",
             }}
           >
             <Typography
-              variant="subtitle1"
               sx={{
                 fontWeight: 800,
-                color: isDark
-                  ? COLORS.TEXT.PRIMARY_DARK
-                  : COLORS.TEXT.PRIMARY_LIGHT,
+                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                 lineHeight: 1.2,
-                fontSize: "1.1rem",
+                fontSize: "1.05rem",
                 cursor: "pointer",
+                "&:hover": { textDecoration: "underline" },
               }}
               onClick={handleOpenDrawer}
             >
               {businessName || providerName}
             </Typography>
 
-            {/* Badges Row from Reference Image */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              {/* Verified Badge - Blue check + text */}
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 0.5,
-                  color: "#1D4ED8", // Professional Blue
-                  fontWeight: 800,
-                  fontSize: "0.75rem",
-                  letterSpacing: "-0.01em",
-                }}
-              >
-                <CheckCircle sx={{ fontSize: "15px" }} />
-                <Typography
-                  sx={{
-                    fontWeight: 900,
-                    fontSize: "0.75rem",
-                    fontStyle: "italic",
-                    fontFamily: "system-ui",
-                  }}
-                >
-                  {english.verified}
-                </Typography>
-              </Box>
-
-              {/* Trust Badge - Styled like the image */}
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  bgcolor: "#FEF3C7",
-                  borderRadius: "4px",
-                  overflow: "hidden",
-                  border: "1px solid #FCD34D",
-                }}
-              >
-                <Box
-                  sx={{
-                    bgcolor: "#F59E0B",
-                    color: "white",
-                    px: 0.5,
-                    py: 0.1,
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography sx={{ fontSize: "0.6rem", fontWeight: 900 }}>
-                    T
-                  </Typography>
-                </Box>
-                <Typography
-                  sx={{
-                    fontSize: "0.6rem",
-                    fontWeight: 900,
-                    px: 0.8,
-                    color: "#92400E",
-                  }}
-                >
-                  Trust
-                </Typography>
-              </Box>
-            </Box>
+            <Chip
+              icon={<CheckCircle sx={{ fontSize: "14px !important" }} />}
+              label={english.verified}
+              size="small"
+              sx={{
+                bgcolor: isDark ? "rgba(29, 78, 216, 0.16)" : "#EFF6FF",
+                color: "#1D4ED8",
+                fontWeight: 800,
+                fontSize: "0.68rem",
+                height: 22,
+              }}
+            />
+            <Chip
+              icon={<WorkspacePremium sx={{ fontSize: "14px !important" }} />}
+              label="Trust"
+              size="small"
+              sx={{
+                bgcolor: isDark ? "rgba(245, 158, 11, 0.18)" : "#FEF3C7",
+                color: "#92400E",
+                fontWeight: 800,
+                fontSize: "0.68rem",
+                height: 22,
+              }}
+            />
           </Box>
           {businessName && (
             <Typography
               variant="caption"
               sx={{
-                color: isDark
-                  ? COLORS.TEXT.SECONDARY_DARK
-                  : COLORS.TEXT.SECONDARY_LIGHT,
+                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                 fontSize: "0.85rem",
                 fontWeight: 500,
                 display: "block",
@@ -232,10 +187,9 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
           <Typography
             variant="caption"
             sx={{
-              color: "#64748B",
+              color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#64748B",
               fontWeight: 600,
               display: "block",
-              mb: 0.5,
             }}
           >
             {english.highly_responsive ?? "Highly Responsive"} •{" "}
@@ -245,7 +199,7 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
             <Typography
               variant="caption"
               sx={{
-                color: "#059669", // Success Green
+                color: "#059669",
                 fontWeight: 700,
                 display: "flex",
                 alignItems: "center",
@@ -260,114 +214,76 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
         </Box>
       </Box>
 
-      <Box sx={{ display: "flex", gap: 1, width: { xs: "100%", sm: "auto" } }}>
-        {/* <Button
-          variant="contained"
-          fullWidth
-          size="small"
-          startIcon={<Message sx={{ fontSize: "1rem !important" }} />}
-          sx={{
-            borderRadius: "10px",
-            textTransform: "none",
-            bgcolor: COLORS.PRIMARY_PURPLE,
-            color: "white",
-            fontWeight: 700,
-            px: 2,
-            "&:hover": {
-              bgcolor: COLORS.PURPLE_HOVER,
-            },
-          }}
-        >
-          Message
-        </Button> */}
-        <Stack gap={2}>
-          {" "}
-          {providerPhoneNumber && (
-            <Button
-              variant="contained"
-              fullWidth
-              size="small"
-              startIcon={<Call sx={{ fontSize: "1rem !important" }} />}
-              onClick={handleShowPhoneNumber}
-              disabled={showPhoneNumber}
-              sx={{
-                borderRadius: "11px",
-                textTransform: "none",
-                bgcolor: isDark
-                  ? COLORS.ACCENT_BLUE_DARK
-                  : COLORS.PRIMARY_PURPLE,
-                color: "white",
-                fontWeight: 800,
-                letterSpacing: showPhoneNumber ? "0.06em" : "0.02em",
-                px: 3,
-                py: 1.1,
-                minWidth: 0,
-                whiteSpace: "nowrap",
-                boxShadow: `0 10px 20px ${
-                  isDark
-                    ? `${COLORS.ACCENT_BLUE_BG_DARK}40`
-                    : `${COLORS.PRIMARY_PURPLE}40`
-                }`,
-                "&:hover": {
-                  bgcolor: isDark
-                    ? COLORS.ACCENT_BLUE_DARK
-                    : COLORS.PRIMARY_PURPLE,
-                  transform: "translateY(-1px)",
-                  boxShadow: `0 4px 12px ${
-                    isDark
-                      ? `${COLORS.ACCENT_BLUE_BG_DARK}40`
-                      : `${COLORS.PRIMARY_PURPLE}40`
-                  }`,
-                },
-                transition: "all 0.2s ease-in-out",
-                "&.Mui-disabled": {
-                  bgcolor: isDark
-                    ? COLORS.ACCENT_BLUE_DARK
-                    : COLORS.PRIMARY_PURPLE,
-                  color: "white",
-                },
-              }}
-            >
-              {showPhoneNumber ? providerPhoneNumber : english.show_number}
-            </Button>
-          )}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "row", sm: "row" },
+          gap: 1,
+          width: { xs: "100%", sm: "auto" },
+          flexShrink: 0,
+        }}
+      >
+        {providerPhoneNumber && (
           <Button
-            variant={"outlined"}
+            variant="contained"
             fullWidth
             size="small"
-            onClick={handleFollow}
-            disabled={isLoading}
-            startIcon={
-              following ? (
-                <Person sx={{ fontSize: "1rem !important" }} />
-              ) : (
-                <PersonAdd sx={{ fontSize: "1rem !important" }} />
-              )
-            }
+            startIcon={<Call sx={{ fontSize: "1rem !important" }} />}
+            onClick={handleShowPhoneNumber}
+            disabled={showPhoneNumber}
             sx={{
-              borderRadius: "10px",
+              borderRadius: "30px",
               textTransform: "none",
-              borderColor: isDark
-                ? COLORS.ACCENT_BLUE_DARK
-                : COLORS.BORDER.DEFAULT_DARK,
-              color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+              bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+              color: "white",
               fontWeight: 700,
-              px: 2,
-              bgcolor: "transparent",
+              px: 2.5,
+              py: 1,
+              minWidth: 0,
+              whiteSpace: "nowrap",
               "&:hover": {
-                borderColor: isDark
-                  ? COLORS.ACCENT_BLUE_DARK
-                  : COLORS.PRIMARY_PURPLE,
-                bgcolor: isDark
-                  ? COLORS.ACCENT_BLUE_DARK
-                  : COLORS.PRIMARY_PURPLE,
+                bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PURPLE_HOVER,
+              },
+              "&.Mui-disabled": {
+                bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
                 color: "white",
+                opacity: 0.9,
               },
             }}
           >
-            {following ? "Following" : "Follow"}
+            {showPhoneNumber ? providerPhoneNumber : english.show_number}
           </Button>
-        </Stack>
+        )}
+        <Button
+          variant="outlined"
+          fullWidth
+          size="small"
+          onClick={handleFollow}
+          disabled={isLoading}
+          startIcon={
+            following ? (
+              <Person sx={{ fontSize: "1rem !important" }} />
+            ) : (
+              <PersonAdd sx={{ fontSize: "1rem !important" }} />
+            )
+          }
+          sx={{
+            borderRadius: "30px",
+            textTransform: "none",
+            borderColor: isDark ? "rgba(255,255,255,0.16)" : COLORS.BORDER.DEFAULT_LIGHT,
+            color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+            fontWeight: 700,
+            px: 2.5,
+            py: 1,
+            whiteSpace: "nowrap",
+            "&:hover": {
+              borderColor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+              bgcolor: isDark ? "rgba(130,72,247,0.1)" : COLORS.PURPLE_ALPHA_04,
+            },
+          }}
+        >
+          {following ? "Following" : "Follow"}
+        </Button>
       </Box>
     </Box>
   );
