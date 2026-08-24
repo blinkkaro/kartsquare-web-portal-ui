@@ -3,6 +3,7 @@ import { Service } from '../serviceList/listInteraface';
 // Request interface
 export interface AgenticSearchRequest {
   searchQuery: string;
+  sessionId?: string;
 }
 
 // Success response interface
