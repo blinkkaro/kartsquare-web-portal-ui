@@ -87,7 +87,7 @@ const HomeBanner = () => {
             spacing={1.5}
             sx={{ mb: { xs: 1.5, md: 2.5 } }}
           >
-            <AvatarGroup
+            {/* <AvatarGroup
               max={3}
               sx={{
                 "& .MuiAvatar-root": {
@@ -110,8 +110,8 @@ const HomeBanner = () => {
                 alt="User 3"
                 src="https://mui.com/static/images/avatar/3.jpg"
               />
-            </AvatarGroup>
-            <Typography
+            </AvatarGroup> */}
+            {/* <Typography
               variant="caption"
               sx={{
                 opacity: 0.9,
@@ -121,7 +121,7 @@ const HomeBanner = () => {
               }}
             >
               {t("home_banner_trusted_by")}
-            </Typography>
+            </Typography> */}
           </Stack>
 
           {/* Search Bar Component */}
