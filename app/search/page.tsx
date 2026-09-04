@@ -43,9 +43,7 @@ export async function generateMetadata({
     },
     // When ?q= is present: noindex to prevent crawl budget drain on query variants.
     // When no ?q=: keep the base /search page indexable.
-    robots: hasQuery
-      ? { index: false, follow: true, googleBot: { index: false, follow: true } }
-      : { index: true, follow: true, googleBot: { index: true, follow: true } },
+    robots: { index: false, follow: true, googleBot: { index: false, follow: true } },
   };
 }
 
