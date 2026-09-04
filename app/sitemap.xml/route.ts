@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import { blogs } from "@/data/blogs";
 import { blogPostSitemapEntry } from "@/lib/seo/blogSitemap";
 
-const BASE_URL = String(process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com").replace(/\/$/, "");
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
+const BASE_URL = String(
+  process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com"
+).replace(/\/$/, "");
+const API_URL = "https://api.kartsquare.com/api/v1";
 
 /**
  * Escapes special XML characters in a string.
@@ -12,12 +14,18 @@ function escapeXml(unsafe: string): string {
   if (!unsafe) return "";
   return unsafe.replace(/[<>&"']/g, (c) => {
     switch (c) {
-      case "<": return "&lt;";
-      case ">": return "&gt;";
-      case "&": return "&amp;";
-      case "\"": return "&quot;";
-      case "'": return "&apos;";
-      default: return c;
+      case "<":
+        return "&lt;";
+      case ">":
+        return "&gt;";
+      case "&":
+        return "&amp;";
+      case '"':
+        return "&quot;";
+      case "'":
+        return "&apos;";
+      default:
+        return c;
     }
   });
 }
@@ -53,10 +61,26 @@ export async function GET() {
   ];
 
   // 2. Fetch Dynamic Data
+  const fetchJson = async (label: string, url: string) => {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) {
+        console.error(
+          `[sitemap] ${label} fetch failed: ${res.status} ${res.statusText} (${url})`
+        );
+        return { data: [] };
+      }
+      return await res.json();
+    } catch (err) {
+      console.error(`[sitemap] ${label} fetch threw:`, err, `(${url})`);
+      return { data: [] };
+    }
+  };
+
   const [productRes, serviceRes, profileRes] = await Promise.all([
-    fetch(`${API_URL}/products?limit=5000`).then(r => r.json()).catch(() => ({ data: [] })),
-    fetch(`${API_URL}/services/sitemap`).then(r => r.json()).catch(() => ({ data: [] })),
-    fetch(`${API_URL}/profile/sitemap`).then(r => r.json()).catch(() => ({ data: [] })),
+    fetchJson("products", `${API_URL}/products?limit=5000`),
+    fetchJson("services", `${API_URL}/services/sitemap`),
+    fetchJson("profiles", `${API_URL}/profile/sitemap`),
   ]);
 
   const products = productRes?.data?.products || productRes?.data || [];
@@ -69,27 +93,45 @@ export async function GET() {
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
 
   // Helper to add mapping to XML
-  const addUrl = (loc: string, lastmod: string, changefreq: string, priority: string, image?: string) => {
+  const addUrl = (
+    loc: string,
+    lastmod: string,
+    changefreq: string,
+    priority: string,
+    image?: string
+  ) => {
     xml += `
   <url>
     <loc>${escapeXml(loc.startsWith("http") ? loc : `${BASE_URL}${loc}`)}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>${changefreq}</changefreq>
-    <priority>${priority}</priority>${image ? `
+    <priority>${priority}</priority>${
+      image
+        ? `
     <image:image>
       <image:loc>${escapeXml(image)}</image:loc>
-    </image:image>` : ""}
+    </image:image>`
+        : ""
+    }
   </url>`;
   };
 
   // Add Static
-  staticRoutes.forEach(r => addUrl(r.url, now, r.changefreq, r.priority));
+  staticRoutes.forEach((r) => addUrl(r.url, now, r.changefreq, r.priority));
 
   // Add Blogs
-  blogs.forEach(blog => {
+  blogs.forEach((blog) => {
     const entry = blogPostSitemapEntry(blog);
     if (entry) {
-      addUrl(entry.url, (entry.lastModified instanceof Date ? entry.lastModified.toISOString() : now), "monthly", "0.78", entry.cover);
+      addUrl(
+        entry.url,
+        entry.lastModified instanceof Date
+          ? entry.lastModified.toISOString()
+          : now,
+        "monthly",
+        "0.78",
+        entry.cover
+      );
     }
   });
 
@@ -99,7 +141,7 @@ export async function GET() {
       const url = `${BASE_URL}/store/product/${p.product_id || p.id}`;
       const lastmod = p.updated_at || p.created_at || now;
       const images = p.product_images || p.images || [];
-      const mainImage = Array.isArray(images) ? images[0] : (p.image || null);
+      const mainImage = Array.isArray(images) ? images[0] : p.image || null;
       addUrl(url, new Date(lastmod).toISOString(), "weekly", "0.8", mainImage);
     });
   }
@@ -111,8 +153,15 @@ export async function GET() {
       if (pathSeg) {
         const url = `${BASE_URL}/services/${pathSeg}`;
         const lastmod = s.updated_at || s.created_at || now;
-        const mainImage = s.og_image || (Array.isArray(s.image_urls) ? s.image_urls[0] : null);
-        addUrl(url, new Date(lastmod).toISOString(), "weekly", "0.82", mainImage);
+        const mainImage =
+          s.og_image || (Array.isArray(s.image_urls) ? s.image_urls[0] : null);
+        addUrl(
+          url,
+          new Date(lastmod).toISOString(),
+          "weekly",
+          "0.82",
+          mainImage
+        );
       }
     });
   }
