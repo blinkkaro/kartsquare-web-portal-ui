@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { Box, Typography, useTheme } from "@mui/material";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import RightDrawer from "../RightDrawer";
@@ -10,6 +11,18 @@ function Ai({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useTranslate();
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
+  const pathname = usePathname();
+  const firstPath = useRef(pathname);
+
+  // Any navigation (provider profile, category page, ...) closes the assistant so it
+  // never sits on top of the page the user just chose to open.
+  useEffect(() => {
+    if (firstPath.current !== pathname) {
+      firstPath.current = pathname;
+      if (open) onClose();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   return (
     <RightDrawer

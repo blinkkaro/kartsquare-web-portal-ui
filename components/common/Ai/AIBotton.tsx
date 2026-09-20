@@ -55,12 +55,15 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
     // Pinned to the screen's right edge — independent of the nav dock's own
     // width (the dock sizes to fit its tabs, so tying this to a shared "dock
     // width" constant drifted out of sync and clipped/overlapped the dock).
-    const AI_SIZE = "48px";
+    const AI_SIZE = "56px";
     return (
       <Box
         sx={{
           position: "fixed",
-          bottom: "14px",
+          // Sits just above the bottom nav (60px bar + 12px tablet float gap + breathing room)
+          bottom: "calc(var(--mobile-nav-h, 60px) + 12px + 16px + env(safe-area-inset-bottom, 0px))",
+          transition: "bottom 0.35s cubic-bezier(0.32, 0.72, 0, 1)",
+          "@media (prefers-reduced-motion: reduce)": { transition: "none" },
           right: "16px",
           width: AI_SIZE,
           height: AI_SIZE,
@@ -107,7 +110,7 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
           }}
         >
           <AutoAwesomeRoundedIcon
-            sx={{ fontSize: 22, color: "#fff", position: "relative", zIndex: 1 }}
+            sx={{ fontSize: 26, color: "#fff", position: "relative", zIndex: 1 }}
           />
         </Box>
       </Box>

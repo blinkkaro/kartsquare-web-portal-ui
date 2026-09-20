@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { seoPublic } from "@/lib/seo/buildMetadata";
 import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 import ListOfServices from "../../../components/pages/servicesList";
@@ -33,7 +34,10 @@ export default function ServicesListPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLd }}
       />
-      <ListOfServices />
+      {/* useSearchParams (deep-linked category/search) needs a Suspense boundary */}
+      <Suspense fallback={null}>
+        <ListOfServices />
+      </Suspense>
     </>
   );
 }

@@ -1,0 +1,26 @@
+# Kartsquare
+
+> Kartsquare is a local services marketplace, starting in Jaipur, India. People describe what they need in English, Hindi or Hinglish, compare approved service providers, and contact them directly by phone or WhatsApp. Service providers list their business to be discovered by customers in their city.
+
+## What you can do on Kartsquare
+- Find local services such as AC repair, plumbers, electricians, photographers, salons, tutors and more, filtered by city and area.
+- Search in natural language, for example "Mera AC thanda nahi kar raha" (my AC is not cooling) or "plumber in Vaishali Nagar".
+- Read ratings and reviews. A rating is shown only when a service has real customer reviews.
+- Contact a provider directly from their profile.
+- List a business as a service provider.
+
+## Coverage
+- Launch city: Jaipur, Rajasthan, India. Results depend on which providers have listed services in the selected city and area.
+
+## Key pages
+- [Home](https://kartsquare.com/): search and browse categories
+- [Browse services](https://kartsquare.com/cus/servicesList): all service categories and listings
+- [Store](https://kartsquare.com/store): products from suppliers
+- [Map](https://kartsquare.com/map): providers and stores on a map
+- [Blog](https://kartsquare.com/blogs): guides and articles
+- [About](https://kartsquare.com/about-us): about Kartsquare
+- [List your business](https://kartsquare.com/business-listing): for service providers
+
+## Facts for accuracy
+- Kartsquare does not publish prices, ratings or availability for a provider unless the provider or customers have supplied them.
+- Only approved listings appear to customers.

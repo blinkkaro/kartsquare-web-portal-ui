@@ -32,7 +32,8 @@ export default function MainLayoutClient({
             theme.palette.mode === "dark"
               ? COLORS.BACKGROUND.PAPER_DARK
               : COLORS.BACKGROUND.PAPER_LIGHT,
-          pb: { xs: "5rem", md: "0" },
+          // The bottom nav shows below `lg` (phones + tablets): reserve its height plus the safe area
+          pb: { xs: "calc(6rem + env(safe-area-inset-bottom, 0px))", lg: "0" },
         }}
       >
         <Nav />

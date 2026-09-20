@@ -16,6 +16,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useTranslate } from "@/hooks/useTranslate";
 import { Button } from "@mui/material";
 import { Tune } from "@mui/icons-material";
+import { useSearchParams } from "next/navigation";
 
 const ListOfServices = () => {
     const { t } = useTranslate();
@@ -27,9 +28,11 @@ const ListOfServices = () => {
     // State
     const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [search, setSearch] = useState("");
-    const [searchInput, setSearchInput] = useState("");
+    // Deep links from the home page: /cus/servicesList?category=<id>&search=<text>
+    const searchParams = useSearchParams();
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(searchParams.get("category"));
+    const [search, setSearch] = useState(searchParams.get("search") ?? "");
+    const [searchInput, setSearchInput] = useState(searchParams.get("search") ?? "");
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [total, setTotal] = useState(0);
