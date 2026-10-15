@@ -70,15 +70,22 @@ export async function GET() {
     }
   };
 
-  const [productRes, serviceRes, profileRes] = await Promise.all([
+  const [productRes, serviceRes, profileRes, locationRes] = await Promise.all([
     fetchJson("products", `${API_URL}/products?limit=5000`),
     fetchJson("services", `${API_URL}/services/sitemap`),
     fetchJson("profiles", `${API_URL}/profile/sitemap`),
+    fetchJson("locations", `${API_URL}/locations/sitemap`),
   ]);
 
   const products = productRes?.data?.products || productRes?.data || [];
   const services = serviceRes?.data?.services || serviceRes?.data || [];
   const profiles = profileRes?.data?.profiles || profileRes?.data || [];
+  // The backend returns `{ urls: [], enabled: false }` while
+  // LOCATION_ROUTING_SITEMAP is off, so this is empty until the flag flips —
+  // no listing URL is ever advertised before it is ready to serve.
+  const locationUrls = locationRes?.data?.enabled
+    ? locationRes?.data?.urls || []
+    : [];
 
   // Build the XML header with namespaces
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -122,6 +129,21 @@ export async function GET() {
       );
     }
   });
+
+  // Add location listing pages (/{city}/{category}, /{city}/{locality}/{category}).
+  // Generated from the database, so the sitemap, the page's own robots tag and
+  // the thin-page redirect all read one threshold and cannot disagree.
+  if (Array.isArray(locationUrls)) {
+    (locationUrls as Array<{ path?: string; lastmod?: string | null }>).forEach(
+      (u) => {
+        if (!u?.path) return;
+        addUrl(
+          `${BASE_URL}${u.path}`,
+          u.lastmod ? new Date(u.lastmod).toISOString() : undefined
+        );
+      }
+    );
+  }
 
   // Add Products
   if (Array.isArray(products)) {
