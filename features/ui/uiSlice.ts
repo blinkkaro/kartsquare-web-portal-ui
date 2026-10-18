@@ -38,15 +38,8 @@ export const uiSlice = createSlice({
           | "dark"
           | null;
 
-        if (savedTheme) {
-          state.mode = savedTheme;
-        } else {
-          // Fallback to system preference
-          const prefersDark = window.matchMedia(
-            "(prefers-color-scheme: dark)"
-          ).matches;
-          state.mode = prefersDark ? "dark" : "light";
-        }
+        // Default to light unless user explicitly chose a theme
+        state.mode = savedTheme === "dark" ? "dark" : "light";
       }
     },
     setAiOpen: (state, action: PayloadAction<boolean>) => {
