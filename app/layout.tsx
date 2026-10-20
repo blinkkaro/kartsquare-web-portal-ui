@@ -2,6 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { Providers } from "./providers";
+import MaintenanceScreen from "@/components/common/MaintenanceScreen";
+
+/** Set to false (and remove the related lines below) to bring the site back. */
+const MAINTENANCE_MODE = true;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com";
 
@@ -57,11 +61,11 @@ export const metadata: Metadata = {
   creator: "kartsquare",
   publisher: "kartsquare",
   robots: {
-    index: true,
-    follow: true,
+    index: !MAINTENANCE_MODE,
+    follow: !MAINTENANCE_MODE,
     googleBot: {
-      index: true,
-      follow: true,
+      index: !MAINTENANCE_MODE,
+      follow: !MAINTENANCE_MODE,
       "max-image-preview": "large",
       "max-snippet": -1,
     },
@@ -161,7 +165,7 @@ export default function RootLayout({
             store, services, business listings) emit their own via
             lib/seo/breadcrumbs.ts. A single sitewide "Home"-only entry would
             duplicate/conflict with those page-specific breadcrumbs. */}
-        <Providers>{children}</Providers>
+        {MAINTENANCE_MODE ? <MaintenanceScreen /> : <Providers>{children}</Providers>}
         <SpeedInsights />
       </body>
     </html>
