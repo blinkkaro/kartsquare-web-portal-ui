@@ -41,6 +41,8 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
       ? COLORS.TEXT.PRIMARY_DARK
       : COLORS.TEXT.PRIMARY_LIGHT,
   padding: "0.5rem",
+  // 44px touch target on phones/tablets (the 20px icon is unchanged)
+  [theme.breakpoints.down("md")]: { minWidth: 44, minHeight: 44 },
   transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
   backgroundColor:
     theme.palette.mode === "dark"
@@ -342,8 +344,9 @@ const NavActions: React.FC<NavActionsProps> = ({
           fontWeight: 600,
           borderColor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
           color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-          minWidth: { xs: "auto", md: "64px" },
-          padding: { xs: "4px 8px", md: "4px 10px" },
+          minWidth: { xs: 44, md: "64px" },
+          minHeight: { xs: 40, md: "auto" },
+          padding: { xs: "6px 10px", md: "4px 10px" },
           transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           "&:hover": {
             borderColor: isDark

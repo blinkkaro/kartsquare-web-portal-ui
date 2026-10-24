@@ -8,7 +8,7 @@ import { COLORS } from "@/constants/colors";
 import { useAppDispatch } from "@/store/hooks";
 import { setAiOpen } from "@/features/ui/uiSlice";
 import { useAILocation } from "@/components/common/Ai/useAILocation";
-import { Section, sectionEyebrowSx, sectionTitleSx, sectionSubtitleSx } from "./shared";
+import { PANEL_PX, Section, SectionTitle } from "./shared";
 
 interface Faq {
   q: string;
@@ -26,38 +26,17 @@ const faqs = (city: string): Faq[] => [
     a: "Kartsquare is a marketplace that connects you with local service providers and suppliers. You describe what you need, compare approved providers, and contact them directly.",
   },
   {
-    q: "How do I find the right provider?",
-    a: `Type your problem the way you would say it, in English, Hindi or Hinglish, for example "AC thanda nahi kar raha". Kartsquare works out the service you need and shows matching providers in ${city}. You can also browse by category.`,
-    action: "ask-ai",
-  },
-  {
     q: `How do I find an AC repair, plumber or electrician in ${city}?`,
-    a: `Type what you need, such as "AC repair", "plumber near me" or "light bar bar ja rahi hai", into the search box. Kartsquare shows approved providers for that exact service in ${city}. If nobody offers it in your area, you will see that clearly instead of unrelated results.`,
+    a: `Type what you need the way you would say it, in English, Hindi or Hinglish, for example "AC repair", "plumber near me" or "AC thanda nahi kar raha". Kartsquare works out the service and shows approved providers in ${city}. You can also browse by category. If nobody offers it in your area, you will see that clearly instead of unrelated results.`,
     action: "ask-ai",
-  },
-  {
-    q: "Can I search in Hindi or Hinglish?",
-    a: `Yes. You can describe the problem in English, Hindi or Hinglish, for example "mera AC kharab ho rha h" or "nal se pani leak ho raha hai". Kartsquare understands common problems, spelling mistakes and area names like Mansarovar or Vaishali Nagar.`,
-  },
-  {
-    q: "What does “approved listing” mean?",
-    a: "A service only appears on Kartsquare after it has been reviewed and approved. Listings that have not been approved are not shown to customers.",
   },
   {
     q: "How do ratings and reviews work?",
-    a: "A rating is shown only when a service has real customer reviews. If a provider has no reviews yet, you will see “No reviews yet” instead of a made-up score.",
+    a: "A rating is shown only when a service has real customer reviews. If a provider has no reviews yet, you will see “No reviews yet” instead of a made-up score. Only approved listings appear on Kartsquare.",
   },
   {
     q: "How do I contact a provider?",
     a: "Open the provider's profile. Where the provider has shared a phone or WhatsApp number you can call or message them directly from the listing.",
-  },
-  {
-    q: "What if there is no provider for my service in my area?",
-    a: "You will see a clear message instead of unrelated results, along with related categories to explore. You can also change the city or area from the location selector and search again.",
-  },
-  {
-    q: "Which cities does Kartsquare cover?",
-    a: "Kartsquare starts in Jaipur. Use the location selector to pick your city and area; the providers you see depend on who has listed services there.",
   },
   {
     q: "I offer a service. How do I list my business?",
@@ -91,19 +70,10 @@ export default function FaqSection() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "minmax(0, 340px) minmax(0, 1fr)" }, gap: { xs: 2, md: 6 }, alignItems: "start" }}>
         {/* heading + help card */}
-        <Box sx={{ position: { md: "sticky" }, top: { md: 96 } }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-            <Box sx={{ width: 22, height: 3, borderRadius: 2, background: `linear-gradient(90deg, ${COLORS.PRIMARY_PURPLE}, #e11d74)` }} />
-            <Typography sx={{ ...sectionEyebrowSx, color: dark ? "#d6b8ff" : COLORS.PRIMARY_PURPLE }}>
-              Got questions?
-            </Typography>
-          </Box>
-          <Typography component="h2" sx={sectionTitleSx}>
+        <Box sx={{ position: { md: "sticky" }, top: { md: 96 }, pl: PANEL_PX }}>
+          <SectionTitle subtitle="Quick answers about finding, comparing and contacting providers.">
             Frequently asked questions
-          </Typography>
-          <Typography sx={sectionSubtitleSx}>
-            Quick answers about finding, comparing and contacting providers.
-          </Typography>
+          </SectionTitle>
 
           <Box
             sx={{
@@ -111,8 +81,6 @@ export default function FaqSection() {
               mt: 2.5,
               p: 2,
               borderRadius: 4,
-              border: "1px solid",
-              borderColor: "divider",
               bgcolor: dark ? "rgba(130,72,247,0.10)" : COLORS.PURPLE_ALPHA_04,
             }}
           >
@@ -145,11 +113,9 @@ export default function FaqSection() {
                 slotProps={{ transition: { timeout: reduce ? 0 : 280 } }}
                 sx={{
                   borderRadius: "16px !important",
-                  border: "1.5px solid",
-                  borderColor: on ? COLORS.PRIMARY_PURPLE : "divider",
-                  bgcolor: on ? (dark ? "rgba(130,72,247,0.10)" : COLORS.PURPLE_ALPHA_04) : "background.paper",
+                  bgcolor: on ? (dark ? "rgba(130,72,247,0.10)" : COLORS.PURPLE_ALPHA_10) : (dark ? "background.paper" : COLORS.BACKGROUND.PAPER_LIGHT),
                   overflow: "hidden",
-                  transition: reduce ? "none" : "border-color 200ms ease, background-color 200ms ease",
+                  transition: reduce ? "none" : "background-color 200ms ease",
                   "&::before": { display: "none" },
                 }}
               >

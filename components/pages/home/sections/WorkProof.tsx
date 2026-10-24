@@ -1,62 +1,95 @@
 "use client";
 import React, { useMemo } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import Link from "next/link";
+import { Box, useTheme } from "@mui/material";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
-import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
-import { useRouter } from "next/navigation";
 import { COLORS } from "@/constants/colors";
 import { useGetInfinitePosts } from "@/hooks/usePosts";
 import { Visibility } from "@/services/post/postInterfaces";
-import { Section, SectionHeader } from "./shared";
+import { PANEL_PX, Section, SectionHeader } from "./shared";
 
-/** Real public posts (image type) from providers; views shown only when the count is > 0. */
+const POST_LIMIT = 8;
+
+/** Mosaic spans (first tile large, then a tall one) so the grid reads like the design without any fixed content. */
+const SPANS: ReadonlyArray<object> = [
+  { gridColumn: { md: "span 2" }, gridRow: { md: "span 2" } },
+  { gridRow: { md: "span 2" } },
+];
+
+/**
+ * "Discover what's happening around you": real public image posts from providers.
+ * Views are shown only when the count is > 0. Renders nothing without posts.
+ */
 export default function WorkProof() {
-  const router = useRouter();
+  const dark = useTheme().palette.mode === "dark";
   const { data } = useGetInfinitePosts({ limit: 12, visibility: Visibility.PUBLIC });
 
   const posts = useMemo(
     () =>
       (data?.pages.flatMap((p) => p.posts) ?? [])
         .filter((p) => p.post_type === "image" && !!p.media_urls)
-        .slice(0, 3),
+        .slice(0, POST_LIMIT),
     [data]
   );
 
   if (posts.length === 0) return null;
 
   return (
-    <Section>
+    <Section
+      sx={{
+        py: { xs: 4, md: 8 },
+        px: { xs: 2, md: 5 },
+        borderRadius: { xs: 0, md: 7 },
+        bgcolor: dark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
+      }}
+    >
       <SectionHeader
-        title="Recent work"
-        subtitle="Posts from providers on Kartsquare"
+        title="Discover what's happening around you"
+        subtitle="Real work posted by providers on Kartsquare."
         action={
-          <Button onClick={() => router.push("/cus/reels")} endIcon={<ArrowForwardRoundedIcon />} sx={{ minHeight: 44, textTransform: "none", fontWeight: 700, color: COLORS.PRIMARY_PURPLE, flexShrink: 0 }}>
-            Reels
-          </Button>
+          <Box
+            component={Link}
+            href="/cus/reels"
+            sx={{ display: "inline-flex", alignItems: "center", gap: 1, minHeight: 46, px: 2.5, borderRadius: 3, bgcolor: "background.paper", color: "text.primary", fontWeight: 700, fontSize: "0.92rem", textDecoration: "none", boxShadow: `0 2px 10px ${COLORS.PURPLE_ALPHA_10}`, transition: "background-color 160ms ease", "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_10 } }}
+          >
+            Explore more <ArrowForwardRoundedIcon sx={{ fontSize: 17 }} />
+          </Box>
         }
       />
-      <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: { xs: 1, md: 2 } }}>
-        {posts.map((p) => {
-          const views = Number(p.views_count);
+
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" },
+          gridAutoRows: { xs: 180, md: 210 },
+          gridAutoFlow: "dense",
+          gap: 1.25,
+        }}
+      >
+        {posts.map((p, i) => {
           return (
             <Box
               key={p.id}
-              component="article"
-              onClick={() => router.push("/cus/reels")}
-              sx={{ position: "relative", aspectRatio: "9 / 14", borderRadius: 4, overflow: "hidden", cursor: "pointer", backgroundColor: COLORS.PURPLE_ALPHA_10, backgroundImage: `url(${p.media_urls})`, backgroundSize: "cover", backgroundPosition: "center" }}
+              component={Link}
+              href="/cus/reels"
+              aria-label="View post"
+              sx={{
+                position: "relative",
+                display: "block",
+                borderRadius: 2.5,
+                overflow: "hidden",
+                textDecoration: "none",
+                backgroundColor: COLORS.PURPLE_ALPHA_10,
+                backgroundImage: `url(${p.media_urls})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                transition: "transform 220ms cubic-bezier(.2,.7,.2,1), box-shadow 220ms ease",
+                "&:hover": { transform: "translateY(-3px)", boxShadow: `0 14px 30px ${COLORS.PURPLE_ALPHA_20}` },
+                "@media (prefers-reduced-motion: reduce)": { transition: "none", "&:hover": { transform: "none" } },
+                ...(SPANS[i] ?? {}),
+                "&:focus-visible": { outline: `3px solid ${COLORS.PRIMARY_PURPLE}`, outlineOffset: 2 },
+              }}
             >
-              <Box sx={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", p: 1, color: "#fff", background: "linear-gradient(to top, rgba(0,0,0,0.78), transparent 60%)" }}>
-                {views > 0 && (
-                  <Typography sx={{ display: "flex", alignItems: "center", gap: 0.4, fontSize: "0.65rem", fontWeight: 700 }}>
-                    <VisibilityRoundedIcon sx={{ fontSize: 12 }} /> {views}
-                  </Typography>
-                )}
-                {p.caption && (
-                  <Typography sx={{ fontSize: "0.7rem", fontWeight: 600, lineHeight: 1.25, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                    {p.caption}
-                  </Typography>
-                )}
-              </Box>
             </Box>
           );
         })}

@@ -30,6 +30,7 @@ const NavLogo: React.FC<NavLogoProps> = ({ isMobile, mode }) => {
         sx={{
           fontWeight: 700,
           fontSize: { xs: "1rem", md: "1.125rem" },
+          display: { xs: "none", "@media (min-width:360px)": "inline" },
           color:
             mode === "dark"
               ? COLORS.TEXT.PRIMARY_DARK
