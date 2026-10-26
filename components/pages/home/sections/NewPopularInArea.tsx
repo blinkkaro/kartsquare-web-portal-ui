@@ -121,7 +121,7 @@ export default function NewPopularInArea() {
               <Box
                 key={idx}
                 component={Link}
-                href={`/cus/servicesList?search=${encodeURIComponent(serviceName)}`}
+                href={`/cus/servicesList?search=${encodeURIComponent(serviceName)}&city=${encodeURIComponent(city)}`}
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -145,6 +145,29 @@ export default function NewPopularInArea() {
                 <ArrowForwardRoundedIcon sx={{ fontSize: 16, opacity: 0.6 }} />
               </Box>
             ))}
+
+            <Box
+              component={Link}
+              href={`/cus/servicesList?city=${encodeURIComponent(city)}`}
+              sx={{
+                mt: 1.5,
+                pt: 1.5,
+                borderTop: "1px solid",
+                borderColor: "divider",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 0.75,
+                fontSize: "0.88rem",
+                fontWeight: 700,
+                color: COLORS.PRIMARY_PURPLE,
+                textDecoration: "none",
+                "&:hover": { textDecoration: "underline" },
+              }}
+            >
+              View all services in {city}
+              <ArrowForwardRoundedIcon sx={{ fontSize: 16 }} />
+            </Box>
           </Box>
         </Box>
 

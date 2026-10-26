@@ -37,7 +37,11 @@ export default function NewHeroSection() {
 
   const search = (text: string) => {
     const q = text.trim();
-    if (q) dispatch(openAiWithQuery(q));
+    if (q) {
+      router.push(`/cus/servicesList?search=${encodeURIComponent(q)}`);
+    } else {
+      router.push(`/cus/servicesList`);
+    }
   };
 
   return (
@@ -180,6 +184,7 @@ export default function NewHeroSection() {
         >
           {/* Large left image - spans 2 rows */}
           <Box
+            onClick={() => router.push("/cus/servicesList?search=electrician")}
             sx={{
               gridRow: "1 / 3",
               position: "relative",
@@ -190,7 +195,8 @@ export default function NewHeroSection() {
               backgroundPosition: "center",
               bgcolor: dark ? "#2a2535" : "#f0edf5",
               cursor: "pointer",
-              "&:hover img": { transform: "scale(1.03)" },
+              transition: "transform 250ms ease, box-shadow 250ms ease",
+              "&:hover": { transform: "scale(1.015)", boxShadow: "0 10px 30px rgba(0,0,0,0.15)" },
             }}
           >
             <Box sx={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.4), transparent 50%)" }} />
@@ -224,6 +230,7 @@ export default function NewHeroSection() {
 
           {/* Top right image */}
           <Box
+            onClick={() => router.push("/cus/reels")}
             sx={{
               position: "relative",
               borderRadius: 4,
@@ -232,6 +239,9 @@ export default function NewHeroSection() {
               backgroundSize: "cover",
               backgroundPosition: "center top",
               bgcolor: dark ? "#2a2535" : "#f0edf5",
+              cursor: "pointer",
+              transition: "transform 250ms ease",
+              "&:hover": { transform: "scale(1.02)" },
             }}
           >
             <Box sx={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.3), transparent 50%)" }} />
@@ -262,6 +272,7 @@ export default function NewHeroSection() {
 
           {/* Bottom right image */}
           <Box
+            onClick={() => router.push("/cus/servicesList?search=cleaning")}
             sx={{
               position: "relative",
               borderRadius: 4,
@@ -270,6 +281,9 @@ export default function NewHeroSection() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               bgcolor: dark ? "#2a2535" : "#f0edf5",
+              cursor: "pointer",
+              transition: "transform 250ms ease",
+              "&:hover": { transform: "scale(1.02)" },
             }}
           >
             <Box sx={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.3), transparent 50%)" }} />

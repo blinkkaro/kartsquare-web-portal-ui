@@ -200,7 +200,17 @@ export default function NewTopPros() {
                 }}
               >
                 {/* Media Image */}
-                <Box sx={{ position: "relative", width: "100%", height: 190, overflow: "hidden", bgcolor: COLORS.PURPLE_ALPHA_10 }}>
+                <Box
+                  onClick={() => openProvider(item.provider_id)}
+                  sx={{
+                    position: "relative",
+                    width: "100%",
+                    height: 190,
+                    overflow: "hidden",
+                    bgcolor: COLORS.PURPLE_ALPHA_10,
+                    cursor: "pointer",
+                  }}
+                >
                   <Box
                     component="img"
                     src={item.image_url}
@@ -276,12 +286,15 @@ export default function NewTopPros() {
                   {/* Business Name */}
                   <Typography
                     component="h3"
+                    onClick={() => openProvider(item.provider_id)}
                     sx={{
                       fontSize: "1.05rem",
                       fontWeight: 800,
                       letterSpacing: "-0.015em",
                       lineHeight: 1.3,
                       mb: 0.5,
+                      cursor: "pointer",
+                      "&:hover": { color: COLORS.PRIMARY_PURPLE },
                       display: "-webkit-box",
                       WebkitLineClamp: 1,
                       WebkitBoxOrient: "vertical",

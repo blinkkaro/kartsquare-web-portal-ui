@@ -59,25 +59,32 @@ const CATEGORY_DESCRIPTIONS: Array<[RegExp, string]> = [
 ];
 const descFor = (name: string): string => CATEGORY_DESCRIPTIONS.find(([re]) => re.test(name))?.[1] ?? "Find approved providers";
 
-/** Dummy categories used when API returns no data. */
 const DUMMY_CATEGORIES = [
-  { id: "ac-repair", name: "AC Repair", description: "Service, gas refill" },
-  { id: "home-cleaning", name: "Home Cleaning", description: "Deep cleaning, sanitization" },
-  { id: "beauty-salon", name: "Beauty & Salon", description: "Hair, makeup, salon at home" },
-  { id: "electricians", name: "Electricians", description: "Wiring, fittings, repairs" },
-  { id: "plumbers", name: "Plumbers", description: "Pipe fixing, installation" },
-  { id: "packers-movers", name: "Packers & Movers", description: "Home and office shifting" },
-  { id: "photographers", name: "Photographers", description: "Weddings, events, portraits" },
+  { id: "electricians", slug: "electricians", name: "Electricians", description: "Wiring, fittings, repairs" },
+  { id: "ac-repair", slug: "ac-repair", name: "AC Repair", description: "Service, gas refill" },
+  { id: "home-cleaning", slug: "home-cleaning", name: "Home Cleaning", description: "Deep cleaning, sanitization" },
+  { id: "beauty-salon", slug: "beauty-salon", name: "Beauty & Salon", description: "Hair, makeup, salon at home" },
+  { id: "plumbers", slug: "plumbers", name: "Plumbers", description: "Pipe fixing, installation" },
+  { id: "packers-movers", slug: "packers-movers", name: "Packers & Movers", description: "Home and office shifting" },
+  { id: "photographers", slug: "photographers", name: "Photographers", description: "Weddings, events, portraits" },
 ];
 
 export default function NewCategoryGrid() {
   const router = useRouter();
   const dark = useTheme().palette.mode === "dark";
   const { data: categories, isLoading } = useCategories();
+  const { location } = useAILocation();
+  const city = (location.city || "Jaipur").toLowerCase();
 
   // Use API data if available, else dummy
   const cats = (!isLoading && categories && categories.length > 0) ? categories : (isLoading ? null : DUMMY_CATEGORIES);
-  const go = (id: string) => router.push(`/cus/servicesList?category=${encodeURIComponent(id)}`);
+  const go = (c: { id: string; name: string; slug?: string }) => {
+    if (c.slug && city) {
+      router.push(`/${city}/${c.slug}`);
+    } else {
+      router.push(`/cus/servicesList?category=${encodeURIComponent(c.id)}&search=${encodeURIComponent(c.name)}`);
+    }
+  };
 
   // Split: first 4 get image cards, rest get icon-row items
   const imageCards = cats?.slice(0, 4) ?? [];
@@ -90,6 +97,24 @@ export default function NewCategoryGrid() {
         <Typography component="h2" sx={{ fontSize: { xs: "1.35rem", md: "1.7rem" }, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.2 }}>
           Popular categories
         </Typography>
+        <Box
+          component="button"
+          type="button"
+          onClick={() => router.push("/cus/servicesList")}
+          sx={{
+            all: "unset",
+            cursor: "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 0.75,
+            fontSize: "0.9rem",
+            fontWeight: 700,
+            color: dark ? "#d6b8ff" : COLORS.PRIMARY_PURPLE,
+            "&:hover": { textDecoration: "underline" },
+          }}
+        >
+          Explore all <ArrowForwardRoundedIcon sx={{ fontSize: 17 }} />
+        </Box>
       </Box>
 
       {isLoading ? (
@@ -108,8 +133,8 @@ export default function NewCategoryGrid() {
                   key={c.id}
                   role="link"
                   tabIndex={0}
-                  onClick={() => go(c.id)}
-                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(c.id); } }}
+                  onClick={() => go(c)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(c); } }}
                   aria-label={`Browse ${c.name}`}
                   sx={{
                     position: "relative",
@@ -193,8 +218,8 @@ export default function NewCategoryGrid() {
                     key={c.id}
                     role="link"
                     tabIndex={0}
-                    onClick={() => go(c.id)}
-                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(c.id); } }}
+                    onClick={() => go(c)}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(c); } }}
                     aria-label={`Browse ${c.name}`}
                     sx={{
                       display: "flex",
