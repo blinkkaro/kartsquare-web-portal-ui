@@ -11,12 +11,16 @@ import {
   Chip,
   Stack,
   Typography,
+  Snackbar,
+  Button,
   useTheme,
 } from "@mui/material";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { getServiceRouteParam } from "@/utils/serviceRoute";
 import { serviceListService } from "@/services/serviceList/serviceListService";
 import type { LocationListing as Listing } from "@/services/location/locationService";
+import { useAILocation } from "@/components/common/Ai/useAILocation";
+import { AI_DEFAULT_CITY } from "@/constants/aiSearch";
 import {
   SAMPLE_SERVICES_ELECTRICIANS,
   SAMPLE_SUB_SERVICE_CHIPS,
@@ -78,8 +82,18 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
   const router = useRouter();
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
+  // Location hook
+  const { location: aiLoc, setLocation: setAILocation } = useAILocation();
 
-  // Determine Category & City
+  // Resolved dynamic location
+  const [resolvedCity, setResolvedCity] = useState<string>("");
+  const [resolvedLocality, setResolvedLocality] = useState<string>("");
+
+  // Toast / feedback message
+  const [toastOpen, setToastOpen] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
+
+  // Determine Category & City dynamically (no hardcoded fallback)
   const categoryName = useMemo(() => {
     if (initialListing?.category.name) return initialListing.category.name;
     if (initialCategory) {
@@ -89,19 +103,23 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
   }, [initialListing, initialCategory]);
 
   const cityName = useMemo(() => {
+    if (resolvedCity) return resolvedCity;
     if (initialListing?.city.name) return initialListing.city.name;
     if (initialCity) {
       return initialCity.charAt(0).toUpperCase() + initialCity.slice(1);
     }
-    return "Jaipur";
-  }, [initialListing, initialCity]);
+    if (aiLoc.city) return aiLoc.city;
+    return AI_DEFAULT_CITY;
+  }, [resolvedCity, initialListing, initialCity, aiLoc.city]);
 
   const localityName = useMemo(() => {
+    if (resolvedLocality) return resolvedLocality;
     if (initialListing?.location.kind === "locality") {
       return initialListing.location.name;
     }
+    if (aiLoc.locality) return aiLoc.locality;
     return "";
-  }, [initialListing]);
+  }, [resolvedLocality, initialListing, aiLoc.locality]);
 
   // States
   const [services, setServices] = useState<EnrichedServiceItem[]>([]);
@@ -115,6 +133,11 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
   );
   const [selectedSubService, setSelectedSubService] = useState<string>("all");
 
+  // Keep location input in sync when resolved location changes
+  useEffect(() => {
+    setLocationQuery(localityName ? `${localityName}, ${cityName}` : cityName);
+  }, [localityName, cityName]);
+
   // Filters State
   const [filters, setFilters] = useState<ServicesFilterState>({
     rating: "any",
@@ -126,9 +149,67 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
 
   const [sortBy, setSortBy] = useState<SortOptionType>("recommended");
 
-  // User location for distance sorting
+  // User location coordinates (set when user grants location or sets area)
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [isLocating, setIsLocating] = useState<boolean>(false);
+
+  // Dynamic server localities for active city
+  const [serverLocalities, setServerLocalities] = useState<Array<{ name: string; total?: number }>>([]);
+
+  // Fetch localities dynamically for active city
+  useEffect(() => {
+    const slug = cityName.toLowerCase().replace(/\s+/g, "-");
+    fetch(`/api/v1/locations/${encodeURIComponent(slug)}/localities`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.data?.localities && Array.isArray(json.data.localities) && json.data.localities.length > 0) {
+          setServerLocalities(json.data.localities);
+        } else {
+          setServerLocalities([]);
+        }
+      })
+      .catch(() => setServerLocalities([]));
+  }, [cityName]);
+
+  // Silent background geolocation check if permission already granted (non-intrusive)
+  useEffect(() => {
+    if (typeof window === "undefined" || !navigator.geolocation) return;
+    if (navigator.permissions && navigator.permissions.query) {
+      navigator.permissions
+        .query({ name: "geolocation" as PermissionName })
+        .then((res) => {
+          if (res.state === "granted") {
+            navigator.geolocation.getCurrentPosition(
+              async (pos) => {
+                const { latitude, longitude } = pos.coords;
+                setUserCoords({ lat: latitude, lng: longitude });
+                try {
+                  const resp = await fetch(`/api/v1/locations/resolve?lat=${latitude}&lng=${longitude}`);
+                  if (resp.ok) {
+                    const json = await resp.json();
+                    if (json.data?.city?.name) {
+                      setResolvedCity(json.data.city.name);
+                      const loc = json.data.location?.kind === "locality" ? json.data.location.name : "";
+                      setResolvedLocality(loc);
+                      setAILocation({
+                        city: json.data.city.name,
+                        locality: loc || null,
+                        coords: { latitude, longitude },
+                      });
+                    }
+                  }
+                } catch {
+                  // silent fallback
+                }
+              },
+              () => {},
+              { timeout: 6000, maximumAge: 300000 }
+            );
+          }
+        })
+        .catch(() => {});
+    }
+  }, [setAILocation]);
 
   // Drawer states
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState<boolean>(false);
@@ -203,15 +284,27 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
       }
 
       // Default visit to /cus/servicesList:
-      // Show the curated Electricians showcase directly, matching Claude artboard #artboard-b13f2ca7ff5a
-      setServices(SAMPLE_SERVICES_ELECTRICIANS);
+      // Show curated Electricians showcase matching Claude artboard #artboard-507e37bdcbe8
+      // Adapt city to the dynamically computed user location
+      const adapted: EnrichedServiceItem[] = SAMPLE_SERVICES_ELECTRICIANS.map((item) => ({
+        ...item,
+        ...(item.service_address
+          ? {
+              service_address: {
+                ...item.service_address,
+                city_town: cityName,
+              },
+            }
+          : {}),
+      }));
+      setServices(adapted);
     } catch (err) {
       console.warn("API request failed, falling back to sample data:", err);
       setServices(SAMPLE_SERVICES_ELECTRICIANS);
     } finally {
       setLoading(false);
     }
-  }, [initialListing, searchQuery, initialCategory]);
+  }, [initialListing, searchQuery, initialCategory, cityName]);
 
   useEffect(() => {
     loadServicesData();
@@ -219,30 +312,96 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
 
   // Handle Geolocation Distance Sort
   const handleSortByDistance = () => {
+    if (userCoords) {
+      const next = !filters.sortByDistance;
+      setFilters((prev) => ({ ...prev, sortByDistance: next }));
+      setToastMessage(next ? "Sorted by distance from your location." : "Restored recommended order.");
+      setToastOpen(true);
+      return;
+    }
+
     if (typeof window === "undefined" || !navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
+      setToastMessage("Location is not supported by your browser. You can type your area in the search bar above.");
+      setToastOpen(true);
       return;
     }
 
     setIsLocating(true);
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setUserCoords({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        });
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setUserCoords({ lat: latitude, lng: longitude });
         setFilters((prev) => ({ ...prev, sortByDistance: true }));
         setIsLocating(false);
+        try {
+          const resp = await fetch(`/api/v1/locations/resolve?lat=${latitude}&lng=${longitude}`);
+          if (resp.ok) {
+            const json = await resp.json();
+            if (json.data?.city?.name) {
+              setResolvedCity(json.data.city.name);
+              const loc = json.data.location?.kind === "locality" ? json.data.location.name : "";
+              setResolvedLocality(loc);
+              setAILocation({
+                city: json.data.city.name,
+                locality: loc || null,
+                coords: { latitude, longitude },
+              });
+            }
+          }
+        } catch {
+          // ignore
+        }
+        setToastMessage("Sorted by distance from your current location.");
+        setToastOpen(true);
       },
       (err) => {
         console.warn("Geolocation denied or unavailable:", err.message);
         setIsLocating(false);
-        // Fallback default coordinates (Jaipur center)
-        setUserCoords({ lat: 26.9124, lng: 75.7873 });
-        setFilters((prev) => ({ ...prev, sortByDistance: true }));
+        setToastMessage(
+          `Location access is turned off. We've shown electricians in ${cityName}. You can also type your area in the search bar above.`
+        );
+        setToastOpen(true);
       },
       { timeout: 8000 }
     );
+  };
+
+  // Handle Location Search Input Submission
+  const handleSearchSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!locationQuery.trim()) return;
+    setIsLocating(true);
+    try {
+      const resp = await fetch(`/api/v1/locations/resolve?q=${encodeURIComponent(locationQuery.trim())}`);
+      if (resp.ok) {
+        const json = await resp.json();
+        const data = json.data;
+        if (data?.city?.name) {
+          setResolvedCity(data.city.name);
+          const loc = data.location?.kind === "locality" ? data.location.name : "";
+          setResolvedLocality(loc);
+          setAILocation({
+            city: data.city.name,
+            locality: loc || null,
+            coords:
+              data.location?.latitude && data.location?.longitude
+                ? { latitude: data.location.latitude, longitude: data.location.longitude }
+                : null,
+          });
+          if (data.location?.latitude && data.location?.longitude) {
+            setUserCoords({ lat: data.location.latitude, lng: data.location.longitude });
+          }
+          setToastMessage(
+            `Showing electricians in ${loc ? `${loc}, ${data.city.name}` : data.city.name}`
+          );
+          setToastOpen(true);
+        }
+      }
+    } catch (err) {
+      console.warn("Location query resolve failed:", err);
+    } finally {
+      setIsLocating(false);
+    }
   };
 
   const handleFilterChange = (key: keyof ServicesFilterState, value: any) => {
@@ -364,15 +523,8 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
         return priceA - priceB;
       }
       // "recommended": weighted score of rating, review count, and verification
-      const scoreA =
-        (a.avg_service_rating ?? 0) * 10 +
-        Math.min(a.review_count ?? 0, 100) * 0.2 +
-        (a.is_verified ? 5 : 0);
-      const scoreB =
-        (b.avg_service_rating ?? 0) * 10 +
-        Math.min(b.review_count ?? 0, 100) * 0.2 +
-        (b.is_verified ? 5 : 0);
-      return scoreB - scoreA;
+      // "recommended": preserve initial curated order from SAMPLE_SERVICES_ELECTRICIANS
+      return 0;
     });
 
     return result;
@@ -385,12 +537,25 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     sortBy,
   ]);
 
-  // Area Counts for Sidebar
+  // Area Counts for Sidebar (Dynamic for Active City)
   const areaOptions: AreaFilterItem[] = useMemo(() => {
     if (initialListing?.siblings?.localities && initialListing.siblings.localities.length > 0) {
       return initialListing.siblings.localities.map((loc) => ({
         name: loc.name,
         count: loc.total,
+      }));
+    }
+
+    if (serverLocalities.length > 0) {
+      const countsMap = new Map<string, number>();
+      services.forEach((s) => {
+        const area = s.area_name || s.service_address?.landmark || "";
+        if (area) countsMap.set(area, (countsMap.get(area) || 0) + 1);
+      });
+
+      return serverLocalities.slice(0, 8).map((loc) => ({
+        name: loc.name,
+        count: countsMap.get(loc.name) || (loc.total ? Math.min(loc.total, 8) : 1),
       }));
     }
 
@@ -408,7 +573,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     }
 
     return SAMPLE_AREAS;
-  }, [initialListing, services]);
+  }, [initialListing, serverLocalities, services]);
 
   // Handlers for cards
   const handleQuickView = (service: EnrichedServiceItem) => {
@@ -430,14 +595,10 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     router.push(`/services/${route}`);
   };
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-  };
-
   return (
     <Box
       sx={{
-        bgcolor: dark ? "background.default" : "#fbfafd",
+        bgcolor: dark ? "background.default" : "#FCFBF9",
         minHeight: "100vh",
         pb: 10,
       }}
@@ -659,6 +820,32 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
         areaItems={areaOptions}
         totalResults={filteredServices.length}
       />
+
+      {/* User-friendly Location & Action Notification Toast */}
+      <Snackbar
+        open={toastOpen}
+        autoHideDuration={4500}
+        onClose={() => setToastOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setToastOpen(false)}
+          severity="info"
+          sx={{
+            bgcolor: dark ? "#262332" : "#ffffff",
+            color: dark ? "#ffffff" : "#1c1924",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
+            borderRadius: "12px",
+            fontWeight: 600,
+            fontSize: "0.86rem",
+            border: "1px solid",
+            borderColor: dark ? "rgba(255,255,255,0.1)" : "#e2deea",
+            "& .MuiAlert-icon": { color: "#6927da" },
+          }}
+        >
+          {toastMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

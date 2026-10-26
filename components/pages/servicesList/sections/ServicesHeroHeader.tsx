@@ -74,7 +74,16 @@ export default function ServicesHeroHeader({
           return (
             <React.Fragment key={idx}>
               {idx > 0 && (
-                <ChevronRightRoundedIcon sx={{ fontSize: 16, color: dark ? "rgba(255,255,255,0.4)" : "#a39fb0" }} />
+                <Typography
+                  component="span"
+                  sx={{
+                    color: dark ? "rgba(255,255,255,0.3)" : "#a39fb0",
+                    mx: 0.5,
+                    fontSize: "0.85rem",
+                  }}
+                >
+                  /
+                </Typography>
               )}
               {crumb.href && !isLast ? (
                 <Box
@@ -130,14 +139,14 @@ export default function ServicesHeroHeader({
               mb: 1,
             }}
           >
-            Find the right {categoryName ? categoryName.toLowerCase() : "service"}{" "}
+            Find the right {categoryName ? categoryName.toLowerCase().replace(/s$/, "") : "electrician"} in{" "}
             <Box
               component="span"
               sx={{
                 color: COLORS.PRIMARY_PURPLE,
               }}
             >
-              in {currentCity || "your city"}.
+              {currentCity ? `${currentCity}.` : "your city."}
             </Box>
           </Typography>
           <Typography

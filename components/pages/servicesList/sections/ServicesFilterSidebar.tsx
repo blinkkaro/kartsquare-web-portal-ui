@@ -335,8 +335,8 @@ export default function ServicesFilterSidebar({
         {isLocating
           ? "Locating..."
           : filters.sortByDistance
-          ? "Sorted by distance"
-          : "Sort by distance from me"}
+          ? "✓ Sorted by distance"
+          : "+ Sort by distance from me"}
       </Button>
     </Box>
   );

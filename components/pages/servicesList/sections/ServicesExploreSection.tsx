@@ -127,40 +127,32 @@ export const ServicesExploreSection: React.FC<ServicesExploreSectionProps> = ({
           alignItems: { xs: "flex-start", sm: "flex-end" },
           justifyContent: "space-between",
           gap: 2,
-          mb: 3.5,
+          mb: 3,
         }}
       >
         <Box>
-          <Box
+          <Typography
             sx={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 0.75,
-              fontSize: "0.74rem",
+              fontSize: "0.76rem",
               fontWeight: 800,
               textTransform: "uppercase",
-              letterSpacing: "0.06em",
+              letterSpacing: "0.08em",
               color: COLORS.PRIMARY_PURPLE,
               mb: 0.5,
             }}
           >
-            <AutoAwesomeRoundedIcon sx={{ fontSize: 16 }} />
-            <span>From Explore</span>
-          </Box>
+            FROM EXPLORE
+          </Typography>
           <Typography
             component="h2"
             sx={{
-              fontSize: { xs: "1.3rem", sm: "1.6rem" },
+              fontSize: { xs: "1.35rem", sm: "1.65rem" },
               fontWeight: 800,
-              letterSpacing: "-0.02em",
+              letterSpacing: "-0.025em",
               color: "text.primary",
             }}
           >
-            Recent work by {categoryName} near you
-          </Typography>
-          <Typography sx={{ fontSize: "0.88rem", color: "text.secondary", mt: 0.5 }}>
-            Real photos and reels shared by verified service providers and customers{" "}
-            {cityName ? `in ${cityName}` : ""}.
+            Recent work by {categoryName.toLowerCase()} near you
           </Typography>
         </Box>
 
@@ -170,8 +162,8 @@ export const ServicesExploreSection: React.FC<ServicesExploreSectionProps> = ({
           sx={{
             display: "inline-flex",
             alignItems: "center",
-            gap: 0.75,
-            fontSize: "0.86rem",
+            gap: 0.5,
+            fontSize: "0.9rem",
             fontWeight: 700,
             color: COLORS.PRIMARY_PURPLE,
             textDecoration: "none",
@@ -182,7 +174,7 @@ export const ServicesExploreSection: React.FC<ServicesExploreSectionProps> = ({
             },
           }}
         >
-          <span>Explore all reels & posts</span>
+          <span>Explore more</span>
           <ArrowForwardRoundedIcon
             className="explore-arrow"
             sx={{ fontSize: 16, transition: "transform 0.2s ease" }}
@@ -190,7 +182,7 @@ export const ServicesExploreSection: React.FC<ServicesExploreSectionProps> = ({
         </Box>
       </Box>
 
-      {/* Grid of 4 Explore Cards */}
+      {/* Grid of 4 Explore Cards (Clean Editorial Style Matching Artboard) */}
       <Box
         sx={{
           display: "grid",
@@ -199,7 +191,7 @@ export const ServicesExploreSection: React.FC<ServicesExploreSectionProps> = ({
             sm: "repeat(2, 1fr)",
             lg: "repeat(4, 1fr)",
           },
-          gap: 2.5,
+          gap: { xs: 2.5, lg: 3 },
         }}
       >
         {exploreItems.map((item) => (
@@ -208,33 +200,26 @@ export const ServicesExploreSection: React.FC<ServicesExploreSectionProps> = ({
             component={Link}
             href={item.link}
             sx={{
-              position: "relative",
-              borderRadius: "16px",
-              overflow: "hidden",
-              bgcolor: "background.paper",
-              border: "1px solid",
-              borderColor: dark ? "rgba(255,255,255,0.08)" : "#ede9f2",
-              boxShadow: dark ? "0 4px 16px rgba(0,0,0,0.25)" : "0 2px 10px rgba(0,0,0,0.04)",
-              transition: "transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease",
               textDecoration: "none",
               display: "block",
+              cursor: "pointer",
               "&:hover": {
-                transform: "translateY(-4px)",
-                borderColor: dark ? "rgba(130,72,247,0.4)" : "#d6cbef",
-                boxShadow: dark ? "0 10px 24px rgba(0,0,0,0.4)" : "0 10px 24px rgba(105,39,218,0.12)",
-                "& .explore-img": { transform: "scale(1.05)" },
-                "& .explore-play": { opacity: 1, transform: "scale(1.08)" },
+                "& .explore-img": { transform: "scale(1.04)" },
+                "& .explore-title": { color: COLORS.PRIMARY_PURPLE },
               },
             }}
           >
-            {/* Image / Thumbnail Container */}
+            {/* Image Container with rounded corners */}
             <Box
               sx={{
                 position: "relative",
                 width: "100%",
-                height: 280,
+                height: 260,
+                borderRadius: "16px",
                 overflow: "hidden",
                 bgcolor: dark ? "rgba(255,255,255,0.04)" : "#f0ecf6",
+                border: "1px solid",
+                borderColor: dark ? "rgba(255,255,255,0.08)" : "#ede9f2",
               }}
             >
               <Image
@@ -245,132 +230,67 @@ export const ServicesExploreSection: React.FC<ServicesExploreSectionProps> = ({
                 className="explore-img"
                 style={{
                   objectFit: "cover",
-                  transition: "transform 400ms ease",
+                  transition: "transform 350ms ease",
                 }}
                 priority={false}
               />
 
-              {/* Gradient Dark Overlay */}
-              <Box
-                sx={{
-                  position: "absolute",
-                  inset: 0,
-                  background:
-                    "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%)",
-                }}
-              />
-
-              {/* Badge */}
-              <Box sx={{ position: "absolute", top: 12, left: 12 }}>
-                <Box
-                  sx={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 0.5,
-                    px: 1.25,
-                    py: 0.5,
-                    borderRadius: "999px",
-                    fontSize: "0.72rem",
-                    fontWeight: 700,
-                    bgcolor:
-                      item.badge === "Reel"
-                        ? "rgba(239, 68, 68, 0.92)"
-                        : item.badge === "Customer post"
-                        ? "rgba(245, 158, 11, 0.92)"
-                        : "rgba(255, 255, 255, 0.92)",
-                    color:
-                      item.badge === "Reel" || item.badge === "Customer post"
-                        ? "#ffffff"
-                        : "#1f1c2b",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.18)",
-                    backdropFilter: "blur(6px)",
-                  }}
-                >
-                  {item.badge === "Reel" ? (
-                    <PlayArrowRoundedIcon sx={{ fontSize: 13 }} />
-                  ) : item.badge === "Customer post" ? (
-                    <VerifiedUserRoundedIcon sx={{ fontSize: 13 }} />
-                  ) : (
-                    <CheckCircleRoundedIcon sx={{ fontSize: 13, color: COLORS.PRIMARY_PURPLE }} />
-                  )}
-                  {item.badge}
-                </Box>
-              </Box>
-
-              {/* Center Play Button on Hover if Reel */}
+              {/* Video Play Pill/Icon in Top-Right for Reels */}
               {item.isReel && (
                 <Box
-                  className="explore-play"
                   sx={{
                     position: "absolute",
-                    inset: 0,
+                    top: 12,
+                    right: 12,
+                    width: 32,
+                    height: 32,
+                    borderRadius: "50%",
+                    bgcolor: "rgba(0,0,0,0.45)",
+                    backdropFilter: "blur(4px)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    opacity: 0,
-                    transition: "opacity 200ms ease, transform 200ms ease",
+                    color: "#ffffff",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
                   }}
                 >
-                  <Box
-                    sx={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: "50%",
-                      bgcolor: "rgba(255,255,255,0.3)",
-                      backdropFilter: "blur(8px)",
-                      border: "1.5px solid rgba(255,255,255,0.6)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#fff",
-                      boxShadow: "0 8px 20px rgba(0,0,0,0.3)",
-                    }}
-                  >
-                    <PlayArrowRoundedIcon sx={{ fontSize: 24, ml: 0.25 }} />
-                  </Box>
+                  <PlayArrowRoundedIcon sx={{ fontSize: 20, ml: 0.15 }} />
                 </Box>
               )}
+            </Box>
 
-              {/* Bottom Content */}
-              <Box
+            {/* Content below image */}
+            <Box sx={{ pt: 1.5, px: 0.5 }}>
+              <Typography
+                className="explore-title"
                 sx={{
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  p: 2,
-                  color: "#fff",
+                  fontSize: "0.95rem",
+                  fontWeight: 800,
+                  color: "text.primary",
+                  lineHeight: 1.35,
+                  mb: 0.35,
+                  display: "-webkit-box",
+                  WebkitLineClamp: 1,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                  transition: "color 0.18s ease",
                 }}
               >
-                <Typography
-                  sx={{
-                    fontSize: "0.88rem",
-                    fontWeight: 700,
-                    lineHeight: 1.35,
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                    textShadow: "0 1px 3px rgba(0,0,0,0.4)",
-                  }}
-                >
-                  {item.title}
-                </Typography>
-                <Typography
-                  sx={{
-                    fontSize: "0.78rem",
-                    color: "rgba(255,255,255,0.85)",
-                    mt: 0.5,
-                    fontWeight: 500,
-                    display: "-webkit-box",
-                    WebkitLineClamp: 1,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                  }}
-                >
-                  {item.author}
-                </Typography>
-              </Box>
+                {item.title}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "0.82rem",
+                  color: "text.secondary",
+                  fontWeight: 500,
+                  display: "-webkit-box",
+                  WebkitLineClamp: 1,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
+              >
+                {item.author} · {item.badge}
+              </Typography>
             </Box>
           </Box>
         ))}
