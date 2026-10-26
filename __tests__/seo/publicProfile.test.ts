@@ -91,8 +91,8 @@ describe("External pages metadata — noindex", () => {
     expect(result.usesSeoAuth).toBe(true);
   });
 
-  it("JoinAsProvider/page.tsx should use seoAuth (noindex)", () => {
-    const filePath = path.join(__dirname, "../../app/External/JoinAsProvider/page.tsx");
+  it("DeleteAccount/page.tsx should use seoAuth (noindex)", () => {
+    const filePath = path.join(__dirname, "../../app/External/DeleteAccount/page.tsx");
     const result = extractMetadataFromSource(filePath);
     expect(result.isNoindex).toBe(true);
     expect(result.usesSeoAuth).toBe(true);

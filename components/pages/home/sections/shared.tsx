@@ -2,6 +2,9 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 
+/** Horizontal padding used by full-bleed sections so content aligns with the rest. */
+export const PANEL_PX = { xs: 0, md: 0 };
+
 /**
  * One typographic scale for every section heading on the home page, so titles never
  * differ in size from section to section. Change it here, it changes everywhere.
@@ -37,20 +40,36 @@ export function Section({
   );
 }
 
-/** Horizontal inset shared by every home panel and heading so titles line up on one left edge. */
-/** xs is 0: the page Section already supplies the 16px gutter, and panels are frameless on phones. */
-export const PANEL_PX = { xs: 0, md: 5 } as const;
+export function SectionHeader({
+  title,
+  subtitle,
+  action,
+  eyebrow,
+}: {
+  title: string;
+  subtitle?: string;
+  action?: React.ReactNode;
+  eyebrow?: string;
+}) {
+  return (
+    <Box sx={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 2, mb: 2 }}>
+      <Box sx={{ minWidth: 0 }}>
+        {eyebrow && (
+          <Typography sx={{ ...sectionEyebrowSx, color: COLORS.PRIMARY_PURPLE }}>{eyebrow}</Typography>
+        )}
+        <Typography component="h2" sx={sectionTitleSx}>
+          {title}
+        </Typography>
+        {subtitle && (
+          <Typography sx={sectionSubtitleSx}>{subtitle}</Typography>
+        )}
+      </Box>
+      {action}
+    </Box>
+  );
+}
 
-/** One heading size for every home section (Popular services in <city> is the only exception). */
-export const headingSx = {
-  m: 0,
-  fontSize: { xs: "1.375rem", md: "2rem" },
-  fontWeight: 800,
-  letterSpacing: "-0.035em",
-  lineHeight: { xs: 1.25, md: 1.15 },
-} as const;
-
-/** Heading + short purple bar. `light` swaps the bar for the lavender used on the violet banner. */
+/** Section title component with optional subtitle and light mode for dark backgrounds. */
 export function SectionTitle({
   children,
   subtitle,
@@ -63,42 +82,25 @@ export function SectionTitle({
   sx?: object;
 }) {
   return (
-    <Box sx={{ minWidth: 0, ...sx }}>
-      <Typography component="h2" sx={headingSx}>
+    <Box>
+      <Typography
+        component="h2"
+        sx={{
+          fontSize: { xs: "1.35rem", md: "1.7rem" },
+          fontWeight: 800,
+          letterSpacing: "-0.02em",
+          lineHeight: 1.2,
+          color: light ? "#fff" : "text.primary",
+          ...sx,
+        }}
+      >
         {children}
       </Typography>
-      <Box
-        aria-hidden
-        sx={{
-          width: 44,
-          height: 4,
-          mt: 1,
-          borderRadius: 2,
-          background: light ? "#c4b5fd" : `linear-gradient(90deg, ${COLORS.PRIMARY_PURPLE}, ${COLORS.ACCENT_BLUE_DARK})`,
-        }}
-      />
-      {subtitle && <Typography sx={{ ...sectionSubtitleSx, mt: 1.25, fontSize: { xs: "0.9rem", md: "0.95rem" } }}>{subtitle}</Typography>}
-    </Box>
-  );
-}
-
-export function SectionHeader({
-  title,
-  subtitle,
-  action,
-}: {
-  title: string;
-  subtitle?: string;
-  action?: React.ReactNode;
-  /** @deprecated eyebrows were dropped so every heading looks the same */
-  eyebrow?: string;
-}) {
-  return (
-    <Box sx={{ display: "flex", flexWrap: { xs: "wrap", sm: "nowrap" }, alignItems: "flex-end", justifyContent: "space-between", gap: { xs: 1, sm: 2 }, mb: { xs: 2.5, md: 3 } }}>
-      <SectionTitle subtitle={subtitle} sx={{ flex: { xs: "1 1 100%", sm: "1 1 auto" } }}>
-        {title}
-      </SectionTitle>
-      {action}
+      {subtitle && (
+        <Typography sx={{ fontSize: "0.88rem", color: light ? "rgba(255,255,255,0.75)" : "text.secondary", mt: 0.5 }}>
+          {subtitle}
+        </Typography>
+      )}
     </Box>
   );
 }

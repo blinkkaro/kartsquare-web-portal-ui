@@ -64,7 +64,7 @@ class ServiceListService {
             const response = await GET<Category[]>(
                 SERVICE_API_ENDPOINTS.GET_CATEGORIES,
                 {},
-                true // requiresAuth = true as per backend routes
+                false // public endpoint, no auth required
             );
             return response.data;
         } catch (error) {
