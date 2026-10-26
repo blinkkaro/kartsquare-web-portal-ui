@@ -11,6 +11,8 @@ class TopSuppliersService {
     try {
       const res = await GET<TopProvider[]>(
         ApiEndPoints.GET_TOP_PROVIDERS(limit, latitude, longitude),
+        {},
+        false
       );
       console.log("Top Providers Response:", res);
       return res.data;
@@ -26,6 +28,8 @@ class TopSuppliersService {
     try {
       const res = await GET<TopService[]>(
         ApiEndPoints.GET_TOP_SERVICES(limit, latitude, longitude),
+        {},
+        false
       );
       console.log("Top Services Response:", res);
       return res.data;

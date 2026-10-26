@@ -23,6 +23,15 @@ export const HOME_PHOTOS = {
   plumberSink: photo("plumber-sink", "Plumber fixing pipes under a sink"),
   barber: photo("barber", "A barber at work in his shop"),
   hawaMahal: photo("hawa-mahal", "Hawa Mahal facade in Jaipur"),
+  weddingPortrait: photo("wedding-portrait", "Wedding portraits under the golden lights", 900, 600),
+  salonHairSpa: photo("salon-hair-spa", "Hair spa, start to finish in salon", 900, 600),
+  barbershopLamp: photo("barbershop-lamp", "Forty years behind the chair barber shop", 900, 600),
+  bridalRed: photo("bridal-red", "Classic red bridal look", 900, 600),
+  cleanerSofa: photo("cleaner-sofa", "Deep sofa and upholstery cleaning", 900, 600),
+  coupleDusk: photo("couple-dusk", "Couple photography at dusk", 900, 600),
+  electricianPanel: photo("electrician-panel", "Panel rewiring done safely", 900, 600),
+  plumberBathroom: photo("plumber-bathroom", "Bathroom fitting and plumbing repair", 900, 600),
+  salonStudio: photo("salon-studio", "A calm new salon studio in town", 900, 600),
 } as const;
 
 /** Real category names -> a matching photo. No match means the card keeps its icon + gradient. */

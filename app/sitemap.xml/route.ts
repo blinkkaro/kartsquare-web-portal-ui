@@ -47,6 +47,7 @@ export async function GET() {
     { url: "/business-listing" },
     { url: "/blogs" },
     { url: "/careers" },
+    { url: "/search" },
     // Legal & policy
     { url: "/terms-conditions" },
     { url: "/privacy-policy" },
