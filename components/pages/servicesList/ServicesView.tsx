@@ -22,12 +22,10 @@ import type { LocationListing as Listing } from "@/services/location/locationSer
 import { useAILocation } from "@/components/common/Ai/useAILocation";
 import { AI_DEFAULT_CITY } from "@/constants/aiSearch";
 import {
-  SAMPLE_SERVICES_ELECTRICIANS,
-  SAMPLE_SUB_SERVICE_CHIPS,
-  SAMPLE_AREAS,
+  mapRealServiceToEnriched,
   EnrichedServiceItem,
 } from "./servicesSampleData";
-import ServicesHeroHeader from "./sections/ServicesHeroHeader";
+import ServicesHeroHeader, { SubServiceChip } from "./sections/ServicesHeroHeader";
 import ServicesFilterSidebar, {
   ServicesFilterState,
   AreaFilterItem,
@@ -222,89 +220,40 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
       setLoading(true);
       setError(false);
 
-      // If initialListing provided with services, use them
+      // If initialListing provided with services (e.g. from SSR / location route), map them
       if (initialListing?.services && initialListing.services.length > 0) {
-        const enriched: EnrichedServiceItem[] = initialListing.services.map((s, index) => {
-          const sample = SAMPLE_SERVICES_ELECTRICIANS[index % SAMPLE_SERVICES_ELECTRICIANS.length];
-          return {
-            ...sample,
-            ...s,
-            service_id: s.service_id,
-            service_name: s.service_name || sample.service_name,
-            business_name: s.business_name || sample.business_name,
-            provider_name: s.provider_name || sample.provider_name,
-            service_desc: s.service_desc || sample.service_desc,
-            avg_service_rating: s.avg_service_rating ?? sample.avg_service_rating,
-            review_count: s.review_count ?? sample.review_count,
-            price: s.price ?? sample.price,
-            is_price_required: s.is_price_required ?? sample.is_price_required,
-            is_verified: true,
-            area_name: s.service_address?.city_town || sample.area_name,
-            recent_works: sample.recent_works,
-            sub_services: sample.sub_services,
-          };
-        });
+        const enriched: EnrichedServiceItem[] = initialListing.services.map(mapRealServiceToEnriched);
         setServices(enriched);
         return;
       }
 
-      // If search or specific category is queried, fetch live API
-      if (searchQuery || initialCategory) {
-        const response = await serviceListService.getServices({
-          limit: 20,
-          page: 1,
-          ...(searchQuery && { search: searchQuery }),
-          ...(initialCategory && { category_id: initialCategory }),
-        });
+      // Fetch live real providers from backend API
+      const response = await serviceListService.getServices({
+        limit: 50,
+        page: 1,
+        ...(searchQuery && { search: searchQuery }),
+        ...(initialCategory && { category_id: initialCategory }),
+      });
 
-        if (response && response.services && response.services.length > 0) {
-          const mapped: EnrichedServiceItem[] = response.services.map((s, index) => {
-            const sample = SAMPLE_SERVICES_ELECTRICIANS[index % SAMPLE_SERVICES_ELECTRICIANS.length];
-            return {
-              ...sample,
-              ...s,
-              service_id: s.service_id,
-              service_name: s.service_name || sample.service_name,
-              business_name: s.business_name || sample.business_name,
-              provider_name: s.provider_name || sample.provider_name,
-              service_desc: s.service_desc || sample.service_desc,
-              avg_service_rating: s.avg_service_rating ?? sample.avg_service_rating,
-              review_count: s.review_count ?? sample.review_count,
-              price: s.price ?? sample.price,
-              is_price_required: s.is_price_required ?? sample.is_price_required,
-              is_verified: true,
-              area_name: s.service_address?.city_town || sample.area_name,
-              recent_works: sample.recent_works,
-              sub_services: sample.sub_services,
-            };
-          });
-          setServices(mapped);
-          return;
-        }
+      const rawServices =
+        response?.services ||
+        (response as any)?.data?.services ||
+        [];
+
+      if (rawServices && rawServices.length > 0) {
+        const mapped: EnrichedServiceItem[] = rawServices.map(mapRealServiceToEnriched);
+        setServices(mapped);
+      } else {
+        setServices([]);
       }
-
-      // Default visit to /cus/servicesList:
-      // Show curated Electricians showcase matching Claude artboard #artboard-507e37bdcbe8
-      // Adapt city to the dynamically computed user location
-      const adapted: EnrichedServiceItem[] = SAMPLE_SERVICES_ELECTRICIANS.map((item) => ({
-        ...item,
-        ...(item.service_address
-          ? {
-              service_address: {
-                ...item.service_address,
-                city_town: cityName,
-              },
-            }
-          : {}),
-      }));
-      setServices(adapted);
     } catch (err) {
-      console.warn("API request failed, falling back to sample data:", err);
-      setServices(SAMPLE_SERVICES_ELECTRICIANS);
+      console.error("Failed to load real services from backend API:", err);
+      setError(true);
+      setServices([]);
     } finally {
       setLoading(false);
     }
-  }, [initialListing, searchQuery, initialCategory, cityName]);
+  }, [initialListing, searchQuery, initialCategory]);
 
   useEffect(() => {
     loadServicesData();
@@ -429,6 +378,36 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     selectedSubService !== "all" ||
     Boolean(searchQuery);
 
+  // Dynamically compute sub-service / specialty chips from real loaded providers
+  const dynamicChips: SubServiceChip[] = useMemo(() => {
+    const baseLabel = categoryName ? `All ${categoryName.toLowerCase()}` : "All services";
+    const chips: SubServiceChip[] = [{ id: "all", label: baseLabel }];
+    const seen = new Set<string>();
+
+    services.forEach((s) => {
+      const candidates = [
+        ...(s.sub_services || []),
+        ...(s.sub_category_name || []),
+        ...(s.category_name || []),
+      ];
+      candidates.forEach((name) => {
+        if (name && typeof name === "string") {
+          const trimmed = name.trim();
+          const slug = trimmed.toLowerCase();
+          if (trimmed && !seen.has(slug) && slug !== "all" && slug !== baseLabel.toLowerCase()) {
+            seen.add(slug);
+            chips.push({
+              id: slug.replace(/[^a-z0-9]+/g, "-"),
+              label: trimmed,
+            });
+          }
+        }
+      });
+    });
+
+    return chips.slice(0, 12);
+  }, [categoryName, services]);
+
   // Filter and Sort Services
   const filteredServices = useMemo(() => {
     let result = [...services];
@@ -448,12 +427,14 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
 
     // Sub-service chip filter
     if (selectedSubService && selectedSubService !== "all") {
-      const chip = SAMPLE_SUB_SERVICE_CHIPS.find((c) => c.id === selectedSubService);
+      const chip = dynamicChips.find((c) => c.id === selectedSubService);
       if (chip) {
         const chipLabel = chip.label.toLowerCase();
         result = result.filter(
           (s) =>
             s.sub_services?.some((sub) => sub.toLowerCase().includes(chipLabel)) ||
+            s.sub_category_name?.some((sub) => sub.toLowerCase().includes(chipLabel)) ||
+            s.category_name?.some((cat) => cat.toLowerCase().includes(chipLabel)) ||
             s.service_name?.toLowerCase().includes(chipLabel) ||
             s.service_desc?.toLowerCase().includes(chipLabel)
         );
@@ -532,12 +513,13 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     services,
     searchQuery,
     selectedSubService,
+    dynamicChips,
     filters,
     userCoords,
     sortBy,
   ]);
 
-  // Area Counts for Sidebar (Dynamic for Active City)
+  // Area Counts for Sidebar (Dynamic for Active City from Real Data)
   const areaOptions: AreaFilterItem[] = useMemo(() => {
     if (initialListing?.siblings?.localities && initialListing.siblings.localities.length > 0) {
       return initialListing.siblings.localities.map((loc) => ({
@@ -546,24 +528,18 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
       }));
     }
 
-    if (serverLocalities.length > 0) {
-      const countsMap = new Map<string, number>();
-      services.forEach((s) => {
-        const area = s.area_name || s.service_address?.landmark || "";
-        if (area) countsMap.set(area, (countsMap.get(area) || 0) + 1);
-      });
+    const countsMap = new Map<string, number>();
+    services.forEach((s) => {
+      const area = s.area_name || s.service_address?.landmark || "";
+      if (area && area !== "Central") countsMap.set(area, (countsMap.get(area) || 0) + 1);
+    });
 
+    if (serverLocalities.length > 0) {
       return serverLocalities.slice(0, 8).map((loc) => ({
         name: loc.name,
         count: countsMap.get(loc.name) || (loc.total ? Math.min(loc.total, 8) : 1),
       }));
     }
-
-    const countsMap = new Map<string, number>();
-    services.forEach((s) => {
-      const area = s.area_name || "Central";
-      countsMap.set(area, (countsMap.get(area) || 0) + 1);
-    });
 
     if (countsMap.size > 0) {
       return Array.from(countsMap.entries()).map(([name, count]) => ({
@@ -572,7 +548,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
       }));
     }
 
-    return SAMPLE_AREAS;
+    return [];
   }, [initialListing, serverLocalities, services]);
 
   // Handlers for cards
@@ -612,7 +588,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
           searchQuery={searchQuery}
           locationQuery={locationQuery}
           selectedChipId={selectedSubService}
-          chips={SAMPLE_SUB_SERVICE_CHIPS}
+          chips={dynamicChips}
           onSearchChange={setSearchQuery}
           onLocationChange={setLocationQuery}
           onSelectChip={setSelectedSubService}

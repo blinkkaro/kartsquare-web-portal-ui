@@ -52,7 +52,8 @@ export default function ServiceQuickViewDrawer({
       ? service.image_urls[0]
       : typeof service.image_urls === "string"
       ? (service.image_urls as string)
-      : HOME_PHOTOS.electricianHero.src;
+      : service.provider_image_url ||
+        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80";
 
   const locCity = service.service_address?.city_town || "Jaipur";
   const locArea = service.area_name || service.service_address?.address || service.service_address?.landmark || "City Center";

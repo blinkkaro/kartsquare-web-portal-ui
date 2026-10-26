@@ -98,14 +98,13 @@ export const ServicesExploreSection: React.FC<ServicesExploreSectionProps> = ({
       }
     });
 
-    // Fallback if live items are empty or fewer than 4
-    if (liveItems.length < 4) {
-      const needed = 4 - liveItems.length;
-      return [...liveItems, ...SAMPLE_EXPLORE_POSTS.slice(0, needed)];
-    }
-
+    // Return up to 4 real explore items
     return liveItems.slice(0, 4);
   }, [postsData, reelsData]);
+
+  if (exploreItems.length === 0) {
+    return null;
+  }
 
   return (
     <Box

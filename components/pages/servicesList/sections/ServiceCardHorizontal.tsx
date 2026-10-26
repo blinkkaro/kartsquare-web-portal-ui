@@ -44,7 +44,8 @@ export default function ServiceCardHorizontal({
       ? service.image_urls[0]
       : typeof service.image_urls === "string"
       ? (service.image_urls as string)
-      : HOME_PHOTOS.electricianHero.src;
+      : service.provider_image_url ||
+        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80";
 
   const displayName = service.business_name || service.service_name || service.provider_name || "Service Expert";
   const categoryLabel = Array.isArray(service.category_name) ? service.category_name[0] : (service.category_name || "Service");
@@ -69,15 +70,13 @@ export default function ServiceCardHorizontal({
   // Price label
   const hasPrice = typeof service.price === "number" && service.price > 0;
 
-  // Recent work thumbnails
+  // Recent work thumbnails (purely from real provider recent works)
   const recentWorks: ProviderRecentWork[] =
     service.recent_works && service.recent_works.length > 0
       ? service.recent_works
-      : [
-          { id: "rw-1", title: "Project highlight", image: primaryImg, type: "image" },
-          { id: "rw-2", title: "Service setup", image: HOME_PHOTOS.electricianPanel.src, type: "image" },
-          { id: "rw-3", title: "Client installation", image: HOME_PHOTOS.electricianBox.src, type: "image" },
-        ];
+      : primaryImg
+      ? [{ id: `${service.service_id}-w1`, title: displayName, image: primaryImg, type: "image" }]
+      : [];
 
   return (
     <Box
