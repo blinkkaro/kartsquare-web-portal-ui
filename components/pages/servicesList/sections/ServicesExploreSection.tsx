@@ -3,11 +3,13 @@
 import React, { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Box, Typography, Button, useTheme } from "@mui/material";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import VerifiedUserRoundedIcon from "@mui/icons-material/VerifiedUserRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import { COLORS } from "@/constants/colors";
 import { SAMPLE_EXPLORE_POSTS } from "../servicesSampleData";
 import { useGetInfinitePosts, useGetReels } from "@/hooks/usePosts";
 import { Visibility, Posts } from "@/services/post/postInterfaces";
@@ -21,6 +23,9 @@ export const ServicesExploreSection: React.FC<ServicesExploreSectionProps> = ({
   categoryName = "electricians",
   cityName = "Jaipur",
 }) => {
+  const theme = useTheme();
+  const dark = theme.palette.mode === "dark";
+
   const { data: postsData } = useGetInfinitePosts({ limit: 6, visibility: Visibility.PUBLIC });
   const { data: reelsData } = useGetReels();
 
@@ -103,96 +108,273 @@ export const ServicesExploreSection: React.FC<ServicesExploreSectionProps> = ({
   }, [postsData, reelsData]);
 
   return (
-    <section className="mt-14 mb-8 pt-10 border-t border-gray-200" aria-label="Recent work from explore">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
-        <div>
-          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-purple-600 mb-1">
+    <Box
+      component="section"
+      aria-label="Recent work from explore"
+      sx={{
+        mt: 8,
+        mb: 6,
+        pt: 5,
+        borderTop: "1px solid",
+        borderColor: dark ? "rgba(255,255,255,0.08)" : "#ede9f2",
+      }}
+    >
+      {/* Section Header */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          alignItems: { xs: "flex-start", sm: "flex-end" },
+          justifyContent: "space-between",
+          gap: 2,
+          mb: 3.5,
+        }}
+      >
+        <Box>
+          <Box
+            sx={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 0.75,
+              fontSize: "0.74rem",
+              fontWeight: 800,
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              color: COLORS.PRIMARY_PURPLE,
+              mb: 0.5,
+            }}
+          >
             <AutoAwesomeRoundedIcon sx={{ fontSize: 16 }} />
             <span>From Explore</span>
-          </div>
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
+          </Box>
+          <Typography
+            component="h2"
+            sx={{
+              fontSize: { xs: "1.3rem", sm: "1.6rem" },
+              fontWeight: 800,
+              letterSpacing: "-0.02em",
+              color: "text.primary",
+            }}
+          >
             Recent work by {categoryName} near you
-          </h2>
-          <p className="text-sm text-gray-500 mt-1">
+          </Typography>
+          <Typography sx={{ fontSize: "0.88rem", color: "text.secondary", mt: 0.5 }}>
             Real photos and reels shared by verified service providers and customers{" "}
             {cityName ? `in ${cityName}` : ""}.
-          </p>
-        </div>
+          </Typography>
+        </Box>
 
-        <Link
+        <Box
+          component={Link}
           href="/cus/reels"
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-purple-600 hover:text-purple-700 transition-colors shrink-0 group"
+          sx={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 0.75,
+            fontSize: "0.86rem",
+            fontWeight: 700,
+            color: COLORS.PRIMARY_PURPLE,
+            textDecoration: "none",
+            flexShrink: 0,
+            "&:hover": {
+              color: COLORS.PURPLE_HOVER,
+              "& .explore-arrow": { transform: "translateX(3px)" },
+            },
+          }}
         >
           <span>Explore all reels & posts</span>
-          <ArrowForwardRoundedIcon sx={{ fontSize: 16 }} className="group-hover:translate-x-1 transition-transform" />
-        </Link>
-      </div>
+          <ArrowForwardRoundedIcon
+            className="explore-arrow"
+            sx={{ fontSize: 16, transition: "transform 0.2s ease" }}
+          />
+        </Box>
+      </Box>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Grid of 4 Explore Cards */}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "repeat(2, 1fr)",
+            lg: "repeat(4, 1fr)",
+          },
+          gap: 2.5,
+        }}
+      >
         {exploreItems.map((item) => (
-          <Link
+          <Box
             key={item.id}
+            component={Link}
             href={item.link}
-            className="group relative bg-white rounded-2xl overflow-hidden border border-gray-150 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col cursor-pointer block"
+            sx={{
+              position: "relative",
+              borderRadius: "16px",
+              overflow: "hidden",
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: dark ? "rgba(255,255,255,0.08)" : "#ede9f2",
+              boxShadow: dark ? "0 4px 16px rgba(0,0,0,0.25)" : "0 2px 10px rgba(0,0,0,0.04)",
+              transition: "transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease",
+              textDecoration: "none",
+              display: "block",
+              "&:hover": {
+                transform: "translateY(-4px)",
+                borderColor: dark ? "rgba(130,72,247,0.4)" : "#d6cbef",
+                boxShadow: dark ? "0 10px 24px rgba(0,0,0,0.4)" : "0 10px 24px rgba(105,39,218,0.12)",
+                "& .explore-img": { transform: "scale(1.05)" },
+                "& .explore-play": { opacity: 1, transform: "scale(1.08)" },
+              },
+            }}
           >
             {/* Image / Thumbnail Container */}
-            <div className="relative aspect-[4/5] w-full overflow-hidden bg-gray-100">
+            <Box
+              sx={{
+                position: "relative",
+                width: "100%",
+                height: 280,
+                overflow: "hidden",
+                bgcolor: dark ? "rgba(255,255,255,0.04)" : "#f0ecf6",
+              }}
+            >
               <Image
                 src={item.image}
                 alt={item.title}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                className="explore-img"
+                style={{
+                  objectFit: "cover",
+                  transition: "transform 400ms ease",
+                }}
                 priority={false}
               />
 
               {/* Gradient Dark Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/10 opacity-90 group-hover:opacity-95 transition-opacity" />
+              <Box
+                sx={{
+                  position: "absolute",
+                  inset: 0,
+                  background:
+                    "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%)",
+                }}
+              />
 
               {/* Badge */}
-              <div className="absolute top-3 left-3">
-                <span
-                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold backdrop-blur-md shadow-xs ${
-                    item.badge === "Reel"
-                      ? "bg-red-500/90 text-white"
-                      : item.badge === "Customer post"
-                      ? "bg-amber-500/90 text-white"
-                      : "bg-white/90 text-gray-800"
-                  }`}
+              <Box sx={{ position: "absolute", top: 12, left: 12 }}>
+                <Box
+                  sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    px: 1.25,
+                    py: 0.5,
+                    borderRadius: "999px",
+                    fontSize: "0.72rem",
+                    fontWeight: 700,
+                    bgcolor:
+                      item.badge === "Reel"
+                        ? "rgba(239, 68, 68, 0.92)"
+                        : item.badge === "Customer post"
+                        ? "rgba(245, 158, 11, 0.92)"
+                        : "rgba(255, 255, 255, 0.92)",
+                    color:
+                      item.badge === "Reel" || item.badge === "Customer post"
+                        ? "#ffffff"
+                        : "#1f1c2b",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.18)",
+                    backdropFilter: "blur(6px)",
+                  }}
                 >
                   {item.badge === "Reel" ? (
-                    <PlayArrowRoundedIcon sx={{ fontSize: 14 }} />
+                    <PlayArrowRoundedIcon sx={{ fontSize: 13 }} />
                   ) : item.badge === "Customer post" ? (
-                    <VerifiedUserRoundedIcon sx={{ fontSize: 14 }} />
+                    <VerifiedUserRoundedIcon sx={{ fontSize: 13 }} />
                   ) : (
-                    <CheckCircleRoundedIcon sx={{ fontSize: 14 }} className="text-purple-600" />
+                    <CheckCircleRoundedIcon sx={{ fontSize: 13, color: COLORS.PRIMARY_PURPLE }} />
                   )}
                   {item.badge}
-                </span>
-              </div>
+                </Box>
+              </Box>
 
               {/* Center Play Button on Hover if Reel */}
               {item.isReel && (
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="w-12 h-12 rounded-full bg-white/25 backdrop-blur-md border border-white/40 flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform">
-                    <PlayArrowRoundedIcon sx={{ fontSize: 24 }} className="text-white ml-0.5" />
-                  </div>
-                </div>
+                <Box
+                  className="explore-play"
+                  sx={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    opacity: 0,
+                    transition: "opacity 200ms ease, transform 200ms ease",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: "50%",
+                      bgcolor: "rgba(255,255,255,0.3)",
+                      backdropFilter: "blur(8px)",
+                      border: "1.5px solid rgba(255,255,255,0.6)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#fff",
+                      boxShadow: "0 8px 20px rgba(0,0,0,0.3)",
+                    }}
+                  >
+                    <PlayArrowRoundedIcon sx={{ fontSize: 24, ml: 0.25 }} />
+                  </Box>
+                </Box>
               )}
 
               {/* Bottom Content */}
-              <div className="absolute bottom-0 inset-x-0 p-3.5 text-white">
-                <p className="text-sm font-semibold leading-snug line-clamp-2 drop-shadow-xs">
+              <Box
+                sx={{
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  p: 2,
+                  color: "#fff",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "0.88rem",
+                    fontWeight: 700,
+                    lineHeight: 1.35,
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    textShadow: "0 1px 3px rgba(0,0,0,0.4)",
+                  }}
+                >
                   {item.title}
-                </p>
-                <p className="text-xs text-gray-200 mt-1 line-clamp-1 font-normal opacity-90">
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "0.78rem",
+                    color: "rgba(255,255,255,0.85)",
+                    mt: 0.5,
+                    fontWeight: 500,
+                    display: "-webkit-box",
+                    WebkitLineClamp: 1,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
                   {item.author}
-                </p>
-              </div>
-            </div>
-          </Link>
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
         ))}
-      </div>
-    </section>
+      </Box>
+    </Box>
   );
 };

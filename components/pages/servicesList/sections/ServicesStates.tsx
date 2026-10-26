@@ -2,68 +2,110 @@
 
 import React from "react";
 import Link from "next/link";
+import {
+  Box,
+  Typography,
+  Button,
+  Skeleton,
+  useTheme,
+} from "@mui/material";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import SearchOffRoundedIcon from "@mui/icons-material/SearchOffRounded";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+import { COLORS } from "@/constants/colors";
 import { RELATED_CATEGORIES_FOR_EMPTY } from "../servicesSampleData";
 
 interface ServicesLoadingSkeletonProps {
   count?: number;
 }
 
-export const ServicesLoadingSkeleton: React.FC<ServicesLoadingSkeletonProps> = ({ count = 3 }) => {
+export const ServicesLoadingSkeleton: React.FC<ServicesLoadingSkeletonProps> = ({
+  count = 3,
+}) => {
+  const theme = useTheme();
+  const dark = theme.palette.mode === "dark";
+
   return (
-    <div className="space-y-4 w-full" aria-label="Loading services" role="status">
+    <Box
+      sx={{ display: "flex", flexDirection: "column", gap: 2.5, width: "100%" }}
+      aria-label="Loading services"
+      role="status"
+    >
       {Array.from({ length: count }).map((_, i) => (
-        <div
+        <Box
           key={i}
-          className="bg-white rounded-2xl border border-gray-100 p-5 shadow-xs animate-pulse"
+          sx={{
+            bgcolor: "background.paper",
+            borderRadius: "16px",
+            border: "1px solid",
+            borderColor: dark ? "rgba(255,255,255,0.08)" : "#ede9f2",
+            p: 2.5,
+          }}
         >
-          <div className="flex flex-col md:flex-row gap-5">
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              gap: 2.5,
+            }}
+          >
             {/* Avatar & cover placeholder */}
-            <div className="w-full md:w-44 h-36 bg-gray-200 rounded-xl shrink-0" />
+            <Skeleton
+              variant="rounded"
+              width={220}
+              height={160}
+              sx={{
+                borderRadius: "12px",
+                width: { xs: "100%", sm: 220 },
+                height: { xs: 180, sm: 160 },
+                flexShrink: 0,
+              }}
+            />
 
             {/* Info placeholder */}
-            <div className="flex-1 space-y-3">
-              <div className="flex items-center gap-2">
-                <div className="h-5 w-40 bg-gray-200 rounded" />
-                <div className="h-4 w-16 bg-gray-200 rounded-full" />
-              </div>
-              <div className="h-3.5 w-60 bg-gray-100 rounded" />
-              <div className="h-3.5 w-full max-w-md bg-gray-100 rounded" />
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+                <Skeleton variant="text" width={180} height={28} />
+                <Skeleton variant="circular" width={18} height={18} />
+              </Box>
+              <Skeleton variant="text" width={220} height={20} sx={{ mb: 1 }} />
+              <Skeleton variant="text" width="90%" height={20} sx={{ mb: 2 }} />
 
-              {/* Sub services tags */}
-              <div className="flex gap-2 pt-1">
-                <div className="h-6 w-24 bg-gray-100 rounded-full" />
-                <div className="h-6 w-28 bg-gray-100 rounded-full" />
-                <div className="h-6 w-20 bg-gray-100 rounded-full" />
-              </div>
-
-              {/* Recent works thumbnail skeleton */}
-              <div className="flex gap-2 pt-2">
-                <div className="h-12 w-12 bg-gray-200 rounded-lg" />
-                <div className="h-12 w-12 bg-gray-200 rounded-lg" />
-                <div className="h-12 w-12 bg-gray-200 rounded-lg" />
-              </div>
-            </div>
+              {/* Recent works placeholder */}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Skeleton variant="rounded" width={42} height={42} sx={{ borderRadius: "8px" }} />
+                <Skeleton variant="rounded" width={42} height={42} sx={{ borderRadius: "8px" }} />
+                <Skeleton variant="rounded" width={42} height={42} sx={{ borderRadius: "8px" }} />
+                <Skeleton variant="text" width={100} height={22} sx={{ ml: 1 }} />
+              </Box>
+            </Box>
 
             {/* Price & action placeholder */}
-            <div className="w-full md:w-48 flex flex-col justify-between border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-5">
-              <div className="space-y-1.5">
-                <div className="h-3 w-20 bg-gray-100 rounded" />
-                <div className="h-6 w-28 bg-gray-200 rounded" />
-              </div>
-              <div className="space-y-2 pt-3">
-                <div className="h-10 w-full bg-gray-200 rounded-xl" />
-                <div className="h-8 w-full bg-gray-100 rounded-lg" />
-              </div>
-            </div>
-          </div>
-        </div>
+            <Box
+              sx={{
+                width: { xs: "100%", sm: 160 },
+                display: "flex",
+                flexDirection: "column",
+                alignItems: { xs: "stretch", sm: "flex-end" },
+                justifyContent: "space-between",
+                gap: 2,
+              }}
+            >
+              <Box sx={{ textAlign: { xs: "left", sm: "right" } }}>
+                <Skeleton variant="text" width={70} height={16} />
+                <Skeleton variant="text" width={100} height={32} />
+              </Box>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1, width: "100%" }}>
+                <Skeleton variant="rounded" height={38} sx={{ borderRadius: "10px" }} />
+                <Skeleton variant="text" height={24} sx={{ width: "60%", mx: "auto" }} />
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       ))}
-    </div>
+    </Box>
   );
 };
 
@@ -80,74 +122,199 @@ export const ServicesEmptyState: React.FC<ServicesEmptyStateProps> = ({
   onResetFilters,
   hasActiveFilters = false,
 }) => {
+  const theme = useTheme();
+  const dark = theme.palette.mode === "dark";
+
   return (
-    <div className="bg-white rounded-2xl border border-gray-200/80 p-8 md:p-12 text-center shadow-xs">
-      <div className="w-16 h-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-100">
+    <Box
+      sx={{
+        bgcolor: "background.paper",
+        borderRadius: "20px",
+        border: "1px solid",
+        borderColor: dark ? "rgba(255,255,255,0.08)" : "#ede9f2",
+        p: { xs: 4, sm: 6 },
+        textAlign: "center",
+      }}
+    >
+      <Box
+        sx={{
+          width: 64,
+          height: 64,
+          borderRadius: "16px",
+          bgcolor: dark ? "rgba(245,158,11,0.15)" : "#fef3c7",
+          color: "#d97706",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          mx: "auto",
+          mb: 2.5,
+          border: "1px solid",
+          borderColor: dark ? "rgba(245,158,11,0.25)" : "#fde68a",
+        }}
+      >
         <SearchOffRoundedIcon sx={{ fontSize: 32 }} />
-      </div>
+      </Box>
 
-      <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
+      <Typography
+        component="h3"
+        sx={{
+          fontSize: { xs: "1.25rem", sm: "1.45rem" },
+          fontWeight: 800,
+          color: "text.primary",
+          letterSpacing: "-0.02em",
+          mb: 1,
+        }}
+      >
         No {categoryName} found {cityName ? `in ${cityName}` : ""} matching your filters
-      </h3>
+      </Typography>
 
-      <p className="text-sm md:text-base text-gray-500 max-w-lg mx-auto mt-2 leading-relaxed">
+      <Typography
+        sx={{
+          fontSize: "0.92rem",
+          color: "text.secondary",
+          maxWidth: 520,
+          mx: "auto",
+          lineHeight: 1.6,
+          mb: 3,
+        }}
+      >
         {hasActiveFilters
           ? "Try clearing some filters, widening your rating range, or expanding your search to all nearby localities."
           : `We couldn't find active verified ${categoryName} in this area right now. Browse related services or explore all categories.`}
-      </p>
+      </Typography>
 
       {hasActiveFilters && onResetFilters && (
-        <div className="mt-5">
-          <button
-            type="button"
-            onClick={onResetFilters}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 hover:bg-black text-white text-sm font-semibold rounded-xl shadow-xs transition-colors cursor-pointer"
-          >
-            <RefreshRoundedIcon sx={{ fontSize: 18 }} />
-            Reset all filters
-          </button>
-        </div>
+        <Button
+          variant="contained"
+          onClick={onResetFilters}
+          startIcon={<RefreshRoundedIcon sx={{ fontSize: 18 }} />}
+          sx={{
+            bgcolor: dark ? "#ffffff" : "#1e1b2e",
+            color: dark ? "#1e1b2e" : "#ffffff",
+            borderRadius: "12px",
+            px: 3,
+            py: 1,
+            fontWeight: 700,
+            textTransform: "none",
+            "&:hover": {
+              bgcolor: dark ? "#e2e0e8" : "#0f0d17",
+            },
+          }}
+        >
+          Reset all filters
+        </Button>
       )}
 
       {/* Related categories */}
-      <div className="mt-8 pt-8 border-t border-gray-100">
-        <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">
+      <Box sx={{ mt: 4, pt: 4, borderTop: "1px solid", borderColor: dark ? "rgba(255,255,255,0.06)" : "#ede9f2" }}>
+        <Typography
+          sx={{
+            fontSize: "0.74rem",
+            fontWeight: 700,
+            color: "text.secondary",
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+            mb: 2,
+          }}
+        >
           Popular related categories {cityName ? `in ${cityName}` : ""}
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-2">
+        </Typography>
+        <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: 1 }}>
           {RELATED_CATEGORIES_FOR_EMPTY.map((cat) => (
-            <Link
+            <Box
               key={cat.name}
+              component={Link}
               href={cat.path}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 text-xs md:text-sm font-medium text-gray-700 rounded-full transition-colors"
+              sx={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 0.75,
+                px: 2,
+                py: 0.75,
+                borderRadius: "999px",
+                border: "1px solid",
+                borderColor: dark ? "rgba(255,255,255,0.12)" : "#e2deea",
+                bgcolor: dark ? "rgba(255,255,255,0.03)" : "#faf8fc",
+                color: "text.primary",
+                textDecoration: "none",
+                fontSize: "0.82rem",
+                fontWeight: 600,
+                transition: "all 0.18s ease",
+                "&:hover": {
+                  borderColor: COLORS.PRIMARY_PURPLE,
+                  color: COLORS.PRIMARY_PURPLE,
+                  bgcolor: dark ? "rgba(130,72,247,0.1)" : "#f3effa",
+                },
+              }}
             >
               <span>{cat.name}</span>
-              <ArrowForwardRoundedIcon sx={{ fontSize: 14 }} className="text-gray-400" />
-            </Link>
+              <ArrowForwardRoundedIcon sx={{ fontSize: 13, color: "text.secondary" }} />
+            </Box>
           ))}
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       {/* Merchant / Provider Callout */}
-      <div className="mt-8 p-5 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl border border-purple-100 text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-            <AddCircleOutlineRoundedIcon sx={{ fontSize: 18 }} className="text-purple-600" />
+      <Box
+        sx={{
+          mt: 4,
+          p: 2.5,
+          borderRadius: "14px",
+          bgcolor: dark ? "rgba(130,72,247,0.08)" : "#f6f2fc",
+          border: "1px solid",
+          borderColor: dark ? "rgba(130,72,247,0.2)" : "#e8dff7",
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          alignItems: { xs: "flex-start", sm: "center" },
+          justifyContent: "space-between",
+          gap: 2,
+          textAlign: "left",
+        }}
+      >
+        <Box>
+          <Typography
+            sx={{
+              fontSize: "0.92rem",
+              fontWeight: 800,
+              color: "text.primary",
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              mb: 0.25,
+            }}
+          >
+            <AddCircleOutlineRoundedIcon sx={{ fontSize: 18, color: COLORS.PRIMARY_PURPLE }} />
             Run a business or provide services here?
-          </h4>
-          <p className="text-xs text-gray-600 mt-0.5">
+          </Typography>
+          <Typography sx={{ fontSize: "0.82rem", color: "text.secondary" }}>
             List your business on Kartsquare for free and start receiving verified customer leads today.
-          </p>
-        </div>
-        <Link
+          </Typography>
+        </Box>
+        <Button
+          component={Link}
           href="/auth/register"
-          className="inline-flex items-center gap-1.5 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-lg shadow-xs shrink-0 transition-colors"
+          variant="contained"
+          endIcon={<ArrowForwardRoundedIcon sx={{ fontSize: 15 }} />}
+          sx={{
+            bgcolor: COLORS.PRIMARY_PURPLE,
+            color: "#ffffff",
+            borderRadius: "10px",
+            px: 2.5,
+            py: 0.8,
+            fontSize: "0.82rem",
+            fontWeight: 700,
+            textTransform: "none",
+            whiteSpace: "nowrap",
+            boxShadow: "none",
+            "&:hover": {
+              bgcolor: COLORS.PURPLE_HOVER,
+            },
+          }}
         >
-          <span>List your business</span>
-          <ArrowForwardRoundedIcon sx={{ fontSize: 14 }} />
-        </Link>
-      </div>
-    </div>
+          List your business
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
@@ -162,38 +329,108 @@ export const ServicesErrorState: React.FC<ServicesErrorStateProps> = ({
   cityName = "Jaipur",
   onRetry,
 }) => {
+  const theme = useTheme();
+  const dark = theme.palette.mode === "dark";
+
   return (
-    <div className="bg-white rounded-2xl border border-red-100 p-8 md:p-12 text-center shadow-xs">
-      <div className="w-16 h-16 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-red-100">
+    <Box
+      sx={{
+        bgcolor: "background.paper",
+        borderRadius: "20px",
+        border: "1px solid",
+        borderColor: dark ? "rgba(239,68,68,0.2)" : "#fee2e2",
+        p: { xs: 4, sm: 6 },
+        textAlign: "center",
+      }}
+    >
+      <Box
+        sx={{
+          width: 64,
+          height: 64,
+          borderRadius: "16px",
+          bgcolor: dark ? "rgba(239,68,68,0.15)" : "#fee2e2",
+          color: "#dc2626",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          mx: "auto",
+          mb: 2.5,
+          border: "1px solid",
+          borderColor: dark ? "rgba(239,68,68,0.25)" : "#fecaca",
+        }}
+      >
         <WarningAmberRoundedIcon sx={{ fontSize: 32 }} />
-      </div>
+      </Box>
 
-      <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
+      <Typography
+        component="h3"
+        sx={{
+          fontSize: { xs: "1.25rem", sm: "1.45rem" },
+          fontWeight: 800,
+          color: "text.primary",
+          letterSpacing: "-0.02em",
+          mb: 1,
+        }}
+      >
         Couldn&apos;t load {categoryName} {cityName ? `in ${cityName}` : ""}
-      </h3>
+      </Typography>
 
-      <p className="text-sm md:text-base text-gray-500 max-w-md mx-auto mt-2 leading-relaxed">
+      <Typography
+        sx={{
+          fontSize: "0.92rem",
+          color: "text.secondary",
+          maxWidth: 480,
+          mx: "auto",
+          lineHeight: 1.6,
+          mb: 3,
+        }}
+      >
         Something went wrong while connecting to our servers. Your connection might be unstable, or our team is updating services.
-      </p>
+      </Typography>
 
-      <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
+      <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: 1.5 }}>
         {onRetry && (
-          <button
-            type="button"
+          <Button
+            variant="contained"
             onClick={onRetry}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 hover:bg-black text-white text-sm font-semibold rounded-xl shadow-xs transition-colors cursor-pointer"
+            startIcon={<RefreshRoundedIcon sx={{ fontSize: 18 }} />}
+            sx={{
+              bgcolor: dark ? "#ffffff" : "#1e1b2e",
+              color: dark ? "#1e1b2e" : "#ffffff",
+              borderRadius: "12px",
+              px: 3,
+              py: 1,
+              fontWeight: 700,
+              textTransform: "none",
+              "&:hover": {
+                bgcolor: dark ? "#e2e0e8" : "#0f0d17",
+              },
+            }}
           >
-            <RefreshRoundedIcon sx={{ fontSize: 18 }} />
             Try again
-          </button>
+          </Button>
         )}
-        <Link
+        <Button
+          component={Link}
           href="/"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-semibold rounded-xl transition-colors"
+          variant="outlined"
+          sx={{
+            borderColor: dark ? "rgba(255,255,255,0.15)" : "#e2deea",
+            color: "text.primary",
+            borderRadius: "12px",
+            px: 3,
+            py: 1,
+            fontWeight: 700,
+            textTransform: "none",
+            "&:hover": {
+              borderColor: COLORS.PRIMARY_PURPLE,
+              color: COLORS.PRIMARY_PURPLE,
+            },
+          }}
         >
           Browse all categories
-        </Link>
-      </div>
-    </div>
+        </Button>
+      </Box>
+    </Box>
   );
 };

@@ -4,7 +4,15 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
-import { Alert, Chip, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Container,
+  Alert,
+  Chip,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { getServiceRouteParam } from "@/utils/serviceRoute";
 import { serviceListService } from "@/services/serviceList/serviceListService";
@@ -68,6 +76,8 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
 }) => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const theme = useTheme();
+  const dark = theme.palette.mode === "dark";
 
   // Determine Category & City
   const categoryName = useMemo(() => {
@@ -157,46 +167,51 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
         return;
       }
 
-      // If no initialListing, call live getServices API
-      const response = await serviceListService.getServices({
-        limit: 20,
-        page: 1,
-        ...(searchQuery && { search: searchQuery }),
-      });
-
-      if (response && response.services && response.services.length > 0) {
-        const mapped: EnrichedServiceItem[] = response.services.map((s, index) => {
-          const sample = SAMPLE_SERVICES_ELECTRICIANS[index % SAMPLE_SERVICES_ELECTRICIANS.length];
-          return {
-            ...sample,
-            ...s,
-            service_id: s.service_id,
-            service_name: s.service_name || sample.service_name,
-            business_name: s.business_name || sample.business_name,
-            provider_name: s.provider_name || sample.provider_name,
-            service_desc: s.service_desc || sample.service_desc,
-            avg_service_rating: s.avg_service_rating ?? sample.avg_service_rating,
-            review_count: s.review_count ?? sample.review_count,
-            price: s.price ?? sample.price,
-            is_price_required: s.is_price_required ?? sample.is_price_required,
-            is_verified: true,
-            area_name: s.service_address?.city_town || sample.area_name,
-            recent_works: sample.recent_works,
-            sub_services: sample.sub_services,
-          };
+      // If search or specific category is queried, fetch live API
+      if (searchQuery || initialCategory) {
+        const response = await serviceListService.getServices({
+          limit: 20,
+          page: 1,
+          ...(searchQuery && { search: searchQuery }),
+          ...(initialCategory && { category_id: initialCategory }),
         });
-        setServices(mapped);
-      } else {
-        // Fallback to high-quality sample data matching Claude artboard
-        setServices(SAMPLE_SERVICES_ELECTRICIANS);
+
+        if (response && response.services && response.services.length > 0) {
+          const mapped: EnrichedServiceItem[] = response.services.map((s, index) => {
+            const sample = SAMPLE_SERVICES_ELECTRICIANS[index % SAMPLE_SERVICES_ELECTRICIANS.length];
+            return {
+              ...sample,
+              ...s,
+              service_id: s.service_id,
+              service_name: s.service_name || sample.service_name,
+              business_name: s.business_name || sample.business_name,
+              provider_name: s.provider_name || sample.provider_name,
+              service_desc: s.service_desc || sample.service_desc,
+              avg_service_rating: s.avg_service_rating ?? sample.avg_service_rating,
+              review_count: s.review_count ?? sample.review_count,
+              price: s.price ?? sample.price,
+              is_price_required: s.is_price_required ?? sample.is_price_required,
+              is_verified: true,
+              area_name: s.service_address?.city_town || sample.area_name,
+              recent_works: sample.recent_works,
+              sub_services: sample.sub_services,
+            };
+          });
+          setServices(mapped);
+          return;
+        }
       }
+
+      // Default visit to /cus/servicesList:
+      // Show the curated Electricians showcase directly, matching Claude artboard #artboard-b13f2ca7ff5a
+      setServices(SAMPLE_SERVICES_ELECTRICIANS);
     } catch (err) {
       console.warn("API request failed, falling back to sample data:", err);
       setServices(SAMPLE_SERVICES_ELECTRICIANS);
     } finally {
       setLoading(false);
     }
-  }, [initialListing, searchQuery]);
+  }, [initialListing, searchQuery, initialCategory]);
 
   useEffect(() => {
     loadServicesData();
@@ -220,13 +235,13 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
         setIsLocating(false);
       },
       (err) => {
-        console.warn("Geolocation error:", err);
-        // Default to Jaipur center coordinates for preview
+        console.warn("Geolocation denied or unavailable:", err.message);
+        setIsLocating(false);
+        // Fallback default coordinates (Jaipur center)
         setUserCoords({ lat: 26.9124, lng: 75.7873 });
         setFilters((prev) => ({ ...prev, sortByDistance: true }));
-        setIsLocating(false);
       },
-      { timeout: 7000 }
+      { timeout: 8000 }
     );
   };
 
@@ -234,7 +249,6 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  // Reset all filters
   const handleResetFilters = () => {
     setFilters({
       rating: "any",
@@ -245,7 +259,6 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     });
     setSelectedSubService("all");
     setSearchQuery("");
-    setSortBy("recommended");
   };
 
   const hasActiveFilters =
@@ -255,15 +268,15 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     filters.selectedAreas.length > 0 ||
     filters.sortByDistance ||
     selectedSubService !== "all" ||
-    searchQuery.trim().length > 0;
+    Boolean(searchQuery);
 
-  // Filter & Sort Pipeline
+  // Filter and Sort Services
   const filteredServices = useMemo(() => {
     let result = [...services];
 
-    // Search query filter
+    // Text search filter
     if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
+      const q = searchQuery.toLowerCase();
       result = result.filter(
         (s) =>
           s.service_name?.toLowerCase().includes(q) ||
@@ -276,35 +289,16 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
 
     // Sub-service chip filter
     if (selectedSubService && selectedSubService !== "all") {
-      const chipObj = SAMPLE_SUB_SERVICE_CHIPS.find((c) => c.id === selectedSubService);
-      const targetLabel = chipObj ? chipObj.label.toLowerCase() : selectedSubService.toLowerCase();
-      result = result.filter((s) => {
-        const joined = [
-          ...(s.sub_services || []),
-          ...(s.sub_category_name || []),
-          s.service_name || "",
-          s.service_desc || "",
-        ]
-          .join(" ")
-          .toLowerCase();
-
-        if (selectedSubService === "wiring") {
-          return joined.includes("wiring") || joined.includes("fitting");
-        }
-        if (selectedSubService === "fan-light") {
-          return joined.includes("fan") || joined.includes("light") || joined.includes("chandelier");
-        }
-        if (selectedSubService === "inverter") {
-          return joined.includes("inverter") || joined.includes("battery") || joined.includes("ups");
-        }
-        if (selectedSubService === "mcb") {
-          return joined.includes("mcb") || joined.includes("switch") || joined.includes("distribution");
-        }
-        if (selectedSubService === "earthing") {
-          return joined.includes("earthing") || joined.includes("ground");
-        }
-        return joined.includes(targetLabel);
-      });
+      const chip = SAMPLE_SUB_SERVICE_CHIPS.find((c) => c.id === selectedSubService);
+      if (chip) {
+        const chipLabel = chip.label.toLowerCase();
+        result = result.filter(
+          (s) =>
+            s.sub_services?.some((sub) => sub.toLowerCase().includes(chipLabel)) ||
+            s.service_name?.toLowerCase().includes(chipLabel) ||
+            s.service_desc?.toLowerCase().includes(chipLabel)
+        );
+      }
     }
 
     // Rating filter
@@ -314,9 +308,9 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
       result = result.filter((s) => (s.avg_service_rating ?? 0) >= 4.5);
     }
 
-    // Verified filter
+    // Verified only filter
     if (filters.verifiedOnly) {
-      result = result.filter((s) => s.is_verified === true);
+      result = result.filter((s) => s.is_verified);
     }
 
     // Pricing filter
@@ -329,21 +323,25 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     // Area filter
     if (filters.selectedAreas.length > 0) {
       result = result.filter((s) => {
-        const area = (s.area_name || s.service_address?.address || "").toLowerCase();
-        return filters.selectedAreas.some((a) => area.includes(a.toLowerCase()));
+        const area = s.area_name || s.service_address?.city_town || "";
+        return filters.selectedAreas.some(
+          (a) => area.toLowerCase().includes(a.toLowerCase()) || a.toLowerCase().includes(area.toLowerCase())
+        );
       });
     }
 
-    // Distance calculation if user coords available
+    // Calculate distance if coordinates available
     if (userCoords) {
       result = result.map((s) => {
-        const lat = s.service_address?.latitude;
-        const lng = s.service_address?.longitude;
-        if (lat && lng) {
-          const dist = calculateHaversineDistance(userCoords.lat, userCoords.lng, lat, lng);
-          return { ...s, distance_km: dist };
-        }
-        return s;
+        const sLat = s.service_address?.latitude ?? 26.9124;
+        const sLng = s.service_address?.longitude ?? 75.7873;
+        const dist = calculateHaversineDistance(
+          userCoords.lat,
+          userCoords.lng,
+          sLat,
+          sLng
+        );
+        return { ...s, distance_km: dist };
       });
     }
 
@@ -437,28 +435,33 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/60 pb-16">
-      {/* 1. Hero Header */}
-      <ServicesHeroHeader
-        categoryName={categoryName}
-        cityName={cityName}
-        localityName={localityName}
-        searchQuery={searchQuery}
-        locationQuery={locationQuery}
-        selectedChipId={selectedSubService}
-        chips={SAMPLE_SUB_SERVICE_CHIPS}
-        onSearchChange={setSearchQuery}
-        onLocationChange={setLocationQuery}
-        onSelectChip={setSelectedSubService}
-        onSubmitSearch={handleSearchSubmit}
-      />
+    <Box
+      sx={{
+        bgcolor: dark ? "background.default" : "#fbfafd",
+        minHeight: "100vh",
+        pb: 10,
+      }}
+    >
+      <Container maxWidth="xl" sx={{ px: { xs: 1.5, sm: 2.5, md: 3, lg: 4 } }}>
+        {/* 1. Hero Header */}
+        <ServicesHeroHeader
+          categoryName={categoryName}
+          cityName={cityName}
+          localityName={localityName}
+          searchQuery={searchQuery}
+          locationQuery={locationQuery}
+          selectedChipId={selectedSubService}
+          chips={SAMPLE_SUB_SERVICE_CHIPS}
+          onSearchChange={setSearchQuery}
+          onLocationChange={setLocationQuery}
+          onSelectChip={setSelectedSubService}
+          onSubmitSearch={handleSearchSubmit}
+        />
 
-      {/* Main Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
         {/* Location fallback alert (if locality was widened to full city) */}
         {initialListing?.fallback && (
-          <div className="mb-6">
-            <Alert severity="info" className="rounded-xl shadow-xs">
+          <Box sx={{ mb: 3 }}>
+            <Alert severity="info" sx={{ borderRadius: "14px" }}>
               {initialListing.fallback.reason === "locality_unknown"
                 ? `We don't have ${initialListing.fallback.requested?.replace(
                     /-/g,
@@ -469,13 +472,23 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                     " "
                   )} yet — showing all of ${cityName}.`}
             </Alert>
-          </div>
+          </Box>
         )}
 
         {/* Sibling Localities Pills for Location SEO */}
         {initialListing?.siblings?.localities && initialListing.siblings.localities.length > 0 && (
-          <div className="mb-6">
-            <Typography variant="caption" className="font-semibold text-gray-500 uppercase tracking-wider block mb-2">
+          <Box sx={{ mb: 3 }}>
+            <Typography
+              variant="caption"
+              sx={{
+                fontWeight: 700,
+                color: "text.secondary",
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+                display: "block",
+                mb: 1,
+              }}
+            >
               Browse by locality in {cityName}
             </Typography>
             <Stack direction="row" flexWrap="wrap" gap={1}>
@@ -491,17 +504,30 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                     variant={initialListing.location.slug === loc.slug ? "filled" : "outlined"}
                     color={initialListing.location.slug === loc.slug ? "primary" : "default"}
                     label={`${loc.name} (${loc.total})`}
-                    className="cursor-pointer hover:border-gray-400 transition-colors"
+                    sx={{
+                      cursor: "pointer",
+                      fontWeight: 600,
+                      borderRadius: "8px",
+                      transition: "all 0.18s ease",
+                    }}
                   />
                 ))}
             </Stack>
-          </div>
+          </Box>
         )}
 
         {/* 2. Content Layout (Sidebar + Results) */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", lg: "280px 1fr" },
+            gap: { xs: 2.5, lg: 3.5 },
+            alignItems: "flex-start",
+            mt: 2,
+          }}
+        >
           {/* Desktop Filter Sidebar */}
-          <div className="hidden lg:block lg:col-span-1">
+          <Box sx={{ display: { xs: "none", lg: "block" } }}>
             <ServicesFilterSidebar
               filters={filters}
               onChangeFilter={handleFilterChange}
@@ -510,10 +536,10 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
               onTriggerDistanceSort={handleSortByDistance}
               isLocating={isLocating}
             />
-          </div>
+          </Box>
 
           {/* Results Column */}
-          <div className="lg:col-span-3">
+          <Box sx={{ minWidth: 0, width: "100%" }}>
             {/* Toolbar */}
             <ServicesToolbar
               totalCount={filteredServices.length}
@@ -532,7 +558,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
             />
 
             {/* List Results */}
-            <div className="mt-4 space-y-4">
+            <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 2 }}>
               {loading ? (
                 <ServicesLoadingSkeleton count={3} />
               ) : error ? (
@@ -559,16 +585,33 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                   />
                 ))
               )}
-            </div>
+            </Box>
 
             {/* Nearby Cities SEO Links */}
             {initialListing?.siblings?.nearby_cities &&
               initialListing.siblings.nearby_cities.length > 0 && (
-                <div className="mt-12 p-6 bg-white rounded-2xl border border-gray-200/80 shadow-xs">
-                  <Typography variant="h6" className="text-base font-bold text-gray-900 mb-2">
+                <Box
+                  sx={{
+                    mt: 6,
+                    p: 3,
+                    bgcolor: "background.paper",
+                    borderRadius: "16px",
+                    border: "1px solid",
+                    borderColor: dark ? "rgba(255,255,255,0.08)" : "#ede9f2",
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontSize: "0.98rem",
+                      fontWeight: 800,
+                      color: "text.primary",
+                      mb: 1.5,
+                    }}
+                  >
                     {categoryName} in nearby cities
                   </Typography>
-                  <Stack direction="row" flexWrap="wrap" gap={1} className="mt-2">
+                  <Stack direction="row" flexWrap="wrap" gap={1}>
                     {initialListing.siblings.nearby_cities.map((nearby) => (
                       <Chip
                         key={nearby.id}
@@ -578,18 +621,22 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                         size="small"
                         variant="outlined"
                         label={`${categoryName} in ${nearby.name} (${nearby.total})`}
-                        className="cursor-pointer hover:border-gray-400"
+                        sx={{
+                          cursor: "pointer",
+                          fontWeight: 500,
+                          borderRadius: "8px",
+                        }}
                       />
                     ))}
                   </Stack>
-                </div>
+                </Box>
               )}
-          </div>
-        </div>
+          </Box>
+        </Box>
 
         {/* 3. Explore Section */}
         <ServicesExploreSection categoryName={categoryName} cityName={cityName} />
-      </div>
+      </Container>
 
       {/* Slide-over Quick View Drawer */}
       <ServiceQuickViewDrawer
@@ -612,6 +659,6 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
         areaItems={areaOptions}
         totalResults={filteredServices.length}
       />
-    </div>
+    </Box>
   );
 };
