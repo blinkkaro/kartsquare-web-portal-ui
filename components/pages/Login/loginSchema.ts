@@ -15,12 +15,7 @@ export const LoginSchema = (t: TFunction) =>
     password: yup
       .string()
       .trim()
-      .min(8, t("passwordMin"))
       .max(100, t("valNameMax"))
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        t("passwordComplexity"),
-      )
       .required(t("passwordRequired")),
   });
 

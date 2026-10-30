@@ -5,7 +5,7 @@ type CFunction = (key: TranslationKey) => string;
 
 export const createResetPasswordSchema = (t: CFunction) => {
   const passwordComplexityRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    /^(?=.*[A-Z])(?=.*\d).{8,}$/;
 
   return yup.object({
     code: yup

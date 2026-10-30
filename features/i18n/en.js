@@ -61,7 +61,7 @@ export const english = {
   emailRequired: "Email is required",
   passwordMin: "Password must be at least 8 characters",
   passwordComplexity:
-    "Password must contain uppercase, lowercase, number and special char",
+    "Password must contain at least one uppercase letter and one number",
   passwordRequired: "Password is required",
   email_verification: "Verify your Email Address",
   email_verification_subtitle:

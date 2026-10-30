@@ -39,7 +39,7 @@ export const guestLoginSchema = (t: TFunction) => yup.object().shape({
     .required(t("passwordRequired"))
     .min(8, t("passwordMin"))
     .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      /^(?=.*[A-Z])(?=.*\d).{8,}$/,
       t("passwordComplexity")
     ),
   country: yup

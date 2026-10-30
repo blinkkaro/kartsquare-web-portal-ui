@@ -33,7 +33,7 @@ export const SignUpSchema = (t: TFunction, role: AppUserType) =>
       .min(8, t("passwordMin"))
       .max(100, t("valNameMax"))
       .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        /^(?=.*[A-Z])(?=.*\d).{8,}$/,
         t("passwordComplexity"),
       )
       .required(t("passwordRequired")),
