@@ -58,7 +58,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 }) => {
   const { t } = useTranslate();
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(true);
   const [agreeError, setAgreeError] = useState(false);
   const birthDateRef = useRef<HTMLInputElement>(null);
@@ -88,7 +87,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       first_name: "",
       last_name: "",
       email: "",
-      confirm_password: "",
       phone_number: isServiceProvider ? initialData?.whatsapp_number || "" : "",
       country_code: isServiceProvider
         ? initialData?.whatsapp_country_code || "+91"
@@ -262,7 +260,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           />
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6 }}>
+        <Grid size={{ xs: 12 }}>
           <Typography
             variant="caption"
             sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
@@ -285,40 +283,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                     edge="end"
                   >
                     {showPassword ? (
-                      <VisibilityOff sx={{ fontSize: 20 }} />
-                    ) : (
-                      <Visibility sx={{ fontSize: 20 }} />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <Typography
-            variant="caption"
-            sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
-          >
-            Confirm Password*
-          </Typography>
-          <Input
-            name="confirm_password"
-            control={control}
-            type={showConfirmPassword ? "text" : "password"}
-            placeholder="********"
-            startIcon={<LockIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle confirm password visibility"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    edge="end"
-                  >
-                    {showConfirmPassword ? (
                       <VisibilityOff sx={{ fontSize: 20 }} />
                     ) : (
                       <Visibility sx={{ fontSize: 20 }} />

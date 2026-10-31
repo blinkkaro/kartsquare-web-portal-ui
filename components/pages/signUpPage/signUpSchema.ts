@@ -30,17 +30,10 @@ export const SignUpSchema = (t: TFunction, role: AppUserType) =>
     password: yup
       .string()
       .trim()
-      .min(8, t("passwordMin"))
+      .min(5, "Password must be at least 5 characters")
       .max(100, t("valNameMax"))
-      .matches(
-        /^(?=.*[A-Z])(?=.*\d).{8,}$/,
-        t("passwordComplexity"),
-      )
+      .matches(/\d/, "Password must contain at least one number")
       .required(t("passwordRequired")),
-    confirm_password: yup
-      .string()
-      .required("Confirm password is required")
-      .oneOf([yup.ref("password")], "Passwords do not match"),
     // For SERVICE_PROVIDER/SUPPLIER: phone is prefilled from lead — not validated by form
     phone_number:
       role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER
