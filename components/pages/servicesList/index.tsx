@@ -11,12 +11,14 @@ const ServicesContent = () => {
   const category = searchParams.get("category");
   const search = searchParams.get("search") ?? "";
   const city = searchParams.get("city") ?? undefined;
+  const area = searchParams.get("area") ?? searchParams.get("locality") ?? undefined;
 
   return (
     <ServicesView
       initialCategory={category}
       initialSearch={search}
       initialCity={city}
+      initialArea={area}
     />
   );
 };

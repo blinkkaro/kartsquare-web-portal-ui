@@ -149,7 +149,7 @@ export const JAIPUR_AREAS: AreaDefinition[] = [
 ];
 
 /** Pincode to canonical Jaipur area fallback lookup */
-const PINCODE_MAP: Record<string, string> = {
+export const PINCODE_MAP: Record<string, string> = {
   "302012": "Jhotwara",
   "302021": "Vaishali Nagar",
   "302020": "Mansarovar",

@@ -139,7 +139,7 @@ export default function ServicesHeroHeader({
               mb: 1,
             }}
           >
-            Find the right {categoryName ? categoryName.toLowerCase().replace(/s$/, "") : "electrician"} in{" "}
+            Find the right {categoryName && categoryName.toLowerCase() !== "all services" ? categoryName.toLowerCase().replace(/s$/, "") : "service"} in{" "}
             <Box
               component="span"
               sx={{

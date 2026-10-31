@@ -21,6 +21,7 @@ import { serviceListService } from "@/services/serviceList/serviceListService";
 import type { LocationListing as Listing } from "@/services/location/locationService";
 import { useAILocation } from "@/components/common/Ai/useAILocation";
 import { AI_DEFAULT_CITY } from "@/constants/aiSearch";
+import { COLORS } from "@/constants/colors";
 import {
   mapRealServiceToEnriched,
   EnrichedServiceItem,
@@ -42,13 +43,14 @@ import {
   ServicesErrorState,
 } from "./sections/ServicesStates";
 import { ServicesExploreSection } from "./sections/ServicesExploreSection";
-import { POPULAR_JAIPUR_AREAS } from "@/utils/mainAreaResolver";
+import { POPULAR_JAIPUR_AREAS, resolveMainArea } from "@/utils/mainAreaResolver";
 
 interface ServicesViewProps {
   initialListing?: Listing;
   initialCategory?: string | null;
   initialSearch?: string;
   initialCity?: string;
+  initialArea?: string;
 }
 
 // Distance calculator using Haversine formula (km)
@@ -76,6 +78,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
   initialCategory = null,
   initialSearch = "",
   initialCity,
+  initialArea,
 }) => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -86,7 +89,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
 
   // Resolved dynamic location
   const [resolvedCity, setResolvedCity] = useState<string>("");
-  const [resolvedLocality, setResolvedLocality] = useState<string>("");
+  const [resolvedLocality, setResolvedLocality] = useState<string>(initialArea || "");
 
   // Toast / feedback message
   const [toastOpen, setToastOpen] = useState<boolean>(false);
@@ -98,7 +101,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     if (initialCategory) {
       return initialCategory.charAt(0).toUpperCase() + initialCategory.slice(1);
     }
-    return "Electricians";
+    return "";
   }, [initialListing, initialCategory]);
 
   const cityName = useMemo(() => {
@@ -138,11 +141,17 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
   }, [localityName, cityName]);
 
   // Filters State
+  const initialResolvedArea = useMemo(() => {
+    if (!initialArea) return undefined;
+    const r = resolveMainArea({ address: initialArea, city: initialCity || AI_DEFAULT_CITY });
+    return r.mainArea || initialArea;
+  }, [initialArea, initialCity]);
+
   const [filters, setFilters] = useState<ServicesFilterState>({
     rating: "any",
     verifiedOnly: false,
     pricing: "any",
-    selectedAreas: [],
+    selectedAreas: initialResolvedArea ? [initialResolvedArea] : [],
     sortByDistance: false,
   });
 
@@ -307,8 +316,9 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
       (err) => {
         console.warn("Geolocation denied or unavailable:", err.message);
         setIsLocating(false);
+        const displayLabel = categoryName ? categoryName.toLowerCase() : "services";
         setToastMessage(
-          `Location access is turned off. We've shown electricians in ${cityName}. You can also type your area in the search bar above.`
+          `Location access is turned off. We've shown ${displayLabel} in ${cityName}. You can also type your area in the search bar above.`
         );
         setToastOpen(true);
       },
@@ -319,10 +329,26 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
   // Handle Location Search Input Submission
   const handleSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!locationQuery.trim()) return;
+    const query = locationQuery.trim();
+    if (!query) return;
+
+    // Check if query matches a canonical Jaipur main area directly (Justdial style)
+    const resolved = resolveMainArea({ address: query, city: cityName });
+    if (resolved.mainArea && resolved.mainArea.toLowerCase() !== cityName.toLowerCase()) {
+      setFilters((prev) => ({
+        ...prev,
+        selectedAreas: [resolved.mainArea],
+      }));
+      setResolvedLocality(resolved.mainArea);
+      const displayLabel = categoryName ? categoryName.toLowerCase() : "services";
+      setToastMessage(`Showing ${displayLabel} in ${resolved.mainArea}, ${cityName}`);
+      setToastOpen(true);
+      return;
+    }
+
     setIsLocating(true);
     try {
-      const resp = await fetch(`/api/v1/locations/resolve?q=${encodeURIComponent(locationQuery.trim())}`);
+      const resp = await fetch(`/api/v1/locations/resolve?q=${encodeURIComponent(query)}`);
       if (resp.ok) {
         const json = await resp.json();
         const data = json.data;
@@ -330,6 +356,12 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
           setResolvedCity(data.city.name);
           const loc = data.location?.kind === "locality" ? data.location.name : "";
           setResolvedLocality(loc);
+          if (loc) {
+            setFilters((prev) => ({
+              ...prev,
+              selectedAreas: [loc],
+            }));
+          }
           setAILocation({
             city: data.city.name,
             locality: loc || null,
@@ -341,8 +373,9 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
           if (data.location?.latitude && data.location?.longitude) {
             setUserCoords({ lat: data.location.latitude, lng: data.location.longitude });
           }
+          const displayLabel = categoryName ? categoryName.toLowerCase() : "services";
           setToastMessage(
-            `Showing electricians in ${loc ? `${loc}, ${data.city.name}` : data.city.name}`
+            `Showing ${displayLabel} in ${loc ? `${loc}, ${data.city.name}` : data.city.name}`
           );
           setToastOpen(true);
         }
@@ -648,6 +681,82 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                   />
                 ))}
             </Stack>
+          </Box>
+        )}
+        {/* Popular Area Chips for Services screen (Justdial style) */}
+        {!initialListing && areaOptions.length > 0 && (
+          <Box sx={{ mb: 2.5 }}>
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  fontWeight: 700,
+                  color: "text.secondary",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                }}
+              >
+                Popular Areas in {cityName}
+              </Typography>
+              {filters.selectedAreas.length > 0 && (
+                <Button
+                  size="small"
+                  onClick={() => setFilters((prev) => ({ ...prev, selectedAreas: [] }))}
+                  sx={{
+                    p: 0,
+                    minWidth: "auto",
+                    textTransform: "none",
+                    fontSize: "0.75rem",
+                    fontWeight: 700,
+                    color: COLORS.PRIMARY_PURPLE,
+                  }}
+                >
+                  Clear area filter
+                </Button>
+              )}
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 1,
+                overflowX: "auto",
+                pb: 0.5,
+                scrollbarWidth: "none",
+                "&::-webkit-scrollbar": { display: "none" },
+                WebkitOverflowScrolling: "touch",
+              }}
+            >
+              {areaOptions.slice(0, 10).map((area) => {
+                const isSelected = filters.selectedAreas.includes(area.name);
+                return (
+                  <Chip
+                    key={area.name}
+                    clickable
+                    size="small"
+                    variant={isSelected ? "filled" : "outlined"}
+                    color={isSelected ? "primary" : "default"}
+                    label={`${area.name}${(area.count ?? 0) > 0 ? ` (${area.count})` : ""}`}
+                    onClick={() => {
+                      setFilters((prev) => {
+                        const exists = prev.selectedAreas.includes(area.name);
+                        return {
+                          ...prev,
+                          selectedAreas: exists ? [] : [area.name],
+                        };
+                      });
+                    }}
+                    sx={{
+                      cursor: "pointer",
+                      fontWeight: 600,
+                      borderRadius: "8px",
+                      flexShrink: 0,
+                      transition: "all 0.15s ease",
+                      "&:active": { transform: "scale(0.95)" },
+                    }}
+                  />
+                );
+              })}
+            </Box>
           </Box>
         )}
 

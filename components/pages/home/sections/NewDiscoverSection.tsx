@@ -131,7 +131,7 @@ export default function NewDiscoverSection() {
   const dark = theme.palette.mode === "dark";
   const [activeTab, setActiveTab] = useState<string>("all");
 
-  const { data: postsData } = useGetInfinitePosts({ limit: 12, visibility: Visibility.PUBLIC });
+  const { data: postsData } = useGetInfinitePosts({ limit: 4, visibility: Visibility.PUBLIC });
   const { data: reelsData } = useGetReels();
 
   const rawPosts: Posts[] = useMemo(
@@ -147,8 +147,8 @@ export default function NewDiscoverSection() {
   const items: DiscoverItem[] = useMemo(() => {
     const combined: DiscoverItem[] = [];
 
-    // Map reels first
-    rawReels.forEach((r, idx) => {
+    // Map reels first (max 4)
+    rawReels.slice(0, 4).forEach((r, idx) => {
       const uName = r.user?.business_name || [r.user?.first_name, r.user?.last_name].filter(Boolean).join(" ");
       combined.push({
         id: r.id || `reel-${idx}`,
@@ -162,8 +162,8 @@ export default function NewDiscoverSection() {
       });
     });
 
-    // Map image posts
-    rawPosts.forEach((p, idx) => {
+    // Map image posts (max 4)
+    rawPosts.slice(0, 4).forEach((p, idx) => {
       const uName = p.user?.business_name || [p.user?.first_name, p.user?.last_name].filter(Boolean).join(" ");
       const cat = categorizePost(p.caption, p.post_type);
       const badgeType: DiscoverItem["badge"] =
@@ -181,9 +181,9 @@ export default function NewDiscoverSection() {
       });
     });
 
-    // If combined has enough items, return them. Otherwise, augment with dummy items
+    // If combined has enough items, return top 8. Otherwise, augment with dummy items
     if (combined.length >= 8) {
-      return combined.slice(0, 12);
+      return combined.slice(0, 8);
     }
 
     // Append dummy items not already covered
@@ -335,8 +335,8 @@ export default function NewDiscoverSection() {
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: { xs: "repeat(1, 1fr)", sm: "repeat(2, 1fr)", md: "repeat(4, 1fr)" },
-          gap: 2,
+          gridTemplateColumns: { xs: "repeat(2, 1fr)", md: "repeat(4, 1fr)" },
+          gap: { xs: 1.5, md: 2 },
         }}
       >
         {filteredItems.map((item, index) => {
@@ -349,18 +349,23 @@ export default function NewDiscoverSection() {
               sx={{
                 position: "relative",
                 display: "block",
-                borderRadius: 4,
+                borderRadius: { xs: 3, md: 4 },
                 overflow: "hidden",
                 textDecoration: "none",
                 bgcolor: COLORS.PURPLE_ALPHA_10,
-                height: isLarge ? { xs: 260, md: 340 } : { xs: 240, md: 340 },
+                height: isLarge ? { xs: 200, sm: 260, md: 340 } : { xs: 185, sm: 240, md: 340 },
                 boxShadow: dark ? "0 4px 20px rgba(0,0,0,0.3)" : "0 4px 20px rgba(0,0,0,0.06)",
-                transition: "transform 220ms ease, box-shadow 220ms ease",
+                transition: "transform 180ms ease, box-shadow 180ms ease",
+                userSelect: "none",
+                WebkitTapHighlightColor: "transparent",
                 "&:hover": {
                   transform: "translateY(-4px)",
                   boxShadow: dark ? "0 12px 30px rgba(0,0,0,0.45)" : "0 12px 30px rgba(105,39,218,0.18)",
                   "& .media-img": { transform: "scale(1.06)" },
                   "& .play-btn": { transform: "translate(-50%, -50%) scale(1.1)" },
+                },
+                "&:active": {
+                  transform: "scale(0.96)",
                 },
               }}
             >
@@ -370,6 +375,8 @@ export default function NewDiscoverSection() {
                 className="media-img"
                 src={item.image}
                 alt={item.title}
+                loading="lazy"
+                decoding="async"
                 onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                   e.currentTarget.src = HOME_PHOTOS.weddingPortrait.src;
                 }}
@@ -395,14 +402,14 @@ export default function NewDiscoverSection() {
               <Box
                 sx={{
                   position: "absolute",
-                  top: 14,
-                  left: 14,
-                  px: 1.25,
-                  py: 0.4,
+                  top: { xs: 10, md: 14 },
+                  left: { xs: 10, md: 14 },
+                  px: { xs: 1, md: 1.25 },
+                  py: 0.35,
                   borderRadius: 99,
                   bgcolor: "rgba(255,255,255,0.92)",
                   color: "#1c1924",
-                  fontSize: "0.72rem",
+                  fontSize: { xs: "0.65rem", md: "0.72rem" },
                   fontWeight: 800,
                   boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
                 }}
@@ -419,8 +426,8 @@ export default function NewDiscoverSection() {
                     top: "50%",
                     left: "50%",
                     transform: "translate(-50%, -50%)",
-                    width: 48,
-                    height: 48,
+                    width: { xs: 38, md: 48 },
+                    height: { xs: 38, md: 48 },
                     borderRadius: "50%",
                     bgcolor: "rgba(255,255,255,0.95)",
                     display: "flex",
@@ -430,7 +437,7 @@ export default function NewDiscoverSection() {
                     transition: "transform 200ms ease",
                   }}
                 >
-                  <PlayArrowRoundedIcon sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 28, ml: 0.25 }} />
+                  <PlayArrowRoundedIcon sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: { xs: 22, md: 28 }, ml: 0.2 }} />
                 </Box>
               )}
 
@@ -438,19 +445,19 @@ export default function NewDiscoverSection() {
               <Box
                 sx={{
                   position: "absolute",
-                  bottom: 14,
-                  left: 14,
-                  right: 14,
+                  bottom: { xs: 10, md: 14 },
+                  left: { xs: 10, md: 14 },
+                  right: { xs: 10, md: 14 },
                 }}
               >
                 <Typography
                   sx={{
                     color: "#fff",
                     fontWeight: 800,
-                    fontSize: { xs: "0.98rem", md: "1.08rem" },
+                    fontSize: { xs: "0.82rem", sm: "0.92rem", md: "1.05rem" },
                     lineHeight: 1.25,
                     letterSpacing: "-0.01em",
-                    mb: 0.4,
+                    mb: 0.3,
                     display: "-webkit-box",
                     WebkitLineClamp: 2,
                     WebkitBoxOrient: "vertical",
@@ -462,7 +469,7 @@ export default function NewDiscoverSection() {
                 <Typography
                   sx={{
                     color: "rgba(255,255,255,0.8)",
-                    fontSize: "0.78rem",
+                    fontSize: { xs: "0.68rem", md: "0.78rem" },
                     fontWeight: 500,
                   }}
                   noWrap

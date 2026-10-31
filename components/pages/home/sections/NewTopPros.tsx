@@ -349,6 +349,7 @@ export default function NewTopPros() {
                           bgcolor: COLORS.PURPLE_HOVER,
                           boxShadow: "0 4px 12px rgba(105,39,218,0.3)",
                         },
+                        "&:active": { transform: "scale(0.96)" },
                       }}
                     >
                       View profile
@@ -370,6 +371,7 @@ export default function NewTopPros() {
                           borderColor: COLORS.PRIMARY_PURPLE,
                           bgcolor: COLORS.PURPLE_ALPHA_04,
                         },
+                        "&:active": { transform: "scale(0.96)" },
                       }}
                     >
                       Enquire
