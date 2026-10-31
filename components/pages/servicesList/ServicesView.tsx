@@ -332,17 +332,19 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     const query = locationQuery.trim();
     if (!query) return;
 
+    const citySlug = (cityName || "jaipur").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const categorySlug = initialListing?.category.slug || "home-services";
+
     // Check if query matches a canonical Jaipur main area directly (Justdial style)
     const resolved = resolveMainArea({ address: query, city: cityName });
     if (resolved.mainArea && resolved.mainArea.toLowerCase() !== cityName.toLowerCase()) {
-      setFilters((prev) => ({
-        ...prev,
-        selectedAreas: [resolved.mainArea],
-      }));
-      setResolvedLocality(resolved.mainArea);
-      const displayLabel = categoryName ? categoryName.toLowerCase() : "services";
-      setToastMessage(`Showing ${displayLabel} in ${resolved.mainArea}, ${cityName}`);
-      setToastOpen(true);
+      const areaSlug = resolved.mainArea.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      router.push(`/${citySlug}/${areaSlug}/${categorySlug}`);
+      return;
+    }
+
+    if (query.toLowerCase() === cityName.toLowerCase()) {
+      router.push(`/${citySlug}/${categorySlug}`);
       return;
     }
 
@@ -353,31 +355,18 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
         const json = await resp.json();
         const data = json.data;
         if (data?.city?.name) {
-          setResolvedCity(data.city.name);
-          const loc = data.location?.kind === "locality" ? data.location.name : "";
-          setResolvedLocality(loc);
-          if (loc) {
-            setFilters((prev) => ({
-              ...prev,
-              selectedAreas: [loc],
-            }));
+          const resCitySlug = data.city.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+          const locSlug =
+            data.location?.kind === "locality" && data.location.name
+              ? data.location.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")
+              : "";
+          if (locSlug) {
+            router.push(`/${resCitySlug}/${locSlug}/${categorySlug}`);
+            return;
+          } else {
+            router.push(`/${resCitySlug}/${categorySlug}`);
+            return;
           }
-          setAILocation({
-            city: data.city.name,
-            locality: loc || null,
-            coords:
-              data.location?.latitude && data.location?.longitude
-                ? { latitude: data.location.latitude, longitude: data.location.longitude }
-                : null,
-          });
-          if (data.location?.latitude && data.location?.longitude) {
-            setUserCoords({ lat: data.location.latitude, lng: data.location.longitude });
-          }
-          const displayLabel = categoryName ? categoryName.toLowerCase() : "services";
-          setToastMessage(
-            `Showing ${displayLabel} in ${loc ? `${loc}, ${data.city.name}` : data.city.name}`
-          );
-          setToastOpen(true);
         }
       }
     } catch (err) {
@@ -389,6 +378,18 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
 
   const handleFilterChange = (key: keyof ServicesFilterState, value: any) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
+    if (key === "selectedAreas" && typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (Array.isArray(value) && value.length > 0) {
+        params.set("area", value[0].toLowerCase().replace(/\s+/g, "-"));
+        params.set("city", (cityName || "jaipur").toLowerCase());
+      } else {
+        params.delete("area");
+      }
+      const newRelativePathQuery =
+        window.location.pathname + (params.toString() ? `?${params.toString()}` : "");
+      window.history.replaceState(null, "", newRelativePathQuery);
+    }
   };
 
   const handleResetFilters = () => {
@@ -700,8 +701,9 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
               </Typography>
               {filters.selectedAreas.length > 0 && (
                 <Button
+                  component={NextLink}
+                  href={`/${(cityName || "jaipur").toLowerCase().replace(/[^a-z0-9]+/g, "-")}/home-services`}
                   size="small"
-                  onClick={() => setFilters((prev) => ({ ...prev, selectedAreas: [] }))}
                   sx={{
                     p: 0,
                     minWidth: "auto",
@@ -728,28 +730,26 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
             >
               {areaOptions.slice(0, 10).map((area) => {
                 const isSelected = filters.selectedAreas.includes(area.name);
+                const areaSlug = area.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                const citySlug = (cityName || "jaipur").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                const targetUrl = `/${citySlug}/${areaSlug}/home-services`;
+
                 return (
                   <Chip
                     key={area.name}
+                    component={NextLink}
+                    href={isSelected ? `/${citySlug}/home-services` : targetUrl}
                     clickable
                     size="small"
                     variant={isSelected ? "filled" : "outlined"}
                     color={isSelected ? "primary" : "default"}
                     label={`${area.name}${(area.count ?? 0) > 0 ? ` (${area.count})` : ""}`}
-                    onClick={() => {
-                      setFilters((prev) => {
-                        const exists = prev.selectedAreas.includes(area.name);
-                        return {
-                          ...prev,
-                          selectedAreas: exists ? [] : [area.name],
-                        };
-                      });
-                    }}
                     sx={{
                       cursor: "pointer",
                       fontWeight: 600,
                       borderRadius: "8px",
                       flexShrink: 0,
+                      textDecoration: "none",
                       transition: "all 0.15s ease",
                       "&:active": { transform: "scale(0.95)" },
                     }}
