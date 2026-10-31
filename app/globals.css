@@ -177,3 +177,10 @@ input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 1000px #1e2930 inset !important;
     -webkit-text-fill-color: #ffffff !important;
 }
+/* ── Inside the Kartsquare mobile app WebView (html[data-native], set in layout) ── */
+html[data-native] [data-native-hide] {
+    display: none !important;
+}
+html[data-native] [data-main-shell] {
+    padding-bottom: 0 !important; /* bottom-nav spacer not needed; native tab bar owns it */
+}

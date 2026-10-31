@@ -24,6 +24,13 @@ export default function NativeBridge() {
   const role = user?.role ?? null;
 
   useEffect(() => {
+    if (typeof window !== "undefined" && window.ReactNativeWebView) {
+      // Fallback in case the pre-paint script in layout ran before the bridge existed.
+      document.documentElement.setAttribute("data-native", "1");
+    }
+  }, []);
+
+  useEffect(() => {
     if (typeof window === "undefined" || !window.ReactNativeWebView) return;
     // Debounced: auth state hydrates from storage a tick after mount, and the
     // transient "signed out" state must not reach the native shell.
