@@ -56,7 +56,7 @@ export default function ServiceQuickViewDrawer({
         "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80";
 
   const locCity = service.service_address?.city_town || "Jaipur";
-  const locArea = service.area_name || service.service_address?.address || service.service_address?.landmark || "City Center";
+  const locArea = service.area_name || "Jaipur";
   const phone = service.provider_phone_number || "+91 98290 12345";
   const whatsappNum = service.provider_whatsapp_number || phone.replace(/\D/g, "");
   const whatsappUrl = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(

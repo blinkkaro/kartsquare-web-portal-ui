@@ -383,7 +383,9 @@ export default function NewCategoryGrid() {
                       ? "0 14px 30px rgba(0,0,0,0.3)"
                       : "0 14px 30px rgba(105,39,218,0.12)",
                   },
-                  "&:active": { transform: "scale(0.985)" },
+                  "&:active": { transform: "scale(0.96)" },
+                  userSelect: "none",
+                  WebkitTapHighlightColor: "transparent",
                 }}
               >
                 {/* Gradient overlay for readability */}
@@ -645,8 +647,11 @@ export default function NewCategoryGrid() {
                       transform: "translateY(-2px)",
                     },
                     "&:active": {
-                      transform: "scale(0.985)",
+                      transform: "scale(0.96)",
+                      bgcolor: dark ? "rgba(130,72,247,0.12)" : COLORS.PURPLE_ALPHA_10,
                     },
+                    userSelect: "none",
+                    WebkitTapHighlightColor: "transparent",
                   }}
                 >
                   {/* Category Icon */}
@@ -770,6 +775,7 @@ export default function NewCategoryGrid() {
                     color: COLORS.PRIMARY_PURPLE,
                     bgcolor: dark ? "rgba(130,72,247,0.06)" : COLORS.PURPLE_ALPHA_04,
                   },
+                  "&:active": { transform: "scale(0.96)" },
                   "&.Mui-disabled": {
                     borderColor: dark ? "rgba(255,255,255,0.06)" : "#f0ecf6",
                     color: "text.disabled",
@@ -793,8 +799,8 @@ export default function NewCategoryGrid() {
                       sx={{
                         all: "unset",
                         cursor: "pointer",
-                        width: 34,
-                        height: 34,
+                        width: { xs: 36, sm: 34 },
+                        height: { xs: 36, sm: 34 },
                         borderRadius: "8px",
                         display: "flex",
                         alignItems: "center",
@@ -808,11 +814,14 @@ export default function NewCategoryGrid() {
                           : "#f3eff8",
                         color: isActive ? "#ffffff" : "text.secondary",
                         boxShadow: isActive ? "0 2px 8px rgba(105,39,218,0.35)" : "none",
-                        transition: "all 160ms ease",
+                        transition: "all 120ms ease",
+                        userSelect: "none",
+                        WebkitTapHighlightColor: "transparent",
                         "&:hover": {
                           bgcolor: isActive ? COLORS.PURPLE_HOVER : dark ? "rgba(255,255,255,0.1)" : "#e8e1f2",
                           color: isActive ? "#ffffff" : COLORS.PRIMARY_PURPLE,
                         },
+                        "&:active": { transform: "scale(0.92)" },
                       }}
                     >
                       {pageNum}
@@ -843,6 +852,7 @@ export default function NewCategoryGrid() {
                     color: COLORS.PRIMARY_PURPLE,
                     bgcolor: dark ? "rgba(130,72,247,0.06)" : COLORS.PURPLE_ALPHA_04,
                   },
+                  "&:active": { transform: "scale(0.96)" },
                   "&.Mui-disabled": {
                     borderColor: dark ? "rgba(255,255,255,0.06)" : "#f0ecf6",
                     color: "text.disabled",

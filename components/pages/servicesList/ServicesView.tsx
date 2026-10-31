@@ -42,6 +42,7 @@ import {
   ServicesErrorState,
 } from "./sections/ServicesStates";
 import { ServicesExploreSection } from "./sections/ServicesExploreSection";
+import { POPULAR_JAIPUR_AREAS } from "@/utils/mainAreaResolver";
 
 interface ServicesViewProps {
   initialListing?: Listing;
@@ -519,37 +520,34 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     sortBy,
   ]);
 
-  // Area Counts for Sidebar (Dynamic for Active City from Real Data)
+  // Area Counts for Sidebar & Drawer (Dynamic for Active City from Real Main Areas)
   const areaOptions: AreaFilterItem[] = useMemo(() => {
-    if (initialListing?.siblings?.localities && initialListing.siblings.localities.length > 0) {
-      return initialListing.siblings.localities.map((loc) => ({
-        name: loc.name,
-        count: loc.total,
-      }));
-    }
-
+    // Count services grouped by their resolved main_area
     const countsMap = new Map<string, number>();
     services.forEach((s) => {
-      const area = s.area_name || s.service_address?.landmark || "";
-      if (area && area !== "Central") countsMap.set(area, (countsMap.get(area) || 0) + 1);
+      const area = s.area_name || s.service_address?.city_town || "";
+      if (area && area !== "Central" && area.toLowerCase() !== cityName.toLowerCase()) {
+        countsMap.set(area, (countsMap.get(area) || 0) + 1);
+      }
     });
 
-    if (serverLocalities.length > 0) {
-      return serverLocalities.slice(0, 8).map((loc) => ({
-        name: loc.name,
-        count: countsMap.get(loc.name) || (loc.total ? Math.min(loc.total, 8) : 1),
-      }));
-    }
+    // Build complete list of recognized popular main areas (Justdial style)
+    const combinedAreas = new Set<string>();
 
-    if (countsMap.size > 0) {
-      return Array.from(countsMap.entries()).map(([name, count]) => ({
-        name,
-        count,
-      }));
-    }
+    // First add areas that currently have active providers (sorted by count desc)
+    const activeAreas = Array.from(countsMap.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([name]) => name);
+    activeAreas.forEach((name) => combinedAreas.add(name));
 
-    return [];
-  }, [initialListing, serverLocalities, services]);
+    // Then add other recognized major city areas
+    POPULAR_JAIPUR_AREAS.forEach((name) => combinedAreas.add(name));
+
+    return Array.from(combinedAreas).map((name) => ({
+      name,
+      count: countsMap.get(name) || 0,
+    }));
+  }, [cityName, services]);
 
   // Handlers for cards
   const handleQuickView = (service: EnrichedServiceItem) => {

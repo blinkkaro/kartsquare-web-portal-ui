@@ -11,7 +11,7 @@ export const MOBILE_NAV_HEIGHT = 60;
 export const MOBILE_NAV_COMPACT_HEIGHT = 42;
 
 const EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
-const SCROLL_THRESHOLD = 4;
+const SCROLL_THRESHOLD = 20;
 
 /**
  * Uber-style collapsing bar: shrinks while the user scrolls down (more room for

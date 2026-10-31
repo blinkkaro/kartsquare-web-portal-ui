@@ -142,17 +142,41 @@ export default function NewHeroSection() {
                 alignItems: "center",
                 gap: 0.5,
                 flexShrink: 0,
-                transition: "background-color 160ms ease",
+                transition: "background-color 160ms ease, transform 120ms ease",
                 "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
+                "&:active": { transform: "scale(0.96)" },
               }}
             >
               Search
             </Box>
           </Box>
 
-          {/* Trending tags */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 2, flexWrap: "wrap" }}>
-            <Typography sx={{ fontSize: "0.78rem", fontWeight: 600, color: "text.secondary" }}>Trending:</Typography>
+          {/* Trending tags - horizontal swipeable track on mobile, wrapped on tablet/desktop */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              mt: 2,
+              overflowX: { xs: "auto", sm: "visible" },
+              flexWrap: { xs: "nowrap", sm: "wrap" },
+              WebkitOverflowScrolling: "touch",
+              scrollbarWidth: "none",
+              "&::-webkit-scrollbar": { display: "none" },
+              pb: { xs: 0.5, sm: 0 },
+              width: "100%",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "0.78rem",
+                fontWeight: 700,
+                color: "text.secondary",
+                flexShrink: 0,
+              }}
+            >
+              Trending:
+            </Typography>
             {trendingTags.map((tag) => (
               <Chip
                 key={tag}
@@ -160,13 +184,16 @@ export default function NewHeroSection() {
                 clickable
                 onClick={() => search(tag)}
                 sx={{
-                  height: 30,
+                  height: 32,
                   fontWeight: 600,
                   fontSize: "0.78rem",
                   bgcolor: dark ? "rgba(130,72,247,0.12)" : COLORS.PURPLE_ALPHA_04,
                   color: dark ? "#d6b8ff" : COLORS.PRIMARY_PURPLE,
                   border: "none",
+                  flexShrink: 0,
+                  transition: "all 120ms ease",
                   "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_10 },
+                  "&:active": { transform: "scale(0.95)", bgcolor: COLORS.PURPLE_ALPHA_20 },
                 }}
               />
             ))}
@@ -203,6 +230,7 @@ export default function NewHeroSection() {
               cursor: "pointer",
               transition: "transform 250ms ease, box-shadow 250ms ease",
               "&:hover": { transform: "scale(1.015)", boxShadow: "0 10px 30px rgba(0,0,0,0.15)" },
+              "&:active": { transform: "scale(0.97)" },
             }}
           >
             <Box sx={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.4), transparent 50%)" }} />
@@ -248,6 +276,7 @@ export default function NewHeroSection() {
               cursor: "pointer",
               transition: "transform 250ms ease",
               "&:hover": { transform: "scale(1.02)" },
+              "&:active": { transform: "scale(0.97)" },
             }}
           >
             <Box sx={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.3), transparent 50%)" }} />
@@ -290,6 +319,7 @@ export default function NewHeroSection() {
               cursor: "pointer",
               transition: "transform 250ms ease",
               "&:hover": { transform: "scale(1.02)" },
+              "&:active": { transform: "scale(0.97)" },
             }}
           >
             <Box sx={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.3), transparent 50%)" }} />
