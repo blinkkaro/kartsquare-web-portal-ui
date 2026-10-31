@@ -193,7 +193,7 @@ export const getMobileNavItems = (
         { label: t("home"), href: "/", icon: <HomeFilled /> },
         {
           label: t("services"),
-          href: "/cus/servicesList",
+          href: "/spr/servicesList",
           icon: <ArticleRounded />,
         },
         {
