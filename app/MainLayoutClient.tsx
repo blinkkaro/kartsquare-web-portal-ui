@@ -60,7 +60,9 @@ export default function MainLayoutClient({
         <Ai open={aiOpen} onClose={() => dispatch(setAiOpen(false))} />
       </Box>
       <LoginModal />
-      <Footer />
+      <Box data-native-hide>
+        <Footer />
+      </Box>
     </>
   );
 }

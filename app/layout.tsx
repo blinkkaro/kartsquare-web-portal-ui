@@ -137,11 +137,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         style={{ fontFamily: "'Poppins', system-ui, -apple-system, sans-serif" }}
         suppressHydrationWarning
       >
+        {/* Flags the Kartsquare mobile app WebView before first paint so
+            [data-native-hide] elements (footer, bottom nav) never flash.
+            RN WebView injects window.ReactNativeWebView; the app may also
+            append "KartsquareApp" to the user agent. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(window.ReactNativeWebView||/KartsquareApp/i.test(navigator.userAgent)){document.documentElement.setAttribute("data-native","1");}}catch(e){}})();`,
+          }}
+        />
         {/* Plain script avoids Turbopack chunk split issues from next/script in RootLayout */}
         {/* Loaded after window load + 3s so it never competes with hydration. */}
         <script
