@@ -334,10 +334,15 @@ export const usePrefetchReels = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    queryClient.prefetchInfiniteQuery({
-      queryKey: ["reels"],
-      queryFn: ({ pageParam }) => postServices.getReels(10, pageParam),
-      initialPageParam: undefined as string | undefined,
-    });
+    // Wait until home's own requests have settled so the prefetch doesn't
+    // compete with them on the critical path.
+    const timer = setTimeout(() => {
+      queryClient.prefetchInfiniteQuery({
+        queryKey: ["reels"],
+        queryFn: ({ pageParam }) => postServices.getReels(10, pageParam),
+        initialPageParam: undefined as string | undefined,
+      });
+    }, 3000);
+    return () => clearTimeout(timer);
   }, [queryClient]);
 };

@@ -12,10 +12,10 @@ const MobileNavContainer = styled(Box)(({ theme }) => ({
   gap: "2px",
   backgroundColor:
     theme.palette.mode === "dark"
-      ? "rgba(23, 20, 34, 0.9)"
-      : "rgba(255, 255, 255, 0.92)",
-  backdropFilter: "blur(16px) saturate(180%)",
-  WebkitBackdropFilter: "blur(16px) saturate(180%)",
+      ? "rgba(23, 20, 34, 0.97)"
+      : "rgba(255, 255, 255, 0.98)",
+  // No backdrop-filter: blurring a fixed layer over scrolling content is
+  // very expensive on Android WebView and made taps/scroll feel laggy.
   position: "fixed",
   bottom: "14px",
   left: "50%",
@@ -48,7 +48,7 @@ const MobileNavItem = styled(Link)(({ theme }) => ({
     theme.palette.mode === "dark"
       ? "rgba(255,255,255,0.5)"
       : "rgba(0,0,0,0.45)",
-  transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+  transition: "color 0.2s ease, background-color 0.2s ease",
   flex: "0 0 auto",
   padding: "6px 8px",
   position: "relative",

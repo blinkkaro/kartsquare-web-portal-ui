@@ -143,9 +143,11 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         {/* Plain script avoids Turbopack chunk split issues from next/script in RootLayout */}
+        {/* Loaded after window load + 3s so it never competes with hydration. */}
         <script
-          async
-          src="https://t.contentsquare.net/uxa/c3689fc1ad6ad.js"
+          dangerouslySetInnerHTML={{
+            __html: `window.addEventListener("load",function(){setTimeout(function(){var s=document.createElement("script");s.async=true;s.src="https://t.contentsquare.net/uxa/c3689fc1ad6ad.js";document.head.appendChild(s);},3000);});`,
+          }}
         />
         <script
           type="application/ld+json"
