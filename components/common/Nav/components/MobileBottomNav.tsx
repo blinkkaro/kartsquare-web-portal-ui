@@ -85,7 +85,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   currentPath,
 }) => {
   return (
-    <MobileNavContainer>
+    <MobileNavContainer data-native-hide>
       {items.map((item) => {
         const isActive = currentPath === item.href;
         return (

@@ -23,6 +23,7 @@ export default function MainLayoutClient({
   return (
     <>
       <Box
+        data-main-shell
         sx={{
           minHeight: "100vh",
           display: "flex",
