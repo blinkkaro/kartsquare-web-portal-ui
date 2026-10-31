@@ -145,7 +145,7 @@ export default function NewTopPros() {
   }, [rawServices, provider, isLoading, location.city]);
 
   return (
-    <Section id="top-pros" sx={{ pb: { xs: 4, md: 6 }, px: { xs: 2, md: 0 } }}>
+    <Section id="top-pros" sx={{ pb: { xs: 4, md: 6 }, px: 0 }}>
       <SectionHeader
         title="Trusted professionals near you"
         subtitle={`Listed on Kartsquare in ${location.city || "Jaipur"}`}

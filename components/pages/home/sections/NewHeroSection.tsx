@@ -48,23 +48,23 @@ export default function NewHeroSection() {
     <Box
       component="section"
       sx={{
-        pt: { xs: 1, md: 2 },
-        pb: { xs: 3, md: 5 },
-        px: { xs: 2, md: 0 },
+        pt: { xs: 1, sm: 1.5, md: 2.5 },
+        pb: { xs: 2.5, sm: 3.5, md: 5 },
+        px: 0,
       }}
     >
       {/* Hero content grid */}
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "minmax(0,1fr) minmax(0,1.1fr)" }, gap: { xs: 3, md: 5 }, alignItems: "center" }}>
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "minmax(0,1fr) minmax(0,1.1fr)" }, gap: { xs: 3, sm: 3.5, md: 5 }, alignItems: "center" }}>
         {/* Left: heading + search */}
         <Box>
           <Typography
             component="h1"
             data-speakable="headline"
             sx={{
-              fontSize: { xs: "1.75rem", sm: "2.1rem", md: "2.6rem" },
+              fontSize: { xs: "1.65rem", sm: "2.1rem", md: "2.5rem", lg: "2.85rem" },
               fontWeight: 800,
               letterSpacing: "-0.03em",
-              lineHeight: 1.1,
+              lineHeight: 1.15,
               color: "text.primary",
               mb: 1.5,
             }}
@@ -178,8 +178,8 @@ export default function NewHeroSection() {
           sx={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
-            gridTemplateRows: { xs: "200px 160px", md: "220px 200px" },
-            gap: 1.5,
+            gridTemplateRows: { xs: "170px 140px", sm: "190px 160px", md: "220px 200px" },
+            gap: { xs: 1.25, md: 1.5 },
           }}
         >
           {/* Large left image - spans 2 rows */}

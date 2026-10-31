@@ -27,12 +27,12 @@ function HomeView() {
   return (
     <Box
       sx={{
-        maxWidth: 1240,
+        maxWidth: 1440,
         mx: "auto",
         width: "100%",
         display: "flex",
         flexDirection: "column",
-        px: { xs: 2, sm: 3, md: 4 },
+        px: { xs: 1.5, sm: 2.5, md: 3, lg: 3.5, xl: 4 },
         pb: 4,
       }}
     >

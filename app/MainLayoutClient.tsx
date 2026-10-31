@@ -27,7 +27,7 @@ export default function MainLayoutClient({
           minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
-          px: { xs: 0, sm: 1.5, md: 3, lg: 4, xl: 5 },
+          px: 0,
           backgroundColor:
             theme.palette.mode === "dark"
               ? COLORS.BACKGROUND.PAPER_DARK
@@ -43,7 +43,7 @@ export default function MainLayoutClient({
             flex: 1,
             mx: "auto",
             width: "100%",
-            px: { xs: 1, md: 0 },
+            px: 0,
             // Nav already reserves the AppBar's exact measured height via its own
             // spacer, so this is just breathing room, not a breakpoint guess.
             mt: 2,

@@ -55,18 +55,24 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  padding: "1rem 1rem",
+  width: "100%",
+  maxWidth: 1440,
+  margin: "0 auto",
+  padding: "0.75rem 1rem",
+  [theme.breakpoints.up("sm")]: {
+    padding: "0.75rem 1.5rem",
+  },
   [theme.breakpoints.up("md")]: {
-    padding: "0.5rem 1rem",
-    gap: "1rem",
+    padding: "0.5rem 2rem",
+    gap: "1.25rem",
   },
   [theme.breakpoints.up("lg")]: {
-    padding: "0.5rem 2rem",
+    padding: "0.5rem 2.5rem",
     gap: "2rem",
   },
   [theme.breakpoints.up("xl")]: {
-    padding: "1rem 12rem",
-    gap: "4rem",
+    padding: "0.5rem 3rem",
+    gap: "2.5rem",
   },
 }));
 
