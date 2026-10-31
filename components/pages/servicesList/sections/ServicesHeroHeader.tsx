@@ -139,7 +139,7 @@ export default function ServicesHeroHeader({
               mb: 1,
             }}
           >
-            Find the right {categoryName ? categoryName.toLowerCase().replace(/s$/, "") : "electrician"} in{" "}
+            Find the right {categoryName && categoryName.toLowerCase() !== "all services" ? categoryName.toLowerCase().replace(/s$/, "") : "service"} in{" "}
             <Box
               component="span"
               sx={{
@@ -167,20 +167,21 @@ export default function ServicesHeroHeader({
           onSubmit={onSubmitSearch}
           sx={{
             display: "flex",
-            alignItems: "center",
-            width: { xs: "100%", sm: "auto" },
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: { xs: "stretch", sm: "center" },
+            width: { xs: "100%", lg: "auto" },
             minWidth: { sm: 460, md: 520 },
-            p: "4px 4px 4px 14px",
-            borderRadius: "16px",
+            p: { xs: 1, sm: "4px 4px 4px 14px" },
+            borderRadius: { xs: "14px", sm: "16px" },
             bgcolor: "background.paper",
             border: "1.5px solid",
             borderColor: dark ? "rgba(130,72,247,0.3)" : "#e4dfeb",
             boxShadow: dark ? "0 4px 16px rgba(0,0,0,0.25)" : "0 4px 20px rgba(105,39,218,0.06)",
-            gap: 1,
+            gap: { xs: 0.75, sm: 1 },
           }}
         >
           {/* Query input */}
-          <Box sx={{ display: "flex", alignItems: "center", flex: 1.2, gap: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center", flex: 1.2, gap: 1, px: { xs: 0.75, sm: 0 }, py: { xs: 0.5, sm: 0 } }}>
             <SearchRoundedIcon sx={{ color: dark ? "#b388ff" : COLORS.PRIMARY_PURPLE, fontSize: 20 }} />
             <InputBase
               placeholder={`Search in ${categoryName || "services"}...`}
@@ -199,52 +200,53 @@ export default function ServicesHeroHeader({
           {/* Divider */}
           <Box
             sx={{
-              width: "1px",
-              height: 24,
+              width: { xs: "100%", sm: "1px" },
+              height: { xs: "1px", sm: 24 },
               bgcolor: dark ? "rgba(255,255,255,0.15)" : "#e2deea",
             }}
           />
 
-          {/* Location input */}
-          <Box sx={{ display: "flex", alignItems: "center", flex: 1, gap: 0.75, pl: 0.5 }}>
+          {/* Location input + Search Button */}
+          <Box sx={{ display: "flex", alignItems: "center", flex: 1, gap: 0.75, pl: { xs: 0.75, sm: 0.5 } }}>
             <PlaceRoundedIcon sx={{ color: dark ? "#b388ff" : COLORS.PRIMARY_PURPLE, fontSize: 19 }} />
             <InputBase
-              placeholder="City or locality"
+              placeholder="City or main area"
               value={locationQuery}
               onChange={(e) => onLocationChange(e.target.value)}
               sx={{
                 fontSize: "0.9rem",
                 fontWeight: 500,
                 color: "text.primary",
-                width: "100%",
+                flex: 1,
                 "& input": { p: 0 },
               }}
             />
+            {/* Search Button */}
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                bgcolor: COLORS.PRIMARY_PURPLE,
+                color: "#fff",
+                borderRadius: "10px",
+                px: { xs: 2, sm: 2.5 },
+                py: { xs: 0.75, sm: 0.85 },
+                fontSize: "0.86rem",
+                fontWeight: 700,
+                textTransform: "none",
+                boxShadow: "none",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+                "&:hover": {
+                  bgcolor: COLORS.PURPLE_HOVER,
+                  boxShadow: "0 4px 14px rgba(105,39,218,0.3)",
+                },
+                "&:active": { transform: "scale(0.97)" },
+              }}
+            >
+              Search
+            </Button>
           </Box>
-
-          {/* Search Button */}
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{
-              bgcolor: COLORS.PRIMARY_PURPLE,
-              color: "#fff",
-              borderRadius: "12px",
-              px: { xs: 2, sm: 2.5 },
-              py: 0.85,
-              fontSize: "0.86rem",
-              fontWeight: 700,
-              textTransform: "none",
-              boxShadow: "none",
-              whiteSpace: "nowrap",
-              "&:hover": {
-                bgcolor: COLORS.PURPLE_HOVER,
-                boxShadow: "0 4px 14px rgba(105,39,218,0.3)",
-              },
-            }}
-          >
-            Search
-          </Button>
         </Box>
       </Box>
 
@@ -258,6 +260,7 @@ export default function ServicesHeroHeader({
             overflowX: "auto",
             scrollbarWidth: "none",
             "&::-webkit-scrollbar": { display: "none" },
+            WebkitOverflowScrolling: "touch",
             py: 1,
             mb: 1,
           }}
@@ -279,7 +282,9 @@ export default function ServicesHeroHeader({
                   fontWeight: isSelected ? 700 : 500,
                   cursor: "pointer",
                   whiteSpace: "nowrap",
-                  transition: "all 0.2s ease",
+                  userSelect: "none",
+                  WebkitTapHighlightColor: "transparent",
+                  transition: "all 0.15s ease",
                   border: isSelected
                     ? `1.5px solid ${COLORS.PRIMARY_PURPLE}`
                     : `1px solid ${dark ? "rgba(255,255,255,0.15)" : "#e2deea"}`,
@@ -297,6 +302,10 @@ export default function ServicesHeroHeader({
                     borderColor: COLORS.PRIMARY_PURPLE,
                     color: isSelected ? undefined : COLORS.PRIMARY_PURPLE,
                     bgcolor: isSelected ? undefined : COLORS.PURPLE_ALPHA_04,
+                  },
+                  "&:active": {
+                    transform: "scale(0.95)",
+                    opacity: 0.9,
                   },
                 }}
               >

@@ -145,7 +145,7 @@ export default function NewTopPros() {
   }, [rawServices, provider, isLoading, location.city]);
 
   return (
-    <Section id="top-pros" sx={{ pb: { xs: 4, md: 6 }, px: { xs: 2, md: 0 } }}>
+    <Section id="top-pros" sx={{ pb: { xs: 4, md: 6 }, px: 0 }}>
       <SectionHeader
         title="Trusted professionals near you"
         subtitle={`Listed on Kartsquare in ${location.city || "Jaipur"}`}
@@ -205,7 +205,7 @@ export default function NewTopPros() {
                   sx={{
                     position: "relative",
                     width: "100%",
-                    height: 190,
+                    height: { xs: 180, sm: 190, md: 200, lg: 215, xl: 230 },
                     overflow: "hidden",
                     bgcolor: COLORS.PURPLE_ALPHA_10,
                     cursor: "pointer",
@@ -349,6 +349,7 @@ export default function NewTopPros() {
                           bgcolor: COLORS.PURPLE_HOVER,
                           boxShadow: "0 4px 12px rgba(105,39,218,0.3)",
                         },
+                        "&:active": { transform: "scale(0.96)" },
                       }}
                     >
                       View profile
@@ -370,6 +371,7 @@ export default function NewTopPros() {
                           borderColor: COLORS.PRIMARY_PURPLE,
                           bgcolor: COLORS.PURPLE_ALPHA_04,
                         },
+                        "&:active": { transform: "scale(0.96)" },
                       }}
                     >
                       Enquire

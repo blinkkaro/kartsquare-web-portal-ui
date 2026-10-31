@@ -12,9 +12,11 @@ import {
   Radio,
   Checkbox,
   Divider,
+  InputBase,
   useTheme,
 } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { COLORS } from "@/constants/colors";
 import {
   ServicesFilterState,
@@ -50,6 +52,8 @@ export default function ServicesMobileFilterDrawer({
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
 
+  const [areaSearch, setAreaSearch] = React.useState("");
+
   const ratingOptions: Array<{ id: RatingFilterType; label: string }> = [
     { id: "any", label: "Any" },
     { id: "4.0", label: "4.0+" },
@@ -66,6 +70,12 @@ export default function ServicesMobileFilterDrawer({
     onChangeFilter("selectedAreas", Array.from(current));
   };
 
+  const displayAreas = React.useMemo(() => {
+    if (!areaSearch.trim()) return areaItems;
+    const q = areaSearch.toLowerCase();
+    return areaItems.filter((a) => a.name.toLowerCase().includes(q));
+  }, [areaItems, areaSearch]);
+
   return (
     <Drawer
       anchor="bottom"
@@ -73,22 +83,35 @@ export default function ServicesMobileFilterDrawer({
       onClose={onClose}
       PaperProps={{
         sx: {
-          maxHeight: "85vh",
-          borderTopLeftRadius: "20px",
-          borderTopRightRadius: "20px",
+          maxHeight: "88vh",
+          borderTopLeftRadius: "22px",
+          borderTopRightRadius: "22px",
           bgcolor: "background.paper",
           backgroundImage: "none",
         },
       }}
     >
       <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+        {/* Native sheet drag handle */}
+        <Box
+          sx={{
+            width: 38,
+            height: 4,
+            borderRadius: 2,
+            bgcolor: dark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.18)",
+            mx: "auto",
+            mt: 1.25,
+            mb: 0.25,
+          }}
+        />
+
         {/* Header */}
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            p: 2,
+            p: "12px 16px",
             borderBottom: "1px solid",
             borderColor: dark ? "rgba(255,255,255,0.08)" : "#ede9f2",
           }}
@@ -251,16 +274,65 @@ export default function ServicesMobileFilterDrawer({
             </RadioGroup>
           </Box>
 
-          {/* 5. Area */}
+          {/* 5. Main Area (Justdial style) */}
           {areaItems.length > 0 && (
             <>
               <Divider sx={{ my: 2 }} />
               <Box sx={{ mb: 2 }}>
-                <Typography sx={{ fontSize: "0.85rem", fontWeight: 700, mb: 1, color: "text.primary" }}>
-                  Area
-                </Typography>
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-                  {areaItems.map((area) => {
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
+                  <Typography sx={{ fontSize: "0.85rem", fontWeight: 700, color: "text.primary" }}>
+                    Main Area
+                  </Typography>
+                  {filters.selectedAreas.length > 0 && (
+                    <Typography
+                      onClick={() => onChangeFilter("selectedAreas", [])}
+                      sx={{
+                        fontSize: "0.74rem",
+                        color: COLORS.PRIMARY_PURPLE,
+                        fontWeight: 700,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Clear
+                    </Typography>
+                  )}
+                </Box>
+
+                {/* Search area input */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    bgcolor: dark ? "rgba(255,255,255,0.05)" : "#f6f3f9",
+                    border: "1px solid",
+                    borderColor: dark ? "rgba(255,255,255,0.1)" : "#e2deea",
+                    borderRadius: "10px",
+                    px: 1.25,
+                    py: 0.5,
+                    mb: 1.25,
+                  }}
+                >
+                  <SearchRoundedIcon sx={{ fontSize: 18, color: "text.secondary", mr: 0.75 }} />
+                  <InputBase
+                    placeholder="Search area (e.g. Vaishali, Mansarovar)..."
+                    value={areaSearch}
+                    onChange={(e) => setAreaSearch(e.target.value)}
+                    sx={{ fontSize: "0.84rem", width: "100%" }}
+                  />
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 0.25,
+                    maxHeight: 220,
+                    overflowY: "auto",
+                    pr: 0.5,
+                    WebkitOverflowScrolling: "touch",
+                  }}
+                >
+                  {displayAreas.map((area) => {
                     const checked = filters.selectedAreas.includes(area.name);
                     return (
                       <Box
@@ -270,16 +342,21 @@ export default function ServicesMobileFilterDrawer({
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "space-between",
-                          py: 0.5,
+                          py: 0.6,
+                          px: 0.5,
+                          borderRadius: "8px",
                           cursor: "pointer",
+                          "&:active": { bgcolor: dark ? "rgba(255,255,255,0.06)" : "#ede9f2" },
                         }}
                       >
                         <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
                           <Checkbox checked={checked} size="small" sx={{ p: 0.5 }} />
-                          <Typography sx={{ fontSize: "0.84rem" }}>{area.name}</Typography>
+                          <Typography sx={{ fontSize: "0.86rem", fontWeight: checked ? 700 : 500 }}>
+                            {area.name}
+                          </Typography>
                         </Box>
                         {typeof area.count === "number" && (
-                          <Typography sx={{ fontSize: "0.75rem", color: "text.secondary" }}>
+                          <Typography sx={{ fontSize: "0.75rem", color: "text.secondary", pr: 0.5 }}>
                             {area.count}
                           </Typography>
                         )}
@@ -292,10 +369,11 @@ export default function ServicesMobileFilterDrawer({
           )}
         </Box>
 
-        {/* Sticky Apply Button */}
+        {/* Sticky Apply Button with Safe-Area Inset */}
         <Box
           sx={{
             p: 2,
+            pb: "calc(16px + env(safe-area-inset-bottom, 16px))",
             borderTop: "1px solid",
             borderColor: dark ? "rgba(255,255,255,0.08)" : "#ede9f2",
             bgcolor: "background.paper",
@@ -309,12 +387,13 @@ export default function ServicesMobileFilterDrawer({
               bgcolor: COLORS.PRIMARY_PURPLE,
               color: "#fff",
               fontWeight: 800,
-              fontSize: "0.92rem",
-              borderRadius: "12px",
-              py: 1.2,
+              fontSize: "0.95rem",
+              borderRadius: "14px",
+              py: 1.25,
               textTransform: "none",
               boxShadow: "none",
               "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
+              "&:active": { transform: "scale(0.98)" },
             }}
           >
             Show {totalResults} providers

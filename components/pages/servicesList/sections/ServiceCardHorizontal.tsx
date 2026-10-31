@@ -16,6 +16,7 @@ import KeyboardArrowUpRoundedIcon from "@mui/icons-material/KeyboardArrowUpRound
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
+import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
 import { COLORS } from "@/constants/colors";
 import { EnrichedServiceItem, ProviderRecentWork } from "../servicesSampleData";
 import { HOME_PHOTOS } from "@/components/pages/home/sections/homePhotos";
@@ -57,10 +58,13 @@ export default function ServiceCardHorizontal({
     ["Professional service", "Verified standards"];
   const subServicesText = subServicesList.join(" · ");
 
-  // Location string
+  // Location string: Prioritize Main Area (Justdial style: Jhotwara, Vaishali Nagar, Mansarovar)
   const locCity = service.service_address?.city_town || "Jaipur";
-  const locArea = service.area_name || service.service_address?.landmark || service.service_address?.address || "";
-  const locationString = locArea ? `${locArea}, ${locCity}` : locCity;
+  const locArea = service.area_name || "Jaipur";
+  const landmarkText = service.landmark_name && service.landmark_name !== locArea
+    ? service.landmark_name.replace(/^(near|opp|opposite)\s+/i, "")
+    : "";
+  const locationString = locArea !== locCity ? `${locArea}, ${locCity}` : locCity;
 
   // Rating
   const ratingNum = Number(service.avg_service_rating) || 4.8;
@@ -221,9 +225,20 @@ export default function ServiceCardHorizontal({
               )}
             </Box>
             <Typography sx={{ fontSize: "0.82rem", color: "text.secondary" }}>·</Typography>
-            <Typography sx={{ fontSize: "0.84rem", color: "text.secondary" }}>
-              {locationString}
-            </Typography>
+            <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.35 }}>
+              <PlaceRoundedIcon sx={{ fontSize: 16, color: COLORS.PRIMARY_PURPLE }} />
+              <Typography sx={{ fontSize: "0.84rem", fontWeight: 700, color: "text.primary" }}>
+                {locArea}
+              </Typography>
+              <Typography sx={{ fontSize: "0.84rem", color: "text.secondary" }}>
+                , {locCity}
+              </Typography>
+              {landmarkText ? (
+                <Typography sx={{ fontSize: "0.76rem", color: "text.secondary", display: { xs: "none", md: "inline" } }}>
+                  ({landmarkText})
+                </Typography>
+              ) : null}
+            </Box>
           </Box>
 
           {/* Sub-services tags */}
@@ -382,6 +397,7 @@ export default function ServiceCardHorizontal({
                   bgcolor: COLORS.PURPLE_HOVER,
                   boxShadow: "0 4px 14px rgba(105,39,218,0.25)",
                 },
+                "&:active": { transform: "scale(0.97)" },
               }}
             >
               View profile
@@ -402,6 +418,7 @@ export default function ServiceCardHorizontal({
                   bgcolor: "transparent",
                   textDecoration: "underline",
                 },
+                "&:active": { transform: "scale(0.97)" },
               }}
             >
               Quick view

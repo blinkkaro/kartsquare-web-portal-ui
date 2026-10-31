@@ -1,5 +1,6 @@
 import { HOME_PHOTOS } from "@/components/pages/home/sections/homePhotos";
 import { Service, ServiceStatus, BookingLocationType, PricingType } from "@/services/serviceList/listInteraface";
+import { resolveMainArea, ResolvedLocation } from "@/utils/mainAreaResolver";
 
 export interface ProviderRecentWork {
   id: string;
@@ -16,6 +17,8 @@ export interface EnrichedServiceItem extends Service {
   distance_km?: number | null;
   starting_price_label?: string;
   area_name?: string;
+  landmark_name?: string;
+  resolved_location?: ResolvedLocation;
 }
 
 /**
@@ -107,12 +110,10 @@ export const mapRealServiceToEnriched = (s: Service): EnrichedServiceItem => {
     isPriceRequired = true;
   }
 
-  // Extract real locality or landmark or area
-  const area_name =
-    s.service_address?.landmark?.trim() ||
-    s.service_address?.address?.split(",")?.[0]?.trim() ||
-    s.service_address?.city_town ||
-    "Jaipur";
+  // Resolve canonical main area (Justdial style: Jhotwara, Vaishali Nagar, Mansarovar, etc.)
+  const resolved = resolveMainArea(s.service_address, s.service_address?.city_town || "Jaipur");
+  const area_name = resolved.mainArea;
+  const landmark_name = resolved.landmark;
 
   const rating = Number(s.avg_service_rating) || 4.5;
   const reviews = typeof s.review_count === "number" ? s.review_count : 0;
@@ -130,6 +131,8 @@ export const mapRealServiceToEnriched = (s: Service): EnrichedServiceItem => {
     review_count: reviews,
     is_verified: true,
     area_name,
+    landmark_name,
+    resolved_location: resolved,
     sub_services: subServices,
     recent_works: recentWorks,
   };

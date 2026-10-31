@@ -40,7 +40,26 @@ export async function resolveListingRoute(
   if (segments.length === 1) {
     const args: ListingArgs = { citySlug, categorySlug: segments[0], page };
     const listing = await getLocationListing(args);
-    return listing ? { args, listing } : null;
+    if (listing) {
+      return { args, listing };
+    }
+
+    // If segments[0] is not a category, try as locality (e.g. /jaipur/jhotwara)
+    const asLocality: ListingArgs = {
+      citySlug,
+      localitySlug: segments[0],
+      categorySlug: "home-services",
+      page,
+    };
+    const localityListing = await getLocationListing(asLocality);
+    if (
+      localityListing &&
+      localityListing.fallback?.reason !== "locality_unknown"
+    ) {
+      return { args: asLocality, listing: localityListing };
+    }
+
+    return null;
   }
 
   if (segments.length === 2) {

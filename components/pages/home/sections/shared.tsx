@@ -34,7 +34,7 @@ export function Section({
   sx?: object;
 }) {
   return (
-    <Box component="section" id={id} sx={{ px: { xs: 2, md: 0 }, py: { xs: 2, md: 3 }, ...sx }}>
+    <Box component="section" id={id} sx={{ px: 0, py: { xs: 2, md: 3 }, ...sx }}>
       {children}
     </Box>
   );

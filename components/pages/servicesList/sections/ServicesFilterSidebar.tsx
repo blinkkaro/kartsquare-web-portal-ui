@@ -9,9 +9,11 @@ import {
   Radio,
   Checkbox,
   Button,
+  InputBase,
   useTheme,
 } from "@mui/material";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { COLORS } from "@/constants/colors";
 
 export interface AreaFilterItem {
@@ -50,6 +52,8 @@ export default function ServicesFilterSidebar({
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
 
+  const [areaSearch, setAreaSearch] = React.useState("");
+
   const ratingOptions: Array<{ id: RatingFilterType; label: string }> = [
     { id: "any", label: "Any" },
     { id: "4.0", label: "4.0+" },
@@ -65,6 +69,12 @@ export default function ServicesFilterSidebar({
     }
     onChangeFilter("selectedAreas", Array.from(current));
   };
+
+  const displayAreas = React.useMemo(() => {
+    if (!areaSearch.trim()) return areaItems;
+    const q = areaSearch.toLowerCase();
+    return areaItems.filter((a) => a.name.toLowerCase().includes(q));
+  }, [areaItems, areaSearch]);
 
   return (
     <Box
@@ -256,11 +266,61 @@ export default function ServicesFilterSidebar({
       {/* 4. Area / Localities */}
       {areaItems.length > 0 && (
         <Box sx={{ mb: 3 }}>
-          <Typography sx={{ fontSize: "0.85rem", fontWeight: 700, mb: 1, color: "text.primary" }}>
-            Area
-          </Typography>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 0.25 }}>
-            {areaItems.map((area) => {
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
+            <Typography sx={{ fontSize: "0.85rem", fontWeight: 700, color: "text.primary" }}>
+              Main Area
+            </Typography>
+            {filters.selectedAreas.length > 0 && (
+              <Typography
+                onClick={() => onChangeFilter("selectedAreas", [])}
+                sx={{
+                  fontSize: "0.72rem",
+                  color: COLORS.PRIMARY_PURPLE,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  "&:hover": { textDecoration: "underline" },
+                }}
+              >
+                Clear
+              </Typography>
+            )}
+          </Box>
+
+          {/* Area Search Box */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              bgcolor: dark ? "rgba(255,255,255,0.05)" : "#f6f3f9",
+              border: "1px solid",
+              borderColor: dark ? "rgba(255,255,255,0.1)" : "#e2deea",
+              borderRadius: "8px",
+              px: 1,
+              py: 0.35,
+              mb: 1,
+            }}
+          >
+            <SearchRoundedIcon sx={{ fontSize: 16, color: "text.secondary", mr: 0.5 }} />
+            <InputBase
+              placeholder="Search area (e.g. Vaishali)..."
+              value={areaSearch}
+              onChange={(e) => setAreaSearch(e.target.value)}
+              sx={{ fontSize: "0.78rem", width: "100%" }}
+            />
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 0.25,
+              maxHeight: 240,
+              overflowY: "auto",
+              pr: 0.5,
+              scrollbarWidth: "thin",
+            }}
+          >
+            {displayAreas.map((area) => {
               const checked = filters.selectedAreas.includes(area.name);
               return (
                 <Box

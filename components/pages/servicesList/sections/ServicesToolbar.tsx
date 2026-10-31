@@ -76,7 +76,7 @@ export default function ServicesToolbar({
             </Badge>
           }
           sx={{
-            display: { xs: "inline-flex", md: "none" },
+            display: { xs: "inline-flex", lg: "none" },
             px: 1.75,
             py: 0.65,
             borderRadius: "999px",
@@ -85,6 +85,7 @@ export default function ServicesToolbar({
             fontSize: "0.82rem",
             fontWeight: 700,
             textTransform: "none",
+            "&:active": { transform: "scale(0.96)" },
           }}
         >
           Filters & sort

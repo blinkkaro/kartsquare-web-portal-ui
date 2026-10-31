@@ -71,8 +71,9 @@ describe("Real Providers Data Integration", () => {
     expect(enriched.starting_price_label).toBe("Starting from");
     expect(enriched.is_price_required).toBe(true);
 
-    // Address & area
-    expect(enriched.area_name).toBe("Satya Nagar");
+    // Address & area (canonical main area + preserved landmark)
+    expect(enriched.area_name).toBe("Jhotwara");
+    expect(enriched.landmark_name).toBe("Satya Nagar");
     expect(enriched.service_address?.city_town).toBe("Jaipur");
 
     // Sub-services derived from real category and price items
@@ -144,7 +145,8 @@ describe("Real Providers Data Integration", () => {
 
     expect(enriched.price).toBe(200);
     expect(enriched.starting_price_label).toBe("Visiting fee");
-    expect(enriched.area_name).toBe("Jaidurga College");
+    expect(enriched.area_name).toBe("Jhotwara");
+    expect(enriched.landmark_name).toBe("Jaidurga College");
     expect(enriched.sub_services).toContain("Solar Panel Installation");
   });
 });
