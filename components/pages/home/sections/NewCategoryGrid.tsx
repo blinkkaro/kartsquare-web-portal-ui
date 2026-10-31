@@ -369,7 +369,7 @@ export default function NewCategoryGrid() {
                   borderRadius: { xs: 3.5, md: 4 },
                   overflow: "hidden",
                   cursor: "pointer",
-                  height: { xs: 155, sm: 180, md: 215 },
+                  height: { xs: 155, sm: 180, md: 215, lg: 225, xl: 240 },
                   backgroundImage: img
                     ? `url(${img})`
                     : `linear-gradient(135deg, ${COLORS.PURPLE_ALPHA_20}, ${COLORS.PURPLE_ALPHA_04})`,
@@ -521,7 +521,7 @@ export default function NewCategoryGrid() {
               borderRadius: "10px",
               px: 1.25,
               py: 0.5,
-              width: { xs: "100%", sm: 260 },
+              width: { xs: "100%", sm: 260, md: 300 },
               transition: "border-color 160ms ease",
               "&:focus-within": {
                 borderColor: COLORS.PRIMARY_PURPLE,

@@ -62,7 +62,7 @@ export default function NewPopularInArea() {
     : DUMMY_CITY_SERVICES;
 
   return (
-    <Section id="popular-area" sx={{ py: { xs: 4, md: 6 }, px: { xs: 2, md: 0 } }}>
+    <Section id="popular-area" sx={{ py: { xs: 4, md: 6 }, px: 0 }}>
       <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 1fr) minmax(0, 1.4fr)" }, gap: 4, alignItems: "stretch" }}>
         {/* Left: Popular in City Card */}
         <Box

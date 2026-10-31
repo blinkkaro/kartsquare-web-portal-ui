@@ -205,7 +205,7 @@ export default function NewTopPros() {
                   sx={{
                     position: "relative",
                     width: "100%",
-                    height: 190,
+                    height: { xs: 180, sm: 190, md: 200, lg: 215, xl: 230 },
                     overflow: "hidden",
                     bgcolor: COLORS.PURPLE_ALPHA_10,
                     cursor: "pointer",

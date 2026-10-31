@@ -61,7 +61,7 @@ export default function NewHeroSection() {
             component="h1"
             data-speakable="headline"
             sx={{
-              fontSize: { xs: "1.65rem", sm: "2.1rem", md: "2.5rem", lg: "2.85rem" },
+              fontSize: { xs: "1.65rem", sm: "2.1rem", md: "2.5rem", lg: "2.85rem", xl: "3.2rem" },
               fontWeight: 800,
               letterSpacing: "-0.03em",
               lineHeight: 1.15,
@@ -83,10 +83,10 @@ export default function NewHeroSection() {
           <Typography
             data-speakable="answer"
             sx={{
-              fontSize: { xs: "0.92rem", md: "1.05rem" },
+              fontSize: { xs: "0.92rem", md: "1.05rem", lg: "1.1rem" },
               color: "text.secondary",
               lineHeight: 1.55,
-              maxWidth: 500,
+              maxWidth: { xs: "100%", sm: 500, md: 540, lg: 580 },
               mb: 3,
             }}
           >
@@ -113,7 +113,7 @@ export default function NewHeroSection() {
               boxShadow: dark ? "0 8px 24px rgba(0,0,0,0.3)" : "0 8px 24px rgba(0,0,0,0.06)",
               transition: "border-color 160ms ease, box-shadow 160ms ease",
               "&:focus-within": { borderColor: COLORS.PRIMARY_PURPLE, boxShadow: `0 0 0 4px ${COLORS.PURPLE_ALPHA_10}` },
-              maxWidth: 500,
+              maxWidth: { xs: "100%", sm: 520, md: 560, lg: 600 },
             }}
           >
             <SearchRoundedIcon sx={{ color: "text.secondary", fontSize: 22 }} />
@@ -178,7 +178,13 @@ export default function NewHeroSection() {
           sx={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
-            gridTemplateRows: { xs: "170px 140px", sm: "190px 160px", md: "220px 200px" },
+            gridTemplateRows: {
+              xs: "170px 140px",
+              sm: "190px 160px",
+              md: "220px 200px",
+              lg: "245px 220px",
+              xl: "270px 245px",
+            },
             gap: { xs: 1.25, md: 1.5 },
           }}
         >
