@@ -141,17 +141,17 @@ export default function FaqSection() {
                   }
                   sx={{
                     minHeight: 56,
-                    px: 2,
+                    px: { xs: 1.5, sm: 2 },
                     "& .MuiAccordionSummary-content": { my: 1.25 },
                     // + turns into an × when open
                     "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": { transform: "rotate(45deg)" },
                     "& .MuiAccordionSummary-expandIconWrapper": { transition: reduce ? "none" : "transform 250ms ease" },
                   }}
                 >
-                  <Typography sx={{ fontWeight: 700, fontSize: { xs: "0.92rem", md: "1rem" }, pr: 1 }}>{f.q}</Typography>
+                  <Typography sx={{ fontWeight: 700, fontSize: { xs: "0.88rem", md: "1rem" }, pr: 1, wordBreak: "break-word" }}>{f.q}</Typography>
                 </AccordionSummary>
-                <AccordionDetails id={`faq-p-${i}`} role="region" aria-labelledby={`faq-h-${i}`} sx={{ px: 2, pt: 0, pb: 2 }}>
-                  <Typography sx={{ fontSize: { xs: "0.86rem", md: "0.92rem" }, color: "text.secondary", lineHeight: 1.65 }}>{f.a}</Typography>
+                <AccordionDetails id={`faq-p-${i}`} role="region" aria-labelledby={`faq-h-${i}`} sx={{ px: { xs: 1.5, sm: 2 }, pt: 0, pb: 2 }}>
+                  <Typography sx={{ fontSize: { xs: "0.82rem", md: "0.92rem" }, color: "text.secondary", lineHeight: 1.65 }}>{f.a}</Typography>
                   {f.action === "list-business" && (
                     <Button onClick={() => router.push("/business-listing")} sx={{ mt: 1, minHeight: 44, px: 0, textTransform: "none", fontWeight: 700, color: dark ? "#d6b8ff" : COLORS.PRIMARY_PURPLE }}>
                       List your business →

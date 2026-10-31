@@ -105,7 +105,7 @@ export default function NewHeroSection() {
               display: "flex",
               alignItems: "center",
               gap: 1,
-              p: "4px 4px 4px 16px",
+              p: { xs: "3px 3px 3px 12px", sm: "4px 4px 4px 16px" },
               borderRadius: "16px",
               bgcolor: "background.paper",
               border: "1.5px solid",
@@ -116,14 +116,14 @@ export default function NewHeroSection() {
               maxWidth: { xs: "100%", sm: 520, md: 560, lg: 600 },
             }}
           >
-            <SearchRoundedIcon sx={{ color: "text.secondary", fontSize: 22 }} />
+            <SearchRoundedIcon sx={{ color: "text.secondary", fontSize: { xs: 20, sm: 22 } }} />
             <InputBase
               fullWidth
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder='Try "deep cleaning"'
               inputProps={{ "aria-label": "Search for a service", enterKeyHint: "search", style: { fontSize: 15 } }}
-              sx={{ minHeight: 44 }}
+              sx={{ minHeight: { xs: 40, sm: 44 } }}
             />
             <Box
               component="button"
@@ -131,13 +131,13 @@ export default function NewHeroSection() {
               sx={{
                 all: "unset",
                 cursor: "pointer",
-                minHeight: 44,
-                px: 2.5,
+                minHeight: { xs: 40, sm: 44 },
+                px: { xs: 2, sm: 2.5 },
                 borderRadius: "12px",
                 bgcolor: COLORS.PRIMARY_PURPLE,
                 color: "#fff",
                 fontWeight: 700,
-                fontSize: "0.9rem",
+                fontSize: { xs: "0.85rem", sm: "0.9rem" },
                 display: "flex",
                 alignItems: "center",
                 gap: 0.5,
@@ -206,8 +206,8 @@ export default function NewHeroSection() {
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
             gridTemplateRows: {
-              xs: "170px 140px",
-              sm: "190px 160px",
+              xs: "155px 125px",
+              sm: "185px 150px",
               md: "220px 200px",
               lg: "245px 220px",
               xl: "270px 245px",
@@ -221,7 +221,7 @@ export default function NewHeroSection() {
             sx={{
               gridRow: "1 / 3",
               position: "relative",
-              borderRadius: 4,
+              borderRadius: { xs: 3, sm: 4 },
               overflow: "hidden",
               backgroundImage: `url(${HERO_IMAGES[0].src})`,
               backgroundSize: "cover",
@@ -238,27 +238,42 @@ export default function NewHeroSection() {
             <Box
               sx={{
                 position: "absolute",
-                bottom: 16,
-                left: 16,
-                right: 16,
+                bottom: { xs: 8, sm: 14 },
+                left: { xs: 8, sm: 14 },
+                right: { xs: 8, sm: 14 },
                 display: "flex",
                 alignItems: "center",
-                gap: 1.5,
-                p: 1.5,
-                borderRadius: 3,
+                gap: { xs: 1, sm: 1.5 },
+                p: { xs: 0.85, sm: 1.5 },
+                borderRadius: { xs: 2.5, sm: 3 },
                 bgcolor: "rgba(255,255,255,0.95)",
                 backdropFilter: "blur(8px)",
                 boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
               }}
             >
-              <Box sx={{ width: 40, height: 40, borderRadius: 2.5, bgcolor: COLORS.PURPLE_ALPHA_10, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <BoltRoundedIcon sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 22 }} />
+              <Box
+                sx={{
+                  width: { xs: 30, sm: 40 },
+                  height: { xs: 30, sm: 40 },
+                  borderRadius: { xs: 2, sm: 2.5 },
+                  bgcolor: COLORS.PURPLE_ALPHA_10,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <BoltRoundedIcon sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: { xs: 17, sm: 22 } }} />
               </Box>
               <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography sx={{ fontWeight: 700, fontSize: "0.88rem", color: "#1a1a1a", lineHeight: 1.2 }}>Electrical repairs</Typography>
-                <Typography sx={{ fontSize: "0.74rem", color: "#666", lineHeight: 1.3 }}>See work from local electricians</Typography>
+                <Typography sx={{ fontWeight: 700, fontSize: { xs: "0.76rem", sm: "0.88rem" }, color: "#1a1a1a", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  Electrical repairs
+                </Typography>
+                <Typography sx={{ fontSize: "0.72rem", color: "#666", lineHeight: 1.2, display: { xs: "none", sm: "block" }, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  See work from local electricians
+                </Typography>
               </Box>
-              <ArrowForwardRoundedIcon sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 20, flexShrink: 0 }} />
+              <ArrowForwardRoundedIcon sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: { xs: 16, sm: 20 }, flexShrink: 0 }} />
             </Box>
           </Box>
 

@@ -199,7 +199,7 @@ export default function NewDiscoverSection() {
   }, [items, activeTab]);
 
   return (
-    <Section id="discover" sx={{ py: { xs: 4, md: 7 }, px: { xs: 2, md: 0 } }}>
+    <Section id="discover" sx={{ py: { xs: 3.5, md: 7 }, px: 0 }}>
       {/* Header with pill tag */}
       <Box sx={{ mb: 3 }}>
         <Box

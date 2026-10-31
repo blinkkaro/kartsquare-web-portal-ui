@@ -752,7 +752,16 @@ export default function NewCategoryGrid() {
             </Typography>
 
             {/* Pagination Controls */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexWrap: "wrap",
+                gap: { xs: 0.5, sm: 0.75 },
+                width: { xs: "100%", sm: "auto" },
+              }}
+            >
               {/* Previous Button */}
               <Button
                 variant="outlined"
@@ -766,10 +775,10 @@ export default function NewCategoryGrid() {
                   color: "text.primary",
                   textTransform: "none",
                   fontWeight: 600,
-                  fontSize: "0.8rem",
+                  fontSize: { xs: "0.75rem", sm: "0.8rem" },
                   py: 0.5,
-                  px: 1.5,
-                  minHeight: 36,
+                  px: { xs: 1, sm: 1.5 },
+                  minHeight: { xs: 34, sm: 36 },
                   "&:hover": {
                     borderColor: COLORS.PRIMARY_PURPLE,
                     color: COLORS.PRIMARY_PURPLE,
@@ -786,7 +795,7 @@ export default function NewCategoryGrid() {
               </Button>
 
               {/* Numbered Page Buttons */}
-              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 0.35, sm: 0.5 } }}>
                 {Array.from({ length: totalPages }).map((_, idx) => {
                   const pageNum = idx + 1;
                   const isActive = currentPage === pageNum;
@@ -799,13 +808,13 @@ export default function NewCategoryGrid() {
                       sx={{
                         all: "unset",
                         cursor: "pointer",
-                        width: { xs: 36, sm: 34 },
-                        height: { xs: 36, sm: 34 },
+                        width: { xs: 32, sm: 34 },
+                        height: { xs: 32, sm: 34 },
                         borderRadius: "8px",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        fontSize: "0.82rem",
+                        fontSize: { xs: "0.78rem", sm: "0.82rem" },
                         fontWeight: isActive ? 800 : 600,
                         bgcolor: isActive
                           ? COLORS.PRIMARY_PURPLE
@@ -843,10 +852,10 @@ export default function NewCategoryGrid() {
                   color: "text.primary",
                   textTransform: "none",
                   fontWeight: 600,
-                  fontSize: "0.8rem",
+                  fontSize: { xs: "0.75rem", sm: "0.8rem" },
                   py: 0.5,
-                  px: 1.5,
-                  minHeight: 36,
+                  px: { xs: 1, sm: 1.5 },
+                  minHeight: { xs: 34, sm: 36 },
                   "&:hover": {
                     borderColor: COLORS.PRIMARY_PURPLE,
                     color: COLORS.PRIMARY_PURPLE,

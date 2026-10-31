@@ -20,6 +20,7 @@ function HomeView() {
         flexDirection: "column",
         px: { xs: 1.5, sm: 2, md: 2.25, lg: 2.5, xl: 3 },
         pb: 4,
+        overflowX: "hidden",
       }}
     >
       <NewHeroSection />

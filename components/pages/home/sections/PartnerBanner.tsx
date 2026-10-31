@@ -31,7 +31,7 @@ export default function PartnerBanner() {
           color: "#fff",
         }}
       >
-        <Box sx={{ px: { xs: 2.5, md: 5 }, py: { xs: 3, md: 6 } }}>
+        <Box sx={{ px: { xs: 2, sm: 3.5, md: 5 }, py: { xs: 3, sm: 4, md: 6 } }}>
           <Typography sx={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#d8c8ff" }}>For business owners</Typography>
           <SectionTitle light sx={{ mt: 1.5, color: "#fff" }}>Grow your business with Kartsquare</SectionTitle>
           <Typography sx={{ mt: 2.5, maxWidth: 440, fontSize: { xs: "0.95rem", md: "1.05rem" }, lineHeight: 1.55, color: "#e2d8f7" }}>
@@ -46,10 +46,36 @@ export default function PartnerBanner() {
             ))}
           </Box>
           <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 1.5, mt: 4 }}>
-            <Box component={Link} href="/business-listing" sx={{ ...ctaBase, px: 3, bgcolor: "#fff", color: COLORS.PURPLE_HOVER, fontWeight: 800, transition: "background-color 160ms ease", "&:hover": { bgcolor: "#f3eeff" } }}>
+            <Box
+              component={Link}
+              href="/business-listing"
+              sx={{
+                ...ctaBase,
+                px: 3,
+                bgcolor: "#fff",
+                color: COLORS.PURPLE_HOVER,
+                fontWeight: 800,
+                transition: "background-color 160ms ease, transform 120ms ease",
+                "&:hover": { bgcolor: "#f3eeff" },
+                "&:active": { transform: "scale(0.97)" },
+              }}
+            >
               List your business
             </Box>
-            <Box component={Link} href="/about-us" sx={{ ...ctaBase, px: 2.5, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.35)", color: "#fff", fontWeight: 600, transition: "background-color 160ms ease", "&:hover": { bgcolor: "rgba(255,255,255,0.1)" } }}>
+            <Box
+              component={Link}
+              href="/about-us"
+              sx={{
+                ...ctaBase,
+                px: 2.5,
+                boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.35)",
+                color: "#fff",
+                fontWeight: 600,
+                transition: "background-color 160ms ease, transform 120ms ease",
+                "&:hover": { bgcolor: "rgba(255,255,255,0.1)" },
+                "&:active": { transform: "scale(0.97)" },
+              }}
+            >
               How it works
             </Box>
           </Box>

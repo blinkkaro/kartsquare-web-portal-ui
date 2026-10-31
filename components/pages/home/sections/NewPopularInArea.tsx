@@ -62,8 +62,8 @@ export default function NewPopularInArea() {
     : DUMMY_CITY_SERVICES;
 
   return (
-    <Section id="popular-area" sx={{ py: { xs: 4, md: 6 }, px: 0 }}>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 1fr) minmax(0, 1.4fr)" }, gap: 4, alignItems: "stretch" }}>
+    <Section id="popular-area" sx={{ py: { xs: 3.5, md: 6 }, px: 0 }}>
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 1fr) minmax(0, 1.4fr)" }, gap: { xs: 2.5, md: 4 }, alignItems: "stretch" }}>
         {/* Left: Popular in City Card */}
         <Box
           sx={{
@@ -195,14 +195,14 @@ export default function NewPopularInArea() {
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "repeat(1, 1fr)", sm: "repeat(2, 1fr)" },
-              gap: 2.5,
+              gap: { xs: 1.5, sm: 2.5 },
             }}
           >
             {WHY_REASONS.map(({ icon: Icon, title, body }) => (
               <Box
                 key={title}
                 sx={{
-                  p: 3,
+                  p: { xs: 2, sm: 3 },
                   borderRadius: 4,
                   bgcolor: "background.paper",
                   border: "1px solid",
