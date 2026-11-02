@@ -104,6 +104,10 @@ export interface ServiceFilters {
   min_price?: number;
   max_price?: number;
   provider_id?: string;
+  /** The user's exact point: the backend returns providers whose own
+   *  service radius reaches it, nearest first. */
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface Category {

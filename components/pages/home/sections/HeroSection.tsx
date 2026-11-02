@@ -231,7 +231,7 @@ export default function HeroSection() {
             [NO_MOTION]: { transition: "none" },
           }}
         >
-          <SearchRoundedIcon sx={{ color: "text.secondary", display: { xs: "none", "@media (min-width:360px)": "block" } }} />
+          <SearchRoundedIcon sx={{ color: "text.secondary", display: "none", "@media (min-width:360px)": { display: "block" } }} />
           <InputBase
             fullWidth
             value={query}

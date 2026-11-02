@@ -1,8 +1,7 @@
 "use client";
 import React from "react";
-import { Breadcrumbs, Link, Typography, useTheme } from "@mui/material";
-import { NavigateNext } from "@mui/icons-material";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Box, Typography, useTheme } from "@mui/material";
 import { COLORS } from "../../../../constants/colors";
 import { english } from "../../../../features/i18n/en";
 
@@ -14,65 +13,81 @@ const CustomerServiceBreadcrumb = ({
   serviceName,
 }: CustomerServiceBreadcrumbProps) => {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
-  const router = useRouter();
+  const dark = theme.palette.mode === "dark";
+
+  const crumbs: Array<{ label: string; href?: string }> = [
+    { label: english.home, href: "/" },
+    { label: english.services, href: "/cus/servicesList" },
+    { label: serviceName || english.service_details },
+  ];
 
   return (
-    <Breadcrumbs
-      separator={<NavigateNext fontSize="small" />}
+    <Box
+      component="nav"
+      aria-label="Breadcrumb"
       sx={{
-        mb: 3,
-        "& .MuiBreadcrumbs-separator": {
-          color: isDark
-            ? COLORS.TEXT.SECONDARY_DARK
-            : COLORS.TEXT.SECONDARY_LIGHT,
-        },
+        display: "flex",
+        alignItems: "center",
+        gap: 0.75,
+        fontSize: "0.82rem",
+        color: "text.secondary",
+        flexWrap: "wrap",
+        minWidth: 0,
       }}
     >
-      <Link
-        component="button"
-        onClick={() => router.push("/")}
-        sx={{
-          color: isDark
-            ? COLORS.TEXT.SECONDARY_DARK
-            : COLORS.TEXT.SECONDARY_LIGHT,
-          textDecoration: "none",
-          fontSize: "0.875rem",
-          "&:hover": {
-            textDecoration: "underline",
-            color: COLORS.PRIMARY_PURPLE,
-          },
-        }}
-      >
-        {english.home}
-      </Link>
-      <Link
-        component="button"
-        onClick={() => router.push("/cus/servicesList")}
-        sx={{
-          color: isDark
-            ? COLORS.TEXT.SECONDARY_DARK
-            : COLORS.TEXT.SECONDARY_LIGHT,
-          textDecoration: "none",
-          fontSize: "0.875rem",
-          "&:hover": {
-            textDecoration: "underline",
-            color: COLORS.PRIMARY_PURPLE,
-          },
-        }}
-      >
-        {english.services}
-      </Link>
-      <Typography
-        sx={{
-          color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-          fontSize: "0.875rem",
-          fontWeight: 500,
-        }}
-      >
-        {serviceName || english.service_details}
-      </Typography>
-    </Breadcrumbs>
+      {crumbs.map((crumb, idx) => {
+        const isLast = idx === crumbs.length - 1;
+        return (
+          <React.Fragment key={crumb.label + idx}>
+            {idx > 0 && (
+              <Typography
+                component="span"
+                aria-hidden
+                sx={{
+                  color: dark
+                    ? COLORS.NEW_UI.CRUMB_SEPARATOR_DARK
+                    : COLORS.NEW_UI.CRUMB_SEPARATOR_LIGHT,
+                  mx: 0.5,
+                  fontSize: "0.85rem",
+                }}
+              >
+                /
+              </Typography>
+            )}
+            {crumb.href && !isLast ? (
+              <Box
+                component={Link}
+                href={crumb.href}
+                sx={{
+                  color: "text.secondary",
+                  textDecoration: "none",
+                  fontWeight: 500,
+                  "&:hover": { color: COLORS.PRIMARY_PURPLE },
+                }}
+              >
+                {crumb.label}
+              </Box>
+            ) : (
+              <Typography
+                component="span"
+                aria-current="page"
+                sx={{
+                  fontSize: "inherit",
+                  fontWeight: 700,
+                  color: "text.primary",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  maxWidth: { xs: 200, sm: 360, md: 520 },
+                }}
+              >
+                {crumb.label}
+              </Typography>
+            )}
+          </React.Fragment>
+        );
+      })}
+    </Box>
   );
 };
 

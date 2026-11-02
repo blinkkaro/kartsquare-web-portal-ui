@@ -25,7 +25,7 @@ export default function PopularInArea() {
 
   if (!categories || categories.length === 0) return null;
 
-  const isJaipur = location.city.toLowerCase() === "jaipur";
+  const isJaipur = location.city?.toLowerCase() === "jaipur";
   const columns = [
     { title: "Top services", items: categories.slice(0, COLUMN_SIZE) },
     { title: "More services", items: categories.slice(COLUMN_SIZE, COLUMN_SIZE * MAX_COLUMNS) },

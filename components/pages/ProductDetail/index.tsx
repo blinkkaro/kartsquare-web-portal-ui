@@ -98,15 +98,17 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
               />
 
               {/* Map View */}
-              {product.supplier?.store_address && (
+              {product.supplier?.store_address &&
+                parseFloat(String(product.supplier.store_address.lat)) &&
+                parseFloat(String(product.supplier.store_address.long)) ? (
                 <Box sx={{ mt: 7 }}>
                   <ProductMap
-                    latitude={parseFloat(String(product.supplier.store_address.lat)) || 26.9124}
-                    longitude={parseFloat(String(product.supplier.store_address.long)) || 75.7873}
+                    latitude={parseFloat(String(product.supplier.store_address.lat))}
+                    longitude={parseFloat(String(product.supplier.store_address.long))}
                     storeName={product.supplier.name}
                   />
                 </Box>
-              )}
+              ) : null}
             </Box>
           </Grid>
 

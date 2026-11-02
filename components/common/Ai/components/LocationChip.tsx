@@ -4,8 +4,9 @@ import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
 import MyLocationRoundedIcon from "@mui/icons-material/MyLocationRounded";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import { COLORS } from "@/constants/colors";
-import { AI_CITIES, AI_LOCALITIES } from "@/constants/aiSearch";
-import { AILocation } from "../useAILocation";
+import { AILocation, placeLabel } from "../useAILocation";
+import { listActiveCities, resolveText } from "@/services/location/locationClient";
+import type { PublicLocation } from "@/services/location/locationService";
 import { MIN_TOUCH } from "./motion";
 
 interface Props {
@@ -19,36 +20,71 @@ interface Props {
   openSignal?: number;
 }
 
-/** Editable "📍 Jaipur" chip: change city, change locality, or use current location (opt-in). */
+/**
+ * Editable location chip: use the exact current location, or type an area,
+ * city or pincode. Typed text is resolved by the backend to a real place, and
+ * that place's centre becomes the point results are searched around.
+ */
 export default function LocationChip({ location, onChange, onUseCurrent, locating, error, disabled, openSignal }: Props) {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const chipRef = useRef<HTMLDivElement | null>(null);
-  const tint = useTheme().palette.mode === "dark" ? "#d6b8ff" : COLORS.PRIMARY_PURPLE;
-  const [city, setCity] = useState(location.city);
-  const [locality, setLocality] = useState(location.locality ?? "");
+  const tint = useTheme().palette.mode === "dark" ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE;
+  const [query, setQuery] = useState("");
+  const [resolving, setResolving] = useState(false);
+  const [notFound, setNotFound] = useState(false);
+  const [cities, setCities] = useState<PublicLocation[]>([]);
 
   const openAt = (el: HTMLElement | null) => {
-    setCity(location.city);
-    setLocality(location.locality ?? "");
+    setQuery("");
+    setNotFound(false);
     setAnchor(el);
   };
   const open = (e: React.MouseEvent<HTMLElement>) => openAt(e.currentTarget);
   useEffect(() => {
     if (openSignal) openAt(chipRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openSignal]);
   const close = () => setAnchor(null);
-  const apply = () => {
-    onChange({ city: city.trim() || location.city, locality: locality.trim() || null, coords: null });
+
+  // Live cities as suggestions only — loaded the first time the picker opens.
+  useEffect(() => {
+    if (!anchor || cities.length > 0) return;
+    let cancelled = false;
+    listActiveCities().then((rows) => {
+      if (!cancelled) setCities(rows);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [anchor, cities.length]);
+
+  const pick = async (text: string) => {
+    const q = text.trim();
+    if (!q || resolving) return;
+    setResolving(true);
+    setNotFound(false);
+    const place = await resolveText(q);
+    setResolving(false);
+    const point = place?.location;
+    if (!point || point.latitude == null || point.longitude == null) {
+      setNotFound(true);
+      return;
+    }
+    onChange({
+      city: place.city?.name ?? (point.kind === "city" ? point.name : null),
+      locality: point.kind === "locality" ? point.name : null,
+      coords: { latitude: point.latitude, longitude: point.longitude },
+      source: "picked",
+    });
     close();
   };
 
   const label = location.coords
-    ? `Near you · ${location.city}`
-    : location.locality
-      ? `${location.locality}, ${location.city}`
-      : location.city;
-  const suggestions = AI_LOCALITIES[city] || [];
+    ? location.source === "gps"
+      ? `Near you${location.locality || location.city ? ` · ${placeLabel(location)}` : ""}`
+      : placeLabel(location)
+    : locating
+      ? "Finding your location…"
+      : "Set your location";
 
   return (
     <>
@@ -95,7 +131,7 @@ export default function LocationChip({ location, onChange, onUseCurrent, locatin
           }}
           sx={{ minHeight: MIN_TOUCH, textTransform: "none", fontWeight: 600, mb: 1.5, borderRadius: 2 }}
         >
-          {locating ? "Finding you…" : "Use current location"}
+          {locating ? "Finding you…" : "Use my current location"}
         </Button>
         {error && (
           <Typography role="alert" sx={{ color: "error.main", fontSize: "0.75rem", mb: 1 }}>
@@ -103,50 +139,49 @@ export default function LocationChip({ location, onChange, onUseCurrent, locatin
           </Typography>
         )}
 
-        <Typography sx={{ fontSize: "0.72rem", color: "text.secondary", mb: 0.5 }}>City</Typography>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75, mb: 1.5 }}>
-          {AI_CITIES.map((c) => (
-            <Chip
-              key={c}
-              label={c}
-              size="small"
-              clickable
-              onClick={() => {
-                setCity(c);
-                if (c !== city) setLocality("");
-              }}
-              color={c === city ? "primary" : "default"}
-              variant={c === city ? "filled" : "outlined"}
-              sx={{ height: 30 }}
-            />
-          ))}
-        </Box>
-
-        <Typography sx={{ fontSize: "0.72rem", color: "text.secondary", mb: 0.5 }}>Area (optional)</Typography>
+        <Typography sx={{ fontSize: "0.72rem", color: "text.secondary", mb: 0.5 }}>Or search an area, city or pincode</Typography>
         <TextField
           fullWidth
           size="small"
-          value={locality}
-          onChange={(e) => setLocality(e.target.value)}
-          placeholder="e.g. Mansarovar"
-          onKeyDown={(e) => e.key === "Enter" && apply()}
-          slotProps={{ htmlInput: { "aria-label": "Area or locality", style: { fontSize: 16 } } }}
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setNotFound(false);
+          }}
+          placeholder="Area, city or pincode"
+          onKeyDown={(e) => e.key === "Enter" && pick(query)}
+          error={notFound}
+          helperText={notFound ? "We couldn't find that place. Try a nearby area or city." : undefined}
+          slotProps={{ htmlInput: { "aria-label": "Area, city or pincode", style: { fontSize: 16 } } }}
         />
-        {suggestions.length > 0 && (
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75, mt: 1 }}>
-            {suggestions.slice(0, 6).map((l) => (
-              <Chip key={l} label={l} size="small" clickable onClick={() => setLocality(l)} sx={{ height: 28 }} />
-            ))}
-          </Box>
+
+        {cities.length > 0 && (
+          <>
+            <Typography sx={{ fontSize: "0.72rem", color: "text.secondary", mt: 1.5, mb: 0.5 }}>Cities on Kartsquare</Typography>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
+              {cities.map((c) => (
+                <Chip
+                  key={c.id}
+                  label={c.name}
+                  size="small"
+                  clickable
+                  disabled={resolving}
+                  onClick={() => pick(c.name)}
+                  sx={{ height: 30 }}
+                />
+              ))}
+            </Box>
+          </>
         )}
 
         <Button
           fullWidth
           variant="contained"
-          onClick={apply}
+          disabled={!query.trim() || resolving}
+          onClick={() => pick(query)}
           sx={{ mt: 2, minHeight: MIN_TOUCH, textTransform: "none", fontWeight: 700, borderRadius: 2 }}
         >
-          Apply
+          {resolving ? "Finding…" : "Apply"}
         </Button>
       </Popover>
     </>

@@ -28,6 +28,17 @@ import { AppUserType } from "@/services/auth/auth.interface";
 
 
 const LIBRARIES: "places"[] = ["places"];
+/** Where to centre the map without a user location: the first real marker, else the whole world. */
+function firstMarkerCenter(items: Array<{ service_address?: { latitude?: number | null; longitude?: number | null } | null }>) {
+  for (const item of items) {
+    const lat = Number(item?.service_address?.latitude);
+    const lng = Number(item?.service_address?.longitude);
+    if (Number.isFinite(lat) && Number.isFinite(lng) && !(lat === 0 && lng === 0)) return { lat, lng };
+  }
+  return null;
+}
+const WORLD_VIEW = { lat: 20, lng: 0 };
+
 const SERVICE_COLOR = COLORS.PRIMARY_PURPLE;
 const STORE_COLOR = COLORS.PRIMARY_BLUE;
 
@@ -208,7 +219,7 @@ const MapView: React.FC = () => {
           mapCenter ||
           (coordinates?.latitude && coordinates?.longitude
             ? { lat: coordinates.latitude, lng: coordinates.longitude }
-            : { lat: 26.9167, lng: 75.7833 })
+            : firstMarkerCenter(services) ?? WORLD_VIEW)
         }
         options={mapOptions}
       >

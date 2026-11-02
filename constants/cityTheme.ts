@@ -29,4 +29,5 @@ const NEUTRAL: CityTheme = {
   accent: ["#c084fc", "#8b5cf6"],
 };
 
-export const getCityTheme = (city: string): CityTheme => THEMES[city] ?? NEUTRAL;
+export const getCityTheme = (city: string | null | undefined): CityTheme =>
+  (city && THEMES[city]) || NEUTRAL;

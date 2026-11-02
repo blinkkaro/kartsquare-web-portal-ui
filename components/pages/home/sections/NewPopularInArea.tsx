@@ -54,7 +54,9 @@ export default function NewPopularInArea() {
   const { location } = useAILocation();
   const { data: categories } = useCategories();
 
-  const city = location.city || "Jaipur";
+  // The services page reads the same shared location, so links carry no city.
+  const city = location.city;
+  const placeTitle = city ?? "your area";
 
   // Use API categories if available, else dummy services
   const serviceList = (categories && categories.length > 0)
@@ -90,13 +92,16 @@ export default function NewPopularInArea() {
               bgcolor: COLORS.PRIMARY_PURPLE,
             }}
           >
-            <Image
-              src={HOME_PHOTOS.hawaMahal.src}
-              alt={HOME_PHOTOS.hawaMahal.alt}
-              fill
-              loading="lazy"
-              style={{ objectFit: "cover", opacity: 0.35 }}
-            />
+            {/* The Hawa Mahal photo belongs to Jaipur only; other places get the plain banner. */}
+            {city === "Jaipur" && (
+              <Image
+                src={HOME_PHOTOS.hawaMahal.src}
+                alt={HOME_PHOTOS.hawaMahal.alt}
+                fill
+                loading="lazy"
+                style={{ objectFit: "cover", opacity: 0.35 }}
+              />
+            )}
             <Box
               sx={{
                 position: "absolute",
@@ -110,7 +115,7 @@ export default function NewPopularInArea() {
                 Popular in
               </Typography>
               <Typography sx={{ color: "#fff", fontSize: "2rem", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1 }}>
-                {city}
+                {placeTitle}
               </Typography>
             </Box>
           </Box>
@@ -121,7 +126,7 @@ export default function NewPopularInArea() {
               <Box
                 key={idx}
                 component={Link}
-                href={`/cus/servicesList?search=${encodeURIComponent(serviceName)}&city=${encodeURIComponent(city)}`}
+                href={`/cus/servicesList?search=${encodeURIComponent(serviceName)}`}
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -148,7 +153,7 @@ export default function NewPopularInArea() {
 
             <Box
               component={Link}
-              href={`/cus/servicesList?city=${encodeURIComponent(city)}`}
+              href="/cus/servicesList"
               sx={{
                 mt: 1.5,
                 pt: 1.5,
@@ -165,7 +170,7 @@ export default function NewPopularInArea() {
                 "&:hover": { textDecoration: "underline" },
               }}
             >
-              View all services in {city}
+              View all services in {placeTitle}
               <ArrowForwardRoundedIcon sx={{ fontSize: 16 }} />
             </Box>
           </Box>

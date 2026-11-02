@@ -144,7 +144,7 @@ export default function ChatInterface() {
 
   // ---------------------------------------------------------------- search
   const buildContext = (over?: AgenticSearchContext, loc = location): AgenticSearchContext => ({
-    city: loc.city,
+    city: loc.city ?? undefined,
     locality: loc.locality ?? undefined,
     latitude: loc.coords?.latitude,
     longitude: loc.coords?.longitude,

@@ -59,9 +59,11 @@ export default function ServicesToolbar({
       >
         {totalCount}{" "}
         {categoryName ? categoryName.toLowerCase() : "providers"}{" "}
-        <Box component="span" sx={{ color: "text.secondary", fontWeight: 500 }}>
-          · {cityName || "Jaipur"}
-        </Box>
+        {cityName && (
+          <Box component="span" sx={{ color: "text.secondary", fontWeight: 500 }}>
+            · {cityName}
+          </Box>
+        )}
       </Typography>
 
       {/* Right controls: Mobile Filter button + Sort Dropdown */}
