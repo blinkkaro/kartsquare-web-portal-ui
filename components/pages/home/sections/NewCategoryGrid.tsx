@@ -65,7 +65,7 @@ import { useRouter } from "next/navigation";
 import { COLORS } from "@/constants/colors";
 import { useCategories } from "@/hooks/useCategories";
 import { useAILocation } from "@/components/common/Ai/useAILocation";
-import { Section } from "./shared";
+import { Section, sectionTitleSx, sectionSubtitleSx } from "./shared";
 
 type IconType = typeof AcUnitRoundedIcon;
 
@@ -229,7 +229,7 @@ export default function NewCategoryGrid() {
     if (c.slug && city) {
       router.push(`/${city}/${c.slug}`);
     } else {
-      router.push(`/cus/servicesList?category=${encodeURIComponent(c.id)}&search=${encodeURIComponent(c.name)}`);
+      router.push(`/cus/services-list?category=${encodeURIComponent(c.id)}&search=${encodeURIComponent(c.name)}`);
     }
   };
 
@@ -282,24 +282,10 @@ export default function NewCategoryGrid() {
         }}
       >
         <Box>
-          <Typography
-            component="h2"
-            sx={{
-              fontSize: { xs: "1.35rem", sm: "1.55rem", md: "1.8rem" },
-              fontWeight: 800,
-              letterSpacing: "-0.02em",
-              lineHeight: 1.2,
-            }}
-          >
+          <Typography component="h2" sx={sectionTitleSx}>
             Popular categories
           </Typography>
-          <Typography
-            sx={{
-              fontSize: { xs: "0.82rem", md: "0.92rem" },
-              color: "text.secondary",
-              mt: 0.5,
-            }}
-          >
+          <Typography sx={sectionSubtitleSx}>
             Find trusted service providers & specialists in {location.city || "Jaipur"}
           </Typography>
         </Box>
@@ -307,13 +293,14 @@ export default function NewCategoryGrid() {
         <Box
           component="button"
           type="button"
-          onClick={() => router.push("/cus/servicesList")}
+          onClick={() => router.push("/cus/services-list")}
           sx={{
             all: "unset",
             cursor: "pointer",
             display: "inline-flex",
             alignItems: "center",
             gap: 0.75,
+            minHeight: 44,
             fontSize: "0.9rem",
             fontWeight: 700,
             color: dark ? "#d6b8ff" : COLORS.PRIMARY_PURPLE,
@@ -321,7 +308,7 @@ export default function NewCategoryGrid() {
             "&:hover": { textDecoration: "underline" },
           }}
         >
-          Explore all <ArrowForwardRoundedIcon sx={{ fontSize: 17 }} />
+          View all <ArrowForwardRoundedIcon sx={{ fontSize: 17 }} />
         </Box>
       </Box>
 
@@ -487,14 +474,7 @@ export default function NewCategoryGrid() {
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Typography
-              component="h3"
-              sx={{
-                fontSize: { xs: "1.1rem", md: "1.25rem" },
-                fontWeight: 800,
-                color: "text.primary",
-              }}
-            >
+            <Typography component="h2" sx={{ ...sectionTitleSx, color: "text.primary" }}>
               Browse all categories
             </Typography>
             <Box
@@ -684,7 +664,7 @@ export default function NewCategoryGrid() {
                         lineHeight: 1.25,
                         color: "text.primary",
                         display: "-webkit-box",
-                        WebkitLineClamp: 1,
+                        WebkitLineClamp: 2,
                         WebkitBoxOrient: "vertical",
                         overflow: "hidden",
                       }}

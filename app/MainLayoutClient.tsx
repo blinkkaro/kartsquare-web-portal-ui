@@ -60,7 +60,10 @@ export default function MainLayoutClient({
         <Ai open={aiOpen} onClose={() => dispatch(setAiOpen(false))} />
       </Box>
       <LoginModal />
-      <Footer />
+      {/* Footer is desktop/tablet only; mobile uses the bottom nav */}
+      <Box sx={{ display: { xs: "none", md: "block" } }}>
+        <Footer />
+      </Box>
     </>
   );
 }

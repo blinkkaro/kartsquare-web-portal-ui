@@ -38,9 +38,9 @@ export default function NewHeroSection() {
   const search = (text: string) => {
     const q = text.trim();
     if (q) {
-      router.push(`/cus/servicesList?search=${encodeURIComponent(q)}`);
+      router.push(`/cus/services-list?search=${encodeURIComponent(q)}`);
     } else {
-      router.push(`/cus/servicesList`);
+      router.push(`/cus/services-list`);
     }
   };
 
@@ -133,7 +133,7 @@ export default function NewHeroSection() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder='Try "deep cleaning"'
-              inputProps={{ "aria-label": "Search for a service", enterKeyHint: "search", style: { fontSize: 14 } }}
+              inputProps={{ "aria-label": "Search for a service", enterKeyHint: "search", style: { fontSize: 16 } }}
               sx={{ flex: 1, minWidth: 0, minHeight: { xs: 40, sm: 44 } }}
             />
             <Box
@@ -235,7 +235,7 @@ export default function NewHeroSection() {
         >
           {/* Large left image - spans 2 rows */}
           <Box
-            onClick={() => router.push("/cus/servicesList?search=electrician")}
+            onClick={() => router.push("/cus/services-list?search=electrician")}
             sx={{
               gridRow: "1 / 3",
               position: "relative",
@@ -345,7 +345,7 @@ export default function NewHeroSection() {
 
           {/* Bottom right image */}
           <Box
-            onClick={() => router.push("/cus/servicesList?search=cleaning")}
+            onClick={() => router.push("/cus/services-list?search=cleaning")}
             sx={{
               position: "relative",
               borderRadius: { xs: 2.5, sm: 4 },

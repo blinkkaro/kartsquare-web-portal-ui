@@ -151,7 +151,7 @@ export default function FaqSection() {
                   <Typography sx={{ fontWeight: 700, fontSize: { xs: "0.88rem", md: "1rem" }, pr: 1, wordBreak: "break-word" }}>{f.q}</Typography>
                 </AccordionSummary>
                 <AccordionDetails id={`faq-p-${i}`} role="region" aria-labelledby={`faq-h-${i}`} sx={{ px: { xs: 1.5, sm: 2 }, pt: 0, pb: 2 }}>
-                  <Typography sx={{ fontSize: { xs: "0.82rem", md: "0.92rem" }, color: "text.secondary", lineHeight: 1.65 }}>{f.a}</Typography>
+                  <Typography sx={{ fontSize: { xs: "0.82rem", md: "0.92rem" }, color: dark ? "text.secondary" : "#30263E", lineHeight: 1.65 }}>{f.a}</Typography>
                   {f.action === "list-business" && (
                     <Button onClick={() => router.push("/business-listing")} sx={{ mt: 1, minHeight: 44, px: 0, textTransform: "none", fontWeight: 700, color: dark ? "#d6b8ff" : COLORS.PRIMARY_PURPLE }}>
                       List your business →
@@ -174,7 +174,7 @@ export default function FaqSection() {
               <Typography sx={{ fontSize: "0.76rem", color: "text.secondary" }}>Ask Kart AI in your language.</Typography>
             </Box>
             <Button variant="contained" disableElevation onClick={() => dispatch(setAiOpen(true))} sx={{ minHeight: 44, px: 2, flexShrink: 0, borderRadius: 3, textTransform: "none", fontWeight: 700, bgcolor: COLORS.PRIMARY_PURPLE, "&:hover": { bgcolor: COLORS.PURPLE_HOVER } }}>
-              Ask AI
+              Ask Kart AI
             </Button>
           </Box>
         </Box>

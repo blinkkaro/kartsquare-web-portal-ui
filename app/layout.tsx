@@ -1,7 +1,22 @@
 import type { Metadata, Viewport } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Plus_Jakarta_Sans, Mukta } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+
+// Plus Jakarta Sans for Latin; Mukta supplies the matching Devanagari so Hindi
+// never falls back to a mismatched system font. Weights kept to 400/600/700.
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-jakarta",
+});
+const mukta = Mukta({
+  subsets: ["devanagari", "latin"],
+  weight: ["400", "600", "700"],
+  display: "swap",
+  variable: "--font-mukta",
+});
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com";
 
@@ -139,9 +154,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${jakarta.variable} ${mukta.variable}`}>
       <body
-        style={{ fontFamily: "'Poppins', system-ui, -apple-system, sans-serif" }}
+        style={{ fontFamily: "var(--font-jakarta), var(--font-mukta), system-ui, -apple-system, sans-serif" }}
         suppressHydrationWarning
       >
         {/* Plain script avoids Turbopack chunk split issues from next/script in RootLayout */}

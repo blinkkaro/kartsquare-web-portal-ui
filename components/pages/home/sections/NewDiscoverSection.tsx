@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { Box, Typography, Chip, useTheme } from "@mui/material";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
@@ -8,7 +8,7 @@ import ExploreRoundedIcon from "@mui/icons-material/ExploreRounded";
 import { COLORS } from "@/constants/colors";
 import { useGetInfinitePosts, useGetReels } from "@/hooks/usePosts";
 import { Visibility, Posts } from "@/services/post/postInterfaces";
-import { Section } from "./shared";
+import { Section, sectionTitleSx, sectionSubtitleSx } from "./shared";
 import { HOME_PHOTOS } from "./homePhotos";
 
 interface DiscoverItem {
@@ -130,6 +130,17 @@ export default function NewDiscoverSection() {
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
   const [activeTab, setActiveTab] = useState<string>("all");
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [slide, setSlide] = useState(0);
+  useEffect(() => {
+    trackRef.current?.scrollTo({ left: 0 });
+    setSlide(0);
+  }, [activeTab]);
+  const onTrackScroll = useCallback(() => {
+    const el = trackRef.current;
+    if (!el || !el.firstElementChild) return;
+    setSlide(Math.round(el.scrollLeft / ((el.firstElementChild as HTMLElement).offsetWidth + 12)));
+  }, []);
 
   const { data: postsData } = useGetInfinitePosts({ limit: 4, visibility: Visibility.PUBLIC });
   const { data: reelsData } = useGetReels();
@@ -225,20 +236,10 @@ export default function NewDiscoverSection() {
 
         <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, alignItems: { xs: "flex-start", sm: "flex-end" }, justifyContent: "space-between", gap: 2 }}>
           <Box sx={{ maxWidth: 640 }}>
-            <Typography
-              component="h2"
-              sx={{
-                fontSize: { xs: "1.45rem", sm: "1.85rem", md: "2.1rem" },
-                fontWeight: 800,
-                letterSpacing: "-0.03em",
-                lineHeight: 1.15,
-                color: "text.primary",
-                mb: 1,
-              }}
-            >
+            <Typography component="h2" sx={{ ...sectionTitleSx, color: "text.primary" }}>
               Discover what&apos;s happening around you
             </Typography>
-            <Typography sx={{ fontSize: { xs: "0.88rem", md: "0.98rem" }, color: "text.secondary", lineHeight: 1.5 }}>
+            <Typography sx={sectionSubtitleSx}>
               Explore local businesses, inspiring projects, and real work from professionals near you.
             </Typography>
           </Box>
@@ -247,7 +248,7 @@ export default function NewDiscoverSection() {
             component={Link}
             href="/cus/reels"
             sx={{
-              display: "inline-flex",
+              display: { xs: "none", sm: "inline-flex" },
               alignItems: "center",
               gap: 0.75,
               px: 2.25,
@@ -284,6 +285,9 @@ export default function NewDiscoverSection() {
           "&::-webkit-scrollbar": { display: "none" },
           pb: 2,
           mb: 1.5,
+          mx: { xs: -1.5, sm: 0 },
+          px: { xs: 1.5, sm: 0 },
+          scrollSnapType: "x proximity",
         }}
       >
         {TABS.map((tab) => {
@@ -297,6 +301,9 @@ export default function NewDiscoverSection() {
               sx={{
                 px: 2.25,
                 py: 0.85,
+                minHeight: 38,
+                flexShrink: 0,
+                scrollSnapAlign: "start",
                 borderRadius: 99,
                 border: "1px solid",
                 borderColor: isActive
@@ -333,10 +340,36 @@ export default function NewDiscoverSection() {
 
       {/* Mosaic Gallery Grid */}
       <Box
+        ref={trackRef}
+        onScroll={onTrackScroll}
         sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "repeat(2, 1fr)", md: "repeat(4, 1fr)" },
+          display: { xs: "flex", sm: "grid" },
+          gridTemplateColumns: { sm: "repeat(2, 1fr)", md: "repeat(4, 1fr)" },
           gap: { xs: 1.5, md: 2 },
+          // Mobile: swipeable story-style cards, next one peeks in
+          overflowX: { xs: "auto", sm: "visible" },
+          scrollSnapType: { xs: "x mandatory", sm: "none" },
+          scrollPaddingLeft: { xs: "12px", sm: 0 },
+          overscrollBehaviorX: "contain",
+          mx: { xs: -1.5, sm: 0 },
+          px: { xs: 1.5, sm: 0 },
+          pb: { xs: 1, sm: 0 },
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": { display: "none" },
+          "& > a": {
+            flex: { xs: "0 0 66%", sm: "initial" },
+            scrollSnapAlign: { xs: "start", sm: "none" },
+          },
+          "@supports (animation-timeline: view())": {
+            "& > a": {
+              "@media (max-width: 599.95px)": {
+                animation: "ks-card-reveal linear both",
+                animationTimeline: "view(inline)",
+                animationRange: "entry 0% entry 60%",
+              },
+            },
+          },
+          "@media (prefers-reduced-motion: reduce)": { "& > a": { animation: "none !important" } },
         }}
       >
         {filteredItems.map((item, index) => {
@@ -353,7 +386,7 @@ export default function NewDiscoverSection() {
                 overflow: "hidden",
                 textDecoration: "none",
                 bgcolor: COLORS.PURPLE_ALPHA_10,
-                height: isLarge ? { xs: 200, sm: 260, md: 340 } : { xs: 185, sm: 240, md: 340 },
+                height: isLarge ? { xs: 330, sm: 260, md: 340 } : { xs: 330, sm: 240, md: 340 },
                 boxShadow: dark ? "0 4px 20px rgba(0,0,0,0.3)" : "0 4px 20px rgba(0,0,0,0.06)",
                 transition: "transform 180ms ease, box-shadow 180ms ease",
                 userSelect: "none",
@@ -435,6 +468,14 @@ export default function NewDiscoverSection() {
                     justifyContent: "center",
                     boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
                     transition: "transform 200ms ease",
+                    "&::after": {
+                      content: '""',
+                      position: "absolute",
+                      inset: 0,
+                      borderRadius: "50%",
+                      border: "2px solid rgba(255,255,255,0.8)",
+                      animation: "ks-ping 2s ease-out infinite",
+                    },
                   }}
                 >
                   <PlayArrowRoundedIcon sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: { xs: 22, md: 28 }, ml: 0.2 }} />
@@ -454,7 +495,7 @@ export default function NewDiscoverSection() {
                   sx={{
                     color: "#fff",
                     fontWeight: 800,
-                    fontSize: { xs: "0.82rem", sm: "0.92rem", md: "1.05rem" },
+                    fontSize: { xs: "1rem", sm: "0.92rem", md: "1.05rem" },
                     lineHeight: 1.25,
                     letterSpacing: "-0.01em",
                     mb: 0.3,
@@ -469,7 +510,7 @@ export default function NewDiscoverSection() {
                 <Typography
                   sx={{
                     color: "rgba(255,255,255,0.8)",
-                    fontSize: { xs: "0.68rem", md: "0.78rem" },
+                    fontSize: { xs: "0.76rem", md: "0.78rem" },
                     fontWeight: 500,
                   }}
                   noWrap
@@ -480,6 +521,45 @@ export default function NewDiscoverSection() {
             </Box>
           );
         })}
+      </Box>
+
+      {/* Mobile only: slide dots + full-width CTA */}
+      <Box sx={{ display: { xs: "block", sm: "none" }, mt: 1 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 0.75, mb: 2 }}>
+          {filteredItems.map((item, i) => (
+            <Box
+              key={item.id}
+              sx={{
+                height: 6,
+                width: i === slide ? 18 : 6,
+                borderRadius: 3,
+                bgcolor: i === slide ? COLORS.PRIMARY_PURPLE : dark ? "rgba(255,255,255,0.25)" : "#d6d0e0",
+                transition: "width 250ms ease, background-color 250ms ease",
+              }}
+            />
+          ))}
+        </Box>
+        <Box
+          component={Link}
+          href="/cus/reels"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 0.75,
+            minHeight: 48,
+            borderRadius: 3,
+            bgcolor: COLORS.PRIMARY_PURPLE,
+            color: "#fff",
+            fontWeight: 700,
+            fontSize: "0.92rem",
+            textDecoration: "none",
+            "&:active": { transform: "scale(0.98)" },
+          }}
+        >
+          Watch all reels &amp; posts
+          <ArrowForwardRoundedIcon sx={{ fontSize: 18 }} />
+        </Box>
       </Box>
     </Section>
   );
