@@ -46,7 +46,7 @@ export default function ServicesHeroHeader({
 
   const defaultBreadcrumbs = [
     { label: "Home", href: "/" },
-    { label: "Services", href: "/cus/servicesList" },
+    { label: "Services", href: "/cus/services-list" },
     { label: categoryName || "All Services" },
   ];
 

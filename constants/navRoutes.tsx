@@ -83,7 +83,7 @@ export const getDesktopNavItems = (
         },
         {
           label: t("services"),
-          href: "/cus/servicesList",
+          href: "/cus/services-list",
           icon: <HomeRepairService sx={{ fontSize: 18 }} />,
         },
         {
@@ -128,7 +128,7 @@ export const getDesktopNavItems = (
         },
         {
           label: t("services"),
-          href: "/cus/servicesList",
+          href: "/cus/services-list",
           icon: <HomeRepairService sx={{ fontSize: 18 }} />,
         },
       ];
@@ -153,7 +153,7 @@ export const getMobileNavItems = (
       },
       {
         label: t("services"),
-        href: "/cus/servicesList",
+        href: "/cus/services-list",
         icon: <ArticleRounded />,
       },
     );
@@ -193,7 +193,7 @@ export const getMobileNavItems = (
         { label: t("home"), href: "/", icon: <HomeFilled /> },
         {
           label: t("services"),
-          href: "/cus/servicesList",
+          href: "/cus/services-list",
           icon: <ArticleRounded />,
         },
         {
@@ -225,7 +225,7 @@ export const getMobileNavItems = (
         },
         {
           label: t("services"),
-          href: "/cus/servicesList",
+          href: "/cus/services-list",
           icon: <ArticleRounded />,
         },
         { label: t("bookings"), href: bookingsHref, icon: <ShoppingBag /> },

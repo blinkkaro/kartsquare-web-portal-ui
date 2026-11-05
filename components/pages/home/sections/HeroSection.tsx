@@ -76,7 +76,7 @@ const HeroCollage = memo(function HeroCollage() {
       <Box aria-hidden sx={{ position: "absolute", top: "-2%", right: "-1%", width: { xs: 64, md: 96 }, height: { xs: 64, md: 96 }, borderRadius: "50%", bgcolor: "rgba(249,115,22,0.16)" }} />
       <Box aria-hidden sx={{ position: "absolute", bottom: "4%", left: "-2%", width: { xs: 70, md: 110 }, height: { xs: 70, md: 110 }, backgroundImage: `radial-gradient(${COLORS.PURPLE_ALPHA_30} 2px, transparent 2px)`, backgroundSize: "14px 14px" }} />
 
-      <Box component={Link} href="/cus/servicesList" aria-label="Electrical repairs" sx={{ ...frame(-4), left: "2%", top: "8%", width: "50%", height: "80%" }}>
+      <Box component={Link} href="/cus/services-list" aria-label="Electrical repairs" sx={{ ...frame(-4), left: "2%", top: "8%", width: "50%", height: "80%" }}>
         <Image src={electricianHero.src} alt={electricianHero.alt} fill priority sizes="(max-width: 900px) 50vw, 270px" style={{ objectPosition: "40% 50%" }} />
       </Box>
       <Box component={Link} href="/cus/reels" aria-label="Watch bridal look reel" sx={{ ...frame(4), right: "3%", top: "0%", width: "40%", height: "54%" }}>
@@ -85,7 +85,7 @@ const HeroCollage = memo(function HeroCollage() {
           <PlayArrowRoundedIcon sx={{ fontSize: 19 }} />
         </Box>
       </Box>
-      <Box component={Link} href="/cus/servicesList" aria-label="Deep cleaning" sx={{ ...frame(-2), right: "9%", bottom: "2%", width: "44%", height: "36%" }}>
+      <Box component={Link} href="/cus/services-list" aria-label="Deep cleaning" sx={{ ...frame(-2), right: "9%", bottom: "2%", width: "44%", height: "36%" }}>
         <Image src={homeCleaning.src} alt={homeCleaning.alt} fill sizes="(max-width: 900px) 44vw, 240px" />
       </Box>
 

@@ -52,7 +52,7 @@ export default function TopPros() {
         action={
           <Box
             component={Link}
-            href="/cus/servicesList"
+            href="/cus/services-list"
             sx={{ display: { xs: "none", sm: "inline-flex" }, alignItems: "center", gap: 0.75, minHeight: 44, flexShrink: 0, fontSize: "0.9rem", fontWeight: 700, color: dark ? "#d6b8ff" : COLORS.PRIMARY_PURPLE, textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
           >
             See all <ArrowForwardRoundedIcon sx={{ fontSize: 17 }} />

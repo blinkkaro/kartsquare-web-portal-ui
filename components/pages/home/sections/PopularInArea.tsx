@@ -68,7 +68,7 @@ export default function PopularInArea() {
                     <li key={c.id}>
                       <Box
                         component={Link}
-                        href={`/cus/servicesList?category=${encodeURIComponent(c.id)}`}
+                        href={`/cus/services-list?category=${encodeURIComponent(c.id)}`}
                         sx={{ display: "inline-flex", alignItems: "center", minHeight: 44, fontSize: "0.95rem", color: "text.secondary", textDecoration: "none", transition: "color 150ms ease", "&:hover": { color: lift } }}
                       >
                         {c.name} in {location.city}

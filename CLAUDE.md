@@ -30,7 +30,7 @@ Run single test: `npx jest __tests__/path/to/file.test.ts`
 All routes use App Router. Pattern: `app/[route]/page.tsx` with `layout.tsx` at each level.
 - Public marketing: `about-us`, `blogs`, `careers`, `contactUs`
 - Auth flows: `login`, `signup`, `forgotPassword`, `emailVerification`
-- Customer portal: `cus/bookings`, `cus/reels`, `cus/servicesList`
+- Customer portal: `cus/bookings`, `cus/reels`, `cus/services-list`
 - Account management: `myAccount/*` (11 sub-routes)
 - Supplier/marketplace: `in/*`, `External/*`
 
