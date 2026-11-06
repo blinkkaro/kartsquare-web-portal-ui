@@ -23,6 +23,7 @@ import type { LocationListing as Listing } from "@/services/location/locationSer
 import { listAreaCounts, resolveText, toSlug, type AreaCount } from "@/services/location/locationClient";
 import { useAILocation, placeLabel } from "@/components/common/Ai/useAILocation";
 import { COLORS } from "@/constants/colors";
+import { DEFAULT_LOCATION } from "@/constants/aiSearch";
 import {
   mapRealServiceToEnriched,
   EnrichedServiceItem,
@@ -103,7 +104,11 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     locateMe,
     locating,
     locateError,
+    isDefaultLocation,
   } = useAILocation();
+  // The default city is a whole-city view: every business located in it, not
+  // only those whose radius reaches the city centre.
+  const withinKm = isDefaultLocation ? DEFAULT_LOCATION.cityRadiusKm : undefined;
 
   // Toast / feedback message
   const [toastOpen, setToastOpen] = useState<boolean>(false);
@@ -264,6 +269,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
         page: 1,
         latitude: searchPoint.latitude,
         longitude: searchPoint.longitude,
+        ...(withinKm && { within_km: withinKm }),
         ...(searchQuery && { search: searchQuery }),
         ...(initialCategory && { category_id: initialCategory }),
       });
@@ -286,7 +292,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     } finally {
       if (seq === requestSeq.current) setLoading(false);
     }
-  }, [initialListing, searchPoint, searchQuery, initialCategory]);
+  }, [initialListing, searchPoint, searchQuery, initialCategory, withinKm]);
 
   useEffect(() => {
     loadServicesData();
@@ -303,6 +309,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
         page: page + 1,
         latitude: searchPoint.latitude,
         longitude: searchPoint.longitude,
+        ...(withinKm && { within_km: withinKm }),
         ...(searchQuery && { search: searchQuery }),
         ...(initialCategory && { category_id: initialCategory }),
       });
@@ -605,18 +612,16 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     setIsQuickViewOpen(true);
   };
 
-  const handleViewProfile = (service: EnrichedServiceItem) => {
-    if (service.provider_id) {
-      dispatch(openDrawer({ userId: service.provider_id }));
-    } else {
-      const route = getServiceRouteParam(service);
-      router.push(`/services/${route}`);
-    }
+  /** A click on the service (photo, name, "View details") opens its details page. */
+  const handleViewService = (service: EnrichedServiceItem) => {
+    router.push(`/services/${getServiceRouteParam(service)}`);
   };
 
-  const handleBookNow = (service: EnrichedServiceItem) => {
-    const route = getServiceRouteParam(service);
-    router.push(`/services/${route}`);
+  /** A click on the provider's picture opens the provider's profile. */
+  const handleViewProvider = (service: EnrichedServiceItem) => {
+    if (service.provider_id) {
+      dispatch(openDrawer({ userId: service.provider_id }));
+    }
   };
 
   return (
@@ -642,6 +647,44 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
           onSelectChip={setSelectedSubService}
           onSubmitSearch={handleSearchSubmit}
         />
+
+        {/* Default city notice: shown while the user's own location is unknown */}
+        {!initialListing && isDefaultLocation && (
+          <Alert
+            severity="info"
+            icon={false}
+            sx={{
+              mb: 2.5,
+              borderRadius: "14px",
+              alignItems: "center",
+              bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_04,
+              color: "text.primary",
+              border: "1px solid",
+              borderColor: dark ? COLORS.NEW_UI.CARD_BORDER_DARK : COLORS.NEW_UI.CARD_BORDER_LIGHT,
+              "& .MuiAlert-message": { width: "100%" },
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1.5, flexWrap: "wrap" }}>
+              <Typography sx={{ fontSize: "0.88rem", color: "text.primary" }}>
+                Showing services in <strong>{DEFAULT_LOCATION.city}, {DEFAULT_LOCATION.state}</strong>. Turn on location to see providers near you.
+              </Typography>
+              <Button
+                size="small"
+                onClick={goToMyLocation}
+                disabled={isLocating}
+                sx={{
+                  textTransform: "none",
+                  fontWeight: 700,
+                  fontSize: "0.82rem",
+                  color: dark ? COLORS.NEW_UI.ACCENT_TEXT_DARK : COLORS.PRIMARY_PURPLE,
+                  px: 1,
+                }}
+              >
+                {isLocating ? "Finding you…" : "Use my location"}
+              </Button>
+            </Box>
+          </Alert>
+        )}
 
         {/* Location fallback alert (if locality was widened to full city) */}
         {initialListing?.fallback && (
@@ -843,8 +886,8 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                     key={service.service_id}
                     service={service}
                     onOpenQuickView={handleQuickView}
-                    onViewProfile={handleViewProfile}
-                    onEnquire={handleBookNow}
+                    onViewService={handleViewService}
+                    onViewProvider={handleViewProvider}
                   />
                 ))
               )}
@@ -932,8 +975,8 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
         open={isQuickViewOpen}
         onClose={() => setIsQuickViewOpen(false)}
         service={quickViewService}
-        onViewFullProfile={handleViewProfile}
-        onBookService={handleBookNow}
+        onViewService={handleViewService}
+        onViewProvider={handleViewProvider}
       />
 
       {/* Mobile Filter & Sort Drawer */}

@@ -1,7 +1,8 @@
 "use client";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Box, Typography, Button, Skeleton, useTheme } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { Avatar, Box, ButtonBase, Typography, Button, Skeleton, Tooltip, useTheme } from "@mui/material";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
@@ -37,6 +38,10 @@ interface TopProCard {
   city_town: string;
   image_url: string;
   verified: boolean;
+  /** Set for a service card: its page (slug or id). Null for a provider-only card. */
+  service_route: string | null;
+  /** The provider's own picture, for the avatar that opens their profile. */
+  provider_image: string;
 }
 
 // Mobile: horizontal snap slider (next card peeks). sm+: regular grid.
@@ -73,6 +78,11 @@ const cardTrack = {
   },
 } as const;
 
+/** The provider's own name for the avatar label; the business name if that's all we have. */
+function providerLabel(item: TopProCard): string {
+  return `${item.provider_first_name || ""} ${item.provider_last_name || ""}`.trim() || item.name;
+}
+
 export default function NewTopPros() {
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
@@ -80,9 +90,20 @@ export default function NewTopPros() {
   const { location } = useAILocation();
   const { provider, servicer, isLoading } = useTopSuggestions("8");
 
+  const router = useRouter();
+
   const openProvider = useCallback((userId: string) => {
     dispatch(openDrawer({ userId }));
   }, [dispatch]);
+
+  /** A service card opens the service page; a provider-only card opens the profile. */
+  const openCard = useCallback(
+    (item: TopProCard) => {
+      if (item.service_route) router.push(`/services/${item.service_route}`);
+      else openProvider(item.provider_id);
+    },
+    [router, openProvider],
+  );
 
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -117,6 +138,8 @@ export default function NewTopPros() {
           city_town: s.city_town || "",
           image_url: img,
           verified: true,
+          service_route: s.slug?.trim() || s.id || null,
+          provider_image: s.provider_profile_pic || "",
         };
       });
     }
@@ -135,6 +158,8 @@ export default function NewTopPros() {
         city_town: p.city || "",
         image_url: p.profile_pic || FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length],
         verified: true,
+        service_route: null,
+        provider_image: p.profile_pic || "",
       }));
     }
     return [];
@@ -201,7 +226,7 @@ export default function NewTopPros() {
               >
                 {/* Media Image */}
                 <Box
-                  onClick={() => openProvider(item.provider_id)}
+                  onClick={() => openCard(item)}
                   sx={{
                     position: "relative",
                     width: "100%",
@@ -249,16 +274,48 @@ export default function NewTopPros() {
 
                 {/* Content */}
                 <Box sx={{ p: 2, display: "flex", flexDirection: "column", flex: 1 }}>
-                  {/* Business Name */}
+                  {/* Provider picture (opens their profile) + business name (opens the service) */}
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5, minWidth: 0 }}>
+                  {item.service_route && item.provider_id && (
+                    <Tooltip title={`View ${providerLabel(item)}'s profile`}>
+                      <ButtonBase
+                        onClick={() => openProvider(item.provider_id)}
+                        aria-label={`View ${providerLabel(item)}'s profile`}
+                        sx={{
+                          borderRadius: "50%",
+                          flexShrink: 0,
+                          "&:focus-visible": { outline: `2px solid ${COLORS.PRIMARY_PURPLE}`, outlineOffset: 2 },
+                        }}
+                      >
+                        <Avatar
+                          src={item.provider_image || undefined}
+                          alt={providerLabel(item)}
+                          sx={{
+                            width: 28,
+                            height: 28,
+                            fontSize: "0.8rem",
+                            fontWeight: 800,
+                            bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10,
+                            color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE,
+                            border: "1.5px solid",
+                            borderColor: dark ? COLORS.NEW_UI.CARD_BORDER_DARK : COLORS.NEW_UI.CARD_BORDER_LIGHT,
+                            "&:hover": { borderColor: COLORS.PRIMARY_PURPLE },
+                          }}
+                        >
+                          {providerLabel(item).charAt(0).toUpperCase()}
+                        </Avatar>
+                      </ButtonBase>
+                    </Tooltip>
+                  )}
                   <Typography
                     component="h3"
-                    onClick={() => openProvider(item.provider_id)}
+                    onClick={() => openCard(item)}
                     sx={{
                       fontSize: "1.05rem",
                       fontWeight: 800,
                       letterSpacing: "-0.015em",
                       lineHeight: 1.3,
-                      mb: 0.5,
+                      minWidth: 0,
                       cursor: "pointer",
                       "&:hover": { color: COLORS.PRIMARY_PURPLE },
                       display: "-webkit-box",
@@ -269,6 +326,7 @@ export default function NewTopPros() {
                   >
                     {item.name}
                   </Typography>
+                  </Box>
 
                   {/* Location (only when the listing has one) */}
                   <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1.5, color: "text.secondary", minHeight: 20 }}>
@@ -301,11 +359,11 @@ export default function NewTopPros() {
                     )}
                   </Box>
 
-                  {/* Action Buttons: View profile + Enquire */}
+                  {/* Action Buttons: View details (service page) + Enquire */}
                   <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1 }}>
                     <Button
                       variant="contained"
-                      onClick={() => openProvider(item.provider_id)}
+                      onClick={() => openCard(item)}
                       sx={{
                         textTransform: "none",
                         fontWeight: 700,
@@ -322,12 +380,12 @@ export default function NewTopPros() {
                         "&:active": { transform: "scale(0.96)" },
                       }}
                     >
-                      View profile
+                      {item.service_route ? "View details" : "View profile"}
                     </Button>
 
                     <Button
                       variant="outlined"
-                      onClick={() => openProvider(item.provider_id)}
+                      onClick={() => openCard(item)}
                       startIcon={<ChatBubbleOutlineRoundedIcon sx={{ fontSize: "16px !important" }} />}
                       sx={{
                         textTransform: "none",

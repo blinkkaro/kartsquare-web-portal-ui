@@ -1,12 +1,15 @@
 "use client";
 import React, { useState } from "react";
 import {
+  Avatar,
   Box,
   Typography,
   Button,
+  ButtonBase,
   Collapse,
   Dialog,
   IconButton,
+  Tooltip,
   useTheme,
 } from "@mui/material";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
@@ -24,15 +27,17 @@ import { HOME_PHOTOS } from "@/components/pages/home/sections/homePhotos";
 interface ServiceCardHorizontalProps {
   service: EnrichedServiceItem;
   onOpenQuickView: (service: EnrichedServiceItem) => void;
-  onViewProfile: (service: EnrichedServiceItem) => void;
-  onEnquire?: (service: EnrichedServiceItem) => void;
+  /** The service itself was clicked (photo, name, "View details"): open the service page. */
+  onViewService: (service: EnrichedServiceItem) => void;
+  /** The provider's picture was clicked: open the provider's profile. */
+  onViewProvider: (service: EnrichedServiceItem) => void;
 }
 
 export default function ServiceCardHorizontal({
   service,
   onOpenQuickView,
-  onViewProfile,
-  onEnquire,
+  onViewService,
+  onViewProvider,
 }: ServiceCardHorizontalProps) {
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
@@ -51,6 +56,7 @@ export default function ServiceCardHorizontal({
     realImg || "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80";
 
   const displayName = service.business_name || service.service_name || service.provider_name || "Service Expert";
+  const providerName = service.provider_name?.trim() || service.business_name || "this provider";
   const categoryLabel = Array.isArray(service.category_name) ? service.category_name[0] : (service.category_name || "Service");
 
   // Sub-services text line
@@ -130,7 +136,7 @@ export default function ServiceCardHorizontal({
             bgcolor: dark ? "rgba(255,255,255,0.05)" : "#f2edf8",
             cursor: "pointer",
           }}
-          onClick={() => onViewProfile(service)}
+          onClick={() => onViewService(service)}
         >
           <Box
             component="img"
@@ -190,11 +196,46 @@ export default function ServiceCardHorizontal({
             </Typography>
           </Box>
 
-          {/* Title & Verified Badge */}
+          {/* Provider picture (opens their profile), title (opens the service) & verified badge */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap", mb: 0.5 }}>
+            {service.provider_id && (
+              <Tooltip title={`View ${providerName}'s profile`}>
+                <ButtonBase
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onViewProvider(service);
+                  }}
+                  aria-label={`View ${providerName}'s profile`}
+                  sx={{
+                    borderRadius: "50%",
+                    flexShrink: 0,
+                    "&:focus-visible": { outline: `2px solid ${COLORS.PRIMARY_PURPLE}`, outlineOffset: 2 },
+                  }}
+                >
+                  <Avatar
+                    src={service.provider_image_url || undefined}
+                    alt={providerName}
+                    sx={{
+                      width: 30,
+                      height: 30,
+                      fontSize: "0.85rem",
+                      fontWeight: 800,
+                      bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10,
+                      color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE,
+                      border: "1.5px solid",
+                      borderColor: dark ? COLORS.NEW_UI.CARD_BORDER_DARK : COLORS.NEW_UI.CARD_BORDER_LIGHT,
+                      transition: "border-color 150ms ease",
+                      "&:hover": { borderColor: COLORS.PRIMARY_PURPLE },
+                    }}
+                  >
+                    {providerName.charAt(0).toUpperCase()}
+                  </Avatar>
+                </ButtonBase>
+              </Tooltip>
+            )}
             <Typography
               component="h2"
-              onClick={() => onViewProfile(service)}
+              onClick={() => onViewService(service)}
               sx={{
                 fontSize: { xs: "1.05rem", sm: "1.15rem" },
                 fontWeight: 800,
@@ -416,7 +457,7 @@ export default function ServiceCardHorizontal({
           >
             <Button
               variant="contained"
-              onClick={() => onViewProfile(service)}
+              onClick={() => onViewService(service)}
               sx={{
                 flex: { xs: 1, sm: "none" },
                 bgcolor: COLORS.PRIMARY_PURPLE,
@@ -435,7 +476,7 @@ export default function ServiceCardHorizontal({
                 "&:active": { transform: "scale(0.97)" },
               }}
             >
-              View profile
+              View details
             </Button>
 
             <Button

@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import {
+  Avatar,
   Drawer,
   Box,
   Typography,
@@ -16,7 +17,6 @@ import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import CallRoundedIcon from "@mui/icons-material/CallRounded";
-import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import { COLORS } from "@/constants/colors";
 import { EnrichedServiceItem } from "../servicesSampleData";
@@ -26,16 +26,18 @@ interface ServiceQuickViewDrawerProps {
   open: boolean;
   onClose: () => void;
   service: EnrichedServiceItem | null;
-  onViewFullProfile: (service: EnrichedServiceItem) => void;
-  onBookService?: (service: EnrichedServiceItem) => void;
+  /** Open the service details page. */
+  onViewService: (service: EnrichedServiceItem) => void;
+  /** Open the provider's profile (from their picture). */
+  onViewProvider: (service: EnrichedServiceItem) => void;
 }
 
 export default function ServiceQuickViewDrawer({
   open,
   onClose,
   service,
-  onViewFullProfile,
-  onBookService,
+  onViewService,
+  onViewProvider,
 }: ServiceQuickViewDrawerProps) {
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
@@ -411,7 +413,7 @@ export default function ServiceQuickViewDrawer({
             variant="contained"
             onClick={() => {
               onClose();
-              onViewFullProfile(service);
+              onViewService(service);
             }}
             sx={{
               bgcolor: COLORS.PRIMARY_PURPLE,
@@ -425,16 +427,25 @@ export default function ServiceQuickViewDrawer({
               "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
             }}
           >
-            View Full Profile
+            View details
           </Button>
-          {onBookService && (
+          {service.provider_id && (
             <Button
               variant="outlined"
               onClick={() => {
                 onClose();
-                onBookService(service);
+                onViewProvider(service);
               }}
-              startIcon={<CalendarMonthRoundedIcon sx={{ fontSize: 18 }} />}
+              aria-label={`View ${service.provider_name || displayName}'s profile`}
+              startIcon={
+                <Avatar
+                  src={service.provider_image_url || undefined}
+                  alt={service.provider_name || displayName}
+                  sx={{ width: 22, height: 22, fontSize: "0.72rem", fontWeight: 800 }}
+                >
+                  {(service.provider_name || displayName).charAt(0).toUpperCase()}
+                </Avatar>
+              }
               sx={{
                 borderColor: COLORS.PRIMARY_PURPLE,
                 color: COLORS.PRIMARY_PURPLE,
@@ -448,7 +459,7 @@ export default function ServiceQuickViewDrawer({
                 "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_10 },
               }}
             >
-              Book
+              Provider
             </Button>
           )}
         </Box>

@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
-import { AI_LOCATION_STORAGE_KEY } from "@/constants/aiSearch";
+import { AI_LOCATION_STORAGE_KEY, DEFAULT_LOCATION } from "@/constants/aiSearch";
 import { resolveCoords } from "@/services/location/locationClient";
 
 /**
  * Where the user is — the one place the whole app reads it from.
  *
- * There is no default city. A location is either the user's exact GPS point
- * or a place they picked (whose centre becomes the point we search around).
- * Until one of those exists the location is unknown, and pages ask for it
- * instead of guessing.
+ * In priority order: a place the user picked, the user's exact GPS point, and
+ * otherwise the default city (Jaipur, Rajasthan) — shown while location is
+ * off, denied or not answered yet, the way Justdial falls back to Mumbai.
+ * GPS replaces the default as soon as it arrives.
  */
 export interface AILocation {
   /** Display name of the nearest known city; null when unknown or not seeded. */
@@ -16,16 +16,22 @@ export interface AILocation {
   locality: string | null;
   /** The point results are searched around: GPS, or the picked place's centre. */
   coords: { latitude: number; longitude: number } | null;
-  source?: "gps" | "picked" | null;
+  /** "default" = the fallback city, used only while nothing better is known. */
+  source?: "gps" | "picked" | "default" | null;
 }
 
-export const EMPTY_LOCATION: AILocation = { city: null, locality: null, coords: null, source: null };
+export const DEFAULT_AI_LOCATION: AILocation = {
+  city: DEFAULT_LOCATION.city,
+  locality: null,
+  coords: { latitude: DEFAULT_LOCATION.latitude, longitude: DEFAULT_LOCATION.longitude },
+  source: "default",
+};
 
 /** Set once the first-visit permission prompt has been shown, so it is never repeated unasked. */
 const PROMPTED_KEY = "kartsquare_location_prompted";
 
 // One shared location for the whole app (home, services list, assistant stay in sync).
-let current: AILocation = EMPTY_LOCATION;
+let current: AILocation = DEFAULT_AI_LOCATION;
 let loaded = false;
 let autoStarted = false;
 let locatingNow = false;
@@ -34,7 +40,7 @@ const listeners = new Set<() => void>();
 function readStored(): AILocation {
   try {
     const raw = localStorage.getItem(AI_LOCATION_STORAGE_KEY);
-    if (!raw) return EMPTY_LOCATION;
+    if (!raw) return DEFAULT_AI_LOCATION;
     const p = JSON.parse(raw);
     // Only a place the user picked is remembered. GPS is re-read each visit:
     // a stale fix would put them where they were yesterday.
@@ -47,7 +53,7 @@ function readStored(): AILocation {
         : null;
     // Entries from the old city-name-only format carry no point to search
     // around; they are dropped rather than shown as a location we can't use.
-    if (!coords) return EMPTY_LOCATION;
+    if (!coords) return DEFAULT_AI_LOCATION;
     return {
       city: typeof p.city === "string" && p.city ? p.city : null,
       locality: typeof p.locality === "string" && p.locality ? p.locality : null,
@@ -55,7 +61,7 @@ function readStored(): AILocation {
       source: coords ? "picked" : null,
     };
   } catch {
-    return EMPTY_LOCATION;
+    return DEFAULT_AI_LOCATION;
   }
 }
 
@@ -67,7 +73,8 @@ function getSnapshot(): AILocation {
   return current;
 }
 
-const getServerSnapshot = () => EMPTY_LOCATION;
+// The server renders the default too, so the first client render matches it.
+const getServerSnapshot = () => DEFAULT_AI_LOCATION;
 
 function subscribe(cb: () => void) {
   listeners.add(cb);
@@ -202,10 +209,10 @@ export function useAILocation() {
     void autoLocate();
   }, []);
 
-  /** A place the user picked (with its centre point) or cleared. */
+  /** A place the user picked (with its centre point); clearing it goes back to the default city. */
   const setLocation = useCallback(
     (next: AILocation) =>
-      commit({ ...next, source: next.coords ? next.source ?? "picked" : null }, true),
+      commit(next.coords ? { ...next, source: next.source ?? "picked" } : DEFAULT_AI_LOCATION, true),
     [],
   );
 
@@ -236,7 +243,9 @@ export function useAILocation() {
     locateMe,
     locating: locating || autoLocating,
     locateError,
-    /** True once there is a point to search around. */
+    /** True once there is a point to search around (always, given the default city). */
     hasLocation: !!location.coords,
+    /** True while showing the default city because the user's location is unknown. */
+    isDefaultLocation: location.source === "default",
   };
 }

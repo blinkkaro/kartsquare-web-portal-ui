@@ -108,6 +108,8 @@ export interface ServiceFilters {
    *  service radius reaches it, nearest first. */
   latitude?: number;
   longitude?: number;
+  /** Whole-city view: also include businesses located within this many km of the point. */
+  within_km?: number;
 }
 
 export interface Category {
