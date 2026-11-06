@@ -13,6 +13,10 @@ export interface EnrichedServiceItem extends Service {
   sub_services?: string[];
   is_verified?: boolean;
   distance_km?: number | null;
+  /** The user's GPS fix was coarse (> 500 m), so the distance is approximate. */
+  distance_approx?: boolean;
+  /** Google Maps directions to the provider (from the user's GPS when known); null = none. */
+  directions_url?: string | null;
   starting_price_label?: string;
   /** Name of the area the provider is in, when the backend knows it. */
   area_name?: string;

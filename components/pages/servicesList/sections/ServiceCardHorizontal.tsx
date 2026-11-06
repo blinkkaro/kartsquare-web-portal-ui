@@ -20,6 +20,7 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
+import DirectionsRoundedIcon from "@mui/icons-material/DirectionsRounded";
 import { COLORS } from "@/constants/colors";
 import { EnrichedServiceItem, ProviderRecentWork } from "../servicesSampleData";
 import { HOME_PHOTOS } from "@/components/pages/home/sections/homePhotos";
@@ -77,8 +78,10 @@ export default function ServiceCardHorizontal({
     typeof service.distance_km === "number" && Number.isFinite(service.distance_km)
       ? service.distance_km
       : null;
-  const distanceText =
-    distanceKm === null ? "" : distanceKm < 1 ? `${Math.round(distanceKm * 1000)} m away` : `${distanceKm.toFixed(1)} km away`;
+  const distanceAmount =
+    distanceKm === null ? "" : distanceKm < 1 ? `${Math.round(distanceKm * 1000)} m` : `${distanceKm.toFixed(1)} km`;
+  // Only ever set from the user's real location, so it is always "away".
+  const distanceText = distanceAmount ? `${service.distance_approx ? "≈ " : ""}${distanceAmount} away` : "";
 
   // Rating: avg_service_rating defaults to 4.00 in the DB, so it only counts with reviews.
   const reviewCount = Number(service.review_count) || 0;
@@ -499,6 +502,30 @@ export default function ServiceCardHorizontal({
             >
               Quick view
             </Button>
+
+            {service.directions_url && (
+              <Button
+                variant="text"
+                component="a"
+                href={service.directions_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Directions to ${displayName} in Google Maps`}
+                startIcon={<DirectionsRoundedIcon sx={{ fontSize: "18px !important" }} />}
+                sx={{
+                  flex: { xs: 1, sm: "none" },
+                  color: dark ? COLORS.NEW_UI.ACCENT_TEXT_DARK : COLORS.PRIMARY_PURPLE,
+                  fontSize: "0.82rem",
+                  fontWeight: 700,
+                  textTransform: "none",
+                  py: 0.5,
+                  "&:hover": { bgcolor: "transparent", textDecoration: "underline" },
+                  "&:active": { transform: "scale(0.97)" },
+                }}
+              >
+                Directions
+              </Button>
+            )}
           </Box>
         </Box>
       </Box>

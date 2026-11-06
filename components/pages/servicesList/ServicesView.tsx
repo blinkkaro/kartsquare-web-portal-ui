@@ -23,6 +23,7 @@ import type { LocationListing as Listing } from "@/services/location/locationSer
 import { listAreaCounts, resolveText, toSlug, type AreaCount } from "@/services/location/locationClient";
 import { useAILocation, placeLabel } from "@/components/common/Ai/useAILocation";
 import { COLORS } from "@/constants/colors";
+import { buildDirectionsUrl } from "@/utils/directions";
 import { DEFAULT_LOCATION } from "@/constants/aiSearch";
 import {
   mapRealServiceToEnriched,
@@ -373,7 +374,8 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
 
   // Handle Geolocation Distance Sort
   const handleSortByDistance = () => {
-    if (searchPoint) {
+    // Distances exist only from the user's real location: get it first.
+    if (userLocation.source === "gps") {
       const next = !filters.sortByDistance;
       setFilters((prev) => ({ ...prev, sortByDistance: next }));
       showToast(next ? "Sorted by distance." : "Restored recommended order.");
@@ -529,23 +531,39 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
       result = result.filter((s) => !s.is_price_required || !s.price);
     }
 
-    // Distance from the point we searched around (real coordinates only)
-    const origin =
-      searchPoint ??
-      (initialListing?.location.latitude != null && initialListing?.location.longitude != null
-        ? { latitude: initialListing.location.latitude, longitude: initialListing.location.longitude }
-        : null);
-    if (origin) {
-      result = result.map((s) => {
-        const sLat = s.service_address?.latitude;
-        const sLng = s.service_address?.longitude;
-        if (!hasRealCoords(sLat, sLng)) return { ...s, distance_km: null };
-        return {
-          ...s,
-          distance_km: calculateHaversineDistance(origin.latitude, origin.longitude, Number(sLat), Number(sLng)),
-        };
-      });
-    }
+    // Distance only from the user's real GPS location. From a picked area,
+    // the default city or a city/area page there is no "you" to measure
+    // from, so no distance is shown at all rather than a misleading one.
+    const userPoint = !initialListing && userLocation.source === "gps" ? userLocation.coords : null;
+    const distanceApprox = (userPoint?.accuracy ?? 0) > 500;
+    result = result.map((s) => {
+      const sLat = s.service_address?.latitude;
+      const sLng = s.service_address?.longitude;
+      // Directions work with or without the user's location: with it, the
+      // route starts from them; without it, Google Maps uses its own.
+      // Online-only services have no place to go to.
+      const addr = s.service_address;
+      const directions_url =
+        s.service_at_location === "virtual_call"
+          ? null
+          : buildDirectionsUrl(
+              {
+                latitude: sLat,
+                longitude: sLng,
+                address: [addr?.building_no, addr?.address, addr?.landmark, addr?.city_town, addr?.pincode]
+                  .filter(Boolean)
+                  .join(", "),
+              },
+              userPoint,
+            );
+      if (!userPoint || !hasRealCoords(sLat, sLng)) return { ...s, distance_km: null, directions_url };
+      return {
+        ...s,
+        distance_km: calculateHaversineDistance(userPoint.latitude, userPoint.longitude, Number(sLat), Number(sLng)),
+        distance_approx: distanceApprox,
+        directions_url,
+      };
+    });
 
     // Sorting
     result.sort((a, b) => {
@@ -578,9 +596,10 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     selectedSubService,
     dynamicChips,
     filters,
-    searchPoint,
     initialListing,
     sortBy,
+    userLocation.source,
+    userLocation.coords,
   ]);
 
   // Filters applied in the browser only (the backend doesn't know them), so

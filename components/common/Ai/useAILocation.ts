@@ -15,7 +15,7 @@ export interface AILocation {
   city: string | null;
   locality: string | null;
   /** The point results are searched around: GPS, or the picked place's centre. */
-  coords: { latitude: number; longitude: number } | null;
+  coords: { latitude: number; longitude: number; accuracy?: number } | null;
   /** "default" = the fallback city, used only while nothing better is known. */
   source?: "gps" | "picked" | "default" | null;
 }
@@ -109,14 +109,15 @@ function commit(next: AILocation, persist: boolean) {
 }
 
 /** Turns a GPS fix into a location, naming the nearest known area if there is one. */
-async function commitGps(latitude: number, longitude: number): Promise<AILocation> {
+async function commitGps(latitude: number, longitude: number, accuracy?: number): Promise<AILocation> {
+  const coords = { latitude, longitude, ...(accuracy ? { accuracy } : {}) };
   // Coordinates first, so results can load while the name is looked up.
-  commit({ city: null, locality: null, coords: { latitude, longitude }, source: "gps" }, true);
+  commit({ city: null, locality: null, coords, source: "gps" }, true);
   const place = await resolveCoords(latitude, longitude);
   const next: AILocation = {
     city: place?.city?.name ?? null,
     locality: place?.location?.kind === "locality" ? place.location.name : null,
-    coords: { latitude, longitude },
+    coords,
     source: "gps",
   };
   // A newer pick or fix may have landed while this one resolved.
@@ -126,42 +127,79 @@ async function commitGps(latitude: number, longitude: number): Promise<AILocatio
   return next;
 }
 
+/**
+ * One precise position. High accuracy asks the device for GPS / Wi-Fi rather
+ * than a coarse network guess, and `maxAgeMs` bounds how old a cached fix may
+ * be: distances shown as "X km away" are only as good as this point.
+ */
 function readGps(
-  onSuccess: (latitude: number, longitude: number) => void,
+  onSuccess: (latitude: number, longitude: number, accuracy: number) => void,
   onError: () => void,
+  maxAgeMs = 60 * 1000,
 ) {
   if (typeof navigator === "undefined" || !navigator.geolocation) {
     onError();
     return;
   }
   navigator.geolocation.getCurrentPosition(
-    (pos) => onSuccess(pos.coords.latitude, pos.coords.longitude),
+    (pos) => onSuccess(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy),
     onError,
-    { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: maxAgeMs },
+  );
+}
+
+/** Reads GPS in the background and makes it the current location. */
+function locateInBackground(maxAgeMs?: number) {
+  locatingNow = true;
+  listeners.forEach((l) => l());
+  readGps(
+    (lat, lng, accuracy) => {
+      locatingNow = false;
+      void commitGps(lat, lng, accuracy);
+    },
+    () => {
+      locatingNow = false;
+      listeners.forEach((l) => l());
+    },
+    maxAgeMs,
   );
 }
 
 /**
- * Runs once per page load. A place the user picked wins. Otherwise: read GPS
- * silently if permission was already granted; on the very first visit, ask
- * once (the browser shows its own prompt); after a denial or a dismissed
- * prompt, wait for the user to tap "Use my location".
+ * Runs once per page load.
+ *  - Location allowed: the user's own GPS is used — it wins over a place
+ *    picked on an earlier visit, so turning location on always shows
+ *    distances from where the user really is.
+ *  - Never asked: ask once (the browser shows its own prompt).
+ *  - Denied / dismissed: keep a picked place, else the default city, until
+ *    the user taps "Use my location".
+ * It also listens for the permission changing while the page is open, so
+ * turning location on in the browser takes effect without a reload.
  */
 async function autoLocate() {
   if (autoStarted || typeof window === "undefined") return;
   autoStarted = true;
-  if (getSnapshot().source === "picked") return;
   if (!navigator.geolocation) return;
 
   let state: PermissionState | "unknown" = "unknown";
   try {
     if (navigator.permissions?.query) {
-      state = (await navigator.permissions.query({ name: "geolocation" as PermissionName })).state;
+      const status = await navigator.permissions.query({ name: "geolocation" as PermissionName });
+      state = status.state;
+      status.onchange = () => {
+        if (status.state === "granted") locateInBackground(0);
+      };
     }
   } catch {
     /* Permissions API missing (older Safari): treat as unknown */
   }
   if (state === "denied") return;
+  if (state === "granted") {
+    locateInBackground();
+    return;
+  }
+  // Not granted yet: a place the user chose stays; don't prompt over it.
+  if (getSnapshot().source === "picked") return;
 
   let prompted = false;
   try {
@@ -169,25 +207,15 @@ async function autoLocate() {
   } catch {
     /* ignore */
   }
-  if (state !== "granted" && prompted) return;
+  // Asked before and not granted: wait for the user to tap "Use my location".
+  if (prompted) return;
 
   try {
     localStorage.setItem(PROMPTED_KEY, "1");
   } catch {
     /* ignore */
   }
-  locatingNow = true;
-  listeners.forEach((l) => l());
-  readGps(
-    (lat, lng) => {
-      locatingNow = false;
-      void commitGps(lat, lng);
-    },
-    () => {
-      locatingNow = false;
-      listeners.forEach((l) => l());
-    },
-  );
+  locateInBackground();
 }
 
 /** "Near Mansarovar, Jaipur" style label; `fallback` when nothing is known. */
@@ -225,8 +253,8 @@ export function useAILocation() {
     }
     setLocating(true);
     readGps(
-      async (lat, lng) => {
-        const next = await commitGps(lat, lng);
+      async (lat, lng, accuracy) => {
+        const next = await commitGps(lat, lng, accuracy);
         setLocating(false);
         onDone?.(next);
       },
@@ -234,6 +262,7 @@ export function useAILocation() {
         setLocating(false);
         setLocateError("Couldn't get your location. Allow location access, or type an area instead.");
       },
+      0, // the user asked for where they are now: never a cached fix
     );
   }, []);
 

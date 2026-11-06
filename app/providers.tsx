@@ -46,7 +46,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
             refetchOnWindowFocus: false,
             refetchOnMount: false, // Don't refetch on mount if data exists
             refetchOnReconnect: true, // Refetch on reconnect
-            retry: 1, // Retry failed requests once
+            // Retry once on network/5xx errors only. A 4xx (incl. 429 "too
+            // many requests") won't succeed on an immediate retry, and retrying
+            // a 429 only spends more of the rate limit.
+            retry: (failureCount, error) => {
+              const status = (error as { response?: { status?: number } })?.response?.status;
+              if (status && status >= 400 && status < 500) return false;
+              return failureCount < 1;
+            },
             staleTime: 2 * 60 * 1000, // Data is fresh for 2 minutes
             gcTime: 5 * 60 * 1000, // Cache data for 5 minutes (formerly cacheTime)
           },
