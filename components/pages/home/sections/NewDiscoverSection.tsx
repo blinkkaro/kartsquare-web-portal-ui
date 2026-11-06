@@ -442,7 +442,7 @@ export default function NewDiscoverSection() {
                   borderRadius: 99,
                   bgcolor: "rgba(255,255,255,0.92)",
                   color: "#1c1924",
-                  fontSize: { xs: "0.65rem", md: "0.72rem" },
+                  fontSize: { xs: "0.75rem", md: "0.75rem" },
                   fontWeight: 800,
                   boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
                 }}

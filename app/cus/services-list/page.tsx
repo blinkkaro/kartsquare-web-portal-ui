@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { seoPublic } from "@/lib/seo/buildMetadata";
+import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
 import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 import ListOfServices from "../../../components/pages/servicesList";
 
@@ -21,8 +21,19 @@ const servicesListFallback = seoPublic({
   ],
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-  return sitePageSeoOrFallback("services_list", servicesListFallback);
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<Metadata> {
+  const md = await sitePageSeoOrFallback("services_list", servicesListFallback);
+  const { category } = await searchParams;
+  const categoryId = Array.isArray(category) ? category[0] : category;
+  if (!categoryId) return md;
+  // Each category page gets its own canonical, so Google indexes them separately
+  // instead of collapsing every ?category=<id> view into the bare listing URL.
+  const canonical = `${SITE_URL}/cus/services-list?category=${encodeURIComponent(categoryId)}`;
+  return { ...md, alternates: { ...md.alternates, canonical } };
 }
 
 export default function ServicesListPage() {

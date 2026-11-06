@@ -10,7 +10,7 @@ export const PANEL_PX = { xs: 0, md: 0 };
  * differ in size from section to section. Change it here, it changes everywhere.
  */
 export const sectionEyebrowSx = {
-  fontSize: "0.68rem",
+  fontSize: "0.75rem",
   fontWeight: 800,
   letterSpacing: "0.12em",
   textTransform: "uppercase",

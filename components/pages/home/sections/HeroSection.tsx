@@ -51,7 +51,7 @@ const chip = {
   borderRadius: 99,
   bgcolor: "#fff",
   color: "#201b2c",
-  fontSize: { xs: "0.68rem", md: "0.78rem" },
+  fontSize: { xs: "0.75rem", md: "0.78rem" },
   fontWeight: 700,
   whiteSpace: "nowrap",
   boxShadow: "0 8px 22px rgba(32,27,44,0.14)",

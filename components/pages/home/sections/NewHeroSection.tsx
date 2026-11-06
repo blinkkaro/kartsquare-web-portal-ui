@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Box, Typography, InputBase, Chip, useTheme } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
@@ -11,6 +11,7 @@ import { openAiWithQuery } from "@/features/ui/uiSlice";
 import { useRouter } from "next/navigation";
 import { useCategories } from "@/hooks/useCategories";
 
+const PLACEHOLDERS = ["deep cleaning", "AC repair", "plumber near me", "bridal makeup", "electrician"];
 const TRENDING = ["AC servicing", "Deep cleaning", "Plumber", "Electrician", "Bridal makeup"];
 
 /** Dummy images for the hero collage (used when no API images exist). */
@@ -26,6 +27,12 @@ export default function NewHeroSection() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const [phIdx, setPhIdx] = useState(0);
+  useEffect(() => {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setInterval(() => setPhIdx((i) => (i + 1) % PLACEHOLDERS.length), 3000);
+    return () => clearInterval(t);
+  }, []);
   const { data: categories } = useCategories();
 
   const trendingTags = useMemo(() => {
@@ -70,10 +77,10 @@ export default function NewHeroSection() {
             component="h1"
             data-speakable="headline"
             sx={{
-              fontSize: { xs: "1.45rem", sm: "1.95rem", md: "2.35rem", lg: "2.85rem", xl: "3.2rem" },
+              fontSize: { xs: "1.9rem", sm: "2.4rem", md: "2.75rem", lg: "3.3rem", xl: "3.6rem" },
               fontWeight: 800,
-              letterSpacing: "-0.025em",
-              lineHeight: { xs: 1.2, md: 1.15 },
+              letterSpacing: "-0.035em",
+              lineHeight: { xs: 1.12, md: 1.08 },
               color: "text.primary",
               mb: 1.25,
               wordBreak: "break-word",
@@ -84,6 +91,10 @@ export default function NewHeroSection() {
               component="span"
               sx={{
                 color: COLORS.PRIMARY_PURPLE,
+                // soft marker stroke under the phrase
+                backgroundImage: `linear-gradient(transparent 68%, ${COLORS.PURPLE_ALPHA_20} 68%)`,
+                backgroundRepeat: "no-repeat",
+                px: 0.25,
               }}
             >
               right when you need it
@@ -93,7 +104,7 @@ export default function NewHeroSection() {
           <Typography
             data-speakable="answer"
             sx={{
-              fontSize: { xs: "0.88rem", md: "1.05rem", lg: "1.1rem" },
+              fontSize: { xs: "0.95rem", md: "1.08rem", lg: "1.15rem" },
               color: "text.secondary",
               lineHeight: 1.5,
               maxWidth: { xs: "100%", sm: 500, md: 540, lg: 580 },
@@ -120,7 +131,7 @@ export default function NewHeroSection() {
               bgcolor: "background.paper",
               border: "1.5px solid",
               borderColor: dark ? "rgba(130,72,247,0.25)" : "#e8e4ed",
-              boxShadow: dark ? "0 8px 24px rgba(0,0,0,0.3)" : "0 8px 24px rgba(0,0,0,0.06)",
+              boxShadow: dark ? "0 10px 30px rgba(0,0,0,0.35)" : "0 12px 32px rgba(105,39,218,0.12)",
               transition: "border-color 160ms ease, box-shadow 160ms ease",
               "&:focus-within": { borderColor: COLORS.PRIMARY_PURPLE, boxShadow: `0 0 0 4px ${COLORS.PURPLE_ALPHA_10}` },
               width: "100%",
@@ -132,7 +143,7 @@ export default function NewHeroSection() {
             <InputBase
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder='Try "deep cleaning"'
+              placeholder={`Try "${PLACEHOLDERS[phIdx]}"`}
               inputProps={{ "aria-label": "Search for a service", enterKeyHint: "search", style: { fontSize: 16 } }}
               sx={{ flex: 1, minWidth: 0, minHeight: { xs: 40, sm: 44 } }}
             />
@@ -148,7 +159,7 @@ export default function NewHeroSection() {
                 bgcolor: COLORS.PRIMARY_PURPLE,
                 color: "#fff",
                 fontWeight: 700,
-                fontSize: { xs: "0.82rem", sm: "0.9rem" },
+                fontSize: { xs: "0.88rem", sm: "0.95rem" },
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -216,6 +227,18 @@ export default function NewHeroSection() {
         {/* Right: Photo collage grid */}
         <Box
           sx={{
+            position: "relative",
+            isolation: "isolate",
+            // single soft lavender shape behind the photos
+            "&::before": {
+              content: '""',
+              position: "absolute",
+              zIndex: -1,
+              inset: { xs: "-8px -6px -10px 20%", md: "-16px -14px -18px 18%" },
+              borderRadius: { xs: "28px", md: "40px" },
+              background: dark ? "rgba(130,72,247,0.14)" : COLORS.PURPLE_ALPHA_10,
+              transform: "rotate(2deg)",
+            },
             display: "grid",
             gridTemplateColumns: {
               xs: "repeat(2, minmax(0, 1fr))",
@@ -286,7 +309,7 @@ export default function NewHeroSection() {
                 <BoltRoundedIcon sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: { xs: 16, sm: 22 } }} />
               </Box>
               <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography sx={{ fontWeight: 700, fontSize: { xs: "0.72rem", sm: "0.88rem" }, color: "#1a1a1a", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                <Typography sx={{ fontWeight: 700, fontSize: { xs: "0.75rem", sm: "0.88rem" }, color: "#1a1a1a", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                   Electrical repairs
                 </Typography>
                 <Typography sx={{ fontSize: "0.7rem", color: "#666", lineHeight: 1.2, display: { xs: "none", sm: "block" }, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
@@ -329,7 +352,7 @@ export default function NewHeroSection() {
                   borderRadius: 2,
                   bgcolor: "rgba(255,255,255,0.92)",
                   backdropFilter: "blur(4px)",
-                  fontSize: { xs: "0.65rem", sm: "0.72rem" },
+                  fontSize: { xs: "0.75rem", sm: "0.75rem" },
                   fontWeight: 700,
                   color: "#1a1a1a",
                   maxWidth: "calc(100% - 16px)",
@@ -371,7 +394,7 @@ export default function NewHeroSection() {
                   py: { xs: 0.25, sm: 0.5 },
                   borderRadius: 2,
                   bgcolor: COLORS.PRIMARY_PURPLE,
-                  fontSize: { xs: "0.65rem", sm: "0.72rem" },
+                  fontSize: { xs: "0.75rem", sm: "0.75rem" },
                   fontWeight: 700,
                   color: "#fff",
                   maxWidth: "calc(100% - 16px)",

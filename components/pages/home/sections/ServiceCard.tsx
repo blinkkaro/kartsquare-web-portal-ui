@@ -19,7 +19,7 @@ const isNew = (createdAt?: string) => {
   return Number.isFinite(t) && Date.now() - t < NEW_WINDOW_DAYS * 86_400_000;
 };
 
-const pill = { px: 1.1, py: 0.35, borderRadius: 99, fontSize: "0.68rem", fontWeight: 800, lineHeight: 1.2 } as const;
+const pill = { px: 1.1, py: 0.35, borderRadius: 99, fontSize: "0.75rem", fontWeight: 800, lineHeight: 1.2 } as const;
 const glass = { bgcolor: "rgba(255,255,255,0.94)", color: "#21172e", boxShadow: "0 2px 8px rgba(32,27,44,0.12)" } as const;
 
 interface Props {
@@ -129,7 +129,7 @@ function ServiceCard({ service: s, onOpenProvider }: Props) {
           {shared ? <CheckRoundedIcon sx={{ fontSize: 18, color: "#16a34a" }} /> : <IosShareRoundedIcon sx={{ fontSize: 18 }} />}
         </Box>
 
-        {price && <Box sx={{ ...pill, ...glass, position: "absolute", left: 10, bottom: 10, fontSize: "0.74rem" }}>From ₹{price.toLocaleString("en-IN")}</Box>}
+        {price && <Box sx={{ ...pill, ...glass, position: "absolute", left: 10, bottom: 10, fontSize: "0.75rem" }}>From ₹{price.toLocaleString("en-IN")}</Box>}
 
         {images.length > 1 && (
           <Box aria-hidden sx={{ position: "absolute", right: 10, bottom: 14, display: "flex", gap: 0.5 }}>
@@ -191,7 +191,7 @@ function ServiceCard({ service: s, onOpenProvider }: Props) {
           >
             <Avatar src={s.provider_profile_pic || undefined} alt="" sx={{ width: 32, height: 32, fontSize: 13 }}>{s.provider_first_name?.[0]}</Avatar>
             <Box sx={{ minWidth: 0 }}>
-              <Typography sx={{ fontSize: "0.66rem", color: "text.secondary", lineHeight: 1.1 }}>Offered by</Typography>
+              <Typography sx={{ fontSize: "0.75rem", color: "text.secondary", lineHeight: 1.1 }}>Offered by</Typography>
               <Typography className="pname" noWrap sx={{ fontSize: "0.82rem", fontWeight: 700, lineHeight: 1.3, transition: "color 150ms ease" }}>{providerName}</Typography>
             </Box>
           </Box>

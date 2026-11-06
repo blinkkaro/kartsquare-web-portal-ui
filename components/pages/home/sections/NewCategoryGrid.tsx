@@ -142,7 +142,7 @@ const getImageForCategory = (name: string): string | null => {
 const CATEGORY_DESCRIPTIONS: Array<[RegExp, string]> = [
   [/\b(agri|farm)/i, "Farming tools & supplies"],
   [/\b(air.*water|water.*treat)/i, "Purifiers & filter service"],
-  [/\b(auto|car|bike)/i, "Car repair, service & wash"],
+  [/\b(auto|cars?\b|bikes?\b)/i, "Car repair, service & wash"],
   [/\b(beauty|salon)/i, "Hair, makeup, salon at home"],
   [/\b(business\s*serv)/i, "Consulting, audit & support"],
   [/\b(cloth|tailor)/i, "Custom tailoring & stitching"],
@@ -187,7 +187,7 @@ const CATEGORY_DESCRIPTIONS: Array<[RegExp, string]> = [
 ];
 
 const descFor = (name: string): string =>
-  CATEGORY_DESCRIPTIONS.find(([re]) => re.test(name))?.[1] ?? "Verified local providers";
+  CATEGORY_DESCRIPTIONS.find(([re]) => re.test(name))?.[1] ?? "Local providers";
 
 const DUMMY_CATEGORIES = [
   { id: "electricians", slug: "electricians", name: "Electricians", description: "Wiring, fittings, repairs" },
@@ -399,7 +399,7 @@ export default function NewCategoryGrid() {
                       borderRadius: 99,
                       bgcolor: COLORS.PRIMARY_PURPLE,
                       color: "#fff",
-                      fontSize: "0.68rem",
+                      fontSize: "0.75rem",
                       fontWeight: 800,
                       boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
                     }}
@@ -486,7 +486,7 @@ export default function NewCategoryGrid() {
                 borderRadius: 99,
                 bgcolor: dark ? "rgba(130,72,247,0.15)" : COLORS.PURPLE_ALPHA_10,
                 color: dark ? "#d6b8ff" : COLORS.PRIMARY_PURPLE,
-                fontSize: "0.72rem",
+                fontSize: "0.75rem",
                 fontWeight: 700,
               }}
             >
@@ -675,7 +675,7 @@ export default function NewCategoryGrid() {
                     </Typography>
                     <Typography
                       sx={{
-                        fontSize: { xs: "0.68rem", sm: "0.72rem" },
+                        fontSize: { xs: "0.75rem", sm: "0.75rem" },
                         color: "text.secondary",
                         lineHeight: 1.2,
                         mt: 0.25,

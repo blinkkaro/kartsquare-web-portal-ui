@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Link from "next/link";
 import { Box, useTheme } from "@mui/material";
 import Nav from "@/components/common/Nav";
 import Footer from "@/components/common/Footer";
@@ -55,6 +56,49 @@ export default function MainLayoutClient({
         >
           {children}
           <AIBotton setOpen={(open) => dispatch(setAiOpen(open))} />
+        </Box>
+        {/* Mobile-only slim footer: the full footer is md+ only. Lives inside the shell so its
+            bottom padding keeps it clear of the fixed bottom nav. */}
+        <Box
+          component="nav"
+          aria-label="Footer"
+          sx={{
+            display: { xs: "flex", md: "none" },
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 0.75,
+            pt: 3,
+            pb: 1,
+            fontSize: "0.75rem",
+            color: "text.secondary",
+          }}
+        >
+          <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", columnGap: 2, rowGap: 0.5 }}>
+            {[
+              { label: "About us", href: "/about-us" },
+              { label: "Contact", href: "/contact-us" },
+              { label: "Privacy", href: "/privacy-policy" },
+              { label: "Terms", href: "/terms-conditions" },
+            ].map((l) => (
+              <Box
+                key={l.href}
+                component={Link}
+                href={l.href}
+                sx={{
+                  color: "inherit",
+                  textDecoration: "none",
+                  fontWeight: 600,
+                  minHeight: 32,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  "&:active": { color: COLORS.PRIMARY_PURPLE },
+                }}
+              >
+                {l.label}
+              </Box>
+            ))}
+          </Box>
+          <Box component="span">© {new Date().getFullYear()} Kartsquare</Box>
         </Box>
         <ProfileDrawer />
         <Ai open={aiOpen} onClose={() => dispatch(setAiOpen(false))} />

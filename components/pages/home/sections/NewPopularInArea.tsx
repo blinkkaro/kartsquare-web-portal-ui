@@ -237,7 +237,7 @@ export default function NewPopularInArea() {
                   bgcolor: "rgba(255,255,255,0.08)",
                   backdropFilter: "blur(6px)",
                   color: "#fff",
-                  fontSize: "0.66rem",
+                  fontSize: "0.75rem",
                   fontWeight: 700,
                   letterSpacing: "0.14em",
                   textTransform: "uppercase",
@@ -330,7 +330,7 @@ export default function NewPopularInArea() {
                 py: 0.5,
                 minHeight: 28,
                 borderRadius: 99,
-                fontSize: "0.72rem",
+                fontSize: "0.75rem",
                 fontWeight: 700,
                 color: COLORS.PRIMARY_PURPLE,
                 "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_10 },
@@ -623,7 +623,7 @@ export default function NewPopularInArea() {
                     {body}
                   </Typography>
                 </Box>
-                <Box aria-hidden sx={{ position: "absolute", top: 14, right: 18, fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.1em", color: sub }}>
+                <Box aria-hidden sx={{ position: "absolute", top: 14, right: 18, fontSize: "0.75rem", fontWeight: 800, letterSpacing: "0.1em", color: sub }}>
                   {String(i + 1).padStart(2, "0")} / {String(WHY_REASONS.length).padStart(2, "0")}
                 </Box>
               </Box>
