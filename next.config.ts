@@ -13,10 +13,16 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      // ── Services: /services → /cus/servicesList ──────────────────────────
+      // ── Services: /services → /cus/services-list ─────────────────────────
       {
         source: "/services",
-        destination: "/cus/servicesList",
+        destination: "/cus/services-list",
+        permanent: true,
+      },
+      // old camelCase URL (existing bookmarks / indexed links); query string is preserved
+      {
+        source: "/cus/servicesList",
+        destination: "/cus/services-list",
         permanent: true,
       },
       // ── camelCase → kebab-case (Google prefers kebab-case) ───────────────

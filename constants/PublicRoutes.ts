@@ -17,6 +17,6 @@ export const publicRoutes = [
   "/services/:id",
   "/store",
   "supplier/register",
-  "/cus/servicesList",
+  "/cus/services-list",
   "/supplier/register",
 ];

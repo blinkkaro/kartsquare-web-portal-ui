@@ -38,7 +38,7 @@ export const COLORS = {
   TEXT: {
     PRIMARY_LIGHT: "#30263E",
     PRIMARY_DARK: "#ffffff",
-    SECONDARY_LIGHT: "#6b7280",
+    SECONDARY_LIGHT: "#5b6170",
     SECONDARY_DARK: "#9ca3af",
   },
 

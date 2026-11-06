@@ -613,8 +613,8 @@ export const SAMPLE_AREAS = [
 ];
 
 export const RELATED_CATEGORIES_FOR_EMPTY = [
-  { name: "Home deep cleaning", path: "/cus/servicesList?search=cleaning" },
-  { name: "Plumbers", path: "/cus/servicesList?search=plumber" },
-  { name: "Bathroom cleaning", path: "/cus/servicesList?search=bathroom" },
-  { name: "AC Repair", path: "/cus/servicesList?search=ac" },
+  { name: "Home deep cleaning", path: "/cus/services-list?search=cleaning" },
+  { name: "Plumbers", path: "/cus/services-list?search=plumber" },
+  { name: "Bathroom cleaning", path: "/cus/services-list?search=bathroom" },
+  { name: "AC Repair", path: "/cus/services-list?search=ac" },
 ];

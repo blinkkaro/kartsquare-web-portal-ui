@@ -1,12 +1,11 @@
 "use client";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Box, Typography, Button, Skeleton, useTheme } from "@mui/material";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
-import VerifiedRoundedIcon from "@mui/icons-material/VerifiedRounded";
 import { COLORS } from "@/constants/colors";
 import { useTopSuggestions } from "@/hooks/useTopSuggestions";
 import { useAILocation } from "@/components/common/Ai/useAILocation";
@@ -80,10 +79,38 @@ const DUMMY_TOP_PROS = [
   },
 ];
 
+// Mobile: horizontal snap slider (next card peeks). sm+: regular grid.
 const cardTrack = {
-  display: "grid",
-  gridTemplateColumns: { xs: "repeat(1, minmax(0, 1fr))", sm: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" },
-  gap: { xs: 2, md: 2.5 },
+  display: { xs: "flex", sm: "grid" },
+  gridTemplateColumns: { sm: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" },
+  gap: { xs: 1.5, md: 2.5 },
+  overflowX: { xs: "auto", sm: "visible" },
+  scrollSnapType: { xs: "x mandatory", sm: "none" },
+  scrollPaddingLeft: { xs: "16px", sm: 0 },
+  WebkitOverflowScrolling: "touch",
+  overscrollBehaviorX: "contain",
+  mx: { xs: -1.5, sm: 0 },
+  px: { xs: 1.5, sm: 0 },
+  pb: { xs: 1, sm: 0 },
+  scrollbarWidth: "none",
+  "&::-webkit-scrollbar": { display: "none" },
+  "& > article": {
+    flex: { xs: "0 0 80%", sm: "initial" },
+    scrollSnapAlign: { xs: "start", sm: "none" },
+  },
+  // Cards scale/fade in as they slide into view (CSS scroll-driven, no JS; ignored where unsupported)
+  "@supports (animation-timeline: view())": {
+    "& > article": {
+      "@media (max-width: 599.95px)": {
+        animation: "ks-card-reveal linear both",
+        animationTimeline: "view(inline)",
+        animationRange: "entry 0% entry 60%",
+      },
+    },
+  },
+  "@media (prefers-reduced-motion: reduce)": {
+    "& > article": { animation: "none !important" },
+  },
 } as const;
 
 export default function NewTopPros() {
@@ -96,6 +123,15 @@ export default function NewTopPros() {
   const openProvider = useCallback((userId: string) => {
     dispatch(openDrawer({ userId }));
   }, [dispatch]);
+
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+  const onTrackScroll = useCallback(() => {
+    const el = trackRef.current;
+    if (!el || !el.firstElementChild) return;
+    const step = (el.firstElementChild as HTMLElement).offsetWidth + 12;
+    setActive(Math.round(el.scrollLeft / step));
+  }, []);
 
   const rawServices: TopService[] = servicer ?? [];
 
@@ -152,11 +188,13 @@ export default function NewTopPros() {
         action={
           <Box
             component={Link}
-            href="/cus/servicesList"
+            href="/cus/services-list"
             sx={{
               display: "inline-flex",
               alignItems: "center",
               gap: 0.75,
+              minHeight: 44,
+              whiteSpace: "nowrap",
               fontSize: "0.9rem",
               fontWeight: 700,
               color: dark ? "#d6b8ff" : COLORS.PRIMARY_PURPLE,
@@ -172,13 +210,13 @@ export default function NewTopPros() {
       {isLoading ? (
         <Box sx={cardTrack}>
           {[0, 1, 2, 3].map((i) => (
-            <Skeleton key={i} variant="rounded" sx={{ height: 380, borderRadius: 4 }} />
+            <Skeleton key={i} variant="rounded" sx={{ height: 380, borderRadius: 4, flex: { xs: "0 0 80%", sm: "initial" } }} />
           ))}
         </Box>
       ) : (
-        <Box sx={cardTrack}>
+        <>
+        <Box sx={cardTrack} ref={trackRef} onScroll={onTrackScroll}>
           {services.map((item) => {
-            const hasReviews = Number(item.review_count) > 0;
             return (
               <Box
                 key={item.id}
@@ -260,25 +298,6 @@ export default function NewTopPros() {
                     ) : null}
                   </Box>
 
-                  {item.verified && (
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        top: 12,
-                        right: 12,
-                        bgcolor: "rgba(255,255,255,0.92)",
-                        borderRadius: "50%",
-                        p: 0.5,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-                      }}
-                      title="Verified Partner"
-                    >
-                      <VerifiedRoundedIcon sx={{ fontSize: 18, color: COLORS.PRIMARY_PURPLE }} />
-                    </Box>
-                  )}
                 </Box>
 
                 {/* Content */}
@@ -312,23 +331,23 @@ export default function NewTopPros() {
                     </Typography>
                   </Box>
 
-                  {/* Stats Row: Rating + Price */}
-                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2.5, mt: "auto" }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                      <StarRoundedIcon sx={{ fontSize: 18, color: "#f59e0b" }} />
-                      <Typography sx={{ fontSize: "0.88rem", fontWeight: 800 }}>
-                        {item.rating}
-                      </Typography>
-                      {hasReviews && (
+                  {/* Rating only once there are 3+ reviews; otherwise a neutral "New" label */}
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 2.5, mt: "auto" }}>
+                    {Number(item.review_count) >= 3 ? (
+                      <>
+                        <StarRoundedIcon sx={{ fontSize: 18, color: "#f59e0b" }} />
+                        <Typography sx={{ fontSize: "0.88rem", fontWeight: 700 }}>
+                          {item.rating}
+                        </Typography>
                         <Typography sx={{ fontSize: "0.78rem", color: "text.secondary" }}>
                           ({item.review_count})
                         </Typography>
-                      )}
-                    </Box>
-
-                    <Typography sx={{ fontSize: "0.85rem", fontWeight: 700, color: "text.primary" }}>
-                      From ₹{item.price}
-                    </Typography>
+                      </>
+                    ) : (
+                      <Typography sx={{ fontSize: "0.82rem", fontWeight: 600, color: "text.secondary" }}>
+                        New on Kartsquare
+                      </Typography>
+                    )}
                   </Box>
 
                   {/* Action Buttons: View profile + Enquire */}
@@ -382,6 +401,22 @@ export default function NewTopPros() {
             );
           })}
         </Box>
+        {/* Mobile slide indicator */}
+        <Box sx={{ display: { xs: "flex", sm: "none" }, justifyContent: "center", gap: 0.75, mt: 1.5 }}>
+          {services.map((item, i) => (
+            <Box
+              key={item.id}
+              sx={{
+                height: 6,
+                width: i === active ? 18 : 6,
+                borderRadius: 3,
+                bgcolor: i === active ? COLORS.PRIMARY_PURPLE : dark ? "rgba(255,255,255,0.25)" : "#d6d0e0",
+                transition: "width 250ms ease, background-color 250ms ease",
+              }}
+            />
+          ))}
+        </Box>
+        </>
       )}
     </Section>
   );

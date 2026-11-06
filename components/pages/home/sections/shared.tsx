@@ -16,12 +16,17 @@ export const sectionEyebrowSx = {
   textTransform: "uppercase",
 } as const;
 export const sectionTitleSx = {
-  fontSize: { xs: "1.15rem", md: "1.4rem" },
+  fontSize: { xs: "1.375rem", md: "1.875rem" },
   fontWeight: 800,
-  letterSpacing: "-0.01em",
-  lineHeight: 1.25,
+  letterSpacing: "-0.02em",
+  lineHeight: 1.2,
 } as const;
-export const sectionSubtitleSx = { fontSize: "0.82rem", color: "text.secondary", mt: 0.25 } as const;
+export const sectionSubtitleSx = {
+  fontSize: { xs: "0.88rem", md: "0.95rem" },
+  color: "text.secondary",
+  mt: 0.5,
+  lineHeight: 1.5,
+} as const;
 
 /** Page-width wrapper used by every homepage section. */
 export function Section({
@@ -64,7 +69,7 @@ export function SectionHeader({
           <Typography sx={sectionSubtitleSx}>{subtitle}</Typography>
         )}
       </Box>
-      {action}
+      {action && <Box sx={{ flexShrink: 0, whiteSpace: "nowrap", alignSelf: "flex-end", pb: 0.25 }}>{action}</Box>}
     </Box>
   );
 }
@@ -86,10 +91,7 @@ export function SectionTitle({
       <Typography
         component="h2"
         sx={{
-          fontSize: { xs: "1.35rem", md: "1.7rem" },
-          fontWeight: 800,
-          letterSpacing: "-0.02em",
-          lineHeight: 1.2,
+          ...sectionTitleSx,
           color: light ? "#fff" : "text.primary",
           ...sx,
         }}
@@ -97,7 +99,7 @@ export function SectionTitle({
         {children}
       </Typography>
       {subtitle && (
-        <Typography sx={{ fontSize: "0.88rem", color: light ? "rgba(255,255,255,0.75)" : "text.secondary", mt: 0.5 }}>
+        <Typography sx={{ ...sectionSubtitleSx, ...(light ? { color: "rgba(255,255,255,0.75)" } : {}) }}>
           {subtitle}
         </Typography>
       )}

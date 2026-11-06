@@ -39,7 +39,7 @@ const Footer: React.FC = () => {
       { label: t("contactUs"), href: "/contactUs" },
     ],
     services: [
-      { label: t("services"), href: "/cus/servicesList" },
+      { label: t("services"), href: "/cus/services-list" },
       //   { label: t("events"), href: "/events" },
       { label: t("store"), href: "/store" },
       { label: t("becomeServiceProvider"), href: "/supplier/register" },
@@ -371,7 +371,7 @@ const Footer: React.FC = () => {
               fontSize: "0.875rem",
             }}
           >
-            © {currentYear} kartsquare. {t("allRightsReserved")}.
+            © {currentYear} Kartsquare. {t("allRightsReserved")}.
           </Typography>
 
           <Box

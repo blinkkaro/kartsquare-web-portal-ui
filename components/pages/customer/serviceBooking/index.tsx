@@ -142,7 +142,7 @@ const CustomerServiceBooking = () => {
             <Typography
               component="span"
               variant="body2"
-              onClick={() => router.push("/cus/servicesList")}
+              onClick={() => router.push("/cus/services-list")}
               sx={{
                 color: isDark
                   ? COLORS.TEXT.SECONDARY_DARK
@@ -1150,7 +1150,7 @@ const CustomerServiceBooking = () => {
             <Button
               fullWidth
               variant="contained"
-              onClick={() => router.push("/cus/servicesList")}
+              onClick={() => router.push("/cus/services-list")}
               sx={{
                 bgcolor: COLORS.PRIMARY_PURPLE,
                 color: "white",

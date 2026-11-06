@@ -47,7 +47,7 @@ const iconFor = (name: string): IconType => ICON_RULES.find(([re]) => re.test(na
 
 const FEATURED_COUNT = 4;
 const COMPACT_COUNT = 4;
-const categoryHref = (id: string) => `/cus/servicesList?category=${encodeURIComponent(id)}`;
+const categoryHref = (id: string) => `/cus/services-list?category=${encodeURIComponent(id)}`;
 
 const clamp2 = { display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", overflowWrap: "normal", hyphens: "auto" } as const;
 /** Below 360px the arrow button steals ~40px from the title, so it is hidden there. */
@@ -80,7 +80,7 @@ export default function CategoryGrid() {
           action={
             <Box
               component={Link}
-              href="/cus/servicesList"
+              href="/cus/services-list"
               sx={{ display: "inline-flex", alignItems: "center", gap: 0.75, minHeight: 44, flexShrink: 0, fontSize: "0.9rem", fontWeight: 700, color: lift, textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
             >
               View all categories <ArrowForwardRoundedIcon sx={{ fontSize: 17 }} />

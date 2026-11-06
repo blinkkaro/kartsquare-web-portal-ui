@@ -14,7 +14,7 @@
 
 ## Key pages
 - [Home](https://kartsquare.com/): search and browse categories
-- [Browse services](https://kartsquare.com/cus/servicesList): all service categories and listings
+- [Browse services](https://kartsquare.com/cus/services-list): all service categories and listings
 - [Store](https://kartsquare.com/store): products from suppliers
 - [Map](https://kartsquare.com/map): providers and stores on a map
 - [Blog](https://kartsquare.com/blogs): guides and articles

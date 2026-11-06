@@ -48,7 +48,7 @@ const CustomerServiceBreadcrumb = ({
       </Link>
       <Link
         component="button"
-        onClick={() => router.push("/cus/servicesList")}
+        onClick={() => router.push("/cus/services-list")}
         sx={{
           color: isDark
             ? COLORS.TEXT.SECONDARY_DARK
