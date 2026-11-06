@@ -28,6 +28,7 @@ class ServiceListService {
             if (typeof filters?.latitude === "number" && typeof filters?.longitude === "number") {
                 params.latitude = filters.latitude;
                 params.longitude = filters.longitude;
+                if (filters.within_km) params.within_km = filters.within_km;
             }
 
             const response = await GET<ServiceListResponse>(
