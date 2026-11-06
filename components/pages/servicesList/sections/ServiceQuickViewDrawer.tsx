@@ -15,6 +15,7 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
+import DirectionsRoundedIcon from "@mui/icons-material/DirectionsRounded";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import CallRoundedIcon from "@mui/icons-material/CallRounded";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
@@ -280,6 +281,32 @@ export default function ServiceQuickViewDrawer({
                 </Button>
               )}
             </Box>
+          )}
+
+          {/* Directions in Google Maps: from the user's location when shared, else Maps' own */}
+          {service.directions_url && (
+            <Button
+              fullWidth
+              component="a"
+              href={service.directions_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="outlined"
+              startIcon={<DirectionsRoundedIcon sx={{ fontSize: 18 }} />}
+              sx={{
+                mb: 3,
+                borderColor: dark ? COLORS.NEW_UI.OUTLINE_DARK : COLORS.NEW_UI.OUTLINE_LIGHT,
+                color: "text.primary",
+                fontWeight: 700,
+                fontSize: "0.85rem",
+                borderRadius: "10px",
+                py: 1,
+                textTransform: "none",
+                "&:hover": { borderColor: COLORS.PRIMARY_PURPLE, color: COLORS.PRIMARY_PURPLE },
+              }}
+            >
+              Get directions
+            </Button>
           )}
 
           <Divider sx={{ my: 2.5 }} />
