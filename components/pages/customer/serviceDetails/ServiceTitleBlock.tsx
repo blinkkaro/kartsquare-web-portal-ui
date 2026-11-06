@@ -66,7 +66,7 @@ const ServiceTitleBlock = ({
         </Typography>
         <CheckCircleRoundedIcon
           sx={{ fontSize: 24, color: COLORS.NEW_UI.VERIFIED_GREEN }}
-          titleAccess="Verified professional"
+          titleAccess="Listed on Kartsquare"
         />
         {isNew && (
           <Box

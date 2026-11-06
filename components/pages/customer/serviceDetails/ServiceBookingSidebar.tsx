@@ -105,7 +105,7 @@ const ServiceBookingSidebar = ({
           "&:active": { transform: "scale(0.98)" },
         }}
       >
-        Book service
+        Enquire now
       </Button>
 
       {(showWhatsApp || showCall) && (
@@ -170,9 +170,9 @@ const ServiceBookingSidebar = ({
         {[
           {
             icon: <CheckCircleRoundedIcon sx={{ fontSize: 17, color: COLORS.NEW_UI.VERIFIED_GREEN }} />,
-            label: "Verified professional",
+            label: "Listed on Kartsquare",
           },
-          { icon: <BoltRoundedIcon sx={{ fontSize: 17 }} />, label: "Instant booking confirmation" },
+          { icon: <BoltRoundedIcon sx={{ fontSize: 17 }} />, label: "Contact the provider directly" },
           { icon: <SupportAgentRoundedIcon sx={{ fontSize: 17 }} />, label: "Dedicated customer support" },
         ].map((item) => (
           <Box key={item.label} sx={{ display: "flex", alignItems: "center", gap: 1 }}>

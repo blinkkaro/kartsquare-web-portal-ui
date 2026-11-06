@@ -211,7 +211,7 @@ export default function ServiceCardHorizontal({
                 color: "#16a34a",
                 display: { xs: "none", sm: "inline-block" },
               }}
-              titleAccess="Verified professional"
+              titleAccess="Listed on Kartsquare"
             />
           </Box>
 

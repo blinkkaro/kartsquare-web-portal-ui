@@ -235,7 +235,7 @@ export default function NewTopPros() {
                           borderRadius: 2,
                           bgcolor: "rgba(255,255,255,0.95)",
                           color: COLORS.PRIMARY_PURPLE,
-                          fontSize: "0.68rem",
+                          fontSize: "0.75rem",
                           fontWeight: 800,
                           boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
                         }}

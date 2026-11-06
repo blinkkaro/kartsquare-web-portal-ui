@@ -140,7 +140,13 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     });
 
     newSocket.on("connect_error", (err) => {
-      console.error("Socket connection error:", err.message);
+      // Expired/invalid token: stop retrying instead of looping and spamming the console.
+      if (/auth|token|jwt|unauthori[sz]ed|forbidden/i.test(err.message)) {
+        newSocket.disconnect();
+      }
+      if (process.env.NODE_ENV !== "production") {
+        console.debug("Socket connection error:", err.message);
+      }
     });
 
     newSocket.on("new_notification", (notification: any) => {

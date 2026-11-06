@@ -12,7 +12,7 @@ import { HOME_PHOTOS } from "./homePhotos";
 const COLUMN_SIZE = 5;
 const MAX_COLUMNS = 2;
 
-const columnHeadSx = { mb: 1.75, fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "text.secondary" } as const;
+const columnHeadSx = { mb: 1.75, fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "text.secondary" } as const;
 
 /**
  * City tile + link lists. Links are the live category list (split into columns), so every

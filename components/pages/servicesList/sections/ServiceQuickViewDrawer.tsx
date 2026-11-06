@@ -163,7 +163,7 @@ export default function ServiceQuickViewDrawer({
                 }}
               >
                 <CheckCircleRoundedIcon sx={{ fontSize: 13, color: "#16a34a" }} />
-                Verified Partner
+                Kartsquare partner
               </Box>
               <Typography
                 sx={{

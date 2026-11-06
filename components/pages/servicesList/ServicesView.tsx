@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useDispatch } from "react-redux";
+import { useCategories } from "@/hooks/useCategories";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -108,13 +109,20 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
   const [toastOpen, setToastOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>("");
 
+  const { data: allCategories } = useCategories();
   const categoryName = useMemo(() => {
     if (initialListing?.category.name) return initialListing.category.name;
     if (initialCategory) {
-      return initialCategory.charAt(0).toUpperCase() + initialCategory.slice(1);
+      // ?category= carries an id (UUID) from category cards; resolve it to the real name.
+      const match = allCategories?.find(
+        (c) => c.id === initialCategory || (c as { slug?: string }).slug === initialCategory,
+      );
+      if (match) return match.name;
+      if (/^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(initialCategory) || /^[0-9a-f]{24}$/i.test(initialCategory)) return "";
+      return initialCategory.charAt(0).toUpperCase() + initialCategory.slice(1).replace(/-/g, " ");
     }
     return "";
-  }, [initialListing, initialCategory]);
+  }, [initialListing, initialCategory, allCategories]);
 
   // On a city/area page the place comes from the URL; elsewhere from the user.
   const cityName = initialListing?.city.name ?? userLocation.city ?? "";

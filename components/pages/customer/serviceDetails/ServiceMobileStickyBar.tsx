@@ -76,7 +76,7 @@ const ServiceMobileStickyBar = ({
           "&:active": { transform: "scale(0.97)" },
         }}
       >
-        Book service
+        Enquire now
       </Button>
     </Box>
   );

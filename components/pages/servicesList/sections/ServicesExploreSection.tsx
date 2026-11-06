@@ -45,7 +45,7 @@ export const ServicesExploreSection: React.FC<ServicesExploreSectionProps> = ({
       const uName =
         r.user?.business_name ||
         [r.user?.first_name, r.user?.last_name].filter(Boolean).join(" ") ||
-        "Verified Pro";
+        "Local pro";
       let img = "";
       if (Array.isArray(r.media_urls) && r.media_urls.length > 0) {
         img =

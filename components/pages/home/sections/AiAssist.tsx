@@ -40,7 +40,7 @@ export default function AiAssist() {
             <AutoAwesomeRoundedIcon />
           </Box>
           <Box>
-            <Typography sx={{ fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.85 }}>Kart AI</Typography>
+            <Typography sx={{ fontSize: "0.75rem", fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.85 }}>Kart AI</Typography>
             <Typography component="h2" sx={sectionTitleSx}>Not sure what to search? Describe the problem.</Typography>
           </Box>
         </Box>

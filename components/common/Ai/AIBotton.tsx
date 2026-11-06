@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { Box, ButtonBase, Typography, useTheme } from "@mui/material";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
@@ -41,6 +41,27 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
     return () => clearInterval(interval);
   }, []);
 
+  // Speech-bubble hints: a few short, timed nudges (Hinglish), then it stays quiet.
+  const HINTS = ["Ask Kart AI", "AC thanda nahi kar raha?", "Plumber chahiye?", "Salon at home?"];
+  const [hint, setHint] = useState<string | null>(null);
+  const hintDone = useRef(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    let shown = 0;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const cycle = () => {
+      if (hintDone.current || shown >= 5) return;
+      setHint(HINTS[shown % HINTS.length]);
+      shown += 1;
+      timers.push(setTimeout(() => setHint(null), 3200));
+      timers.push(setTimeout(cycle, 9000));
+    };
+    timers.push(setTimeout(cycle, 4000));
+    return () => timers.forEach(clearTimeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Check visibility AFTER all hooks have been called
   if (!shouldShowAIBot(pathname, role, appAIServiceConfig)) {
     return null;
@@ -54,6 +75,7 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
   const AI_SIZE = { xs: "48px", sm: "56px" };
   const mobileButton = (
     <Box
+      className="ks-ai"
       sx={{
         display: { xs: "block", lg: "none" },
         position: "fixed",
@@ -68,8 +90,39 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
         zIndex: 1000,
       }}
     >
+      {/* timed speech bubble; never blocks taps */}
+      {hint && (
+        <Box
+          aria-hidden
+          sx={{
+            position: "absolute",
+            right: "calc(100% + 10px)",
+            top: "50%",
+            mt: "-17px",
+            px: 1.5,
+            py: 0.8,
+            borderRadius: "14px 14px 4px 14px",
+            bgcolor: "#2a0d73",
+            color: "#fff",
+            fontSize: "0.75rem",
+            fontWeight: 600,
+            lineHeight: 1.2,
+            whiteSpace: "nowrap",
+            pointerEvents: "none",
+            boxShadow: "0 6px 18px rgba(42,13,115,0.35)",
+            animation: "ks-ai-bubble 350ms cubic-bezier(0.22, 1, 0.36, 1) both",
+          }}
+        >
+          {hint}
+        </Box>
+      )}
+
       <ButtonBase
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          hintDone.current = true;
+          setHint(null);
+          setOpen(true);
+        }}
         aria-label="Ask Kart AI"
         sx={{
           position: "relative",
@@ -80,37 +133,46 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
-          background: `linear-gradient(135deg, ${COLORS.ICON_GRADIENT.Light.START} 0%, ${COLORS.ICON_GRADIENT.Light.END} 100%)`,
-          boxShadow: `0 8px 24px ${COLORS.PRIMARY_PURPLE}55, 0 2px 8px rgba(0,0,0,0.15)`,
-          border: `2px solid ${
-            theme.palette.mode === "dark" ? "rgba(23,20,34,0.9)" : "#ffffff"
-          }`,
           transition: "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
-          animation: "aiFloat 3s ease-in-out infinite",
-          "@keyframes aiFloat": {
-            "0%, 100%": { transform: "translateY(0px)" },
-            "50%": { transform: "translateY(-6px)" },
-          },
-          "&::before": {
-            content: '""',
-            position: "absolute",
-            inset: "-5px",
-            borderRadius: "50%",
-            border: `1.5px solid ${COLORS.PRIMARY_PURPLE}66`,
-            animation: "aiRing 2.2s ease-out infinite",
-          },
-          "@keyframes aiRing": {
-            "0%": { transform: "scale(0.85)", opacity: 0.9 },
-            "100%": { transform: "scale(1.25)", opacity: 0 },
-          },
-          "&:active": {
-            transform: "scale(0.94)",
-          },
+          "&:active": { transform: "scale(0.92)" },
         }}
       >
-        <AutoAwesomeRoundedIcon
-          sx={{ fontSize: 26, color: "#fff", position: "relative", zIndex: 1 }}
+        {/* spinning gradient ring */}
+        <Box
+          aria-hidden
+          sx={{
+            position: "absolute",
+            inset: "-4px",
+            borderRadius: "50%",
+            background: "conic-gradient(from 0deg, #d9c8ff, #6927da, #2a0d73, #a77bff, #d9c8ff)",
+            WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px))",
+            mask: "radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px))",
+            animation: "ks-ai-spin 3.5s linear infinite",
+          }}
         />
+        {/* orbiting spark */}
+        <Box aria-hidden sx={{ position: "absolute", inset: "-10px", animation: "ks-ai-spin 6s linear infinite reverse", pointerEvents: "none" }}>
+          <Box sx={{ position: "absolute", top: 0, left: "50%", width: 6, height: 6, ml: "-3px", borderRadius: "50%", bgcolor: "#c9b2ff", boxShadow: "0 0 8px 2px rgba(201,178,255,0.9)" }} />
+        </Box>
+        {/* core */}
+        <Box
+          sx={{
+            position: "relative",
+            width: "100%",
+            height: "100%",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "radial-gradient(circle at 30% 25%, #9a63ff 0%, #5b21d9 55%, #2a0d73 100%)",
+            boxShadow: `0 8px 24px ${COLORS.PRIMARY_PURPLE}66, inset 0 1px 2px rgba(255,255,255,0.4)`,
+            border: `2px solid ${theme.palette.mode === "dark" ? "rgba(23,20,34,0.9)" : "#ffffff"}`,
+          }}
+        >
+          <AutoAwesomeRoundedIcon
+            sx={{ fontSize: 24, color: "#fff", animation: "ks-ai-twinkle 2.4s ease-in-out infinite" }}
+          />
+        </Box>
       </ButtonBase>
     </Box>
   );
@@ -119,6 +181,7 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
     <>
       {mobileButton}
       <Box
+        className="ks-ai"
         sx={{
           display: { xs: "none", lg: "block" },
           position: "fixed",
@@ -161,6 +224,19 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
             },
             "&:active": {
               transform: "scale(0.98) translateY(-2px)",
+            },
+            overflow: "hidden",
+            // light sweep that glides across the pill every few seconds
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              top: 0,
+              bottom: 0,
+              left: 0,
+              width: "35%",
+              background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)",
+              animation: "ks-ai-sweep 4.5s ease-in-out infinite",
+              pointerEvents: "none",
             },
             "&::before": {
               content: '""',

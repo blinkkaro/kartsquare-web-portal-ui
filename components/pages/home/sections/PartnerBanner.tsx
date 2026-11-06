@@ -32,7 +32,7 @@ export default function PartnerBanner() {
         }}
       >
         <Box sx={{ px: { xs: 2, sm: 3.5, md: 5 }, py: { xs: 3, sm: 4, md: 6 } }}>
-          <Typography sx={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#d8c8ff" }}>For business owners</Typography>
+          <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#d8c8ff" }}>For business owners</Typography>
           <SectionTitle light sx={{ mt: 1.5, color: "#fff" }}>Grow your business with Kartsquare</SectionTitle>
           <Typography sx={{ mt: 2.5, maxWidth: 440, fontSize: { xs: "0.95rem", md: "1.05rem" }, lineHeight: 1.55, color: "#e2d8f7" }}>
             Showcase your work, connect with local customers, and build your online presence.
