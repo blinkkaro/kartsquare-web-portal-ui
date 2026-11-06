@@ -65,6 +65,7 @@ import { useRouter } from "next/navigation";
 import { COLORS } from "@/constants/colors";
 import { useCategories } from "@/hooks/useCategories";
 import { useAILocation } from "@/components/common/Ai/useAILocation";
+import { toSlug } from "@/services/location/locationClient";
 import { Section, sectionTitleSx, sectionSubtitleSx } from "./shared";
 
 type IconType = typeof AcUnitRoundedIcon;
@@ -210,7 +211,8 @@ export default function NewCategoryGrid() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { data: categories, isLoading } = useCategories();
   const { location } = useAILocation();
-  const city = (location.city || "Jaipur").toLowerCase();
+  // City pages (/{city}/{category}) only when we know the user's city.
+  const city = location.city ? toSlug(location.city) : "";
 
   const listingRef = useRef<HTMLDivElement>(null);
 
@@ -286,7 +288,7 @@ export default function NewCategoryGrid() {
             Popular categories
           </Typography>
           <Typography sx={sectionSubtitleSx}>
-            Find trusted service providers & specialists in {location.city || "Jaipur"}
+            Find trusted service providers & specialists {location.city ? `in ${location.city}` : "near you"}
           </Typography>
         </Box>
 

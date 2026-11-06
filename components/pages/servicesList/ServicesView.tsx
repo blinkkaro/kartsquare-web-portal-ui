@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useDispatch } from "react-redux";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,8 +19,8 @@ import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { getServiceRouteParam } from "@/utils/serviceRoute";
 import { serviceListService } from "@/services/serviceList/serviceListService";
 import type { LocationListing as Listing } from "@/services/location/locationService";
-import { useAILocation } from "@/components/common/Ai/useAILocation";
-import { AI_DEFAULT_CITY } from "@/constants/aiSearch";
+import { listAreaCounts, resolveText, toSlug, type AreaCount } from "@/services/location/locationClient";
+import { useAILocation, placeLabel } from "@/components/common/Ai/useAILocation";
 import { COLORS } from "@/constants/colors";
 import {
   mapRealServiceToEnriched,
@@ -30,8 +30,6 @@ import ServicesHeroHeader, { SubServiceChip } from "./sections/ServicesHeroHeade
 import ServicesFilterSidebar, {
   ServicesFilterState,
   AreaFilterItem,
-  RatingFilterType,
-  PricingFilterType,
 } from "./sections/ServicesFilterSidebar";
 import ServicesToolbar, { SortOptionType } from "./sections/ServicesToolbar";
 import ServiceCardHorizontal from "./sections/ServiceCardHorizontal";
@@ -41,9 +39,9 @@ import {
   ServicesLoadingSkeleton,
   ServicesEmptyState,
   ServicesErrorState,
+  ServicesLocationPrompt,
 } from "./sections/ServicesStates";
 import { ServicesExploreSection } from "./sections/ServicesExploreSection";
-import { POPULAR_JAIPUR_AREAS, resolveMainArea } from "@/utils/mainAreaResolver";
 
 interface ServicesViewProps {
   initialListing?: Listing;
@@ -73,6 +71,18 @@ function calculateHaversineDistance(
   return Math.round(R * c * 10) / 10;
 }
 
+function hasRealCoords(lat: unknown, lng: unknown): boolean {
+  const la = Number(lat);
+  const ln = Number(lng);
+  // 0,0 was the column default for addresses: it means "not set".
+  return Number.isFinite(la) && Number.isFinite(ln) && !(la === 0 && ln === 0);
+}
+
+const titleCase = (value: string) =>
+  value
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (ch) => ch.toUpperCase());
+
 export const ServicesView: React.FC<ServicesViewProps> = ({
   initialListing,
   initialCategory = null,
@@ -84,18 +94,20 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
   const router = useRouter();
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
-  // Location hook
-  const { location: aiLoc, setLocation: setAILocation } = useAILocation();
 
-  // Resolved dynamic location
-  const [resolvedCity, setResolvedCity] = useState<string>("");
-  const [resolvedLocality, setResolvedLocality] = useState<string>(initialArea || "");
+  // The user's location — exact GPS, or a place they picked. No default city.
+  const {
+    location: userLocation,
+    setLocation,
+    locateMe,
+    locating,
+    locateError,
+  } = useAILocation();
 
   // Toast / feedback message
   const [toastOpen, setToastOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>("");
 
-  // Determine Category & City dynamically (no hardcoded fallback)
   const categoryName = useMemo(() => {
     if (initialListing?.category.name) return initialListing.category.name;
     if (initialCategory) {
@@ -104,292 +116,298 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     return "";
   }, [initialListing, initialCategory]);
 
-  const cityName = useMemo(() => {
-    if (resolvedCity) return resolvedCity;
-    if (initialListing?.city.name) return initialListing.city.name;
-    if (initialCity) {
-      return initialCity.charAt(0).toUpperCase() + initialCity.slice(1);
-    }
-    if (aiLoc.city) return aiLoc.city;
-    return AI_DEFAULT_CITY;
-  }, [resolvedCity, initialListing, initialCity, aiLoc.city]);
-
-  const localityName = useMemo(() => {
-    if (resolvedLocality) return resolvedLocality;
-    if (initialListing?.location.kind === "locality") {
-      return initialListing.location.name;
-    }
-    if (aiLoc.locality) return aiLoc.locality;
-    return "";
-  }, [resolvedLocality, initialListing, aiLoc.locality]);
+  // On a city/area page the place comes from the URL; elsewhere from the user.
+  const cityName = initialListing?.city.name ?? userLocation.city ?? "";
+  const localityName =
+    initialListing
+      ? initialListing.location.kind === "locality"
+        ? initialListing.location.name
+        : ""
+      : userLocation.locality ?? "";
+  const searchPoint = initialListing ? null : userLocation.coords;
+  const placeText = initialListing
+    ? localityName
+      ? `${localityName}, ${cityName}`
+      : cityName
+    : placeLabel(userLocation, "");
 
   // States
+  const PAGE_SIZE = 50;
   const [services, setServices] = useState<EnrichedServiceItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
+  /** The backend's total for the current place + filters (may exceed what is loaded). */
+  const [serverTotal, setServerTotal] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
 
   // Search & chips
   const [searchQuery, setSearchQuery] = useState<string>(initialSearch || "");
-  const [locationQuery, setLocationQuery] = useState<string>(
-    localityName ? `${localityName}, ${cityName}` : cityName
-  );
+  const [locationQuery, setLocationQuery] = useState<string>(placeText);
   const [selectedSubService, setSelectedSubService] = useState<string>("all");
 
-  // Keep location input in sync when resolved location changes
+  // Keep the location input in sync when the location changes
   useEffect(() => {
-    setLocationQuery(localityName ? `${localityName}, ${cityName}` : cityName);
-  }, [localityName, cityName]);
-
-  // Filters State
-  const initialResolvedArea = useMemo(() => {
-    if (!initialArea) return undefined;
-    const r = resolveMainArea({ address: initialArea, city: initialCity || AI_DEFAULT_CITY });
-    return r.mainArea || initialArea;
-  }, [initialArea, initialCity]);
+    setLocationQuery(placeText);
+  }, [placeText]);
 
   const [filters, setFilters] = useState<ServicesFilterState>({
     rating: "any",
     verifiedOnly: false,
     pricing: "any",
-    selectedAreas: initialResolvedArea ? [initialResolvedArea] : [],
+    selectedAreas: localityName ? [localityName] : [],
     sortByDistance: false,
   });
 
   const [sortBy, setSortBy] = useState<SortOptionType>("recommended");
+  const [resolvingPlace, setResolvingPlace] = useState<boolean>(false);
+  const isLocating = locating || resolvingPlace;
 
-  // User location coordinates (set when user grants location or sets area)
-  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
-  const [isLocating, setIsLocating] = useState<boolean>(false);
-
-  // Dynamic server localities for active city
-  const [serverLocalities, setServerLocalities] = useState<Array<{ name: string; total?: number }>>([]);
-
-  // Fetch localities dynamically for active city
+  // A link like ?city=<city>&area=<area> names a place: search around it.
+  const urlPlaceApplied = useRef(false);
   useEffect(() => {
-    const slug = cityName.toLowerCase().replace(/\s+/g, "-");
-    fetch(`/api/v1/locations/${encodeURIComponent(slug)}/localities`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((json) => {
-        if (json?.data?.localities && Array.isArray(json.data.localities) && json.data.localities.length > 0) {
-          setServerLocalities(json.data.localities);
-        } else {
-          setServerLocalities([]);
+    if (initialListing || urlPlaceApplied.current) return;
+    const text = [initialArea, initialCity].filter(Boolean).map((v) => titleCase(String(v))).join(", ");
+    if (!text) return;
+    urlPlaceApplied.current = true;
+    setResolvingPlace(true);
+    resolveText(text)
+      .then((place) => {
+        const point = place?.location;
+        if (point && point.latitude != null && point.longitude != null) {
+          setLocation({
+            city: place.city?.name ?? (point.kind === "city" ? point.name : null),
+            locality: point.kind === "locality" ? point.name : null,
+            coords: { latitude: point.latitude, longitude: point.longitude },
+            source: "picked",
+          });
         }
       })
-      .catch(() => setServerLocalities([]));
-  }, [cityName]);
+      .finally(() => setResolvingPlace(false));
+  }, [initialListing, initialArea, initialCity, setLocation]);
 
-  // Silent background geolocation check if permission already granted (non-intrusive)
+  // Areas of the current city with live counts. The backend counts with the
+  // same query and filters as the list, measured at each area's centre — and
+  // tapping an area searches at exactly that centre — so a chip's number is
+  // always the number of results it opens.
+  const citySlug = initialListing?.city.slug ?? (userLocation.city ? toSlug(userLocation.city) : "");
+  const [areaCounts, setAreaCounts] = useState<AreaCount[]>([]);
+  const [countSearch, setCountSearch] = useState<string>(searchQuery);
   useEffect(() => {
-    if (typeof window === "undefined" || !navigator.geolocation) return;
-    if (navigator.permissions && navigator.permissions.query) {
-      navigator.permissions
-        .query({ name: "geolocation" as PermissionName })
-        .then((res) => {
-          if (res.state === "granted") {
-            navigator.geolocation.getCurrentPosition(
-              async (pos) => {
-                const { latitude, longitude } = pos.coords;
-                setUserCoords({ lat: latitude, lng: longitude });
-                try {
-                  const resp = await fetch(`/api/v1/locations/resolve?lat=${latitude}&lng=${longitude}`);
-                  if (resp.ok) {
-                    const json = await resp.json();
-                    if (json.data?.city?.name) {
-                      setResolvedCity(json.data.city.name);
-                      const loc = json.data.location?.kind === "locality" ? json.data.location.name : "";
-                      setResolvedLocality(loc);
-                      setAILocation({
-                        city: json.data.city.name,
-                        locality: loc || null,
-                        coords: { latitude, longitude },
-                      });
-                    }
-                  }
-                } catch {
-                  // silent fallback
-                }
-              },
-              () => {},
-              { timeout: 6000, maximumAge: 300000 }
-            );
-          }
-        })
-        .catch(() => {});
+    // Debounced so typing in the search box doesn't refetch on every key.
+    const id = window.setTimeout(() => setCountSearch(searchQuery), 350);
+    return () => window.clearTimeout(id);
+  }, [searchQuery]);
+  useEffect(() => {
+    let cancelled = false;
+    if (!citySlug || initialListing) {
+      setAreaCounts([]);
+      return;
     }
-  }, [setAILocation]);
+    listAreaCounts(citySlug, {
+      category_id: initialCategory ?? undefined,
+      search: countSearch,
+    }).then((rows) => {
+      if (!cancelled) setAreaCounts(rows);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [citySlug, initialListing, initialCategory, countSearch]);
 
   // Drawer states
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState<boolean>(false);
   const [quickViewService, setQuickViewService] = useState<EnrichedServiceItem | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState<boolean>(false);
 
+  const needsLocation = !initialListing && !searchPoint;
+  // Only the newest request may write results (an older one can finish last).
+  const requestSeq = useRef(0);
+
   // Load Data
   const loadServicesData = useCallback(async () => {
+    // City/area pages arrive with their rows from the server.
+    if (initialListing) {
+      setServices((initialListing.services ?? []).map(mapRealServiceToEnriched));
+      setServerTotal(initialListing.pagination?.total ?? initialListing.services?.length ?? 0);
+      setError(false);
+      setLoading(false);
+      return;
+    }
+
+    // No point to search around yet: the page asks for a location instead.
+    if (!searchPoint) {
+      requestSeq.current++;
+      setServices([]);
+      setServerTotal(0);
+      setError(false);
+      setLoading(false);
+      return;
+    }
+
+    const seq = ++requestSeq.current;
     try {
       setLoading(true);
       setError(false);
 
-      // If initialListing provided with services (e.g. from SSR / location route), map them
-      if (initialListing?.services && initialListing.services.length > 0) {
-        const enriched: EnrichedServiceItem[] = initialListing.services.map(mapRealServiceToEnriched);
-        setServices(enriched);
-        return;
-      }
-
-      // Fetch live real providers from backend API
+      // Providers whose own service radius reaches the user, nearest first.
       const response = await serviceListService.getServices({
-        limit: 50,
+        limit: PAGE_SIZE,
         page: 1,
+        latitude: searchPoint.latitude,
+        longitude: searchPoint.longitude,
         ...(searchQuery && { search: searchQuery }),
         ...(initialCategory && { category_id: initialCategory }),
       });
 
       const rawServices =
         response?.services ||
-        (response as any)?.data?.services ||
+        (response as unknown as { data?: { services?: [] } })?.data?.services ||
         [];
 
-      if (rawServices && rawServices.length > 0) {
-        const mapped: EnrichedServiceItem[] = rawServices.map(mapRealServiceToEnriched);
-        setServices(mapped);
-      } else {
-        setServices([]);
-      }
+      if (seq !== requestSeq.current) return;
+      setServices(rawServices.map(mapRealServiceToEnriched));
+      setServerTotal(response?.pagination?.total ?? rawServices.length);
+      setPage(1);
     } catch (err) {
-      console.error("Failed to load real services from backend API:", err);
+      if (seq !== requestSeq.current) return;
+      console.error("Failed to load services:", err);
       setError(true);
       setServices([]);
+      setServerTotal(0);
     } finally {
-      setLoading(false);
+      if (seq === requestSeq.current) setLoading(false);
     }
-  }, [initialListing, searchQuery, initialCategory]);
+  }, [initialListing, searchPoint, searchQuery, initialCategory]);
 
   useEffect(() => {
     loadServicesData();
   }, [loadServicesData]);
 
+  /** Next page of the same place + filters, appended (results stay nearest-first). */
+  const loadMore = async () => {
+    if (!searchPoint || loadingMore) return;
+    const seq = requestSeq.current;
+    setLoadingMore(true);
+    try {
+      const response = await serviceListService.getServices({
+        limit: PAGE_SIZE,
+        page: page + 1,
+        latitude: searchPoint.latitude,
+        longitude: searchPoint.longitude,
+        ...(searchQuery && { search: searchQuery }),
+        ...(initialCategory && { category_id: initialCategory }),
+      });
+      if (seq !== requestSeq.current) return;
+      const more = (response?.services ?? []).map(mapRealServiceToEnriched);
+      setServices((prev) => {
+        const seen = new Set(prev.map((s) => s.service_id));
+        return [...prev, ...more.filter((s) => !seen.has(s.service_id))];
+      });
+      setPage((p) => p + 1);
+    } catch (err) {
+      console.error("Failed to load more services:", err);
+      showToast("Couldn't load more providers. Please try again.");
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setToastOpen(true);
+  };
+
+  // A typed area / city / pincode becomes the point we search around.
+  const applyPlace = useCallback(
+    async (text: string) => {
+      const q = text.trim();
+      if (!q) return false;
+      setResolvingPlace(true);
+      try {
+        const place = await resolveText(q);
+        const point = place?.location;
+        if (!point || point.latitude == null || point.longitude == null) {
+          showToast(`We couldn't find "${q}". Try a nearby area, city or pincode.`);
+          return false;
+        }
+        setLocation({
+          city: place.city?.name ?? (point.kind === "city" ? point.name : null),
+          locality: point.kind === "locality" ? point.name : null,
+          coords: { latitude: point.latitude, longitude: point.longitude },
+          source: "picked",
+        });
+        return true;
+      } finally {
+        setResolvingPlace(false);
+      }
+    },
+    [setLocation]
+  );
+
+  const goToMyLocation = () => {
+    locateMe(() => {
+      setFilters((prev) => ({ ...prev, selectedAreas: [] }));
+      showToast("Showing services near your current location.");
+    });
+  };
+
+  useEffect(() => {
+    if (locateError) showToast(locateError);
+  }, [locateError]);
+
   // Handle Geolocation Distance Sort
   const handleSortByDistance = () => {
-    if (userCoords) {
+    if (searchPoint) {
       const next = !filters.sortByDistance;
       setFilters((prev) => ({ ...prev, sortByDistance: next }));
-      setToastMessage(next ? "Sorted by distance from your location." : "Restored recommended order.");
-      setToastOpen(true);
+      showToast(next ? "Sorted by distance." : "Restored recommended order.");
       return;
     }
-
-    if (typeof window === "undefined" || !navigator.geolocation) {
-      setToastMessage("Location is not supported by your browser. You can type your area in the search bar above.");
-      setToastOpen(true);
-      return;
-    }
-
-    setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const { latitude, longitude } = pos.coords;
-        setUserCoords({ lat: latitude, lng: longitude });
-        setFilters((prev) => ({ ...prev, sortByDistance: true }));
-        setIsLocating(false);
-        try {
-          const resp = await fetch(`/api/v1/locations/resolve?lat=${latitude}&lng=${longitude}`);
-          if (resp.ok) {
-            const json = await resp.json();
-            if (json.data?.city?.name) {
-              setResolvedCity(json.data.city.name);
-              const loc = json.data.location?.kind === "locality" ? json.data.location.name : "";
-              setResolvedLocality(loc);
-              setAILocation({
-                city: json.data.city.name,
-                locality: loc || null,
-                coords: { latitude, longitude },
-              });
-            }
-          }
-        } catch {
-          // ignore
-        }
-        setToastMessage("Sorted by distance from your current location.");
-        setToastOpen(true);
-      },
-      (err) => {
-        console.warn("Geolocation denied or unavailable:", err.message);
-        setIsLocating(false);
-        const displayLabel = categoryName ? categoryName.toLowerCase() : "services";
-        setToastMessage(
-          `Location access is turned off. We've shown ${displayLabel} in ${cityName}. You can also type your area in the search bar above.`
-        );
-        setToastOpen(true);
-      },
-      { timeout: 8000 }
-    );
+    locateMe(() => setFilters((prev) => ({ ...prev, sortByDistance: true })));
   };
 
   // Handle Location Search Input Submission
   const handleSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const query = locationQuery.trim();
-    if (!query) return;
-
-    const citySlug = (cityName || "jaipur").toLowerCase().replace(/[^a-z0-9]+/g, "-");
-    const categorySlug = initialListing?.category.slug || "home-services";
-
-    // Check if query matches a canonical Jaipur main area directly (Justdial style)
-    const resolved = resolveMainArea({ address: query, city: cityName });
-    if (resolved.mainArea && resolved.mainArea.toLowerCase() !== cityName.toLowerCase()) {
-      const areaSlug = resolved.mainArea.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-      router.push(`/${citySlug}/${areaSlug}/${categorySlug}`);
+    if (!query || query === placeText) {
+      loadServicesData();
       return;
     }
-
-    if (query.toLowerCase() === cityName.toLowerCase()) {
-      router.push(`/${citySlug}/${categorySlug}`);
+    if (initialListing) {
+      // Leave the city/area page for results around the place typed.
+      if (await applyPlace(query)) router.push("/cus/services-list");
       return;
     }
-
-    setIsLocating(true);
-    try {
-      const resp = await fetch(`/api/v1/locations/resolve?q=${encodeURIComponent(query)}`);
-      if (resp.ok) {
-        const json = await resp.json();
-        const data = json.data;
-        if (data?.city?.name) {
-          const resCitySlug = data.city.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-          const locSlug =
-            data.location?.kind === "locality" && data.location.name
-              ? data.location.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")
-              : "";
-          if (locSlug) {
-            router.push(`/${resCitySlug}/${locSlug}/${categorySlug}`);
-            return;
-          } else {
-            router.push(`/${resCitySlug}/${categorySlug}`);
-            return;
-          }
-        }
-      }
-    } catch (err) {
-      console.warn("Location query resolve failed:", err);
-    } finally {
-      setIsLocating(false);
-    }
+    await applyPlace(query);
   };
 
-  const handleFilterChange = (key: keyof ServicesFilterState, value: any) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-    if (key === "selectedAreas" && typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      if (Array.isArray(value) && value.length > 0) {
-        params.set("area", value[0].toLowerCase().replace(/\s+/g, "-"));
-        params.set("city", (cityName || "jaipur").toLowerCase());
+  const handleFilterChange = (key: keyof ServicesFilterState, value: unknown) => {
+    if (key === "selectedAreas") {
+      // Picking an area searches at that area's own centre (the point its
+      // count was measured at); clearing it goes back to "near me".
+      const next = (value as string[]).filter((a) => !filters.selectedAreas.includes(a));
+      const picked = next[next.length - 1];
+      const area = picked ? areaCounts.find((a) => a.name === picked) : undefined;
+      if (area) {
+        setFilters((prev) => ({ ...prev, selectedAreas: [area.name] }));
+        setLocation({
+          city: cityName || null,
+          locality: area.name,
+          coords: { latitude: area.latitude, longitude: area.longitude },
+          source: "picked",
+        });
+      } else if (picked) {
+        setFilters((prev) => ({ ...prev, selectedAreas: [picked] }));
+        void applyPlace(cityName ? `${picked}, ${cityName}` : picked);
       } else {
-        params.delete("area");
+        setFilters((prev) => ({ ...prev, selectedAreas: [] }));
+        goToMyLocation();
       }
-      const newRelativePathQuery =
-        window.location.pathname + (params.toString() ? `?${params.toString()}` : "");
-      window.history.replaceState(null, "", newRelativePathQuery);
+      return;
     }
+    setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleResetFilters = () => {
@@ -397,7 +415,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
       rating: "any",
       verifiedOnly: false,
       pricing: "any",
-      selectedAreas: [],
+      selectedAreas: filters.selectedAreas,
       sortByDistance: false,
     });
     setSelectedSubService("all");
@@ -408,7 +426,6 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     filters.rating !== "any" ||
     filters.verifiedOnly ||
     filters.pricing !== "any" ||
-    filters.selectedAreas.length > 0 ||
     filters.sortByDistance ||
     selectedSubService !== "all" ||
     Boolean(searchQuery);
@@ -447,8 +464,10 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
   const filteredServices = useMemo(() => {
     let result = [...services];
 
-    // Text search filter
-    if (searchQuery.trim()) {
+    // Text search: the backend already filtered by it. Re-filtering here with
+    // different rules would hide rows the counts include, so only the
+    // server-rendered city/area pages (fetched without the search) filter here.
+    if (initialListing && searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
         (s) =>
@@ -476,11 +495,11 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
       }
     }
 
-    // Rating filter
+    // Rating filter (only rated services: a rating needs reviews behind it)
     if (filters.rating === "4.0") {
-      result = result.filter((s) => (s.avg_service_rating ?? 0) >= 4.0);
+      result = result.filter((s) => (s.review_count ?? 0) > 0 && (s.avg_service_rating ?? 0) >= 4.0);
     } else if (filters.rating === "4.5") {
-      result = result.filter((s) => (s.avg_service_rating ?? 0) >= 4.5);
+      result = result.filter((s) => (s.review_count ?? 0) > 0 && (s.avg_service_rating ?? 0) >= 4.5);
     }
 
     // Verified only filter
@@ -495,51 +514,45 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
       result = result.filter((s) => !s.is_price_required || !s.price);
     }
 
-    // Area filter
-    if (filters.selectedAreas.length > 0) {
-      result = result.filter((s) => {
-        const area = s.area_name || s.service_address?.city_town || "";
-        return filters.selectedAreas.some(
-          (a) => area.toLowerCase().includes(a.toLowerCase()) || a.toLowerCase().includes(area.toLowerCase())
-        );
-      });
-    }
-
-    // Calculate distance if coordinates available
-    if (userCoords) {
+    // Distance from the point we searched around (real coordinates only)
+    const origin =
+      searchPoint ??
+      (initialListing?.location.latitude != null && initialListing?.location.longitude != null
+        ? { latitude: initialListing.location.latitude, longitude: initialListing.location.longitude }
+        : null);
+    if (origin) {
       result = result.map((s) => {
-        const sLat = s.service_address?.latitude ?? 26.9124;
-        const sLng = s.service_address?.longitude ?? 75.7873;
-        const dist = calculateHaversineDistance(
-          userCoords.lat,
-          userCoords.lng,
-          sLat,
-          sLng
-        );
-        return { ...s, distance_km: dist };
+        const sLat = s.service_address?.latitude;
+        const sLng = s.service_address?.longitude;
+        if (!hasRealCoords(sLat, sLng)) return { ...s, distance_km: null };
+        return {
+          ...s,
+          distance_km: calculateHaversineDistance(origin.latitude, origin.longitude, Number(sLat), Number(sLng)),
+        };
       });
     }
 
     // Sorting
     result.sort((a, b) => {
       if (filters.sortByDistance) {
-        const distA = a.distance_km ?? 9999;
-        const distB = b.distance_km ?? 9999;
+        const distA = a.distance_km ?? Number.POSITIVE_INFINITY;
+        const distB = b.distance_km ?? Number.POSITIVE_INFINITY;
         return distA - distB;
       }
       if (sortBy === "rating") {
-        return (b.avg_service_rating ?? 0) - (a.avg_service_rating ?? 0);
+        const ra = (a.review_count ?? 0) > 0 ? a.avg_service_rating ?? 0 : 0;
+        const rb = (b.review_count ?? 0) > 0 ? b.avg_service_rating ?? 0 : 0;
+        return rb - ra;
       }
       if (sortBy === "reviews") {
         return (b.review_count ?? 0) - (a.review_count ?? 0);
       }
       if (sortBy === "price_low") {
-        const priceA = a.is_price_required ? a.price ?? 999999 : 999999;
-        const priceB = b.is_price_required ? b.price ?? 999999 : 999999;
+        const priceA = a.is_price_required ? a.price ?? Number.POSITIVE_INFINITY : Number.POSITIVE_INFINITY;
+        const priceB = b.is_price_required ? b.price ?? Number.POSITIVE_INFINITY : Number.POSITIVE_INFINITY;
         return priceA - priceB;
       }
-      // "recommended": weighted score of rating, review count, and verification
-      // "recommended": preserve initial curated order from SAMPLE_SERVICES_ELECTRICIANS
+      // "recommended": keep the backend's order (nearest first around the user).
       return 0;
     });
 
@@ -550,38 +563,33 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
     selectedSubService,
     dynamicChips,
     filters,
-    userCoords,
+    searchPoint,
+    initialListing,
     sortBy,
   ]);
 
-  // Area Counts for Sidebar & Drawer (Dynamic for Active City from Real Main Areas)
-  const areaOptions: AreaFilterItem[] = useMemo(() => {
-    // Count services grouped by their resolved main_area
-    const countsMap = new Map<string, number>();
-    services.forEach((s) => {
-      const area = s.area_name || s.service_address?.city_town || "";
-      if (area && area !== "Central" && area.toLowerCase() !== cityName.toLowerCase()) {
-        countsMap.set(area, (countsMap.get(area) || 0) + 1);
-      }
-    });
+  // Filters applied in the browser only (the backend doesn't know them), so
+  // area counts can't include them: while any is on, areas show no number.
+  const clientOnlyFilters =
+    filters.rating !== "any" ||
+    filters.verifiedOnly ||
+    filters.pricing !== "any" ||
+    selectedSubService !== "all";
 
-    // Build complete list of recognized popular main areas (Justdial style)
-    const combinedAreas = new Set<string>();
+  // Areas that have at least one service for the current filters, busiest
+  // first. An area with 0 would only open an empty page, so it isn't offered.
+  const areaOptions: AreaFilterItem[] = useMemo(
+    () =>
+      areaCounts
+        .filter((a) => a.total > 0)
+        .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name))
+        .map((a) => ({ name: a.name, count: clientOnlyFilters ? undefined : a.total })),
+    [areaCounts, clientOnlyFilters]
+  );
 
-    // First add areas that currently have active providers (sorted by count desc)
-    const activeAreas = Array.from(countsMap.entries())
-      .sort((a, b) => b[1] - a[1])
-      .map(([name]) => name);
-    activeAreas.forEach((name) => combinedAreas.add(name));
-
-    // Then add other recognized major city areas
-    POPULAR_JAIPUR_AREAS.forEach((name) => combinedAreas.add(name));
-
-    return Array.from(combinedAreas).map((name) => ({
-      name,
-      count: countsMap.get(name) || 0,
-    }));
-  }, [cityName, services]);
+  // What the toolbar says: the backend's total unless browser-only filters narrow it.
+  const shownTotal = initialListing || clientOnlyFilters ? filteredServices.length : serverTotal;
+  const canLoadMore = !initialListing && !!searchPoint && services.length < serverTotal;
 
   // Handlers for cards
   const handleQuickView = (service: EnrichedServiceItem) => {
@@ -606,7 +614,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
   return (
     <Box
       sx={{
-        bgcolor: dark ? "background.default" : "#FCFBF9",
+        bgcolor: dark ? "background.default" : COLORS.NEW_UI.PAGE_BG_LIGHT,
         minHeight: "100vh",
         pb: 10,
       }}
@@ -684,7 +692,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
             </Stack>
           </Box>
         )}
-        {/* Popular Area Chips for Services screen (Justdial style) */}
+        {/* Areas of the user's city (from the backend): tapping one searches there */}
         {!initialListing && areaOptions.length > 0 && (
           <Box sx={{ mb: 2.5 }}>
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
@@ -697,12 +705,11 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                   letterSpacing: "0.06em",
                 }}
               >
-                Popular Areas in {cityName}
+                Areas in {cityName}
               </Typography>
               {filters.selectedAreas.length > 0 && (
                 <Button
-                  component={NextLink}
-                  href={`/${(cityName || "jaipur").toLowerCase().replace(/[^a-z0-9]+/g, "-")}/home-services`}
+                  onClick={() => handleFilterChange("selectedAreas", [])}
                   size="small"
                   sx={{
                     p: 0,
@@ -713,7 +720,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                     color: COLORS.PRIMARY_PURPLE,
                   }}
                 >
-                  Clear area filter
+                  Back to near me
                 </Button>
               )}
             </Box>
@@ -730,16 +737,14 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
             >
               {areaOptions.slice(0, 10).map((area) => {
                 const isSelected = filters.selectedAreas.includes(area.name);
-                const areaSlug = area.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-                const citySlug = (cityName || "jaipur").toLowerCase().replace(/[^a-z0-9]+/g, "-");
-                const targetUrl = `/${citySlug}/${areaSlug}/home-services`;
-
                 return (
                   <Chip
                     key={area.name}
-                    component={NextLink}
-                    href={isSelected ? `/${citySlug}/home-services` : targetUrl}
                     clickable
+                    disabled={isLocating}
+                    onClick={() =>
+                      handleFilterChange("selectedAreas", isSelected ? [] : [...filters.selectedAreas, area.name])
+                    }
                     size="small"
                     variant={isSelected ? "filled" : "outlined"}
                     color={isSelected ? "primary" : "default"}
@@ -749,7 +754,6 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                       fontWeight: 600,
                       borderRadius: "8px",
                       flexShrink: 0,
-                      textDecoration: "none",
                       transition: "all 0.15s ease",
                       "&:active": { transform: "scale(0.95)" },
                     }}
@@ -786,9 +790,9 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
           <Box sx={{ minWidth: 0, width: "100%" }}>
             {/* Toolbar */}
             <ServicesToolbar
-              totalCount={filteredServices.length}
+              totalCount={shownTotal}
               categoryName={categoryName}
-              cityName={cityName}
+              cityName={placeText}
               sortBy={sortBy}
               activeFilterCount={
                 (filters.rating !== "any" ? 1 : 0) +
@@ -803,18 +807,25 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
 
             {/* List Results */}
             <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 2 }}>
-              {loading ? (
+              {loading || (needsLocation && isLocating) ? (
                 <ServicesLoadingSkeleton count={3} />
+              ) : needsLocation ? (
+                <ServicesLocationPrompt
+                  categoryName={categoryName}
+                  onUseMyLocation={goToMyLocation}
+                  onSubmitPlace={(text) => void applyPlace(text)}
+                  locating={isLocating}
+                />
               ) : error ? (
                 <ServicesErrorState
                   categoryName={categoryName}
-                  cityName={cityName}
+                  cityName={placeText}
                   onRetry={loadServicesData}
                 />
               ) : filteredServices.length === 0 ? (
                 <ServicesEmptyState
                   categoryName={categoryName}
-                  cityName={cityName}
+                  cityName={placeText}
                   onResetFilters={handleResetFilters}
                   hasActiveFilters={hasActiveFilters}
                 />
@@ -830,6 +841,32 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                 ))
               )}
             </Box>
+
+            {/* More results for the same place and filters */}
+            {!loading && !error && canLoadMore && (
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+                <Button
+                  variant="outlined"
+                  onClick={loadMore}
+                  disabled={loadingMore}
+                  sx={{
+                    borderColor: dark ? COLORS.NEW_UI.OUTLINE_DARK : COLORS.NEW_UI.OUTLINE_LIGHT,
+                    color: "text.primary",
+                    fontWeight: 700,
+                    fontSize: "0.88rem",
+                    borderRadius: "10px",
+                    px: 3,
+                    py: 1,
+                    textTransform: "none",
+                    "&:hover": { borderColor: COLORS.PRIMARY_PURPLE, color: COLORS.PRIMARY_PURPLE },
+                  }}
+                >
+                  {loadingMore
+                    ? "Loading…"
+                    : `Show more (${services.length} of ${serverTotal})`}
+                </Button>
+              </Box>
+            )}
 
             {/* Nearby Cities SEO Links */}
             {initialListing?.siblings?.nearby_cities &&
@@ -879,7 +916,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
         </Box>
 
         {/* 3. Explore Section */}
-        <ServicesExploreSection categoryName={categoryName} cityName={cityName} />
+        <ServicesExploreSection categoryName={categoryName} cityName={placeText} />
       </Container>
 
       {/* Slide-over Quick View Drawer */}
@@ -901,7 +938,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
         sortBy={sortBy}
         onChangeSort={setSortBy}
         areaItems={areaOptions}
-        totalResults={filteredServices.length}
+        totalResults={shownTotal}
       />
 
       {/* User-friendly Location & Action Notification Toast */}

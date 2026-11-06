@@ -30,7 +30,10 @@ const NavLogo: React.FC<NavLogoProps> = ({ isMobile, mode }) => {
         sx={{
           fontWeight: 700,
           fontSize: { xs: "1rem", md: "1.125rem" },
-          display: { xs: "none", "@media (min-width:360px)": "inline" },
+          // Hidden on very narrow phones; shown from 360px. A media query must be
+          // its own key in sx, not a key inside a breakpoint object.
+          display: "none",
+          "@media (min-width:360px)": { display: "inline" },
           color:
             mode === "dark"
               ? COLORS.TEXT.PRIMARY_DARK

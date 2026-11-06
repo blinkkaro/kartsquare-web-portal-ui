@@ -59,8 +59,6 @@ export const INDIAN_STATES: StateData[] = [
 
 // Default values
 export const DEFAULT_COUNTRY = "India";
-export const DEFAULT_STATE = "Rajasthan";
-export const DEFAULT_CITY = "Jaipur";
 
 // Helper function to get cities by state
 export const getCitiesByState = (stateName: string): LocationOption[] => {

@@ -44,8 +44,10 @@ export default function ServiceQuickViewDrawer({
 
   const displayName = service.business_name || service.service_name || service.provider_name || "Service Expert";
   const categoryLabel = Array.isArray(service.category_name) ? service.category_name[0] : (service.category_name || "Service");
-  const ratingNum = Number(service.avg_service_rating) || 4.8;
-  const reviewCount = Number(service.review_count) || 24;
+  // avg_service_rating defaults to 4.00 in the DB: a rating only counts with reviews.
+  const reviewCount = Number(service.review_count) || 0;
+  const hasReviews = reviewCount > 0;
+  const ratingNum = Number(service.avg_service_rating) || 0;
 
   const primaryImg =
     Array.isArray(service.image_urls) && service.image_urls.length > 0
@@ -55,13 +57,21 @@ export default function ServiceQuickViewDrawer({
       : service.provider_image_url ||
         "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80";
 
-  const locCity = service.service_address?.city_town || "Jaipur";
-  const locArea = service.area_name || "Jaipur";
-  const phone = service.provider_phone_number || "+91 98290 12345";
-  const whatsappNum = service.provider_whatsapp_number || phone.replace(/\D/g, "");
-  const whatsappUrl = `https://wa.me/${whatsappNum}?text=${encodeURIComponent(
-    `Hi ${displayName}, I found your listing on Kartsquare for ${categoryLabel} services and would like an enquiry.`
-  )}`;
+  // Real data only — no placeholder city or phone number.
+  const locCity = service.service_address?.city_town?.trim() || "";
+  const locArea = service.area_name?.trim() || "";
+  const locText = [locArea, locCity && locCity !== locArea ? locCity : ""].filter(Boolean).join(", ");
+  const phone = service.provider_phone_number?.trim() || "";
+  const whatsappDigits = (
+    service.provider_whatsapp_number
+      ? `${service.provider_whatsapp_country_code ?? ""}${service.provider_whatsapp_number}`
+      : phone
+  ).replace(/\D/g, "");
+  const whatsappUrl = whatsappDigits
+    ? `https://wa.me/${whatsappDigits}?text=${encodeURIComponent(
+        `Hi ${displayName}, I found your listing on Kartsquare for ${categoryLabel} services and would like an enquiry.`
+      )}`
+    : "";
 
   const recentWorks = service.recent_works || [];
   const subServices = service.sub_services || (Array.isArray(service.sub_category_name) ? service.sub_category_name : []) || [];
@@ -183,84 +193,106 @@ export default function ServiceQuickViewDrawer({
 
         {/* Scrollable Content */}
         <Box sx={{ flex: 1, overflowY: "auto", p: { xs: 2.5, sm: 3 } }}>
-          {/* Rating, Reviews & Area */}
+          {/* Rating, Reviews & Area (real data only) */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2, flexWrap: "wrap" }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.4 }}>
-              <StarRoundedIcon sx={{ color: "#f59e0b", fontSize: 20 }} />
-              <Typography sx={{ fontSize: "0.92rem", fontWeight: 800, color: "text.primary" }}>
-                {ratingNum.toFixed(1)}
-              </Typography>
-              <Typography sx={{ fontSize: "0.82rem", color: "text.secondary" }}>
-                ({reviewCount} reviews)
-              </Typography>
+              <StarRoundedIcon sx={{ color: COLORS.NEW_UI.STAR_AMBER, fontSize: 20 }} />
+              {hasReviews ? (
+                <>
+                  <Typography sx={{ fontSize: "0.92rem", fontWeight: 800, color: "text.primary" }}>
+                    {ratingNum.toFixed(1)}
+                  </Typography>
+                  <Typography sx={{ fontSize: "0.82rem", color: "text.secondary" }}>
+                    ({reviewCount} review{reviewCount === 1 ? "" : "s"})
+                  </Typography>
+                </>
+              ) : (
+                <Typography sx={{ fontSize: "0.84rem", color: "text.secondary" }}>New · No reviews yet</Typography>
+              )}
             </Box>
-            <Typography sx={{ color: "text.secondary" }}>·</Typography>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.4, color: "text.secondary" }}>
-              <PlaceRoundedIcon sx={{ fontSize: 16 }} />
-              <Typography sx={{ fontSize: "0.84rem" }}>
-                {locArea}, {locCity}
-              </Typography>
-            </Box>
+            {locText && (
+              <>
+                <Typography sx={{ color: "text.secondary" }}>·</Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.4, color: "text.secondary" }}>
+                  <PlaceRoundedIcon sx={{ fontSize: 16 }} />
+                  <Typography sx={{ fontSize: "0.84rem" }}>{locText}</Typography>
+                </Box>
+              </>
+            )}
           </Box>
 
-          {/* Quick Connect Action Buttons */}
-          <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.25, mb: 3 }}>
-            <Button
-              component="a"
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              variant="contained"
-              startIcon={<WhatsAppIcon sx={{ fontSize: 18 }} />}
+          {/* Quick Connect Action Buttons — only for contact details the provider gave */}
+          {(whatsappUrl || phone) && (
+            <Box
               sx={{
-                bgcolor: "#25D366",
-                color: "#fff",
-                fontWeight: 700,
-                fontSize: "0.85rem",
-                borderRadius: "10px",
-                py: 1,
-                boxShadow: "none",
-                textTransform: "none",
-                "&:hover": { bgcolor: "#20bd5a" },
+                display: "grid",
+                gridTemplateColumns: whatsappUrl && phone ? "1fr 1fr" : "1fr",
+                gap: 1.25,
+                mb: 3,
               }}
             >
-              WhatsApp
-            </Button>
-            <Button
-              component="a"
-              href={`tel:${phone}`}
-              variant="outlined"
-              startIcon={<CallRoundedIcon sx={{ fontSize: 18 }} />}
-              sx={{
-                borderColor: dark ? "rgba(255,255,255,0.2)" : "#d6d0e0",
-                color: "text.primary",
-                fontWeight: 700,
-                fontSize: "0.85rem",
-                borderRadius: "10px",
-                py: 1,
-                textTransform: "none",
-                "&:hover": {
-                  borderColor: COLORS.PRIMARY_PURPLE,
-                  color: COLORS.PRIMARY_PURPLE,
-                },
-              }}
-            >
-              Call Provider
-            </Button>
-          </Box>
+              {whatsappUrl && (
+                <Button
+                  component="a"
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="contained"
+                  startIcon={<WhatsAppIcon sx={{ fontSize: 18 }} />}
+                  sx={{
+                    bgcolor: COLORS.NEW_UI.WHATSAPP,
+                    color: COLORS.WHITE,
+                    fontWeight: 700,
+                    fontSize: "0.85rem",
+                    borderRadius: "10px",
+                    py: 1,
+                    boxShadow: "none",
+                    textTransform: "none",
+                    "&:hover": { bgcolor: COLORS.NEW_UI.WHATSAPP_HOVER },
+                  }}
+                >
+                  WhatsApp
+                </Button>
+              )}
+              {phone && (
+                <Button
+                  component="a"
+                  href={`tel:${phone}`}
+                  variant="outlined"
+                  startIcon={<CallRoundedIcon sx={{ fontSize: 18 }} />}
+                  sx={{
+                    borderColor: dark ? COLORS.NEW_UI.OUTLINE_DARK : COLORS.NEW_UI.OUTLINE_LIGHT,
+                    color: "text.primary",
+                    fontWeight: 700,
+                    fontSize: "0.85rem",
+                    borderRadius: "10px",
+                    py: 1,
+                    textTransform: "none",
+                    "&:hover": {
+                      borderColor: COLORS.PRIMARY_PURPLE,
+                      color: COLORS.PRIMARY_PURPLE,
+                    },
+                  }}
+                >
+                  Call Provider
+                </Button>
+              )}
+            </Box>
+          )}
 
           <Divider sx={{ my: 2.5 }} />
 
           {/* About / Description */}
+          {service.service_desc && (
           <Box sx={{ mb: 3 }}>
             <Typography sx={{ fontSize: "0.92rem", fontWeight: 800, color: "text.primary", mb: 0.75 }}>
               About this professional
             </Typography>
             <Typography sx={{ fontSize: "0.86rem", color: "text.secondary", lineHeight: 1.6 }}>
-              {service.service_desc ||
-                `${displayName} is a verified ${categoryLabel.toLowerCase()} expert serving ${locCity} with top quality craftsmanship, quick response times, and upfront pricing.`}
+              {service.service_desc}
             </Typography>
           </Box>
+          )}
 
           {/* Services & Specializations */}
           {subServices.length > 0 && (

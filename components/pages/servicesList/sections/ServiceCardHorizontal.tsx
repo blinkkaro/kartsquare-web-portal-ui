@@ -40,13 +40,15 @@ export default function ServiceCardHorizontal({
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   // Parse media
-  const primaryImg =
+  const realImg =
     Array.isArray(service.image_urls) && service.image_urls.length > 0
       ? service.image_urls[0]
       : typeof service.image_urls === "string"
       ? (service.image_urls as string)
-      : service.provider_image_url ||
-        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80";
+      : service.provider_image_url || "";
+  // Placeholder for the photo slot only — never shown as the provider's own work.
+  const primaryImg =
+    realImg || "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80";
 
   const displayName = service.business_name || service.service_name || service.provider_name || "Service Expert";
   const categoryLabel = Array.isArray(service.category_name) ? service.category_name[0] : (service.category_name || "Service");
@@ -55,21 +57,27 @@ export default function ServiceCardHorizontal({
   const subServicesList =
     service.sub_services ||
     (Array.isArray(service.sub_category_name) ? service.sub_category_name : null) ||
-    ["Professional service", "Verified standards"];
+    [];
   const subServicesText = subServicesList.join(" · ");
 
   // Location string: Prioritize Main Area (Justdial style: Jhotwara, Vaishali Nagar, Mansarovar)
-  const locCity = service.service_address?.city_town || "Jaipur";
-  const locArea = service.area_name || "Jaipur";
+  // Real location only: area when the backend knows it, else the address city.
+  const locCity = service.service_address?.city_town?.trim() || "";
+  const locArea = service.area_name?.trim() || "";
   const landmarkText = service.landmark_name && service.landmark_name !== locArea
     ? service.landmark_name.replace(/^(near|opp|opposite)\s+/i, "")
     : "";
-  const locationString = locArea !== locCity ? `${locArea}, ${locCity}` : locCity;
+  const distanceKm =
+    typeof service.distance_km === "number" && Number.isFinite(service.distance_km)
+      ? service.distance_km
+      : null;
+  const distanceText =
+    distanceKm === null ? "" : distanceKm < 1 ? `${Math.round(distanceKm * 1000)} m away` : `${distanceKm.toFixed(1)} km away`;
 
-  // Rating
-  const ratingNum = Number(service.avg_service_rating) || 4.8;
+  // Rating: avg_service_rating defaults to 4.00 in the DB, so it only counts with reviews.
   const reviewCount = Number(service.review_count) || 0;
   const hasReviews = reviewCount > 0;
+  const ratingNum = Number(service.avg_service_rating) || 0;
 
   // Price label
   const hasPrice = typeof service.price === "number" && service.price > 0;
@@ -78,8 +86,8 @@ export default function ServiceCardHorizontal({
   const recentWorks: ProviderRecentWork[] =
     service.recent_works && service.recent_works.length > 0
       ? service.recent_works
-      : primaryImg
-      ? [{ id: `${service.service_id}-w1`, title: displayName, image: primaryImg, type: "image" }]
+      : realImg
+      ? [{ id: `${service.service_id}-w1`, title: displayName, image: realImg, type: "image" }]
       : [];
 
   return (
@@ -207,41 +215,67 @@ export default function ServiceCardHorizontal({
             />
           </Box>
 
-          {/* Rating & Location */}
+          {/* Rating, distance & location (real data only) */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap", mb: 1 }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.35 }}>
-              <StarRoundedIcon sx={{ color: "#f59e0b", fontSize: 19 }} />
-              <Typography sx={{ fontSize: "0.86rem", fontWeight: 700, color: "text.primary" }}>
-                {ratingNum.toFixed(1)}
-              </Typography>
+              <StarRoundedIcon sx={{ color: COLORS.NEW_UI.STAR_AMBER, fontSize: 19 }} />
               {hasReviews ? (
-                <Typography sx={{ fontSize: "0.82rem", color: "text.secondary" }}>
-                  ({reviewCount} reviews)
-                </Typography>
+                <>
+                  <Typography sx={{ fontSize: "0.86rem", fontWeight: 700, color: "text.primary" }}>
+                    {ratingNum.toFixed(1)}
+                  </Typography>
+                  <Typography sx={{ fontSize: "0.82rem", color: "text.secondary" }}>
+                    ({reviewCount} review{reviewCount === 1 ? "" : "s"})
+                  </Typography>
+                </>
               ) : (
-                <Typography sx={{ fontSize: "0.78rem", color: "text.secondary" }}>
-                  · New
+                <Typography sx={{ fontSize: "0.82rem", color: "text.secondary" }}>
+                  New · No reviews yet
                 </Typography>
               )}
             </Box>
-            <Typography sx={{ fontSize: "0.82rem", color: "text.secondary" }}>·</Typography>
-            <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.35 }}>
-              <PlaceRoundedIcon sx={{ fontSize: 16, color: COLORS.PRIMARY_PURPLE }} />
-              <Typography sx={{ fontSize: "0.84rem", fontWeight: 700, color: "text.primary" }}>
-                {locArea}
-              </Typography>
-              <Typography sx={{ fontSize: "0.84rem", color: "text.secondary" }}>
-                , {locCity}
-              </Typography>
-              {landmarkText ? (
-                <Typography sx={{ fontSize: "0.76rem", color: "text.secondary", display: { xs: "none", md: "inline" } }}>
-                  ({landmarkText})
+            {distanceText && (
+              <>
+                <Typography sx={{ fontSize: "0.82rem", color: "text.secondary" }}>·</Typography>
+                <Typography sx={{ fontSize: "0.84rem", fontWeight: 700, color: "text.primary" }}>
+                  {distanceText}
                 </Typography>
-              ) : null}
-            </Box>
+              </>
+            )}
+            {(locArea || locCity) && (
+              <>
+                <Typography sx={{ fontSize: "0.82rem", color: "text.secondary" }}>·</Typography>
+                <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.35 }}>
+                  <PlaceRoundedIcon sx={{ fontSize: 16, color: COLORS.PRIMARY_PURPLE }} />
+                  {locArea && (
+                    <Typography sx={{ fontSize: "0.84rem", fontWeight: 700, color: "text.primary" }}>
+                      {locArea}
+                      {locCity && locCity !== locArea ? "," : ""}
+                    </Typography>
+                  )}
+                  {locCity && locCity !== locArea && (
+                    <Typography
+                      sx={{
+                        fontSize: "0.84rem",
+                        fontWeight: locArea ? 400 : 700,
+                        color: locArea ? "text.secondary" : "text.primary",
+                      }}
+                    >
+                      {locCity}
+                    </Typography>
+                  )}
+                  {landmarkText ? (
+                    <Typography sx={{ fontSize: "0.76rem", color: "text.secondary", display: { xs: "none", md: "inline" } }}>
+                      ({landmarkText})
+                    </Typography>
+                  ) : null}
+                </Box>
+              </>
+            )}
           </Box>
 
           {/* Sub-services tags */}
+          {subServicesText && (
           <Typography
             sx={{
               fontSize: "0.84rem",
@@ -256,6 +290,7 @@ export default function ServiceCardHorizontal({
           >
             {subServicesText}
           </Typography>
+          )}
 
           {/* Recent Work Thumbnails + Preview Toggle */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, flexWrap: "wrap" }}>

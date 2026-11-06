@@ -15,69 +15,29 @@ import { TopService } from "@/services/topSuppliers/topSupplires.interfaces";
 import { Section, SectionHeader } from "./shared";
 import { HOME_PHOTOS } from "./homePhotos";
 
-/** Dummy top pros used when the API returns no results */
-const DUMMY_TOP_PROS = [
-  {
-    id: "dummy-pro-1",
-    name: "Sharma Electricals & AC Care",
-    category_name: ["Electrician", "AC Repair"],
-    provider_id: "prov-1",
-    provider_first_name: "Ramesh",
-    provider_last_name: "Sharma",
-    rating: "4.9",
-    review_count: "128",
-    price: "299",
-    city_town: "Vaishali Nagar, Jaipur",
-    image_url: HOME_PHOTOS.electricianHero.src,
-    is_new: false,
-    verified: true,
-  },
-  {
-    id: "dummy-pro-2",
-    name: "Glamour Bride Studio & Salon",
-    category_name: ["Beauty & Salon"],
-    provider_id: "prov-2",
-    provider_first_name: "Pooja",
-    provider_last_name: "Verma",
-    rating: "4.8",
-    review_count: "94",
-    price: "999",
-    city_town: "C-Scheme, Jaipur",
-    image_url: HOME_PHOTOS.bridalMakeup.src,
-    is_new: true,
-    verified: true,
-  },
-  {
-    id: "dummy-pro-3",
-    name: "Sparkle Clean Home Solutions",
-    category_name: ["Home Cleaning"],
-    provider_id: "prov-3",
-    provider_first_name: "Sunil",
-    provider_last_name: "Kumar",
-    rating: "4.9",
-    review_count: "215",
-    price: "499",
-    city_town: "Mansarovar, Jaipur",
-    image_url: HOME_PHOTOS.homeCleaning.src,
-    is_new: false,
-    verified: true,
-  },
-  {
-    id: "dummy-pro-4",
-    name: "Apex Plumbing & Sanitations",
-    category_name: ["Plumbing"],
-    provider_id: "prov-4",
-    provider_first_name: "Mahesh",
-    provider_last_name: "Saini",
-    rating: "4.7",
-    review_count: "76",
-    price: "199",
-    city_town: "Malviya Nagar, Jaipur",
-    image_url: HOME_PHOTOS.plumberSink.src,
-    is_new: false,
-    verified: true,
-  },
+/** Neutral photo for the image slot when a listing has none (never a fake listing). */
+const FALLBACK_IMAGES = [
+  HOME_PHOTOS.electricianHero.src,
+  HOME_PHOTOS.homeCleaning.src,
+  HOME_PHOTOS.acRepair.src,
+  HOME_PHOTOS.beautySalon.src,
 ];
+
+interface TopProCard {
+  id: string;
+  name: string;
+  category_name: string[];
+  provider_id: string;
+  provider_first_name?: string;
+  provider_last_name?: string;
+  /** Shown only when there are real reviews behind it. */
+  rating: string | null;
+  review_count: number;
+  price: string | null;
+  city_town: string;
+  image_url: string;
+  verified: boolean;
+}
 
 // Mobile: horizontal snap slider (next card peeks). sm+: regular grid.
 const cardTrack = {
@@ -135,27 +95,27 @@ export default function NewTopPros() {
 
   const rawServices: TopService[] = servicer ?? [];
 
-  // When API has items use them (services first, then providers), otherwise fallback to rich dummy data
-  const services = useMemo(() => {
+  // Real listings only. With none, the section is hidden rather than filled with examples.
+  const services: TopProCard[] = useMemo(() => {
     if (isLoading) return [];
     if (rawServices.length > 0) {
       return rawServices.slice(0, 4).map((s, idx) => {
         const img = Array.isArray(s.image_urls) && s.image_urls.length > 0
           ? s.image_urls[0]
-          : (typeof s.image_urls === "string" ? s.image_urls : DUMMY_TOP_PROS[idx % DUMMY_TOP_PROS.length].image_url);
+          : (typeof s.image_urls === "string" && s.image_urls ? s.image_urls : FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length]);
+        const reviews = Number(s.review_count) || 0;
         return {
           id: s.id || `pro-${idx}`,
           name: s.name,
-          category_name: s.category_name ?? ["Service"],
+          category_name: s.category_name ?? [],
           provider_id: s.provider_id,
           provider_first_name: s.provider_first_name,
           provider_last_name: s.provider_last_name,
-          rating: s.rating && Number(s.rating) > 0 ? String(s.rating) : "4.8",
-          review_count: s.review_count && Number(s.review_count) > 0 ? String(s.review_count) : "24",
-          price: s.price && Number(s.price) > 0 ? String(s.price) : "499",
-          city_town: s.city_town || `${location.city || "Jaipur"}`,
+          rating: reviews > 0 && Number(s.rating) > 0 ? Number(s.rating).toFixed(1) : null,
+          review_count: reviews,
+          price: s.price && Number(s.price) > 0 ? String(s.price) : null,
+          city_town: s.city_town || "",
           image_url: img,
-          is_new: idx === 1,
           verified: true,
         };
       });
@@ -163,28 +123,30 @@ export default function NewTopPros() {
     if (provider && provider.length > 0) {
       return provider.slice(0, 4).map((p, idx) => ({
         id: p.id || `prov-${idx}`,
-        name: p.business_name || `${p.first_name || ""} ${p.last_name || ""}`.trim() || "Service Expert",
-        category_name: ["Verified Pro"],
+        name: p.business_name || `${p.first_name || ""} ${p.last_name || ""}`.trim() || "Service provider",
+        category_name: [],
         provider_id: p.id,
         provider_first_name: p.first_name,
         provider_last_name: p.last_name,
-        rating: p.rating && Number(p.rating) > 0 ? String(p.rating) : "4.9",
-        review_count: p.total_bookings && Number(p.total_bookings) > 0 ? String(p.total_bookings) : "32",
-        price: "399",
-        city_town: p.city || `${location.city || "Jaipur"}`,
-        image_url: p.profile_pic || DUMMY_TOP_PROS[idx % DUMMY_TOP_PROS.length].image_url,
-        is_new: false,
+        // Bookings are not reviews: no rating is shown for providers here.
+        rating: null,
+        review_count: 0,
+        price: null,
+        city_town: p.city || "",
+        image_url: p.profile_pic || FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length],
         verified: true,
       }));
     }
-    return DUMMY_TOP_PROS;
-  }, [rawServices, provider, isLoading, location.city]);
+    return [];
+  }, [rawServices, provider, isLoading]);
+
+  if (!isLoading && services.length === 0) return null;
 
   return (
     <Section id="top-pros" sx={{ pb: { xs: 4, md: 6 }, px: 0 }}>
       <SectionHeader
         title="Trusted professionals near you"
-        subtitle={`Listed on Kartsquare in ${location.city || "Jaipur"}`}
+        subtitle={location.city ? `Listed on Kartsquare in ${location.city}` : "Listed on Kartsquare"}
         action={
           <Box
             component={Link}
@@ -265,22 +227,7 @@ export default function NewTopPros() {
 
                   {/* Badges on image */}
                   <Box sx={{ position: "absolute", top: 12, left: 12, display: "flex", gap: 0.75 }}>
-                    {item.is_new ? (
-                      <Box
-                        sx={{
-                          px: 1.25,
-                          py: 0.35,
-                          borderRadius: 2,
-                          bgcolor: "#fff",
-                          color: "#ea580c",
-                          fontSize: "0.68rem",
-                          fontWeight: 800,
-                          boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                        }}
-                      >
-                        New on Kartsquare
-                      </Box>
-                    ) : item.category_name?.[0] ? (
+                    {item.category_name?.[0] ? (
                       <Box
                         sx={{
                           px: 1.25,
@@ -323,19 +270,23 @@ export default function NewTopPros() {
                     {item.name}
                   </Typography>
 
-                  {/* Location */}
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1.5, color: "text.secondary" }}>
-                    <PlaceRoundedIcon sx={{ fontSize: 16, color: "text.secondary" }} />
-                    <Typography sx={{ fontSize: "0.8rem", color: "text.secondary" }} noWrap>
-                      {item.city_town}
-                    </Typography>
+                  {/* Location (only when the listing has one) */}
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1.5, color: "text.secondary", minHeight: 20 }}>
+                    {item.city_town && (
+                      <>
+                        <PlaceRoundedIcon sx={{ fontSize: 16, color: "text.secondary" }} />
+                        <Typography sx={{ fontSize: "0.8rem", color: "text.secondary" }} noWrap>
+                          {item.city_town}
+                        </Typography>
+                      </>
+                    )}
                   </Box>
 
-                  {/* Rating only once there are 3+ reviews; otherwise a neutral "New" label */}
+                  {/* Rating only once there are 3+ real reviews; otherwise a neutral "New" label */}
                   <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 2.5, mt: "auto" }}>
-                    {Number(item.review_count) >= 3 ? (
+                    {item.rating && Number(item.review_count) >= 3 ? (
                       <>
-                        <StarRoundedIcon sx={{ fontSize: 18, color: "#f59e0b" }} />
+                        <StarRoundedIcon sx={{ fontSize: 18, color: COLORS.NEW_UI.STAR_AMBER }} />
                         <Typography sx={{ fontSize: "0.88rem", fontWeight: 700 }}>
                           {item.rating}
                         </Typography>

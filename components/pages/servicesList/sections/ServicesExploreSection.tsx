@@ -10,7 +10,6 @@ import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import VerifiedUserRoundedIcon from "@mui/icons-material/VerifiedUserRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import { COLORS } from "@/constants/colors";
-import { SAMPLE_EXPLORE_POSTS } from "../servicesSampleData";
 import { useGetInfinitePosts, useGetReels } from "@/hooks/usePosts";
 import { Visibility, Posts } from "@/services/post/postInterfaces";
 
@@ -21,7 +20,7 @@ interface ServicesExploreSectionProps {
 
 export const ServicesExploreSection: React.FC<ServicesExploreSectionProps> = ({
   categoryName = "electricians",
-  cityName = "Jaipur",
+  cityName,
 }) => {
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";

@@ -85,7 +85,9 @@ export default function NewPopularInArea() {
   const { location } = useAILocation();
   const { data: categories } = useCategories();
 
-  const city = location.city || "Jaipur";
+  // The services page reads the same shared location, so links carry no city.
+  const city = location.city;
+  const placeTitle = city ?? "your area";
 
   // Interactive spotlight: one row open at a time. Auto-advances until the user
   // touches the list; pauses off-screen and for reduced-motion users.
@@ -203,14 +205,17 @@ export default function NewPopularInArea() {
               background: "linear-gradient(160deg, #14052f 0%, #2a0d73 45%, #4c1bd0 100%)",
             }}
           >
-            <Image
-              src={HOME_PHOTOS.hawaMahal.src}
-              alt={HOME_PHOTOS.hawaMahal.alt}
-              fill
-              loading="lazy"
-              sizes="(max-width: 1200px) 100vw, 520px"
-              style={{ objectFit: "cover", opacity: 0.28, mixBlendMode: "luminosity", zIndex: -3 }}
-            />
+            {/* The Hawa Mahal photo belongs to Jaipur only; other places get the plain banner. */}
+            {city === "Jaipur" && (
+              <Image
+                src={HOME_PHOTOS.hawaMahal.src}
+                alt={HOME_PHOTOS.hawaMahal.alt}
+                fill
+                loading="lazy"
+                sizes="(max-width: 1200px) 100vw, 520px"
+                style={{ objectFit: "cover", opacity: 0.28, mixBlendMode: "luminosity", zIndex: -3 }}
+              />
+            )}
             {/* drifting aurora blobs */}
             <Box aria-hidden sx={{ position: "absolute", zIndex: -2, top: -60, left: -40, width: 220, height: 220, borderRadius: "50%", background: "radial-gradient(circle, #a77bff 0%, transparent 70%)", filter: "blur(18px)", animation: "ks-blob-a 9s ease-in-out infinite alternate" }} />
             <Box aria-hidden sx={{ position: "absolute", zIndex: -2, bottom: -80, right: -50, width: 260, height: 260, borderRadius: "50%", background: "radial-gradient(circle, #6d3bff 0%, transparent 70%)", filter: "blur(22px)", animation: "ks-blob-b 11s ease-in-out infinite alternate" }} />
@@ -244,7 +249,7 @@ export default function NewPopularInArea() {
 
               <Typography
                 component="h2"
-                aria-label={`Popular services in ${city}`}
+                aria-label={`Popular services in ${placeTitle}`}
                 sx={{
                   mt: 0.75,
                   display: "flex",
@@ -256,7 +261,7 @@ export default function NewPopularInArea() {
                   WebkitTextStroke: "1.5px rgba(255,255,255,0.9)",
                 }}
               >
-                {Array.from(city).map((ch, i) => (
+                {Array.from(placeTitle).map((ch, i) => (
                   <Box
                     key={i}
                     component="span"
@@ -336,8 +341,8 @@ export default function NewPopularInArea() {
             </Box>
             {serviceList.map((serviceName, idx) => {
               const open = idx === active;
-              const photo = photoForCategory(serviceName) ?? HOME_PHOTOS.hawaMahal;
-              const href = `/cus/services-list?search=${encodeURIComponent(serviceName)}&city=${encodeURIComponent(city)}`;
+              const photo = photoForCategory(serviceName) ?? (city === "Jaipur" ? HOME_PHOTOS.hawaMahal : HOME_PHOTOS.homeCleaning);
+              const href = `/cus/services-list?search=${encodeURIComponent(serviceName)}`;
               return (
                 <Box
                   key={idx}
@@ -429,7 +434,7 @@ export default function NewPopularInArea() {
                           <Box sx={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,10,40,0.78) 0%, rgba(20,10,40,0.1) 65%)" }} />
                           <Box sx={{ position: "absolute", left: 12, right: 12, bottom: 10, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1 }}>
                             <Typography sx={{ color: "#fff", fontSize: "0.85rem", fontWeight: 700 }}>
-                              Find {serviceName.toLowerCase()} in {city}
+                              Find {serviceName.toLowerCase()} in {placeTitle}
                             </Typography>
                             <Box
                               sx={{
@@ -472,7 +477,7 @@ export default function NewPopularInArea() {
 
             <Box
               component={Link}
-              href={`/cus/services-list?city=${encodeURIComponent(city)}`}
+              href="/cus/services-list"
               sx={{
                 mt: 1.5,
                 pt: 1.5,
@@ -489,7 +494,7 @@ export default function NewPopularInArea() {
                 "&:hover": { textDecoration: "underline" },
               }}
             >
-              View all services in {city}
+              View all services in {placeTitle}
               <ArrowForwardRoundedIcon sx={{ fontSize: 16 }} />
             </Box>
           </Box>

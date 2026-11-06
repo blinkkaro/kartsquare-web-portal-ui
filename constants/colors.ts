@@ -87,4 +87,34 @@ export const COLORS = {
 
   // error
   ERROR_RED: "#ff4d4f",
+
+  // Services 2.0 (new UI) — values the redesigned services list uses
+  NEW_UI: {
+    PAGE_BG_LIGHT: "#FCFBF9",
+    CARD_BORDER_LIGHT: "#ede9f2",
+    CARD_BORDER_DARK: "rgba(255,255,255,0.08)",
+    CARD_BORDER_HOVER_LIGHT: "#d6cbef",
+    CARD_BORDER_HOVER_DARK: "rgba(130,72,247,0.4)",
+    DIVIDER_LIGHT: "#e2deea",
+    DIVIDER_DARK: "rgba(255,255,255,0.15)",
+    SURFACE_SOFT_LIGHT: "#f8f6fb",
+    SURFACE_SOFT_DARK: "rgba(255,255,255,0.03)",
+    CARD_SHADOW_LIGHT: "0 2px 12px rgba(0,0,0,0.03)",
+    CARD_SHADOW_DARK: "0 4px 16px rgba(0,0,0,0.2)",
+    CARD_SHADOW_HOVER_LIGHT: "0 8px 24px rgba(105,39,218,0.08)",
+    CARD_SHADOW_HOVER_DARK: "0 8px 24px rgba(0,0,0,0.35)",
+    CRUMB_SEPARATOR_LIGHT: "#a39fb0",
+    CRUMB_SEPARATOR_DARK: "rgba(255,255,255,0.3)",
+    ACCENT_TEXT_DARK: "#c4a3ff",
+    CHIP_TEXT_DARK: "#d6b8ff",
+    CHIP_BG_DARK: "rgba(130,72,247,0.12)",
+    OUTLINE_LIGHT: "#d6d0e0",
+    OUTLINE_DARK: "rgba(255,255,255,0.2)",
+    VERIFIED_GREEN: "#16a34a",
+    STAR_AMBER: "#f59e0b",
+    WHATSAPP: "#25D366",
+    WHATSAPP_HOVER: "#20bd5a",
+    BUTTON_SHADOW_HOVER: "0 4px 14px rgba(105,39,218,0.3)",
+    BOTTOM_BAR_SHADOW: "0 -4px 20px rgba(0,0,0,0.06)",
+  },
 };

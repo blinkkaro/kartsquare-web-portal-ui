@@ -53,7 +53,7 @@ export default function FaqSection() {
   const reduce = useMediaQuery("(prefers-reduced-motion: reduce)");
   const { location } = useAILocation();
   const [open, setOpen] = useState<number | false>(0);
-  const items = faqs(location.city);
+  const items = faqs(location.city ?? "your area");
 
   const jsonLd = {
     "@context": "https://schema.org",

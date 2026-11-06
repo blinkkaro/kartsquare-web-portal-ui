@@ -180,8 +180,8 @@ const ProductMap: React.FC<ProductMapProps> = ({
     };
 
     const center = {
-        lat: latitude || 26.9124,
-        lng: longitude || 75.7873,
+        lat: latitude,
+        lng: longitude,
     };
 
     const handleGetDirections = () => {

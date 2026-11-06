@@ -25,6 +25,10 @@ class ServiceListService {
             if (filters?.min_price) params.min_price = filters.min_price;
             if (filters?.max_price) params.max_price = filters.max_price;
             if (filters?.provider_id) params.provider_id = filters.provider_id;
+            if (typeof filters?.latitude === "number" && typeof filters?.longitude === "number") {
+                params.latitude = filters.latitude;
+                params.longitude = filters.longitude;
+            }
 
             const response = await GET<ServiceListResponse>(
                 SERVICE_API_ENDPOINTS.GET_SERVICES,

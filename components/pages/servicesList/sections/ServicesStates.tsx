@@ -6,9 +6,12 @@ import {
   Box,
   Typography,
   Button,
+  InputBase,
   Skeleton,
   useTheme,
 } from "@mui/material";
+import MyLocationRoundedIcon from "@mui/icons-material/MyLocationRounded";
+import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import SearchOffRoundedIcon from "@mui/icons-material/SearchOffRounded";
@@ -118,7 +121,7 @@ interface ServicesEmptyStateProps {
 
 export const ServicesEmptyState: React.FC<ServicesEmptyStateProps> = ({
   categoryName = "electricians",
-  cityName = "Jaipur",
+  cityName,
   onResetFilters,
   hasActiveFilters = false,
 }) => {
@@ -326,7 +329,7 @@ interface ServicesErrorStateProps {
 
 export const ServicesErrorState: React.FC<ServicesErrorStateProps> = ({
   categoryName = "services",
-  cityName = "Jaipur",
+  cityName,
   onRetry,
 }) => {
   const theme = useTheme();
@@ -430,6 +433,154 @@ export const ServicesErrorState: React.FC<ServicesErrorStateProps> = ({
         >
           Browse all categories
         </Button>
+      </Box>
+    </Box>
+  );
+};
+
+interface ServicesLocationPromptProps {
+  categoryName?: string;
+  onUseMyLocation: () => void;
+  onSubmitPlace: (text: string) => void;
+  locating?: boolean;
+}
+
+/**
+ * Shown when we don't know where the user is. Results are always around the
+ * user's own location, so instead of guessing a city the page asks.
+ */
+export const ServicesLocationPrompt: React.FC<ServicesLocationPromptProps> = ({
+  categoryName,
+  onUseMyLocation,
+  onSubmitPlace,
+  locating = false,
+}) => {
+  const theme = useTheme();
+  const dark = theme.palette.mode === "dark";
+  const [place, setPlace] = React.useState("");
+  const subject = categoryName ? categoryName.toLowerCase() : "services";
+
+  return (
+    <Box
+      sx={{
+        bgcolor: "background.paper",
+        borderRadius: "20px",
+        border: "1px solid",
+        borderColor: dark ? COLORS.NEW_UI.CARD_BORDER_DARK : COLORS.NEW_UI.CARD_BORDER_LIGHT,
+        p: { xs: 4, sm: 6 },
+        textAlign: "center",
+      }}
+    >
+      <Box
+        sx={{
+          width: 64,
+          height: 64,
+          borderRadius: "16px",
+          bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10,
+          color: dark ? COLORS.NEW_UI.ACCENT_TEXT_DARK : COLORS.PRIMARY_PURPLE,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          mx: "auto",
+          mb: 2.5,
+        }}
+      >
+        <PlaceRoundedIcon sx={{ fontSize: 32 }} />
+      </Box>
+
+      <Typography
+        component="h3"
+        sx={{
+          fontSize: { xs: "1.25rem", sm: "1.45rem" },
+          fontWeight: 800,
+          color: "text.primary",
+          letterSpacing: "-0.02em",
+          mb: 1,
+        }}
+      >
+        Where do you need {subject}?
+      </Typography>
+
+      <Typography
+        sx={{
+          fontSize: "0.92rem",
+          color: "text.secondary",
+          maxWidth: 480,
+          mx: "auto",
+          lineHeight: 1.6,
+          mb: 3,
+        }}
+      >
+        We show providers who serve your exact location. Share your location, or type your area, city or pincode.
+      </Typography>
+
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1.5, maxWidth: 420, mx: "auto" }}>
+        <Button
+          variant="contained"
+          fullWidth
+          onClick={onUseMyLocation}
+          disabled={locating}
+          startIcon={<MyLocationRoundedIcon sx={{ fontSize: 18 }} />}
+          sx={{
+            bgcolor: COLORS.PRIMARY_PURPLE,
+            color: COLORS.WHITE,
+            borderRadius: "10px",
+            py: 1.1,
+            fontWeight: 700,
+            textTransform: "none",
+            boxShadow: "none",
+            "&:hover": { bgcolor: COLORS.PURPLE_HOVER, boxShadow: COLORS.NEW_UI.BUTTON_SHADOW_HOVER },
+          }}
+        >
+          {locating ? "Finding your location…" : "Use my current location"}
+        </Button>
+
+        <Box
+          component="form"
+          onSubmit={(e: React.FormEvent) => {
+            e.preventDefault();
+            if (place.trim()) onSubmitPlace(place);
+          }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+            gap: 1,
+            p: "4px 4px 4px 14px",
+            borderRadius: "12px",
+            border: "1.5px solid",
+            borderColor: dark ? COLORS.NEW_UI.DIVIDER_DARK : COLORS.NEW_UI.DIVIDER_LIGHT,
+            bgcolor: "background.paper",
+          }}
+        >
+          <PlaceRoundedIcon sx={{ color: dark ? COLORS.NEW_UI.ACCENT_TEXT_DARK : COLORS.PRIMARY_PURPLE, fontSize: 19 }} />
+          <InputBase
+            value={place}
+            onChange={(e) => setPlace(e.target.value)}
+            placeholder="Area, city or pincode"
+            inputProps={{ "aria-label": "Area, city or pincode" }}
+            sx={{ flex: 1, fontSize: "0.9rem", fontWeight: 500, color: "text.primary", "& input": { p: 0 } }}
+          />
+          <Button
+            type="submit"
+            variant="outlined"
+            disabled={!place.trim() || locating}
+            sx={{
+              borderColor: dark ? COLORS.NEW_UI.OUTLINE_DARK : COLORS.NEW_UI.OUTLINE_LIGHT,
+              color: "text.primary",
+              borderRadius: "10px",
+              px: 2,
+              py: 0.6,
+              fontWeight: 700,
+              fontSize: "0.85rem",
+              textTransform: "none",
+              flexShrink: 0,
+              "&:hover": { borderColor: COLORS.PRIMARY_PURPLE, color: COLORS.PRIMARY_PURPLE },
+            }}
+          >
+            Search
+          </Button>
+        </Box>
       </Box>
     </Box>
   );

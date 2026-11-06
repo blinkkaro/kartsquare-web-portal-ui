@@ -51,7 +51,7 @@ const categoryHref = (id: string) => `/cus/services-list?category=${encodeURICom
 
 const clamp2 = { display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", overflowWrap: "normal", hyphens: "auto" } as const;
 /** Below 360px the arrow button steals ~40px from the title, so it is hidden there. */
-const HIDE_BELOW_360 = { display: { xs: "none", "@media (min-width:360px)": "flex" } } as const;
+const HIDE_BELOW_360 = { display: "none", "@media (min-width:360px)": { display: "flex" } } as const;
 
 export default function CategoryGrid() {
   const dark = useTheme().palette.mode === "dark";
