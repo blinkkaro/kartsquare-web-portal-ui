@@ -161,6 +161,7 @@ export const english = {
   home: "Home",
   dashboard: "Dashboard",
   store: "Store",
+  feed: "Feed",
   services: "Services",
   events: "Events",
   bookings: "Bookings",

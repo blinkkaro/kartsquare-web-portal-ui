@@ -17,125 +17,23 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 
-// Comprehensive Icon set for all 40 categories
-import AgricultureRoundedIcon from "@mui/icons-material/AgricultureRounded";
-import WaterDropRoundedIcon from "@mui/icons-material/WaterDropRounded";
-import DirectionsCarRoundedIcon from "@mui/icons-material/DirectionsCarRounded";
-import ContentCutRoundedIcon from "@mui/icons-material/ContentCutRounded";
-import BusinessCenterRoundedIcon from "@mui/icons-material/BusinessCenterRounded";
-import CheckroomRoundedIcon from "@mui/icons-material/CheckroomRounded";
-import ArchitectureRoundedIcon from "@mui/icons-material/ArchitectureRounded";
-import LocalShippingRoundedIcon from "@mui/icons-material/LocalShippingRounded";
-import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
-import SolarPowerRoundedIcon from "@mui/icons-material/SolarPowerRounded";
-import CelebrationRoundedIcon from "@mui/icons-material/CelebrationRounded";
-import AccountBalanceRoundedIcon from "@mui/icons-material/AccountBalanceRounded";
-import FitnessCenterRoundedIcon from "@mui/icons-material/FitnessCenterRounded";
-import LocalGroceryStoreRoundedIcon from "@mui/icons-material/LocalGroceryStoreRounded";
-import LocalHospitalRoundedIcon from "@mui/icons-material/LocalHospitalRounded";
-import HomeRepairServiceRoundedIcon from "@mui/icons-material/HomeRepairServiceRounded";
-import ComputerRoundedIcon from "@mui/icons-material/ComputerRounded";
-import DiamondRoundedIcon from "@mui/icons-material/DiamondRounded";
-import LocalLaundryServiceRoundedIcon from "@mui/icons-material/LocalLaundryServiceRounded";
-import GavelRoundedIcon from "@mui/icons-material/GavelRounded";
-import PrecisionManufacturingRoundedIcon from "@mui/icons-material/PrecisionManufacturingRounded";
-import MovieCreationRoundedIcon from "@mui/icons-material/MovieCreationRounded";
-import SmartphoneRoundedIcon from "@mui/icons-material/SmartphoneRounded";
-import MusicNoteRoundedIcon from "@mui/icons-material/MusicNoteRounded";
-import VolunteerActivismRoundedIcon from "@mui/icons-material/VolunteerActivismRounded";
-import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
-import PetsRoundedIcon from "@mui/icons-material/PetsRounded";
-import CameraAltRoundedIcon from "@mui/icons-material/CameraAltRounded";
-import PrintRoundedIcon from "@mui/icons-material/PrintRounded";
-import ApartmentRoundedIcon from "@mui/icons-material/ApartmentRounded";
-import SelfImprovementRoundedIcon from "@mui/icons-material/SelfImprovementRounded";
-import CarRentalRoundedIcon from "@mui/icons-material/CarRentalRounded";
-import RestaurantRoundedIcon from "@mui/icons-material/RestaurantRounded";
-import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
-import ShoppingBagRoundedIcon from "@mui/icons-material/ShoppingBagRounded";
-import LayersRoundedIcon from "@mui/icons-material/LayersRounded";
-import LocalTaxiRoundedIcon from "@mui/icons-material/LocalTaxiRounded";
-import FlightTakeoffRoundedIcon from "@mui/icons-material/FlightTakeoffRounded";
-import AcUnitRoundedIcon from "@mui/icons-material/AcUnitRounded";
-import CleaningServicesRoundedIcon from "@mui/icons-material/CleaningServicesRounded";
-import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
-import PlumbingRoundedIcon from "@mui/icons-material/PlumbingRounded";
-
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { COLORS } from "@/constants/colors";
 import { useCategories } from "@/hooks/useCategories";
 import { useAILocation } from "@/components/common/Ai/useAILocation";
 import { toSlug } from "@/services/location/locationClient";
 import { Section, sectionTitleSx, sectionSubtitleSx } from "./shared";
+import CategoryIcon, { sameOrigin } from "@/components/common/CategoryIcon";
 
-type IconType = typeof AcUnitRoundedIcon;
+/** Fields from migration 006; the dummy fallback categories have none of them. */
+type CategoryMedia = { icon?: string | null; color?: string | null; image?: string | null };
 
-/** Full regex rule set to match all 40 categories in Kartsquare DB */
-const ICON_RULES: Array<[RegExp, IconType]> = [
-  [/\b(agri|farm)/i, AgricultureRoundedIcon],
-  [/\b(air.*water|water.*treat|water.*purif)/i, WaterDropRoundedIcon],
-  [/\b(auto|car|bike|motor|vehicle)/i, DirectionsCarRoundedIcon],
-  [/\b(beauty|salon|parlou?r|spa|groom|hair|makeup)/i, ContentCutRoundedIcon],
-  [/\b(business\s*serv)/i, BusinessCenterRoundedIcon],
-  [/\b(cloth|tailor|apparel|dress)/i, CheckroomRoundedIcon],
-  [/\b(construct|archit|build)/i, ArchitectureRoundedIcon],
-  [/\b(courier|logist)/i, LocalShippingRoundedIcon],
-  [/\b(educat|train|coach|tutor|school)/i, SchoolRoundedIcon],
-  [/\b(energy|environ|solar)/i, SolarPowerRoundedIcon],
-  [/\b(event|entertain|party|celebrat)/i, CelebrationRoundedIcon],
-  [/\b(financ|loan|tax|account|ca\b)/i, AccountBalanceRoundedIcon],
-  [/\b(fit|sport|gym|workout)/i, FitnessCenterRoundedIcon],
-  [/\b(gov|public)/i, AccountBalanceRoundedIcon],
-  [/\b(groc|daily|mart|store)/i, LocalGroceryStoreRoundedIcon],
-  [/\b(health|wellness|doctor|clinic|medic)/i, LocalHospitalRoundedIcon],
-  [/\b(home\s*serv|repair)/i, HomeRepairServiceRoundedIcon],
-  [/\b(it\b|digital|software|web|tech)/i, ComputerRoundedIcon],
-  [/\b(jewel|gold|silver|access)/i, DiamondRoundedIcon],
-  [/\b(laundry|dry\s*clean)/i, LocalLaundryServiceRoundedIcon],
-  [/\b(legal|law|lawyer|advocate)/i, GavelRoundedIcon],
-  [/\b(manufact|indust)/i, PrecisionManufacturingRoundedIcon],
-  [/\b(media|creative)/i, MovieCreationRoundedIcon],
-  [/\b(mobile|electronic|phone)/i, SmartphoneRoundedIcon],
-  [/\b(music)/i, MusicNoteRoundedIcon],
-  [/\b(ngo|social)/i, VolunteerActivismRoundedIcon],
-  [/\b(optic|eyewear|glass)/i, VisibilityRoundedIcon],
-  [/\b(pack|mov|shift)/i, LocalShippingRoundedIcon],
-  [/\b(pet|animal|vet)/i, PetsRoundedIcon],
-  [/\b(photo|video|studio|shoot)/i, CameraAltRoundedIcon],
-  [/\b(print|station)/i, PrintRoundedIcon],
-  [/\b(real\s*estate|property)/i, ApartmentRoundedIcon],
-  [/\b(relig|spirit|puja|pandit|jyotish|vastu)/i, SelfImprovementRoundedIcon],
-  [/\b(rental)/i, CarRentalRoundedIcon],
-  [/\b(rest|food|cafe|dining)/i, RestaurantRoundedIcon],
-  [/\b(secur|cctv|guard)/i, SecurityRoundedIcon],
-  [/\b(shop|retail)/i, ShoppingBagRoundedIcon],
-  [/\b(stone|marble|tile)/i, LayersRoundedIcon],
-  [/\b(transp|cab|taxi)/i, LocalTaxiRoundedIcon],
-  [/\b(travel|tour|hotel|hospitality)/i, FlightTakeoffRoundedIcon],
-  [/\b(ac|appliance|cool)/i, AcUnitRoundedIcon],
-  [/\b(clean|pest|maid)/i, CleaningServicesRoundedIcon],
-  [/\b(electric)/i, BoltRoundedIcon],
-  [/\b(plumb)/i, PlumbingRoundedIcon],
-];
-
-const iconFor = (name: string): IconType =>
-  ICON_RULES.find(([re]) => re.test(name))?.[1] ?? HomeRepairServiceRoundedIcon;
-
-/** Category images for the visual cards. */
-const CATEGORY_IMAGES: Record<string, string> = {
-  ac: "/images/home/ac-repair.jpg",
-  clean: "/images/home/home-cleaning.jpg",
-  beauty: "/images/home/beauty-salon.jpg",
-  electric: "/images/home/electrician-box.jpg",
-};
-
-const getImageForCategory = (name: string): string | null => {
-  const lower = name.toLowerCase();
-  if (/\b(ac|appliance|cool)/i.test(lower)) return CATEGORY_IMAGES.ac;
-  if (/clean|pest|maid/i.test(lower)) return CATEGORY_IMAGES.clean;
-  if (/beauty|salon|parlou?r|spa|groom/i.test(lower)) return CATEGORY_IMAGES.beauty;
-  if (/electric/i.test(lower)) return CATEGORY_IMAGES.electric;
-  return null;
+/** Hosts next.config lets next/image load from; any other photo falls back to the colour gradient. */
+const PHOTO_HOSTS = /^https:\/\/(res\.cloudinary\.com|images\.unsplash\.com|kartsquare-document\.s3\.ap-south-1\.amazonaws\.com)\//;
+const photoSrc = (url?: string | null): string | null => {
+  const src = sameOrigin(url);
+  return src && (src.startsWith("/") || PHOTO_HOSTS.test(src)) ? src : null;
 };
 
 /** Short descriptions for all categories. */
@@ -227,7 +125,7 @@ export default function NewCategoryGrid() {
   // Use API data if available, else dummy
   const cats = (!isLoading && categories && categories.length > 0) ? categories : (isLoading ? null : DUMMY_CATEGORIES);
 
-  const go = (c: { id: string; name: string; slug?: string }) => {
+  const go = (c: { id: string; name: string; slug?: string | null }) => {
     if (c.slug && city) {
       router.push(`/${city}/${c.slug}`);
     } else {
@@ -338,7 +236,9 @@ export default function NewCategoryGrid() {
           }}
         >
           {imageCards.map((c, i) => {
-            const img = getImageForCategory(c.name);
+            const img = photoSrc((c as CategoryMedia).image);
+            const { icon, color } = c as CategoryMedia;
+            const hasColor = Boolean(color && /^#[0-9a-f]{6}$/i.test(color));
             const isFirst = i === 0;
             return (
               <Box
@@ -359,11 +259,10 @@ export default function NewCategoryGrid() {
                   overflow: "hidden",
                   cursor: "pointer",
                   height: { xs: 155, sm: 180, md: 215, lg: 225, xl: 240 },
-                  backgroundImage: img
-                    ? `url(${img})`
+                  // Under the photo, or the whole card when there is none: the category's own colour.
+                  backgroundImage: hasColor
+                    ? `linear-gradient(135deg, ${color}, ${color}b3)`
                     : `linear-gradient(135deg, ${COLORS.PURPLE_ALPHA_20}, ${COLORS.PURPLE_ALPHA_04})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
                   bgcolor: dark ? "#2a2535" : "#f0edf5",
                   transition: "transform 180ms ease, box-shadow 180ms ease",
                   "&:hover": {
@@ -377,6 +276,18 @@ export default function NewCategoryGrid() {
                   WebkitTapHighlightColor: "transparent",
                 }}
               >
+                {/* Category photo: above the fold, so fetched first and never lazily */}
+                {img && (
+                  <Image
+                    src={img}
+                    alt=""
+                    fill
+                    priority
+                    sizes="(max-width: 900px) 50vw, 300px"
+                    style={{ objectFit: "cover" }}
+                  />
+                )}
+
                 {/* Gradient overlay for readability */}
                 <Box
                   sx={{
@@ -409,13 +320,25 @@ export default function NewCategoryGrid() {
                 )}
 
                 {/* Category details */}
-                <Box sx={{ position: "absolute", bottom: { xs: 12, md: 16 }, left: { xs: 12, md: 16 }, right: { xs: 12, md: 16 } }}>
+                <Box sx={{ position: "absolute", bottom: { xs: 12, md: 16 }, left: { xs: 12, md: 16 }, right: { xs: 12, md: 16 }, pr: { xs: 0, sm: 5 } }}>
+                  <CategoryIcon
+                    icon={icon}
+                    tile={{ xs: 38, sm: 42 }}
+                    size={{ xs: 22, sm: 26 }}
+                    radius={2.5}
+                    priority
+                    sx={{ bgcolor: "common.white", mb: 1, boxShadow: "0 2px 8px rgba(0,0,0,0.25)" }}
+                  />
                   <Typography
                     sx={{
                       color: "#fff",
                       fontWeight: 800,
                       fontSize: { xs: "0.95rem", sm: "1.05rem", md: "1.2rem" },
                       lineHeight: 1.2,
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
                     }}
                   >
                     {c.name}
@@ -596,7 +519,7 @@ export default function NewCategoryGrid() {
             }}
           >
             {paginatedCategories.map((c) => {
-              const Icon = iconFor(c.name);
+              const { icon, color } = c as CategoryMedia;
               return (
                 <Box
                   key={c.id}
@@ -637,25 +560,7 @@ export default function NewCategoryGrid() {
                   }}
                 >
                   {/* Category Icon */}
-                  <Box
-                    sx={{
-                      width: { xs: 38, sm: 42 },
-                      height: { xs: 38, sm: 42 },
-                      borderRadius: 2.5,
-                      bgcolor: dark ? "rgba(130,72,247,0.12)" : COLORS.PURPLE_ALPHA_10,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                    }}
-                  >
-                    <Icon
-                      sx={{
-                        color: dark ? "#d6b8ff" : COLORS.PRIMARY_PURPLE,
-                        fontSize: { xs: 20, sm: 22 },
-                      }}
-                    />
-                  </Box>
+                  <CategoryIcon icon={icon} color={color} tile={{ xs: 38, sm: 42 }} size={{ xs: 22, sm: 26 }} radius={2.5} priority />
 
                   {/* Category Text */}
                   <Box sx={{ flex: 1, minWidth: 0 }}>

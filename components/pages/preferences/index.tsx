@@ -295,6 +295,8 @@ function PreferencesView() {
                   onPress={() => handleToggle(preference.id)}
                   isSelected={selectedPreferenceIds.has(preference.id)}
                   id={preference.id}
+                  icon={preference.icon_url}
+                  color={preference.color}
                 />
               </Grid>
             ))}

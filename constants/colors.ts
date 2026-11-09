@@ -114,6 +114,8 @@ export const COLORS = {
     STAR_AMBER: "#f59e0b",
     WHATSAPP: "#25D366",
     WHATSAPP_HOVER: "#20bd5a",
+    /** Near-black used for selected pills on light backgrounds (services list chips, feed tabs). */
+    INK: "#1c1924",
     BUTTON_SHADOW_HOVER: "0 4px 14px rgba(105,39,218,0.3)",
     BOTTOM_BAR_SHADOW: "0 -4px 20px rgba(0,0,0,0.06)",
   },

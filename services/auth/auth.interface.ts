@@ -59,7 +59,12 @@ export interface RegisterData {
   whatsapp_country_code?: string;
 }
 export interface preferences {
+  /** Icon key used by the mobile app, e.g. "home_services". */
   icon: string;
+  /** Duotone SVG icon URL for the web (backend migration 006). */
+  icon_url?: string | null;
+  /** Category colour as #rrggbb (migration 006). */
+  color?: string | null;
   id: string;
   preference_name: string;
   is_active: boolean;

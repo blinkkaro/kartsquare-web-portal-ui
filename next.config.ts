@@ -97,7 +97,18 @@ const nextConfig: NextConfig = {
       { source: "/terms-conditions", destination: "/termsConditions" },
     ];
   },
+  // Category icons and photos change only on a deploy: let browsers and the CDN keep them
+  // for 30 days, and serve the cached copy while revalidating for a week after that.
+  async headers() {
+    const longCache = [{ key: "Cache-Control", value: "public, max-age=2592000, stale-while-revalidate=604800" }];
+    return [
+      { source: "/category-icons/:path*", headers: longCache },
+      { source: "/images/categories/:path*", headers: longCache },
+    ];
+  },
   images: {
+    // AVIF first: about 20% smaller than WebP for the category photos.
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",

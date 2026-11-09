@@ -120,6 +120,14 @@ export interface Category {
   deleted_by?: string;
   created_at: string;
   updated_at: string;
+  /** URL segment for /{city}/{category}. */
+  slug?: string | null;
+  /** Duotone SVG icon URL (backend migration 006). */
+  icon?: string | null;
+  /** Category colour as #rrggbb (migration 006). */
+  color?: string | null;
+  /** Category photo URL for the large home cards (migration 006). */
+  image?: string | null;
 }
 
 export interface CategoryListResponse {
