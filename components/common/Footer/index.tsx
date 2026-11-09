@@ -36,7 +36,7 @@ const Footer: React.FC = () => {
       { label: t("aboutUs"), href: "/about-us" },
       { label: t("careers"), href: "/careers" },
       { label: t("blogs"), href: "/blogs" },
-      { label: t("contactUs"), href: "/contactUs" },
+      { label: t("contactUs"), href: "/contact-us" },
     ],
     services: [
       { label: t("services"), href: "/cus/services-list" },
@@ -49,8 +49,8 @@ const Footer: React.FC = () => {
       { label: t("faqs"), href: "/myAccount/FAQ" },
     ],
     legal: [
-      { label: t("privacy_policy"), href: "/privacyPolicy" },
-      { label: t("termsConditions"), href: "/termsConditions" },
+      { label: t("privacy_policy"), href: "/privacy-policy" },
+      { label: t("termsConditions"), href: "/terms-conditions" },
       { label: t("cookiePolicy"), href: "/cookie-policy" },
     ],
   };

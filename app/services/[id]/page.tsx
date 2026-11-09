@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { permanentRedirect } from "next/navigation";
 import CustomerServiceDetails from "../../../components/pages/customer/serviceDetails";
 import { serviceListService } from "@/services/serviceList/serviceListService";
 import { SITE_URL } from "@/lib/seo/buildMetadata";
@@ -8,6 +9,9 @@ type Props = {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
+
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function parseStructured(raw: unknown): Record<string, unknown> | null {
   if (!raw) return null;
@@ -106,6 +110,17 @@ export default async function ServiceDetailPage({
 }) {
   const { id } = await params;
   let jsonLd: string | null = null;
+
+  // Old UUID links 301 to the slug URL so each service has exactly one indexable
+  // address. Done outside the try/catch: redirect() works by throwing.
+  if (UUID_RE.test(id)) {
+    const slug = await serviceListService
+      .getServiceById(id)
+      .then((s) => s.slug?.trim() || null)
+      .catch(() => null);
+    if (slug && slug !== id) permanentRedirect(`/services/${slug}`);
+  }
+
   try {
     const service = await serviceListService.getServiceById(id);
     const structured = parseStructured(service.structured_data);
