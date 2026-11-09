@@ -160,7 +160,8 @@ export async function GET() {
   // Add Services
   if (Array.isArray(services)) {
     services.forEach((s: any) => {
-      const pathSeg = (s.slug && String(s.slug).trim()) || s.service_id || "";
+      // Slug only: a UUID URL 301s to the slug, so listing it wastes crawl budget.
+      const pathSeg = (s.slug && String(s.slug).trim()) || "";
       if (pathSeg) {
         const url = `${BASE_URL}/services/${pathSeg}`;
         const lastmod = s.updated_at || s.created_at;

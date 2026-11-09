@@ -27,8 +27,18 @@ export async function generateMetadata({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }): Promise<Metadata> {
   const md = await sitePageSeoOrFallback("services_list", servicesListFallback);
-  const { category } = await searchParams;
+  const { category, search } = await searchParams;
   const categoryId = Array.isArray(category) ? category[0] : category;
+  const searchTerm = Array.isArray(search) ? search[0] : search;
+  // Free-text search results are infinite near-duplicate pages: keep them out of
+  // the index and point them at the bare listing.
+  if (searchTerm && !categoryId) {
+    return {
+      ...md,
+      alternates: { ...md.alternates, canonical: `${SITE_URL}/cus/services-list` },
+      robots: { index: false, follow: true },
+    };
+  }
   if (!categoryId) return md;
   // Each category page gets its own canonical, so Google indexes them separately
   // instead of collapsing every ?category=<id> view into the bare listing URL.
