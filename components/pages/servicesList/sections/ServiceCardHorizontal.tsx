@@ -453,6 +453,8 @@ export default function ServiceCardHorizontal({
             sx={{
               display: "flex",
               flexDirection: { xs: "row", sm: "column" },
+              // Phones: View details on its own row, Quick view + Directions below
+              flexWrap: { xs: "wrap", sm: "nowrap" },
               alignItems: "stretch",
               width: "100%",
               gap: 1,
@@ -462,7 +464,9 @@ export default function ServiceCardHorizontal({
               variant="contained"
               onClick={() => onViewService(service)}
               sx={{
-                flex: { xs: 1, sm: "none" },
+                flex: { xs: "1 1 100%", sm: "none" },
+                minHeight: { xs: 44, sm: "auto" },
+                whiteSpace: { xs: "nowrap", sm: "normal" },
                 bgcolor: COLORS.PRIMARY_PURPLE,
                 color: "#ffffff",
                 borderRadius: "10px",
@@ -486,7 +490,9 @@ export default function ServiceCardHorizontal({
               variant="text"
               onClick={() => onOpenQuickView(service)}
               sx={{
-                flex: { xs: 1, sm: "none" },
+                flex: { xs: "1 1 0", sm: "none" },
+                minHeight: { xs: 44, sm: "auto" },
+                whiteSpace: { xs: "nowrap", sm: "normal" },
                 color: "text.secondary",
                 fontSize: "0.82rem",
                 fontWeight: 600,
@@ -513,7 +519,9 @@ export default function ServiceCardHorizontal({
                 aria-label={`Directions to ${displayName} in Google Maps`}
                 startIcon={<DirectionsRoundedIcon sx={{ fontSize: "18px !important" }} />}
                 sx={{
-                  flex: { xs: 1, sm: "none" },
+                  flex: { xs: "1 1 0", sm: "none" },
+                  minHeight: { xs: 44, sm: "auto" },
+                  whiteSpace: { xs: "nowrap", sm: "normal" },
                   color: dark ? COLORS.NEW_UI.ACCENT_TEXT_DARK : COLORS.PRIMARY_PURPLE,
                   fontSize: "0.82rem",
                   fontWeight: 700,
