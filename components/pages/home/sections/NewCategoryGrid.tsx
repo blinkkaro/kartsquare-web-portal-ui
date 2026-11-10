@@ -18,6 +18,7 @@ import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 
 import Image from "next/image";
+import cloudinaryLoader, { isCloudinaryUrl } from "@/lib/cloudinaryLoader";
 import { useRouter } from "next/navigation";
 import { COLORS } from "@/constants/colors";
 import { useCategories } from "@/hooks/useCategories";
@@ -33,7 +34,8 @@ type CategoryMedia = { icon?: string | null; color?: string | null; image?: stri
 const PHOTO_HOSTS = /^https:\/\/(res\.cloudinary\.com|images\.unsplash\.com|kartsquare-document\.s3\.ap-south-1\.amazonaws\.com)\//;
 const photoSrc = (url?: string | null): string | null => {
   const src = sameOrigin(url);
-  return src && (src.startsWith("/") || PHOTO_HOSTS.test(src)) ? src : null;
+  // "/x" is this site; "//host/x" is another host and must match PHOTO_HOSTS like any URL.
+  return src && ((src.startsWith("/") && !src.startsWith("//")) || PHOTO_HOSTS.test(src)) ? src : null;
 };
 
 /** Short descriptions for all categories. */
@@ -282,6 +284,8 @@ export default function NewCategoryGrid() {
                 {img && (
                   <Image
                     src={img}
+                    // Cloudinary resizes and picks AVIF/WebP itself; other hosts go through Next.
+                    loader={isCloudinaryUrl(img) ? cloudinaryLoader : undefined}
                     alt=""
                     fill
                     priority

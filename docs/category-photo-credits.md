@@ -1,6 +1,6 @@
 # Category photo credits
 
-Photos from Wikimedia Commons, resized and cropped to 1200×800 WebP. CC BY and CC BY-SA licences require crediting the author and linking the licence wherever the photo is shown, for example on an "Image credits" page linked from the footer. CC BY-SA also requires these edited versions to be shared under the same licence.
+Photos for the home page's "Popular categories" cards, served from Cloudinary (folder `kartsquare/categories`). Most come from Wikimedia Commons, resized and cropped to 1200×800 WebP. CC BY and CC BY-SA licences require crediting the author and linking the licence wherever the photo is shown, for example on an "Image credits" page linked from the footer. CC BY-SA also requires these edited versions to be shared under the same licence.
 
 | Category | Source | Author | Licence |
 |---|---|---|---|
