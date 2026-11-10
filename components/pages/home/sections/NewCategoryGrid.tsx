@@ -323,10 +323,10 @@ export default function NewCategoryGrid() {
                 <Box sx={{ position: "absolute", bottom: { xs: 12, md: 16 }, left: { xs: 12, md: 16 }, right: { xs: 12, md: 16 }, pr: { xs: 0, sm: 5 } }}>
                   <CategoryIcon
                     icon={icon}
+                    color={color}
                     tile={{ xs: 38, sm: 42 }}
                     size={{ xs: 22, sm: 26 }}
                     radius={2.5}
-                    priority
                     sx={{ bgcolor: "common.white", mb: 1, boxShadow: "0 2px 8px rgba(0,0,0,0.25)" }}
                   />
                   <Typography
@@ -560,7 +560,7 @@ export default function NewCategoryGrid() {
                   }}
                 >
                   {/* Category Icon */}
-                  <CategoryIcon icon={icon} color={color} tile={{ xs: 38, sm: 42 }} size={{ xs: 22, sm: 26 }} radius={2.5} priority />
+                  <CategoryIcon icon={icon} color={color} tile={{ xs: 38, sm: 42 }} size={{ xs: 22, sm: 26 }} radius={2.5} />
 
                   {/* Category Text */}
                   <Box sx={{ flex: 1, minWidth: 0 }}>

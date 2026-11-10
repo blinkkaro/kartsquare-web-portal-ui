@@ -85,7 +85,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
               key={category.id}
               label={
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                  <CategoryIcon icon={category.icon} size={18} />
+                  <CategoryIcon icon={category.icon} color={category.color} size={18} />
                   <span>{category.name}</span>
                 </Box>
               }

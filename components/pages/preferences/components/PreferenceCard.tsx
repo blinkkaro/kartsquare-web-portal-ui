@@ -11,7 +11,7 @@ interface PreferenceCardProps {
   isSelected: boolean;
   onPress: (id: string) => void;
   id: string;
-  /** The preference's icon URL and colour (backend migration 006). */
+  /** The preference's Iconify icon name and colour (backend migration 009). */
   icon?: string | null;
   color?: string | null;
 }

@@ -93,7 +93,7 @@ const ProviderCategoriesBar = ({
                     gap: { xs: 0.25, sm: 0.5 },
                   }}
                 >
-                  <CategoryIcon icon={category.icon} size={18} />
+                  <CategoryIcon icon={category.icon} color={category.color} size={18} />
                   <span>{category.name}</span>
                 </Box>
               }

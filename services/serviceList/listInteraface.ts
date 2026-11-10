@@ -122,7 +122,7 @@ export interface Category {
   updated_at: string;
   /** URL segment for /{city}/{category}. */
   slug?: string | null;
-  /** Duotone SVG icon URL (backend migration 006). */
+  /** Iconify icon name, e.g. "ph:tractor-duotone" (backend migration 009). */
   icon?: string | null;
   /** Category colour as #rrggbb (migration 006). */
   color?: string | null;
