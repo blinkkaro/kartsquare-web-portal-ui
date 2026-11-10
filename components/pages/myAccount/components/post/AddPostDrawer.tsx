@@ -7,7 +7,8 @@ import { COLORS } from "@/constants/colors";
 import Button from "@/components/common/Button";
 import { useForm, Controller } from "react-hook-form";
 import { useCreatePost } from "@/hooks/useProfile";
-import { PostType, Visibility } from "@/services/post/postInterfaces";
+import { Visibility } from "@/services/post/postInterfaces";
+import { postTypeForFiles } from "@/services/post/postMedia";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import ImageUpload from "@/components/common/ImageUpload";
@@ -151,15 +152,8 @@ const AddPostDrawer: React.FC<AddPostDrawerProps> = ({ onClose }) => {
       return;
     }
 
-    const isVideo = selectedFiles.some((file) => file.type.startsWith("video/"));
-    const isImage = selectedFiles.some((file) => file.type.startsWith("image/"));
-
-    let postType: PostType = PostType.IMAGE;
-    if (isVideo && isImage) {
-      postType = PostType.MIXED;
-    } else if (isVideo) {
-      postType = PostType.VIDEO;
-    }
+    // Video only → a "video" post, which is what the Reels feed shows.
+    const postType = postTypeForFiles(selectedFiles);
 
     try {
       setCompressing(true);

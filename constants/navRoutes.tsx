@@ -200,6 +200,8 @@ export const getMobileNavItems = (
     if (role === UserRole.SERVICE_PROVIDER) {
       items.push(
         { label: t("home"), href: "/", icon: <HomeFilled /> },
+        // Providers post, add stories and share reels from the Feed.
+        { label: t("feed"), href: "/cus/feed", icon: <DynamicFeedRounded /> },
         {
           label: t("services"),
           href: "/cus/services-list",

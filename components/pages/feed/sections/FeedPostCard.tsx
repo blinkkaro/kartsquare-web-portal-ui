@@ -24,6 +24,7 @@ import { openLoginModal } from "@/features/ui/loginModalSlice";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { formatTimestamp } from "@/helper/helper";
 import PostComment from "@/components/pages/home/components/PostComment";
+import { isVideoUrl } from "@/services/post/postMedia";
 
 /** media_urls arrives as an array of urls (older rows: a single url string). */
 export function postMedia(post: Pick<Posts, "media_urls">): string[] {
@@ -44,7 +45,7 @@ export function postMedia(post: Pick<Posts, "media_urls">): string[] {
   return [];
 }
 
-export const isVideoUrl = (url: string) => /\.(mp4|mov|webm|m4v|m3u8)(\?|$)/i.test(url);
+export { isVideoUrl };
 
 /**
  * What to show for a post: video posts carry a thumbnail image and the video

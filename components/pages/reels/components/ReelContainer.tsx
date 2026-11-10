@@ -11,6 +11,7 @@ import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { selectCurrentUser } from "@/features/ui/authSlice";
 import { AppUserType } from "@/services/auth/auth.interface";
 import { getMediaUrls } from "@/helper/helper";
+import { reelVideoUrl } from "@/services/post/postMedia";
 
 interface ReelContainerProps {
   reel: Posts;
@@ -24,7 +25,7 @@ const ReelContainer: React.FC<ReelContainerProps> = ({
   preloadHint = "auto",
 }) => {
   const urls = getMediaUrls(reel.media_urls);
-  const videoUrl = urls.length > 1 ? urls[1] : urls[0];
+  const videoUrl = reelVideoUrl(urls) ?? "";
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
   const theme = useTheme();
