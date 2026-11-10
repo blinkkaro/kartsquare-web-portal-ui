@@ -9,8 +9,6 @@ import {
   styled,
 } from "@mui/material";
 import {
-  LightMode as LightModeIcon,
-  DarkMode as DarkModeIcon,
   Search as SearchIcon,
   Login as LoginIcon,
   Business,
@@ -62,7 +60,6 @@ interface NavActionsProps {
   isMobile: boolean;
   isTablet: boolean;
   mode: "light" | "dark";
-  onThemeToggle: () => void;
   onSearchToggle: () => void;
   profileClick: () => void;
   onLogin: () => void;
@@ -81,7 +78,6 @@ const NavActions: React.FC<NavActionsProps> = ({
   isMobile,
   isTablet,
   mode,
-  onThemeToggle,
   onSearchToggle,
   profileClick,
   onLogin,
@@ -157,18 +153,6 @@ const NavActions: React.FC<NavActionsProps> = ({
           </Badge>
         </StyledIconButton>
 
-        {/* Theme Toggle */}
-        <StyledIconButton
-          size="small"
-          onClick={onThemeToggle}
-          aria-label="toggle theme"
-        >
-          {mode === "dark" ? (
-            <LightModeIcon fontSize="small" />
-          ) : (
-            <DarkModeIcon fontSize="small" />
-          )}
-        </StyledIconButton>
 
         {/* User Avatar */}
         <Avatar
@@ -316,18 +300,6 @@ const NavActions: React.FC<NavActionsProps> = ({
         </StyledIconButton>
       )}
 
-      {/* Theme Toggle */}
-      <StyledIconButton
-        size="small"
-        onClick={onThemeToggle}
-        aria-label="toggle theme"
-      >
-        {mode === "dark" ? (
-          <LightModeIcon fontSize="small" />
-        ) : (
-          <DarkModeIcon fontSize="small" />
-        )}
-      </StyledIconButton>
 
       {/* Login Button */}
       <Button

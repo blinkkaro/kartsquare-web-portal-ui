@@ -35,6 +35,8 @@ let current: AILocation = DEFAULT_AI_LOCATION;
 let loaded = false;
 let autoStarted = false;
 let locatingNow = false;
+/** True from a GPS fix until its area name is looked up, so the UI shows one final label. */
+let resolvingName = false;
 const listeners = new Set<() => void>();
 
 function readStored(): AILocation {
@@ -112,8 +114,14 @@ function commit(next: AILocation, persist: boolean) {
 async function commitGps(latitude: number, longitude: number, accuracy?: number): Promise<AILocation> {
   const coords = { latitude, longitude, ...(accuracy ? { accuracy } : {}) };
   // Coordinates first, so results can load while the name is looked up.
+  resolvingName = true;
   commit({ city: null, locality: null, coords, source: "gps" }, true);
-  const place = await resolveCoords(latitude, longitude);
+  let place: Awaited<ReturnType<typeof resolveCoords>> = null;
+  try {
+    place = await resolveCoords(latitude, longitude);
+  } finally {
+    resolvingName = false;
+  }
   const next: AILocation = {
     city: place?.city?.name ?? null,
     locality: place?.location?.kind === "locality" ? place.location.name : null,
@@ -123,6 +131,8 @@ async function commitGps(latitude: number, longitude: number, accuracy?: number)
   // A newer pick or fix may have landed while this one resolved.
   if (current.source === "gps" && current.coords?.latitude === latitude && current.coords?.longitude === longitude) {
     commit(next, false);
+  } else {
+    listeners.forEach((l) => l());
   }
   return next;
 }
@@ -181,6 +191,16 @@ async function autoLocate() {
   autoStarted = true;
   if (!navigator.geolocation) return;
 
+  // Show "finding your location" straight away instead of flashing the default
+  // city, then "Near you", then the real area. Cleared on every path that
+  // does not end in a GPS read.
+  locatingNow = true;
+  listeners.forEach((l) => l());
+  const giveUp = () => {
+    locatingNow = false;
+    listeners.forEach((l) => l());
+  };
+
   let state: PermissionState | "unknown" = "unknown";
   try {
     if (navigator.permissions?.query) {
@@ -193,13 +213,13 @@ async function autoLocate() {
   } catch {
     /* Permissions API missing (older Safari): treat as unknown */
   }
-  if (state === "denied") return;
+  if (state === "denied") return giveUp();
   if (state === "granted") {
     locateInBackground();
     return;
   }
   // Not granted yet: a place the user chose stays; don't prompt over it.
-  if (getSnapshot().source === "picked") return;
+  if (getSnapshot().source === "picked") return giveUp();
 
   let prompted = false;
   try {
@@ -208,7 +228,7 @@ async function autoLocate() {
     /* ignore */
   }
   // Asked before and not granted: wait for the user to tap "Use my location".
-  if (prompted) return;
+  if (prompted) return giveUp();
 
   try {
     localStorage.setItem(PROMPTED_KEY, "1");
@@ -229,7 +249,7 @@ export function placeLabel(location: AILocation, fallback = "your area"): string
 
 export function useAILocation() {
   const location = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const autoLocating = useSyncExternalStore(subscribe, () => locatingNow, () => false);
+  const autoLocating = useSyncExternalStore(subscribe, () => locatingNow || resolvingName, () => false);
   const [locating, setLocating] = useState(false);
   const [locateError, setLocateError] = useState<string | null>(null);
 

@@ -27,10 +27,7 @@ export const viewport: Viewport = {
   maximumScale: 5,
   // Lets the bottom nav pad for the iPhone home indicator via env(safe-area-inset-bottom)
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#172023" },
-  ],
+  themeColor: "#ffffff",
 };
 
 export const metadata: Metadata = {
