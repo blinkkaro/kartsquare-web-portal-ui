@@ -14,8 +14,11 @@ import { setAiOpen } from "@/features/ui/uiSlice";
 
 export default function MainLayoutClient({
   children,
+  flushTop = false,
 }: {
   children: React.ReactNode;
+  /** Drop the gap under the header on phones, for pages that run edge to edge there. */
+  flushTop?: boolean;
 }) {
   const theme = useTheme();
   const dispatch = useAppDispatch();
@@ -47,7 +50,7 @@ export default function MainLayoutClient({
             px: 0,
             // Nav already reserves the AppBar's exact measured height via its own
             // spacer, so this is just breathing room, not a breakpoint guess.
-            mt: 2,
+            mt: flushTop ? { xs: 0, sm: 2 } : 2,
             backgroundColor:
               theme.palette.mode === "dark"
                 ? COLORS.BACKGROUND.PAPER_DARK

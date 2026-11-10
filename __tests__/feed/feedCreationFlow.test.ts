@@ -174,3 +174,21 @@ describe("post media box on phones: the photo's own shape, within 4:5 and 1.91:1
     expect(card).not.toMatch(/aspectRatio:\s*"4 \/ 5"/);
   });
 });
+
+describe("feed spacing on phones", () => {
+  const feed = read("components/pages/feed/index.tsx");
+
+  it("starts right under the header on phones (MainLayout flushTop)", () => {
+    expect(feed).toMatch(/<MainLayout flushTop>/);
+    expect(read("app/MainLayoutClient.tsx")).toMatch(/mt:\s*flushTop \? \{ xs: 0, sm: 2 \} : 2/);
+  });
+
+  it("doesn't add bottom padding on top of the layout's bottom-bar space below lg", () => {
+    expect(feed).toMatch(/pb:\s*\{ xs: 2, lg: 8 \}/);
+  });
+
+  it("the infinite-scroll trigger is 1px, not sx's 1 (= 100%, as tall as the feed)", () => {
+    expect(feed).toMatch(/<Box ref=\{loadMoreRef\} sx=\{\{ height: "1px" \}\} \/>/);
+    expect(feed).not.toMatch(/sx=\{\{[^}]*\b(width|height):\s*1\b/);
+  });
+});
