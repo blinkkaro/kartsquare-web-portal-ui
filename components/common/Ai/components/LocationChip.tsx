@@ -78,12 +78,15 @@ export default function LocationChip({ location, onChange, onUseCurrent, locatin
     close();
   };
 
-  const label = location.coords
-    ? location.source === "gps"
-      ? `Near you${location.locality || location.city ? ` · ${placeLabel(location)}` : ""}`
-      : placeLabel(location)
-    : locating
-      ? "Finding your location…"
+  // While the position and its area name are being worked out, show one loading
+  // label; then the final place ("Jhotwara, Jaipur"). "Near you" only when GPS
+  // worked but no known city matched.
+  const label = locating
+    ? "Finding your location…"
+    : location.coords
+      ? location.source === "gps" && !location.locality && !location.city
+        ? "Near you"
+        : placeLabel(location)
       : "Set your location";
 
   return (
@@ -100,6 +103,9 @@ export default function LocationChip({ location, onChange, onUseCurrent, locatin
         sx={{
           height: 32,
           maxWidth: "100%",
+          // Stable width so swapping "Finding your location…" / "Jaipur" / "Alwar" doesn't shift neighbours
+          minWidth: 112,
+          "& .MuiChip-label": { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
           fontWeight: 600,
           fontSize: "0.78rem",
           bgcolor: COLORS.PURPLE_ALPHA_10,

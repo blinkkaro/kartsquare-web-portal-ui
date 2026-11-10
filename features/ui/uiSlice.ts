@@ -17,38 +17,22 @@ export const uiSlice = createSlice({
   name: "ui",
   initialState,
   reducers: {
+    // Light-only site: both stay as no-ops so existing imports keep compiling.
     toggleTheme: (state) => {
-      state.mode = state.mode === "light" ? "dark" : "light";
-
-      // Persist theme to localStorage
-      if (typeof window !== "undefined") {
-        localStorage.setItem("theme", state.mode);
-      }
+      state.mode = "light";
     },
-    setTheme: (state, action: PayloadAction<"light" | "dark">) => {
-      state.mode = action.payload;
-
-      // Persist theme to localStorage
-      if (typeof window !== "undefined") {
-        localStorage.setItem("theme", action.payload);
-      }
+    setTheme: (state, _action: PayloadAction<"light" | "dark">) => {
+      state.mode = "light";
     },
     hydrateTheme: (state) => {
-      // Restore theme from localStorage or system preference
+      // The site is light-only: ignore any saved or system dark preference and
+      // drop the stale value so it can never come back.
+      state.mode = "light";
       if (typeof window !== "undefined") {
-        const savedTheme = localStorage.getItem("theme") as
-          | "light"
-          | "dark"
-          | null;
-
-        if (savedTheme) {
-          state.mode = savedTheme;
-        } else {
-          // Fallback to system preference
-          const prefersDark = window.matchMedia(
-            "(prefers-color-scheme: dark)"
-          ).matches;
-          state.mode = prefersDark ? "dark" : "light";
+        try {
+          localStorage.removeItem("theme");
+        } catch {
+          /* storage unavailable */
         }
       }
     },
