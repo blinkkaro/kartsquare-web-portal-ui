@@ -6,6 +6,7 @@ import {
   Typography,
   Box,
   useTheme,
+  useMediaQuery,
   IconButton,
   TextField,
   Button,
@@ -39,6 +40,10 @@ const AddStoryModal: React.FC<AddStoryModalProps> = ({
   isLoading,
 }) => {
   const theme = useTheme();
+  // Phones: the preview + caption step takes the whole screen, so a tall video
+  // can't push the caption and Share button out of view. Picking stays a dialog.
+  const isPhone = useMediaQuery(theme.breakpoints.down("sm"));
+  const fullScreen = isPhone && !!file;
   const { t } = useTranslationContext();
   const [caption, setCaption] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -80,10 +85,11 @@ const AddStoryModal: React.FC<AddStoryModalProps> = ({
       open={open}
       onClose={isLoading ? undefined : onClose}
       fullWidth
+      fullScreen={fullScreen}
       maxWidth={file ? "sm" : "xs"}
       PaperProps={{
         sx: {
-          borderRadius: 3,
+          borderRadius: fullScreen ? 0 : 3,
           bgcolor: isDark
             ? COLORS.BACKGROUND.PAPER_DARK
             : COLORS.BACKGROUND.PAPER_LIGHT,
@@ -123,7 +129,7 @@ const AddStoryModal: React.FC<AddStoryModalProps> = ({
         )}
       </Box>
 
-      <DialogContent sx={{ p: file ? 0 : 3 }}>
+      <DialogContent sx={{ p: file ? 0 : 3, ...(fullScreen && { display: "flex", flexDirection: "column" }) }}>
         {!file ? (
           <Stack spacing={2}>
             {options.map((option, index) => (
@@ -178,6 +184,7 @@ const AddStoryModal: React.FC<AddStoryModalProps> = ({
               display: "flex",
               flexDirection: { xs: "column", sm: "row" },
               height: { sm: 400 },
+              ...(fullScreen && { flex: 1, minHeight: 0 }),
             }}
           >
             {/* Media Preview */}
@@ -190,7 +197,7 @@ const AddStoryModal: React.FC<AddStoryModalProps> = ({
                 justifyContent: "center",
                 overflow: "hidden",
                 position: "relative",
-                minHeight: 300,
+                minHeight: fullScreen ? 240 : 300,
               }}
             >
               {previewUrl &&

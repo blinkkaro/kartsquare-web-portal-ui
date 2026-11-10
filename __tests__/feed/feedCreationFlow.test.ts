@@ -13,7 +13,7 @@
 import fs from "fs";
 import path from "path";
 import { PostType } from "@/services/post/postInterfaces";
-import { isVideoUrl, postTypeForFiles, reelVideoUrl } from "@/services/post/postMedia";
+import { isVideoUrl, mediaAspect, MEDIA_ASPECT_DEFAULT, postTypeForFiles, reelVideoUrl } from "@/services/post/postMedia";
 import { API_ENDPOINTS as POST_ENDPOINTS } from "@/services/post/apiEndpoints";
 import { APIENDPOINT as STORY_ENDPOINTS } from "@/services/stories/apiEndPoint";
 import { getDesktopNavItems, getMobileNavItems } from "@/constants/navRoutes";
@@ -141,5 +141,36 @@ describe("endpoints match the backend routes", () => {
 
   it("stories are created at POST /stories", () => {
     expect(STORY_ENDPOINTS.CREATE_STORY).toBe("/stories");
+  });
+});
+
+describe("post media box on phones: the photo's own shape, within 4:5 and 1.91:1", () => {
+  it("a 16:9 photo gets a 16:9 box, so no empty bands above and below", () => {
+    expect(mediaAspect(1672, 941)).toBeCloseTo(1672 / 941);
+  });
+
+  it("a square photo gets a square box", () => {
+    expect(mediaAspect(1080, 1080)).toBe(1);
+  });
+
+  it("a very tall photo is held at 4:5, so it never fills more than a phone screen", () => {
+    expect(mediaAspect(1080, 1920)).toBeCloseTo(4 / 5);
+  });
+
+  it("a panorama is held at 1.91:1, so it doesn't shrink to a strip", () => {
+    expect(mediaAspect(4000, 1000)).toBeCloseTo(1.91);
+  });
+
+  it("unknown sizes (not loaded, broken image) keep the square default", () => {
+    expect(mediaAspect(0, 0)).toBe(MEDIA_ASPECT_DEFAULT);
+    expect(mediaAspect(1080, 0)).toBe(MEDIA_ASPECT_DEFAULT);
+    expect(mediaAspect(Number.NaN, 100)).toBe(MEDIA_ASPECT_DEFAULT);
+  });
+
+  it("the post card sizes its media box with this rule", () => {
+    const card = read("components/pages/feed/sections/FeedPostCard.tsx");
+    expect(card).toMatch(/aspectRatio:\s*String\(aspect\)/);
+    expect(card).toMatch(/setAspect\(mediaAspect\(/);
+    expect(card).not.toMatch(/aspectRatio:\s*"4 \/ 5"/);
   });
 });

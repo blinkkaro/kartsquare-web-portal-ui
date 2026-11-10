@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar, Box, Button, ButtonBase, IconButton, Typography, useTheme } from "@mui/material";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
@@ -24,7 +24,7 @@ import { openLoginModal } from "@/features/ui/loginModalSlice";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { formatTimestamp } from "@/helper/helper";
 import PostComment from "@/components/pages/home/components/PostComment";
-import { isVideoUrl } from "@/services/post/postMedia";
+import { isVideoUrl, mediaAspect, MEDIA_ASPECT_DEFAULT } from "@/services/post/postMedia";
 
 /** media_urls arrives as an array of urls (older rows: a single url string). */
 export function postMedia(post: Pick<Posts, "media_urls">): string[] {
@@ -86,6 +86,13 @@ export default function FeedPostCard({ post }: FeedPostCardProps) {
   const following = followedHere || !!(post.is_following ?? post.user?.is_following);
   const trackRef = useRef<HTMLDivElement>(null);
   const lastTap = useRef(0);
+  // The media box takes the first photo's shape (4:5 to 1.91:1) once its size is known.
+  const [aspect, setAspect] = useState(MEDIA_ASPECT_DEFAULT);
+  // A photo already loaded (cached, or before React attached onLoad) fires no load event:
+  // read its size when the element mounts.
+  const firstImageRef = useCallback((el: HTMLImageElement | null) => {
+    if (el?.complete && el.naturalWidth > 0) setAspect(mediaAspect(el.naturalWidth, el.naturalHeight));
+  }, []);
 
   const likeMutation = useLikePost(post.id);
   const followMutation = useFollow();
@@ -101,6 +108,18 @@ export default function FeedPostCard({ post }: FeedPostCardProps) {
   const place = post.location_name?.trim();
   const caption = post.caption?.trim() ?? "";
   const longCaption = caption.length > 140;
+
+  // A video post's shape comes from its poster, which loads without fetching the video.
+  const firstPoster = media[0]?.video ? media[0].poster : undefined;
+  useEffect(() => {
+    if (!firstPoster) return;
+    const img = new window.Image();
+    img.onload = () => setAspect(mediaAspect(img.naturalWidth, img.naturalHeight));
+    img.src = firstPoster;
+    return () => {
+      img.onload = null;
+    };
+  }, [firstPoster]);
 
   const requireLogin = () => {
     if (isAuthenticated) return false;
@@ -293,16 +312,28 @@ export default function FeedPostCard({ post }: FeedPostCardProps) {
             }}
           >
             {media.map((slideItem, i) => (
-              <Box key={slideItem.url + i} sx={{ flex: "0 0 100%", scrollSnapAlign: "start", aspectRatio: "4 / 5", maxHeight: 640, display: "flex" }}>
+              <Box key={slideItem.url + i} sx={{ flex: "0 0 100%", scrollSnapAlign: "start", aspectRatio: String(aspect), maxHeight: 640, display: "flex" }}>
                 {slideItem.video ? (
-                  <Box component="video" src={slideItem.url} poster={slideItem.poster} controls playsInline preload="none" sx={{ width: "100%", height: "100%", objectFit: "contain", bgcolor: "#000" }} />
+                  <Box
+                    component="video"
+                    src={slideItem.url}
+                    poster={slideItem.poster}
+                    controls
+                    playsInline
+                    // No poster: fetch just the first video's size (a few KB) so the box has its shape up front.
+                    preload={i === 0 && !slideItem.poster ? "metadata" : "none"}
+                    onLoadedMetadata={i === 0 && !slideItem.poster ? (e: React.SyntheticEvent<HTMLVideoElement>) => setAspect(mediaAspect(e.currentTarget.videoWidth, e.currentTarget.videoHeight)) : undefined}
+                    sx={{ width: "100%", height: "100%", objectFit: "contain", bgcolor: "#000" }}
+                  />
                 ) : (
                   <Box
                     component="img"
                     src={slideItem.url}
                     alt={caption ? caption.slice(0, 100) : `Post by ${name}`}
+                    ref={i === 0 ? firstImageRef : undefined}
                     loading="lazy"
                     draggable={false}
+                    onLoad={i === 0 ? (e: React.SyntheticEvent<HTMLImageElement>) => setAspect(mediaAspect(e.currentTarget.naturalWidth, e.currentTarget.naturalHeight)) : undefined}
                     // Whole photo, never cropped: posters often carry text right to the edge.
                     sx={{ width: "100%", height: "100%", objectFit: "contain", userSelect: "none" }}
                   />
