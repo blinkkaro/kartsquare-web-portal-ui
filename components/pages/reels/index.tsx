@@ -44,6 +44,21 @@ function ReelsView() {
     [activeIndex],
   );
 
+  // Opened from the Feed as /cus/reels?reel=<id>: start at that reel (once).
+  const deepLinkHandled = useRef(false);
+  useEffect(() => {
+    if (deepLinkHandled.current || reels.length === 0) return;
+    deepLinkHandled.current = true;
+    const wanted = new URLSearchParams(window.location.search).get("reel");
+    if (!wanted || !reels.some((r) => r.id === wanted)) return;
+    requestAnimationFrame(() => {
+      setActiveReelId(wanted);
+      containerRef.current
+        ?.querySelector(`.reel-wrapper[data-id="${CSS.escape(wanted)}"]`)
+        ?.scrollIntoView({ block: "start" });
+    });
+  }, [reels]);
+
   // Set first reel as active on initial load
   useEffect(() => {
     if (reels.length > 0 && !activeReelId) {

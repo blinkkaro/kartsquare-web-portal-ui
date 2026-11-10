@@ -2,64 +2,8 @@
 import { COLORS } from "@/constants/colors";
 import { Box, Typography, useTheme } from "@mui/material";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
-import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
-import GrassRoundedIcon from "@mui/icons-material/GrassRounded";
-import WaterDropRoundedIcon from "@mui/icons-material/WaterDropRounded";
-import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
-import DevicesRoundedIcon from "@mui/icons-material/DevicesRounded";
-import SpaRoundedIcon from "@mui/icons-material/SpaRounded";
-import RestaurantRoundedIcon from "@mui/icons-material/RestaurantRounded";
-import LocalHospitalRoundedIcon from "@mui/icons-material/LocalHospitalRounded";
-import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
-import LocalShippingRoundedIcon from "@mui/icons-material/LocalShippingRounded";
-import AccountBalanceRoundedIcon from "@mui/icons-material/AccountBalanceRounded";
-import CheckroomRoundedIcon from "@mui/icons-material/CheckroomRounded";
-import EventRoundedIcon from "@mui/icons-material/EventRounded";
-import PetsRoundedIcon from "@mui/icons-material/PetsRounded";
-import FitnessCenterRoundedIcon from "@mui/icons-material/FitnessCenterRounded";
-import DirectionsCarRoundedIcon from "@mui/icons-material/DirectionsCarRounded";
-import ConstructionRoundedIcon from "@mui/icons-material/ConstructionRounded";
-import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
-import CleaningServicesRoundedIcon from "@mui/icons-material/CleaningServicesRounded";
-import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
-import GavelRoundedIcon from "@mui/icons-material/GavelRounded";
-import CampaignRoundedIcon from "@mui/icons-material/CampaignRounded";
-import CameraAltRoundedIcon from "@mui/icons-material/CameraAltRounded";
-import ApartmentRoundedIcon from "@mui/icons-material/ApartmentRounded";
-import HandymanRoundedIcon from "@mui/icons-material/HandymanRounded";
+import CategoryIcon from "@/components/common/CategoryIcon";
 import React from "react";
-
-const ICON_RULES: [RegExp, React.ElementType][] = [
-  [/agri|farm|garden/i, GrassRoundedIcon],
-  [/water|air.*treat|purif/i, WaterDropRoundedIcon],
-  [/educat|train|school|tuition|coaching/i, SchoolRoundedIcon],
-  [/electron|device|gadget|tech/i, DevicesRoundedIcon],
-  [/beauty|spa|salon|wellness/i, SpaRoundedIcon],
-  [/food|restaurant|catering|kitchen/i, RestaurantRoundedIcon],
-  [/health|hospital|medic|clinic|pharma/i, LocalHospitalRoundedIcon],
-  [/home|interior|furnitur|decor/i, HomeRoundedIcon],
-  [/courier|logistic|freight|transport|delivery/i, LocalShippingRoundedIcon],
-  [/finance|bank|account|invest|insurance/i, AccountBalanceRoundedIcon],
-  [/fashion|cloth|apparel|tailor/i, CheckroomRoundedIcon],
-  [/event|wedding|party|celebrat/i, EventRoundedIcon],
-  [/pet|animal|vet/i, PetsRoundedIcon],
-  [/fitness|gym|sport|yoga/i, FitnessCenterRoundedIcon],
-  [/auto|car|vehicle|bike/i, DirectionsCarRoundedIcon],
-  [/construct|build|civil|architect/i, ConstructionRoundedIcon],
-  [/energy|solar|power|electric/i, BoltRoundedIcon],
-  [/clean|pest|sanitiz/i, CleaningServicesRoundedIcon],
-  [/security|guard|surveillance/i, SecurityRoundedIcon],
-  [/legal|law|advocate|court/i, GavelRoundedIcon],
-  [/market|advertis|promot|seo/i, CampaignRoundedIcon],
-  [/photo|video|shoot|studio/i, CameraAltRoundedIcon],
-  [/real.?estate|property|rent|apartment/i, ApartmentRoundedIcon],
-  [/repair|handyman|plumb|electric.*repair|maintenance/i, HandymanRoundedIcon],
-];
-
-const getCategoryIcon = (name: string): React.ElementType => {
-  const match = ICON_RULES.find(([regex]) => regex.test(name || ""));
-  return match ? match[1] : CategoryRoundedIcon;
-};
 
 interface PreferenceCardProps {
   title: string;
@@ -67,6 +11,9 @@ interface PreferenceCardProps {
   isSelected: boolean;
   onPress: (id: string) => void;
   id: string;
+  /** The preference's Iconify icon name and colour (backend migration 009). */
+  icon?: string | null;
+  color?: string | null;
 }
 
 const PreferenceCards: React.FC<PreferenceCardProps> = ({
@@ -75,10 +22,11 @@ const PreferenceCards: React.FC<PreferenceCardProps> = ({
   isSelected,
   onPress,
   id,
+  icon,
+  color,
 }) => {
   const theme = useTheme();
   const gradient = `linear-gradient(135deg, ${COLORS.ICON_GRADIENT.Light.START} 0%, ${COLORS.ICON_GRADIENT.Light.END} 100%)`;
-  const CategoryIcon = getCategoryIcon(title);
 
   return (
     <Box
@@ -152,31 +100,8 @@ const PreferenceCards: React.FC<PreferenceCardProps> = ({
         {isSelected && <CheckRoundedIcon sx={{ fontSize: 14, color: "common.white" }} />}
       </Box>
 
-      {/* Gradient category icon */}
-      <Box
-        sx={{
-          width: 36,
-          height: 36,
-          borderRadius: "11px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          mb: 1.25,
-          background: isSelected
-            ? gradient
-            : theme.palette.mode === "dark"
-            ? "rgba(130, 72, 247, 0.25)"
-            : COLORS.PURPLE_ALPHA_10,
-          transition: "all 0.25s ease",
-        }}
-      >
-        <CategoryIcon
-          sx={{
-            fontSize: 19,
-            color: isSelected ? "common.white" : COLORS.PRIMARY_PURPLE,
-          }}
-        />
-      </Box>
+      {/* Category icon; its tint stays when selected, since the card's border and glow show the selection */}
+      <CategoryIcon icon={icon} color={color} tile={36} size={22} radius="11px" sx={{ mb: 1.25 }} />
 
       <Box sx={{ flexGrow: 1, pr: 2 }}>
         <Typography

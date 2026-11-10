@@ -8,6 +8,7 @@ import {
   Dashboard,
   HomeRepairService,
   Campaign,
+  DynamicFeedRounded,
 } from "@mui/icons-material";
 import { TranslationKey } from "@/features/i18n/TranslationContext";
 import { UserRole } from "@/utils/auth";
@@ -51,6 +52,7 @@ export const getDesktopNavItems = (
       return [
         { label: t("home"), href: "/", icon: <HomeFilled sx={{ fontSize: 18 }} /> },
         { label: t("dashboard"), href: "/dashboard", icon: <Dashboard sx={{ fontSize: 18 }} /> },
+        { label: t("feed"), href: "/cus/feed", icon: <DynamicFeedRounded sx={{ fontSize: 18 }} /> },
         {
           label: t("reels"),
           href: "/cus/reels",
@@ -75,7 +77,9 @@ export const getDesktopNavItems = (
     case UserRole.CUSTOMER:
       return [
         { label: t("home"), href: "/", icon: <HomeFilled sx={{ fontSize: 18 }} /> },
-        { label: t("store"), href: "/store", icon: <ShoppingBag sx={{ fontSize: 18 }} /> },
+        // Store is hidden for now; the Feed takes its place.
+        // { label: t("store"), href: "/store", icon: <ShoppingBag sx={{ fontSize: 18 }} /> },
+        { label: t("feed"), href: "/cus/feed", icon: <DynamicFeedRounded sx={{ fontSize: 18 }} /> },
         {
           label: t("reels"),
           href: "/cus/reels",
@@ -96,6 +100,7 @@ export const getDesktopNavItems = (
       return [
         { label: t("home"), href: "/", icon: <HomeFilled sx={{ fontSize: 18 }} /> },
         { label: t("dashboard"), href: "/dashboard", icon: <Dashboard sx={{ fontSize: 18 }} /> },
+        { label: t("feed"), href: "/cus/feed", icon: <DynamicFeedRounded sx={{ fontSize: 18 }} /> },
         {
           label: t("reels"),
           href: "/cus/reels",
@@ -120,7 +125,9 @@ export const getDesktopNavItems = (
     default:
       return [
         { label: t("home"), href: "/", icon: <HomeFilled sx={{ fontSize: 18 }} /> },
-        { label: t("store"), href: "/store", icon: <ShoppingBag sx={{ fontSize: 18 }} /> },
+        // Store is hidden for now; the Feed takes its place.
+        // { label: t("store"), href: "/store", icon: <ShoppingBag sx={{ fontSize: 18 }} /> },
+        { label: t("feed"), href: "/cus/feed", icon: <DynamicFeedRounded sx={{ fontSize: 18 }} /> },
         {
           label: t("reels"),
           href: "/cus/reels",
@@ -145,7 +152,9 @@ export const getMobileNavItems = (
   if (!isAuthenticated) {
     items.push(
       { label: t("home"), href: "/", icon: <HomeFilled /> },
-      { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
+      // Store is hidden for now; the Feed takes its place.
+      // { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
+      { label: t("feed"), href: "/cus/feed", icon: <DynamicFeedRounded /> },
       {
         label: t("reels"),
         href: "/cus/reels",
@@ -191,6 +200,8 @@ export const getMobileNavItems = (
     if (role === UserRole.SERVICE_PROVIDER) {
       items.push(
         { label: t("home"), href: "/", icon: <HomeFilled /> },
+        // Providers post, add stories and share reels from the Feed.
+        { label: t("feed"), href: "/cus/feed", icon: <DynamicFeedRounded /> },
         {
           label: t("services"),
           href: "/cus/services-list",
@@ -217,7 +228,9 @@ export const getMobileNavItems = (
       // Default / Customer
       items.push(
         { label: t("home"), href: "/", icon: <HomeFilled /> },
-        { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
+        // Store is hidden for now; the Feed takes its place.
+        // { label: t("store"), href: "/store", icon: <LocalMallRounded /> },
+        { label: t("feed"), href: "/cus/feed", icon: <DynamicFeedRounded /> },
         {
           label: t("reels"),
           href: "/cus/reels",

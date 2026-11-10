@@ -10,12 +10,14 @@
     "generate-favicon": "node scripts/generate-favicon.cjs",
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "icons:category": "node scripts/generate-category-icons.cjs",
     "update-assetlinks": "node scripts/update-assetlinks.cjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@hookform/resolvers": "^3.9.0",
+    "@iconify/react": "6.0.3",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
     "@mui/material-nextjs": "^7.3.6",
@@ -46,6 +48,8 @@
     "yup": "^1.7.1"
   },
   "devDependencies": {
+    "@iconify-json/ph": "1.2.2",
+    "@iconify/utils": "3.1.7",
     "@types/crypto-js": "^4.2.2",
     "@types/jest": "^30.0.0",
     "@types/node": "^20",

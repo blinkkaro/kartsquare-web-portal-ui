@@ -143,7 +143,8 @@ const MobileNavItem = styled(Link)(({ theme }) => {
     "&:active": { transform: "scale(0.94)" },
     // Icon sits in a pill that fills in when the tab is active
     "& .icon-wrap": {
-      width: 56,
+      // Narrows only when six tabs share a small phone's width; 56px otherwise.
+      width: "min(56px, 100%)",
       height: 30,
       borderRadius: 15,
       display: "flex",

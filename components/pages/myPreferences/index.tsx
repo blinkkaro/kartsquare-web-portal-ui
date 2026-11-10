@@ -105,6 +105,8 @@ function MyPreferencesView() {
                 isSelected={selectedPreferences.includes(preference.id)}
                 onPress={handlePreferenceToggle}
                 id={preference.id}
+                icon={preference.icon_name}
+                color={preference.color}
               />
             ))}
           </Box>
