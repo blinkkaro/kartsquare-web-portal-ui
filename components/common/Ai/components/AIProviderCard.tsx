@@ -1,6 +1,5 @@
 import React, { forwardRef } from "react";
 import { Avatar, Box, Button, Chip, Typography } from "@mui/material";
-import VerifiedRoundedIcon from "@mui/icons-material/VerifiedRounded";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
 import PhoneRoundedIcon from "@mui/icons-material/PhoneRounded";
@@ -95,13 +94,6 @@ const AIProviderCard = forwardRef<HTMLDivElement, Props>(function AIProviderCard
       </Box>
 
       <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 0.75, mt: 1 }}>
-        {/* Services are only listed after Kartsquare approval - same meaning as the badge on ServiceCard */}
-        <Chip
-          size="small"
-          icon={<VerifiedRoundedIcon sx={{ fontSize: "14px !important" }} />}
-          label="Verified"
-          sx={{ height: 24, fontWeight: 600, bgcolor: "rgba(51,207,77,0.12)", color: "#1f9d37", "& .MuiChip-icon": { color: "#1f9d37" } }}
-        />
         {m?.rating != null ? (
           <Typography sx={{ display: "flex", alignItems: "center", fontSize: "0.8rem", fontWeight: 600 }}>
             <StarRoundedIcon sx={{ fontSize: 16, color: "#f5a623", mr: 0.25 }} />

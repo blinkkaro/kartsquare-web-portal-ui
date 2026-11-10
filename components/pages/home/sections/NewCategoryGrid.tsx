@@ -214,7 +214,7 @@ export default function NewCategoryGrid() {
           {/* Two lines reserved on phones: the city name changes length when GPS or a saved
               city replaces the default, and the section must not jump when it does. */}
           <Typography sx={{ ...sectionSubtitleSx, minHeight: { xs: "3em", sm: 0 } }}>
-            Find trusted service providers & specialists {location.city ? `in ${location.city}` : "near you"}
+            Find local service providers & specialists {location.city ? `in ${location.city}` : "near you"}
           </Typography>
         </Box>
 

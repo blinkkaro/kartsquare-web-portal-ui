@@ -33,3 +33,10 @@ export const OPERATING_LOCATIONS = [
   "Pune",
   "Jaipur",
 ];
+
+/**
+ * Ratings, review counts and final prices are not live yet. While false, the rating filter,
+ * the pricing filter and the "Highest rated" / "Most reviewed" / "Lowest price" sorts stay
+ * hidden. Flip to true once they have real data behind them.
+ */
+export const REVIEWS_AND_PRICING_LIVE = false;

@@ -183,7 +183,7 @@ export const ServicesEmptyState: React.FC<ServicesEmptyStateProps> = ({
       >
         {hasActiveFilters
           ? "Try clearing some filters, widening your rating range, or expanding your search to all nearby localities."
-          : `We couldn't find active verified ${categoryName} in this area right now. Browse related services or explore all categories.`}
+          : `We couldn't find ${categoryName} listed in this area right now. Browse related services or explore all categories.`}
       </Typography>
 
       {hasActiveFilters && onResetFilters && (
@@ -290,7 +290,7 @@ export const ServicesEmptyState: React.FC<ServicesEmptyStateProps> = ({
             Run a business or provide services here?
           </Typography>
           <Typography sx={{ fontSize: "0.82rem", color: "text.secondary" }}>
-            List your business on Kartsquare for free and start receiving verified customer leads today.
+            List your business on Kartsquare for free and let customers in your area find you.
           </Typography>
         </Box>
         <Button

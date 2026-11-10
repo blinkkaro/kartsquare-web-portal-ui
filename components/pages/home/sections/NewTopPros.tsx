@@ -1,4 +1,5 @@
 "use client";
+import NoPhotoTile from "@/components/common/NoPhotoTile";
 import React, { useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -14,15 +15,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { TopService } from "@/services/topSuppliers/topSupplires.interfaces";
 import { Section, SectionHeader } from "./shared";
-import { HOME_PHOTOS } from "./homePhotos";
 
-/** Neutral photo for the image slot when a listing has none (never a fake listing). */
-const FALLBACK_IMAGES = [
-  HOME_PHOTOS.electricianHero.src,
-  HOME_PHOTOS.homeCleaning.src,
-  HOME_PHOTOS.acRepair.src,
-  HOME_PHOTOS.beautySalon.src,
-];
 
 interface TopProCard {
   id: string;
@@ -37,7 +30,6 @@ interface TopProCard {
   price: string | null;
   city_town: string;
   image_url: string;
-  verified: boolean;
   /** Set for a service card: its page (slug or id). Null for a provider-only card. */
   service_route: string | null;
   /** The provider's own picture, for the avatar that opens their profile. */
@@ -114,7 +106,7 @@ export default function NewTopPros() {
       return rawServices.slice(0, 4).map((s, idx) => {
         const img = Array.isArray(s.image_urls) && s.image_urls.length > 0
           ? s.image_urls[0]
-          : (typeof s.image_urls === "string" && s.image_urls ? s.image_urls : FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length]);
+          : (typeof s.image_urls === "string" && s.image_urls ? s.image_urls : "");
         const reviews = Number(s.review_count) || 0;
         return {
           id: s.id || `pro-${idx}`,
@@ -128,8 +120,7 @@ export default function NewTopPros() {
           price: s.price && Number(s.price) > 0 ? String(s.price) : null,
           city_town: s.city_town || "",
           image_url: img,
-          verified: true,
-          service_route: s.slug?.trim() || s.id || null,
+            service_route: s.slug?.trim() || s.id || null,
           provider_image: s.provider_profile_pic || "",
         };
       });
@@ -147,8 +138,7 @@ export default function NewTopPros() {
         review_count: 0,
         price: null,
         city_town: p.city || "",
-        image_url: p.profile_pic || FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length],
-        verified: true,
+        image_url: p.profile_pic || "",
         service_route: null,
         provider_image: p.profile_pic || "",
       }));
@@ -161,7 +151,7 @@ export default function NewTopPros() {
   return (
     <Section id="top-pros" sx={{ pb: { xs: 4, md: 6 }, px: 0 }}>
       <SectionHeader
-        title="Trusted professionals near you"
+        title="Professionals near you"
         subtitle={location.city ? `Listed on Kartsquare in ${location.city}` : "Listed on Kartsquare"}
         action={
           <Box
@@ -227,19 +217,23 @@ export default function NewTopPros() {
                     cursor: "pointer",
                   }}
                 >
-                  <Box
-                    component="img"
-                    src={item.image_url}
-                    alt={item.name}
-                    loading="lazy"
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      transition: "transform 400ms ease",
-                      "&:hover": { transform: "scale(1.05)" },
-                    }}
-                  />
+                  {item.image_url ? (
+                    <Box
+                      component="img"
+                      src={item.image_url}
+                      alt={item.name}
+                      loading="lazy"
+                      sx={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        transition: "transform 400ms ease",
+                        "&:hover": { transform: "scale(1.05)" },
+                      }}
+                    />
+                  ) : (
+                    <NoPhotoTile name={item.name} />
+                  )}
 
                   {/* Badges on image */}
                   <Box sx={{ position: "absolute", top: { xs: 8, sm: 12 }, left: { xs: 8, sm: 12 }, right: { xs: 8, sm: 12 }, display: "flex", gap: 0.75, minWidth: 0 }}>

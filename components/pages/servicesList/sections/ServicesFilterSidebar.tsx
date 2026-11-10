@@ -3,7 +3,6 @@ import React from "react";
 import {
   Box,
   Typography,
-  Switch,
   RadioGroup,
   FormControlLabel,
   Radio,
@@ -15,6 +14,7 @@ import {
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { COLORS } from "@/constants/colors";
+import { REVIEWS_AND_PRICING_LIVE } from "@/constants/common";
 
 export interface AreaFilterItem {
   name: string;
@@ -117,7 +117,9 @@ export default function ServicesFilterSidebar({
         </Button>
       </Box>
 
-      {/* 1. Rating */}
+      {/* 1. Rating (hidden until reviews are live) */}
+      {REVIEWS_AND_PRICING_LIVE && (
+        <>
       <Box sx={{ mb: 3 }}>
         <Typography sx={{ fontSize: "0.85rem", fontWeight: 700, mb: 1.25, color: "text.primary" }}>
           Rating
@@ -160,42 +162,12 @@ export default function ServicesFilterSidebar({
           })}
         </Box>
       </Box>
+        </>
+      )}
 
-      {/* 2. Verified only */}
-      <Box
-        sx={{
-          mb: 3,
-          pb: 2.5,
-          borderBottom: "1px solid",
-          borderColor: dark ? "rgba(255,255,255,0.08)" : "#ede9f2",
-        }}
-      >
-        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Box>
-            <Typography sx={{ fontSize: "0.88rem", fontWeight: 700, color: "text.primary" }}>
-              Verified only
-            </Typography>
-            <Typography sx={{ fontSize: "0.76rem", color: "text.secondary", mt: 0.2 }}>
-              Details checked by Kartsquare
-            </Typography>
-          </Box>
-          <Switch
-            checked={filters.verifiedOnly}
-            onChange={(e) => onChangeFilter("verifiedOnly", e.target.checked)}
-            sx={{
-              "& .MuiSwitch-switchBase.Mui-checked": {
-                color: COLORS.PRIMARY_PURPLE,
-                "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_10 },
-              },
-              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                bgcolor: COLORS.PRIMARY_PURPLE,
-              },
-            }}
-          />
-        </Box>
-      </Box>
-
-      {/* 3. Pricing */}
+      {/* 2. Pricing (hidden until prices are final) */}
+      {REVIEWS_AND_PRICING_LIVE && (
+        <>
       <Box
         sx={{
           mb: 3,
@@ -262,6 +234,8 @@ export default function ServicesFilterSidebar({
           />
         </RadioGroup>
       </Box>
+        </>
+      )}
 
       {/* 4. Area / Localities */}
       {areaItems.length > 0 && (

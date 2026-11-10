@@ -18,7 +18,8 @@ import {
 } from "@mui/material";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
-import { CheckCircle, Bolt, Verified } from "@mui/icons-material";
+import { CheckCircle } from "@mui/icons-material";
+import { REVIEWS_AND_PRICING_LIVE } from "@/constants/common";
 import { useParams, useRouter } from "next/navigation";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -233,63 +234,8 @@ const CustomerServiceBooking = () => {
               </Typography>
 
               {/* Trust Badges */}
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.5,
-                  flexWrap: "wrap",
-                  mt: 0.5,
-                  mb: 1,
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 0.5,
-                    color: "#1D4ED8",
-                    fontWeight: 800,
-                  }}
-                >
-                  <Verified sx={{ fontSize: "14px" }} />
-                  <Typography
-                    sx={{
-                      fontWeight: 900,
-                      fontSize: "0.65rem",
-                      fontStyle: "italic",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    Verified Service
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 0.5,
-                    bgcolor: "#ECFDF5",
-                    color: "#059669",
-                    px: 0.8,
-                    py: 0.2,
-                    borderRadius: "4px",
-                    border: "1px solid #10B98130",
-                  }}
-                >
-                  <Bolt sx={{ fontSize: "12px" }} />
-                  <Typography
-                    sx={{
-                      fontWeight: 800,
-                      fontSize: "0.6rem",
-                    }}
-                  >
-                    HIGH SUCCESS
-                  </Typography>
-                </Box>
-              </Box>
-              {service.is_price_required ? (
+              {/* No price figure until pricing is final */}
+              {REVIEWS_AND_PRICING_LIVE && service.is_price_required ? (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <Box
                     sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}
@@ -1035,7 +981,7 @@ const CustomerServiceBooking = () => {
                   },
                 }}
               >
-                {english.confirm_booking}
+                Request Service
               </Button>
             </Box>
           </Box>

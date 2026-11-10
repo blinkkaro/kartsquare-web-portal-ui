@@ -3,7 +3,6 @@ import React from "react";
 import { Box, Typography, useTheme } from "@mui/material";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import { COLORS } from "../../../../constants/colors";
 
 interface ServiceTitleBlockProps {
@@ -64,10 +63,6 @@ const ServiceTitleBlock = ({
         >
           {name}
         </Typography>
-        <CheckCircleRoundedIcon
-          sx={{ fontSize: 24, color: COLORS.NEW_UI.VERIFIED_GREEN }}
-          titleAccess="Listed on Kartsquare"
-        />
         {isNew && (
           <Box
             component="span"

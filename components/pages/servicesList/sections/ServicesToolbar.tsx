@@ -12,6 +12,7 @@ import {
 import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import { COLORS } from "@/constants/colors";
+import { REVIEWS_AND_PRICING_LIVE } from "@/constants/common";
 
 export type SortOptionType = "recommended" | "rating" | "reviews" | "price_low";
 
@@ -102,7 +103,8 @@ export default function ServicesToolbar({
           Filters & sort
         </Button>
 
-        {/* Sort select */}
+        {/* Sort select (only "Recommended" exists until reviews and prices are live) */}
+        {REVIEWS_AND_PRICING_LIVE && (
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flex: { xs: "1 1 0", sm: "0 1 auto" }, minWidth: { xs: 0, sm: "auto" } }}>
           <Typography
             sx={{
@@ -156,6 +158,7 @@ export default function ServicesToolbar({
             </MenuItem>
           </Select>
         </Box>
+        )}
       </Box>
     </Box>
   );

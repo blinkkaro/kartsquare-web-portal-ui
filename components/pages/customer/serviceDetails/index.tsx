@@ -1,4 +1,5 @@
 "use client";
+import HideImageOutlinedIcon from "@mui/icons-material/HideImageOutlined";
 import React, { useState, useMemo, useEffect } from "react";
 import { Box, Container, Typography, useTheme } from "@mui/material";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
@@ -235,12 +236,8 @@ const CustomerServiceDetails = () => {
     return null;
   }
 
-  const images =
-    service.image_urls && service.image_urls.length > 0
-      ? service.image_urls
-      : [
-          "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        ];
+  // Only the provider's own photos; no stock photo when there are none.
+  const images = (service.image_urls ?? []).filter(Boolean);
 
   const isPriceRequired =
     service.pricing_type === "noPrice" ? false : service.is_price_required;
@@ -337,7 +334,24 @@ const CustomerServiceDetails = () => {
                   bgcolor: isDark ? COLORS.NEW_UI.SURFACE_SOFT_DARK : COLORS.NEW_UI.SURFACE_SOFT_LIGHT,
                 }}
               >
-                <ServiceImageCarousel images={images} serviceName={service.service_name || ""} />
+                {images.length > 0 ? (
+                  <ServiceImageCarousel images={images} serviceName={service.service_name || ""} />
+                ) : (
+                  <Box
+                    sx={{
+                      height: { xs: 140, md: 200 },
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 0.75,
+                      color: "text.secondary",
+                    }}
+                  >
+                    <HideImageOutlinedIcon sx={{ fontSize: 32, opacity: 0.6 }} />
+                    <Typography sx={{ fontSize: "0.85rem", fontWeight: 600 }}>No photos yet</Typography>
+                  </Box>
+                )}
               </Box>
 
               <ServiceTitleBlock

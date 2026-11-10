@@ -6,7 +6,6 @@ import Hero from "./components/Hero";
 import TakeChargeSection from "./components/TakeChargeSection";
 import ConnectWithCustomersSection from "./components/ConnectWithCustomersSection";
 import ShowWhatYouOfferSection from "./components/ShowWhatYouOfferSection";
-import SuccessStories from "./components/SuccessStories";
 import HowItWorks from "./components/HowItWorks";
 import FAQ from "./components/FAQ";
 import ScrollReveal from "./components/ScrollReveal";
@@ -63,12 +62,8 @@ function ListingView() {
         <Hero />
       </Box>
 
-      {/* 2. Success Stories — Build trust early with social proof */}
-      <Box component="section" id={SECTION_IDS.SUCCESS_STORIES} sx={{ borderTop: sectionBorder }}>
-        <ScrollReveal variant="fadeRight" delay={0}>
-          <SuccessStories />
-        </ScrollReveal>
-      </Box>
+      {/* 2. Success Stories: removed until there are real, permissioned quotes
+          (the previous ones were sample testimonials). components/SuccessStories.tsx is kept. */}
 
       {/* 3. How It Works - Simple process */}
       <Box component="section" id={SECTION_IDS.HOW_IT_WORKS} sx={{ borderTop: sectionBorder }}>

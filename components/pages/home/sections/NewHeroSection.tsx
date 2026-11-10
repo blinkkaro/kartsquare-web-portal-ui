@@ -97,7 +97,7 @@ export default function NewHeroSection() {
                 px: 0.25,
               }}
             >
-              right when you need it
+              right in your area
             </Box>
           </Typography>
 

@@ -23,16 +23,16 @@ interface Faq {
 const faqs = (city: string): Faq[] => [
   {
     q: "What is Kartsquare?",
-    a: "Kartsquare is a marketplace that connects you with local service providers and suppliers. You describe what you need, compare approved providers, and contact them directly.",
+    a: "Kartsquare is a marketplace that connects you with local service providers and suppliers. You describe what you need, compare local providers, and contact them directly.",
   },
   {
     q: `How do I find an AC repair, plumber or electrician in ${city}?`,
-    a: `Type what you need the way you would say it, in English, Hindi or Hinglish, for example "AC repair", "plumber near me" or "AC thanda nahi kar raha". Kartsquare works out the service and shows approved providers in ${city}. You can also browse by category. If nobody offers it in your area, you will see that clearly instead of unrelated results.`,
+    a: `Type what you need the way you would say it, in English, Hindi or Hinglish, for example "AC repair", "plumber near me" or "AC thanda nahi kar raha". Kartsquare works out the service and shows providers listed in ${city}. You can also browse by category. If nobody offers it in your area, you will see that clearly instead of unrelated results.`,
     action: "ask-ai",
   },
   {
     q: "How do ratings and reviews work?",
-    a: "A rating is shown only when a service has real customer reviews. If a provider has no reviews yet, you will see “No reviews yet” instead of a made-up score. Only approved listings appear on Kartsquare.",
+    a: "A rating is shown only when a service has real customer reviews. If a provider has no reviews yet, you will see “No reviews yet” instead of a made-up score.",
   },
   {
     q: "How do I contact a provider?",
@@ -40,7 +40,7 @@ const faqs = (city: string): Faq[] => [
   },
   {
     q: "I offer a service. How do I list my business?",
-    a: "Choose “List your business”, create your provider profile and add your services. Once a listing is approved it becomes visible to customers searching in your city.",
+    a: "Choose “List your business”, create your provider profile and add your services. Once your listing is published it becomes visible to customers searching in your city.",
     action: "list-business",
   },
 ];

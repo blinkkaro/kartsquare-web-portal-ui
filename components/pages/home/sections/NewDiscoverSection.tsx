@@ -176,7 +176,7 @@ export default function NewDiscoverSection() {
       combined.push({
         id: p.id || `post-${idx}`,
         badge: badgeType,
-        title: p.caption || "Verified service highlight",
+        title: p.caption || "Recent work",
         subtitle: uName ? `${uName} · Professional` : "Kartsquare Pro",
         category: cat,
         image: getMediaUrl(p.media_urls),

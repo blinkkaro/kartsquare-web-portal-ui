@@ -5,7 +5,7 @@ import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import CallRoundedIcon from "@mui/icons-material/CallRounded";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
 import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
 import SupportAgentRoundedIcon from "@mui/icons-material/SupportAgentRounded";
 import { COLORS } from "../../../../constants/colors";
@@ -105,7 +105,7 @@ const ServiceBookingSidebar = ({
           "&:active": { transform: "scale(0.98)" },
         }}
       >
-        Enquire now
+        Request Service
       </Button>
 
       {(showWhatsApp || showCall) && (
@@ -169,7 +169,7 @@ const ServiceBookingSidebar = ({
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         {[
           {
-            icon: <CheckCircleRoundedIcon sx={{ fontSize: 17, color: COLORS.NEW_UI.VERIFIED_GREEN }} />,
+            icon: <StorefrontRoundedIcon sx={{ fontSize: 17 }} />,
             label: "Listed on Kartsquare",
           },
           { icon: <BoltRoundedIcon sx={{ fontSize: 17 }} />, label: "Contact the provider directly" },

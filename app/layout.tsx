@@ -50,21 +50,19 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
   },
   title: {
-    default: "kartsquare – B2B Marketplace | Products & Services from Verified Suppliers",
+    default: "Kartsquare – Local Services in Jaipur",
     template: "%s | kartsquare",
   },
   description:
-    "kartsquare is India's B2B marketplace for products and services. Discover electronics, machinery, textiles, chemicals, automotive parts and professional services from verified suppliers. Buy and book online.",
+    "Find local service providers in Jaipur, see their work and send a request: AC repair, electricians, plumbers, cleaning, beauty and more.",
   keywords: [
-    "B2B marketplace",
     "kartsquare",
-    "products India",
-    "services marketplace",
-    "verified suppliers",
-    "business products",
-    "wholesale",
-    "industrial supplies",
+    "local services Jaipur",
     "home services",
+    "AC repair Jaipur",
+    "electrician Jaipur",
+    "plumber Jaipur",
+    "services marketplace",
     "professional services",
   ],
   authors: [{ name: "kartsquare", url: SITE_URL }],
@@ -85,15 +83,15 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: SITE_URL,
     siteName: "kartsquare",
-    title: "kartsquare – B2B Marketplace | Products & Services from Verified Suppliers",
+    title: "Kartsquare – Local Services in Jaipur",
     description:
-      "India's B2B marketplace for products and services. Discover and buy from verified suppliers. Book professional services online.",
+      "Find local service providers in Jaipur, see their work and send a request: AC repair, electricians, plumbers, cleaning, beauty and more.",
     images: [
       {
         url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "kartsquare – India's B2B Marketplace",
+        alt: "Kartsquare – local services in Jaipur",
       },
     ],
   },
@@ -101,8 +99,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@kartsquare",
     creator: "@kartsquare",
-    title: "kartsquare – B2B Marketplace",
-    description: "Products & services from verified suppliers. Buy and book online.",
+    title: "Kartsquare – Local Services in Jaipur",
+    description: "Find local service providers in Jaipur, see their work and send a request: AC repair, electricians, plumbers, cleaning, beauty and more.",
     images: [`${SITE_URL}/og-image.png`],
   },
   alternates: {
@@ -120,9 +118,9 @@ const organizationJsonLd = {
   "@type": "Organization",
   name: "kartsquare",
   url: SITE_URL,
-  // /icon.png (192×192) is the verified PWA icon present in /public
+  // /icon.png (192×192) is the PWA icon present in /public
   logo: `${SITE_URL}/icon.png`,
-  description: "B2B marketplace for products and services from verified suppliers.",
+  description: "Find local service providers in Jaipur, see their work and send a request: AC repair, electricians, plumbers, cleaning, beauty and more.",
   // sameAs: Add social profiles to boost entity recognition in Google's Knowledge Graph.
   // Add or remove handles as your actual social presence dictates.
   sameAs: [
