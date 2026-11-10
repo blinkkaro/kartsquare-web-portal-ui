@@ -3,13 +3,9 @@ import React from "react";
 import { Box, SxProps, Theme } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { COLORS } from "@/constants/colors";
+import { categoryIconData } from "@/lib/categoryIcons";
 
-/** Shown when a category has no icon name, or an old value that is not one (e.g. a file URL). */
-export const DEFAULT_CATEGORY_ICON = "ph:squares-four-duotone";
-
-/** An Iconify icon name, "prefix:name", e.g. "ph:tractor-duotone". */
-const ICON_NAME = /^[a-z0-9]+(-[a-z0-9]+)*:[a-z0-9]+(-[a-z0-9]+)*$/;
-const iconName = (icon?: string | null): string => (icon && ICON_NAME.test(icon) ? icon : DEFAULT_CATEGORY_ICON);
+export { DEFAULT_CATEGORY_ICON } from "@/lib/categoryIcons";
 
 const HEX = /^#[0-9a-f]{6}$/i;
 
@@ -24,7 +20,7 @@ export const categoryTint = (color?: string | null): string =>
 type Size = number | { xs: number; sm?: number; md?: number };
 
 interface CategoryIconProps {
-  /** Iconify icon name from the API (`icon` on categories and subcategories, `icon_name` on preferences). */
+  /** Icon name from the API, e.g. "ph:tractor-duotone" (`icon` on categories and subcategories, `icon_name` on preferences). */
   icon?: string | null;
   /** The category colour (#rrggbb): colours the icon and tints the tile. */
   color?: string | null;
@@ -39,7 +35,7 @@ interface CategoryIconProps {
 }
 
 /**
- * A category's duotone icon from the Iconify library (fetched on demand and cached by the browser),
+ * A category's duotone icon, drawn by the Iconify library from the bundled icon data,
  * optionally on a tile tinted with the category colour. The icon is decorative: the category name
  * is always shown or announced beside it.
  */
@@ -54,7 +50,7 @@ export default function CategoryIcon({ icon, color, size, tile, radius, sx }: Ca
         ...(tile ? [] : extra),
       ]}
     >
-      <Icon icon={iconName(icon)} width="100%" height="100%" ssr />
+      <Icon icon={categoryIconData(icon)} width="100%" height="100%" ssr />
     </Box>
   );
   if (!tile) return glyph;
