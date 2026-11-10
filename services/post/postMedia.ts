@@ -25,3 +25,19 @@ export const postTypeForFiles = (files: ReadonlyArray<{ type: string }>): PostTy
  */
 export const reelVideoUrl = (urls: ReadonlyArray<string>): string | undefined =>
   urls.find(isVideoUrl) ?? (urls.length > 1 ? urls[1] : urls[0]);
+
+/** The tallest (4:5) and widest (1.91:1) a post's media box may be, as width ÷ height. */
+export const MEDIA_ASPECT_MIN = 4 / 5;
+export const MEDIA_ASPECT_MAX = 1.91;
+/** Before the first photo's size is known: square, the middle of the range. */
+export const MEDIA_ASPECT_DEFAULT = 1;
+
+/**
+ * The post's media box takes the first photo's own shape, kept between 4:5 portrait and
+ * 1.91:1 landscape, so a wide photo isn't framed by empty bands and a tall one doesn't
+ * take more than a phone screen. Unknown or broken sizes keep the default.
+ */
+export const mediaAspect = (width: number, height: number): number =>
+  width > 0 && height > 0 && Number.isFinite(width / height)
+    ? Math.min(MEDIA_ASPECT_MAX, Math.max(MEDIA_ASPECT_MIN, width / height))
+    : MEDIA_ASPECT_DEFAULT;

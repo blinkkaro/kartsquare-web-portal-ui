@@ -189,9 +189,9 @@ export default function FeedView() {
   };
 
   return (
-    <MainLayout>
-      <Box sx={{ bgcolor: dark ? "background.default" : COLORS.NEW_UI.PAGE_BG_LIGHT, minHeight: "100vh", pb: { xs: 12, md: 8 } }}>
-        <Typography component="h1" sx={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap" }}>
+    <MainLayout flushTop>
+      <Box sx={{ bgcolor: dark ? "background.default" : COLORS.NEW_UI.PAGE_BG_LIGHT, minHeight: "100vh", pb: { xs: 2, lg: 8 } }}>
+        <Typography component="h1" sx={{ position: "absolute", width: "1px", height: "1px", overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap" }}>
           Kartsquare feed — stories, posts and reels
         </Typography>
         {/* Same container and side padding as the services list; phones stay edge-to-edge. */}
@@ -320,7 +320,8 @@ export default function FeedView() {
                 renderPosts()
               )}
 
-              <Box ref={loadMoreRef} sx={{ height: 1 }} />
+              {/* "1px", not 1: in sx a 1 means 100%, which made this trigger as tall as the feed. */}
+              <Box ref={loadMoreRef} sx={{ height: "1px" }} />
               {endOfList()}
             </Box>
 

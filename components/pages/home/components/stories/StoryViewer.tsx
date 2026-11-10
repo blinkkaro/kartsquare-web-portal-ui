@@ -200,11 +200,10 @@ const StoryViewer: React.FC<StoryViewerProps> = ({
         exit={{ opacity: 0, scale: 0.9 }}
         transition={{ duration: 0.2 }}
         style={{
+          // Pinned to all four edges: exactly the visible screen. 100vh is taller than
+          // the visible area on phones while the address bar shows, hiding the bottom.
           position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100vw",
-          height: "100vh",
+          inset: 0,
           backgroundColor: "#000",
           zIndex: 1300, // Higher than MUI AppBar usually
           display: "flex",
