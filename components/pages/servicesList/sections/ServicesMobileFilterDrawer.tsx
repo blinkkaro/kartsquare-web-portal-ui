@@ -6,7 +6,6 @@ import {
   Typography,
   IconButton,
   Button,
-  Switch,
   RadioGroup,
   FormControlLabel,
   Radio,
@@ -18,6 +17,7 @@ import {
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { COLORS } from "@/constants/colors";
+import { REVIEWS_AND_PRICING_LIVE } from "@/constants/common";
 import {
   ServicesFilterState,
   AreaFilterItem,
@@ -141,6 +141,9 @@ export default function ServicesMobileFilterDrawer({
 
         {/* Scrollable Filter Body */}
         <Box sx={{ flex: 1, overflowY: "auto", p: 2.5 }}>
+          {/* 1. Sort + 2. Rating (only "Recommended" exists until reviews and prices are live) */}
+          {REVIEWS_AND_PRICING_LIVE && (
+            <>
           {/* 1. Sort By */}
           <Box sx={{ mb: 3 }}>
             <Typography sx={{ fontSize: "0.85rem", fontWeight: 700, mb: 1, color: "text.primary" }}>
@@ -220,33 +223,12 @@ export default function ServicesMobileFilterDrawer({
           </Box>
 
           <Divider sx={{ my: 2 }} />
+            </>
+          )}
 
-          {/* 3. Verified only */}
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 3 }}>
-            <Box>
-              <Typography sx={{ fontSize: "0.88rem", fontWeight: 700, color: "text.primary" }}>
-                Verified only
-              </Typography>
-              <Typography sx={{ fontSize: "0.76rem", color: "text.secondary" }}>
-                Details checked by Kartsquare
-              </Typography>
-            </Box>
-            <Switch
-              checked={filters.verifiedOnly}
-              onChange={(e) => onChangeFilter("verifiedOnly", e.target.checked)}
-              sx={{
-                "& .MuiSwitch-switchBase.Mui-checked": {
-                  color: COLORS.PRIMARY_PURPLE,
-                },
-                "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                  bgcolor: COLORS.PRIMARY_PURPLE,
-                },
-              }}
-            />
-          </Box>
-
-          <Divider sx={{ my: 2 }} />
-
+          {/* 3. Pricing (hidden until prices are final) */}
+          {REVIEWS_AND_PRICING_LIVE && (
+            <>
           {/* 4. Pricing */}
           <Box sx={{ mb: 3 }}>
             <Typography sx={{ fontSize: "0.85rem", fontWeight: 700, mb: 1, color: "text.primary" }}>
@@ -273,11 +255,13 @@ export default function ServicesMobileFilterDrawer({
               />
             </RadioGroup>
           </Box>
+            </>
+          )}
 
           {/* 5. Main Area (Justdial style) */}
           {areaItems.length > 0 && (
             <>
-              <Divider sx={{ my: 2 }} />
+              {REVIEWS_AND_PRICING_LIVE && <Divider sx={{ my: 2 }} />}
               <Box sx={{ mb: 2 }}>
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
                   <Typography sx={{ fontSize: "0.85rem", fontWeight: 700, color: "text.primary" }}>

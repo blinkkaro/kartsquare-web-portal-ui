@@ -103,8 +103,11 @@ export default function LocationChip({ location, onChange, onUseCurrent, locatin
         sx={{
           height: 32,
           maxWidth: "100%",
-          // Stable width so swapping "Finding your location…" / "Jaipur" / "Alwar" doesn't shift neighbours
-          minWidth: 112,
+          // Stable width so swapping "Finding your location…" / "Jaipur" / "Alwar" doesn't shift neighbours,
+          // but never wider than the room the header gives it (it ran under the buttons on 280px phones)
+          minWidth: "min(112px, 100%)",
+          // Narrowest phones: the place name gets the arrow's room (the whole chip still opens the picker)
+          "@media (max-width: 339.95px)": { "& .MuiChip-deleteIcon": { display: "none" }, "& .MuiChip-label": { pr: 1.25 } },
           "& .MuiChip-label": { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
           fontWeight: 600,
           fontSize: "0.78rem",

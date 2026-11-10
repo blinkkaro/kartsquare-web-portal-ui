@@ -63,8 +63,8 @@ export const useBookingData = (
                 });
                 setTimeSlots(slotsData.slots);
             } catch (error) {
+                // No error banner: the picker shows "No available slots" for that date instead.
                 console.error("Failed to fetch slots:", error);
-                setError("Failed to load available time slots");
                 setTimeSlots([]);
             } finally {
                 setSlotsLoading(false);

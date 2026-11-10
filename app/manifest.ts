@@ -4,16 +4,24 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://kartsquare.com';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'kartsquare – B2B Marketplace',
-    short_name: 'kartsquare',
-    description: 'Products and services from verified suppliers. Buy and book online.',
+    id: '/',
+    name: "Kartsquare – Local Services in Jaipur",
+    short_name: 'Kartsquare',
+    description: 'Find local service providers in Jaipur, see their work and send a request: AC repair, electricians, plumbers, cleaning, beauty and more.',
+    lang: 'en-IN',
     start_url: '/',
     scope: '/',
     display: 'standalone',
     background_color: '#ffffff',
-    theme_color: '#1976d2',
+    // Matches <meta name="theme-color"> in app/layout.tsx (was MUI's default blue).
+    theme_color: '#ffffff',
     orientation: 'portrait-primary',
-    categories: ['business', 'shopping'],
+    categories: ['lifestyle', 'business'],
+    shortcuts: [
+      { name: 'Find a service', short_name: 'Services', url: '/cus/services-list' },
+      { name: 'Reels', url: '/cus/reels' },
+      { name: 'List your business', short_name: 'List business', url: '/business-listing' },
+    ],
     icons: [
       { src: '/icon.svg', type: 'image/svg+xml', purpose: 'any' },
       { src: '/icons/favicon-32x32.png', sizes: '32x32', type: 'image/png', purpose: 'any' },

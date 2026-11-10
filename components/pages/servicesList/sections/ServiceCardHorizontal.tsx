@@ -1,4 +1,5 @@
 "use client";
+import NoPhotoTile from "@/components/common/NoPhotoTile";
 import React, { useState } from "react";
 import {
   Avatar,
@@ -13,7 +14,6 @@ import {
   useTheme,
 } from "@mui/material";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import KeyboardArrowUpRoundedIcon from "@mui/icons-material/KeyboardArrowUpRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
@@ -23,7 +23,6 @@ import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
 import DirectionsRoundedIcon from "@mui/icons-material/DirectionsRounded";
 import { COLORS } from "@/constants/colors";
 import { EnrichedServiceItem, ProviderRecentWork } from "../servicesSampleData";
-import { HOME_PHOTOS } from "@/components/pages/home/sections/homePhotos";
 
 interface ServiceCardHorizontalProps {
   service: EnrichedServiceItem;
@@ -52,9 +51,9 @@ export default function ServiceCardHorizontal({
       : typeof service.image_urls === "string"
       ? (service.image_urls as string)
       : service.provider_image_url || "";
-  // Placeholder for the photo slot only — never shown as the provider's own work.
-  const primaryImg =
-    realImg || "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80";
+  // No stock photo: with no photo (or a broken one) the slot shows NoPhotoTile.
+  const [imgFailed, setImgFailed] = React.useState(false);
+  const primaryImg = imgFailed ? "" : realImg;
 
   const displayName = service.business_name || service.service_name || service.provider_name || "Service Expert";
   const providerName = service.provider_name?.trim() || service.business_name || "this provider";
@@ -141,13 +140,12 @@ export default function ServiceCardHorizontal({
           }}
           onClick={() => onViewService(service)}
         >
+          {primaryImg ? (
           <Box
             component="img"
             src={primaryImg}
             alt={displayName}
-            onError={(e: any) => {
-              e.currentTarget.src = HOME_PHOTOS.electricianHero.src;
-            }}
+            onError={() => setImgFailed(true)}
             sx={{
               width: "100%",
               height: "100%",
@@ -157,29 +155,10 @@ export default function ServiceCardHorizontal({
               "&:hover": { transform: "scale(1.04)" },
             }}
           />
+          ) : (
+            <NoPhotoTile name={displayName} />
+          )}
 
-          {/* Mobile-only Verified Badge Overlay */}
-          <Box
-            sx={{
-              display: { xs: "inline-flex", sm: "none" },
-              position: "absolute",
-              top: 10,
-              left: 10,
-              alignItems: "center",
-              gap: 0.5,
-              px: 1,
-              py: 0.35,
-              borderRadius: "999px",
-              bgcolor: "rgba(255,255,255,0.92)",
-              color: "#166534",
-              fontSize: "0.72rem",
-              fontWeight: 800,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-            }}
-          >
-            <CheckCircleRoundedIcon sx={{ fontSize: 13, color: "#16a34a" }} />
-            Verified
-          </Box>
         </Box>
 
         {/* 2. Middle: Identity, Details, Tags & Recent Work */}
@@ -199,7 +178,7 @@ export default function ServiceCardHorizontal({
             </Typography>
           </Box>
 
-          {/* Provider picture (opens their profile), title (opens the service) & verified badge */}
+          {/* Provider picture (opens their profile) and title (opens the service) */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap", mb: 0.5 }}>
             {service.provider_id && (
               <Tooltip title={`View ${providerName}'s profile`}>
@@ -249,14 +228,6 @@ export default function ServiceCardHorizontal({
             >
               {displayName}
             </Typography>
-            <CheckCircleRoundedIcon
-              sx={{
-                fontSize: 18,
-                color: "#16a34a",
-                display: { xs: "none", sm: "inline-block" },
-              }}
-              titleAccess="Listed on Kartsquare"
-            />
           </Box>
 
           {/* Rating, distance & location (real data only) */}
@@ -453,6 +424,8 @@ export default function ServiceCardHorizontal({
             sx={{
               display: "flex",
               flexDirection: { xs: "row", sm: "column" },
+              // Phones: View details on its own row, Quick view + Directions below
+              flexWrap: { xs: "wrap", sm: "nowrap" },
               alignItems: "stretch",
               width: "100%",
               gap: 1,
@@ -462,7 +435,9 @@ export default function ServiceCardHorizontal({
               variant="contained"
               onClick={() => onViewService(service)}
               sx={{
-                flex: { xs: 1, sm: "none" },
+                flex: { xs: "1 1 100%", sm: "none" },
+                minHeight: { xs: 44, sm: "auto" },
+                whiteSpace: { xs: "nowrap", sm: "normal" },
                 bgcolor: COLORS.PRIMARY_PURPLE,
                 color: "#ffffff",
                 borderRadius: "10px",
@@ -486,7 +461,9 @@ export default function ServiceCardHorizontal({
               variant="text"
               onClick={() => onOpenQuickView(service)}
               sx={{
-                flex: { xs: 1, sm: "none" },
+                flex: { xs: "1 1 0", sm: "none" },
+                minHeight: { xs: 44, sm: "auto" },
+                whiteSpace: { xs: "nowrap", sm: "normal" },
                 color: "text.secondary",
                 fontSize: "0.82rem",
                 fontWeight: 600,
@@ -513,7 +490,9 @@ export default function ServiceCardHorizontal({
                 aria-label={`Directions to ${displayName} in Google Maps`}
                 startIcon={<DirectionsRoundedIcon sx={{ fontSize: "18px !important" }} />}
                 sx={{
-                  flex: { xs: 1, sm: "none" },
+                  flex: { xs: "1 1 0", sm: "none" },
+                  minHeight: { xs: 44, sm: "auto" },
+                  whiteSpace: { xs: "nowrap", sm: "normal" },
                   color: dark ? COLORS.NEW_UI.ACCENT_TEXT_DARK : COLORS.PRIMARY_PURPLE,
                   fontSize: "0.82rem",
                   fontWeight: 700,

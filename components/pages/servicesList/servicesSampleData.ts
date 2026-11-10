@@ -28,7 +28,7 @@ export interface EnrichedServiceItem extends Service {
  */
 export const mapRealServiceToEnriched = (s: Service): EnrichedServiceItem => {
   const displayName =
-    s.business_name || s.service_name || s.provider_name || "Verified Service";
+    s.business_name || s.service_name || s.provider_name || "Local service";
   const providerName = s.provider_name || s.business_name || displayName;
 
   // Extract sub services from real sub_category_name, price_items, or category_name

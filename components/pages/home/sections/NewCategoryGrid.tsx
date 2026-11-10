@@ -8,7 +8,6 @@ import {
   IconButton,
   Button,
   useTheme,
-  useMediaQuery,
 } from "@mui/material";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
@@ -16,6 +15,7 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 
 import Image from "next/image";
 import cloudinaryLoader, { isCloudinaryUrl } from "@/lib/cloudinaryLoader";
@@ -104,11 +104,30 @@ const DUMMY_CATEGORIES = [
   { id: "restaurants", slug: "restaurants-food", name: "Restaurants & Food", description: "Dine-in, takeaway & cafes" },
 ];
 
+/** Categories in the phone icon grid before "Show all": 3 rows of 4. */
+const MOBILE_PREVIEW = 12;
+
+/** Phones: 4 icon tiles per row, 3 on the narrowest (under 340px) so labels stay readable. */
+const mobileIconGridSx = {
+  display: "grid",
+  gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+  "@media (max-width: 339.95px)": { gridTemplateColumns: "repeat(3, minmax(0, 1fr))" },
+  columnGap: 1,
+  rowGap: 2,
+} as const;
+
+/** Tablet/desktop list columns; minmax(0, …) lets a long word ("Entertainment") shrink instead of widening its column. */
+const listGridColumns = {
+  xs: "minmax(0, 1fr)",
+  sm: "repeat(2, minmax(0, 1fr))",
+  md: "repeat(3, minmax(0, 1fr))",
+  lg: "repeat(4, minmax(0, 1fr))",
+} as const;
+
 export default function NewCategoryGrid() {
   const router = useRouter();
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { data: categories, isLoading } = useCategories();
   const { location } = useAILocation();
   // City pages (/{city}/{category}) only when we know the user's city.
@@ -118,11 +137,13 @@ export default function NewCategoryGrid() {
 
   // Search/Filter state
   const [searchTerm, setSearchTerm] = useState("");
-  // Pagination state
+  // Pagination state (tablet/desktop)
   const [currentPage, setCurrentPage] = useState(1);
+  // Phones: an app-style icon grid showing the first few, then "Show all" instead of pages
+  const [showAll, setShowAll] = useState(false);
 
   // Items per page: 8 on mobile, 12 on tablet/desktop
-  const itemsPerPage = isMobile ? 8 : 12;
+  const itemsPerPage = 12;
 
   // Use API data if available, else dummy
   const cats = (!isLoading && categories && categories.length > 0) ? categories : (isLoading ? null : DUMMY_CATEGORIES);
@@ -157,6 +178,9 @@ export default function NewCategoryGrid() {
   // Total pages
   const totalPages = Math.max(1, Math.ceil(filteredCategories.length / itemsPerPage));
 
+  // Phones show MOBILE_PREVIEW until "Show all" (or while filtering, every match)
+  const mobileCategories = showAll || searchTerm.trim() ? filteredCategories : filteredCategories.slice(0, MOBILE_PREVIEW);
+
   // Current page items
   const paginatedCategories = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -190,7 +214,7 @@ export default function NewCategoryGrid() {
           {/* Two lines reserved on phones: the city name changes length when GPS or a saved
               city replaces the default, and the section must not jump when it does. */}
           <Typography sx={{ ...sectionSubtitleSx, minHeight: { xs: "3em", sm: 0 } }}>
-            Find trusted service providers & specialists {location.city ? `in ${location.city}` : "near you"}
+            Find local service providers & specialists {location.city ? `in ${location.city}` : "near you"}
           </Typography>
         </Box>
 
@@ -262,7 +286,7 @@ export default function NewCategoryGrid() {
                   borderRadius: { xs: 3.5, md: 4 },
                   overflow: "hidden",
                   cursor: "pointer",
-                  height: { xs: 155, sm: 180, md: 215, lg: 225, xl: 240 },
+                  height: { xs: 168, sm: 180, md: 215, lg: 225, xl: 240 },
                   // Under the photo, or the whole card when there is none: the category's own colour.
                   backgroundImage: hasColor
                     ? `linear-gradient(135deg, ${color}, ${color}b3)`
@@ -469,22 +493,21 @@ export default function NewCategoryGrid() {
 
         {/* Categories Grid (Paginated) */}
         {isLoading ? (
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "repeat(2, 1fr)",
-                sm: "repeat(2, 1fr)",
-                md: "repeat(3, 1fr)",
-                lg: "repeat(4, 1fr)",
-              },
-              gap: 1.25,
-            }}
-          >
-            {Array.from({ length: 8 }).map((_, i) => (
-              <Skeleton key={i} variant="rounded" height={68} sx={{ borderRadius: 3 }} />
-            ))}
-          </Box>
+          <>
+            <Box sx={{ ...mobileIconGridSx, display: { xs: "grid", sm: "none" } }}>
+              {Array.from({ length: MOBILE_PREVIEW }).map((_, i) => (
+                <Box key={i} sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0.75 }}>
+                  <Skeleton variant="rounded" width={52} height={52} sx={{ borderRadius: "16px" }} />
+                  <Skeleton variant="text" width="80%" />
+                </Box>
+              ))}
+            </Box>
+            <Box sx={{ display: { xs: "none", sm: "grid" }, gridTemplateColumns: listGridColumns, gap: 1.25 }}>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} variant="rounded" height={68} sx={{ borderRadius: 3 }} />
+              ))}
+            </Box>
+          </>
         ) : paginatedCategories.length === 0 ? (
           <Box
             sx={{
@@ -512,15 +535,101 @@ export default function NewCategoryGrid() {
             </Button>
           </Box>
         ) : (
+          <>
+          {/* Phones: app-style icon grid + "Show all" */}
+          <Box sx={{ display: { xs: "block", sm: "none" } }}>
+            <Box sx={mobileIconGridSx}>
+              {mobileCategories.map((c) => {
+                const { icon, color } = c as CategoryMedia;
+                return (
+                  <Box
+                    key={c.id}
+                    role="link"
+                    tabIndex={0}
+                    onClick={() => go(c)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        go(c);
+                      }
+                    }}
+                    aria-label={`Browse ${c.name}`}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 0.75,
+                      minWidth: 0,
+                      cursor: "pointer",
+                      userSelect: "none",
+                      WebkitTapHighlightColor: "transparent",
+                      borderRadius: 2,
+                      // The icon tile (first child) presses in on tap, like an app icon
+                      "& > :first-of-type": { transition: "transform 120ms ease" },
+                      "&:active > :first-of-type": { transform: "scale(0.92)" },
+                      "@media (prefers-reduced-motion: reduce)": { "& > :first-of-type": { transition: "none" }, "&:active > :first-of-type": { transform: "none" } },
+                      "&:focus-visible": { outline: `2px solid ${COLORS.PRIMARY_PURPLE}`, outlineOffset: 2 },
+                    }}
+                  >
+                    <CategoryIcon
+                      icon={icon}
+                      color={color}
+                      tile={52}
+                      size={30}
+                      radius="16px"
+                    />
+                    <Typography
+                      sx={{
+                        fontSize: "0.72rem",
+                        fontWeight: 600,
+                        lineHeight: 1.2,
+                        textAlign: "center",
+                        color: "text.primary",
+                        width: "100%",
+                        overflowWrap: "anywhere",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}
+                    >
+                      {c.name}
+                    </Typography>
+                  </Box>
+                );
+              })}
+            </Box>
+            {!searchTerm.trim() && filteredCategories.length > MOBILE_PREVIEW && (
+              <Button
+                fullWidth
+                variant="outlined"
+                onClick={() => {
+                  if (showAll) listingRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  setShowAll((v) => !v);
+                }}
+                aria-expanded={showAll}
+                endIcon={<KeyboardArrowDownRoundedIcon sx={{ transform: showAll ? "rotate(180deg)" : "none", transition: "transform 200ms ease" }} />}
+                sx={{
+                  mt: 2.5,
+                  minHeight: 44,
+                  borderRadius: 2.5,
+                  textTransform: "none",
+                  fontWeight: 700,
+                  fontSize: "0.88rem",
+                  borderColor: dark ? "rgba(255,255,255,0.15)" : "#e2deea",
+                  color: dark ? "#d6b8ff" : COLORS.PRIMARY_PURPLE,
+                }}
+              >
+                {showAll ? "Show less" : `Show all ${filteredCategories.length} categories`}
+              </Button>
+            )}
+          </Box>
+
+          {/* Tablet/desktop: the paginated list */}
           <Box
             sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "repeat(2, 1fr)",
-                sm: "repeat(2, 1fr)",
-                md: "repeat(3, 1fr)",
-                lg: "repeat(4, 1fr)",
-              },
+              display: { xs: "none", sm: "grid" },
+              gridTemplateColumns: listGridColumns,
               gap: { xs: 1, sm: 1.25 },
             }}
           >
@@ -613,13 +722,14 @@ export default function NewCategoryGrid() {
               );
             })}
           </Box>
+          </>
         )}
 
-        {/* 4. Modern Interactive Pagination Bar */}
+        {/* 4. Modern Interactive Pagination Bar (tablet/desktop; phones use "Show all") */}
         {totalPages > 1 && (
           <Box
             sx={{
-              display: "flex",
+              display: { xs: "none", sm: "flex" },
               flexDirection: { xs: "column", sm: "row" },
               alignItems: "center",
               justifyContent: "space-between",

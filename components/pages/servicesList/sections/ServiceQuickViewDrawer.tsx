@@ -1,4 +1,5 @@
 "use client";
+import NoPhotoTile from "@/components/common/NoPhotoTile";
 import React from "react";
 import {
   Avatar,
@@ -13,7 +14,6 @@ import {
 } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
 import DirectionsRoundedIcon from "@mui/icons-material/DirectionsRounded";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
@@ -21,7 +21,6 @@ import CallRoundedIcon from "@mui/icons-material/CallRounded";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import { COLORS } from "@/constants/colors";
 import { EnrichedServiceItem } from "../servicesSampleData";
-import { HOME_PHOTOS } from "@/components/pages/home/sections/homePhotos";
 
 interface ServiceQuickViewDrawerProps {
   open: boolean;
@@ -57,8 +56,7 @@ export default function ServiceQuickViewDrawer({
       ? service.image_urls[0]
       : typeof service.image_urls === "string"
       ? (service.image_urls as string)
-      : service.provider_image_url ||
-        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80";
+      : service.provider_image_url || "";
 
   // Real data only — no placeholder city or phone number.
   const locCity = service.service_address?.city_town?.trim() || "";
@@ -102,17 +100,21 @@ export default function ServiceQuickViewDrawer({
             overflow: "hidden",
           }}
         >
-          <Box
-            component="img"
-            src={primaryImg}
-            alt={displayName}
-            sx={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              display: "block",
-            }}
-          />
+          {primaryImg ? (
+            <Box
+              component="img"
+              src={primaryImg}
+              alt={displayName}
+              sx={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+              }}
+            />
+          ) : (
+            <NoPhotoTile name={displayName} size="3.5rem" />
+          )}
           {/* Overlay */}
           <Box
             sx={{
@@ -159,14 +161,13 @@ export default function ServiceQuickViewDrawer({
                   py: 0.25,
                   borderRadius: "999px",
                   bgcolor: "rgba(255,255,255,0.92)",
-                  color: "#166534",
+                  color: "#1c1924",
                   fontSize: "0.72rem",
                   fontWeight: 800,
                   mb: 0.5,
                 }}
               >
-                <CheckCircleRoundedIcon sx={{ fontSize: 13, color: "#16a34a" }} />
-                Kartsquare partner
+                Listed on Kartsquare
               </Box>
               <Typography
                 sx={{

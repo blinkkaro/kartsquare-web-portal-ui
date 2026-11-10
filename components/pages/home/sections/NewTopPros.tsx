@@ -1,5 +1,6 @@
 "use client";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import NoPhotoTile from "@/components/common/NoPhotoTile";
+import React, { useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Avatar, Box, ButtonBase, Typography, Button, Skeleton, Tooltip, useTheme } from "@mui/material";
@@ -14,15 +15,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { TopService } from "@/services/topSuppliers/topSupplires.interfaces";
 import { Section, SectionHeader } from "./shared";
-import { HOME_PHOTOS } from "./homePhotos";
 
-/** Neutral photo for the image slot when a listing has none (never a fake listing). */
-const FALLBACK_IMAGES = [
-  HOME_PHOTOS.electricianHero.src,
-  HOME_PHOTOS.homeCleaning.src,
-  HOME_PHOTOS.acRepair.src,
-  HOME_PHOTOS.beautySalon.src,
-];
 
 interface TopProCard {
   id: string;
@@ -37,14 +30,13 @@ interface TopProCard {
   price: string | null;
   city_town: string;
   image_url: string;
-  verified: boolean;
   /** Set for a service card: its page (slug or id). Null for a provider-only card. */
   service_route: string | null;
   /** The provider's own picture, for the avatar that opens their profile. */
   provider_image: string;
 }
 
-// Mobile: horizontal snap slider (next card peeks). sm+: regular grid.
+// Phones: an app-style shelf of compact cards (next card peeks, no dots). sm+: regular grid.
 const cardTrack = {
   display: { xs: "flex", sm: "grid" },
   gridTemplateColumns: { sm: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" },
@@ -60,7 +52,7 @@ const cardTrack = {
   scrollbarWidth: "none",
   "&::-webkit-scrollbar": { display: "none" },
   "& > article": {
-    flex: { xs: "0 0 80%", sm: "initial" },
+    flex: { xs: "0 0 min(78%, 280px)", sm: "initial" },
     scrollSnapAlign: { xs: "start", sm: "none" },
   },
   // Cards scale/fade in as they slide into view (CSS scroll-driven, no JS; ignored where unsupported)
@@ -105,15 +97,6 @@ export default function NewTopPros() {
     [router, openProvider],
   );
 
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(0);
-  const onTrackScroll = useCallback(() => {
-    const el = trackRef.current;
-    if (!el || !el.firstElementChild) return;
-    const step = (el.firstElementChild as HTMLElement).offsetWidth + 12;
-    setActive(Math.round(el.scrollLeft / step));
-  }, []);
-
   const rawServices: TopService[] = servicer ?? [];
 
   // Real listings only. With none, the section is hidden rather than filled with examples.
@@ -123,7 +106,7 @@ export default function NewTopPros() {
       return rawServices.slice(0, 4).map((s, idx) => {
         const img = Array.isArray(s.image_urls) && s.image_urls.length > 0
           ? s.image_urls[0]
-          : (typeof s.image_urls === "string" && s.image_urls ? s.image_urls : FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length]);
+          : (typeof s.image_urls === "string" && s.image_urls ? s.image_urls : "");
         const reviews = Number(s.review_count) || 0;
         return {
           id: s.id || `pro-${idx}`,
@@ -137,8 +120,7 @@ export default function NewTopPros() {
           price: s.price && Number(s.price) > 0 ? String(s.price) : null,
           city_town: s.city_town || "",
           image_url: img,
-          verified: true,
-          service_route: s.slug?.trim() || s.id || null,
+            service_route: s.slug?.trim() || s.id || null,
           provider_image: s.provider_profile_pic || "",
         };
       });
@@ -156,8 +138,7 @@ export default function NewTopPros() {
         review_count: 0,
         price: null,
         city_town: p.city || "",
-        image_url: p.profile_pic || FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length],
-        verified: true,
+        image_url: p.profile_pic || "",
         service_route: null,
         provider_image: p.profile_pic || "",
       }));
@@ -170,7 +151,7 @@ export default function NewTopPros() {
   return (
     <Section id="top-pros" sx={{ pb: { xs: 4, md: 6 }, px: 0 }}>
       <SectionHeader
-        title="Trusted professionals near you"
+        title="Professionals near you"
         subtitle={location.city ? `Listed on Kartsquare in ${location.city}` : "Listed on Kartsquare"}
         action={
           <Box
@@ -197,12 +178,12 @@ export default function NewTopPros() {
       {isLoading ? (
         <Box sx={cardTrack}>
           {[0, 1, 2, 3].map((i) => (
-            <Skeleton key={i} variant="rounded" sx={{ height: 380, borderRadius: 4, flex: { xs: "0 0 80%", sm: "initial" } }} />
+            <Skeleton key={i} variant="rounded" sx={{ height: { xs: 300, sm: 380 }, borderRadius: 4, flex: { xs: "0 0 min(78%, 280px)", sm: "initial" } }} />
           ))}
         </Box>
       ) : (
         <>
-        <Box sx={cardTrack} ref={trackRef} onScroll={onTrackScroll}>
+        <Box sx={cardTrack}>
           {services.map((item) => {
             return (
               <Box
@@ -230,38 +211,46 @@ export default function NewTopPros() {
                   sx={{
                     position: "relative",
                     width: "100%",
-                    height: { xs: 180, sm: 190, md: 200, lg: 215, xl: 230 },
+                    height: { xs: 132, sm: 190, md: 200, lg: 215, xl: 230 },
                     overflow: "hidden",
                     bgcolor: COLORS.PURPLE_ALPHA_10,
                     cursor: "pointer",
                   }}
                 >
-                  <Box
-                    component="img"
-                    src={item.image_url}
-                    alt={item.name}
-                    loading="lazy"
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      transition: "transform 400ms ease",
-                      "&:hover": { transform: "scale(1.05)" },
-                    }}
-                  />
+                  {item.image_url ? (
+                    <Box
+                      component="img"
+                      src={item.image_url}
+                      alt={item.name}
+                      loading="lazy"
+                      sx={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        transition: "transform 400ms ease",
+                        "&:hover": { transform: "scale(1.05)" },
+                      }}
+                    />
+                  ) : (
+                    <NoPhotoTile name={item.name} />
+                  )}
 
                   {/* Badges on image */}
-                  <Box sx={{ position: "absolute", top: 12, left: 12, display: "flex", gap: 0.75 }}>
+                  <Box sx={{ position: "absolute", top: { xs: 8, sm: 12 }, left: { xs: 8, sm: 12 }, right: { xs: 8, sm: 12 }, display: "flex", gap: 0.75, minWidth: 0 }}>
                     {item.category_name?.[0] ? (
                       <Box
                         sx={{
-                          px: 1.25,
+                          px: { xs: 1, sm: 1.25 },
                           py: 0.35,
                           borderRadius: 2,
                           bgcolor: "rgba(255,255,255,0.95)",
                           color: COLORS.PRIMARY_PURPLE,
-                          fontSize: "0.75rem",
+                          fontSize: { xs: "0.68rem", sm: "0.75rem" },
                           fontWeight: 800,
+                          maxWidth: "100%",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
                           boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
                         }}
                       >
@@ -273,7 +262,7 @@ export default function NewTopPros() {
                 </Box>
 
                 {/* Content */}
-                <Box sx={{ p: 2, display: "flex", flexDirection: "column", flex: 1 }}>
+                <Box sx={{ p: { xs: 1.5, sm: 2 }, display: "flex", flexDirection: "column", flex: 1 }}>
                   {/* Provider picture (opens their profile) + business name (opens the service) */}
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5, minWidth: 0 }}>
                   {item.service_route && item.provider_id && (
@@ -311,7 +300,7 @@ export default function NewTopPros() {
                     component="h3"
                     onClick={() => openCard(item)}
                     sx={{
-                      fontSize: "1.05rem",
+                      fontSize: { xs: "0.95rem", sm: "1.05rem" },
                       fontWeight: 800,
                       letterSpacing: "-0.015em",
                       lineHeight: 1.3,
@@ -329,7 +318,7 @@ export default function NewTopPros() {
                   </Box>
 
                   {/* Location (only when the listing has one) */}
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1.5, color: "text.secondary", minHeight: 20 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: { xs: 0.5, sm: 1.5 }, color: "text.secondary", minHeight: 20 }}>
                     {item.city_town && (
                       <>
                         <PlaceRoundedIcon sx={{ fontSize: 16, color: "text.secondary" }} />
@@ -341,7 +330,7 @@ export default function NewTopPros() {
                   </Box>
 
                   {/* Rating only once there are 3+ real reviews; otherwise a neutral "New" label */}
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 2.5, mt: "auto" }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: { xs: 1.5, sm: 2.5 }, mt: "auto" }}>
                     {item.rating && Number(item.review_count) >= 3 ? (
                       <>
                         <StarRoundedIcon sx={{ fontSize: 18, color: COLORS.NEW_UI.STAR_AMBER }} />
@@ -360,7 +349,7 @@ export default function NewTopPros() {
                   </Box>
 
                   {/* Action Buttons: View details (service page) + Enquire */}
-                  <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1 }}>
+                  <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr) 44px", sm: "1fr 1fr" }, gap: 1 }}>
                     <Button
                       variant="contained"
                       onClick={() => openCard(item)}
@@ -369,6 +358,8 @@ export default function NewTopPros() {
                         fontWeight: 700,
                         fontSize: "0.84rem",
                         py: 0.9,
+                        minHeight: { xs: 44, sm: "auto" },
+                        whiteSpace: { xs: "nowrap", sm: "normal" },
                         borderRadius: 2.5,
                         bgcolor: COLORS.PRIMARY_PURPLE,
                         color: "#fff",
@@ -386,12 +377,18 @@ export default function NewTopPros() {
                     <Button
                       variant="outlined"
                       onClick={() => openCard(item)}
+                      aria-label={`Enquire with ${item.name}`}
                       startIcon={<ChatBubbleOutlineRoundedIcon sx={{ fontSize: "16px !important" }} />}
                       sx={{
                         textTransform: "none",
                         fontWeight: 700,
                         fontSize: "0.84rem",
                         py: 0.9,
+                        minHeight: { xs: 44, sm: "auto" },
+                        minWidth: { xs: 44, sm: 64 },
+                        whiteSpace: { xs: "nowrap", sm: "normal" },
+                        // Phones: icon only, centred; tablet/desktop keep MUI's icon + label spacing
+                        "@media (max-width: 599.95px)": { px: 0, "& .MuiButton-startIcon": { mx: 0 } },
                         borderRadius: 2.5,
                         borderColor: dark ? "rgba(255,255,255,0.2)" : "#d6d0e0",
                         color: "text.primary",
@@ -402,28 +399,15 @@ export default function NewTopPros() {
                         "&:active": { transform: "scale(0.96)" },
                       }}
                     >
-                      Enquire
+                      <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+                        Enquire
+                      </Box>
                     </Button>
                   </Box>
                 </Box>
               </Box>
             );
           })}
-        </Box>
-        {/* Mobile slide indicator */}
-        <Box sx={{ display: { xs: "flex", sm: "none" }, justifyContent: "center", gap: 0.75, mt: 1.5 }}>
-          {services.map((item, i) => (
-            <Box
-              key={item.id}
-              sx={{
-                height: 6,
-                width: i === active ? 18 : 6,
-                borderRadius: 3,
-                bgcolor: i === active ? COLORS.PRIMARY_PURPLE : dark ? "rgba(255,255,255,0.25)" : "#d6d0e0",
-                transition: "width 250ms ease, background-color 250ms ease",
-              }}
-            />
-          ))}
         </Box>
         </>
       )}

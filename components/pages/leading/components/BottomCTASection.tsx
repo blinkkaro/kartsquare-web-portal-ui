@@ -7,9 +7,7 @@ import {
   Container,
   Grid,
   useTheme,
-  AvatarGroup,
-  Avatar,
-} from "@mui/material";
+  } from "@mui/material";
 import { motion } from "framer-motion";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -118,59 +116,9 @@ export default function BottomCTASection() {
                 }}
               >
                 {(t as any)("joinThousands") ||
-                  "Join thousands of suppliers and service providers who are getting discovered by millions of customers every day."}
+                  "List your business on Kartsquare for free so people nearby can find you."}
               </Typography>
 
-              {/* Trust Elements */}
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <AvatarGroup
-                  max={4}
-                  sx={{
-                    "& .MuiAvatar-root": {
-                      width: 40,
-                      height: 40,
-                      border: `2px solid ${
-                        isDark
-                          ? COLORS.BACKGROUND.SECONDARY_DARK
-                          : COLORS.BACKGROUND.SECONDARY_LIGHT
-                      }`,
-                    },
-                  }}
-                >
-                  <Avatar
-                    alt="Provider 1"
-                    src="https://i.pravatar.cc/150?img=11"
-                  />
-                  <Avatar
-                    alt="Provider 2"
-                    src="https://i.pravatar.cc/150?img=32"
-                  />
-                  <Avatar
-                    alt="Provider 3"
-                    src="https://i.pravatar.cc/150?img=68"
-                  />
-                  <Avatar
-                    alt="Provider 4"
-                    src="https://i.pravatar.cc/150?img=47"
-                  />
-                </AvatarGroup>
-                <Box>
-                  {/* <Typography variant="body2" sx={{ fontWeight: 700, color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }}>
-                                        {(t as any)("trustedByLocals") || "Trusted by 10k+ locals"}
-                                    </Typography> */}
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: isDark
-                        ? COLORS.TEXT.SECONDARY_DARK
-                        : COLORS.TEXT.SECONDARY_LIGHT,
-                    }}
-                  >
-                    {(t as any)("joinCommunityLabel") ||
-                      "Join our community today"}
-                  </Typography>
-                </Box>
-              </Box>
             </motion.div>
           </Grid>
 

@@ -12,6 +12,7 @@ import {
 import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import { COLORS } from "@/constants/colors";
+import { REVIEWS_AND_PRICING_LIVE } from "@/constants/common";
 
 export type SortOptionType = "recommended" | "rating" | "reviews" | "price_low";
 
@@ -43,6 +44,10 @@ export default function ServicesToolbar({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        // Phones: the count on its own line, then Filters + Sort sharing the row below
+        flexWrap: { xs: "wrap", sm: "nowrap" },
+        rowGap: 1,
+        columnGap: 1.5,
         py: 1.5,
         mb: 2,
         borderBottom: "1px solid",
@@ -55,6 +60,8 @@ export default function ServicesToolbar({
           fontSize: { xs: "0.88rem", sm: "0.98rem" },
           fontWeight: 700,
           color: "text.primary",
+          flex: { xs: "1 1 100%", sm: "0 1 auto" },
+          minWidth: { xs: 0, sm: "auto" },
         }}
       >
         {totalCount}{" "}
@@ -67,7 +74,7 @@ export default function ServicesToolbar({
       </Typography>
 
       {/* Right controls: Mobile Filter button + Sort Dropdown */}
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 1.5 }, flex: { xs: "1 1 100%", sm: "0 1 auto" }, minWidth: { xs: 0, sm: "auto" } }}>
         {/* Mobile filter button */}
         <Button
           onClick={onOpenMobileFilters}
@@ -79,6 +86,9 @@ export default function ServicesToolbar({
           }
           sx={{
             display: { xs: "inline-flex", lg: "none" },
+            flex: { xs: "1 1 0", sm: "0 1 auto" },
+            whiteSpace: { xs: "nowrap", sm: "normal" },
+            minHeight: { xs: 40, sm: "auto" },
             px: 1.75,
             py: 0.65,
             borderRadius: "999px",
@@ -93,8 +103,9 @@ export default function ServicesToolbar({
           Filters & sort
         </Button>
 
-        {/* Sort select */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+        {/* Sort select (only "Recommended" exists until reviews and prices are live) */}
+        {REVIEWS_AND_PRICING_LIVE && (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flex: { xs: "1 1 0", sm: "0 1 auto" }, minWidth: { xs: 0, sm: "auto" } }}>
           <Typography
             sx={{
               display: { xs: "none", sm: "inline" },
@@ -111,6 +122,9 @@ export default function ServicesToolbar({
             IconComponent={KeyboardArrowDownRoundedIcon}
             size="small"
             sx={{
+              width: { xs: "100%", sm: "auto" },
+              minWidth: { xs: 0, sm: "auto" },
+              minHeight: { xs: 40, sm: "auto" },
               fontSize: "0.84rem",
               fontWeight: 700,
               borderRadius: "10px",
@@ -144,6 +158,7 @@ export default function ServicesToolbar({
             </MenuItem>
           </Select>
         </Box>
+        )}
       </Box>
     </Box>
   );

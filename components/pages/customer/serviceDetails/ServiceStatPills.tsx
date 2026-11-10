@@ -6,6 +6,7 @@ import GpsFixedRoundedIcon from "@mui/icons-material/GpsFixedRounded";
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
 import { COLORS } from "../../../../constants/colors";
+import { REVIEWS_AND_PRICING_LIVE } from "@/constants/common";
 
 interface StatPill {
   icon: React.ReactNode;
@@ -50,14 +51,19 @@ const ServiceStatPills = ({
       : "At shop";
 
   const pills: StatPill[] = [
-    {
-      icon: <AccountBalanceWalletRoundedIcon sx={{ fontSize: 18 }} />,
-      label: "Visiting charge",
-      value:
-        visitingCharge != null && visitingCharge > 0
-          ? `${currencySymbol}${visitingCharge}`
-          : "Free",
-    },
+    // No price figure (or "Free") until pricing is final
+    ...(REVIEWS_AND_PRICING_LIVE
+      ? [
+          {
+            icon: <AccountBalanceWalletRoundedIcon sx={{ fontSize: 18 }} />,
+            label: "Visiting charge",
+            value:
+              visitingCharge != null && visitingCharge > 0
+                ? `${currencySymbol}${visitingCharge}`
+                : "Free",
+          },
+        ]
+      : []),
     {
       icon: <GpsFixedRoundedIcon sx={{ fontSize: 18 }} />,
       label: "Service radius",

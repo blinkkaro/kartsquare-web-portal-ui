@@ -728,7 +728,7 @@ export const english = {
   responsiveCustomerService: "Responsive customer service and communication",
   complianceWithStandards: "Compliance with industry standards and regulations",
   joinThousands:
-    "Thousands of Indian shop owners and service professionals are already getting direct leads every single day. Join them for free.",
+    "List your shop or service on Kartsquare for free, so people nearby can find you and contact you directly.",
   readyToStandOut: "Ready to Multiply Your Business?",
   providerSuccessStory:
     "Join a community of successful service providers who have grown their businesses with KartSquare. From freelancers to established businesses, our platform helps you reach more customers and scale your operations.",
@@ -1204,7 +1204,7 @@ export const english = {
     "Customers today search online before they step out. Make sure your business is the first one they see and trust.",
   addEssentialInfo: "Be Found When They Search",
   addEssentialInfoDesc:
-    "When someone nearby searches for 'hardware store' or 'electrician near me', your phone number, shop address, and open hours show up instantly.",
+    "When someone nearby searches for 'hardware store' or 'electrician near me', your phone number, shop address, and open hours are right there on your listing.",
   sharePhotosLogos: "Build Trust With Authentic Photos",
   sharePhotosLogosDesc:
     "People buy from shops they trust. Upload photos of your products, your storefront, or your past work so customers know you are genuine.",
@@ -1237,10 +1237,10 @@ export const english = {
     "No technical skills needed. Claim your free listing, add your details, and start getting calls from customers nearby.",
   stepClaim: "1. Claim Your Free Dukaan",
   stepClaimDesc:
-    "Enter your mobile number to create your digital storefront in literally 30 seconds. No passwords to remember.",
+    "Enter your mobile number to create your digital storefront. No passwords to remember.",
   stepPersonalise: "2. Add Details & Photos",
   stepPersonaliseDesc:
-    "Upload pictures of your shop or work, add your timings, and list what you sell so locals trust you instantly.",
+    "Upload pictures of your shop or work, add your timings, and list what you sell so locals can see what you offer.",
   stepManage: "3. Get Direct Enquiries",
   stepManageDesc:
     "Receive direct calls and WhatsApp messages from customers nearby. You close the deal, you keep 100% of the money.",

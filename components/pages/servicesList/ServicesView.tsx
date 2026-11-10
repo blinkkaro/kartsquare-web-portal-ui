@@ -713,7 +713,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                 ? `We don't have ${initialListing.fallback.requested?.replace(
                     /-/g,
                     " "
-                  )} on the map yet — showing all verified ${categoryName.toLowerCase()} in ${cityName}.`
+                  )} on the map yet — showing all ${categoryName.toLowerCase()} in ${cityName}.`
                 : `Not enough ${categoryName.toLowerCase()} in ${initialListing.fallback.requested?.replace(
                     /-/g,
                     " "

@@ -4,7 +4,6 @@ import {
   Avatar,
   Typography,
   Button,
-  Chip,
   useTheme,
 } from "@mui/material";
 import { useFollowUser, useUnfollowUser } from "@/hooks/useFollow";
@@ -15,8 +14,7 @@ import {
   PersonAdd,
   CheckCircle,
   Call,
-  WorkspacePremium,
-} from "@mui/icons-material";
+  } from "@mui/icons-material";
 import { COLORS } from "../constants/colors";
 import { english } from "../features/i18n/en";
 import { useDispatch } from "react-redux";
@@ -145,30 +143,6 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
               {businessName || providerName}
             </Typography>
 
-            <Chip
-              icon={<CheckCircle sx={{ fontSize: "14px !important" }} />}
-              label={english.verified}
-              size="small"
-              sx={{
-                bgcolor: isDark ? "rgba(29, 78, 216, 0.16)" : "#EFF6FF",
-                color: "#1D4ED8",
-                fontWeight: 800,
-                fontSize: "0.68rem",
-                height: 22,
-              }}
-            />
-            <Chip
-              icon={<WorkspacePremium sx={{ fontSize: "14px !important" }} />}
-              label="Trust"
-              size="small"
-              sx={{
-                bgcolor: isDark ? "rgba(245, 158, 11, 0.18)" : "#FEF3C7",
-                color: "#92400E",
-                fontWeight: 800,
-                fontSize: "0.68rem",
-                height: 22,
-              }}
-            />
           </Box>
           {businessName && (
             <Typography
@@ -184,17 +158,6 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
               by {providerName}
             </Typography>
           )}
-          <Typography
-            variant="caption"
-            sx={{
-              color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#64748B",
-              fontWeight: 600,
-              display: "block",
-            }}
-          >
-            {english.highly_responsive ?? "Highly Responsive"} •{" "}
-            {english.top_professional ?? "Top Professional"}
-          </Typography>
           {gstNumber && (
             <Typography
               variant="caption"
