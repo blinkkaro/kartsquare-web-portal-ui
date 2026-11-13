@@ -65,10 +65,53 @@ export interface Booking {
   status: BookingStatus;
 }
 
+export type CompletenessKey =
+  | "has_service"
+  | "has_business_photos"
+  | "has_working_hours"
+  | "has_profile_photo"
+  | "has_business_description"
+  | "has_address";
+
+export interface CompletenessStep {
+  key: CompletenessKey;
+  done: boolean;
+}
+
+export interface ProfileCompleteness {
+  percent: number;
+  steps: CompletenessStep[];
+  next_step: CompletenessKey | null;
+}
+
+export interface DashboardAttention {
+  pending_bookings: number;
+  new_leads_7d: number;
+  unread_notifications: number;
+}
+
+export interface DashboardProfile {
+  first_name: string | null;
+  last_name: string | null;
+  business_name: string | null;
+  profile_pic: string | null;
+  username: string | null;
+  city: string | null;
+  is_accepting_bookings: boolean;
+  completeness: ProfileCompleteness;
+}
+
 export interface ProviderDashboardResponse {
   stats: stats;
   upcoming_bookings: Booking[];
   latest_reviews: (Review & { service_name: string })[];
+  /** Absent on a backend that predates the dashboard summary. */
+  attention?: DashboardAttention;
+  profile?: DashboardProfile;
+}
+
+export interface AvailabilityResponse {
+  is_accepting_bookings: boolean;
 }
 
 export interface ProviderDashboardChartResponse {

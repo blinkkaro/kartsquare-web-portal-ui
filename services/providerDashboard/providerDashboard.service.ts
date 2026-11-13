@@ -1,6 +1,6 @@
-import { GET } from "../api";
+import { GET, PUT } from "../api";
 import { APIENDPOINTS } from "./apiEndPoints";
-import { ProviderDashboardChartResponse, ProviderDashboardResponse } from "./providerDashboard.interface";
+import { AvailabilityResponse, ProviderDashboardChartResponse, ProviderDashboardResponse } from "./providerDashboard.interface";
 
 class ProviderDashboardService {
     async getProviderDashboardData(): Promise<ProviderDashboardResponse> {
@@ -20,6 +20,14 @@ class ProviderDashboardService {
       } catch (error) {
         throw error;
       }   
+    }
+
+    async setAvailability(isAcceptingBookings: boolean): Promise<AvailabilityResponse> {
+      const response = await PUT<AvailabilityResponse>(
+        APIENDPOINTS.SET_PROVIDER_AVAILABILITY,
+        { is_accepting_bookings: isAcceptingBookings },
+      );
+      return response.data;
     }
 }
 

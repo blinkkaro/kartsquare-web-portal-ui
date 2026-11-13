@@ -15,10 +15,16 @@ import LatestReviews from "./components/LatestReviews"; // Add this
 import LatestLeads from "./components/LatestLeads";
 import UpcomingEvents from "./components/UpcomingEvents";
 import RecentTransactions from "./components/RecentTransactions";
-import { useProviderDashboard } from "@/hooks/useProviderDashboard";
+import { useProviderDashboard, useSetAvailability } from "@/hooks/useProviderDashboard";
 import { useSupplierDashboard } from "@/hooks/useSupplierDashboard";
 import ProviderBookingDetailsDrawer from "../provider/bookings/ProviderBookingDetailsDrawer";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
+import toast from "react-hot-toast";
+import ErrorMessage from "@/components/common/ErrorMessage";
+import ProviderGreetingHero from "./components/ProviderGreetingHero";
+import NeedsAttention from "./components/NeedsAttention";
+import ProfileCompleteness from "./components/ProfileCompleteness";
+import ShareKit from "./components/ShareKit";
 
 function DashboardView() {
   const theme = useTheme();
@@ -40,6 +46,10 @@ function DashboardView() {
     isLoading: isSupplierLoading,
     error: supplierError,
   } = useSupplierDashboard(role === "SUPPLIER");
+
+  const setAvailability = useSetAvailability();
+  const providerProfile = role === "SUPPLIER" ? undefined : providerDashboardData?.profile;
+  const attention = role === "SUPPLIER" ? undefined : providerDashboardData?.attention;
 
   const isLoading = role === "SUPPLIER" ? isSupplierLoading : isProviderLoading;
   const error = role === "SUPPLIER" ? supplierError : providerError;
@@ -69,17 +79,6 @@ function DashboardView() {
     );
   }
 
-  if (error) {
-    console.error("Dashboard Error:", error);
-    // return (
-    //   <Box sx={{ py: { xs: 2, md: 3 } }}>
-    //     <Typography variant="h4">
-    //       Error: {(error as any).data.message}
-    //     </Typography>
-    //   </Box>
-    // );
-  }
-
   const stats =
     role === "SUPPLIER"
       ? supplierDashboardData?.stats
@@ -99,26 +98,40 @@ function DashboardView() {
 
   return (
     <Box sx={{ py: { xs: 2, md: 3 }, mx: { xs: 2, md: 3, lg: 10, xl: 20 } }}>
+      <ErrorMessage isVisible={Boolean(error)} error={t("pd_dashboard_error")} />
+      {providerProfile && (
+        <ProviderGreetingHero
+          profile={providerProfile}
+          onToggleAvailability={(accepting) =>
+            setAvailability.mutate(accepting, {
+              onError: () => toast.error(t("pd_availability_error")),
+            })
+          }
+          isTogglingAvailability={setAvailability.isPending}
+        />
+      )}
       {/* Header row: Title + Tools */}
       <Box
         sx={{
           display: "flex",
           alignItems: { xs: "flex-start", sm: "center" },
-          justifyContent: "space-between",
+          justifyContent: providerProfile ? "flex-end" : "space-between",
           flexDirection: { xs: "column", sm: "row" },
           gap: 2,
           mb: { xs: 3, md: 4 },
         }}
       >
-        <Typography
-          variant="h4"
-          sx={{
-            fontWeight: 600,
-            color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-          }}
-        >
-          {t("dashboard")}
-        </Typography>
+        {!providerProfile && (
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 600,
+              color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+            }}
+          >
+            {t("dashboard")}
+          </Typography>
+        )}
 
         {/* Quick Tools Strip */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -200,6 +213,7 @@ function DashboardView() {
         {/* Left Column - Main Content */}
         <Grid size={{ xs: 12, lg: 8 }}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            {attention && <NeedsAttention attention={attention} />}
             {/* Metric Cards */}
             <MetricCards
               stats={
@@ -225,13 +239,17 @@ function DashboardView() {
             <RevenueChart chartData={chartData} />
 
             {/* Latest Leads - Only for Service Providers since Suppliers have enquiries */}
-            <LatestLeads />
+            <Box id="leads" sx={{ scrollMarginTop: 96 }}>
+              <LatestLeads />
+            </Box>
           </Box>
         </Grid>
 
         {/* Right Column - Sidebar */}
         <Grid size={{ xs: 12, lg: 4 }}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            {providerProfile && <ProfileCompleteness completeness={providerProfile.completeness} />}
+            {providerProfile && <ShareKit username={providerProfile.username} />}
             {/* Upcoming Bookings / Enquiries */}
             <UpcomingBookings
               bookings={upcomingData || []}

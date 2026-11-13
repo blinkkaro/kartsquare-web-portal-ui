@@ -15,7 +15,10 @@ import { useAppSelector } from "@/store/hooks";
 import {
   getDesktopNavItems,
   getMobileNavItems,
+  getProviderDockItems,
 } from "../../../constants/navRoutes";
+import { AppUserType } from "@/services/auth/auth.interface";
+import { publicProfilePath } from "@/lib/providerDashboard";
 
 // Import extracted components
 import NavLogo from "./components/NavLogo";
@@ -25,6 +28,7 @@ import SearchBar from "./components/SearchBar";
 import DesktopNavLinks from "./components/DesktopNavLinks";
 import NavActions from "./components/NavActions";
 import MobileBottomNav from "./components/MobileBottomNav";
+import ProviderBottomNav from "./components/ProviderBottomNav";
 import MobileSearchDrawer from "./components/MobileSearchDrawer";
 import NotificationList from "./components/NotificationList";
 import RightDrawer from "../RightDrawer";
@@ -103,6 +107,13 @@ const Nav = () => {
   const mobileNavItems = useMemo(
     () => getMobileNavItems(isAuthenticated, t, role),
     [isAuthenticated, t, role],
+  );
+
+  const isProviderDock = isAuthenticated && role === AppUserType.SERVICE_PROVIDER;
+  const providerUsername = (secureStorage.getItem("user_details") as { username?: string } | null)?.username;
+  const providerDock = useMemo(
+    () => getProviderDockItems(t, publicProfilePath(providerUsername)),
+    [t, providerUsername],
   );
 
   // Handlers
@@ -205,9 +216,12 @@ const Nav = () => {
           </Box>
 
           {/* Mobile Bottom Navigation */}
-          {(isMobile || isTablet) && (
-            <MobileBottomNav items={mobileNavItems} currentPath={pathname} />
-          )}
+          {(isMobile || isTablet) &&
+            (isProviderDock ? (
+              <ProviderBottomNav primary={providerDock.primary} more={providerDock.more} currentPath={pathname} />
+            ) : (
+              <MobileBottomNav items={mobileNavItems} currentPath={pathname} />
+            ))}
         </StyledToolbar>
       </StyledAppBar>
 

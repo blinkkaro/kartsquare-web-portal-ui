@@ -17,7 +17,7 @@ const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 let lastActive: string | null = null;
 
 /** Publishes the dock's height as --mobile-nav-h so other fixed UI (the AI button, back-to-top) can sit above it. */
-function usePublishHeight() {
+export function usePublishHeight() {
   useEffect(() => {
     document.documentElement.style.setProperty("--mobile-nav-h", `${MOBILE_NAV_HEIGHT}px`);
     return () => {

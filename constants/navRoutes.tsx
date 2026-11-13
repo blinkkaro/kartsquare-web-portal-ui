@@ -1,4 +1,8 @@
 import {
+  MoreHoriz,
+  Person,
+  PlayCircleOutline,
+  Storefront,
   HomeFilled,
   ArticleRounded,
   LocalMallRounded,
@@ -141,6 +145,36 @@ export const getDesktopNavItems = (
       ];
   }
 };
+
+export interface ProviderDockItem extends NavItem {
+  /** The one tab that gets the filled accent treatment. */
+  emphasis?: boolean;
+}
+
+/**
+ * Provider bottom dock: four tabs plus a "More" sheet (a bottom nav holds five at most).
+ * `primary` order is the on-screen order; Dashboard sits in the middle.
+ */
+export const getProviderDockItems = (
+  t: (key: TranslationKey) => string,
+  publicPath: string | null,
+): { primary: ProviderDockItem[]; more: NavItem[] } => ({
+  primary: [
+    { label: t("bookings"), href: "/spr/bookings", icon: <Event /> },
+    { label: t("services"), href: "/spr/servicesList", icon: <HomeRepairService /> },
+    { label: t("dashboard"), href: "/dashboard", icon: <Dashboard />, emphasis: true },
+    { label: t("feed"), href: "/cus/feed", icon: <DynamicFeedRounded /> },
+  ],
+  more: [
+    { label: t("home"), href: "/", icon: <HomeFilled /> },
+    { label: t("reels"), href: "/cus/reels", icon: <PlayCircleOutline /> },
+    { label: t("marketing_tools"), href: "/spr/marketing-tools", icon: <Campaign /> },
+    ...(publicPath ? [{ label: t("pd_view_public"), href: publicPath, icon: <Storefront /> }] : []),
+    { label: t("pd_nav_account"), href: "/myAccount", icon: <Person /> },
+  ],
+});
+
+export { MoreHoriz as ProviderMoreIcon };
 
 export const getMobileNavItems = (
   isAuthenticated: boolean,
