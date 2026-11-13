@@ -54,7 +54,7 @@ const CustomerServiceDetails = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   // Canonical route /services/[city]/[slug] (slug) or legacy /services/[first] (uuid or slug).
-  const serviceId = (params.slug ?? params.first ?? params.id) as string;
+  const serviceId = (params.second ?? params.slug ?? params.first ?? params.id) as string;
   const actions = searchParams.get("action");
   const theme = useTheme();
   const { t } = useTranslate();
