@@ -8,3 +8,4 @@ export const metadata = seoAuth({
 });
 
 export default CustomerServiceBooking;
+

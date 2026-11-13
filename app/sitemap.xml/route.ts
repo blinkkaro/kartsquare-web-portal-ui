@@ -3,10 +3,9 @@ import { NextResponse } from "next/server";
 import { blogs } from "@/data/blogs";
 import { blogPostSitemapEntry } from "@/lib/seo/blogSitemap";
 
-const BASE_URL = String(process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com").replace(
-  /\/$/,
-  "",
-);
+const BASE_URL = String(
+  process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com"
+).replace(/\/$/, "");
 const API_URL = "https://api.kartsquare.com/api/v1";
 
 /**
@@ -61,7 +60,9 @@ export async function GET() {
     try {
       const res = await fetch(url);
       if (!res.ok) {
-        console.error(`[sitemap] ${label} fetch failed: ${res.status} ${res.statusText} (${url})`);
+        console.error(
+          `[sitemap] ${label} fetch failed: ${res.status} ${res.statusText} (${url})`
+        );
         return { data: [] };
       }
       return await res.json();
@@ -84,7 +85,9 @@ export async function GET() {
   // The backend returns `{ urls: [], enabled: false }` while
   // LOCATION_ROUTING_SITEMAP is off, so this is empty until the flag flips —
   // no listing URL is ever advertised before it is ready to serve.
-  const locationUrls = locationRes?.data?.enabled ? locationRes?.data?.urls || [] : [];
+  const locationUrls = locationRes?.data?.enabled
+    ? locationRes?.data?.urls || []
+    : [];
 
   // Build the XML header with namespaces
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -92,7 +95,11 @@ export async function GET() {
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
 
   // Helper to add mapping to XML
-  const addUrl = (loc: string, lastmod?: string, image?: string) => {
+  const addUrl = (
+    loc: string,
+    lastmod?: string,
+    image?: string
+  ) => {
     xml += `
   <url>
     <loc>${escapeXml(loc.startsWith("http") ? loc : `${BASE_URL}${loc}`)}</loc>${
@@ -117,8 +124,10 @@ export async function GET() {
     if (entry) {
       addUrl(
         entry.url,
-        entry.lastModified instanceof Date ? entry.lastModified.toISOString() : undefined,
-        entry.cover,
+        entry.lastModified instanceof Date
+          ? entry.lastModified.toISOString()
+          : undefined,
+        entry.cover
       );
     }
   });
@@ -127,10 +136,15 @@ export async function GET() {
   // Generated from the database, so the sitemap, the page's own robots tag and
   // the thin-page redirect all read one threshold and cannot disagree.
   if (Array.isArray(locationUrls)) {
-    (locationUrls as Array<{ path?: string; lastmod?: string | null }>).forEach((u) => {
-      if (!u?.path) return;
-      addUrl(`${BASE_URL}${u.path}`, u.lastmod ? new Date(u.lastmod).toISOString() : undefined);
-    });
+    (locationUrls as Array<{ path?: string; lastmod?: string | null }>).forEach(
+      (u) => {
+        if (!u?.path) return;
+        addUrl(
+          `${BASE_URL}${u.path}`,
+          u.lastmod ? new Date(u.lastmod).toISOString() : undefined
+        );
+      }
+    );
   }
 
   // Add Products
@@ -152,8 +166,13 @@ export async function GET() {
       if (path) {
         const url = `${BASE_URL}${path}`;
         const lastmod = s.updated_at || s.created_at;
-        const mainImage = s.og_image || (Array.isArray(s.image_urls) ? s.image_urls[0] : null);
-        addUrl(url, lastmod ? new Date(lastmod).toISOString() : undefined, mainImage);
+        const mainImage =
+          s.og_image || (Array.isArray(s.image_urls) ? s.image_urls[0] : null);
+        addUrl(
+          url,
+          lastmod ? new Date(lastmod).toISOString() : undefined,
+          mainImage
+        );
       }
     });
   }

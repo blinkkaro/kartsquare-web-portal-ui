@@ -7,6 +7,8 @@ export const metadata = pageTab(
   "View and manage all your email campaigns sent through kartsquare marketing tools.",
 );
 
+
+
 export default function ProviderCampaignListPage() {
   return <CampaignList role="spr" />;
 }

@@ -7,6 +7,8 @@ export const metadata = pageTab(
   "Build and launch a new email campaign to reach your subscribers from your kartsquare supplier account.",
 );
 
+
+
 export default function SupplierCreateCampaignPage() {
   return <CreateCampaign role="supplier" />;
 }

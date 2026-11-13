@@ -99,6 +99,7 @@ function LoginModal() {
         handleClose();
       }
     } catch (error) {
+      console.log(error);
       const err = error as {response?: { data?: { message?: string } } };
       toast.error(err.response?.data?.message || "Something went wrong during guest login");
     } finally {

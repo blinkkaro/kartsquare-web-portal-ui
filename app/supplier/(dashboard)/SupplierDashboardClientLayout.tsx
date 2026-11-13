@@ -4,7 +4,11 @@ import SupplierGuard from "@/components/supplier/SupplierGuard";
 import Nav from "@/components/common/Nav";
 import { Box } from "@mui/material";
 
-export default function SupplierDashboardClientLayout({ children }: { children: React.ReactNode }) {
+export default function SupplierDashboardClientLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <SupplierGuard requireComplete={true}>
       <Nav />

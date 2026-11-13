@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { manifestCopy } from "@/lib/seo/metaManifest";
 import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
 import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 import ListOfServices from "../../../components/pages/servicesList";
@@ -8,11 +7,9 @@ import ListOfServices from "../../../components/pages/servicesList";
 import { buildBreadcrumbJsonLd, BREADCRUMBS } from "@/lib/seo/breadcrumbs";
 
 const servicesListFallback = seoPublic({
-  ...(manifestCopy("services_list") ?? {
-    title: "Browse services \u2014 book home & professional help",
-    description:
-      "Discover and book home repairs, cleaning, beauty, wellness, and professional services from verified kartsquare providers across India.",
-  }),
+  title: "Browse services \u2014 book home & professional help",
+  description:
+    "Discover and book home repairs, cleaning, beauty, wellness, and professional services from verified kartsquare providers across India.",
   path: "/services",
   keywords: [
     "book services online India",
@@ -54,7 +51,10 @@ export default function ServicesListPage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd }}
+      />
       {/* useSearchParams (deep-linked category/search) needs a Suspense boundary */}
       <Suspense fallback={null}>
         <ListOfServices />

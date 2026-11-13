@@ -37,7 +37,7 @@ const ReelPlayer: React.FC<ReelPlayerProps> = ({
     if (!video) return;
 
     if (isActive && !isPaused) {
-      video.play().catch(() => {});
+      video.play().catch((err) => console.log("Autoplay blocked:", err));
       setIsPlaying(true);
     } else {
       video.pause();
@@ -135,7 +135,7 @@ const ReelPlayer: React.FC<ReelPlayerProps> = ({
       const video = videoRef.current;
       if (video) {
         video.load();
-        video.play().catch(() => {});
+        video.play().catch((err) => console.log("Retry play failed:", err));
       }
       return;
     }

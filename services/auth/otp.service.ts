@@ -15,12 +15,14 @@ class OtpService {
         {},
         true
       );
+      console.log(response);
       if (response.status === "success") {
         return true;
       } else {
         throw new Error(response.message || 'Invalid OTP');
       }
     } catch (error: any) {
+      console.log(error);
       throw error;
     }
   }
@@ -38,6 +40,7 @@ class OtpService {
         throw new Error(response.message || 'Failed to send otp');
       }
     } catch (error: any) {
+      console.log(error);
       throw error;
     }
   }

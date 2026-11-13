@@ -77,15 +77,7 @@ export default function MainLayoutClient({
             color: "text.secondary",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "center",
-              columnGap: 2,
-              rowGap: 0.5,
-            }}
-          >
+          <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", columnGap: 2, rowGap: 0.5 }}>
             {[
               { label: "About us", href: "/about-us" },
               { label: "Contact", href: "/contact-us" },

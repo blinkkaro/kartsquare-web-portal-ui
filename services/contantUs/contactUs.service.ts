@@ -5,6 +5,7 @@ import { APIENDPOINTS } from "./apiEndPoints";
 class ContactUsService {
   async contactUs(data: ContactUsInterface) {
     try {
+      console.log(data);
       const newData = {
         ...data,
         waitlist_type: waitlist_type.CONTACT_US,
@@ -12,6 +13,7 @@ class ContactUsService {
       const response = await POST(APIENDPOINTS.CONTACT_US, newData);
       return response;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }

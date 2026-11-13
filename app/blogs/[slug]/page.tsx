@@ -32,7 +32,9 @@ export async function generateMetadata({
   const path = canonicalBlogPath(blog);
   const canonical = `${SITE_URL}${path}`;
   const rawTitle = blog.metaTitle || blog.title;
-  const titleText = /kartsquare/i.test(rawTitle) ? rawTitle : `${rawTitle} | kartsquare`;
+  const titleText = /kartsquare/i.test(rawTitle)
+    ? rawTitle
+    : `${rawTitle} | kartsquare`;
   const keywords = blog.tags?.length ? blog.tags : undefined;
   const description =
     blog.metaDescription?.trim() ||
@@ -65,7 +67,11 @@ export async function generateMetadata({
   };
 }
 
-export default async function BlogDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function BlogDetailsPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   const blog = findBlog(slug);
 
@@ -100,10 +106,16 @@ export default async function BlogDetailsPage({ params }: { params: Promise<{ sl
   return (
     <MainLayout>
       {jsonLd ? (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLd }}
+        />
       ) : null}
       {breadcrumbJsonLd ? (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
+        />
       ) : null}
       <BlogsDetailView />
     </MainLayout>

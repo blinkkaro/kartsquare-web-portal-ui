@@ -7,6 +7,8 @@ export const metadata = pageTab(
   "Overview of your email marketing performance — opens, clicks, and subscriber stats for your supplier store.",
 );
 
+
+
 export default function SupplierEmailMarketingPage() {
   return <DashboardOverview role="supplier" />;
 }

@@ -47,7 +47,10 @@ export default function FreeListing() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(businessListingWebPageJsonLd) }}
       />
       {breadcrumbJsonLd ? (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
+        />
       ) : null}
       <ListingView />
     </MainLayout>

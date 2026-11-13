@@ -74,6 +74,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
 
   // Auto-open review modal logic
   React.useEffect(() => {
+    console.log("Booking details:", booking);
     if (
       booking &&
       booking.status === BookingStatus.COMPLETED &&
@@ -82,6 +83,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
       const timer = setTimeout(() => {
         setReviewModalOpen(true);
       }, 1000); // 1 second delay for better UX
+      console.log("Review modal opened");
       return () => clearTimeout(timer);
     }
   }, [booking]);

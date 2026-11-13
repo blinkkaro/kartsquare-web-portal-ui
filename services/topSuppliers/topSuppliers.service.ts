@@ -14,6 +14,7 @@ class TopSuppliersService {
         {},
         false
       );
+      console.log("Top Providers Response:", res);
       return res.data;
     } catch (error) {
       throw error;
@@ -30,6 +31,7 @@ class TopSuppliersService {
         {},
         false
       );
+      console.log("Top Services Response:", res);
       return res.data;
     } catch (error) {
       throw error;

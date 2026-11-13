@@ -13,6 +13,7 @@ class SupplierDashboardService {
       );
       return response.data;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
@@ -23,6 +24,7 @@ class SupplierDashboardService {
       );
       return response.data;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }

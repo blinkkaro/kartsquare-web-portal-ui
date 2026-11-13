@@ -7,6 +7,8 @@ export const metadata = pageTab(
   "Create campaigns, manage email marketing, and grow your customer base from the kartsquare supplier dashboard.",
 );
 
+
+
 export default function SupplierMarketingToolsPage() {
   return <MarketingToolsLanding role="supplier" />;
 }

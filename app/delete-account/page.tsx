@@ -4,7 +4,8 @@ import { seoPublic } from "@/lib/seo/buildMetadata";
 
 export const metadata = seoPublic({
   title: "Delete Account",
-  description: "Request deletion of your kartsquare account and associated personal data.",
+  description:
+    "Request deletion of your kartsquare account and associated personal data.",
   path: "/delete-account",
 });
 

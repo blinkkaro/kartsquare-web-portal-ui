@@ -26,9 +26,10 @@ type Props = { params: Promise<{ first: string; second: string }> };
 /** Pre-render the most recently updated services; the rest render on first hit. */
 export async function generateStaticParams(): Promise<Array<{ first: string; second: string }>> {
   try {
-    const res = await fetchPublicJson<{
-      data?: { services?: Array<{ canonical_path?: string }> } | Array<{ canonical_path?: string }>;
-    }>(`${getApiBaseUrl()}/services/sitemap`, { revalidate: 3600 });
+    const res = await fetchPublicJson<{ data?: { services?: Array<{ canonical_path?: string }> } | Array<{ canonical_path?: string }> }>(
+      `${getApiBaseUrl()}/services/sitemap`,
+      { revalidate: 3600 },
+    );
     if (res.status !== "ok") return [];
     const data = res.body?.data;
     const list = Array.isArray(data) ? data : (data?.services ?? []);
@@ -47,8 +48,7 @@ export async function generateStaticParams(): Promise<Array<{ first: string; sec
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { first, second } = await params;
-  if (!isSlugShape(first) || !isSlugShape(second))
-    return { robots: { index: false, follow: false } };
+  if (!isSlugShape(first) || !isSlugShape(second)) return { robots: { index: false, follow: false } };
   return serviceMetadata(second, `/services/${first}/${second}`);
 }
 

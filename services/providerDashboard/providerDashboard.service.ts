@@ -6,6 +6,7 @@ class ProviderDashboardService {
     async getProviderDashboardData(): Promise<ProviderDashboardResponse> {
       try {
         const response = await GET<ProviderDashboardResponse>(APIENDPOINTS.GET_PROVIDER_DASHBOARD_DATA);
+        console.log(response.data);
         return response.data;
       } catch (error) {
         throw error;

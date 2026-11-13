@@ -38,12 +38,15 @@ class PostServices {
 
   async likePost(postId: string): Promise<any> {
     try {
+      console.log("postId", postId);
       const response = await POST(`${API_ENDPOINTS.LIKE_POST(postId)}`, {});
+      console.log("response", response);
       if (response.status !== "success") {
         throw new Error(response.message || "Failed to like post");
       }
       return response.data;
     } catch (error) {
+      console.log("error", error);
       throw error;
     }
   }
@@ -79,6 +82,7 @@ class PostServices {
         {},
         true,
       );
+      console.log("response", response);
       if (response.status !== "success") {
         throw new Error(response.message || "Failed to add post comment");
       }
@@ -105,6 +109,7 @@ class PostServices {
       }
       return response.data;
     } catch (error: any) {
+      console.log("error", error);
       throw error;
     }
   }

@@ -399,6 +399,7 @@ export const useServiceForm = ({
           parseFloat(item.price) > 0
       );
 
+      console.log('DEBUG SUBMIT - categoryIds:', categoryIds, 'subcategoryIds:', subcategoryIds);
       const requestData: any = {
         provider_id: userId,
         category_id: categoryIds,
@@ -437,6 +438,7 @@ export const useServiceForm = ({
       }
 
       if (editService) {
+        console.log('DEBUG UPDATE - requestData:', requestData);
         await serviceListService.updateService(
           editService.service_id,
           requestData,

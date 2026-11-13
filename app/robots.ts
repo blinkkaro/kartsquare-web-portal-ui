@@ -11,39 +11,39 @@ const BASE_URL = "https://kartsquare.com".replace(/\/$/, "");
 export default function robots(): MetadataRoute.Robots {
   /** Paths that should never be indexed — shared across all user agents */
   const privateDisallow = [
-    "/api/",
-    "/_next/",
+    '/api/',
+    '/_next/',
     // ── Auth & onboarding flows ──────────────────────────────────────────
-    "/login",
-    "/signUp",
-    "/resetPassword",
-    "/forgotPassword",
-    "/emailVerification",
-    "/verifyDocuments",
-    "/selectRole",
-    "/preferences",
-    "/businessInfo",
-    "/unsubscribe",
+    '/login',
+    '/signUp',
+    '/resetPassword',
+    '/forgotPassword',
+    '/emailVerification',
+    '/verifyDocuments',
+    '/selectRole',
+    '/preferences',
+    '/businessInfo',
+    '/unsubscribe',
     // ── Customer private areas ───────────────────────────────────────────
-    "/dashboard",
-    "/schedule",
-    "/chat",
-    "/myAccount/",
-    "/cus/bookings",
-    "/cus/notifications",
+    '/dashboard',
+    '/schedule',
+    '/chat',
+    '/myAccount/',
+    '/cus/bookings',
+    '/cus/notifications',
     // ── Service booking checkout (transactional, not for indexing) ────────
-    "/services/*/book",
+    '/services/*/book',
     // ── Service provider private dashboard ──────────────────────────────
-    "/spr/",
+    '/spr/',
     // ── Supplier (customer-alias) private area ────────────────────────────
-    "/sup/",
+    '/sup/',
     // ── Supplier portal — full prefix (auth pages + dashboard) ────────────
-    "/supplier/",
-    "/search",
-    "/admin",
-    "/checkout",
-    "/cart",
-    "/orders",
+    '/supplier/',
+    '/search',
+    '/admin',
+    '/checkout',
+    '/cart',
+    '/orders',
   ] as const;
 
   return {
@@ -52,8 +52,8 @@ export default function robots(): MetadataRoute.Robots {
         // Single wildcard rule — Googlebot (and all other crawlers) inherit from '*'.
         // A duplicate Googlebot block with identical rules wastes robots.txt space and
         // can confuse some parsers. Removed.
-        userAgent: "*",
-        allow: "/",
+        userAgent: '*',
+        allow: '/',
         disallow: [...privateDisallow],
       },
     ],

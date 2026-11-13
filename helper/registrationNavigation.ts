@@ -39,6 +39,7 @@ export const handleRegistrationStepNavigation = (
   const nextScreen = roleMap[newStep];
   const nextPath = getPathForScreen(nextScreen);
 
+  console.log(`Navigating to next path: ${nextPath} for step: ${newStep}`);
   if(nextPath){
     setTimeout(() => {
       router.push(nextPath);

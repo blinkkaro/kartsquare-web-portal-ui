@@ -4,16 +4,13 @@ import { Box, Typography } from "@mui/material";
 import MainLayout from "@/app/mainLayout";
 import StoreProductsView from "@/components/pages/store/ProductsListing";
 import { buildBreadcrumbJsonLd, BREADCRUMBS } from "@/lib/seo/breadcrumbs";
-import { manifestCopy } from "@/lib/seo/metaManifest";
 import { seoPublic } from "@/lib/seo/buildMetadata";
 import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 
 const storeProductsFallback = seoPublic({
-  ...(manifestCopy("store_products") ?? {
-    title: "Browse all products",
-    description:
-      "Search and filter products from kartsquare suppliers — compare prices, SKUs, and availability across categories.",
-  }),
+  title: "Browse all products",
+  description:
+    "Search and filter products from kartsquare suppliers — compare prices, SKUs, and availability across categories.",
   path: "/store/products",
   keywords: ["product catalog", "supplier products", "B2B catalog India"],
 });
@@ -30,8 +27,8 @@ function StoreProductsFallback() {
         Browse all products
       </Typography>
       <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600, mx: "auto" }}>
-        Search and filter products from kartsquare suppliers — compare prices, SKUs, and
-        availability across categories.
+        Search and filter products from kartsquare suppliers — compare
+        prices, SKUs, and availability across categories.
       </Typography>
     </Box>
   );
@@ -42,7 +39,10 @@ export default function StoreProductsPage() {
 
   return (
     <MainLayout>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd }}
+      />
       <Suspense fallback={<StoreProductsFallback />}>
         <StoreProductsView />
       </Suspense>

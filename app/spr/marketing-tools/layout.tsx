@@ -8,6 +8,10 @@ export const metadata: Metadata = pageTab(
   "Email marketing and campaigns to grow your kartsquare service business.",
 );
 
-export default function SprMarketingToolsLayout({ children }: { children: React.ReactNode }) {
+export default function SprMarketingToolsLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <MainLayout>{children}</MainLayout>;
 }

@@ -130,10 +130,12 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     });
 
     newSocket.on("connect", () => {
+      console.log("Socket connected:", newSocket.id);
       setIsConnected(true);
     });
 
     newSocket.on("disconnect", () => {
+      console.log("Socket disconnected");
       setIsConnected(false);
     });
 
@@ -143,10 +145,12 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
         newSocket.disconnect();
       }
       if (process.env.NODE_ENV !== "production") {
+        console.debug("Socket connection error:", err.message);
       }
     });
 
     newSocket.on("new_notification", (notification: any) => {
+      console.log("New notification received:", notification);
       setNotifications((prev) => [notification, ...prev]);
       // Optimistically update count or wait for count update event
       // We will rely on 'notification_count_update' for count, OR increment locally
@@ -163,6 +167,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     });
 
     newSocket.on("notification_count_update", (data: { count: number }) => {
+      console.log("Notification count updated:", data.count);
       setUnreadCount(data.count);
     });
 

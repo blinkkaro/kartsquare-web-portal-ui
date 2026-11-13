@@ -26,7 +26,7 @@ const StoryMedia: React.FC<StoryMediaProps> = ({
       } else {
         videoRef.current
           .play()
-          .catch(() => {});
+          .catch((e) => console.log("Autoplay prevented", e));
       }
     } else if (
       !isActive &&

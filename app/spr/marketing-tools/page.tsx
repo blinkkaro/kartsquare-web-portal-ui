@@ -7,6 +7,7 @@ export const metadata = pageTab(
   "Create campaigns, manage email marketing, and grow your audience as a kartsquare service provider.",
 );
 
+
 export default function ProviderMarketingToolsPage() {
   return <MarketingToolsLanding role="spr" />;
 }

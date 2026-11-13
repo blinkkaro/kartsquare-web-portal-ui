@@ -33,23 +33,15 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
 
   // This useEffect must be called before any conditional returns
   useEffect(() => {
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
-    let swap: ReturnType<typeof setTimeout> | undefined;
     const interval = setInterval(() => {
-      // Nothing to animate while the tab is in the background: skip the re-render.
-      if (document.hidden) return;
       setFadeIn(false);
-      swap = setTimeout(() => {
+      setTimeout(() => {
         setCurrentServiceIndex((prev) => (prev + 1) % services.length);
         setFadeIn(true);
       }, 500);
     }, 3000);
 
-    return () => {
-      clearInterval(interval);
-      if (swap) clearTimeout(swap);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => clearInterval(interval);
   }, []);
 
   // Speech-bubble hints: a few short, timed nudges (Hinglish), then it stays quiet.

@@ -24,6 +24,7 @@ function HelpSupportView() {
   });
   const theme = useTheme();
   const onSubmit = (data: any) => {
+    console.log(data);
   };
 
   const issueTypes = [

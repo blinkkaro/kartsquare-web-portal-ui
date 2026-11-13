@@ -7,6 +7,8 @@ export const metadata = pageTab(
   "Review performance stats, click rates, and subscriber activity for this supplier email campaign.",
 );
 
+
+
 export default function SupplierCampaignDetailsPage() {
   return <CampaignDetails role="supplier" />;
 }

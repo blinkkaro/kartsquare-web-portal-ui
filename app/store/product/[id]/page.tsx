@@ -17,13 +17,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const product = await productService.getProductById(id);
     const productName = product.product_name || (product as any).name || "Product";
-
+    
     // Access brand and supplier name based on available interface properties
     const brand = product.brand_name;
     const supplierName = (product as any).supplier?.name || (product as any).business_name;
-
+    
     // Dynamic branded title: "Product by Business | kartsquare"
-    const titleText = brand
+    const titleText = brand 
       ? `Buy ${productName} by ${brand} | kartsquare`
       : supplierName
         ? `Buy ${productName} from ${supplierName} | kartsquare`
@@ -33,10 +33,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       product.product_description ||
       (product as any).description ||
       `Buy ${productName} from ${supplierName || "verified suppliers"} on kartsquare. Discover quality products with clear pricing and secure business checkout.`;
-
+    
     const productImages = product.product_images || (product as any).images || [];
     const mainImage =
-      (Array.isArray(productImages) && productImages[0]) || (product as any).image || "";
+      (Array.isArray(productImages) && productImages[0]) ||
+      (product as any).image ||
+      "";
     const canonical = `${base}/store/product/${id}`;
 
     return {
@@ -69,17 +71,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProductDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   let jsonLd: string | null = null;
   try {
     const product = await productService.getProductById(id);
     const productName = product.product_name || (product as any).name || "Product";
-    const productDesc = product.product_description || (product as any).description || "";
+    const productDesc =
+      product.product_description || (product as any).description || "";
     const productImages = product.product_images || (product as any).images || [];
     const mainImage =
-      (Array.isArray(productImages) && productImages[0]) || (product as any).image || "";
-
+      (Array.isArray(productImages) && productImages[0]) ||
+      (product as any).image ||
+      "";
+    
     const supplierName = (product as any).supplier?.name || (product as any).business_name;
     const brand = product.brand_name;
 
@@ -107,9 +116,15 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     return (
       <MainLayout>
         {jsonLd ? (
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: jsonLd }}
+          />
         ) : null}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
+        />
         <ProductDetailsView productId={id} />
       </MainLayout>
     );

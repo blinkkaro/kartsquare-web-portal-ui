@@ -77,6 +77,7 @@ const InquiryModal: React.FC<InquiryModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   useEffect(() => {
+    console.log("supplierId", supplierId);
   }, [supplierId]);
   const {
     register,

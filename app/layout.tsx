@@ -132,6 +132,7 @@ const organizationJsonLd = {
   ],
 };
 
+
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
@@ -152,10 +153,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${jakarta.variable} ${mukta.variable}`} suppressHydrationWarning>
       <body
-        style={{
-          fontFamily:
-            "var(--font-jakarta), var(--font-mukta), system-ui, -apple-system, sans-serif",
-        }}
+        style={{ fontFamily: "var(--font-jakarta), var(--font-mukta), system-ui, -apple-system, sans-serif" }}
         suppressHydrationWarning
       >
         {/* Flags the Kartsquare mobile app WebView before first paint so

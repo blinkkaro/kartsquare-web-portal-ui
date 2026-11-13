@@ -125,6 +125,7 @@ function EmailVerificationView() {
     secureStorage.removeItem("user_details");
 
     dispatch(logout());
+    console.log(role);
 
     if (role === AppUserType.CUSTOMER) {
       router.push(`/login?role=customer`);

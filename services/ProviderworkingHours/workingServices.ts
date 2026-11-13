@@ -27,6 +27,7 @@ class ProviderWorkingHours {
   }
   async addWorkingHours(data: IWorkingHour): Promise<void> {
     try {
+      console.log(data);
       const response = await POST(API_ENDPOINTS.ADD_WORKING_HOURS, {
         working_hours: data,
       });
@@ -43,6 +44,7 @@ class ProviderWorkingHours {
   }
   async bulkUpdateWorkingHours(data: IWorkingHour[]): Promise<void> {
     try {
+      console.log(data);
       const response = await PUT(API_ENDPOINTS.UPDATE_WORKING_HOURS, {
         working_hours: data,
       });
@@ -59,6 +61,7 @@ class ProviderWorkingHours {
   }
   async deleteAllWorkingHours(): Promise<void> {
     try {
+      console.log('deleteAllWorkingHours');
       const response = await DELETE(API_ENDPOINTS.DELETE_ALL_WORKING_HOURS);
       if (response.status !== 'success') {
         throw new Error(response.message || 'Failed to delete working hours.');
