@@ -13,7 +13,6 @@ class ScheduleService {
         {},
         true
       );
-      console.log(response);
       if (response.status === "success") {
       } else {
         throw new Error(response.message || "Failed to add working hours.");

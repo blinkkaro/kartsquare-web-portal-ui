@@ -93,10 +93,8 @@ class ProfileService {
       const response = await GET<providerPostsInterface>(
         APIENDPOINTS.GET_PROVIDER_POSTS(id, page, limit || 10),
       );
-      console.log(response.data);
       return response.data;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
@@ -110,7 +108,6 @@ class ProfileService {
       const response = await GET<providerServicesInterface>(
         APIENDPOINTS.GET_PROVIDER_SERVICES(id, page, limit || 10),
       );
-      console.log(response.data);
       return response.data;
     } catch (error) {
       throw error;
@@ -185,7 +182,6 @@ class ProfileService {
       const response = await GET<providerPostsInterface>(
         APIENDPOINTS.GET_PROVIDER_REELS(id, page, limit || 10),
       );
-      console.log(response.data);
       return response.data;
     } catch (error) {
       throw error;
