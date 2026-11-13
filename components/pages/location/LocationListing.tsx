@@ -9,6 +9,8 @@ interface Props {
   listing: Listing;
   /** The place the URL asked for, which may differ from the one that answered. */
   requestedLocalitySlug?: string;
+  /** Static explanatory content rendered under the listing. */
+  children?: React.ReactNode;
 }
 
 /**
@@ -19,10 +21,11 @@ interface Props {
  * - Real next/link anchors for sibling localities and nearby cities to support crawler indexation
  * - Interactive hero header, filter sidebar, horizontal pro cards, quick-view drawer, and explore section
  */
-const LocationListing: React.FC<Props> = ({ listing }) => {
+const LocationListing: React.FC<Props> = ({ listing, children }) => {
   return (
     <MainLayout>
       <ServicesView initialListing={listing} />
+      {children}
     </MainLayout>
   );
 };

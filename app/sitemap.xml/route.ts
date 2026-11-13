@@ -2,6 +2,7 @@ import { serviceSitemapPath } from "@/lib/seo/sitemapPaths";
 import { NextResponse } from "next/server";
 import { blogs } from "@/data/blogs";
 import { blogPostSitemapEntry } from "@/lib/seo/blogSitemap";
+import { contentSitemapPaths } from "@/lib/services/sitemap";
 
 const BASE_URL = String(
   process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com"
@@ -48,7 +49,6 @@ export async function GET() {
     { url: "/business-listing" },
     { url: "/blogs" },
     { url: "/careers" },
-    { url: "/search" },
     // Legal & policy
     { url: "/terms-conditions" },
     { url: "/privacy-policy" },
@@ -117,6 +117,9 @@ export async function GET() {
 
   // Add Static
   staticRoutes.forEach((r) => addUrl(r.url));
+
+  // Reviewed /services hub and /services/c/{category} pages. Empty until a person approves content.
+  contentSitemapPaths().forEach((p) => addUrl(p));
 
   // Add Blogs
   blogs.forEach((blog) => {

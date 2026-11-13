@@ -23,11 +23,17 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       // ── Services: /services → /cus/services-list ─────────────────────────
-      {
-        source: "/services",
-        destination: "/cus/services-list",
-        permanent: true,
-      },
+      // Kept until the /services content hub is reviewed. Set SERVICES_HUB_ENABLED=true
+      // (build and runtime) to serve the hub at /services instead.
+      ...(process.env.SERVICES_HUB_ENABLED === "true"
+        ? []
+        : [
+            {
+              source: "/services",
+              destination: "/cus/services-list",
+              permanent: true,
+            },
+          ]),
       // old camelCase URL (existing bookmarks / indexed links); query string is preserved
       {
         source: "/cus/servicesList",

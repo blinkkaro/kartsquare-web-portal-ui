@@ -8,6 +8,12 @@ import {
   type LocationListing as Listing,
 } from "@/services/location/locationService";
 import LocationListingView from "@/components/pages/location/LocationListing";
+import LandingContentSection from "@/components/pages/servicesHub/LandingContentSection";
+import { getLandingContent } from "@/data/services/landing";
+import { isPreviewEnabled } from "@/lib/services/content";
+import { serializeJsonLd } from "@/lib/seo/jsonLd";
+import { getServiceHref } from "@/utils/serviceRoute";
+import type { LandingContent } from "@/lib/services/types";
 
 /** `?page=` is the only query parameter a canonical listing page may carry. */
 export function parsePage(value: string | string[] | undefined): number {
@@ -101,6 +107,13 @@ export async function resolveListingRoute(
   return null;
 }
 
+/** Static copy for a sub-category page. Unreviewed copy is shown only when previewing. */
+function landingFor(listing: Listing): LandingContent | undefined {
+  if (!listing.sub_category?.slug) return undefined;
+  const c = getLandingContent(listing.city.slug, listing.category.slug, listing.sub_category.slug);
+  return c && (c.reviewed || isPreviewEnabled()) ? c : undefined;
+}
+
 /**
  * Metadata for a listing page.
  *
@@ -132,14 +145,18 @@ export async function buildLocationListingMetadata(
     page > 1 ? `${listing.canonical_path}?page=${page}` : listing.canonical_path;
 
   const seo = listing.seo;
+  const landing = landingFor(listing);
   const title =
     seo?.meta_title?.trim() ||
+    (landing && page === 1 ? landing.seoTitle : "") ||
     `${subject} in ${placeName}${page > 1 ? ` — page ${page}` : ""}`;
 
+  // No ratings, prices, booking or "verified" claims: the platform does not back them here.
   const description =
     seo?.meta_description?.trim() ||
-    `Compare ${listing.pagination.total} verified ${subject.toLowerCase()} ` +
-      `providers in ${placeName}. Ratings, prices and direct booking on kartsquare.`;
+    (landing && page === 1 ? landing.metaDescription : "") ||
+    `Browse ${subject.toLowerCase()} providers in ${placeName} on Kartsquare. ` +
+      `Read provider profiles and send a service request.`;
 
   const metadata = seoPublic({
     title,
@@ -191,7 +208,7 @@ function buildItemListJsonLd(listing: Listing, placeName: string): string {
         item: {
           "@type": "LocalBusiness",
           name: service.business_name || service.provider_name,
-          url: `${SITE_URL}/services/${service.slug || service.service_id}`,
+          url: `${SITE_URL}${getServiceHref(service)}`,
           ...(service.image_urls?.length
             ? { image: service.image_urls[0] }
             : {}),
@@ -276,8 +293,24 @@ export async function renderLocationListing(
     { name: listing.category.name, item: listing.canonical_path },
   ];
 
+  const landing = landingFor(listing);
+  // FAQPage structured data only for reviewed, real FAQ content.
+  const faqJsonLd =
+    landing?.reviewed === true
+      ? serializeJsonLd({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: landing.faq.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        })
+      : null;
+
   return (
     <>
+      {faqJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqJsonLd }} />}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -290,7 +323,7 @@ export async function renderLocationListing(
           __html: buildItemListJsonLd(listing, placeName),
         }}
       />
-      <LocationListingView listing={listing} />
+      <LocationListingView listing={listing}>{landing && page === 1 ? <LandingContentSection content={landing} /> : null}</LocationListingView>
     </>
   );
 }
