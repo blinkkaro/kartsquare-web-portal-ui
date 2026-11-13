@@ -7,8 +7,6 @@ export const metadata = pageTab(
   "Build and launch a new email campaign to reach your kartsquare subscribers.",
 );
 
-
-
 export default function ProviderCreateCampaignPage() {
   return <CreateCampaign role="spr" />;
 }

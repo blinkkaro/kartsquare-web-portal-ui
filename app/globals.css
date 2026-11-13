@@ -1,155 +1,197 @@
-
 :root {
-    /* Gradient colors */
-    --color-primary: #8800FF;
-    --color-primary2: #79adff;
-    --color-skyblue: #79adff;
-    --color-lightskyblue: #9cc2dd;
-    --color-dark: #172023;
-    --color-secondary: #00B2FF;
-    --color-gradient: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+  /* Gradient colors */
+  --color-primary: #8800ff;
+  --color-primary2: #79adff;
+  --color-skyblue: #79adff;
+  --color-lightskyblue: #9cc2dd;
+  --color-dark: #172023;
+  --color-secondary: #00b2ff;
+  --color-gradient: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
 
-    /* Shadow */
-    --shadow-3xl: 0px 4px 6px -2px #0000000D, 0px 10px 15px -3px #0000001A;
-    --shadow-auth: 0 20px 25px -5px #0000001a;
-    --shadow-dark-auth: rgba(255, 255, 255, 0.1) 0px 12px 28px 0px, rgba(255, 255, 255, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
+  /* Shadow */
+  --shadow-3xl: 0px 4px 6px -2px #0000000d, 0px 10px 15px -3px #0000001a;
+  --shadow-auth: 0 20px 25px -5px #0000001a;
+  --shadow-dark-auth:
+    rgba(255, 255, 255, 0.1) 0px 12px 28px 0px, rgba(255, 255, 255, 0.1) 0px 2px 4px 0px,
+    rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
 
-    /* font size */
-    --text-xm: 1.125rem;
-    --text-9xl: 6.5rem;
-    --text-40: 2rem;
-    --text-52: 3.25rem;
-    --text-sm: 0.875rem;
+  /* font size */
+  --text-xm: 1.125rem;
+  --text-9xl: 6.5rem;
+  --text-40: 2rem;
+  --text-52: 3.25rem;
+  --text-sm: 0.875rem;
 
-    /* Breakpoint */
-    --breakpoint-xs: 23.438rem;
-    /* 375px */
-    --breakpoint-mobile: 32.5rem;
-    /* 520px */
+  /* Breakpoint */
+  --breakpoint-xs: 23.438rem;
+  /* 375px */
+  --breakpoint-mobile: 32.5rem;
+  /* 520px */
 
-    /* Spacing */
-    --spacing-45p: 45%;
-    --spacing-85p: 85%;
-    --spacing-90p: 90%;
-    --spacing-68: 17.375rem;
-    --spacing-540: 33.75rem;
-    /* 540px */
-    --spacing-8xl: 87.5rem;
-    /* 1400px */
+  /* Spacing */
+  --spacing-45p: 45%;
+  --spacing-85p: 85%;
+  --spacing-90p: 90%;
+  --spacing-68: 17.375rem;
+  --spacing-540: 33.75rem;
+  /* 540px */
+  --spacing-8xl: 87.5rem;
+  /* 1400px */
 
-    /* Matches utils/theme.ts MUI typography.fontFamily — single font system app-wide */
-    --font-heading: var(--font-jakarta), var(--font-mukta), system-ui, sans-serif;
-    --font-body: var(--font-jakarta), var(--font-mukta), system-ui, sans-serif;
-    /* Electric violet gradient for borders/glow */
-    --gradient-border: linear-gradient(135deg, rgba(94, 24, 233, 0.4) 0%, rgba(94, 24, 233, 0.1) 50%, rgba(94, 24, 233, 0.4) 100%);
-    --gradient-border-dark: linear-gradient(135deg, rgba(148, 99, 255, 0.25) 0%, rgba(94, 24, 233, 0.1) 50%, rgba(148, 99, 255, 0.25) 100%);
+  /* Matches utils/theme.ts MUI typography.fontFamily — single font system app-wide */
+  --font-heading: var(--font-jakarta), var(--font-mukta), system-ui, sans-serif;
+  --font-body: var(--font-jakarta), var(--font-mukta), system-ui, sans-serif;
+  /* Electric violet gradient for borders/glow */
+  --gradient-border: linear-gradient(
+    135deg,
+    rgba(94, 24, 233, 0.4) 0%,
+    rgba(94, 24, 233, 0.1) 50%,
+    rgba(94, 24, 233, 0.4) 100%
+  );
+  --gradient-border-dark: linear-gradient(
+    135deg,
+    rgba(148, 99, 255, 0.25) 0%,
+    rgba(94, 24, 233, 0.1) 50%,
+    rgba(148, 99, 255, 0.25) 100%
+  );
 }
 
 /* Listing page: heading underline reveal */
 @keyframes heading-underline {
-    from { transform: scaleX(0); }
-    to { transform: scaleX(1); }
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 
 @keyframes heading-fade-up {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes slide {
-    0% {
-        transform: translateX(0%);
-    }
+  0% {
+    transform: translateX(0%);
+  }
 
-    100% {
-        transform: translateX(-103%);
-    }
+  100% {
+    transform: translateX(-103%);
+  }
 }
 
 /* ── Scroll-reveal system (replaces framer-motion on External/WebView pages) ── */
 @keyframes ks-fade-up {
-    from { opacity: 0; transform: translateY(28px); }
-    to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes ks-fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Default hidden state — elements with data-animate start invisible */
 [data-animate] {
-    opacity: 0;
-    transform: translateY(28px);
+  opacity: 0;
+  transform: translateY(28px);
 }
 
 /* Triggered by IntersectionObserver in useScrollReveal */
 [data-animate].ks-visible {
-    animation: ks-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: ks-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 /* Variant: fade only (no Y movement) — use data-animate="fade" */
 [data-animate="fade"] {
-    opacity: 0;
-    transform: none;
+  opacity: 0;
+  transform: none;
 }
 [data-animate="fade"].ks-visible {
-    animation: ks-fade-in 0.5s ease forwards;
+  animation: ks-fade-in 0.5s ease forwards;
 }
 
 /* Respect user preference */
 @media (prefers-reduced-motion: reduce) {
-    [data-animate], [data-animate="fade"] {
-        opacity: 1;
-        transform: none;
-        animation: none !important;
-    }
+  [data-animate],
+  [data-animate="fade"] {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
 }
 
 html {
-    scroll-behavior: smooth;
+  scroll-behavior: smooth;
 }
 
 /* Hide scrollbar for all browsers */
 .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 * {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
-button, a, input, select, textarea, [role="button"], [role="link"] {
-    touch-action: manipulation;
+button,
+a,
+input,
+select,
+textarea,
+[role="button"],
+[role="link"] {
+  touch-action: manipulation;
 }
 
 html,
 body {
-    max-width: 100vw;
-    overflow-x: hidden;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 body {
-    color: rgb(var(--foreground-rgb));
-    background: white;
+  color: rgb(var(--foreground-rgb));
+  background: white;
 }
 
 a {
-    color: inherit;
-    text-decoration: none;
+  color: inherit;
+  text-decoration: none;
 }
 
 /* Remove double-tap-zoom delay on interactive elements */
@@ -160,11 +202,11 @@ input,
 select,
 textarea,
 label {
-    touch-action: manipulation;
+  touch-action: manipulation;
 }
 
 html {
-    color-scheme: light;
+  color-scheme: light;
 }
 
 /* Global Autofill Fix */
@@ -172,61 +214,162 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 1000px #f5f4fa inset !important;
-    -webkit-text-fill-color: #30263E !important;
-    transition: background-color 5000s ease-in-out 0s;
+  -webkit-box-shadow: 0 0 0 1000px #f5f4fa inset !important;
+  -webkit-text-fill-color: #30263e !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
-[data-theme='dark'] input:-webkit-autofill,
-[data-theme='dark'] input:-webkit-autofill:hover,
-[data-theme='dark'] input:-webkit-autofill:focus,
-[data-theme='dark'] input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 1000px #1e2930 inset !important;
-    -webkit-text-fill-color: #ffffff !important;
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover,
+[data-theme="dark"] input:-webkit-autofill:focus,
+[data-theme="dark"] input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #1e2930 inset !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 /* ── Inside the Kartsquare mobile app WebView (html[data-native], set in layout) ── */
 html[data-native] [data-native-hide] {
-    display: none !important;
+  display: none !important;
 }
 html[data-native] [data-main-shell] {
-    padding-bottom: 0 !important; /* bottom-nav spacer not needed; native tab bar owns it */
+  padding-bottom: 0 !important; /* bottom-nav spacer not needed; native tab bar owns it */
 }
 /* Mobile slider card entrance (scroll-driven; used by NewTopPros) */
 @keyframes ks-card-reveal {
-    from { opacity: 0.55; transform: scale(0.94); }
-    to   { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0.55;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* Popular-in-city auto-advance progress (NewPopularInArea) */
 @keyframes ks-progress {
-    from { width: 0; }
-    to   { width: 100%; }
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 /* Popular-in-city banner (NewPopularInArea) */
-@keyframes ks-blob-a { from { transform: translate(0, 0) scale(1); } to { transform: translate(90px, 50px) scale(1.25); } }
-@keyframes ks-blob-b { from { transform: translate(0, 0) scale(1.1); } to { transform: translate(-80px, -40px) scale(0.9); } }
-@keyframes ks-letter-rise { from { opacity: 0; transform: translateY(60%) rotate(8deg); } to { opacity: 1; transform: none; } }
-@keyframes ks-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-@keyframes ks-ping { 0% { transform: scale(1); opacity: 0.7; } 80%, 100% { transform: scale(3); opacity: 0; } }
+@keyframes ks-blob-a {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(90px, 50px) scale(1.25);
+  }
+}
+@keyframes ks-blob-b {
+  from {
+    transform: translate(0, 0) scale(1.1);
+  }
+  to {
+    transform: translate(-80px, -40px) scale(0.9);
+  }
+}
+@keyframes ks-letter-rise {
+  from {
+    opacity: 0;
+    transform: translateY(60%) rotate(8deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ks-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes ks-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  80%,
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
-    .ks-banner *, .ks-banner *::after { animation: none !important; }
+  .ks-banner *,
+  .ks-banner *::after {
+    animation: none !important;
+  }
 }
 
-@keyframes ks-why-rise { from { opacity: 0.4; transform: translateY(26px) scale(0.97); } to { opacity: 1; transform: none; } }
+@keyframes ks-why-rise {
+  from {
+    opacity: 0.4;
+    transform: translateY(26px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 
 /* Native buttons/inputs default to Arial; make every one inherit the app font. */
-button, input, select, textarea, optgroup {
-    font-family: inherit;
+button,
+input,
+select,
+textarea,
+optgroup {
+  font-family: inherit;
 }
 
 /* Kart AI floating button (AIBotton) */
-@keyframes ks-ai-spin { to { transform: rotate(360deg); } }
-@keyframes ks-ai-twinkle { 0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; } 50% { transform: scale(1.18) rotate(18deg); opacity: 0.85; } }
-@keyframes ks-ai-bubble { 0% { opacity: 0; transform: translateY(6px) scale(0.92); } 100% { opacity: 1; transform: none; } }
-@keyframes ks-ai-sweep { 0% { transform: translateX(-120%) skewX(-18deg); } 60%, 100% { transform: translateX(260%) skewX(-18deg); } }
+@keyframes ks-ai-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes ks-ai-twinkle {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.18) rotate(18deg);
+    opacity: 0.85;
+  }
+}
+@keyframes ks-ai-bubble {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ks-ai-sweep {
+  0% {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  60%,
+  100% {
+    transform: translateX(260%) skewX(-18deg);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
-    .ks-ai *, .ks-ai *::before, .ks-ai *::after { animation: none !important; }
+  .ks-ai *,
+  .ks-ai *::before,
+  .ks-ai *::after {
+    animation: none !important;
+  }
 }
 
 /* One typeface everywhere: third-party UI (chart labels, tooltips, toasts) must not bring its own. */
@@ -234,5 +377,5 @@ svg text,
 .recharts-wrapper,
 .recharts-tooltip-wrapper,
 .swiper {
-    font-family: inherit;
+  font-family: inherit;
 }

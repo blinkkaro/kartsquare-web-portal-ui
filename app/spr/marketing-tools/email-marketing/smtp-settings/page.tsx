@@ -7,8 +7,6 @@ export const metadata = pageTab(
   "Configure your custom SMTP server to send email campaigns through kartsquare.",
 );
 
-
-
 export default function ProviderSmtpSettingsPage() {
   return <SmtpSettings role="spr" />;
 }

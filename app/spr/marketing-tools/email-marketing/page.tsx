@@ -7,8 +7,6 @@ export const metadata = pageTab(
   "Overview of your email marketing performance — opens, clicks, and subscriber stats on kartsquare.",
 );
 
-
-
 export default function ProviderEmailMarketingPage() {
   return <DashboardOverview role="spr" />;
 }

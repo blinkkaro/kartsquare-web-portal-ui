@@ -3,13 +3,16 @@ import { Suspense } from "react";
 import { Box, Typography } from "@mui/material";
 import MainLayout from "@/app/mainLayout";
 import StoreView from "@/components/pages/store";
+import { manifestCopy } from "@/lib/seo/metaManifest";
 import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
 import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 
 const storeFallback = seoPublic({
-  title: "Store — products from verified suppliers",
-  description:
-    "Browse wholesale and retail products on kartsquare — electronics, industrial supplies, textiles, chemicals, and more from verified Indian suppliers.",
+  ...(manifestCopy("store") ?? {
+    title: "Store — products from verified suppliers",
+    description:
+      "Browse wholesale and retail products on kartsquare — electronics, industrial supplies, textiles, chemicals, and more from verified Indian suppliers.",
+  }),
   path: "/store",
   keywords: [
     "B2B products India",
@@ -46,9 +49,8 @@ function StoreFallback() {
         Store — products from verified suppliers
       </Typography>
       <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600, mx: "auto" }}>
-        Browse wholesale and retail products on kartsquare — electronics,
-        industrial supplies, textiles, chemicals, and more from verified
-        Indian suppliers.
+        Browse wholesale and retail products on kartsquare — electronics, industrial supplies,
+        textiles, chemicals, and more from verified Indian suppliers.
       </Typography>
     </Box>
   );

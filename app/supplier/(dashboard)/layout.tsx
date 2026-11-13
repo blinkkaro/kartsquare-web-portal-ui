@@ -5,14 +5,9 @@ import SupplierDashboardClientLayout from "./SupplierDashboardClientLayout";
 
 export const metadata: Metadata = seoPrivate({
   title: "Supplier dashboard",
-  description:
-    "Manage your kartsquare supplier store, products, orders, and marketing tools.",
+  description: "Manage your kartsquare supplier store, products, orders, and marketing tools.",
 });
 
-export default function SupplierDashboardLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function SupplierDashboardLayout({ children }: { children: ReactNode }) {
   return <SupplierDashboardClientLayout>{children}</SupplierDashboardClientLayout>;
 }

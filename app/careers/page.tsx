@@ -1,12 +1,15 @@
 import MainLayout from "../mainLayout";
 import CareersView from "@/components/pages/careers";
+import { manifestCopy } from "@/lib/seo/metaManifest";
 import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
 import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 
 export const metadata = seoPublic({
-  title: "Careers at kartsquare — Jobs in India's B2B Marketplace",
-  description:
-    "Explore career opportunities at kartsquare — build India's leading marketplace for products and professional services. Join our growing team.",
+  ...(manifestCopy("careers") ?? {
+    title: "Careers at kartsquare — Jobs in India's B2B Marketplace",
+    description:
+      "Explore career opportunities at kartsquare — build India's leading marketplace for products and professional services. Join our growing team.",
+  }),
   path: "/careers",
   keywords: [
     "kartsquare careers",
@@ -43,10 +46,7 @@ export default function Careers() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(careersWebPageJsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }} />
       <CareersView />
     </MainLayout>
   );

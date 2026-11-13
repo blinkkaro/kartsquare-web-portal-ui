@@ -89,9 +89,7 @@ export default function NotFoundClient() {
             variant="h4"
             sx={{
               fontWeight: 700,
-              color: isDark
-                ? COLORS.TEXT.PRIMARY_DARK
-                : COLORS.TEXT.PRIMARY_LIGHT,
+              color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
               mb: 2,
             }}
           >
@@ -102,9 +100,7 @@ export default function NotFoundClient() {
           <Typography
             variant="body1"
             sx={{
-              color: isDark
-                ? COLORS.TEXT.SECONDARY_DARK
-                : COLORS.TEXT.SECONDARY_LIGHT,
+              color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
               mb: 4,
               maxWidth: "500px",
               fontSize: { xs: "14px", sm: "16px" },
@@ -153,12 +149,8 @@ export default function NotFoundClient() {
               variant="outlined"
               onClick={() => router.back()}
               sx={{
-                borderColor: isDark
-                  ? COLORS.BORDER.DEFAULT_DARK
-                  : COLORS.BORDER.DEFAULT_LIGHT,
-                color: isDark
-                  ? COLORS.TEXT.PRIMARY_DARK
-                  : COLORS.TEXT.PRIMARY_LIGHT,
+                borderColor: isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT,
+                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                 px: 4,
                 py: 1.5,
                 fontSize: { xs: "14px", sm: "16px" },
@@ -167,9 +159,7 @@ export default function NotFoundClient() {
                 borderRadius: 2,
                 "&:hover": {
                   borderColor: COLORS.PRIMARY_PURPLE,
-                  bgcolor: isDark
-                    ? COLORS.PURPLE_ALPHA_10
-                    : COLORS.PURPLE_ALPHA_04,
+                  bgcolor: isDark ? COLORS.PURPLE_ALPHA_10 : COLORS.PURPLE_ALPHA_04,
                 },
                 transition: "all 0.3s ease",
                 minWidth: { xs: "100%", sm: "200px" },

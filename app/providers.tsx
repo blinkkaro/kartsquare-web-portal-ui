@@ -27,7 +27,7 @@ function ThemeWrapper({ children }: { children: React.ReactNode }) {
 
   // Sync mode with document body attribute for global CSS
   useEffect(() => {
-    document.body.setAttribute('data-theme', mode);
+    document.body.setAttribute("data-theme", mode);
   }, [mode]);
 
   return (
@@ -62,7 +62,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             retry: 1,
           },
         },
-      })
+      }),
   );
 
   return (

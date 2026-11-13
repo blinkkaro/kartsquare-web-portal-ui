@@ -36,7 +36,6 @@ function BusinessInfoView() {
         UserRegisterSteps.BUSINESS_INFO,
       );
     } catch (error: any) {
-      console.log(error);
       setError(error.message);
     } finally {
       setIsLoading(false);

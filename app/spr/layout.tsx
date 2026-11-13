@@ -9,10 +9,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ServiceProviderPortalLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function ServiceProviderPortalLayout({ children }: { children: ReactNode }) {
   return children;
 }

@@ -17,9 +17,7 @@ interface ProfilePageProps {
   }>;
 }
 
-export async function generateMetadata(
-  { params }: ProfilePageProps,
-): Promise<Metadata> {
+export async function generateMetadata({ params }: ProfilePageProps): Promise<Metadata> {
   const { username } = await params;
 
   try {
@@ -80,10 +78,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         />
       ) : null}
       {breadcrumbJsonLd ? (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }} />
       ) : null}
       <ProviderProfilePage username={username} />
     </MainLayout>

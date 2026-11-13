@@ -7,10 +7,6 @@ export const metadata: Metadata = pageTab(
   "Email marketing and campaigns for your kartsquare supplier store.",
 );
 
-export default function SupplierMarketingToolsLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function SupplierMarketingToolsLayout({ children }: { children: ReactNode }) {
   return children;
 }

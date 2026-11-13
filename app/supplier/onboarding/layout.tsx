@@ -8,10 +8,6 @@ export const metadata: Metadata = seoAuth({
     "Complete store setup and KYC steps to start selling on kartsquare as a verified supplier.",
 });
 
-export default function SupplierOnboardingLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function SupplierOnboardingLayout({ children }: { children: ReactNode }) {
   return children;
 }

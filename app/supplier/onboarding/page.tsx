@@ -1,13 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import {
-  Box,
-  Grid,
-  Typography,
-  useTheme,
-  useMediaQuery,
-  alpha,
-} from "@mui/material";
+import { Box, Grid, Typography, useTheme, useMediaQuery, alpha } from "@mui/material";
 import KycStep from "@/components/supplier/onboarding/KycStep";
 import StoreStep from "@/components/supplier/onboarding/StoreStep";
 import Image from "next/image";
@@ -26,14 +19,12 @@ import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 const steps = [
   {
     label: "Store Setup",
-    description:
-      "Business details, categories & store location so buyers can discover your store.",
+    description: "Business details, categories & store location so buyers can discover your store.",
     icon: <StorefrontRoundedIcon />,
   },
   {
     label: "KYC Verification",
-    description:
-      "Verify identity & business with PAN, ID proof & address for a safe marketplace.",
+    description: "Verify identity & business with PAN, ID proof & address for a safe marketplace.",
     icon: <VerifiedUserRoundedIcon />,
   },
 ];
@@ -99,10 +90,7 @@ export default function SupplierOnboardingPage() {
       <Grid
         size={{ xs: 12, lg: 6 }}
         sx={{
-          background:
-            theme.palette.mode === "light"
-              ? COLORS.PURPLECYAN
-              : COLORS.DARK_GRADIENT,
+          background: theme.palette.mode === "light" ? COLORS.PURPLECYAN : COLORS.DARK_GRADIENT,
           display: { xs: "none", lg: "flex" },
           flexDirection: "column",
           justifyContent: "center",
@@ -134,8 +122,7 @@ export default function SupplierOnboardingPage() {
           <Typography
             sx={{
               fontWeight: "bold",
-              color:
-                theme.palette.mode === "light" ? "text.primary" : "#ffffff",
+              color: theme.palette.mode === "light" ? "text.primary" : "#ffffff",
               letterSpacing: "-0.01em",
               fontSize: isLargeScreen ? "4rem" : "3rem",
             }}
@@ -179,15 +166,7 @@ export default function SupplierOnboardingPage() {
           }}
         >
           <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 1 }}>
-
-
-            <Image
-              src="/logo.svg"
-              alt="kartsquare"
-              width={56}
-              height={56}
-              priority
-            />
+            <Image src="/logo.svg" alt="kartsquare" width={56} height={56} priority />
             <Typography
               sx={{
                 fontWeight: 700,
@@ -215,7 +194,10 @@ export default function SupplierOnboardingPage() {
             <Typography
               variant="body2"
               sx={{
-                color: theme.palette.mode === "dark" ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                color:
+                  theme.palette.mode === "dark"
+                    ? COLORS.TEXT.SECONDARY_DARK
+                    : COLORS.TEXT.SECONDARY_LIGHT,
                 mb: { xs: 2, sm: 3 },
                 lineHeight: 1.5,
                 px: { xs: 0, sm: 0 },
@@ -235,9 +217,13 @@ export default function SupplierOnboardingPage() {
                 p: { xs: 1.5, sm: 2 },
                 borderRadius: 2,
                 border: "1px solid",
-                borderColor: theme.palette.mode === "dark" ? "divider" : alpha(COLORS.PRIMARY_PURPLE, 0.12),
+                borderColor:
+                  theme.palette.mode === "dark" ? "divider" : alpha(COLORS.PRIMARY_PURPLE, 0.12),
                 bgcolor: theme.palette.mode === "dark" ? "background.paper" : "white",
-                boxShadow: theme.palette.mode === "dark" ? "none" : `0 2px 8px ${alpha(COLORS.PRIMARY_PURPLE, 0.04)}`,
+                boxShadow:
+                  theme.palette.mode === "dark"
+                    ? "none"
+                    : `0 2px 8px ${alpha(COLORS.PRIMARY_PURPLE, 0.04)}`,
               }}
             >
               {steps.map((s, idx) => {
@@ -267,22 +253,54 @@ export default function SupplierOnboardingPage() {
                           width: { xs: 32, sm: 36 },
                           height: { xs: 32, sm: 36 },
                           borderRadius: "50%",
-                          bgcolor: isActive ? COLORS.PRIMARY_PURPLE : isCompleted ? alpha(COLORS.PRIMARY_PURPLE, 0.2) : (theme.palette.mode === "dark" ? "action.hover" : "action.selected"),
-                          color: isActive ? "#fff" : (isCompleted ? COLORS.PRIMARY_PURPLE : "text.secondary"),
+                          bgcolor: isActive
+                            ? COLORS.PRIMARY_PURPLE
+                            : isCompleted
+                              ? alpha(COLORS.PRIMARY_PURPLE, 0.2)
+                              : theme.palette.mode === "dark"
+                                ? "action.hover"
+                                : "action.selected",
+                          color: isActive
+                            ? "#fff"
+                            : isCompleted
+                              ? COLORS.PRIMARY_PURPLE
+                              : "text.secondary",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
                           flexShrink: 0,
-                          boxShadow: isActive ? `0 0 0 3px ${alpha(COLORS.PRIMARY_PURPLE, 0.15)}` : "none",
+                          boxShadow: isActive
+                            ? `0 0 0 3px ${alpha(COLORS.PRIMARY_PURPLE, 0.15)}`
+                            : "none",
                         }}
                       >
-                        {isCompleted ? <CheckCircleRoundedIcon sx={{ fontSize: { xs: 18, sm: 20 } }} /> : s.icon}
+                        {isCompleted ? (
+                          <CheckCircleRoundedIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
+                        ) : (
+                          s.icon
+                        )}
                       </Box>
                       <Box sx={{ minWidth: 0, overflow: "hidden" }}>
-                        <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ display: "block", textTransform: "uppercase", letterSpacing: "0.05em", fontSize: { xs: "0.65rem", sm: "0.75rem" } }}>
+                        <Typography
+                          variant="caption"
+                          fontWeight={700}
+                          color="text.secondary"
+                          sx={{
+                            display: "block",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.05em",
+                            fontSize: { xs: "0.65rem", sm: "0.75rem" },
+                          }}
+                        >
                           Step {idx + 1}
                         </Typography>
-                        <Typography variant="subtitle2" fontWeight={600} color={isActive || isCompleted ? "text.primary" : "text.secondary"} sx={{ lineHeight: 1.3, fontSize: { xs: "0.8rem", sm: "0.875rem" } }} noWrap>
+                        <Typography
+                          variant="subtitle2"
+                          fontWeight={600}
+                          color={isActive || isCompleted ? "text.primary" : "text.secondary"}
+                          sx={{ lineHeight: 1.3, fontSize: { xs: "0.8rem", sm: "0.875rem" } }}
+                          noWrap
+                        >
                           {s.label}
                         </Typography>
                       </Box>
@@ -294,7 +312,11 @@ export default function SupplierOnboardingPage() {
                           width: { xs: 12, sm: 24 },
                           height: 2,
                           borderRadius: 1,
-                          bgcolor: isCompleted ? alpha(COLORS.PRIMARY_PURPLE, 0.5) : (theme.palette.mode === "dark" ? "action.hover" : "action.selected"),
+                          bgcolor: isCompleted
+                            ? alpha(COLORS.PRIMARY_PURPLE, 0.5)
+                            : theme.palette.mode === "dark"
+                              ? "action.hover"
+                              : "action.selected",
                           mx: { xs: 0.25, sm: 0.5 },
                         }}
                       />
@@ -305,9 +327,7 @@ export default function SupplierOnboardingPage() {
             </Box>
 
             {/* Form content — full width, responsive padding */}
-            <Box sx={{ width: "100%", overflow: "hidden" }}>
-              {getStepContent(activeStep)}
-            </Box>
+            <Box sx={{ width: "100%", overflow: "hidden" }}>{getStepContent(activeStep)}</Box>
           </Box>
         </Box>
       </Grid>

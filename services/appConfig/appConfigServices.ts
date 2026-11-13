@@ -13,7 +13,6 @@ class AppConfigServices {
 
       return response.data;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
@@ -27,7 +26,6 @@ class AppConfigServices {
       );
       return response.data;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
@@ -38,7 +36,6 @@ class AppConfigServices {
       );
       return response.data;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }

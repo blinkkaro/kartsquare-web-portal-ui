@@ -20,7 +20,6 @@ class ReviewService {
       const response = await GET<ReviewResponse>(
         APIENDPOINT.GET_REVIEW(event, review_event_id, page, limit),
       );
-      console.log(response);
       if (response.status === "success") {
         return response.data;
       }
@@ -31,7 +30,6 @@ class ReviewService {
   }
   async createReview(data: reviewCreateParams) {
     try {
-      console.log(data);
       const response = await POST<ReviewResponse>(
         APIENDPOINT.CREATE_REVIEW,
         data,
@@ -41,7 +39,6 @@ class ReviewService {
       }
       throw new Error(response.message);
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
@@ -56,7 +53,6 @@ class ReviewService {
       }
       throw new Error(response.message);
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
@@ -97,20 +93,17 @@ class ReviewService {
       }
       throw new Error(response.message);
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
   async getAllTestimonials(providerId: string): Promise<Review[]> {
     try {
       const response = await GET<Review[]>(APIENDPOINT.GET_ALL_TESTIMONIALS(providerId));
-      console.log(response);
       if (response.status === "success") {
         return response.data;
       }
       throw new Error(response.message);
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }

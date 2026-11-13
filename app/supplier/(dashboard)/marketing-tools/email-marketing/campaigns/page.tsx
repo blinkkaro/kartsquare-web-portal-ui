@@ -7,8 +7,6 @@ export const metadata = pageTab(
   "View and manage all email campaigns for your kartsquare supplier store.",
 );
 
-
-
 export default function SupplierCampaignListPage() {
   return <CampaignList role="supplier" />;
 }

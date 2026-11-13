@@ -6,7 +6,6 @@ export const metadata = seoAuth({
   description: "Permanently delete your kartsquare account.",
 });
 
-
 export default function DeleteAccount() {
   return <DeleteAccountView />;
 }

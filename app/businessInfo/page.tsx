@@ -9,7 +9,5 @@ export const metadata = seoPublic({
 });
 
 export default function BusinessInfo() {
-  return (
-    <BusinessInfoView />
-  );
+  return <BusinessInfoView />;
 }

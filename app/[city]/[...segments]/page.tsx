@@ -22,10 +22,7 @@ type Props = {
  * last two shapes are indistinguishable from the path alone — only the data
  * says which is which, so the resolver tries both.
  */
-export async function generateMetadata({
-  params,
-  searchParams,
-}: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const [{ city, segments }, search] = await Promise.all([params, searchParams]);
   return buildLocationListingMetadata(city, segments ?? [], parsePage(search.page));
 }
