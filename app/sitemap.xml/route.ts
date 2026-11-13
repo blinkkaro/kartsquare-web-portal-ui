@@ -5,7 +5,7 @@ import { blogPostSitemapEntry } from "@/lib/seo/blogSitemap";
 import { contentSitemapPaths } from "@/lib/services/sitemap";
 
 const BASE_URL = String(
-  process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com"
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.kartsquare.com"
 ).replace(/\/$/, "");
 const API_URL = "https://api.kartsquare.com/api/v1";
 

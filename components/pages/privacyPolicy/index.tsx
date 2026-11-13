@@ -21,6 +21,7 @@ export default function PrivacyPolicyView() {
     <MainLayout>
       <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
         <Title
+          as="h1"
           title="Privacy Policy"
           subtitle={`Last updated: ${PRIVACY_POLICY_LAST_UPDATED}`}
         />

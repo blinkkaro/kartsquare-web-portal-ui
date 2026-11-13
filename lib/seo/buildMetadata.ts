@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 /** Normalized site origin (no trailing slash). */
 export const SITE_URL = String(
-  process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com"
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.kartsquare.com"
 ).replace(/\/$/, "");
 
 function brandTitle(title: string): string {

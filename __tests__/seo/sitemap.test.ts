@@ -79,8 +79,8 @@ describe("sitemap.xml static routes", () => {
     expect(staticUrls).toContain("/store/products");
   });
 
-  it("should include /search", () => {
-    expect(staticUrls).toContain("/search");
+  it("should not include /search (it is blocked by robots.txt and noindex)", () => {
+    expect(staticUrls).not.toContain("/search");
   });
 
   it("should include /blogs", () => {

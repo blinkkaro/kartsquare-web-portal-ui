@@ -21,6 +21,7 @@ export default function CookiePolicyView() {
     <MainLayout>
       <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
         <Title
+          as="h1"
           title="Cookie Policy"
           subtitle={`Last updated: ${COOKIE_POLICY_LAST_UPDATED}`}
         />

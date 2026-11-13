@@ -90,3 +90,16 @@ describe("draft visibility", () => {
     expect(getCategoryContent("nope")).toBeUndefined();
   });
 });
+
+describe("titles and descriptions against the reviewed static-page manifest", () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const manifest = require("@/data/seo/metaManifest.json").entries as Array<{ title: string; description: string }>;
+
+  it("never repeats a title or description already used by a static page or blog", () => {
+    const used = new Set(manifest.flatMap((e) => [e.title.toLowerCase(), e.description.toLowerCase()]));
+    for (const c of [...CATEGORY_CONTENT, ...LANDING_CONTENT]) {
+      expect(used.has(c.seoTitle.toLowerCase())).toBe(false);
+      expect(used.has(c.metaDescription.toLowerCase())).toBe(false);
+    }
+  });
+});

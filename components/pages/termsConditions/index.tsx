@@ -21,6 +21,7 @@ export default function TermsConditionsView() {
     <MainLayout>
       <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
         <Title
+          as="h1"
           title="Terms & Conditions"
           subtitle={`Last updated: ${TERMS_CONDITIONS_LAST_UPDATED}`}
         />

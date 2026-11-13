@@ -6,6 +6,7 @@ import { seoPrivate, seoPublic } from "@/lib/seo/buildMetadata";
 import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 import { serializeJsonLd } from "@/lib/seo/jsonLd";
 import { categoryContentPath, getCategoryContent, isCategoryIndexable, isPreviewEnabled } from "@/lib/services/content";
+import { photoSrc } from "@/lib/services/photo";
 import { COVERAGE_CITY, getCategoryMedia, getCategoryProviders, getCityCoverage } from "@/lib/services/coverage";
 
 export const revalidate = 300;
@@ -27,7 +28,10 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const path = categoryContentPath(content.slug);
   // Unreviewed content renders for preview but is noindex and is not in the sitemap.
   if (!isCategoryIndexable(content)) return seoPrivate({ title: content.seoTitle, description: content.metaDescription });
-  return seoPublic({ title: content.seoTitle, description: content.metaDescription, path });
+  // Share card: the category photo the site already shows, when there is one.
+  const media = await getCategoryMedia();
+  const photo = photoSrc(media[content.slug]?.image);
+  return seoPublic({ title: content.seoTitle, description: content.metaDescription, path, ...(photo?.startsWith("https://") ? { image: photo } : {}) });
 }
 
 export default async function CategoryContentPage({ params }: Params) {

@@ -10,7 +10,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "home-services",
     name: "Home Services",
-    seoTitle: "Home Services in Jaipur: Plumbers, Electricians",
+    seoTitle: "Home Services: Plumbers, Electricians, Cleaners",
     metaDescription:
       "Find plumbers, electricians, carpenters, painters and cleaners on Kartsquare. Read provider profiles and send a service request for your home.",
     h1: "Home Services",
@@ -66,7 +66,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "mobile-electronics-repair",
     name: "Mobile & Electronics Repair",
-    seoTitle: "Mobile, Laptop and TV Repair Providers in Jaipur",
+    seoTitle: "Mobile, Laptop and TV Repair Providers",
     metaDescription:
       "Look up mobile, laptop, TV and CCTV repair providers on Kartsquare. Check what each repairer lists and send a request describing the fault.",
     h1: "Mobile & Electronics Repair",
@@ -118,7 +118,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "automotive",
     name: "Automotive",
-    seoTitle: "Car and Bike Repair and Services in Jaipur",
+    seoTitle: "Car and Bike Repair and Services",
     metaDescription:
       "Browse car and bike repair, car wash and vehicle service providers on Kartsquare, read their profiles and send a request with your vehicle details.",
     h1: "Automotive Services",
@@ -170,7 +170,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "security-services",
     name: "Security Services",
-    seoTitle: "Security Guards, CCTV and Fire Safety in Jaipur",
+    seoTitle: "Security Guards, CCTV and Fire Safety",
     metaDescription:
       "Find security guard, CCTV, fire safety and alarm system providers on Kartsquare. Review their profiles and send a request for your premises.",
     h1: "Security Services",
@@ -222,7 +222,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "energy-environment",
     name: "Energy & Environment",
-    seoTitle: "Solar, Inverter and Water Purifier Providers in Jaipur",
+    seoTitle: "Solar, Inverter and RO Purifier Providers",
     metaDescription:
       "Browse solar panel, inverter, RO water purifier, borewell and waste management providers on Kartsquare and send a request with your needs.",
     h1: "Energy & Environment Services",
@@ -274,7 +274,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "fitness-sports",
     name: "Fitness & Sports",
-    seoTitle: "Gyms, Yoga and Sports Coaching Providers in Jaipur",
+    seoTitle: "Gyms, Yoga and Sports Coaching Providers",
     metaDescription:
       "Find gyms, yoga teachers, personal trainers and sports coaches on Kartsquare. Read their profiles and send a request to ask about your goals.",
     h1: "Fitness & Sports",
@@ -326,7 +326,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "it-digital-services",
     name: "IT & Digital Services",
-    seoTitle: "Website, App and Digital Marketing Providers in Jaipur",
+    seoTitle: "Website, App and Digital Marketing Providers",
     metaDescription:
       "Browse website, app, SEO, social media and software providers on Kartsquare. Review their profiles and send a request with your project brief.",
     h1: "IT & Digital Services",
@@ -378,7 +378,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "photography-videography",
     name: "Photography & Videography",
-    seoTitle: "Photographers and Videographers in Jaipur",
+    seoTitle: "Photographers and Videographers",
     metaDescription:
       "Find wedding, product and studio photographers and videographers on Kartsquare. Read their profiles and send a request with your event details.",
     h1: "Photography & Videography",
@@ -430,7 +430,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "religious-spiritual",
     name: "Religious & Spiritual",
-    seoTitle: "Pandits, Astrologers and Vastu Consultants in Jaipur",
+    seoTitle: "Pandits, Astrologers and Vastu Consultants",
     metaDescription:
       "Find pandits, astrologers and vastu consultants on Kartsquare. Read their profiles and send a request about the ceremony or consultation you need.",
     h1: "Religious & Spiritual Services",
@@ -482,7 +482,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "restaurants-food",
     name: "Restaurants & Food",
-    seoTitle: "Caterers, Tiffin Services and Restaurants in Jaipur",
+    seoTitle: "Caterers, Tiffin Services and Restaurants",
     metaDescription:
       "Browse restaurants, cafes, caterers and tiffin services on Kartsquare. Read their profiles and send a request about menus, events or regular meals.",
     h1: "Restaurants & Food",

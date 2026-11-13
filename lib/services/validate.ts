@@ -14,7 +14,9 @@ function allText(c: CategoryContent | LandingContent): string[] {
 /** Problems that stop a page from being marked reviewed. Empty = the page is complete. */
 export function validateContent(c: CategoryContent | LandingContent): string[] {
   const problems: string[] = [];
-  if (c.seoTitle.length < 20 || c.seoTitle.length > 60) problems.push(`seoTitle length ${c.seoTitle.length} (want 20-60)`);
+  // The page title is the SEO title plus " | kartsquare" unless it already names the brand.
+  const fullTitle = /kartsquare/i.test(c.seoTitle) ? c.seoTitle : `${c.seoTitle} | kartsquare`;
+  if (c.seoTitle.length < 20 || fullTitle.length > 60) problems.push(`title "${fullTitle}" is ${fullTitle.length} chars (want 20-60 with the brand)`);
   if (c.metaDescription.length < 70 || c.metaDescription.length > 160) problems.push(`metaDescription length ${c.metaDescription.length} (want 70-160)`);
   if (!c.h1.trim()) problems.push("h1 missing");
   if (wordCount(c.intro) < 80) problems.push("intro under 80 words");

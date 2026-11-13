@@ -18,7 +18,7 @@ const mukta = Mukta({
   variable: "--font-mukta",
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kartsquare.com";
 
 /** Viewport — must be exported separately from metadata in Next.js 14+ */
 export const viewport: Viewport = {

@@ -55,7 +55,12 @@ describe("robots.ts", () => {
 
   it("should allow / (root)", () => {
     const rule = Array.isArray(result.rules) ? result.rules[0] : result.rules;
-    expect(rule.allow).toBe("/");
+    expect(rule.allow).toContain("/");
+  });
+
+  it("should keep the built JS and CSS crawlable so pages can be rendered", () => {
+    const rule = Array.isArray(result.rules) ? result.rules[0] : result.rules;
+    expect(rule.allow).toEqual(expect.arrayContaining(["/_next/static/", "/_next/image"]));
   });
 
   it("should have a valid sitemap URL", () => {
