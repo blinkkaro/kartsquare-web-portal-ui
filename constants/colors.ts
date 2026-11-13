@@ -4,6 +4,8 @@ export const COLORS = {
   // Primary Colors
   PRIMARY_PURPLE: "#5e18e9",
   PURPLE_HOVER: "#4b12bb",
+  // Deep violet for solid dark shapes behind white cards (home hero)
+  PURPLE_DEEP: "#2a0d73",
   PURPLE_ALPHA_04: "rgba(94, 24, 233, 0.04)",
   PURPLE_ALPHA_10: "rgba(94, 24, 233, 0.1)",
   PURPLE_ALPHA_20: "rgba(94, 24, 233, 0.2)",

@@ -54,7 +54,7 @@ export default function PartnerBanner() {
                 px: 3,
                 bgcolor: "#fff",
                 color: COLORS.PURPLE_HOVER,
-                fontWeight: 800,
+                fontWeight: 700,
                 transition: "background-color 160ms ease, transform 120ms ease",
                 "&:hover": { bgcolor: "#f3eeff" },
                 "&:active": { transform: "scale(0.97)" },

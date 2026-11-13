@@ -132,7 +132,7 @@ export const ServicesExploreSection: React.FC<ServicesExploreSectionProps> = ({
           <Typography
             sx={{
               fontSize: "0.76rem",
-              fontWeight: 800,
+              fontWeight: 700,
               textTransform: "uppercase",
               letterSpacing: "0.08em",
               color: COLORS.PRIMARY_PURPLE,
@@ -145,8 +145,8 @@ export const ServicesExploreSection: React.FC<ServicesExploreSectionProps> = ({
             component="h2"
             sx={{
               fontSize: { xs: "1.35rem", sm: "1.65rem" },
-              fontWeight: 800,
-              letterSpacing: "-0.025em",
+              fontWeight: 700,
+              letterSpacing: "-0.01em",
               color: "text.primary",
             }}
           >
@@ -263,7 +263,7 @@ export const ServicesExploreSection: React.FC<ServicesExploreSectionProps> = ({
                 className="explore-title"
                 sx={{
                   fontSize: "0.95rem",
-                  fontWeight: 800,
+                  fontWeight: 700,
                   color: "text.primary",
                   lineHeight: 1.35,
                   mb: 0.35,

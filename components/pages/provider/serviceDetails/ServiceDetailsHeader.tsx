@@ -57,7 +57,7 @@ const ServiceDetailsHeader = ({
                 color: isDark
                   ? COLORS.TEXT.SECONDARY_DARK
                   : COLORS.TEXT.SECONDARY_LIGHT,
-                fontWeight: 800,
+                fontWeight: 700,
                 fontSize: "1.1rem",
               }}
             >

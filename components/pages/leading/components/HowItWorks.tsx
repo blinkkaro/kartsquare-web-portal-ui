@@ -133,11 +133,11 @@ const HowItWorks = () => {
                         top: 16,
                         right: 20,
                         fontFamily: "var(--font-heading)",
-                        fontWeight: 800,
+                        fontWeight: 700,
                         fontSize: "4rem",
                         lineHeight: 1,
                         color: isDark ? "rgba(255,255,255,0.04)" : "rgba(94, 24, 233, 0.06)",
-                        letterSpacing: "-0.04em",
+                        letterSpacing: "-0.01em",
                       }}
                     >
                       {stepNum}
@@ -167,7 +167,7 @@ const HowItWorks = () => {
                       fontWeight={800}
                       sx={{
                         fontFamily: "var(--font-heading)",
-                        letterSpacing: "-0.02em",
+                        letterSpacing: "-0.01em",
                         color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                         lineHeight: 1.25,
                         mb: 1,

@@ -4,8 +4,9 @@
  *   - the composer turns a video-only upload into a "video" post, which is what the
  *     backend's /social_posts/reels returns (a reel is a video post, nothing more);
  *   - the reel player plays the video, not the thumbnail uploaded before it;
- *   - the feed offers "create a post" and "add a story" to any logged-in user, with no
- *     role check, and the requests go to the endpoints the backend serves.
+ *   - the feed offers "create a post" only to service providers and suppliers (customers
+ *     read the feed but never see the composer), and the requests go to the endpoints the
+ *     backend serves.
  *
  * The backend half of the flow is covered in
  * kartsquare-app-backend/src/__tests__/feed.creation.flow.test.ts.
@@ -111,7 +112,7 @@ describe("reel player: plays the video, not the thumbnail", () => {
   });
 });
 
-describe("feed page: creating is for any logged-in user", () => {
+describe("feed page: creating is for service providers and suppliers", () => {
   const feed = read("components/pages/feed/index.tsx");
 
   it("offers the post composer and the stories row", () => {
@@ -120,16 +121,25 @@ describe("feed page: creating is for any logged-in user", () => {
     expect(feed).toMatch(/setComposerOpen\(true\)/);
   });
 
-  it("does not gate creating on the user's role", () => {
-    // A role check here would hide posting from providers (or customers).
-    expect(feed).not.toMatch(/UserRole\.|AppUserType\.|\.role\s*[!=]==/);
+  it("decides who can create from the user's role, using the shared rule", () => {
+    expect(feed).toMatch(/canCreatePosts\(/);
+    expect(feed).toMatch(/const canCreate = isAuthenticated && canCreatePosts\(/);
+  });
+
+  it("puts every way of opening the composer behind that rule", () => {
+    // the desktop composer card, the phone "+" button and the drawer itself
+    expect((feed.match(/canCreate && \(/g) ?? []).length).toBeGreaterThanOrEqual(3);
+    // the empty state offers "Create a post" only to creators
+    expect(feed).toMatch(/canCreate \? \(\s*<Button onClick=\{\(\) => setComposerOpen\(true\)\}/);
+    // and no composer control is gated on being logged in alone
+    expect(feed).not.toMatch(/\{isAuthenticated && \(\s*<IconButton/);
+    expect(feed).not.toMatch(/isAuthenticated && \(\s*<IconButton/);
   });
 
   it("the stories row lets the user add a story", () => {
     const stories = read("components/pages/feed/sections/FeedStories.tsx");
     expect(stories).toMatch(/useAddStory\(\)/);
     expect(stories).toMatch(/<AddStoryModal\b/);
-    expect(stories).not.toMatch(/UserRole\.|AppUserType\.|\.role\s*[!=]==/);
   });
 });
 

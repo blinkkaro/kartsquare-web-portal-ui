@@ -74,8 +74,8 @@ const ServiceBookingSidebar = ({
         <Typography
           sx={{
             fontSize: hasPrice ? "1.6rem" : "1.1rem",
-            fontWeight: 800,
-            letterSpacing: "-0.02em",
+            fontWeight: 700,
+            letterSpacing: "-0.01em",
             lineHeight: 1.2,
             color: "text.primary",
           }}

@@ -97,3 +97,12 @@ export const getUserId = (): string | null => {
   }
   return null;
 };
+
+/**
+ * Who may create posts and reels: service providers and suppliers. Customers can read, like and comment,
+ * but never see the create or upload controls. (The backend must enforce this too; hiding a button is not security.)
+ */
+export const canCreatePosts = (role?: string | null): boolean => {
+  const r = role?.toUpperCase();
+  return r === UserRole.SERVICE_PROVIDER || r === UserRole.SUPPLIER;
+};

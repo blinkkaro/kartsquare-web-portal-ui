@@ -22,7 +22,7 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { getUserRole, UserRole } from "../../../../utils/auth";
-import { getServiceRouteParam } from "@/utils/serviceRoute";
+import { getServiceHref } from "@/utils/serviceRoute";
 
 interface SearchDropdownProps {
   open: boolean;
@@ -67,8 +67,6 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
     }
   }, []);
 
-  if (!open || !anchorEl) return null;
-
   const handleUserClick = (userId: string) => {
     // Open profile drawer instead of navigating
     dispatch(openDrawer({ userId }));
@@ -76,7 +74,6 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   };
 
   const handleServiceClick = (service: SearchService) => {
-    const serviceRoute = getServiceRouteParam(service);
     // Determine the route based on the user's role
     const role = getUserRole();
     if (role === UserRole.SERVICE_PROVIDER) {
@@ -84,7 +81,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
       router.push(`/spr/services/${service.id}`);
     } else {
       // Default detail page (customer view)
-      router.push(`/services/${serviceRoute}`);
+      router.push(getServiceHref(service));
     }
     onClose();
   };
@@ -117,6 +114,9 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
       return Math.min(availableHeight, 600);
     }
   }, [viewportHeight, anchorEl]);
+
+  // After every hook above: an early return before them changes the hook count between renders.
+  if (!open || !anchorEl) return null;
 
   return (
     <Paper

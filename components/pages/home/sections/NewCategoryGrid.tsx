@@ -10,6 +10,7 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
+import { keyframes } from "@mui/material/styles";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
@@ -22,6 +23,9 @@ import cloudinaryLoader, { isCloudinaryUrl } from "@/lib/cloudinaryLoader";
 import { useRouter } from "next/navigation";
 import { COLORS } from "@/constants/colors";
 import { useCategories } from "@/hooks/useCategories";
+import { useCategoryAvailability } from "@/hooks/useCategoryAvailability";
+import { ShimmerBox } from "./HomeLoading";
+import { popularHomeCategoriesFromAvailability } from "@/lib/homeServices";
 import { useAILocation } from "@/components/common/Ai/useAILocation";
 import { toSlug } from "@/services/location/locationClient";
 import { Section, sectionTitleSx, sectionSubtitleSx } from "./shared";
@@ -89,30 +93,43 @@ const CATEGORY_DESCRIPTIONS: Array<[RegExp, string]> = [
 const descFor = (name: string): string =>
   CATEGORY_DESCRIPTIONS.find(([re]) => re.test(name))?.[1] ?? "Local providers";
 
-const DUMMY_CATEGORIES = [
-  { id: "electricians", slug: "electricians", name: "Electricians", description: "Wiring, fittings, repairs" },
-  { id: "ac-repair", slug: "ac-repair", name: "AC Repair", description: "Service, gas refill" },
-  { id: "home-cleaning", slug: "home-cleaning", name: "Home Cleaning", description: "Deep cleaning, sanitization" },
-  { id: "beauty-salon", slug: "beauty-salon", name: "Beauty & Salon", description: "Hair, makeup, salon at home" },
-  { id: "plumbers", slug: "plumbers", name: "Plumbers", description: "Pipe fixing, installation" },
-  { id: "packers-movers", slug: "packers-movers", name: "Packers & Movers", description: "Home and office shifting" },
-  { id: "photographers", slug: "photographers", name: "Photographers", description: "Weddings, events, portraits" },
-  { id: "automotive", slug: "automotive", name: "Automotive", description: "Car repair, service & wash" },
-  { id: "solar-energy", slug: "energy-environment", name: "Energy & Solar", description: "Solar panels, inverters & battery" },
-  { id: "it-digital", slug: "it-digital-services", name: "IT & Digital", description: "Web, apps, IT support & AMC" },
-  { id: "fitness", slug: "fitness-sports", name: "Fitness & Sports", description: "Trainers, gyms & fitness" },
-  { id: "restaurants", slug: "restaurants-food", name: "Restaurants & Food", description: "Dine-in, takeaway & cafes" },
-];
+// Tiles rise into place one after another once the data has loaded (they never render before it, so
+// nothing is hidden at rest). Off under reduced motion.
+const rise = keyframes`from { opacity: 0; transform: translateY(18px) scale(0.98); } to { opacity: 1; transform: none; }`;
+const riseSx = (i: number) => ({
+  animation: `${rise} 480ms cubic-bezier(0.22, 1, 0.36, 1) backwards`, // backwards: hover transforms still apply afterwards
+  animationDelay: `${Math.min(i, 8) * 55}ms`,
+  "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+});
 
 export default function NewCategoryGrid() {
   const router = useRouter();
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { data: categories, isLoading } = useCategories();
+  // The curated popular categories (Home Services, Security, Religious, Photography, Energy), each only if it
+  // has live providers behind it (lib/homeServices).
   const { location } = useAILocation();
   // City pages (/{city}/{category}) only when we know the user's city.
   const city = location.city ? toSlug(location.city) : "";
+  const locality = location.locality ? toSlug(location.locality) : "";
+
+  const categoriesQuery = useCategories();
+  // Which categories really have services here: one small request scoped to the selected place.
+  const availabilityQuery = useCategoryAvailability(city || undefined, locality || undefined);
+  const categories = useMemo(
+    () => popularHomeCategoriesFromAvailability(categoriesQuery.data, availabilityQuery.data),
+    [categoriesQuery.data, availabilityQuery.data],
+  );
+  // No known city means nothing to ask about: an empty (not loading) state, never a made-up list.
+  const awaitingCity = !city;
+  const isLoading = categoriesQuery.isLoading || (!awaitingCity && availabilityQuery.isLoading);
+  const isError = categoriesQuery.isError || availabilityQuery.isError;
+  const isFetching = categoriesQuery.isFetching || availabilityQuery.isFetching;
+  const refetch = () => {
+    categoriesQuery.refetch();
+    if (!awaitingCity) availabilityQuery.refetch();
+  };
 
   const listingRef = useRef<HTMLDivElement>(null);
 
@@ -124,8 +141,9 @@ export default function NewCategoryGrid() {
   // Items per page: 8 on mobile, 12 on tablet/desktop
   const itemsPerPage = isMobile ? 8 : 12;
 
-  // Use API data if available, else dummy
-  const cats = (!isLoading && categories && categories.length > 0) ? categories : (isLoading ? null : DUMMY_CATEGORIES);
+  // Real categories only. A failed or empty response shows a retry state, never placeholder tiles.
+  const failed = !isLoading && (isError || !categories || categories.length === 0);
+  const cats = !isLoading && !failed ? categories : null;
 
   const go = (c: { id: string; name: string; slug?: string | null }) => {
     if (c.slug && city) {
@@ -227,8 +245,32 @@ export default function NewCategoryGrid() {
           }}
         >
           {[0, 1, 2, 3].map((i) => (
-            <Skeleton key={i} variant="rounded" height={200} sx={{ borderRadius: 4 }} />
+            <ShimmerBox key={i} sx={{ height: { xs: 155, sm: 180, md: 215, lg: 225, xl: 240 }, borderRadius: 4 }} />
           ))}
+        </Box>
+      ) : failed ? (
+        <Box
+          role="alert"
+          sx={{
+            textAlign: "center",
+            py: { xs: 5, md: 7 },
+            px: 2,
+            borderRadius: 4,
+            bgcolor: dark ? "rgba(255,255,255,0.02)" : "#fbf9fd",
+            border: "1px dashed",
+            borderColor: dark ? "rgba(255,255,255,0.1)" : "#ded8e8",
+          }}
+        >
+          <Typography sx={{ fontWeight: 700, color: "text.primary", mb: 1.5 }}>
+            Categories load nahi hui.
+          </Typography>
+          <Button
+            onClick={() => refetch()}
+            disabled={isFetching}
+            sx={{ textTransform: "none", fontWeight: 700, color: COLORS.PRIMARY_PURPLE }}
+          >
+            Dobara try karo →
+          </Button>
         </Box>
       ) : (
         <Box
@@ -243,7 +285,6 @@ export default function NewCategoryGrid() {
             const img = photoSrc((c as CategoryMedia).image);
             const { icon, color } = c as CategoryMedia;
             const hasColor = Boolean(color && /^#[0-9a-f]{6}$/i.test(color));
-            const isFirst = i === 0;
             return (
               <Box
                 key={c.id}
@@ -258,6 +299,7 @@ export default function NewCategoryGrid() {
                 }}
                 aria-label={`Browse ${c.name}`}
                 sx={{
+                  ...riseSx(i),
                   position: "relative",
                   borderRadius: { xs: 3.5, md: 4 },
                   overflow: "hidden",
@@ -304,27 +346,6 @@ export default function NewCategoryGrid() {
                   }}
                 />
 
-                {/* "Most booked" badge */}
-                {isFirst && (
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: 12,
-                      left: 12,
-                      px: 1.25,
-                      py: 0.35,
-                      borderRadius: 99,
-                      bgcolor: COLORS.PRIMARY_PURPLE,
-                      color: "#fff",
-                      fontSize: "0.75rem",
-                      fontWeight: 800,
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
-                    }}
-                  >
-                    Most booked
-                  </Box>
-                )}
-
                 {/* Category details */}
                 <Box sx={{ position: "absolute", bottom: { xs: 12, md: 16 }, left: { xs: 12, md: 16 }, right: { xs: 12, md: 16 }, pr: { xs: 0, sm: 5 } }}>
                   <CategoryIcon
@@ -338,7 +359,7 @@ export default function NewCategoryGrid() {
                   <Typography
                     sx={{
                       color: "#fff",
-                      fontWeight: 800,
+                      fontWeight: 700,
                       fontSize: { xs: "0.95rem", sm: "1.05rem", md: "1.2rem" },
                       lineHeight: 1.2,
                       display: "-webkit-box",
@@ -388,7 +409,8 @@ export default function NewCategoryGrid() {
         </Box>
       )}
 
-      {/* 3. Paginated Category Listing Section */}
+      {/* 3. Paginated Category Listing Section (hidden while the error state is showing, and when the four featured cards above are all there is) */}
+      {!failed && (cats?.length ?? 0) > 4 && (
       <Box ref={listingRef} sx={{ scrollMarginTop: "90px" }}>
         {/* Listing Subheader + Search/Filter Bar */}
         <Box
@@ -482,7 +504,7 @@ export default function NewCategoryGrid() {
             }}
           >
             {Array.from({ length: 8 }).map((_, i) => (
-              <Skeleton key={i} variant="rounded" height={68} sx={{ borderRadius: 3 }} />
+              <ShimmerBox key={i} sx={{ minHeight: { xs: 66, sm: 72 }, borderRadius: 3 }} />
             ))}
           </Box>
         ) : paginatedCategories.length === 0 ? (
@@ -524,7 +546,7 @@ export default function NewCategoryGrid() {
               gap: { xs: 1, sm: 1.25 },
             }}
           >
-            {paginatedCategories.map((c) => {
+            {paginatedCategories.map((c, idx) => {
               const { icon, color } = c as CategoryMedia;
               return (
                 <Box
@@ -540,6 +562,7 @@ export default function NewCategoryGrid() {
                   }}
                   aria-label={`Browse ${c.name}`}
                   sx={{
+                    ...riseSx(idx),
                     display: "flex",
                     alignItems: "center",
                     gap: 1.25,
@@ -767,6 +790,7 @@ export default function NewCategoryGrid() {
           </Box>
         )}
       </Box>
+      )}
     </Section>
   );
 }

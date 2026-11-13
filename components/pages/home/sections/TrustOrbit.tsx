@@ -266,7 +266,7 @@ export default function TrustOrbit() {
                   }}
                 >
                   <Image src="/logo.svg" alt="Kartsquare logo" width={52} height={52} priority style={{ width: "46%", height: "auto" }} />
-                  <Typography sx={{ fontWeight: 800, fontSize: "0.48rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#6b6480", lineHeight: 1 }}>
+                  <Typography sx={{ fontWeight: 700, fontSize: "0.48rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#6b6480", lineHeight: 1 }}>
                     {location.city}
                   </Typography>
                 </Box>
@@ -281,7 +281,7 @@ export default function TrustOrbit() {
               <Box key={active} aria-live="polite" sx={{ animation: "kFadeUp 380ms ease both", "@keyframes kFadeUp": { from: { opacity: 0, transform: "translateY(8px)" }, to: { opacity: 1, transform: "none" } }, "@media (prefers-reduced-motion: reduce)": { animation: "none" } }}>
                 <Box sx={{ display: "inline-flex", alignItems: "center", gap: 1, mb: 0.5 }}>
                   <CurIcon sx={{ color: cur.from }} />
-                  <Typography sx={{ fontWeight: 800, fontSize: "1.1rem" }}>{cur.title}</Typography>
+                  <Typography sx={{ fontWeight: 700, fontSize: "1.1rem" }}>{cur.title}</Typography>
                 </Box>
                 <Typography sx={{ color: "text.secondary", fontSize: "0.88rem", maxWidth: 300, mx: "auto" }}>{cur.body}</Typography>
               </Box>
@@ -334,7 +334,7 @@ export default function TrustOrbit() {
                       <Icon />
                     </Box>
                     <Box>
-                      <Typography sx={{ fontWeight: 800, fontSize: "0.98rem", color: on ? ink : "text.primary" }}>{p.title}</Typography>
+                      <Typography sx={{ fontWeight: 700, fontSize: "0.98rem", color: on ? ink : "text.primary" }}>{p.title}</Typography>
                       <Typography sx={{ fontSize: "0.83rem", color: "text.secondary", mt: 0.25 }}>{p.body}</Typography>
                     </Box>
                   </Box>

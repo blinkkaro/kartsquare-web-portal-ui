@@ -25,7 +25,7 @@ import { getUserRole, getUserId, UserRole } from "../utils/auth";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useDispatch } from "react-redux";
 import { closeDrawer } from "@/features/ui/profileDrawerSlice";
-import { getServiceRouteParam } from "@/utils/serviceRoute";
+import { getServiceHref } from "@/utils/serviceRoute";
 
 interface ServiceCardProps {
   service: Service;
@@ -66,12 +66,11 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
   const handleCardClick = () => {
     // If service provider viewing their own service, go to provider details page
     dispatch(closeDrawer());
-    const serviceRoute = getServiceRouteParam(service);
     if (isOwner) {
       router.push(`/spr/services/${service.service_id}`);
     } else {
       // Otherwise (customer or provider viewing other services), go to customer details page
-      router.push(`/services/${serviceRoute}`);
+      router.push(getServiceHref(service));
     }
   };
 
@@ -396,7 +395,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             variant="h6"
             component="h3"
             sx={{
-              fontWeight: 800,
+              fontWeight: 700,
               lineHeight: 1.2,
               color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
             }}
@@ -420,7 +419,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
               <WorkspacePremium sx={{ fontSize: "12px" }} />
               <Typography
                 sx={{
-                  fontWeight: 800,
+                  fontWeight: 700,
                   fontSize: "0.6rem",
                   letterSpacing: "0.03em",
                 }}

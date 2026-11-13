@@ -162,9 +162,9 @@ export const ServicesEmptyState: React.FC<ServicesEmptyStateProps> = ({
         component="h3"
         sx={{
           fontSize: { xs: "1.25rem", sm: "1.45rem" },
-          fontWeight: 800,
+          fontWeight: 700,
           color: "text.primary",
-          letterSpacing: "-0.02em",
+          letterSpacing: "-0.01em",
           mb: 1,
         }}
       >
@@ -278,7 +278,7 @@ export const ServicesEmptyState: React.FC<ServicesEmptyStateProps> = ({
           <Typography
             sx={{
               fontSize: "0.92rem",
-              fontWeight: 800,
+              fontWeight: 700,
               color: "text.primary",
               display: "flex",
               alignItems: "center",
@@ -369,9 +369,9 @@ export const ServicesErrorState: React.FC<ServicesErrorStateProps> = ({
         component="h3"
         sx={{
           fontSize: { xs: "1.25rem", sm: "1.45rem" },
-          fontWeight: 800,
+          fontWeight: 700,
           color: "text.primary",
-          letterSpacing: "-0.02em",
+          letterSpacing: "-0.01em",
           mb: 1,
         }}
       >
@@ -492,9 +492,9 @@ export const ServicesLocationPrompt: React.FC<ServicesLocationPromptProps> = ({
         component="h3"
         sx={{
           fontSize: { xs: "1.25rem", sm: "1.45rem" },
-          fontWeight: 800,
+          fontWeight: 700,
           color: "text.primary",
-          letterSpacing: "-0.02em",
+          letterSpacing: "-0.01em",
           mb: 1,
         }}
       >

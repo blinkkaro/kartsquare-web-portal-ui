@@ -17,7 +17,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
-import { getServiceRouteParam } from "@/utils/serviceRoute";
+import { getServiceHref } from "@/utils/serviceRoute";
 import { serviceListService } from "@/services/serviceList/serviceListService";
 import type { LocationListing as Listing } from "@/services/location/locationService";
 import { listAreaCounts, resolveText, toSlug, type AreaCount } from "@/services/location/locationClient";
@@ -633,7 +633,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
 
   /** A click on the service (photo, name, "View details") opens its details page. */
   const handleViewService = (service: EnrichedServiceItem) => {
-    router.push(`/services/${getServiceRouteParam(service)}`);
+    router.push(getServiceHref(service));
   };
 
   /** A click on the provider's picture opens the provider's profile. */
@@ -955,7 +955,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                     variant="h6"
                     sx={{
                       fontSize: "0.98rem",
-                      fontWeight: 800,
+                      fontWeight: 700,
                       color: "text.primary",
                       mb: 1.5,
                     }}

@@ -168,7 +168,7 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                 BOOKING ID
               </Typography>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 2 }}>
-                <Typography sx={{ fontWeight: 800, fontSize: "1.1rem", color: isDark ? '#E2E8F0' : '#1E293B', wordBreak: 'break-all', lineHeight: 1.3 }}>
+                <Typography sx={{ fontWeight: 700, fontSize: "1.1rem", color: isDark ? '#E2E8F0' : '#1E293B', wordBreak: 'break-all', lineHeight: 1.3 }}>
                   #{currentBooking.booking_id.toUpperCase()}
                 </Typography>
                 <Chip
@@ -177,7 +177,7 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                     bgcolor: statusStyle.bg,
                     color: statusStyle.text,
                     border: 'none',
-                    fontWeight: 800,
+                    fontWeight: 700,
                     fontSize: "0.75rem",
                     letterSpacing: '0.05em',
                     height: 26,
@@ -218,7 +218,7 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                       bgcolor: "rgba(255,255,255,0.9)",
                       color: COLORS.PRIMARY_PURPLE,
                       backdropFilter: "blur(10px)",
-                      fontWeight: 800,
+                      fontWeight: 700,
                       fontSize: "0.7rem",
                       height: 24,
                       borderRadius: "8px",
@@ -247,7 +247,7 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                   <Box>
                     <Typography
                       variant="h5"
-                      sx={{ fontWeight: 900, color: "white", mb: 0.5 }}
+                      sx={{ fontWeight: 700, color: "white", mb: 0.5 }}
                     >
                       {currentBooking.service_name}
                     </Typography>
@@ -270,7 +270,7 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                         />
                         <Typography
                           variant="caption"
-                          sx={{ color: "white", fontWeight: 800 }}
+                          sx={{ color: "white", fontWeight: 700 }}
                         >
                           {dayjs(currentBooking.booking_at).format("h:mm A")}
                         </Typography>
@@ -291,7 +291,7 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                         <LocationOn sx={{ fontSize: 14, color: "#FCD34D" }} />
                         <Typography
                           variant="caption"
-                          sx={{ color: "white", fontWeight: 800 }}
+                          sx={{ color: "white", fontWeight: 700 }}
                         >
                           {currentBooking.service_location === "at_customer"
                             ? "At Customer"
@@ -314,7 +314,7 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                     </Typography>
                     <Typography
                       variant="h5"
-                      sx={{ fontWeight: 900, color: "white" }}
+                      sx={{ fontWeight: 700, color: "white" }}
                     >
                       {booking.service_currency} {totalAmount.toFixed(0)}
                     </Typography>

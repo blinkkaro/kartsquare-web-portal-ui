@@ -189,7 +189,7 @@ const ContactUsSection = ({ profile }: any) => {
               }}
             />
             <Box sx={{ position: "relative", zIndex: 1 }}>
-              <Typography variant="h4" sx={{ fontWeight: 800, mb: 2 }}>
+              <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
                 {t("getInTouch") || "Get in Touch"}
               </Typography>
               <Typography

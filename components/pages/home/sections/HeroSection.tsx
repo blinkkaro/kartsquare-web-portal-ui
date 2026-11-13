@@ -190,7 +190,7 @@ export default function HeroSection() {
         <Typography
           component="h1"
           data-speakable="headline"
-          sx={{ fontSize: { xs: "clamp(26px, 7.4vw, 32px)", sm: "2.5rem", md: "3.2rem" }, fontWeight: 800, letterSpacing: "-0.045em", lineHeight: { xs: 1.1, md: 1.08 }, maxWidth: 620 }}
+          sx={{ fontSize: { xs: "clamp(26px, 7.4vw, 32px)", sm: "2.5rem", md: "3.2rem" }, fontWeight: 700, letterSpacing: "-0.01em", lineHeight: { xs: 1.1, md: 1.08 }, maxWidth: 620 }}
         >
           Find the right local service in {location.city},{" "}
           <Box component="span" sx={{ position: "relative", display: "inline-block", color: lift }}>

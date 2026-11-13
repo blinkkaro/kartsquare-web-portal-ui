@@ -346,7 +346,7 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
                   borderRadius: "10px",
                   px: 1.4,
                   py: 0.6,
-                  fontWeight: 800,
+                  fontWeight: 700,
                   fontSize: "0.9rem",
                   whiteSpace: "nowrap",
                 }}

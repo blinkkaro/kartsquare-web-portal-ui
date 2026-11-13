@@ -358,7 +358,7 @@ const ProviderBookingsPage = () => {
       <ProviderBookingDetailsDrawer
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        booking_id={selectedBooking?.booking_id!}
+        booking_id={selectedBooking?.booking_id ?? ""}
       />
     </MainLayout>
   );

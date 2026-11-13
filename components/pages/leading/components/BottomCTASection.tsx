@@ -93,11 +93,11 @@ export default function BottomCTASection() {
                 variant="h2"
                 sx={{
                   fontFamily: "var(--font-heading)",
-                  fontWeight: 800,
+                  fontWeight: 700,
                   color: isDark
                     ? COLORS.TEXT.PRIMARY_DARK
                     : COLORS.TEXT.PRIMARY_LIGHT,
-                  letterSpacing: "-0.02em",
+                  letterSpacing: "-0.01em",
                   mb: 2.5,
                   lineHeight: 1.15,
                 }}

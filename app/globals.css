@@ -210,3 +210,11 @@ button, input, select, textarea, optgroup {
 @media (prefers-reduced-motion: reduce) {
     .ks-ai *, .ks-ai *::before, .ks-ai *::after { animation: none !important; }
 }
+
+/* One typeface everywhere: third-party UI (chart labels, tooltips, toasts) must not bring its own. */
+svg text,
+.recharts-wrapper,
+.recharts-tooltip-wrapper,
+.swiper {
+    font-family: inherit;
+}

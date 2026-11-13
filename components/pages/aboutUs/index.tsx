@@ -189,7 +189,7 @@ function AnimatedCounter({ value, suffix, color }: { value: number; suffix: stri
   }, [inView, value]);
 
   return (
-    <Typography ref={ref} component="div" sx={{ fontSize: { xs: "2rem", md: "2.6rem" }, fontWeight: 900, color, lineHeight: 1 }}>
+    <Typography ref={ref} component="div" sx={{ fontSize: { xs: "2rem", md: "2.6rem" }, fontWeight: 700, color, lineHeight: 1 }}>
       {display.toLocaleString("en-IN")}
       {suffix}
     </Typography>
@@ -249,10 +249,10 @@ function SectionHeading({ kicker, title, sub, primaryTxt, secondaryTxt }: { kick
   return (
     <Reveal>
       <Box sx={{ mb: { xs: 5, md: 7 }, textAlign: { xs: "left", md: "center" }, maxWidth: 720, mx: { md: "auto" } }}>
-        <Typography sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 800, letterSpacing: 2.5, fontSize: "0.78rem", mb: 1.5, textTransform: "uppercase" }}>
+        <Typography sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700, letterSpacing: 2.5, fontSize: "0.78rem", mb: 1.5, textTransform: "uppercase" }}>
           {kicker}
         </Typography>
-        <Typography sx={{ fontSize: { xs: "1.9rem", md: "2.75rem" }, fontWeight: 900, color: primaryTxt, letterSpacing: "-0.02em", lineHeight: 1.15, mb: sub ? 1.5 : 0 }}>
+        <Typography sx={{ fontSize: { xs: "1.9rem", md: "2.75rem" }, fontWeight: 700, color: primaryTxt, letterSpacing: "-0.01em", lineHeight: 1.15, mb: sub ? 1.5 : 0 }}>
           {title}
         </Typography>
         {sub && (
@@ -336,8 +336,8 @@ export default function AboutUsView() {
 
             <motion.div variants={fadeUp}>
               <Typography component="h1" sx={{
-                fontSize: { xs: "2.6rem", sm: "3.4rem", md: "4.6rem" }, fontWeight: 900, lineHeight: 1.05,
-                letterSpacing: "-0.03em", color: primaryTxt, mb: 3,
+                fontSize: { xs: "2.6rem", sm: "3.4rem", md: "4.6rem" }, fontWeight: 700, lineHeight: 1.05,
+                letterSpacing: "-0.01em", color: primaryTxt, mb: 3,
               }}>
                 We&apos;re building the future of{" "}
                 <Box component="span" sx={{
@@ -361,7 +361,7 @@ export default function AboutUsView() {
                 <Box
                   onClick={() => router.push("/supplier/register")}
                   sx={{
-                    px: 4.5, py: 1.75, borderRadius: "100px", cursor: "pointer", fontWeight: 800, fontSize: "1rem",
+                    px: 4.5, py: 1.75, borderRadius: "100px", cursor: "pointer", fontWeight: 700, fontSize: "1rem",
                     color: "#fff", background: `linear-gradient(90deg, ${COLORS.PRIMARY_PURPLE}, ${COLORS.PURPLE_HOVER})`,
                     boxShadow: "0 10px 30px rgba(94,24,233,0.35)", transition: "transform 0.2s, box-shadow 0.2s",
                     "&:hover": { transform: "translateY(-2px)", boxShadow: "0 14px 36px rgba(94,24,233,0.45)" },
@@ -372,7 +372,7 @@ export default function AboutUsView() {
                 <Box
                   onClick={() => router.push("/contact-us")}
                   sx={{
-                    px: 4.5, py: 1.75, borderRadius: "100px", cursor: "pointer", fontWeight: 800, fontSize: "1rem",
+                    px: 4.5, py: 1.75, borderRadius: "100px", cursor: "pointer", fontWeight: 700, fontSize: "1rem",
                     color: primaryTxt, bgcolor: cardBg, border: `1.5px solid ${border}`, backdropFilter: "blur(12px)",
                     transition: "transform 0.2s, border-color 0.2s",
                     "&:hover": { transform: "translateY(-2px)", borderColor: COLORS.PRIMARY_PURPLE },
@@ -456,7 +456,7 @@ export default function AboutUsView() {
                     borderRadius: "20px", p: { xs: 2.5, md: 3 }, boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
                     textAlign: { xs: "left", md: i % 2 === 0 ? "left" : "right" },
                   }}>
-                    <Typography sx={{ fontWeight: 800, fontSize: { xs: "1.05rem", md: "1.15rem" }, color: primaryTxt, mb: 0.75 }}>
+                    <Typography sx={{ fontWeight: 700, fontSize: { xs: "1.05rem", md: "1.15rem" }, color: primaryTxt, mb: 0.75 }}>
                       {s.title}
                     </Typography>
                     <Typography sx={{ color: secondaryTxt, fontSize: "0.95rem", lineHeight: 1.65 }}>
@@ -490,7 +490,7 @@ export default function AboutUsView() {
                       }}>
                         <r.icon sx={{ color: "#fff", fontSize: 24 }} />
                       </Box>
-                      <Typography sx={{ fontWeight: 800, fontSize: "1.1rem", color: primaryTxt, mb: 1 }}>{r.title}</Typography>
+                      <Typography sx={{ fontWeight: 700, fontSize: "1.1rem", color: primaryTxt, mb: 1 }}>{r.title}</Typography>
                       <Typography sx={{ color: secondaryTxt, fontSize: "0.92rem", lineHeight: 1.6 }}>{r.text}</Typography>
                     </Box>
                   </motion.div>
@@ -553,7 +553,7 @@ export default function AboutUsView() {
               <Grid size={{ xs: 12, md: 6 }}>
                 <motion.div variants={fadeUp} style={{ height: "100%" }}>
                   <Box sx={{ border: `1.5px solid ${border}`, borderRadius: "24px", p: { xs: 3, md: 3.5 }, height: "100%" }}>
-                    <Typography sx={{ fontWeight: 800, fontSize: "1.1rem", color: secondaryTxt, mb: 2.5 }}>Before kartsquare</Typography>
+                    <Typography sx={{ fontWeight: 700, fontSize: "1.1rem", color: secondaryTxt, mb: 2.5 }}>Before kartsquare</Typography>
                     {beforeAfter.before.map((t, i) => (
                       <Box key={i} sx={{ display: "flex", gap: 1.5, alignItems: "flex-start", mb: 1.75 }}>
                         <CloseIcon sx={{ color: "#e63946", fontSize: 18, mt: 0.2, flexShrink: 0 }} />
@@ -569,7 +569,7 @@ export default function AboutUsView() {
                     border: `1.5px solid ${COLORS.PRIMARY_PURPLE}`, borderRadius: "24px", p: { xs: 3, md: 3.5 }, height: "100%",
                     bgcolor: COLORS.PURPLE_ALPHA_04,
                   }}>
-                    <Typography sx={{ fontWeight: 800, fontSize: "1.1rem", color: COLORS.PRIMARY_PURPLE, mb: 2.5 }}>With kartsquare</Typography>
+                    <Typography sx={{ fontWeight: 700, fontSize: "1.1rem", color: COLORS.PRIMARY_PURPLE, mb: 2.5 }}>With kartsquare</Typography>
                     {beforeAfter.after.map((t, i) => (
                       <Box key={i} sx={{ display: "flex", gap: 1.5, alignItems: "flex-start", mb: 1.75 }}>
                         <CheckIcon sx={{ color: "#0d9488", fontSize: 18, mt: 0.2, flexShrink: 0 }} />
@@ -628,7 +628,7 @@ export default function AboutUsView() {
                       }}>
                         <v.icon sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 22 }} />
                       </Box>
-                      <Typography sx={{ fontWeight: 800, fontSize: "1.05rem", color: primaryTxt, mb: 1 }}>{v.title}</Typography>
+                      <Typography sx={{ fontWeight: 700, fontSize: "1.05rem", color: primaryTxt, mb: 1 }}>{v.title}</Typography>
                       <Typography sx={{ color: secondaryTxt, fontSize: "0.9rem", lineHeight: 1.6 }}>{v.text}</Typography>
                     </Box>
                   </motion.div>
@@ -656,9 +656,9 @@ export default function AboutUsView() {
                         alignItems: "center", justifyContent: "center", mb: 2.5, mx: "auto",
                         boxShadow: `0 8px 24px ${f.bg}55`,
                       }}>
-                        <Typography sx={{ color: "#fff", fontWeight: 800, fontSize: "2rem" }}>{f.initial}</Typography>
+                        <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: "2rem" }}>{f.initial}</Typography>
                       </Box>
-                      <Typography sx={{ textAlign: "center", fontWeight: 800, fontSize: "1.2rem", color: primaryTxt }}>{f.name}</Typography>
+                      <Typography sx={{ textAlign: "center", fontWeight: 700, fontSize: "1.2rem", color: primaryTxt }}>{f.name}</Typography>
                       <Typography sx={{ textAlign: "center", color: COLORS.PRIMARY_PURPLE, fontWeight: 700, fontSize: "0.85rem", mb: 2 }}>{f.role}</Typography>
 
                       <Typography sx={{ fontStyle: "italic", color: secondaryTxt, fontSize: "0.9rem", lineHeight: 1.6, textAlign: "center", mb: 2 }}>
@@ -736,7 +736,7 @@ export default function AboutUsView() {
                         width: 16, height: 16, borderRadius: "50%", bgcolor: COLORS.PRIMARY_PURPLE,
                         border: `3px solid ${isDark ? COLORS.BACKGROUND.PRIMARY_DARK : "#fff"}`, mb: 2, position: "relative", zIndex: 1,
                       }} />
-                      <Typography sx={{ fontWeight: 800, fontSize: "0.78rem", color: COLORS.PRIMARY_PURPLE, mb: 0.5 }}>{m.year}</Typography>
+                      <Typography sx={{ fontWeight: 700, fontSize: "0.78rem", color: COLORS.PRIMARY_PURPLE, mb: 0.5 }}>{m.year}</Typography>
                       <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: primaryTxt, lineHeight: 1.4 }}>{m.label}</Typography>
                     </Box>
                   ))}
@@ -774,7 +774,7 @@ export default function AboutUsView() {
                       <Typography sx={{ fontWeight: 700, fontSize: "0.85rem", color: COLORS.PRIMARY_PURPLE, mb: 0.5 }}>
                         {String(i + 1).padStart(2, "0")}
                       </Typography>
-                      <Typography sx={{ fontWeight: 800, fontSize: "1rem", color: primaryTxt, mb: 0.75 }}>{p.title}</Typography>
+                      <Typography sx={{ fontWeight: 700, fontSize: "1rem", color: primaryTxt, mb: 0.75 }}>{p.title}</Typography>
                       <Typography sx={{ color: secondaryTxt, fontSize: "0.85rem", lineHeight: 1.55 }}>{p.text}</Typography>
                     </Box>
                   </motion.div>
@@ -794,10 +794,10 @@ export default function AboutUsView() {
                 : "linear-gradient(135deg, rgba(94,24,233,0.06), rgba(249,115,22,0.05))",
               border: `1px solid ${glassBorder}`,
             }}>
-              <Typography sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 800, letterSpacing: 2.5, fontSize: "0.78rem", mb: 1.5, textTransform: "uppercase" }}>
+              <Typography sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700, letterSpacing: 2.5, fontSize: "0.78rem", mb: 1.5, textTransform: "uppercase" }}>
                 Careers
               </Typography>
-              <Typography sx={{ fontSize: { xs: "1.9rem", md: "2.5rem" }, fontWeight: 900, color: primaryTxt, mb: 1.5, letterSpacing: "-0.01em" }}>
+              <Typography sx={{ fontSize: { xs: "1.9rem", md: "2.5rem" }, fontWeight: 700, color: primaryTxt, mb: 1.5, letterSpacing: "-0.01em" }}>
                 Join us
               </Typography>
               <Typography sx={{ color: secondaryTxt, mb: 4, maxWidth: 520, mx: "auto", fontSize: "1.02rem", lineHeight: 1.6 }}>
@@ -807,7 +807,7 @@ export default function AboutUsView() {
                 onClick={() => router.push("/contact-us")}
                 sx={{
                   display: "inline-block", px: 4.5, py: 1.75, borderRadius: "100px", cursor: "pointer",
-                  fontWeight: 800, fontSize: "1rem", color: "#fff",
+                  fontWeight: 700, fontSize: "1rem", color: "#fff",
                   background: `linear-gradient(90deg, ${COLORS.PRIMARY_PURPLE}, ${COLORS.PURPLE_HOVER})`,
                   boxShadow: "0 10px 30px rgba(94,24,233,0.3)", transition: "transform 0.2s",
                   "&:hover": { transform: "translateY(-2px)" },
@@ -846,7 +846,7 @@ export default function AboutUsView() {
                   background: "radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%)",
                 }}
               />
-              <Typography sx={{ fontSize: { xs: "2rem", md: "3rem" }, fontWeight: 900, color: "#fff", mb: 1.5, letterSpacing: "-0.02em", position: "relative" }}>
+              <Typography sx={{ fontSize: { xs: "2rem", md: "3rem" }, fontWeight: 700, color: "#fff", mb: 1.5, letterSpacing: "-0.01em", position: "relative" }}>
                 Ready to build the future with us?
               </Typography>
               <Typography sx={{ color: "rgba(255,255,255,0.8)", mb: 4, maxWidth: 480, mx: "auto", fontSize: "1.05rem", position: "relative" }}>
@@ -855,13 +855,13 @@ export default function AboutUsView() {
               <Box sx={{ display: "flex", gap: 2, justifyContent: "center", flexWrap: "wrap", position: "relative" }}>
                 <Box
                   onClick={() => router.push("/supplier/register")}
-                  sx={{ px: 4.5, py: 1.75, borderRadius: "100px", cursor: "pointer", fontWeight: 800, fontSize: "1rem", color: COLORS.PRIMARY_PURPLE, bgcolor: "#fff", transition: "transform 0.15s", "&:hover": { transform: "scale(1.04)" } }}
+                  sx={{ px: 4.5, py: 1.75, borderRadius: "100px", cursor: "pointer", fontWeight: 700, fontSize: "1rem", color: COLORS.PRIMARY_PURPLE, bgcolor: "#fff", transition: "transform 0.15s", "&:hover": { transform: "scale(1.04)" } }}
                 >
                   Get Started
                 </Box>
                 <Box
                   onClick={() => router.push("/contact-us")}
-                  sx={{ px: 4.5, py: 1.75, borderRadius: "100px", cursor: "pointer", fontWeight: 800, fontSize: "1rem", color: "#fff", border: "2px solid rgba(255,255,255,0.4)", transition: "transform 0.15s", "&:hover": { transform: "scale(1.04)", borderColor: "#fff" } }}
+                  sx={{ px: 4.5, py: 1.75, borderRadius: "100px", cursor: "pointer", fontWeight: 700, fontSize: "1rem", color: "#fff", border: "2px solid rgba(255,255,255,0.4)", transition: "transform 0.15s", "&:hover": { transform: "scale(1.04)", borderColor: "#fff" } }}
                 >
                   Contact Us
                 </Box>

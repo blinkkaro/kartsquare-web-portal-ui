@@ -530,7 +530,7 @@ const ProductsListingView: React.FC = () => {
                   sx={{
                     color: isDark ? "text.primary" : "#0f172a",
                     mb: 1,
-                    letterSpacing: "-0.02em",
+                    letterSpacing: "-0.01em",
                   }}
                 >
                   {getCategoryTitle()}

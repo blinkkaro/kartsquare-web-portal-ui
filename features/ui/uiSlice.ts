@@ -5,12 +5,18 @@ interface UiState {
   isAiOpen: boolean;
   /** A query another screen wants the assistant to run when it opens (home search, symptom chips). */
   aiPendingQuery: string | null;
+  /** True while an inline Kart AI entry (the home hero) is on screen, so the floating AI button steps aside. */
+  inlineAiVisible: boolean;
+  /** Goes up each time something asks for a fresh Kart AI conversation; the chat starts over when it sees a new value. */
+  aiNewChat: number;
 }
 
 const initialState: UiState = {
   mode: "light", // Default to light, but will be hydrated from localStorage/system
   isAiOpen: false,
   aiPendingQuery: null,
+  inlineAiVisible: false,
+  aiNewChat: 0,
 };
 
 export const uiSlice = createSlice({
@@ -36,6 +42,15 @@ export const uiSlice = createSlice({
         }
       }
     },
+    /** Open the assistant on a brand-new conversation: its welcome message, nothing carried over, nothing run. */
+    openAiNewChat: (state) => {
+      state.isAiOpen = true;
+      state.aiPendingQuery = null;
+      state.aiNewChat += 1;
+    },
+    setInlineAiVisible: (state, action: PayloadAction<boolean>) => {
+      state.inlineAiVisible = action.payload;
+    },
     setAiOpen: (state, action: PayloadAction<boolean>) => {
       state.isAiOpen = action.payload;
     },
@@ -55,6 +70,8 @@ export const {
   setTheme,
   hydrateTheme,
   setAiOpen,
+  setInlineAiVisible,
+  openAiNewChat,
   openAiWithQuery,
   clearAiPendingQuery,
 } = uiSlice.actions;

@@ -230,7 +230,7 @@ const StoreCard: React.FC<StoreCardProps> = ({
                 variant={isSmall ? "subtitle2" : "h6"}
                 onClick={handleOpenDrawer}
                 sx={{
-                  fontWeight: 800,
+                  fontWeight: 700,
                   color:
                     theme.palette.mode === "dark"
                       ? COLORS.TEXT.PRIMARY_DARK

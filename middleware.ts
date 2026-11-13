@@ -7,6 +7,15 @@ import { blogs } from "@/data/blogs";
  */
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+
+  // Service URLs are lowercase. Without this, /services/Jaipur/CK-Solar is served
+  // from the same cache entry as /services/jaipur/ck-solar (a duplicate URL).
+  if (pathname.startsWith("/services/") && pathname !== pathname.toLowerCase()) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.toLowerCase();
+    return NextResponse.redirect(url, 308);
+  }
+
   const match = /^\/blogs\/([^/]+)\/?$/.exec(pathname);
   if (!match) return NextResponse.next();
 
@@ -22,5 +31,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/blogs/:segment"],
+  matcher: ["/blogs/:segment", "/services/:path*"],
 };

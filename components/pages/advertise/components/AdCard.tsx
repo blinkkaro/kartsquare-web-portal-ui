@@ -183,7 +183,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad, onEdit, onDelete }) => {
           variant="h6"
           component="h3"
           sx={{
-            fontWeight: 800,
+            fontWeight: 700,
             lineHeight: 1.2,
             color: COLORS.PRIMARY_PURPLE,
             mb: 0.5,

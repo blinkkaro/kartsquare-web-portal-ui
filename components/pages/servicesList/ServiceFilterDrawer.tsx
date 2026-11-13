@@ -73,7 +73,7 @@ const SectionTitle = ({ icon, title }: { icon: any, title: string }) => (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, mt: 1 }}>
         {icon}
         <Typography variant="subtitle1" sx={{ 
-            fontWeight: 800, 
+            fontWeight: 700, 
             color: textPrimary, 
             letterSpacing: '0.02em',
             textTransform: 'uppercase',
@@ -104,7 +104,7 @@ const SectionTitle = ({ icon, title }: { icon: any, title: string }) => (
           display: "flex", 
           justifyContent: "space-between", 
           alignItems: "center",
-          fontWeight: 900,
+          fontWeight: 700,
           fontSize: "1.25rem",
           p: 3,
           pb: 2,
@@ -146,7 +146,7 @@ const SectionTitle = ({ icon, title }: { icon: any, title: string }) => (
                     onChange={(_, val) => setMinRating(val)}
                     sx={{ color: "#FFC107" }}
                 />
-                <Typography sx={{ fontWeight: 800, color: textPrimary, fontSize: '1.1rem' }}>{minRating}+</Typography>
+                <Typography sx={{ fontWeight: 700, color: textPrimary, fontSize: '1.1rem' }}>{minRating}+</Typography>
             </Box>
 
             <Divider sx={{ my: 3, borderColor }} />
@@ -233,7 +233,7 @@ const SectionTitle = ({ icon, title }: { icon: any, title: string }) => (
                 onClick={handleApply}
                 sx={{ 
                     bgcolor: COLORS.PRIMARY_PURPLE, 
-                    fontWeight: 900, 
+                    fontWeight: 700, 
                     borderRadius: '16px',
                     textTransform: 'none',
                     py: 1.5,

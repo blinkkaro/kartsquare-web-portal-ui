@@ -32,7 +32,7 @@ export default async function Image({
             justifyContent: "center",
             color: "white",
             fontSize: 64,
-            fontWeight: 800,
+            fontWeight: 700,
             fontFamily: "sans-serif",
           }}
         >
@@ -87,7 +87,7 @@ export default async function Image({
               alignItems: "center",
               fontSize: 24,
               fontWeight: 700,
-              letterSpacing: "-0.02em",
+              letterSpacing: "-0.01em",
             }}
           >
             <span style={{ color: "white" }}>Kart</span>
@@ -128,7 +128,7 @@ export default async function Image({
                 marginRight: 48,
                 border: "4px solid rgba(94, 24, 233, 0.4)",
                 fontSize: 72,
-                fontWeight: 800,
+                fontWeight: 700,
                 color: "#5E18E9",
               }}
             >
@@ -140,11 +140,11 @@ export default async function Image({
             <h1
               style={{
                 fontSize: 72,
-                fontWeight: 800,
+                fontWeight: 700,
                 margin: 0,
                 marginBottom: 16,
                 lineHeight: 1.1,
-                letterSpacing: "-0.03em",
+                letterSpacing: "-0.01em",
                 color: "white",
               }}
             >

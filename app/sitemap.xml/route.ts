@@ -1,3 +1,4 @@
+import { serviceSitemapPath } from "@/lib/seo/sitemapPaths";
 import { NextResponse } from "next/server";
 import { blogs } from "@/data/blogs";
 import { blogPostSitemapEntry } from "@/lib/seo/blogSitemap";
@@ -157,13 +158,13 @@ export async function GET() {
     });
   }
 
-  // Add Services
+  // Add Services: the API's canonical_path (/services/{slug}) only. Slug-less
+  // services have no canonical URL and a UUID URL 301s, so neither is listed.
   if (Array.isArray(services)) {
     services.forEach((s: any) => {
-      // Slug only: a UUID URL 301s to the slug, so listing it wastes crawl budget.
-      const pathSeg = (s.slug && String(s.slug).trim()) || "";
-      if (pathSeg) {
-        const url = `${BASE_URL}/services/${pathSeg}`;
+      const path = serviceSitemapPath(s);
+      if (path) {
+        const url = `${BASE_URL}${path}`;
         const lastmod = s.updated_at || s.created_at;
         const mainImage =
           s.og_image || (Array.isArray(s.image_urls) ? s.image_urls[0] : null);
@@ -179,7 +180,9 @@ export async function GET() {
   // Add Profiles
   if (Array.isArray(profiles)) {
     profiles.forEach((p: any) => {
-      const url = `${BASE_URL}/in/${p.username}`;
+      const username = typeof p.username === "string" ? p.username.trim() : "";
+      if (!username) return;
+      const url = `${BASE_URL}/in/${encodeURIComponent(username)}`;
       const lastmod = p.updated_at;
       addUrl(url, lastmod ? new Date(lastmod).toISOString() : undefined);
     });

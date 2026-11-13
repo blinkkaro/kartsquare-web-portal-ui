@@ -155,7 +155,7 @@ export default function TrendingRoller({ suggestions, onPick }: Props) {
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 1.25 }}>
         <LocalFireDepartmentRoundedIcon sx={{ fontSize: 18, color: ORANGE }} />
-        <Typography component="span" sx={{ fontSize: "0.78rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "text.secondary" }}>
+        <Typography component="span" sx={{ fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "text.secondary" }}>
           Trending near you
         </Typography>
       </Box>

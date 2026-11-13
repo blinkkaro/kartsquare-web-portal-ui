@@ -8,7 +8,7 @@ import IosShareRoundedIcon from "@mui/icons-material/IosShareRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { COLORS } from "@/constants/colors";
-import { getServiceRouteParam } from "@/utils/serviceRoute";
+import { getServiceHref } from "@/utils/serviceRoute";
 import { TopService } from "@/services/topSuppliers/topSupplires.interfaces";
 
 const NEW_WINDOW_DAYS = 30;
@@ -19,7 +19,7 @@ const isNew = (createdAt?: string) => {
   return Number.isFinite(t) && Date.now() - t < NEW_WINDOW_DAYS * 86_400_000;
 };
 
-const pill = { px: 1.1, py: 0.35, borderRadius: 99, fontSize: "0.75rem", fontWeight: 800, lineHeight: 1.2 } as const;
+const pill = { px: 1.1, py: 0.35, borderRadius: 99, fontSize: "0.75rem", fontWeight: 700, lineHeight: 1.2 } as const;
 const glass = { bgcolor: "rgba(255,255,255,0.94)", color: "#21172e", boxShadow: "0 2px 8px rgba(32,27,44,0.12)" } as const;
 
 interface Props {
@@ -45,7 +45,7 @@ function ServiceCard({ service: s, onOpenProvider }: Props) {
   const reviews = Number(s.review_count ?? 0);
   const rating = reviews > 0 && Number(s.rating) > 0 ? Number(s.rating) : null;
   const price = Number(s.price) > 0 ? Number(s.price) : null;
-  const href = `/services/${getServiceRouteParam(s)}`;
+  const href = getServiceHref(s);
   const lift = dark ? "#d6b8ff" : COLORS.PRIMARY_PURPLE;
 
   const stop = useCallback(() => {
@@ -143,7 +143,7 @@ function ServiceCard({ service: s, onOpenProvider }: Props) {
       <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 0.75, flex: 1 }}>
         <Typography
           component="h3"
-          sx={{ m: 0, fontSize: "1.02rem", fontWeight: 800, lineHeight: 1.3, letterSpacing: "-0.015em", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}
+          sx={{ m: 0, fontSize: "1.02rem", fontWeight: 700, lineHeight: 1.3, letterSpacing: "-0.01em", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}
         >
           <Link
             href={href}
@@ -198,7 +198,7 @@ function ServiceCard({ service: s, onOpenProvider }: Props) {
           <Box
             className="cta"
             aria-hidden
-            sx={{ height: 40, px: 1.75, flexShrink: 0, borderRadius: 3, display: "flex", alignItems: "center", gap: 0.5, fontSize: "0.82rem", fontWeight: 800, bgcolor: COLORS.PURPLE_ALPHA_10, color: lift, transition: "background-color 180ms ease, color 180ms ease" }}
+            sx={{ height: 40, px: 1.75, flexShrink: 0, borderRadius: 3, display: "flex", alignItems: "center", gap: 0.5, fontSize: "0.82rem", fontWeight: 700, bgcolor: COLORS.PURPLE_ALPHA_10, color: lift, transition: "background-color 180ms ease, color 180ms ease" }}
           >
             View <ArrowForwardRoundedIcon className="cta-arrow" sx={{ fontSize: 16, transition: "transform 180ms ease" }} />
           </Box>

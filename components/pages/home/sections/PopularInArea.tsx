@@ -48,13 +48,13 @@ export default function PopularInArea() {
             <Image src={HOME_PHOTOS.hawaMahal.src} alt={HOME_PHOTOS.hawaMahal.alt} fill loading="lazy" sizes="(max-width: 900px) 100vw, 280px" style={{ objectFit: "cover" }} />
             <Box sx={{ position: "absolute", left: 14, right: 14, bottom: 14, p: 1.5, borderRadius: 3.5, bgcolor: "rgba(255,255,255,0.95)", color: "#201b2c", boxShadow: "0 8px 24px rgba(32,27,44,0.16)" }}>
               <Typography sx={{ fontSize: "0.75rem", fontWeight: 600, color: "#6b6577" }}>You&apos;re exploring</Typography>
-              <Typography sx={{ fontSize: "1.6rem", fontWeight: 800, letterSpacing: "-0.035em", lineHeight: 1.15, color: COLORS.PRIMARY_PURPLE }}>{location.city}</Typography>
+              <Typography sx={{ fontSize: "1.6rem", fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.15, color: COLORS.PRIMARY_PURPLE }}>{location.city}</Typography>
             </Box>
           </Box>
         )}
 
         <Box sx={{ minWidth: 0 }}>
-          <Typography component="h2" sx={{ ...sectionTitleSx, fontSize: { xs: "1.4rem", md: "1.9rem" }, letterSpacing: "-0.035em" }}>
+          <Typography component="h2" sx={{ ...sectionTitleSx, fontSize: { xs: "1.4rem", md: "1.9rem" }, letterSpacing: "-0.01em" }}>
             Popular services in {location.city}
           </Typography>
           <Typography sx={{ ...sectionSubtitleSx, mt: 0.75, fontSize: "0.92rem" }}>Browse by what you need</Typography>

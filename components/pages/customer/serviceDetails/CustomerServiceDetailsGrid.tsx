@@ -40,7 +40,7 @@ const CustomerServiceDetailsGrid = ({
 
   const labelSx = {
     fontSize: "0.72rem",
-    fontWeight: 800,
+    fontWeight: 700,
     textTransform: "uppercase" as const,
     letterSpacing: "0.04em",
     color: "text.secondary",
@@ -51,7 +51,7 @@ const CustomerServiceDetailsGrid = ({
     <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.5 }}>
       <Box sx={cardSx}>
         <Typography sx={labelSx}>{english.duration}</Typography>
-        <Typography sx={{ fontSize: "0.95rem", fontWeight: 800, color: "text.primary" }}>
+        <Typography sx={{ fontSize: "0.95rem", fontWeight: 700, color: "text.primary" }}>
           {formatDuration(serviceDuration)}
         </Typography>
       </Box>
@@ -61,7 +61,7 @@ const CustomerServiceDetailsGrid = ({
         <Typography
           sx={{
             fontSize: "0.95rem",
-            fontWeight: 800,
+            fontWeight: 700,
             color: haveSlots
               ? dark
                 ? COLORS.NEW_UI.ACCENT_TEXT_DARK

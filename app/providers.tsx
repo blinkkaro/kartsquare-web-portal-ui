@@ -71,7 +71,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <TranslationProvider>
             <SocketProvider>
               <ThemeWrapper>
-                <Toaster position="top-right" />
+                <Toaster position="top-right" toastOptions={{ style: { fontFamily: "inherit" } }} />
                 <RegistrationGuard>{children}</RegistrationGuard>
               </ThemeWrapper>
             </SocketProvider>

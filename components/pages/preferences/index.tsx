@@ -160,13 +160,13 @@ function PreferencesView() {
           <Typography
             variant="subtitle2"
             sx={{
-              fontWeight: 800,
+              fontWeight: 700,
               background: `linear-gradient(135deg, ${COLORS.ICON_GRADIENT.Light.START} 0%, ${COLORS.ICON_GRADIENT.Light.END} 100%)`,
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
               fontSize: { xs: "2rem", sm: "2.5rem", md: "2.75rem" },
-              letterSpacing: "-0.04em",
+              letterSpacing: "-0.01em",
               // lineHeight: 1.1,
               mb: 0.5,
             }}

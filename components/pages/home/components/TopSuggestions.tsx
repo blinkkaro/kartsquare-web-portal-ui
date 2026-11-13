@@ -22,7 +22,7 @@ import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import RightDrawer from "@/components/common/RightDrawer";
 import TopRankedItem from "./TopRankedItem";
 import { truncateHTML } from "@/helper/helper";
-import { getServiceRouteParam } from "@/utils/serviceRoute";
+import { getServiceHref } from "@/utils/serviceRoute";
 
 interface SectionProps {
   title: string;
@@ -236,8 +236,7 @@ const TopSuggestions = () => {
     if ("profile_pic" in item) {
       dispatch(openDrawer({ userId: item.id }));
     } else {
-      const serviceRoute = getServiceRouteParam(item);
-      router.push(`/services/${serviceRoute}`);
+      router.push(getServiceHref(item));
     }
   };
 

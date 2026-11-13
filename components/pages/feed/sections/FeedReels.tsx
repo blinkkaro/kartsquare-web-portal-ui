@@ -99,7 +99,7 @@ export function FeedReelsStrip({ reels }: { reels: Posts[] }) {
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1.5 }}>
-        <Typography component="h2" sx={{ fontSize: "0.95rem", fontWeight: 800, color: "text.primary" }}>
+        <Typography component="h2" sx={{ fontSize: "0.9rem", fontWeight: 700, color: "text.primary" }}>
           Reels for you
         </Typography>
         <Box component={Link} href="/cus/reels" sx={{ fontSize: "0.84rem", fontWeight: 700, color: dark ? COLORS.NEW_UI.ACCENT_TEXT_DARK : COLORS.PRIMARY_PURPLE, textDecoration: "none", "&:hover": { textDecoration: "underline" } }}>

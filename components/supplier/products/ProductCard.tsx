@@ -183,7 +183,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
 
                     <Box sx={{ mt: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box>
-                            <Typography variant="h6" sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 800 }}>
+                            <Typography variant="h6" sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700 }}>
                                 {product.currency === "USD" ? "$" : "₹"}{product.price}
                             </Typography>
                         </Box>

@@ -51,7 +51,7 @@ const CombinedFeaturedSection = () => {
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", mb: 3, px: 1 }}>
                 <Box>
 
-                    <Typography variant="h5" sx={{ fontWeight: 800, letterSpacing: "-0.02em", color: "text.primary" }}>
+                    <Typography variant="h5" sx={{ fontWeight: 700, letterSpacing: "-0.01em", color: "text.primary" }}>
                         Explore Services & Products
                     </Typography>
                 </Box>

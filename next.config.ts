@@ -1,5 +1,14 @@
 import type { NextConfig } from "next";
 
+/**
+ * Local development only: proxy /api/* to a backend running on this machine (default :5900), so the
+ * browser talks to its own origin and CORS never applies. Use with
+ * NEXT_PUBLIC_API_URL=http://localhost:3000/api/v1 (see docs/01-project-overview.md).
+ * Never active in production builds.
+ */
+const LOCAL_API_TARGET = process.env.LOCAL_API_PROXY_TARGET ?? "http://localhost:5900";
+const proxyLocalApi = process.env.NODE_ENV !== "production";
+
 const nextConfig: NextConfig = {
   compress: true, // gzip responses
   poweredByHeader: false, // remove X-Powered-By header
@@ -95,6 +104,9 @@ const nextConfig: NextConfig = {
       { source: "/contact-us", destination: "/contactUs" },
       { source: "/privacy-policy", destination: "/privacyPolicy" },
       { source: "/terms-conditions", destination: "/termsConditions" },
+      ...(proxyLocalApi
+        ? [{ source: "/api/:path*", destination: `${LOCAL_API_TARGET}/api/:path*` }]
+        : []),
     ];
   },
   images: {

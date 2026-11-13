@@ -7,11 +7,19 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "generate-favicon": "node scripts/generate-favicon.cjs",
+    "lint:fix": "eslint --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.tests.json",
     "test": "jest",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration",
     "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "generate-favicon": "node scripts/generate-favicon.cjs",
     "icons:category": "node scripts/generate-category-icons.cjs",
-    "update-assetlinks": "node scripts/update-assetlinks.cjs"
+    "update-assetlinks": "node scripts/update-assetlinks.cjs",
+    "prepare": "husky"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -50,6 +58,11 @@
   "devDependencies": {
     "@iconify-json/ph": "1.2.2",
     "@iconify/utils": "3.1.7",
+    "@playwright/test": "^1.55.0",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/crypto-js": "^4.2.2",
     "@types/jest": "^30.0.0",
     "@types/node": "^20",
@@ -58,10 +71,28 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
+    "husky": "^9.1.7",
     "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
     "jest-environment-node": "^30.4.1",
+    "lint-staged": "^16.1.0",
     "png2icons": "^2.0.1",
+    "prettier": "^3.6.2",
     "ts-jest": "^29.4.11",
+    "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --max-warnings=0"
+    ],
+    "*.{js,mjs,cjs}": [
+      "prettier --write",
+      "eslint --max-warnings=0"
+    ],
+    "*.{json,md,css,yml}": [
+      "prettier --write"
+    ]
   }
 }

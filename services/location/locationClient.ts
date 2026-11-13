@@ -107,3 +107,44 @@ export function toSlug(value: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
+
+/** One category with live supply at a place (GET /locations/:city/categories?view=availability). */
+export interface CategoryAvailability {
+  id: string;
+  name: string;
+  slug: string | null;
+  icon: string | null;
+  /** Services the listing API would return for this place and category. */
+  service_count: number;
+  provider_count: number;
+}
+
+/**
+ * Categories that really have services at a city (or one of its localities).
+ * Unlike `getData` this THROWS on failure, so the page can tell "failed" from
+ * "nothing available" and never invents categories. A locality the backend does
+ * not know falls back to the whole city.
+ */
+export async function getCategoryAvailability(
+  citySlug: string,
+  localitySlug?: string,
+): Promise<CategoryAvailability[]> {
+  const path = `/locations/${encodeURIComponent(citySlug)}/categories`;
+  const read = async (locality?: string) => {
+    const body = (await GET<ApiEnvelope<{ categories: CategoryAvailability[] }>>(
+      path,
+      { view: "availability", ...(locality ? { locality } : {}) },
+      false,
+    )) as unknown as ApiEnvelope<{ categories: CategoryAvailability[] }>;
+    return body?.data?.categories ?? [];
+  };
+  if (!localitySlug) return read();
+  try {
+    return await read(localitySlug);
+  } catch (error) {
+    const status = (error as { statusCode?: number; response?: { status?: number } })?.statusCode
+      ?? (error as { response?: { status?: number } })?.response?.status;
+    if (status === 404) return read(); // unknown locality: show the city
+    throw error;
+  }
+}

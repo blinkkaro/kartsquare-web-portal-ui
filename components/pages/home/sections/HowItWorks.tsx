@@ -44,12 +44,12 @@ export default function HowItWorks() {
                 <Box sx={{ width: 68, height: 68, borderRadius: 4.5, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background: `linear-gradient(135deg, ${s.from}, ${s.to})`, boxShadow: `0 14px 28px ${s.from}44` }}>
                   <Icon sx={{ fontSize: 32 }} />
                 </Box>
-                <Box sx={{ position: "absolute", top: -8, right: -8, width: 26, height: 26, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.78rem", fontWeight: 800, bgcolor: "background.paper", color: s.from, border: `2px solid ${s.from}` }}>
+                <Box sx={{ position: "absolute", top: -8, right: -8, width: 26, height: 26, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.78rem", fontWeight: 700, bgcolor: "background.paper", color: s.from, border: `2px solid ${s.from}` }}>
                   {i + 1}
                 </Box>
               </Box>
               <Box sx={{ pt: { xs: 0.5, md: 0 } }}>
-                <Typography sx={{ fontWeight: 800, fontSize: "1rem", lineHeight: 1.25 }}>{s.title}</Typography>
+                <Typography sx={{ fontWeight: 700, fontSize: "1rem", lineHeight: 1.25 }}>{s.title}</Typography>
                 <Typography sx={{ fontSize: "0.83rem", color: "text.secondary", mt: 0.5, lineHeight: 1.55, maxWidth: 320 }}>{s.body}</Typography>
               </Box>
             </Box>

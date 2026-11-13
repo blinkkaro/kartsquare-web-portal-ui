@@ -234,7 +234,7 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
               onClick={handleNameClick}
               variant="body2"
               sx={{
-                fontWeight: 800,
+                fontWeight: 700,
                 color: COLORS.TEXT.PRIMARY_LIGHT,
                 overflow: "hidden",
                 textOverflow: "ellipsis",

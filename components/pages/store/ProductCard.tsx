@@ -307,7 +307,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                         variant="caption"
                         sx={{
                           fontSize: "0.55rem",
-                          fontWeight: 900,
+                          fontWeight: 700,
                           letterSpacing: "0.03em",
                           textTransform: "uppercase",
                         }}
@@ -379,7 +379,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 sx={{
                   py: 1.2,
                   fontSize: "0.85rem",
-                  fontWeight: 800,
+                  fontWeight: 700,
                   borderRadius: 2,
                   textTransform: "none",
                   boxShadow: "none",

@@ -132,8 +132,8 @@ export default function ServicesHeroHeader({
             component="h1"
             sx={{
               fontSize: { xs: "1.75rem", sm: "2.1rem", md: "2.35rem" },
-              fontWeight: 800,
-              letterSpacing: "-0.03em",
+              fontWeight: 700,
+              letterSpacing: "-0.01em",
               lineHeight: 1.15,
               color: "text.primary",
               mb: 1,

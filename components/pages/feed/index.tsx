@@ -3,20 +3,26 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { Avatar, Box, Button, ButtonBase, Container, IconButton, Skeleton, Typography, useTheme } from "@mui/material";
+import { motion, useReducedMotion } from "framer-motion";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import PhotoLibraryRoundedIcon from "@mui/icons-material/PhotoLibraryRounded";
 import DynamicFeedRoundedIcon from "@mui/icons-material/DynamicFeedRounded";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import MainLayout from "@/app/mainLayout";
 import RightDrawer from "@/components/common/RightDrawer";
+import EmptyState from "@/components/common/EmptyState";
 import AddPostDrawer from "@/components/pages/myAccount/components/post/AddPostDrawer";
 import { COLORS } from "@/constants/colors";
 import { useGetInfinitePosts, useGetReels } from "@/hooks/usePosts";
 import { Posts, Visibility } from "@/services/post/postInterfaces";
 import { selectCurrentUser, selectIsAuthenticated } from "@/features/ui/authSlice";
+import { canCreatePosts } from "@/utils/auth";
 import FeedPostCard from "./sections/FeedPostCard";
 import FeedStories from "./sections/FeedStories";
 import FeedSidebar from "./sections/FeedSidebar";
+import FeedTabs from "./sections/FeedTabs";
+import BackToTop from "./sections/BackToTop";
+import { FEED_DURATION, FEED_EASE } from "./feedMotion";
 import { FeedReelsGrid, FeedReelsStrip } from "./sections/FeedReels";
 
 type FeedTab = "for_you" | "posts" | "reels";
@@ -64,6 +70,9 @@ export default function FeedView() {
   const dark = theme.palette.mode === "dark";
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const currentUser = useSelector(selectCurrentUser) as FeedUser;
+  // Only service providers and suppliers create posts and reels; customers only read the feed.
+  const canCreate = isAuthenticated && canCreatePosts(currentUser?.role);
+  const reduce = useReducedMotion() === true;
   const [tab, setTab] = useState<FeedTab>("for_you");
   const [composerOpen, setComposerOpen] = useState(false);
 
@@ -111,16 +120,21 @@ export default function FeedView() {
     </Box>
   );
 
+  // The shared EmptyState, in the feed's card.
   const stateCard = (title: string, body: string, action?: React.ReactNode) => (
-    <Box sx={{ ...cardSx, borderRadius: { xs: 0, sm: "16px" }, p: { xs: 4, sm: 5 }, textAlign: "center" }}>
-      <Box sx={{ width: 56, height: 56, borderRadius: "16px", mx: "auto", mb: 2, display: "grid", placeItems: "center", bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10, color: accent }}>
-        <DynamicFeedRoundedIcon />
-      </Box>
-      <Typography component="h2" sx={{ fontSize: "1.15rem", fontWeight: 800, color: "text.primary", mb: 0.75 }}>
-        {title}
-      </Typography>
-      <Typography sx={{ fontSize: "0.9rem", color: "text.secondary", maxWidth: 420, mx: "auto", mb: action ? 2.5 : 0 }}>{body}</Typography>
-      {action}
+    <Box sx={{ ...cardSx, borderRadius: { xs: 0, sm: "16px" } }}>
+      <EmptyState
+        titleKey=""
+        title={title}
+        description={body}
+        action={action}
+        minHeight={260}
+        icon={
+          <Box sx={{ width: 56, height: 56, borderRadius: "16px", mx: "auto", mb: 2, display: "grid", placeItems: "center", bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10, color: accent }}>
+            <DynamicFeedRoundedIcon />
+          </Box>
+        }
+      />
     </Box>
   );
 
@@ -149,8 +163,8 @@ export default function FeedView() {
     if (visiblePosts.length === 0) {
       return stateCard(
         "No posts yet",
-        isAuthenticated ? "Be the first to share a photo or update with your community." : "Posts from local providers and people near you will show up here.",
-        isAuthenticated ? (
+        canCreate ? "Be the first to share a photo or update with your community." : "Posts from local providers and people near you will show up here.",
+        canCreate ? (
           <Button onClick={() => setComposerOpen(true)} sx={primaryBtnSx}>
             Create a post
           </Button>
@@ -180,9 +194,14 @@ export default function FeedView() {
     const items = tab === "reels" ? reelList : visiblePosts;
     if (!activeQuery.hasNextPage && items.length > 0 && !activeQuery.isLoading) {
       return (
-        <Typography sx={{ textAlign: "center", color: "text.secondary", fontSize: "0.86rem", py: 3 }}>
-          You&apos;re all caught up
-        </Typography>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1, py: 4 }}>
+          <Box sx={{ width: 36, height: 36, borderRadius: "50%", display: "grid", placeItems: "center", bgcolor: COLORS.PURPLE_ALPHA_10, color: COLORS.PRIMARY_PURPLE }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+              <motion.path d="M5 12.5l4.5 4.5L19 7.5" initial={reduce ? false : { pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, ease: FEED_EASE }} />
+            </svg>
+          </Box>
+          <Typography sx={{ color: "text.secondary", fontSize: "0.86rem" }}>You&apos;re all caught up</Typography>
+        </Box>
       );
     }
     return null;
@@ -212,9 +231,10 @@ export default function FeedView() {
                     <FeedStories currentUser={currentUser} />
                   </Box>
 
-                  {/* Composer (tablet/desktop); phones use the + button */}
+                  {/* Composer (tablet/desktop); phones use the + button. Providers and suppliers only. */}
+                  {canCreate && (
                   <Box sx={{ ...cardSx, display: { xs: "none", sm: "flex" }, alignItems: "center", gap: 1.5, p: 1.75, mb: 2 }}>
-                    <Avatar src={currentUser?.profile_pic || undefined} alt={myName} sx={{ width: 40, height: 40, fontWeight: 800, bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10, color: accent }}>
+                    <Avatar src={currentUser?.profile_pic || undefined} alt={myName} sx={{ width: 40, height: 40, fontWeight: 700, bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10, color: accent }}>
                       {myName.charAt(0).toUpperCase()}
                     </Avatar>
                     <ButtonBase
@@ -230,6 +250,10 @@ export default function FeedView() {
                         borderColor: border,
                         color: "text.secondary",
                         fontSize: "0.9rem",
+                        transition: "transform 120ms ease, border-color 120ms ease",
+                        "&:hover": { borderColor: COLORS.PRIMARY_PURPLE },
+                        "&:active": { transform: "scale(0.99)" },
+                        "@media (prefers-reduced-motion: reduce)": { transition: "none", "&:active": { transform: "none" } },
                       }}
                     >
                       Share a photo, video or update…
@@ -252,56 +276,50 @@ export default function FeedView() {
                       Photo / Video
                     </Button>
                   </Box>
+                  )}
                 </>
               )}
 
-              {/* Tabs */}
-              <Box role="tablist" aria-label="Feed" sx={{ display: "flex", gap: 1, px: { xs: 1.5, sm: 0 }, py: { xs: 1.5, sm: 0 }, mb: { xs: 0, sm: 2 } }}>
-                {TABS.map((t) => {
-                  const selected = tab === t.id;
-                  return (
-                    <ButtonBase
-                      key={t.id}
-                      role="tab"
-                      aria-selected={selected}
-                      onClick={() => setTab(t.id)}
+              {/* Tabs: one pill slides to the selected tab */}
+              <FeedTabs
+                tabs={TABS}
+                value={tab}
+                onChange={setTab}
+                ariaLabel="Feed"
+                trailing={
+                  /* Create (phones): in the tab row, clear of the floating Kart AI button. Providers and suppliers only. */
+                  canCreate && (
+                    <IconButton
+                      onClick={() => setComposerOpen(true)}
+                      aria-label="Create a post"
                       sx={{
-                        height: 36,
-                        px: 2,
-                        borderRadius: "999px",
-                        fontSize: "0.86rem",
-                        fontWeight: selected ? 700 : 600,
-                        border: "1px solid",
-                        borderColor: selected ? (dark ? COLORS.WHITE : COLORS.NEW_UI.INK) : dark ? COLORS.NEW_UI.DIVIDER_DARK : COLORS.NEW_UI.DIVIDER_LIGHT,
-                        bgcolor: selected ? (dark ? COLORS.WHITE : COLORS.NEW_UI.INK) : "transparent",
-                        color: selected ? (dark ? COLORS.NEW_UI.INK : COLORS.WHITE) : "text.primary",
-                        "&:hover": selected ? {} : { borderColor: COLORS.PRIMARY_PURPLE, color: COLORS.PRIMARY_PURPLE },
+                        display: { xs: "inline-flex", sm: "none" },
+                        ml: "auto",
+                        width: 44,
+                        height: 44,
+                        bgcolor: COLORS.PRIMARY_PURPLE,
+                        color: COLORS.WHITE,
+                        transition: "transform 120ms ease",
+                        "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
+                        "&:active": { transform: "scale(0.92)" },
+                        "@media (prefers-reduced-motion: reduce)": { transition: "none", "&:active": { transform: "none" } },
                       }}
                     >
-                      {t.label}
-                    </ButtonBase>
-                  );
-                })}
-                {/* Create (phones): in the tab row, clear of the floating Kart AI button */}
-                {isAuthenticated && (
-                  <IconButton
-                    onClick={() => setComposerOpen(true)}
-                    aria-label="Create a post"
-                    sx={{
-                      display: { xs: "inline-flex", sm: "none" },
-                      ml: "auto",
-                      width: 36,
-                      height: 36,
-                      bgcolor: COLORS.PRIMARY_PURPLE,
-                      color: COLORS.WHITE,
-                      "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
-                    }}
-                  >
-                    <AddRoundedIcon />
-                  </IconButton>
-                )}
-              </Box>
+                      <AddRoundedIcon />
+                    </IconButton>
+                  )
+                }
+              />
 
+              <motion.div
+                key={tab}
+                id="feed-panel"
+                role="tabpanel"
+                aria-labelledby={`feed-tab-${tab}`}
+                initial={reduce ? false : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: FEED_DURATION.enter, ease: FEED_EASE }}
+              >
               {tab === "reels" ? (
                 reels.isError && reelList.length === 0 ? (
                   stateCard(
@@ -319,6 +337,7 @@ export default function FeedView() {
               ) : (
                 renderPosts()
               )}
+              </motion.div>
 
               {/* "1px", not 1: in sx a 1 means 100%, which made this trigger as tall as the feed. */}
               <Box ref={loadMoreRef} sx={{ height: "1px" }} />
@@ -334,9 +353,13 @@ export default function FeedView() {
 
       </Box>
 
-      <RightDrawer open={composerOpen} onClose={() => setComposerOpen(false)} title="Create post" width={520}>
-        <AddPostDrawer onClose={() => setComposerOpen(false)} />
-      </RightDrawer>
+      <BackToTop />
+
+      {canCreate && (
+        <RightDrawer open={composerOpen} onClose={() => setComposerOpen(false)} title="Create post" width={520}>
+          <AddPostDrawer onClose={() => setComposerOpen(false)} />
+        </RightDrawer>
+      )}
     </MainLayout>
   );
 }
