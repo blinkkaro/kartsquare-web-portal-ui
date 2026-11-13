@@ -43,6 +43,15 @@ describe("rendered pages", () => {
     expect(text(html)).not.toMatch(/\bit & digital\b/);
   });
 
+  it("shows the category photo from the API, and an icon tile when there is none", () => {
+    const content = CATEGORY_CONTENT[0];
+    const media = { [content.slug]: { icon: "ph:house-duotone", color: "#059669", image: "https://res.cloudinary.com/x/image/upload/v1/kartsquare/categories/a.webp" } };
+    const withPhoto = renderToStaticMarkup(<CategoryContentView content={content} providers={[]} coverage={{}} media={media} cityName="Jaipur" citySlug="jaipur" />);
+    expect(withPhoto).toMatch(/<img[^>]+alt=""/);
+    const without = renderToStaticMarkup(<CategoryContentView content={content} providers={[]} coverage={{}} cityName="Jaipur" citySlug="jaipur" />);
+    expect(without).not.toMatch(/<img/);
+  });
+
   it("omits Jaipur provider links when the API shows no coverage", () => {
     const content = CATEGORY_CONTENT[0];
     const html = renderToStaticMarkup(<CategoryContentView content={content} providers={[]} coverage={{}} cityName="Jaipur" citySlug="jaipur" />);

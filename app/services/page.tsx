@@ -4,7 +4,7 @@ import ServicesHubView from "@/components/pages/servicesHub/ServicesHubView";
 import { CATEGORY_CONTENT } from "@/data/services/categories";
 import { seoPublic, seoPrivate } from "@/lib/seo/buildMetadata";
 import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
-import { COVERAGE_CITY, getCityCoverage } from "@/lib/services/coverage";
+import { COVERAGE_CITY, getCategoryMedia, getCityCoverage } from "@/lib/services/coverage";
 import { HUB_REVIEWED } from "@/data/services/hub";
 import { isServicesHubEnabled, SERVICES_HUB_PATH } from "@/lib/services/content";
 
@@ -25,7 +25,7 @@ export default async function ServicesHubPage() {
   // so this route is only reachable when it is on. Belt and braces:
   if (!isServicesHubEnabled()) notFound();
 
-  const coverage = await getCityCoverage();
+  const [coverage, media] = await Promise.all([getCityCoverage(), getCategoryMedia()]);
   const breadcrumbs = buildBreadcrumbJsonLd([
     { name: "Home", item: "/" },
     { name: "Services", item: SERVICES_HUB_PATH },
@@ -34,7 +34,7 @@ export default async function ServicesHubPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbs }} />
-      <ServicesHubView categories={CATEGORY_CONTENT} coverage={coverage} cityName={COVERAGE_CITY.name} citySlug={COVERAGE_CITY.slug} />
+      <ServicesHubView categories={CATEGORY_CONTENT} coverage={coverage} media={media} cityName={COVERAGE_CITY.name} citySlug={COVERAGE_CITY.slug} />
     </>
   );
 }

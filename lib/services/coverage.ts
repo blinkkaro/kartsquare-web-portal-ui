@@ -17,3 +17,35 @@ export async function getCategoryProviders(categorySlug: string, limit = 6): Pro
   const listing = await getLocationListing({ citySlug: COVERAGE_CITY.slug, categorySlug });
   return (listing?.services ?? []).slice(0, limit);
 }
+
+/** Icon, colour and photo the home page already shows for a category. */
+export interface CategoryMedia {
+  icon: string | null;
+  color: string | null;
+  image: string | null;
+}
+
+/** category slug -> media, from the public categories endpoint. Empty if the API is down: pages fall back to a plain icon tile. */
+export async function getCategoryMedia(): Promise<Record<string, CategoryMedia>> {
+  const base = process.env.NEXT_PUBLIC_API_URL;
+  if (!base) return {};
+  try {
+    const res = await fetch(`${base}/categories`, { next: { revalidate: 3600 }, headers: { Accept: "application/json" } });
+    if (!res.ok) return {};
+    const json = (await res.json()) as { data?: unknown };
+    const raw = json.data as { categories?: unknown[] } | unknown[] | undefined;
+    const list = (Array.isArray(raw) ? raw : raw?.categories ?? []) as Array<Record<string, unknown>>;
+    const out: Record<string, CategoryMedia> = {};
+    for (const c of list) {
+      if (typeof c.slug !== "string") continue;
+      out[c.slug] = {
+        icon: typeof c.icon === "string" ? c.icon : null,
+        color: typeof c.color === "string" ? c.color : null,
+        image: typeof c.image === "string" ? c.image : null,
+      };
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}

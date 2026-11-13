@@ -6,7 +6,7 @@ import { seoPrivate, seoPublic } from "@/lib/seo/buildMetadata";
 import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 import { serializeJsonLd } from "@/lib/seo/jsonLd";
 import { categoryContentPath, getCategoryContent, isCategoryIndexable, isPreviewEnabled } from "@/lib/services/content";
-import { COVERAGE_CITY, getCategoryProviders, getCityCoverage } from "@/lib/services/coverage";
+import { COVERAGE_CITY, getCategoryMedia, getCategoryProviders, getCityCoverage } from "@/lib/services/coverage";
 
 export const revalidate = 300;
 export const dynamicParams = true;
@@ -37,7 +37,7 @@ export default async function CategoryContentPage({ params }: Params) {
   // Mixed-case URL: one 308 to the lowercase canonical.
   if (category !== content.slug) permanentRedirect(categoryContentPath(content.slug));
 
-  const [coverage, providers] = await Promise.all([getCityCoverage(), getCategoryProviders(content.slug)]);
+  const [coverage, providers, media] = await Promise.all([getCityCoverage(), getCategoryProviders(content.slug), getCategoryMedia()]);
 
   const breadcrumbs = buildBreadcrumbJsonLd([
     { name: "Home", item: "/" },
@@ -57,7 +57,7 @@ export default async function CategoryContentPage({ params }: Params) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbs }} />
       {faqJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqJsonLd }} />}
-      <CategoryContentView content={content} providers={providers} coverage={coverage} cityName={COVERAGE_CITY.name} citySlug={COVERAGE_CITY.slug} />
+      <CategoryContentView content={content} providers={providers} coverage={coverage} media={media} cityName={COVERAGE_CITY.name} citySlug={COVERAGE_CITY.slug} />
     </>
   );
 }
