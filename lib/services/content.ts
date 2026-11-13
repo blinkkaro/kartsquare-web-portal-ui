@@ -1,7 +1,8 @@
 import { CATEGORY_BY_SLUG, CATEGORY_CONTENT } from "@/data/services/categories";
 import type { CategoryContent } from "./types";
 
-export const SERVICES_HUB_PATH = "/services";
+/** The content hub. /services itself stays a redirect to the app list (next.config.ts). */
+export const SERVICES_HUB_PATH = "/explore-services";
 
 /** Canonical path of a category content page. Lowercase, no trailing slash. */
 export function categoryContentPath(slug: string): string {
@@ -33,5 +34,3 @@ export function indexableCategories(): CategoryContent[] {
 export function relatedCategories(c: CategoryContent): CategoryContent[] {
   return c.related.map((s) => CATEGORY_BY_SLUG[s]).filter((x): x is CategoryContent => Boolean(x));
 }
-
-export { isServicesHubEnabled } from "./hubFlag";

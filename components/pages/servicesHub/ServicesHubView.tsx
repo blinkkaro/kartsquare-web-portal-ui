@@ -16,6 +16,8 @@ interface Props {
   coverage: Record<string, number>;
   /** Icon, colour and photo per category slug, from the API. Optional. */
   media?: Record<string, CategoryMedia>;
+  /** Slugs whose /services/c/{slug} page can be opened. Others link to the city list when they have providers, or are left out. */
+  contentSlugs?: string[];
   cityName: string;
   citySlug: string;
 }
@@ -34,8 +36,15 @@ const CHECKS = [
   "Is everything you agree written down in the chat or a bill?",
 ];
 
-const ServicesHubView: React.FC<Props> = ({ categories, coverage, media = {}, cityName, citySlug }) => {
+const ServicesHubView: React.FC<Props> = ({ categories, coverage, media = {}, contentSlugs, cityName, citySlug }) => {
   const liveCategories = categories.filter((c) => (coverage[c.slug] ?? 0) > 0);
+  // Every card must open a real page: the category guide when it is viewable, else the city list if it has providers.
+  const hrefFor = (slug: string): string | null =>
+    !contentSlugs || contentSlugs.includes(slug) ? categoryContentPath(slug) : (coverage[slug] ?? 0) > 0 ? `/${citySlug}/${slug}` : null;
+  const cards = categories.flatMap((c) => {
+    const href = hrefFor(c.slug);
+    return href ? [{ c, href }] : [];
+  });
 
   return (
     <MainLayout>
@@ -59,8 +68,8 @@ const ServicesHubView: React.FC<Props> = ({ categories, coverage, media = {}, ci
       <PageContainer>
         <Section id="categories" eyebrow="Categories" title="Service categories">
           <CardGrid min={250}>
-            {categories.map((c) => (
-              <CategoryCard key={c.slug} href={categoryContentPath(c.slug)} name={c.name} text={c.commonServices.slice(0, 4).join(", ")} media={media[c.slug]} />
+            {cards.map(({ c, href }) => (
+              <CategoryCard key={c.slug} href={href} name={c.name} text={c.commonServices.slice(0, 4).join(", ")} media={media[c.slug]} />
             ))}
           </CardGrid>
         </Section>

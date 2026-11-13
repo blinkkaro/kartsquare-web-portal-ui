@@ -1,5 +1,5 @@
 import { HUB_REVIEWED } from "@/data/services/hub";
-import { categoryContentPath, indexableCategories, isServicesHubEnabled, SERVICES_HUB_PATH } from "./content";
+import { categoryContentPath, indexableCategories, SERVICES_HUB_PATH } from "./content";
 
 /**
  * Paths of the static content pages that may be listed in the sitemap: the hub (only when it is
@@ -7,7 +7,7 @@ import { categoryContentPath, indexableCategories, isServicesHubEnabled, SERVICE
  */
 export function contentSitemapPaths(): string[] {
   const paths: string[] = [];
-  if (HUB_REVIEWED && isServicesHubEnabled()) paths.push(SERVICES_HUB_PATH);
+  if (HUB_REVIEWED) paths.push(SERVICES_HUB_PATH);
   for (const c of indexableCategories()) paths.push(categoryContentPath(c.slug));
   return paths;
 }

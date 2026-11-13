@@ -1,4 +1,3 @@
-import { isServicesHubEnabled } from "./lib/services/hubFlag";
 import type { NextConfig } from "next";
 
 /**
@@ -24,17 +23,12 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       // ── Services: /services → /cus/services-list ─────────────────────────
-      // Kept until the /services content hub is reviewed. SERVICES_HUB_ENABLED=true
-      // serves the hub at /services instead (on by default in development).
-      ...(isServicesHubEnabled()
-        ? []
-        : [
-            {
-              source: "/services",
-              destination: "/cus/services-list",
-              permanent: true,
-            },
-          ]),
+      // /services stays the app's list. The content hub lives at /explore-services.
+      {
+        source: "/services",
+        destination: "/cus/services-list",
+        permanent: true,
+      },
       // old camelCase URL (existing bookmarks / indexed links); query string is preserved
       {
         source: "/cus/servicesList",

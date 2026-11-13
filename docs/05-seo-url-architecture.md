@@ -61,13 +61,13 @@ All permanent (308/301). Static ones live in `next.config.ts`; data-driven ones 
 | R8 | `/in/{old-username}` | `/in/{current-username}` | needs backend username history |
 | — | `/contactUs`, `/aboutUs`, `/aboutus`, `/en/aboutus`, `/privacyPolicy`, `/termsConditions` | kebab-case equivalents | done (`next.config.ts`) |
 
-## Static content pages (`/services` hub, `/services/c/{category}`, sub-category copy)
+## Static content pages (`/explore-services` hub, `/services/c/{category}`, sub-category copy)
 
 Written as typed data in the repo, reviewed through pull requests. No database, no admin UI.
 
 - `data/services/categories.ts` (category pages), `data/services/landing.ts` (copy under existing `/{city}/{category}/{sub-category}` pages), `data/services/hub.ts` (hub review flag).
 - **`reviewed: false` is the default.** An unreviewed page is `noindex`, has no FAQPage JSON-LD, is absent from the sitemap, and returns 404 in production (visible in development or with `SERVICES_PREVIEW=true`). A person flips the flag in a PR after reading the copy.
-- **`/services` stays a redirect to `/cus/services-list`** in production until `SERVICES_HUB_ENABLED=true` (set at build and runtime). The flag is on by default in development (`false` forces it off). The hub is `noindex` and absent from the sitemap until `HUB_REVIEWED` is also true.
+- **The hub is `/explore-services`.** `/services` is unchanged: it stays a redirect to `/cus/services-list`. The hub is visible to everyone but `noindex` and absent from the sitemap until `HUB_REVIEWED` is true. Each hub card opens a category guide when that page is viewable, else the city list when it has providers, else it is left out, so the hub never links to a 404.
 - Route priority: the static `c` segment in `app/services/c/[category]` wins over `[first]/[second]`. `c` is not a valid city or slug. `/services/c` itself 308s to `/services`. `/services/{city}/{slug}` and legacy `/services/{slug}` are untouched.
 - Provider lists and Jaipur links come from the API (`/locations/jaipur/categories`, the listing endpoint) and appear only when a category has live services there. Provider cards link to the API's `canonical_path`. They show no rating, price or availability.
 - Copy rules are enforced by tests (`tests/unit/services`): required sections, unique title/description/H1, near-duplicate intro check, and a banned-claims list (`lib/services/claims.ts`: verified, guarantee, best, 24/7, instant, fixed price and similar; "does not guarantee" is allowed as a disclaimer).

@@ -42,11 +42,10 @@ const Footer: React.FC = () => {
       { label: t("contactUs"), href: "/contact-us" },
     ],
     services: [
-      // Customers and visitors go to /services (the content hub once it is live; until then it
-      // redirects to the services list). Providers keep their own list.
+      // Customers and visitors go to the content hub. Providers keep their own list.
       (role as string) === UserRole.SERVICE_PROVIDER
         ? { label: t("services"), href: "/spr/servicesList" }
-        : { label: t("explore_services"), href: "/services" },
+        : { label: t("explore_services"), href: "/explore-services" },
       //   { label: t("events"), href: "/events" },
       { label: t("store"), href: "/store" },
       { label: t("becomeServiceProvider"), href: "/supplier/register" },

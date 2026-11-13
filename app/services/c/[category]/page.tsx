@@ -5,7 +5,7 @@ import { CATEGORY_CONTENT } from "@/data/services/categories";
 import { seoPrivate, seoPublic } from "@/lib/seo/buildMetadata";
 import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 import { serializeJsonLd } from "@/lib/seo/jsonLd";
-import { categoryContentPath, getCategoryContent, isCategoryIndexable, isPreviewEnabled } from "@/lib/services/content";
+import { categoryContentPath, getCategoryContent, isCategoryIndexable, isPreviewEnabled, SERVICES_HUB_PATH } from "@/lib/services/content";
 import { photoSrc } from "@/lib/services/photo";
 import { COVERAGE_CITY, getCategoryMedia, getCategoryProviders, getCityCoverage } from "@/lib/services/coverage";
 
@@ -45,7 +45,7 @@ export default async function CategoryContentPage({ params }: Params) {
 
   const breadcrumbs = buildBreadcrumbJsonLd([
     { name: "Home", item: "/" },
-    { name: "Services", item: "/services" },
+    { name: "Services", item: SERVICES_HUB_PATH },
     { name: content.name, item: categoryContentPath(content.slug) },
   ]);
   // FAQPage structured data only for reviewed, real FAQ content.

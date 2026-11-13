@@ -6,7 +6,7 @@ import { Box, Typography } from "@mui/material";
 import MainLayout from "@/app/mainLayout";
 import CategoryIcon from "@/components/common/CategoryIcon";
 import { COLORS } from "@/constants/colors";
-import { categoryContentPath, relatedCategories } from "@/lib/services/content";
+import { categoryContentPath, relatedCategories, SERVICES_HUB_PATH } from "@/lib/services/content";
 import type { CategoryMedia } from "@/lib/services/coverage";
 import type { CategoryContent } from "@/lib/services/types";
 import type { Service } from "@/services/serviceList/listInteraface";
@@ -49,7 +49,7 @@ const CategoryContentView: React.FC<Props> = ({ content, providers, coverage, me
   return (
     <MainLayout>
       <HeroBand
-        crumbs={[{ name: "Home", href: "/" }, { name: "Services", href: "/services" }, { name: content.name }]}
+        crumbs={[{ name: "Home", href: "/" }, { name: "Services", href: SERVICES_HUB_PATH }, { name: content.name }]}
         eyebrow="Service category"
         title={content.h1}
         lead={content.intro[0]}
@@ -132,7 +132,7 @@ const CategoryContentView: React.FC<Props> = ({ content, providers, coverage, me
           title={live ? `Find ${content.name} providers in ${cityName}` : "Explore services on Kartsquare"}
           text="Read provider profiles and send a request describing what you need. The provider replies to you directly and you agree the details with them."
           primary={primary}
-          secondary={{ label: "All service categories", href: "/services" }}
+          secondary={{ label: "All service categories", href: SERVICES_HUB_PATH }}
         />
       </PageContainer>
     </MainLayout>

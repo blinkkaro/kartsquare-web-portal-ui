@@ -69,6 +69,24 @@ describe("rendered pages", () => {
     expect(findBannedClaims(text(html))).toEqual([]);
   });
 
+  it("hub: every card opens a real page (guide, else the city list, else it is left out)", () => {
+    const viewable = ["home-services"];
+    const html = renderToStaticMarkup(<ServicesHubView categories={CATEGORY_CONTENT} coverage={{ "home-services": 3, automotive: 2 }} contentSlugs={viewable} cityName="Jaipur" citySlug="jaipur" />);
+    const links = hrefs(html);
+    expect(links).toContain("/services/c/home-services");
+    expect(links).toContain("/jaipur/automotive");
+    // no coverage and no viewable guide: no card, so no dead link
+    expect(links).not.toContain("/services/c/fitness-sports");
+    expect(links).not.toContain("/jaipur/fitness-sports");
+    expect(links.filter((h) => h.startsWith("/services/c/"))).toEqual(["/services/c/home-services"]);
+  });
+
+  it("category page breadcrumbs link to the hub at /explore-services", () => {
+    const html = renderToStaticMarkup(<CategoryContentView content={CATEGORY_CONTENT[0]} providers={[]} coverage={{}} cityName="Jaipur" citySlug="jaipur" />);
+    expect(hrefs(html)).toContain("/explore-services");
+    expect(hrefs(html)).not.toContain("/services");
+  });
+
   it.each(LANDING_CONTENT.map((l) => [l.subCategorySlug, l] as const))("landing section %s: no h1, no claims", (_s, content) => {
     const html = renderToStaticMarkup(<LandingContentSection content={content} />);
     expect(count(html, "h1")).toBe(0);
