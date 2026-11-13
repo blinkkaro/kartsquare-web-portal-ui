@@ -738,7 +738,18 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
             >
               Browse by locality in {cityName}
             </Typography>
-            <Stack direction="row" flexWrap="wrap" gap={1}>
+            <Stack
+              direction="row"
+              gap={1}
+              sx={{
+                flexWrap: "nowrap",
+                overflowX: "auto",
+                pb: 0.5,
+                scrollbarWidth: "none",
+                "&::-webkit-scrollbar": { display: "none" },
+                "& .MuiChip-root": { flexShrink: 0 },
+              }}
+            >
               {initialListing.siblings.localities
                 .filter((l) => l.total > 0)
                 .map((loc) => (

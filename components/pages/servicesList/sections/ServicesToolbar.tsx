@@ -41,8 +41,10 @@ export default function ServicesToolbar({
     <Box
       sx={{
         display: "flex",
-        alignItems: "center",
+        flexDirection: { xs: "column", sm: "row" },
+        alignItems: { xs: "stretch", sm: "center" },
         justifyContent: "space-between",
+        gap: { xs: 1.25, sm: 1.5 },
         py: 1.5,
         mb: 2,
         borderBottom: "1px solid",
@@ -67,7 +69,7 @@ export default function ServicesToolbar({
       </Typography>
 
       {/* Right controls: Mobile Filter button + Sort Dropdown */}
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 1.5 }, minWidth: 0 }}>
         {/* Mobile filter button */}
         <Button
           onClick={onOpenMobileFilters}
@@ -79,6 +81,9 @@ export default function ServicesToolbar({
           }
           sx={{
             display: { xs: "inline-flex", lg: "none" },
+            flexShrink: 0,
+            whiteSpace: "nowrap",
+            minHeight: 40,
             px: 1.75,
             py: 0.65,
             borderRadius: "999px",
@@ -94,7 +99,7 @@ export default function ServicesToolbar({
         </Button>
 
         {/* Sort select */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flex: { xs: 1, sm: "none" }, minWidth: 0 }}>
           <Typography
             sx={{
               display: { xs: "none", sm: "inline" },
@@ -111,6 +116,8 @@ export default function ServicesToolbar({
             IconComponent={KeyboardArrowDownRoundedIcon}
             size="small"
             sx={{
+              flex: { xs: 1, sm: "none" },
+              minWidth: 0,
               fontSize: "0.84rem",
               fontWeight: 700,
               borderRadius: "10px",
