@@ -44,7 +44,6 @@ These are product and legal constraints. They apply to UI copy, metadata, JSON-L
 
 ### Known violations to fix (found while writing these docs)
 
-- `app/dashboard/page.tsx` metadata says "as a verified provider" (rule 2).
 - `DUMMY_CATEGORIES` renders when the categories request fails, which presents fake tiles as real (rule 4). It should show an error/empty state instead.
 
 ## Environments
