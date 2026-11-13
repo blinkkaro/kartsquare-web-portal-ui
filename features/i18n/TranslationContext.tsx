@@ -7,6 +7,7 @@ import { english } from "./en";
 
 // Define translation keys (example)
 export type TranslationKey =
+  | "explore_services"
   | "businessCategory"
   | "businessSubCategory"
   | "selectBusinessCategory"
