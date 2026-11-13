@@ -185,18 +185,21 @@ export default function NewHeroSection() {
             Service search karo, ya Kart AI ko apni problem batao.
           </Typography>
 
-          <SearchBar
-            variant="hero"
-            search={query}
-            onSearchChange={setQuery}
-            onSubmit={(q) => router.push(searchHref(q))}
-            placeholder={placeholder}
-            label="Kaunsi service chahiye?"
-          />
+          {/* Phones skip the search box: the Kart AI card below does the job better. Tablet and up keep it. */}
+          <Box sx={{ display: { xs: "none", sm: "block" } }}>
+            <SearchBar
+              variant="hero"
+              search={query}
+              onSearchChange={setQuery}
+              onSubmit={(q) => router.push(searchHref(q))}
+              placeholder={placeholder}
+              label="Kaunsi service chahiye?"
+            />
+          </Box>
 
           {isLoading && (
             // the same height as the chip row that replaces it
-            <Box sx={{ mt: 2.25 }} aria-hidden>
+            <Box sx={{ mt: 2.25, display: { xs: "none", sm: "block" } }} aria-hidden>
               <ShimmerBox tone="onDark" sx={{ width: 96, height: 14, mb: 1.25, borderRadius: 1 }} />
               <Box sx={{ display: "flex", gap: 1, pb: 0.5 }}>
                 {[120, 168, 150].map((w) => (
@@ -206,7 +209,7 @@ export default function NewHeroSection() {
             </Box>
           )}
           {shortcuts.length > 0 && (
-            <Box sx={{ mt: 2.25 }}>
+            <Box sx={{ mt: 2.25, display: { xs: "none", sm: "block" } }}>
               <Typography id="hero-shortcuts-label" sx={{ fontSize: "0.82rem", fontWeight: 600, color: "rgba(255,255,255,0.86)", mb: 1 }}>
                 Try searching
               </Typography>

@@ -1,5 +1,6 @@
 "use client";
 import React, { useId, useRef, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Box,
   InputBase,
@@ -7,12 +8,12 @@ import {
   useTheme,
 } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { COLORS } from "../../../../constants/colors";
 import GradientIcon from "../../GradientIcon";
-import SearchDropdown from "./SearchDropdown";
 import { searchService } from "../../../../services/search/searchService";
-import { SearchUser, SearchService as SearchServiceType } from "../../../../services/search/searchInterface";
-import { useRouter } from "next/navigation";
+import { type SearchUser, type SearchService as SearchServiceType } from "../../../../services/search/searchInterface";
+import SearchDropdown from "./SearchDropdown";
 
 interface SearchBarProps {
   search: string;
@@ -166,9 +167,38 @@ const SearchBar: React.FC<SearchBarProps> = ({
             onChange={(e) => onSearchChange(e.target.value)}
             onFocus={() => setIsFocused(true)}
             placeholder={placeholder}
-            inputProps={{ enterKeyHint: "search", autoComplete: "off", style: { fontSize: 16 } }}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setIsFocused(false);
+            }}
+            inputProps={{ enterKeyHint: "search", autoComplete: "off", style: { fontSize: 16 }, "aria-expanded": showDropdown }}
             sx={{ flex: 1, minWidth: 0, minHeight: 48, fontWeight: 500 }}
           />
+          {search && (
+            <Box
+              component="button"
+              type="button"
+              aria-label="Clear search"
+              onClick={() => {
+                onSearchChange("");
+                setIsFocused(false);
+              }}
+              sx={{
+                all: "unset",
+                cursor: "pointer",
+                width: 32,
+                height: 32,
+                flexShrink: 0,
+                display: "grid",
+                placeItems: "center",
+                borderRadius: "50%",
+                color: "text.secondary",
+                "&:hover": { bgcolor: "action.hover" },
+                "&:focus-visible": { outline: `2px solid ${COLORS.PRIMARY_PURPLE}` },
+              }}
+            >
+              <CloseRoundedIcon sx={{ fontSize: 18 }} />
+            </Box>
+          )}
           <Box
             component="button"
             type="submit"
