@@ -2,9 +2,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
-import { Avatar, Box, Button, ButtonBase, Container, IconButton, Skeleton, Typography, useTheme } from "@mui/material";
+import { Avatar, Box, Button, ButtonBase, Container, Skeleton, Typography, useTheme } from "@mui/material";
 import { motion, useReducedMotion } from "framer-motion";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import PhotoLibraryRoundedIcon from "@mui/icons-material/PhotoLibraryRounded";
 import DynamicFeedRoundedIcon from "@mui/icons-material/DynamicFeedRounded";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
@@ -13,34 +12,15 @@ import RightDrawer from "@/components/common/RightDrawer";
 import EmptyState from "@/components/common/EmptyState";
 import AddPostDrawer from "@/components/pages/myAccount/components/post/AddPostDrawer";
 import { COLORS } from "@/constants/colors";
-import { useGetInfinitePosts, useGetReels } from "@/hooks/usePosts";
-import { Posts, Visibility } from "@/services/post/postInterfaces";
+import { useGetInfinitePosts } from "@/hooks/usePosts";
+import { type Posts, Visibility } from "@/services/post/postInterfaces";
 import { selectCurrentUser, selectIsAuthenticated } from "@/features/ui/authSlice";
 import { canCreatePosts } from "@/utils/auth";
 import FeedPostCard from "./sections/FeedPostCard";
 import FeedStories from "./sections/FeedStories";
 import FeedSidebar from "./sections/FeedSidebar";
-import FeedTabs from "./sections/FeedTabs";
 import BackToTop from "./sections/BackToTop";
 import { FEED_DURATION, FEED_EASE } from "./feedMotion";
-import { FeedReelsGrid, FeedReelsStrip } from "./sections/FeedReels";
-
-type FeedTab = "for_you" | "posts" | "reels";
-const TABS: Array<{ id: FeedTab; label: string }> = [
-  { id: "for_you", label: "For you" },
-  { id: "posts", label: "Posts" },
-  { id: "reels", label: "Reels" },
-];
-/** A "Reels for you" strip appears after every this many posts in "For you". */
-const REELS_EVERY = 4;
-const REELS_PER_STRIP = 8;
-
-/** The list starting at `offset`, wrapping around, so every strip has reels to show. */
-function rotate<T>(list: T[], offset: number): T[] {
-  if (list.length === 0) return list;
-  const start = offset % list.length;
-  return [...list.slice(start), ...list.slice(0, start)];
-}
 
 type FeedUser = {
   id?: string;
@@ -73,23 +53,16 @@ export default function FeedView() {
   // Only service providers and suppliers create posts and reels; customers only read the feed.
   const canCreate = isAuthenticated && canCreatePosts(currentUser?.role);
   const reduce = useReducedMotion() === true;
-  const [tab, setTab] = useState<FeedTab>("for_you");
   const [composerOpen, setComposerOpen] = useState(false);
 
   const posts = useGetInfinitePosts({ limit: 10, visibility: Visibility.PUBLIC });
-  const reels = useGetReels();
 
   const postList = useMemo(() => posts.data?.pages.flatMap((p) => p.posts) ?? [], [posts.data]);
-  const reelList = useMemo(() => reels.data?.pages.flatMap((p) => p.posts) ?? [], [reels.data]);
-  // "Posts" shows photo and text posts; videos live in Reels.
-  const visiblePosts = useMemo(
-    () => (tab === "posts" ? postList.filter((p: Posts) => p.post_type !== "video") : postList),
-    [postList, tab],
-  );
+  // The feed shows photo and text posts; videos live in Reels (in the navbar).
+  const visiblePosts = useMemo(() => postList.filter((p: Posts) => p.post_type !== "video"), [postList]);
 
-  const activeQuery = tab === "reels" ? reels : posts;
-  const loadMoreRef = useLoadMore(!!activeQuery.hasNextPage && !activeQuery.isFetchingNextPage, () => {
-    if (activeQuery.hasNextPage && !activeQuery.isFetchingNextPage) void activeQuery.fetchNextPage();
+  const loadMoreRef = useLoadMore(!!posts.hasNextPage && !posts.isFetchingNextPage, () => {
+    if (posts.hasNextPage && !posts.isFetchingNextPage) void posts.fetchNextPage();
   });
 
   const border = dark ? COLORS.NEW_UI.CARD_BORDER_DARK : COLORS.NEW_UI.CARD_BORDER_LIGHT;
@@ -175,24 +148,12 @@ export default function FeedView() {
         ),
       );
     }
-    return visiblePosts.map((post, i) => {
-      // After every REELS_EVERY posts, a reels strip; each strip starts further
-      // into the reels list so consecutive strips don't repeat the same videos.
-      const stripNo = (i + 1) % REELS_EVERY === 0 ? (i + 1) / REELS_EVERY - 1 : -1;
-      const stripReels = stripNo >= 0 ? rotate(reelList, stripNo * REELS_PER_STRIP) : [];
-      return (
-        <React.Fragment key={post.id}>
-          <FeedPostCard post={post} />
-          {tab === "for_you" && stripNo >= 0 && <FeedReelsStrip reels={stripReels} />}
-        </React.Fragment>
-      );
-    });
+    return visiblePosts.map((post) => <FeedPostCard key={post.id} post={post} />);
   };
 
   const endOfList = () => {
-    if (activeQuery.isFetchingNextPage) return tab === "reels" ? null : postSkeleton(99);
-    const items = tab === "reels" ? reelList : visiblePosts;
-    if (!activeQuery.hasNextPage && items.length > 0 && !activeQuery.isLoading) {
+    if (posts.isFetchingNextPage) return postSkeleton(99);
+    if (!posts.hasNextPage && visiblePosts.length > 0 && !posts.isLoading) {
       return (
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1, py: 4 }}>
           <Box sx={{ width: 36, height: 36, borderRadius: "50%", display: "grid", placeItems: "center", bgcolor: COLORS.PURPLE_ALPHA_10, color: COLORS.PRIMARY_PURPLE }}>
@@ -228,10 +189,10 @@ export default function FeedView() {
               {isAuthenticated && (
                 <>
                   <Box sx={{ mb: { xs: 0, sm: 2 } }}>
-                    <FeedStories currentUser={currentUser} />
+                    <FeedStories currentUser={currentUser} onCreatePost={canCreate ? () => setComposerOpen(true) : undefined} />
                   </Box>
 
-                  {/* Composer (tablet/desktop); phones use the + button. Providers and suppliers only. */}
+                  {/* Composer (tablet/desktop); phones use the + button. Providers only. */}
                   {canCreate && (
                   <Box sx={{ ...cardSx, display: { xs: "none", sm: "flex" }, alignItems: "center", gap: 1.5, p: 1.75, mb: 2 }}>
                     <Avatar src={currentUser?.profile_pic || undefined} alt={myName} sx={{ width: 40, height: 40, fontWeight: 700, bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10, color: accent }}>
@@ -280,64 +241,9 @@ export default function FeedView() {
                 </>
               )}
 
-              {/* Tabs: one pill slides to the selected tab */}
-              <FeedTabs
-                tabs={TABS}
-                value={tab}
-                onChange={setTab}
-                ariaLabel="Feed"
-                trailing={
-                  /* Create (phones): in the tab row, clear of the floating Kart AI button. Providers and suppliers only. */
-                  canCreate && (
-                    <IconButton
-                      onClick={() => setComposerOpen(true)}
-                      aria-label="Create a post"
-                      sx={{
-                        display: { xs: "inline-flex", sm: "none" },
-                        ml: "auto",
-                        width: 44,
-                        height: 44,
-                        bgcolor: COLORS.PRIMARY_PURPLE,
-                        color: COLORS.WHITE,
-                        transition: "transform 120ms ease",
-                        "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
-                        "&:active": { transform: "scale(0.92)" },
-                        "@media (prefers-reduced-motion: reduce)": { transition: "none", "&:active": { transform: "none" } },
-                      }}
-                    >
-                      <AddRoundedIcon />
-                    </IconButton>
-                  )
-                }
-              />
-
-              <motion.div
-                key={tab}
-                id="feed-panel"
-                role="tabpanel"
-                aria-labelledby={`feed-tab-${tab}`}
-                initial={reduce ? false : { opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: FEED_DURATION.enter, ease: FEED_EASE }}
-              >
-              {tab === "reels" ? (
-                reels.isError && reelList.length === 0 ? (
-                  stateCard(
-                    "Couldn't load reels",
-                    "Something went wrong while loading reels. Check your connection and try again.",
-                    <Button onClick={() => reels.refetch()} startIcon={<RefreshRoundedIcon />} sx={primaryBtnSx}>
-                      Try again
-                    </Button>,
-                  )
-                ) : !reels.isLoading && reelList.length === 0 ? (
-                  stateCard("No reels yet", "Short videos from providers will show up here.")
-                ) : (
-                  <FeedReelsGrid reels={reelList} loading={reels.isLoading} />
-                )
-              ) : (
-                renderPosts()
-              )}
-              </motion.div>
+              <Box id="feed-panel" component={motion.div} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: FEED_DURATION.enter, ease: FEED_EASE }}>
+                {renderPosts()}
+              </Box>
 
               {/* "1px", not 1: in sx a 1 means 100%, which made this trigger as tall as the feed. */}
               <Box ref={loadMoreRef} sx={{ height: "1px" }} />

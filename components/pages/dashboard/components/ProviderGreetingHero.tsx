@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useSyncExternalStore } from "react";
+import Link from "next/link";
 import { alpha, Avatar, Box, ButtonBase, Chip, Typography } from "@mui/material";
 import { OpenInNewRounded, PlaceRounded } from "@mui/icons-material";
 import { motion, useReducedMotion } from "framer-motion";
-import Link from "next/link";
+import Button from "@/components/common/Button";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { greetingPart, publicProfilePath } from "@/lib/providerDashboard";
 import type { DashboardProfile } from "@/services/providerDashboard/providerDashboard.interface";
+import { DASHBOARD_BUTTON_SX } from "./buttonSx";
 
 interface ProviderGreetingHeroProps {
   profile: DashboardProfile;
@@ -23,9 +25,12 @@ const ProviderGreetingHero: React.FC<ProviderGreetingHeroProps> = ({
 }) => {
   const { t } = useTranslate();
   const reduceMotion = useReducedMotion();
-  // Greeting depends on the visitor's clock: resolve after mount to avoid a hydration mismatch.
-  const [part, setPart] = useState<"morning" | "afternoon" | "evening" | null>(null);
-  useEffect(() => setPart(greetingPart(new Date().getHours())), []);
+  // The greeting depends on the visitor's clock: null while rendering on the server, so there is no hydration mismatch.
+  const part = useSyncExternalStore(
+    () => () => undefined,
+    () => greetingPart(new Date().getHours()),
+    () => null,
+  );
 
   const name = profile.first_name?.trim() || profile.business_name?.trim() || "";
   const publicPath = publicProfilePath(profile.username);
@@ -46,8 +51,8 @@ const ProviderGreetingHero: React.FC<ProviderGreetingHeroProps> = ({
         position: "relative",
         overflow: "hidden",
         borderRadius: "24px",
-        p: { xs: 3, md: 5 },
-        mb: { xs: 3, md: 4 },
+        p: { xs: 2, md: 4 },
+        mb: { xs: 2, md: 3 },
         color: COLORS.WHITE,
         background: `linear-gradient(135deg, ${COLORS.PURPLE_DEEP} 0%, ${COLORS.PRIMARY_PURPLE} 62%, ${COLORS.PURPLE_HOVER} 100%)`,
       }}
@@ -89,9 +94,9 @@ const ProviderGreetingHero: React.FC<ProviderGreetingHeroProps> = ({
           position: "relative",
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
-          alignItems: { xs: "flex-start", md: "center" },
+          alignItems: { xs: "stretch", md: "center" },
           justifyContent: "space-between",
-          gap: 3,
+          gap: { xs: 2, md: 3 },
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 2, md: 3 }, minWidth: 0 }}>
@@ -109,8 +114,8 @@ const ProviderGreetingHero: React.FC<ProviderGreetingHeroProps> = ({
               src={profile.profile_pic ?? undefined}
               alt={name}
               sx={{
-                width: { xs: 64, md: 88 },
-                height: { xs: 64, md: 88 },
+                width: { xs: 56, md: 88 },
+                height: { xs: 56, md: 88 },
                 border: `3px solid ${COLORS.PURPLE_DEEP}`,
               }}
             >
@@ -131,14 +136,14 @@ const ProviderGreetingHero: React.FC<ProviderGreetingHeroProps> = ({
             >
               {t("pd_hi", { name })}
             </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 1, mt: 1.5 }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 1, mt: 1 }}>
               <Chip
                 label={t("pd_role_provider")}
                 size="small"
                 sx={{ bgcolor: alpha(COLORS.WHITE, 0.18), color: COLORS.WHITE, fontWeight: 600 }}
               />
               {profile.business_name && (
-                <Typography sx={{ fontWeight: 600, opacity: 0.95 }}>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
                   {profile.business_name}
                 </Typography>
               )}
@@ -152,14 +157,7 @@ const ProviderGreetingHero: React.FC<ProviderGreetingHeroProps> = ({
           </Box>
         </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: { xs: "flex-start", md: "flex-end" },
-            gap: 1.5,
-          }}
-        >
+        <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 1.5 }}>
           <ButtonBase
             role="switch"
             aria-checked={open}
@@ -170,10 +168,9 @@ const ProviderGreetingHero: React.FC<ProviderGreetingHeroProps> = ({
               display: "flex",
               alignItems: "center",
               gap: 1.5,
-              minHeight: 48,
-              pl: 1.5,
-              pr: 3,
-              borderRadius: "999px",
+              minHeight: 44,
+              px: 2.5,
+              borderRadius: "30px",
               bgcolor: alpha(COLORS.WHITE, open ? 0.22 : 0.1),
               border: `1px solid ${alpha(COLORS.WHITE, 0.35)}`,
               backdropFilter: "blur(8px)",
@@ -183,39 +180,38 @@ const ProviderGreetingHero: React.FC<ProviderGreetingHeroProps> = ({
               "&.Mui-disabled": { opacity: 0.7 },
             }}
           >
-            <Box sx={{ position: "relative", width: 12, height: 12 }}>
-              <Box
-                sx={{
-                  position: "absolute",
-                  inset: 0,
-                  borderRadius: "50%",
-                  bgcolor: open ? COLORS.SUCCESS_GREEN : alpha(COLORS.WHITE, 0.5),
-                }}
-              />
-            </Box>
-            <Typography sx={{ fontWeight: 700 }}>{open ? t("pd_open") : t("pd_away")}</Typography>
+            <Box
+              aria-hidden
+              sx={{
+                width: 10,
+                height: 10,
+                borderRadius: "50%",
+                bgcolor: open ? COLORS.SUCCESS_GREEN : alpha(COLORS.WHITE, 0.5),
+              }}
+            />
+            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: "0.875rem" }}>
+              {open ? t("pd_open") : t("pd_away")}
+            </Typography>
           </ButtonBase>
 
           {publicPath && (
-            <ButtonBase
+            <Button
               component={Link}
               href={publicPath}
+              variant="outlined"
+              endIcon={<OpenInNewRounded />}
               sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 0.75,
-                minHeight: 44,
-                px: 1,
-                borderRadius: "8px",
-                fontWeight: 600,
-                textDecoration: "underline",
-                textUnderlineOffset: 4,
-                "&.Mui-focusVisible": { outline: `3px solid ${COLORS.WHITE}`, outlineOffset: 2 },
+                ...DASHBOARD_BUTTON_SX,
+                color: COLORS.WHITE,
+                borderColor: alpha(COLORS.WHITE, 0.35),
+                "&:hover": {
+                  bgcolor: alpha(COLORS.WHITE, 0.15),
+                  borderColor: alpha(COLORS.WHITE, 0.6),
+                },
               }}
             >
-              {t("pd_view_public")}
-              <OpenInNewRounded sx={{ fontSize: 18 }} />
-            </ButtonBase>
+              {t("pd_my_page")}
+            </Button>
           )}
         </Box>
       </Box>

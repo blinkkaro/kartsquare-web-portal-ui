@@ -1,16 +1,18 @@
 "use client";
 
 import React from "react";
-import { Box, Button, Typography } from "@mui/material";
+import Link from "next/link";
+import { Box, Typography } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { CheckRounded } from "@mui/icons-material";
 import { motion, useReducedMotion } from "framer-motion";
-import Link from "next/link";
+import Button from "@/components/common/Button";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { COMPLETENESS_ROUTES } from "@/lib/providerDashboard";
 import type { ProfileCompleteness as ProfileCompletenessData } from "@/services/providerDashboard/providerDashboard.interface";
 import AnimatedNumber from "./AnimatedNumber";
+import { DASHBOARD_BUTTON_SX } from "./buttonSx";
 
 interface ProfileCompletenessProps {
   completeness: ProfileCompletenessData;
@@ -38,7 +40,7 @@ const ProfileCompleteness: React.FC<ProfileCompletenessProps> = ({ completeness 
       sx={{
         borderRadius: "16px",
         p: 3,
-        bgcolor: "background.paper",
+        bgcolor: COLORS.WHITE,
         border: `1px solid ${COLORS.NEW_UI.CARD_BORDER_LIGHT}`,
         boxShadow: COLORS.NEW_UI.CARD_SHADOW_LIGHT,
       }}
@@ -141,7 +143,6 @@ const ProfileCompleteness: React.FC<ProfileCompletenessProps> = ({ completeness 
               sx={{
                 fontWeight: step.done ? 500 : 600,
                 color: step.done ? COLORS.TEXT.SECONDARY_LIGHT : COLORS.TEXT.PRIMARY_LIGHT,
-                textDecoration: step.done ? "line-through" : "none",
               }}
             >
               {t(`pd_step_${step.key}`)}
@@ -159,16 +160,8 @@ const ProfileCompleteness: React.FC<ProfileCompletenessProps> = ({ completeness 
       <Button
         component={Link}
         href={COMPLETENESS_ROUTES[completeness.next_step]}
-        variant="contained"
         fullWidth
-        sx={{
-          minHeight: 48,
-          borderRadius: "12px",
-          fontWeight: 700,
-          textTransform: "none",
-          bgcolor: COLORS.PRIMARY_PURPLE,
-          "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
-        }}
+        sx={DASHBOARD_BUTTON_SX}
       >
         {t("pd_profile_next", { step: nextLabel })}
       </Button>

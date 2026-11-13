@@ -99,10 +99,8 @@ export const getUserId = (): string | null => {
 };
 
 /**
- * Who may create posts and reels: service providers and suppliers. Customers can read, like and comment,
- * but never see the create or upload controls. (The backend must enforce this too; hiding a button is not security.)
+ * Who may create posts, reels and stories: service providers only, for now. Everyone else can read, like and
+ * comment, but never sees the create or upload controls. (The backend must enforce this too; hiding a button is
+ * not security.)
  */
-export const canCreatePosts = (role?: string | null): boolean => {
-  const r = role?.toUpperCase();
-  return r === UserRole.SERVICE_PROVIDER || r === UserRole.SUPPLIER;
-};
+export const canCreatePosts = (role?: string | null): boolean => role?.toUpperCase() === UserRole.SERVICE_PROVIDER;

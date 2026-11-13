@@ -45,6 +45,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import GetQuoteModal from "./GetQuoteModal";
 import { getServiceHref } from "@/utils/serviceRoute";
+import { SERVICE_FALLBACK_IMAGE } from "@/constants/media";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 const NEW_LISTING_WINDOW_DAYS = 30;
@@ -239,7 +240,7 @@ const CustomerServiceDetails = () => {
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
       : [
-          "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+          SERVICE_FALLBACK_IMAGE,
         ];
 
   const isPriceRequired =

@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { Add, ArrowBack, GridOn, MovieFilter } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
+import { canCreatePosts, getUserRole } from "@/utils/auth";
 import RightDrawer from "@/components/common/RightDrawer";
 import { Posts } from "@/services/post/postInterfaces";
 import { usePosts, useReels } from "@/hooks/useProfile";
@@ -198,7 +199,7 @@ export default function PostModel({ onClose }: { onClose: () => void }) {
       />
 
       {/* Floating Action Button - Only show in Grid or if desired in both */}
-      {viewMode === "grid" && (
+      {viewMode === "grid" && canCreatePosts(getUserRole()) && (
         <Fab
           color="primary"
           aria-label="add post"

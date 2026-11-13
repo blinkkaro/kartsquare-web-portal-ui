@@ -44,7 +44,6 @@ function PersonalInfoView() {
         <Typography
           variant="h4"
           sx={{
-            fontWeight: "500",
             color: isDark
               ? COLORS.TEXT.PRIMARY_DARK
               : COLORS.TEXT.PRIMARY_LIGHT,

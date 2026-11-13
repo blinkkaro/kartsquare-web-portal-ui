@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { alpha, Box, ButtonBase, Typography } from "@mui/material";
 import {
   CheckCircleRounded,
@@ -10,7 +11,6 @@ import {
   PersonAddAltRounded,
 } from "@mui/icons-material";
 import { motion, useReducedMotion } from "framer-motion";
-import Link from "next/link";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import type { DashboardAttention } from "@/services/providerDashboard/providerDashboard.interface";
@@ -56,18 +56,35 @@ const NeedsAttention: React.FC<NeedsAttentionProps> = ({ attention }) => {
   ];
   const active = rows.filter((r) => r.count > 0);
 
+  if (active.length === 0) {
+    return (
+      <Box
+        component={motion.section}
+        aria-label={t("pd_attention_title")}
+        initial={reduceMotion ? false : { opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1.5,
+          px: 2,
+          py: 1.5,
+          borderRadius: "16px",
+          bgcolor: alpha(COLORS.SUCCESS_GREEN, 0.1),
+          border: `1px solid ${alpha(COLORS.SUCCESS_GREEN, 0.35)}`,
+          color: COLORS.TEXT.PRIMARY_LIGHT,
+        }}
+      >
+        <CheckCircleRounded sx={{ color: COLORS.SUCCESS_GREEN }} />
+        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+          {t("pd_attention_clear")}
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
-    <Box
-      component="section"
-      aria-labelledby="needs-attention-title"
-      sx={{
-        borderRadius: "16px",
-        p: 3,
-        bgcolor: "background.paper",
-        border: `1px solid ${COLORS.NEW_UI.CARD_BORDER_LIGHT}`,
-        boxShadow: COLORS.NEW_UI.CARD_SHADOW_LIGHT,
-      }}
-    >
+    <Box component="section" aria-labelledby="needs-attention-title" sx={{ height: "100%" }}>
       <Typography id="needs-attention-title" variant="h5" component="h2" sx={{ mb: 2 }}>
         {t("pd_attention_title")}
       </Typography>

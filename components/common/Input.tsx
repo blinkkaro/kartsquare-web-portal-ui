@@ -59,13 +59,7 @@ const Input: React.FC<InputProps> = ({
     },
     "& .MuiInputBase-input": {
       padding: "8.5px 10px",
-      fontSize: "0.85rem",
-      [theme.breakpoints.up("lg")]: {
-        fontSize: "0.875rem",
-      },
-      [theme.breakpoints.up("xl")]: {
-        fontSize: "0.95rem",
-      },
+      fontSize: "0.875rem",
     },
     "& .MuiInputAdornment-root .MuiSvgIcon-root": {
       fontSize: "1.15rem",

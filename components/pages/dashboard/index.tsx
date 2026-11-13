@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Box, Card, CardActionArea, CardContent, Grid, Typography, useTheme } from "@mui/material";
+import React, { useEffect } from "react";
+import { Box, Grid, Typography, useTheme } from "@mui/material";
 import { Campaign } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -13,18 +13,13 @@ import RevenueChart from "./components/RevenueChart";
 import UpcomingBookings from "./components/UpcomingBookings";
 import LatestReviews from "./components/LatestReviews"; // Add this
 import LatestLeads from "./components/LatestLeads";
-import UpcomingEvents from "./components/UpcomingEvents";
-import RecentTransactions from "./components/RecentTransactions";
 import { useProviderDashboard, useSetAvailability } from "@/hooks/useProviderDashboard";
+import type { ProviderDashboardChartResponse, stats as ProviderStats } from "@/services/providerDashboard/providerDashboard.interface";
 import { useSupplierDashboard } from "@/hooks/useSupplierDashboard";
-import ProviderBookingDetailsDrawer from "../provider/bookings/ProviderBookingDetailsDrawer";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import toast from "react-hot-toast";
 import ErrorMessage from "@/components/common/ErrorMessage";
-import ProviderGreetingHero from "./components/ProviderGreetingHero";
-import NeedsAttention from "./components/NeedsAttention";
-import ProfileCompleteness from "./components/ProfileCompleteness";
-import ShareKit from "./components/ShareKit";
+import ProviderDashboardLayout from "./ProviderDashboardLayout";
 
 function DashboardView() {
   const theme = useTheme();
@@ -96,42 +91,50 @@ function DashboardView() {
       ? supplierDashboardData?.latest_reviews
       : providerDashboardData?.latest_reviews;
 
+  // Service providers get their own layout; suppliers keep the original one below.
+  if (providerProfile) {
+    return (
+      <ProviderDashboardLayout
+        profile={providerProfile}
+        attention={attention}
+        stats={stats as ProviderStats | undefined}
+        chartData={chartData as ProviderDashboardChartResponse | undefined}
+        upcomingBookings={providerDashboardData?.upcoming_bookings ?? []}
+        latestReviews={providerDashboardData?.latest_reviews ?? []}
+        hasError={Boolean(error)}
+        onToggleAvailability={(accepting) =>
+          setAvailability.mutate(accepting, {
+            onError: () => toast.error(t("pd_availability_error")),
+          })
+        }
+        isTogglingAvailability={setAvailability.isPending}
+      />
+    );
+  }
+
   return (
     <Box sx={{ py: { xs: 2, md: 3 }, mx: { xs: 2, md: 3, lg: 10, xl: 20 } }}>
       <ErrorMessage isVisible={Boolean(error)} error={t("pd_dashboard_error")} />
-      {providerProfile && (
-        <ProviderGreetingHero
-          profile={providerProfile}
-          onToggleAvailability={(accepting) =>
-            setAvailability.mutate(accepting, {
-              onError: () => toast.error(t("pd_availability_error")),
-            })
-          }
-          isTogglingAvailability={setAvailability.isPending}
-        />
-      )}
       {/* Header row: Title + Tools */}
       <Box
         sx={{
           display: "flex",
           alignItems: { xs: "flex-start", sm: "center" },
-          justifyContent: providerProfile ? "flex-end" : "space-between",
+          justifyContent: "space-between",
           flexDirection: { xs: "column", sm: "row" },
           gap: 2,
           mb: { xs: 3, md: 4 },
         }}
       >
-        {!providerProfile && (
-          <Typography
-            variant="h4"
-            sx={{
-              fontWeight: 600,
-              color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-            }}
-          >
-            {t("dashboard")}
-          </Typography>
-        )}
+        <Typography
+          variant="h4"
+          sx={{
+            fontWeight: 600,
+            color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+          }}
+        >
+          {t("dashboard")}
+        </Typography>
 
         {/* Quick Tools Strip */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -213,7 +216,6 @@ function DashboardView() {
         {/* Left Column - Main Content */}
         <Grid size={{ xs: 12, lg: 8 }}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {attention && <NeedsAttention attention={attention} />}
             {/* Metric Cards */}
             <MetricCards
               stats={
@@ -248,8 +250,6 @@ function DashboardView() {
         {/* Right Column - Sidebar */}
         <Grid size={{ xs: 12, lg: 4 }}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {providerProfile && <ProfileCompleteness completeness={providerProfile.completeness} />}
-            {providerProfile && <ShareKit username={providerProfile.username} />}
             {/* Upcoming Bookings / Enquiries */}
             <UpcomingBookings
               bookings={upcomingData || []}

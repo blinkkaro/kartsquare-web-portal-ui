@@ -24,8 +24,9 @@ export default function NativeBridge() {
   const role = user?.role ?? null;
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.ReactNativeWebView) {
-      // Fallback in case the pre-paint script in layout ran before the bridge existed.
+    if (typeof window !== "undefined" && window.__KARTSQUARE_WEBVIEW__) {
+      // Fallback in case the pre-paint script in layout ran before the app injected its flag.
+      // Only app builds that carry a native tab bar set the flag, so older builds keep the web nav.
       document.documentElement.setAttribute("data-native", "1");
     }
   }, []);

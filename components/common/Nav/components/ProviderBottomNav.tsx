@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { alpha, Box, ButtonBase, Drawer, styled, Typography } from "@mui/material";
 import { useReducedMotion } from "framer-motion";
@@ -145,11 +145,11 @@ const TabInner: React.FC<{ item: Pick<NavItem, "label" | "icon"> }> = ({ item })
 const ProviderBottomNav: React.FC<ProviderBottomNavProps> = ({ primary, more, currentPath }) => {
   const { t } = useTranslate();
   const reduce = useReducedMotion() === true;
-  const [sheetOpen, setSheetOpen] = useState(false);
+  // The sheet remembers the path it was opened on, so moving to another page closes it by itself.
+  const [sheetPath, setSheetPath] = useState<string | null>(null);
+  const sheetOpen = sheetPath === currentPath;
+  const setSheetOpen = (open: boolean) => setSheetPath(open ? currentPath : null);
   usePublishHeight();
-
-  // Close the sheet when the route changes.
-  useEffect(() => setSheetOpen(false), [currentPath]);
 
   const activeHref = primary.find((i) => isActivePath(currentPath, i.href))?.href ?? null;
   const moreActive = !activeHref && more.some((i) => isActivePath(currentPath, i.href));

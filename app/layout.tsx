@@ -156,13 +156,15 @@ export default function RootLayout({
         style={{ fontFamily: "var(--font-jakarta), var(--font-mukta), system-ui, -apple-system, sans-serif" }}
         suppressHydrationWarning
       >
-        {/* Flags the Kartsquare mobile app WebView before first paint so
-            [data-native-hide] elements (footer, bottom nav) never flash.
-            RN WebView injects window.ReactNativeWebView; the app may also
-            append "KartsquareApp" to the user agent. */}
+        {/* Flags the Kartsquare mobile app before first paint so [data-native-hide]
+            elements (footer, bottom nav) never flash. Only builds that have a native tab bar
+            announce themselves: they set window.__KARTSQUARE_WEBVIEW__ (or add "KartsquareApp" to
+            the user agent). Do NOT key this on window.ReactNativeWebView: every React Native
+            WebView has that, including older app builds with no native tab bar, and the page would
+            then hide its own nav and leave the user with none. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{if(window.ReactNativeWebView||/KartsquareApp/i.test(navigator.userAgent)){document.documentElement.setAttribute("data-native","1");}}catch(e){}})();`,
+            __html: `(function(){try{if(window.__KARTSQUARE_WEBVIEW__||/KartsquareApp/i.test(navigator.userAgent)){document.documentElement.setAttribute("data-native","1");}}catch(e){}})();`,
           }}
         />
         {/* Plain script avoids Turbopack chunk split issues from next/script in RootLayout */}

@@ -35,6 +35,7 @@ import CustomerServicePricing from "@/components/common/CustomerServicePricing";
 import { review_type } from "@/services/providerDashboard/providerDashboard.interface";
 import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
 import { useProfile, useUpdateShowNumber } from "@/hooks/useProfile";
+import { SERVICE_FALLBACK_IMAGE } from "@/constants/media";
 
 const ProviderServiceDetails = () => {
   const params = useParams();
@@ -157,7 +158,7 @@ const ProviderServiceDetails = () => {
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
       : [
-          "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+          SERVICE_FALLBACK_IMAGE,
         ];
 
   return (

@@ -18,6 +18,7 @@ import {
   StoryItem,
 } from "@/services/stories/stories.interface";
 import { useAddStory } from "@/hooks/useStories";
+import { canCreatePosts } from "@/utils/auth";
 import { MediaType } from "@/services/stories/stories.interface";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import { secureStorage } from "@/helper/SecureStorage";
@@ -33,7 +34,7 @@ const StoriesSection = ({
   const theme = useTheme();
   const profile = secureStorage.getItem("user_details");
   const { t } = useTranslationContext();
-  const isCustomer = profile?.role === AppUserType.CUSTOMER;
+  const isCustomer = !canCreatePosts(profile?.role); // only providers add stories, for now
 
   const [viewerOpen, setViewerOpen] = useState(false);
   const [addStoryOpen, setAddStoryOpen] = useState(false);

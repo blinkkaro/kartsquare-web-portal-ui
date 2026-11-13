@@ -116,7 +116,7 @@ const NavActions: React.FC<NavActionsProps> = ({
         )} */}
 
         {/* Provider shortcuts: dashboard + the page customers see */}
-        {profile?.role?.toUpperCase() === AppUserType.SERVICE_PROVIDER && (
+        {!isMobile && !isTablet && profile?.role?.toUpperCase() === AppUserType.SERVICE_PROVIDER && (
           <>
             <StyledIconButton
               size="small"

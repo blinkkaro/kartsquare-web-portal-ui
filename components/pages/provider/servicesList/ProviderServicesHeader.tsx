@@ -1,31 +1,51 @@
 "use client";
 import React from "react";
-import { Typography, useTheme } from "@mui/material";
-import { COLORS } from "../../../../constants/colors";
-import { getUserRole, UserRole } from "../../../../utils/auth";
-import { english } from "../../../../features/i18n/en";
+import { AddRounded } from "@mui/icons-material";
+import { Box, Typography } from "@mui/material";
+import Button from "@/components/common/Button";
+import PageTitle from "@/components/common/PageTitle";
+import { COLORS } from "@/constants/colors";
+import { useTranslate } from "@/hooks/useTranslate";
 
-const ProviderServicesHeader = () => {
-    const theme = useTheme();
-    const isDark = theme.palette.mode === "dark";
-    const userRole = getUserRole();
+interface ProviderServicesHeaderProps {
+  title: string;
+  /** Second line under the title, for example "12 listed · 9 active". */
+  subtitle?: string;
+  /** Providers get the primary action; everyone else sees only the title. */
+  onAdd?: () => void;
+}
 
-    const pageTitle = userRole === UserRole.SERVICE_PROVIDER
-        ? english.my_services
-        : english.services_for_you;
-
-    return (
-        <Typography
-            variant="h4"
-            fontWeight="bold"
-            sx={{
-                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-                lineHeight: { xs: 1.3, sm: 1.4 },
-            }}
+/** Page title, a plain-language summary, and the one primary action. */
+const ProviderServicesHeader = ({ title, subtitle, onAdd }: ProviderServicesHeaderProps) => {
+  const { t } = useTranslate();
+  return (
+    <Box
+      component="header"
+      sx={{
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
+        alignItems: { xs: "stretch", sm: "center" },
+        justifyContent: "space-between",
+        gap: 2,
+        mb: { xs: 2, md: 3 },
+      }}
+    >
+      <Box sx={{ minWidth: 0 }}>
+        <PageTitle subtitle={subtitle} subtitleProps={{ variant: "body2", sx: { mt: 0.5 } }}>
+          {title}
+        </PageTitle>
+      </Box>
+      {onAdd && (
+        <Button
+          onClick={onAdd}
+          startIcon={<AddRounded />}
+          sx={{ minHeight: 44, px: 3, whiteSpace: "nowrap" }}
         >
-            {pageTitle}
-        </Typography>
-    );
+          {t("sv_add")}
+        </Button>
+      )}
+    </Box>
+  );
 };
 
 export default ProviderServicesHeader;

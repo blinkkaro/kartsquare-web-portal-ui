@@ -22,6 +22,7 @@ import EmptyState from "@/components/common/EmptyState";
 import { useCustomerBookings } from "@/hooks/useBookings";
 import BookingStatusCard from "@/components/common/BookingStatusCard";
 import { IconButton } from "@mui/material";
+import { SERVICE_FALLBACK_IMAGE } from "@/constants/media";
 
 type ViewMode = "table" | "card";
 
@@ -339,7 +340,7 @@ const BookingsPage = () => {
                             currency: booking.currency,
                             name: booking.service_name,
                             image:
-                              booking.service_images?.[0] || "/placeholder.png",
+                              booking.service_images?.[0] || SERVICE_FALLBACK_IMAGE,
                             status: booking.status,
                             price: booking.service_price,
                             time: booking.booking_at,

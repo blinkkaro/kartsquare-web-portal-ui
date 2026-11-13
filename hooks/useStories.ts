@@ -41,12 +41,12 @@ export const useAddStory = () => {
     mutationFn: (story: CreateStory) => storiesService.createStory(story),
 
     onMutate: async (newStory) => {
-      const queryKey = ["stories", 1, 10];
+      // Every stories list on screen (home asks for 10, the feed for 20) shares this key prefix.
+      const queryKey = ["stories"];
 
       await queryClient.cancelQueries({ queryKey });
 
-      const previousData =
-        queryClient.getQueryData<InfiniteData<StoriesListResponse>>(queryKey);
+      const previousData = queryClient.getQueriesData<InfiniteData<StoriesListResponse>>({ queryKey });
 
       const optimisticStory = {
         story_id: Date.now().toString(),
@@ -57,10 +57,10 @@ export const useAddStory = () => {
         is_visited: false,
       };
 
-      queryClient.setQueryData<InfiniteData<StoriesListResponse>>(
-        queryKey,
+      queryClient.setQueriesData<InfiniteData<StoriesListResponse>>(
+        { queryKey },
         (oldData) => {
-          if (!oldData) return { pages: [], pageParams: [] };
+          if (!oldData) return oldData;
 
           return {
             ...oldData,
@@ -109,13 +109,11 @@ export const useAddStory = () => {
       return { previousData };
     },
     onError: (err, newStory, context) => {
-      if (context?.previousData) {
-        queryClient.setQueryData(["stories", 1, 10], context.previousData);
-      }
+      context?.previousData.forEach(([key, data]) => queryClient.setQueryData(key, data));
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["stories", 1, 10] });
+      queryClient.invalidateQueries({ queryKey: ["stories"] });
     },
   });
 };

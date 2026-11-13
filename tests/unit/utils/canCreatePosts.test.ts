@@ -1,16 +1,16 @@
 import { canCreatePosts } from "@/utils/auth";
 
 describe("canCreatePosts", () => {
-  it.each(["SERVICE_PROVIDER", "SUPPLIER"])("lets a %s create posts and reels", (role) => {
-    expect(canCreatePosts(role)).toBe(true);
+  it("lets a service provider create posts, reels and stories", () => {
+    expect(canCreatePosts("SERVICE_PROVIDER")).toBe(true);
   });
 
   it("is not case sensitive about the role the backend sends", () => {
     expect(canCreatePosts("service_provider")).toBe(true);
-    expect(canCreatePosts("Supplier")).toBe(true);
+    expect(canCreatePosts("Service_Provider")).toBe(true);
   });
 
-  it.each(["CUSTOMER", "INFLUENCER", "ADMIN", "MANAGER", "SUPPORT"])("keeps creating away from a %s", (role) => {
+  it.each(["CUSTOMER", "SUPPLIER", "INFLUENCER", "ADMIN", "MANAGER", "SUPPORT"])("keeps creating away from a %s", (role) => {
     expect(canCreatePosts(role)).toBe(false);
   });
 

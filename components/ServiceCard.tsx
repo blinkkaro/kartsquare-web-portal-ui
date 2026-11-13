@@ -26,6 +26,7 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { useDispatch } from "react-redux";
 import { closeDrawer } from "@/features/ui/profileDrawerSlice";
 import { getServiceHref } from "@/utils/serviceRoute";
+import { SERVICE_FALLBACK_IMAGE } from "@/constants/media";
 
 interface ServiceCardProps {
   service: Service;
@@ -45,7 +46,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
       : [
-          "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+          SERVICE_FALLBACK_IMAGE,
         ];
 
   const handlePrevImage = (e: React.MouseEvent) => {

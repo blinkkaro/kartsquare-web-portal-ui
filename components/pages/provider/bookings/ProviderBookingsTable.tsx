@@ -9,7 +9,6 @@ import {
     TableHead,
     TableRow,
     Paper,
-    useTheme,
 } from "@mui/material";
 import { UserBooking } from "../../../../services/booking/bookingInterface";
 import { COLORS } from "../../../../constants/colors";
@@ -17,6 +16,7 @@ import { english } from "../../../../features/i18n/en";
 import dayjs from "dayjs";
 import ProviderBookingActionButtons from "./ProviderBookingActionButtons";
 import { useTranslate } from "@/hooks/useTranslate";
+import { SERVICE_FALLBACK_IMAGE } from "@/constants/media";
 
 interface ProviderBookingsTableProps {
     bookings: UserBooking[];
@@ -26,33 +26,34 @@ interface ProviderBookingsTableProps {
 }
 
 const ProviderBookingsTable: React.FC<ProviderBookingsTableProps> = ({ bookings, activeTab, tabs, onViewDetails }) => {
-    const theme = useTheme();
     const { t } = useTranslate();
-    const isDark = theme.palette.mode === "dark";
 
     // Reusable Table Cell Styles
     const cellStyle = {
-        borderBottom: 'none',
-        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+        borderBottom: `1px solid ${COLORS.NEW_UI.DIVIDER_LIGHT}`,
+        color: COLORS.TEXT.PRIMARY_LIGHT,
         fontSize: '0.875rem',
         py: 2
     };
 
     const headerCellStyle = {
-        borderBottom: 'none',
-        color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#9CA3AF",
+        borderBottom: `1px solid ${COLORS.NEW_UI.DIVIDER_LIGHT}`,
+        bgcolor: COLORS.NEW_UI.SURFACE_SOFT_LIGHT,
+        color: COLORS.TEXT.SECONDARY_LIGHT,
         fontSize: '0.75rem',
         fontWeight: 600,
-        textTransform: 'uppercase' as const,
-        letterSpacing: '0.05em'
+        whiteSpace: 'nowrap' as const,
     };
 
     return (
-        <TableContainer component={Paper} elevation={0} sx={{ bgcolor: "transparent" }}>
-            <Table sx={{ minWidth: 650, borderSpacing: "0 12px", borderCollapse: "separate" }}>
+        <TableContainer
+            component={Paper}
+            elevation={0}
+            sx={{ bgcolor: COLORS.WHITE, border: `1px solid ${COLORS.NEW_UI.CARD_BORDER_LIGHT}`, borderRadius: "16px", overflowX: "auto" }}
+        >
+            <Table sx={{ minWidth: 760 }}>
                 <TableHead>
                     <TableRow>
-                        <TableCell sx={headerCellStyle}>S.No</TableCell>
                         <TableCell sx={headerCellStyle}>{english.id || "ID"}</TableCell>
                         <TableCell sx={headerCellStyle}>{english.service_name || "Service"}</TableCell>
                         <TableCell sx={headerCellStyle}>{english.customer || "Customer"}</TableCell>
@@ -64,35 +65,26 @@ const ProviderBookingsTable: React.FC<ProviderBookingsTableProps> = ({ bookings,
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {bookings?.map((booking, index) => (
+                    {bookings?.map((booking) => (
                         <TableRow
                             key={booking.booking_id}
-                            sx={{
-                                bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-                                boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-                                "& > td:first-of-type": { borderRadius: "12px 0 0 12px" },
-                                "& > td:last-of-type": { borderRadius: "0 12px 12px 0" },
-                            }}
+                            hover
+                            sx={{ "&:last-of-type td": { borderBottom: 0 } }}
                         >
                             <TableCell sx={cellStyle}>
-                                <Typography variant="body2" fontWeight={600} sx={{ color: isDark ? COLORS.TEXT.SECONDARY_DARK : "#6B7280" }}>
-                                    {index + 1}.
-                                </Typography>
-                            </TableCell>
-                            <TableCell sx={cellStyle}>
-                                {booking.booking_id.substring(0, 15)}...
+                                #{booking.booking_id.substring(0, 8)}
                             </TableCell>
                             <TableCell sx={cellStyle}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                                     <Box
                                         component="img"
-                                        src={booking.service_images?.[0] || "/placeholder.png"}
+                                        src={booking.service_images?.[0] || SERVICE_FALLBACK_IMAGE}
                                         sx={{
                                             width: 48,
                                             height: 48,
                                             borderRadius: "8px",
                                             objectFit: "cover",
-                                            border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)"}`
+                                            border: `1px solid ${COLORS.NEW_UI.CARD_BORDER_LIGHT}`
                                         }}
                                     />
                                     <Typography variant="body2" sx={{ fontWeight: 700, maxWidth: 150 }} noWrap>
@@ -105,7 +97,7 @@ const ProviderBookingsTable: React.FC<ProviderBookingsTableProps> = ({ bookings,
                                     {booking.customer_details ? `${booking.customer_details?.first_name || ""} ${booking.customer_details?.last_name || ""}` : "N/A"}
                                 </Typography>
                             </TableCell>
-                            <TableCell sx={cellStyle}>
+                            <TableCell sx={{ ...cellStyle, whiteSpace: "nowrap" }}>
                                 <Box>
                                     <Typography variant="body2" fontWeight={500}>
                                         {dayjs(booking.booking_at).format("MMM DD, YYYY")}
@@ -115,24 +107,24 @@ const ProviderBookingsTable: React.FC<ProviderBookingsTableProps> = ({ bookings,
                                     </Typography>
                                 </Box>
                             </TableCell>
-                            <TableCell sx={cellStyle}>
+                            <TableCell sx={{ ...cellStyle, whiteSpace: "nowrap" }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                     {tabs[activeTab] === t("completed") && (
-                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#10B981' }} />
+                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: COLORS.SUCCESS_GREEN }} />
                                     )}
                                     {tabs[activeTab] === t("cancelled") && (
-                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#EF4444' }} />
+                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: COLORS.ERROR_RED }} />
                                     )}
                                     {tabs[activeTab] === t("in_progress") && (
-                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#3B82F6' }} />
+                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: COLORS.PRIMARY_BLUE }} />
                                     )}
                                     {tabs[activeTab] === t("upcoming") && (
-                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#F59E0B' }} />
+                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: COLORS.SECONDARY_ORANGE }} />
                                     )}
                                     {tabs[activeTab] === t("pending") && (
-                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#6366F1' }} />
+                                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: COLORS.PRIMARY_PURPLE }} />
                                     )}
-                                    <Typography variant="body2" fontWeight={700} sx={{ color: isDark ? "text.primary" : "#374151" }}>
+                                    <Typography variant="body2" fontWeight={700} sx={{ color: COLORS.TEXT.PRIMARY_LIGHT }}>
                                         {booking.service_price > 0 ? `${booking.currency} ${booking.service_price.toFixed(2)}` : "Get Quote"}
                                     </Typography>
                                 </Box>
