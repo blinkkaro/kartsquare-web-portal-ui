@@ -1,3 +1,4 @@
+import { isServicesHubEnabled } from "./lib/services/hubFlag";
 import type { NextConfig } from "next";
 
 /**
@@ -23,9 +24,9 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       // ── Services: /services → /cus/services-list ─────────────────────────
-      // Kept until the /services content hub is reviewed. Set SERVICES_HUB_ENABLED=true
-      // (build and runtime) to serve the hub at /services instead.
-      ...(process.env.SERVICES_HUB_ENABLED === "true"
+      // Kept until the /services content hub is reviewed. SERVICES_HUB_ENABLED=true
+      // serves the hub at /services instead (on by default in development).
+      ...(isServicesHubEnabled()
         ? []
         : [
             {

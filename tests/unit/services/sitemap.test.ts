@@ -62,3 +62,14 @@ describe("sitemap.xml route", () => {
     }
   });
 });
+
+describe("isServicesHubEnabled", () => {
+  it("is on in development, off in production, and the env var overrides both", async () => {
+    const { isServicesHubEnabled } = await import("@/lib/services/hubFlag");
+    const env = (e: Record<string, string | undefined>) => e as unknown as NodeJS.ProcessEnv;
+    expect(isServicesHubEnabled(env({ NODE_ENV: "development" }))).toBe(true);
+    expect(isServicesHubEnabled(env({ NODE_ENV: "production" }))).toBe(false);
+    expect(isServicesHubEnabled(env({ NODE_ENV: "production", SERVICES_HUB_ENABLED: "true" }))).toBe(true);
+    expect(isServicesHubEnabled(env({ NODE_ENV: "development", SERVICES_HUB_ENABLED: "false" }))).toBe(false);
+  });
+});

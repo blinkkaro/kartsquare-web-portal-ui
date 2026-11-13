@@ -34,7 +34,4 @@ export function relatedCategories(c: CategoryContent): CategoryContent[] {
   return c.related.map((s) => CATEGORY_BY_SLUG[s]).filter((x): x is CategoryContent => Boolean(x));
 }
 
-/** The hub is live only when the flag is on. Keep in step with next.config.ts. */
-export function isServicesHubEnabled(): boolean {
-  return process.env.SERVICES_HUB_ENABLED === "true";
-}
+export { isServicesHubEnabled } from "./hubFlag";
