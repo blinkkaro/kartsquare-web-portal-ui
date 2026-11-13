@@ -5,7 +5,7 @@ import { CATEGORY_CONTENT } from "@/data/services/categories";
 import { seoPrivate, seoPublic } from "@/lib/seo/buildMetadata";
 import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 import { serializeJsonLd } from "@/lib/seo/jsonLd";
-import { categoryContentPath, getCategoryContent, isCategoryIndexable, isPreviewEnabled, SERVICES_HUB_PATH } from "@/lib/services/content";
+import { categoryContentPath, getCategoryContent, isCategoryIndexable, SERVICES_HUB_PATH } from "@/lib/services/content";
 import { photoSrc } from "@/lib/services/photo";
 import { COVERAGE_CITY, getCategoryMedia, getCategoryProviders, getCityCoverage } from "@/lib/services/coverage";
 
@@ -17,8 +17,7 @@ interface Params {
 }
 
 export function generateStaticParams() {
-  // Only reviewed pages are prebuilt. Draft pages exist only while previewing.
-  return CATEGORY_CONTENT.filter((c) => c.reviewed || isPreviewEnabled()).map((c) => ({ category: c.slug }));
+  return CATEGORY_CONTENT.map((c) => ({ category: c.slug }));
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
@@ -26,7 +25,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const content = getCategoryContent(category);
   if (!content) return seoPrivate({ title: "Not found", description: "This page does not exist." });
   const path = categoryContentPath(content.slug);
-  // Unreviewed content renders for preview but is noindex and is not in the sitemap.
+  // Unreviewed content is public but noindex, and is not in the sitemap.
   if (!isCategoryIndexable(content)) return seoPrivate({ title: content.seoTitle, description: content.metaDescription });
   // Share card: the category photo the site already shows, when there is one.
   const media = await getCategoryMedia();

@@ -10,7 +10,6 @@ import {
 import LocationListingView from "@/components/pages/location/LocationListing";
 import LandingContentSection from "@/components/pages/servicesHub/LandingContentSection";
 import { getLandingContent } from "@/data/services/landing";
-import { isPreviewEnabled } from "@/lib/services/content";
 import { serializeJsonLd } from "@/lib/seo/jsonLd";
 import { getServiceHref } from "@/utils/serviceRoute";
 import type { LandingContent } from "@/lib/services/types";
@@ -107,11 +106,11 @@ export async function resolveListingRoute(
   return null;
 }
 
-/** Static copy for a sub-category page. Unreviewed copy is shown only when previewing. */
+/** Static copy for a sub-category page. Shown whether or not it is reviewed; indexing is decided by the listing and the reviewed flag. */
 function landingFor(listing: Listing): LandingContent | undefined {
   if (!listing.sub_category?.slug) return undefined;
   const c = getLandingContent(listing.city.slug, listing.category.slug, listing.sub_category.slug);
-  return c && (c.reviewed || isPreviewEnabled()) ? c : undefined;
+  return c;
 }
 
 /**

@@ -9,16 +9,12 @@ export function categoryContentPath(slug: string): string {
   return `/services/c/${slug}`;
 }
 
-/** Draft content may be seen in development, or in production with SERVICES_PREVIEW=true. */
-export function isPreviewEnabled(): boolean {
-  return process.env.NODE_ENV !== "production" || process.env.SERVICES_PREVIEW === "true";
-}
-
-/** Content for a slug, or undefined. Unreviewed content is returned only when previewing. */
+/**
+ * Content for a slug, or undefined. Draft (unreviewed) pages are public so people can read them,
+ * but they are noindex, carry no FAQ structured data and are not in the sitemap until reviewed.
+ */
 export function getCategoryContent(slug: string): CategoryContent | undefined {
-  const c = CATEGORY_BY_SLUG[slug.toLowerCase()];
-  if (!c) return undefined;
-  return c.reviewed || isPreviewEnabled() ? c : undefined;
+  return CATEGORY_BY_SLUG[slug.toLowerCase()];
 }
 
 /** Only reviewed content is indexed and listed in the sitemap. */

@@ -67,26 +67,11 @@ describe("banned claims", () => {
 });
 
 describe("draft visibility", () => {
-  const env = process.env as Record<string, string | undefined>;
-  const original = { node: env.NODE_ENV, preview: env.SERVICES_PREVIEW };
-  afterEach(() => {
-    env.NODE_ENV = original.node;
-    env.SERVICES_PREVIEW = original.preview;
-  });
-
-  it("hides unreviewed content in production unless previewing", async () => {
-    const { getCategoryContent } = await import("@/lib/services/content");
-    env.NODE_ENV = "production";
-    delete env.SERVICES_PREVIEW;
-    expect(getCategoryContent("home-services")).toBeUndefined();
-    env.SERVICES_PREVIEW = "true";
-    expect(getCategoryContent("home-services")?.slug).toBe("home-services");
-  });
-
-  it("is case-insensitive and returns nothing for unknown slugs", async () => {
-    const { getCategoryContent } = await import("@/lib/services/content");
-    env.NODE_ENV = "development";
-    expect(getCategoryContent("HOME-SERVICES")?.slug).toBe("home-services");
+  it("serves draft content to readers but never marks it indexable", async () => {
+    const { getCategoryContent, isCategoryIndexable } = await import("@/lib/services/content");
+    const c = getCategoryContent("HOME-SERVICES");
+    expect(c?.slug).toBe("home-services");
+    expect(c && isCategoryIndexable(c)).toBe(false);
     expect(getCategoryContent("nope")).toBeUndefined();
   });
 });
