@@ -11,6 +11,7 @@ import CategoryIcon, { sameOrigin } from "@/components/common/CategoryIcon";
 import { HOME_GUTTER, HOME_MAX_WIDTH, sectionEyebrowSx, sectionSubtitleSx, sectionTitleSx, tappableCard } from "@/components/pages/home/sections/shared";
 import { COLORS } from "@/constants/colors";
 import cloudinaryLoader, { isCloudinaryUrl } from "@/lib/cloudinaryLoader";
+import { photoSrc } from "@/lib/services/photo";
 import type { CategoryMedia } from "@/lib/services/coverage";
 import type { FaqItem } from "@/lib/services/types";
 
@@ -18,13 +19,6 @@ export interface Crumb {
   name: string;
   href?: string;
 }
-
-const PHOTO_HOSTS = /^https:\/\/(res\.cloudinary\.com|images\.unsplash\.com)\//;
-/** A photo next/image may load, or null so the tile falls back to its icon. */
-export const photoSrc = (url?: string | null): string | null => {
-  const src = sameOrigin(url);
-  return src && ((src.startsWith("/") && !src.startsWith("//")) || PHOTO_HOSTS.test(src)) ? src : null;
-};
 
 const HERO_BG = `linear-gradient(135deg, ${COLORS.PURPLE_DEEP} 0%, ${COLORS.PURPLE_HOVER} 55%, ${COLORS.PRIMARY_PURPLE} 100%)`;
 const pill = { borderRadius: 9999, px: 3, minHeight: 44, textTransform: "none", fontWeight: 700, boxShadow: "none" } as const;
