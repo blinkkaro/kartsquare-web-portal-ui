@@ -156,11 +156,18 @@ export default function NewCategoryGrid() {
   // Split: top 4 featured visual cards
   const imageCards = cats?.slice(0, 4) ?? [];
 
+  // Every category that has live services here: the "Browse all categories" list. The curated four above are
+  // left out of it unless the person is filtering.
+  const allLive = useMemo(() => {
+    const live = new Set((availabilityQuery.data ?? []).filter((a) => a.service_count >= 1).map((a) => a.id));
+    return (categoriesQuery.data ?? []).filter((c) => !c.is_deleted && live.has(c.id));
+  }, [categoriesQuery.data, availabilityQuery.data]);
+
   // Filter remaining categories for the paginated listing
   const filteredCategories = useMemo(() => {
     if (!cats) return [];
-    // If search term is present, search across all categories; otherwise use remaining categories (index 4 onwards)
-    const list = searchTerm.trim() ? cats : cats.slice(4);
+    const featured = new Set(cats.slice(0, 4).map((c) => c.id));
+    const list = searchTerm.trim() ? allLive : allLive.filter((c) => !featured.has(c.id));
     if (!searchTerm.trim()) return list;
 
     const term = searchTerm.toLowerCase();
@@ -170,7 +177,7 @@ export default function NewCategoryGrid() {
         Boolean((c as any).slug && (c as any).slug.toLowerCase().includes(term)) ||
         descFor(c.name).toLowerCase().includes(term)
     );
-  }, [cats, searchTerm]);
+  }, [cats, allLive, searchTerm]);
 
   // Total pages
   const totalPages = Math.max(1, Math.ceil(filteredCategories.length / itemsPerPage));
@@ -410,7 +417,7 @@ export default function NewCategoryGrid() {
       )}
 
       {/* 3. Paginated Category Listing Section (hidden while the error state is showing, and when the four featured cards above are all there is) */}
-      {!failed && (cats?.length ?? 0) > 4 && (
+      {!failed && !isLoading && allLive.length > Math.min(4, cats?.length ?? 0) && (
       <Box ref={listingRef} sx={{ scrollMarginTop: "90px" }}>
         {/* Listing Subheader + Search/Filter Bar */}
         <Box
