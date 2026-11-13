@@ -12,8 +12,9 @@ import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import toast from "react-hot-toast";
+import { stripMarkdown } from "@/utils/plainText";
 import { COLORS } from "@/constants/colors";
-import { Posts } from "@/services/post/postInterfaces";
+import { type Posts } from "@/services/post/postInterfaces";
 import { AppUserType } from "@/services/auth/auth.interface";
 import { useLikePost } from "@/hooks/usePosts";
 import { useFollow } from "@/hooks/useFollow";
@@ -111,7 +112,7 @@ export default function FeedPostCard({ post }: FeedPostCardProps) {
   const isOwn = !!currentUser?.id && currentUser.id === post.user_id;
   const isSaved = !!savedIds?.has(post.id);
   const place = post.location_name?.trim();
-  const caption = post.caption?.trim() ?? "";
+  const caption = stripMarkdown(post.caption).trim();
   const longCaption = caption.length > 140;
 
   // A video post's shape comes from its poster, which loads without fetching the video.

@@ -19,9 +19,10 @@ import DirectionsRoundedIcon from "@mui/icons-material/DirectionsRounded";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import CallRoundedIcon from "@mui/icons-material/CallRounded";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
+import { stripMarkdown } from "@/utils/plainText";
 import { COLORS } from "@/constants/colors";
-import { EnrichedServiceItem } from "../servicesSampleData";
 import { HOME_PHOTOS } from "@/components/pages/home/sections/homePhotos";
+import { type EnrichedServiceItem } from "../servicesSampleData";
 
 interface ServiceQuickViewDrawerProps {
   open: boolean;
@@ -318,7 +319,7 @@ export default function ServiceQuickViewDrawer({
               About this professional
             </Typography>
             <Typography sx={{ fontSize: "0.86rem", color: "text.secondary", lineHeight: 1.6 }}>
-              {service.service_desc}
+              {stripMarkdown(service.service_desc)}
             </Typography>
           </Box>
           )}

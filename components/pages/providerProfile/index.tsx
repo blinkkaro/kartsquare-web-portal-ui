@@ -1,6 +1,28 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import {
+  Share,
+  ContentCopy,
+  Facebook,
+  Twitter,
+  WhatsApp,
+  Email,
+  LocationOn,
+  Email as EmailIcon,
+  Phone,
+  Visibility,
+  Favorite,
+  People,
+  BusinessCenter,
+  Work as WorkIcon,
+  Article as ArticleIcon,
+  ExpandMore,
+  ExpandLess,
+  MovieFilter,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -22,28 +44,7 @@ import {
   Collapse,
 } from "@mui/material";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
-import {
-  Share,
-  ContentCopy,
-  Facebook,
-  Twitter,
-  WhatsApp,
-  Email,
-  LocationOn,
-  Email as EmailIcon,
-  Phone,
-  Visibility,
-  Favorite,
-  People,
-  BusinessCenter,
-  Work as WorkIcon,
-  Article as ArticleIcon,
-  ExpandMore,
-  ExpandLess,
-  MovieFilter,
-} from "@mui/icons-material";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { stripMarkdown } from "@/utils/plainText";
 import { COLORS } from "@/constants/colors";
 import {
   useProviderProfileByUsername,
@@ -54,22 +55,22 @@ import {
 import { useTranslate } from "@/hooks/useTranslate";
 import ServiceCard from "@/components/ServiceCard";
 import PostFeedGrid from "@/components/pages/myAccount/components/post/PostFeedGrid";
-import { Posts } from "@/services/post/postInterfaces";
-import { Service } from "@/services/serviceList/listInteraface";
+import { type Posts } from "@/services/post/postInterfaces";
+import { type Service } from "@/services/serviceList/listInteraface";
 import { UserRole } from "@/utils/auth";
-import ContactUsSection from "./components/ContactUsSection";
-import ProviderMapSection from "./components/ProviderMapSection";
-import ProfileNotFound from "./components/ProfileNotFound";
-import ProviderReviews from "./components/ProviderReviews";
 import { AppUserType } from "@/services/auth/auth.interface";
 import {
-  ISupplierProfile,
+  type ISupplierProfile,
   ISupplierProfileResponse,
   ProductListItem,
 } from "@/services/profile/profileInterface";
-import ProfileProducts from "../../common/ProfileDrawer/components/ProfileProducts";
 import ReelFeedGrid from "@/components/pages/myAccount/components/post/ReelFeedGrid";
 import ReelViewModal from "@/components/pages/myAccount/components/post/ReelViewModal";
+import ProfileProducts from "../../common/ProfileDrawer/components/ProfileProducts";
+import ProviderReviews from "./components/ProviderReviews";
+import ProfileNotFound from "./components/ProfileNotFound";
+import ProviderMapSection from "./components/ProviderMapSection";
+import ContactUsSection from "./components/ContactUsSection";
 
 interface ProviderProfilePageProps {
   username: string;
@@ -495,12 +496,12 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   }}
                 >
                   {(() => {
-                    const bioText =
+                    const bioText = stripMarkdown(
                       profile.bio ||
                       (isSupplier
                         ? (profile as ISupplierProfile).description
                         : "") ||
-                      "Professional service provider on kartsquare.";
+                      "Professional service provider on kartsquare.");
                     const words = bioText.split(" ");
                     const WORD_LIMIT = 12;
                     const isLongBio = words.length > WORD_LIMIT;

@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useMemo } from "react";
+import { useParams, useRouter } from "next/navigation";
 import {
   Box,
   Container,
@@ -7,16 +8,24 @@ import {
   useTheme,
   Divider,
 } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
-import { useParams, useRouter } from "next/navigation";
 import { Edit, Delete, Share } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
+import { stripMarkdown } from "@/utils/plainText";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
+import { useTranslate } from "@/hooks/useTranslate";
+import EmptyState from "@/components/common/EmptyState";
+import MainLayout from "@/app/mainLayout";
+import { useServiceDetails } from "@/hooks/useServiceDetails";
+import { useGetReviews } from "@/hooks/useReview";
+import CustomerServicePricing from "@/components/common/CustomerServicePricing";
+import { review_type } from "@/services/providerDashboard/providerDashboard.interface";
+import { useProfile, useUpdateShowNumber } from "@/hooks/useProfile";
 import ServiceImageCarousel from "../../../ServiceImageCarousel";
 import { COLORS } from "../../../../constants/colors";
 import AddServiceDrawer from "../addService";
 import { serviceListService } from "../../../../services/serviceList/serviceListService";
-import { useTranslate } from "@/hooks/useTranslate";
-import EmptyState from "@/components/common/EmptyState";
+import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
 import ServiceDetailsBreadcrumb from "./ServiceDetailsBreadcrumb";
 import ServiceDetailsHeader from "./ServiceDetailsHeader";
 import ServiceDetailsInfo from "./ServiceDetailsInfo";
@@ -27,14 +36,6 @@ import DescriptionDrawer from "./DescriptionDialog";
 import DeleteDialog from "./DeleteDialog";
 import ShareDialog from "./ShareDialog";
 import AdvancePayInfo from "./AdvancePayInfo";
-import MainLayout from "@/app/mainLayout";
-import { useServiceDetails } from "@/hooks/useServiceDetails";
-import { useGetReviews } from "@/hooks/useReview";
-import { useQueryClient } from "@tanstack/react-query";
-import CustomerServicePricing from "@/components/common/CustomerServicePricing";
-import { review_type } from "@/services/providerDashboard/providerDashboard.interface";
-import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
-import { useProfile, useUpdateShowNumber } from "@/hooks/useProfile";
 
 const ProviderServiceDetails = () => {
   const params = useParams();
@@ -402,7 +403,7 @@ const ProviderServiceDetails = () => {
       <DescriptionDrawer
         open={descriptionDrawerOpen}
         onClose={() => setDescriptionDrawerOpen(false)}
-        description={service.service_desc || ""}
+        description={stripMarkdown(service.service_desc)}
       />
 
       {/* Edit Service Drawer */}

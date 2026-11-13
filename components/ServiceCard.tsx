@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardMedia,
@@ -18,14 +19,14 @@ import {
   Bolt,
   WorkspacePremium,
 } from "@mui/icons-material";
-import { COLORS } from "../constants/colors";
-import { Service, ServiceStatus } from "../services/serviceList/listInteraface";
-import { useRouter } from "next/navigation";
-import { getUserRole, getUserId, UserRole } from "../utils/auth";
-import { useTranslate } from "@/hooks/useTranslate";
 import { useDispatch } from "react-redux";
+import { useTranslate } from "@/hooks/useTranslate";
+import { stripMarkdown } from "@/utils/plainText";
 import { closeDrawer } from "@/features/ui/profileDrawerSlice";
 import { getServiceHref } from "@/utils/serviceRoute";
+import { getUserRole, getUserId, UserRole } from "../utils/auth";
+import { type Service, ServiceStatus } from "../services/serviceList/listInteraface";
+import { COLORS } from "../constants/colors";
 
 interface ServiceCardProps {
   service: Service;
@@ -445,7 +446,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
               : COLORS.TEXT.SECONDARY_LIGHT,
           }}
         >
-          {service.service_desc || "No description available"}
+          {stripMarkdown(service.service_desc) || "No description available"}
         </Typography>
       </CardContent>
     </Card>

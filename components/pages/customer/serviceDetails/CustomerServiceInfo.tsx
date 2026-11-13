@@ -3,6 +3,7 @@ import React from "react";
 import { Box, Typography, Button, useTheme } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
+import { stripMarkdown } from "@/utils/plainText";
 import { COLORS } from "../../../../constants/colors";
 import { english } from "../../../../features/i18n/en";
 
@@ -61,7 +62,7 @@ const CustomerServiceInfo = ({
           whiteSpace: "pre-line",
         }}
       >
-        {serviceDesc || english.no_description_available}
+        {stripMarkdown(serviceDesc) || english.no_description_available}
       </Typography>
 
       {showContinueReading && (

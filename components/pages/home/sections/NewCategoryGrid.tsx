@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useMemo, useRef } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Box,
   Skeleton,
@@ -17,22 +19,20 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
-
-import Image from "next/image";
 import cloudinaryLoader, { isCloudinaryUrl } from "@/lib/cloudinaryLoader";
-import { useRouter } from "next/navigation";
 import { COLORS } from "@/constants/colors";
 import { useCategories } from "@/hooks/useCategories";
 import { useCategoryAvailability } from "@/hooks/useCategoryAvailability";
-import { ShimmerBox } from "./HomeLoading";
 import { popularHomeCategoriesFromAvailability } from "@/lib/homeServices";
 import { useAILocation } from "@/components/common/Ai/useAILocation";
+import { DEFAULT_LOCATION } from "@/constants/aiSearch";
 import { toSlug } from "@/services/location/locationClient";
-import { Section, sectionTitleSx, sectionSubtitleSx } from "./shared";
 import CategoryIcon, { sameOrigin } from "@/components/common/CategoryIcon";
+import { Section, sectionTitleSx, sectionSubtitleSx } from "./shared";
+import { ShimmerBox } from "./HomeLoading";
 
 /** Fields from migration 006; the dummy fallback categories have none of them. */
-type CategoryMedia = { icon?: string | null; color?: string | null; image?: string | null };
+interface CategoryMedia { icon?: string | null; color?: string | null; image?: string | null }
 
 /** Hosts next.config lets next/image load from; any other photo falls back to the colour gradient. */
 const PHOTO_HOSTS = /^https:\/\/(res\.cloudinary\.com|images\.unsplash\.com|kartsquare-document\.s3\.ap-south-1\.amazonaws\.com)\//;
@@ -110,8 +110,9 @@ export default function NewCategoryGrid() {
   // The curated popular categories (Home Services, Security, Religious, Photography, Energy), each only if it
   // has live providers behind it (lib/homeServices).
   const { location } = useAILocation();
-  // City pages (/{city}/{category}) only when we know the user's city.
-  const city = location.city ? toSlug(location.city) : "";
+  // City pages (/{city}/{category}). While the visitor's own place is still unresolved ("Near you"), use the
+  // default city instead of failing, so the section is never empty just because location is slow.
+  const city = toSlug(location.city || DEFAULT_LOCATION.city);
   const locality = location.locality ? toSlug(location.locality) : "";
 
   const categoriesQuery = useCategories();
