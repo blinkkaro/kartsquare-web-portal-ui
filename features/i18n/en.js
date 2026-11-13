@@ -163,6 +163,7 @@ export const english = {
   store: "Store",
   feed: "Feed",
   services: "Services",
+  explore_services: "Explore services",
   events: "Events",
   bookings: "Bookings",
   search: "Search services, users...",
