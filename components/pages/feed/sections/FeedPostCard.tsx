@@ -2,8 +2,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar, Box, Button, ButtonBase, IconButton, Typography, useTheme } from "@mui/material";
-import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
-import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import BookmarkBorderRoundedIcon from "@mui/icons-material/BookmarkBorderRounded";
@@ -12,6 +10,7 @@ import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import toast from "react-hot-toast";
 import { COLORS } from "@/constants/colors";
 import { Posts } from "@/services/post/postInterfaces";
@@ -25,6 +24,8 @@ import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { formatTimestamp } from "@/helper/helper";
 import PostComment from "@/components/pages/home/components/PostComment";
 import { isVideoUrl, mediaAspect, MEDIA_ASPECT_DEFAULT } from "@/services/post/postMedia";
+import { FEED_DURATION, FEED_EASE, FEED_SPRING } from "../feedMotion";
+import LikeButton, { AnimatedCount, DoubleTapHeart } from "./LikeButton";
 
 /** media_urls arrives as an array of urls (older rows: a single url string). */
 export function postMedia(post: Pick<Posts, "media_urls">): string[] {
@@ -86,6 +87,10 @@ export default function FeedPostCard({ post }: FeedPostCardProps) {
   const following = followedHere || !!(post.is_following ?? post.user?.is_following);
   const trackRef = useRef<HTMLDivElement>(null);
   const lastTap = useRef(0);
+  const reduce = useReducedMotion() === true;
+  // Counters that go up on each double-tap like / each save, so their animations play again.
+  const [heartTick, setHeartTick] = useState(0);
+  const [saveTick, setSaveTick] = useState(0);
   // The media box takes the first photo's shape (4:5 to 1.91:1) once its size is known.
   const [aspect, setAspect] = useState(MEDIA_ASPECT_DEFAULT);
   // A photo already loaded (cached, or before React attached onLoad) fires no load event:
@@ -138,7 +143,10 @@ export default function FeedPostCard({ post }: FeedPostCardProps) {
   // Double-tap / double-click on the photo likes it (never unlikes), like Instagram.
   const onMediaTap = () => {
     const now = Date.now();
-    if (now - lastTap.current < 300 && !post.is_liked) like();
+    if (now - lastTap.current < 300) {
+      if (isAuthenticated) setHeartTick((n) => n + 1);
+      if (!post.is_liked) like();
+    }
     lastTap.current = now;
   };
 
@@ -160,6 +168,7 @@ export default function FeedPostCard({ post }: FeedPostCardProps) {
 
   const save = () => {
     if (requireLogin()) return;
+    if (!isSaved) setSaveTick((n) => n + 1);
     toggleSave.mutate(
       { postId: post.id, saved: isSaved },
       { onError: () => toast.error("Couldn't update saved posts. Please try again.") },
@@ -199,8 +208,13 @@ export default function FeedPostCard({ post }: FeedPostCardProps) {
 
   return (
     <Box
-      component="article"
+      component={motion.article}
       aria-label={`Post by ${name}`}
+      // each card rises in once, as it scrolls into view
+      initial={reduce ? false : { opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.1 }}
+      transition={{ duration: FEED_DURATION.enter, ease: FEED_EASE }}
       sx={{
         bgcolor: "background.paper",
         // Phones: edge-to-edge with top/bottom rules; tablet up: a bordered card.
@@ -222,7 +236,7 @@ export default function FeedPostCard({ post }: FeedPostCardProps) {
             sx={{
               width: 38,
               height: 38,
-              fontWeight: 800,
+              fontWeight: 700,
               fontSize: "0.95rem",
               bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10,
               color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE,
@@ -240,7 +254,7 @@ export default function FeedPostCard({ post }: FeedPostCardProps) {
                 all: "unset",
                 cursor: "pointer",
                 fontSize: "0.9rem",
-                fontWeight: 800,
+                fontWeight: 700,
                 color: "text.primary",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -262,7 +276,7 @@ export default function FeedPostCard({ post }: FeedPostCardProps) {
                     py: 0.15,
                     borderRadius: "999px",
                     fontSize: "0.68rem",
-                    fontWeight: 800,
+                    fontWeight: 700,
                     bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10,
                     color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE,
                     flexShrink: 0,
@@ -278,7 +292,9 @@ export default function FeedPostCard({ post }: FeedPostCardProps) {
             {formatTimestamp(post.created_at)}
           </Typography>
         </Box>
+        <AnimatePresence initial={false}>
         {!isOwn && !following && (
+          <motion.div key="follow" exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.85 }} transition={{ duration: FEED_DURATION.exit }}>
           <Button
             onClick={follow}
             size="small"
@@ -293,12 +309,15 @@ export default function FeedPostCard({ post }: FeedPostCardProps) {
           >
             Follow
           </Button>
+          </motion.div>
         )}
+        </AnimatePresence>
       </Box>
 
       {/* Media: swipeable photos, or a video */}
       {media.length > 0 && (
         <Box sx={{ position: "relative", bgcolor: dark ? "#000" : COLORS.NEW_UI.SURFACE_SOFT_LIGHT }}>
+          <DoubleTapHeart trigger={heartTick} />
           <Box
             ref={trackRef}
             onScroll={onTrackScroll}
@@ -434,13 +453,7 @@ export default function FeedPostCard({ post }: FeedPostCardProps) {
 
       {/* Actions */}
       <Box sx={{ display: "flex", alignItems: "center", px: { xs: 0.75, sm: 1 }, pt: 0.75 }}>
-        <IconButton onClick={like} aria-label={post.is_liked ? "Unlike" : "Like"} aria-pressed={!!post.is_liked}>
-          {post.is_liked ? (
-            <FavoriteRoundedIcon sx={{ color: "#ef4444" }} />
-          ) : (
-            <FavoriteBorderRoundedIcon sx={{ color: iconColor }} />
-          )}
-        </IconButton>
+        <LikeButton liked={!!post.is_liked} onToggle={like} color={iconColor} />
         <IconButton onClick={openComments} aria-label="Comment">
           <ChatBubbleOutlineRoundedIcon sx={{ color: iconColor }} />
         </IconButton>
@@ -449,24 +462,32 @@ export default function FeedPostCard({ post }: FeedPostCardProps) {
         </IconButton>
         <Box sx={{ flex: 1 }} />
         <IconButton onClick={save} aria-label={isSaved ? "Remove from saved" : "Save"} aria-pressed={isSaved}>
-          {isSaved ? (
-            <BookmarkRoundedIcon sx={{ color: dark ? COLORS.NEW_UI.ACCENT_TEXT_DARK : COLORS.PRIMARY_PURPLE }} />
-          ) : (
-            <BookmarkBorderRoundedIcon sx={{ color: iconColor }} />
-          )}
+          <motion.span
+            key={saveTick}
+            initial={reduce || saveTick === 0 ? false : { scale: 0.7 }}
+            animate={{ scale: 1 }}
+            transition={FEED_SPRING}
+            style={{ display: "inline-flex" }}
+          >
+            {isSaved ? (
+              <BookmarkRoundedIcon sx={{ color: dark ? COLORS.NEW_UI.ACCENT_TEXT_DARK : COLORS.PRIMARY_PURPLE }} />
+            ) : (
+              <BookmarkBorderRoundedIcon sx={{ color: iconColor }} />
+            )}
+          </motion.span>
         </IconButton>
       </Box>
 
       {/* Likes, caption, comments, time */}
       <Box sx={{ px: { xs: 1.5, sm: 1.75 }, pb: 1.75 }}>
         {post.likes_count > 0 && (
-          <Typography sx={{ fontSize: "0.86rem", fontWeight: 800, color: "text.primary", mb: 0.5 }}>
-            {post.likes_count.toLocaleString("en-IN")} {post.likes_count === 1 ? "like" : "likes"}
+          <Typography sx={{ fontSize: "0.86rem", fontWeight: 700, color: "text.primary", mb: 0.5 }}>
+            <AnimatedCount value={post.likes_count} /> {post.likes_count === 1 ? "like" : "likes"}
           </Typography>
         )}
         {caption && (
           <Typography sx={{ fontSize: "0.86rem", color: "text.primary", lineHeight: 1.5, whiteSpace: "pre-line", wordBreak: "break-word" }}>
-            <Box component="span" sx={{ fontWeight: 800, mr: 0.75 }}>
+            <Box component="span" sx={{ fontWeight: 700, mr: 0.75 }}>
               {name}
             </Box>
             {longCaption && !expanded ? `${caption.slice(0, 140).trimEnd()}… ` : caption}

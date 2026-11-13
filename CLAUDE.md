@@ -1,93 +1,82 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Kartsquare web portal: a Jaipur-first local-services marketplace (customers find and request providers; providers and suppliers manage listings, bookings and products). Public SEO site + customer app + provider/supplier dashboards. Backend is a separate repo (`Blinkkaro_backend`).
+
+## Always read docs/ before making changes
+
+Read the file(s) for your task **before** editing. They are the standards, and they describe the code as it is today.
+
+| Task touches | Read |
+| --- | --- |
+| Product, roles, copy, business rules | [docs/01-project-overview.md](docs/01-project-overview.md) |
+| Routing, rendering, state, data flow | [docs/02-architecture.md](docs/02-architecture.md) |
+| Any UI: colours, fonts, spacing, motion | [docs/03-design-system.md](docs/03-design-system.md) |
+| Backend calls, auth, errors | [docs/04-api-contracts.md](docs/04-api-contracts.md) |
+| URLs, metadata, sitemap, redirects | [docs/05-seo-url-architecture.md](docs/05-seo-url-architecture.md) (full spec: [docs/seo-url-architecture.md](docs/seo-url-architecture.md)) |
+| Writing any code | [docs/06-coding-standards.md](docs/06-coding-standards.md) |
+| Tests | [docs/07-testing-strategy.md](docs/07-testing-strategy.md) |
+
+If code and a doc disagree, say so and fix whichever is wrong in the same PR.
+
+## Stack (as installed, not as planned)
+
+Next.js **16** App Router · React **19** · TypeScript strict · **MUI v7** (no Tailwind, no shadcn) · Redux Toolkit (UI state only) · TanStack Query v5 (all server state) · Axios · React Hook Form + **Yup** (not Zod) · Framer Motion · Socket.io · Jest + Testing Library + Playwright.
 
 ## Commands
 
 ```bash
-# Development
-npm run dev          # Start dev server
-npm run build        # Production build
-npm run start        # Start production server
-
-# Quality
-npm run lint         # ESLint
-npm test             # Jest tests
-npm run test:coverage  # Tests with coverage
-
-# Utilities
-npm run generate-favicon   # Regenerate favicon assets
-npm run update-assetlinks  # Update Android asset links
+npm run dev               # dev server (localhost:3000)
+npm run build             # production build
+npm run lint              # ESLint (0 errors required; warnings are legacy debt)
+npm run typecheck         # tsc --noEmit (app) + tsconfig.tests.json (tests, e2e)
+npm test                  # Jest (unit + integration + legacy __tests__)
+npm run test:coverage     # with thresholds
+npm run test:e2e          # Playwright (build first)
+npm run format            # Prettier (whole repo; normally lint-staged does this)
+npx jest tests/unit/lib/toSlug.test.ts   # one test file
 ```
 
-Run single test: `npx jest __tests__/path/to/file.test.ts`
+Before a PR: `npm run lint && npm run typecheck && npm test`. Never use `sudo` with npm/next, and never `--no-verify`.
 
-## Architecture
-
-**Stack**: Next.js App Router (v16.1.1) + TypeScript + Material-UI v7 + Redux Toolkit + TanStack Query
-
-### Routing & Pages (`/app`)
-All routes use App Router. Pattern: `app/[route]/page.tsx` with `layout.tsx` at each level.
-- Public marketing: `about-us`, `blogs`, `careers`, `contactUs`
-- Auth flows: `login`, `signup`, `forgotPassword`, `emailVerification`
-- Customer portal: `cus/bookings`, `cus/reels`, `cus/services-list`
-- Account management: `myAccount/*` (11 sub-routes)
-- Supplier/marketplace: `in/*`, `External/*`
-
-### Data Fetching (`/services` + `/hooks`)
-Each domain has a service folder with 3 files:
-- `*.service.ts` — raw Axios calls via `services/api.ts`
-- `*.query.ts` — TanStack Query `useQuery` wrappers
-- `*.mutation.ts` — TanStack `useMutation` wrappers
-
-38 custom hooks in `/hooks` consume these services. **Use TanStack Query for all server state** — no direct Axios in components.
-
-### State Management
-- **Redux** (`/store`, `/features/ui/`): UI state only — theme, auth user info, modals, profile drawer
-- **TanStack Query**: All server/async data (staleTime: 2min, gcTime: 5min, no refetch on focus)
-- **Local state**: Component-level with `useState`/`useReducer`
-
-### Authentication
-- Tokens stored encrypted via `helper/SecureStorage.ts` (AES via CryptoJS, key: `NEXT_PUBLIC_SECRET_KEY`)
-- `utils/auth.ts` — `storeTokens`, `getTokens`, `clearTokens`, `getUserRole`, `getUserId`
-- Roles: `ADMIN | CUSTOMER | SERVICE_PROVIDER | SUPPLIER | MANAGER | SUPPORT`
-- `services/api.ts` auto-injects Bearer token + handles 401 with refresh token queue
-- Firebase used for phone auth (OTP)
-- `helper/RegistrationGuard.tsx` wraps routes needing registration
-
-### Real-time (`/contexts/SocketContext.tsx`)
-Socket.io connection — notifications only. Socket URL derived from `NEXT_PUBLIC_API_URL` by stripping `/api/v1`.
-
-### UI Components (`/components`)
-- `components/common/` — shared (Footer, BackButton, LoginModal)
-- `components/auth/` — auth screens
-- `components/pages/` — page-specific heavy components
-- `components/supplier/` — supplier dashboard features
-
-### SEO (`/lib/seo`)
-- `buildMetadata.ts` — JSON-LD schema builders
-- `sitePageSeo.ts` — page metadata with fallback
-- `breadcrumbs.ts`, `blogSitemap.ts`, `publicProfile.ts`
-
-`next.config.ts` redirects camelCase → kebab-case URLs for canonical SEO.
-
-## Key Environment Variables
+## Folder structure
 
 ```
-NEXT_PUBLIC_API_URL          # Backend API base (e.g. http://localhost:5800/api/v1)
-NEXT_PUBLIC_SECRET_KEY       # AES encryption key for SecureStorage
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
-NEXT_PUBLIC_FIREBASE_*       # Firebase phone auth config
+app/          routes (server page.tsx by default; kebab-case for new routes)
+components/   common/ (shared) · pages/<page>/ (page-specific) · auth/ · supplier/
+services/     <domain>/{<x>Service.ts, apiEndPoints.ts, <x>Interface.ts}  ← only place that talks to Axios
+hooks/        TanStack Query hooks (useX) consumed by components
+store/ features/ui/   Redux (UI flags, auth user, modals)
+lib/ utils/   framework-free helpers (lib/seo/ = metadata, JSON-LD, sitemap)
+constants/    colors.ts (COLORS) and static config
+tests/        unit/ · integration/ · e2e/      (+ legacy __tests__/)
+docs/         standards: read on demand
 ```
 
-## Path Alias
+## Key conventions
 
-`@/*` resolves to repo root. Use `@/components/...`, `@/services/...`, etc.
+- **Layering:** component → `hooks/useX` → `services/*Service` → `services/api.ts`. No Axios in components or hooks.
+- **Server by default.** `"use client"` only when needed, as low in the tree as possible. Every page exports metadata (`seoPublic` / `seoPrivate`).
+- **Naming:** components PascalCase `.tsx`; hooks `useX.ts`; utils camelCase; new routes kebab-case; tests `<subject>.test.ts(x)`.
+- **Imports:** `@/*` = repo root; never `../../`. Order: React → Next → third-party → `@/` → relative → types.
+- **TypeScript:** no `any`, `interface` over `type` for object shapes, `import type`, no `!` without a reason, no `@ts-ignore`.
+- **Styling:** MUI `sx` + `COLORS`/theme tokens. No hex in components, no Tailwind, no inline `style`. 8 px spacing scale. Light theme only.
+- **Images:** `next/image`; Cloudinary via `lib/cloudinaryLoader`; new remote hosts go in `next.config.ts`.
+- **Category icons** only via `components/common/CategoryIcon` (bundled Phosphor data, never fetched).
+- **Forms:** React Hook Form + Yup. **Auth/tokens:** only through `utils/auth.ts`.
+- **Commits:** imperative, specific, ≤ 72 chars. Branches `feature|fix|chore|docs/<kebab>` off `development`.
+- **Lint ratchet:** ESLint warns repo-wide but lint-staged requires 0 warnings in every file you commit. Leave each touched file cleaner than you found it.
 
-## Form Validation
+## Business rules (never violate in copy, metadata or data)
 
-Forms use React Hook Form + **Yup** (not Zod, despite stack notes). Yup schemas defined inline or alongside form components.
+No fake claims (invented ratings, counts, "trusted by"). No "verified" label without an explicit backend status. Outreach is opt-in only. No placeholder data presented as real. Details: docs/01.
 
-## Tests
+## Environment
 
-Tests live in `__tests__/`. Coverage focuses on SEO utilities, robots.ts, sitemap, and search page. Jest uses `ts-jest` with `node` test environment.
+```
+NEXT_PUBLIC_API_URL            backend base, e.g. https://api.kartsquare.com/api/v1 or http://localhost:5900/api/v1
+NEXT_PUBLIC_SECRET_KEY         AES key for SecureStorage (visible to browsers: not a real secret)
+NEXT_PUBLIC_SITE_URL           canonical site origin for SEO
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY, NEXT_PUBLIC_FIREBASE_*   maps, phone-OTP auth
+```
+
+**Local dev:** run the backend on `:5900`; `next.config.ts` proxies `/api/*` to it in dev. Put `NEXT_PUBLIC_API_URL=http://localhost:3000/api/v1` in `.env.local`. The deployed API rejects `localhost` origins (CORS), so do not point local pages straight at it (docs/01).

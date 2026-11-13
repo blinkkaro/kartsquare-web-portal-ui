@@ -106,7 +106,7 @@ export default function GlobalAboutUsView() {
             </motion.div>
             <motion.div variants={fadeUp}>
               <Typography variant="h1" component="h1" sx={{
-                fontWeight: 800, lineHeight: 1.1, mb: 2,
+                fontWeight: 700, lineHeight: 1.1, mb: 2,
                 background: `linear-gradient(130deg,${COLORS.PRIMARY_PURPLE} 0%,#00bcff 100%)`,
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
               }}>
@@ -131,7 +131,7 @@ export default function GlobalAboutUsView() {
                 <Grid size={{ xs: 6, sm: 3 }} key={i}>
                   <motion.div variants={fadeUp}>
                     <Box sx={{ textAlign: "center" }}>
-                      <Typography sx={{ fontSize: { xs: "2rem", md: "2.75rem" }, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{s.value}</Typography>
+                      <Typography sx={{ fontSize: { xs: "2rem", md: "2.75rem" }, fontWeight: 700, color: "#fff", lineHeight: 1 }}>{s.value}</Typography>
                       <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)", mt: 0.5 }}>{s.label}</Typography>
                     </Box>
                   </motion.div>
@@ -162,7 +162,7 @@ export default function GlobalAboutUsView() {
                     <TrackChangesIcon sx={{ fontSize: 15, color: COLORS.PRIMARY_PURPLE }} />
                     <Typography variant="caption" sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700, letterSpacing: 0.5, fontSize: "0.7rem" }}>MISSION & VISION</Typography>
                   </Box>
-                  <Typography variant="h4" sx={{ fontWeight: 800, color: primaryTxt, mb: 2, lineHeight: 1.25 }}>
+                  <Typography variant="h4" sx={{ fontWeight: 700, color: primaryTxt, mb: 2, lineHeight: 1.25 }}>
                     Making Quality Services Accessible to Every Indian
                   </Typography>
                   <Typography variant="body1" sx={{ color: secondaryTxt, lineHeight: 1.8, mb: 2.5 }}>
@@ -181,7 +181,7 @@ export default function GlobalAboutUsView() {
         <Box ref={storyRef} sx={{ mb: { xs: 8, md: 10 } }}>
           <motion.div initial="hidden" animate={storyInView ? "visible" : "hidden"} variants={stagger}>
             <motion.div variants={fadeUp}>
-              <Typography variant="h4" sx={{ fontWeight: 800, color: primaryTxt, textAlign: "center", mb: 1 }}>Our Journey</Typography>
+              <Typography variant="h4" sx={{ fontWeight: 700, color: primaryTxt, textAlign: "center", mb: 1 }}>Our Journey</Typography>
               <Typography variant="body1" sx={{ color: secondaryTxt, textAlign: "center", mb: 6, maxWidth: 480, mx: "auto" }}>
                 From a startup idea in Dubai to India's fastest-growing service marketplace.
               </Typography>
@@ -226,7 +226,7 @@ export default function GlobalAboutUsView() {
         <Box ref={valuesRef} sx={{ mb: { xs: 8, md: 10 } }}>
           <motion.div initial="hidden" animate={valuesInView ? "visible" : "hidden"} variants={stagger}>
             <motion.div variants={fadeUp}>
-              <Typography variant="h4" sx={{ fontWeight: 800, color: primaryTxt, textAlign: "center", mb: 1 }}>What We Stand For</Typography>
+              <Typography variant="h4" sx={{ fontWeight: 700, color: primaryTxt, textAlign: "center", mb: 1 }}>What We Stand For</Typography>
               <Typography variant="body1" sx={{ color: secondaryTxt, textAlign: "center", mb: 5, maxWidth: 480, mx: "auto" }}>
                 Our values drive every product decision and every partnership.
               </Typography>
@@ -260,7 +260,7 @@ export default function GlobalAboutUsView() {
         <Box ref={teamRef} sx={{ mb: { xs: 8, md: 10 } }}>
           <motion.div initial="hidden" animate={teamInView ? "visible" : "hidden"} variants={stagger}>
             <motion.div variants={fadeUp}>
-              <Typography variant="h4" sx={{ fontWeight: 800, color: primaryTxt, textAlign: "center", mb: 1 }}>Leadership Team</Typography>
+              <Typography variant="h4" sx={{ fontWeight: 700, color: primaryTxt, textAlign: "center", mb: 1 }}>Leadership Team</Typography>
               <Typography variant="body1" sx={{ color: secondaryTxt, textAlign: "center", mb: 5 }}>
                 The people driving kartsquare's vision forward.
               </Typography>
@@ -303,7 +303,7 @@ export default function GlobalAboutUsView() {
               border: `1px solid ${COLORS.PURPLE_ALPHA_20}`,
             }}>
               <Box sx={{ position: "absolute", top: -60, right: -60, width: 250, height: 250, borderRadius: "50%", bgcolor: `${COLORS.PRIMARY_PURPLE}12`, filter: "blur(60px)", pointerEvents: "none" }} />
-              <Typography variant="h4" sx={{ fontWeight: 800, color: primaryTxt, mb: 1.5, position: "relative", zIndex: 1 }}>
+              <Typography variant="h4" sx={{ fontWeight: 700, color: primaryTxt, mb: 1.5, position: "relative", zIndex: 1 }}>
                 Join the kartsquare Family
               </Typography>
               <Typography variant="body1" sx={{ color: secondaryTxt, mb: 4, maxWidth: 500, mx: "auto", position: "relative", zIndex: 1 }}>

@@ -126,7 +126,7 @@ const VerificationModal: React.FC<VerificationModalProps> = ({
 
         <Typography
           variant="h5"
-          sx={{ fontWeight: 800, color: "text.primary" }}
+          sx={{ fontWeight: 700, color: "text.primary" }}
         >
           {t("otp_verification")}
         </Typography>

@@ -199,6 +199,8 @@ const Nav = () => {
               loginText={t("login")}
               onNotificationToggle={toggleNotificationDrawer}
               onFreeListingClick={handleFreeListingClick}
+              // The home hero has the page's search, so the header drops its own there (phones/tablets only).
+              homeCompact={pathname === "/"}
             />
           </Box>
 

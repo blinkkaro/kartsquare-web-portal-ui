@@ -133,7 +133,7 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
           >
             <Typography
               sx={{
-                fontWeight: 800,
+                fontWeight: 700,
                 color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                 lineHeight: 1.2,
                 fontSize: "1.05rem",
@@ -152,7 +152,7 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
               sx={{
                 bgcolor: isDark ? "rgba(29, 78, 216, 0.16)" : "#EFF6FF",
                 color: "#1D4ED8",
-                fontWeight: 800,
+                fontWeight: 700,
                 fontSize: "0.68rem",
                 height: 22,
               }}
@@ -164,7 +164,7 @@ const ProviderInfoCard: React.FC<ProviderInfoCardProps> = ({
               sx={{
                 bgcolor: isDark ? "rgba(245, 158, 11, 0.18)" : "#FEF3C7",
                 color: "#92400E",
-                fontWeight: 800,
+                fontWeight: 700,
                 fontSize: "0.68rem",
                 height: 22,
               }}

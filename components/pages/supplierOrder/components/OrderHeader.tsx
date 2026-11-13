@@ -154,7 +154,7 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({
     // >
     //   <Typography
     //     variant="h4"
-    //     sx={{ fontWeight: 800, color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE }}
+    //     sx={{ fontWeight: 700, color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE }}
     //   >
     //     {t("my_orders")}
     //   </Typography>

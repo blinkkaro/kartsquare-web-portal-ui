@@ -10,6 +10,7 @@ import { AppUserType } from "@/services/auth/auth.interface";
 import { shouldShowAIBot } from "@/constants/aiBot";
 import { useAppAIServiceConfig } from "@/hooks/useAppConfig";
 import Image from "next/image";
+import { useAppSelector } from "@/store/hooks";
 
 function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
   const [currentServiceIndex, setCurrentServiceIndex] = useState(0);
@@ -19,6 +20,8 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
   const role: AppUserType = secureStorage.getItem("role");
   const { data: appAIServiceConfig } = useAppAIServiceConfig();
   const theme = useTheme();
+  // The home hero has its own inline Kart AI entry; while it is on screen this one steps aside.
+  const inlineAiVisible = useAppSelector((state) => state.ui.inlineAiVisible);
   const services = [
     t("plumber"),
     t("electrician"),
@@ -63,7 +66,7 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
   }, []);
 
   // Check visibility AFTER all hooks have been called
-  if (!shouldShowAIBot(pathname, role, appAIServiceConfig)) {
+  if (inlineAiVisible || !shouldShowAIBot(pathname, role, appAIServiceConfig)) {
     return null;
   }
 

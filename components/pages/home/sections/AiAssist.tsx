@@ -40,7 +40,7 @@ export default function AiAssist() {
             <AutoAwesomeRoundedIcon />
           </Box>
           <Box>
-            <Typography sx={{ fontSize: "0.75rem", fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.85 }}>Kart AI</Typography>
+            <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.85 }}>Kart AI</Typography>
             <Typography component="h2" sx={sectionTitleSx}>Not sure what to search? Describe the problem.</Typography>
           </Box>
         </Box>
@@ -80,7 +80,7 @@ export default function AiAssist() {
             type="submit"
             disableElevation
             variant="contained"
-            sx={{ minHeight: 44, px: 2.25, borderRadius: 3, textTransform: "none", fontWeight: 800, bgcolor: "#fff", color: "#450fa2", flexShrink: 0, "&:hover": { bgcolor: "#f0e8ff" } }}
+            sx={{ minHeight: 44, px: 2.25, borderRadius: 3, textTransform: "none", fontWeight: 700, bgcolor: "#fff", color: "#450fa2", flexShrink: 0, "&:hover": { bgcolor: "#f0e8ff" } }}
           >
             Match me
           </Button>

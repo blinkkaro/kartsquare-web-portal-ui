@@ -111,7 +111,7 @@ const ProfileNotFound = () => {
                         variant="h1"
                         sx={{
                             position: "absolute",
-                            fontWeight: 900,
+                            fontWeight: 700,
                             color: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)",
                             zIndex: 0
                         }}
@@ -124,7 +124,7 @@ const ProfileNotFound = () => {
                     <Typography
                         variant="h3"
                         sx={{
-                            fontWeight: 800,
+                            fontWeight: 700,
                             mb: 1.5,
                             background: `linear-gradient(45deg, ${COLORS.PRIMARY_PURPLE}, ${COLORS.PRIMARY_BLUE})`,
                             backgroundClip: "text",

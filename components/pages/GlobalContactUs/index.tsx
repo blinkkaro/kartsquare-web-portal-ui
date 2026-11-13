@@ -209,7 +209,7 @@ export default function GlobalContactUsView() {
                 variant="h1"
                 component="h1"
                 sx={{
-                  fontWeight: 800,
+                  fontWeight: 700,
                   lineHeight: 1.1,
                   mb: 2,
                   background: `linear-gradient(130deg, ${COLORS.PRIMARY_PURPLE} 0%, #00bcff 100%)`,

@@ -84,7 +84,7 @@ export default function FaqSection() {
               bgcolor: dark ? "rgba(130,72,247,0.10)" : COLORS.PURPLE_ALPHA_04,
             }}
           >
-            <Typography sx={{ fontWeight: 800, fontSize: "0.95rem" }}>Still have a question?</Typography>
+            <Typography sx={{ fontWeight: 700, fontSize: "0.95rem" }}>Still have a question?</Typography>
             <Typography sx={{ fontSize: "0.8rem", color: "text.secondary", mt: 0.25, mb: 1.25 }}>Ask Kart AI — it replies in your language.</Typography>
             <Button
               variant="contained"
@@ -170,7 +170,7 @@ export default function FaqSection() {
           {/* mobile help card (desktop has it beside the heading) */}
           <Box sx={{ display: { xs: "flex", md: "none" }, alignItems: "center", justifyContent: "space-between", gap: 1.5, mt: 1, p: 1.75, borderRadius: 4, border: "1px solid", borderColor: "divider", bgcolor: dark ? "rgba(130,72,247,0.10)" : COLORS.PURPLE_ALPHA_04 }}>
             <Box>
-              <Typography sx={{ fontWeight: 800, fontSize: "0.92rem" }}>Still have a question?</Typography>
+              <Typography sx={{ fontWeight: 700, fontSize: "0.92rem" }}>Still have a question?</Typography>
               <Typography sx={{ fontSize: "0.76rem", color: "text.secondary" }}>Ask Kart AI in your language.</Typography>
             </Box>
             <Button variant="contained" disableElevation onClick={() => dispatch(setAiOpen(true))} sx={{ minHeight: 44, px: 2, flexShrink: 0, borderRadius: 3, textTransform: "none", fontWeight: 700, bgcolor: COLORS.PRIMARY_PURPLE, "&:hover": { bgcolor: COLORS.PURPLE_HOVER } }}>

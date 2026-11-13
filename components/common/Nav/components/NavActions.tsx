@@ -66,6 +66,11 @@ interface NavActionsProps {
   loginText: string;
   onNotificationToggle: () => void;
   onFreeListingClick: () => void;
+  /**
+   * Customer home on phones/tablets: the hero carries the search, so the header drops its search icon.
+   * The business listing icon stays. Every other page is unchanged.
+   */
+  homeCompact?: boolean;
 }
 
 import { useSocket } from "@/contexts/SocketContext";
@@ -84,12 +89,14 @@ const NavActions: React.FC<NavActionsProps> = ({
   loginText,
   onNotificationToggle,
   onFreeListingClick,
+  homeCompact = false,
 }) => {
   const profile = secureStorage.getItem("user_details");
   const { unreadCount } = useSocket();
   const { t } = useTranslate();
   const isDark = mode === "dark";
   const router = useRouter();
+  const compact = homeCompact && (isMobile || isTablet);
 
   if (isAuthenticated) {
     return (
@@ -290,7 +297,7 @@ const NavActions: React.FC<NavActionsProps> = ({
       </Box>
 
       {/* Mobile/Tablet Search Icon */}
-      {(isMobile || isTablet) && (
+      {(isMobile || isTablet) && !compact && (
         <StyledIconButton
           size="small"
           aria-label="search"
@@ -340,6 +347,7 @@ const NavActions: React.FC<NavActionsProps> = ({
           {loginText}
         </Box>
       </Button>
+
     </ActionsContainer>
   );
 };

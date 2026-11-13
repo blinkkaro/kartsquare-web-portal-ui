@@ -21,7 +21,7 @@ import {
   DeleteOutline,
   DoneAll,
 } from "@mui/icons-material";
-import { getNotification } from "@/hooks/useNotification";
+import { useNotification } from "@/hooks/useNotification";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import { COLORS } from "@/constants/colors";
 import { service_booking_events } from "@/services/notifications/notificationInterfaces";

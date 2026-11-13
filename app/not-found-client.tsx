@@ -50,7 +50,7 @@ export default function NotFoundClient() {
               variant="h1"
               sx={{
                 fontSize: { xs: "120px", sm: "150px", md: "180px" },
-                fontWeight: 800,
+                fontWeight: 700,
                 lineHeight: 1,
                 background: isDark
                   ? `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE} 0%, ${COLORS.PRIMARY_BLUE} 100%)`

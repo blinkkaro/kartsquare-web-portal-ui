@@ -24,7 +24,7 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { useMapDetails } from "@/hooks/useMapDetails";
 import type { MapServiceItem, MapStoreItem, SelectedItem } from "@/services/map/mapInterface";
 import ProfileDrawer from "@/components/common/ProfileDrawer";
-import { getServiceRouteParam } from "@/utils/serviceRoute";
+import { getServiceHref } from "@/utils/serviceRoute";
 import { AppUserType } from "@/services/auth/auth.interface";
 
 
@@ -248,7 +248,7 @@ const MapView: React.FC = () => {
                   id={service.service_id}
                   role={AppUserType.SERVICE_PROVIDER}
                   username={service.provider_name}
-                  detailsHref={`/services/${getServiceRouteParam(service)}`}
+                  detailsHref={getServiceHref(service)}
                   profileUserId={service.provider_id}
                   selected={isSelected}
                   onClick={() => handleServiceMarkerClick(service)}

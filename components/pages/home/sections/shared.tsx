@@ -2,6 +2,10 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 
+/** Side padding and max width of the home page's content column, so a full-width band lines up with the rest. */
+export const HOME_GUTTER = { xs: 1.5, sm: 2, md: 2.25, lg: 2.5, xl: 3 };
+export const HOME_MAX_WIDTH = 1680;
+
 /** Horizontal padding used by full-bleed sections so content aligns with the rest. */
 export const PANEL_PX = { xs: 0, md: 0 };
 
@@ -11,14 +15,14 @@ export const PANEL_PX = { xs: 0, md: 0 };
  */
 export const sectionEyebrowSx = {
   fontSize: "0.75rem",
-  fontWeight: 800,
+  fontWeight: 700,
   letterSpacing: "0.12em",
   textTransform: "uppercase",
 } as const;
 export const sectionTitleSx = {
   fontSize: { xs: "1.375rem", md: "1.875rem" },
-  fontWeight: 800,
-  letterSpacing: "-0.02em",
+  fontWeight: 700,
+  letterSpacing: "-0.01em",
   lineHeight: 1.2,
 } as const;
 export const sectionSubtitleSx = {
@@ -50,11 +54,14 @@ export function SectionHeader({
   subtitle,
   action,
   eyebrow,
+  onDark = false,
 }: {
   title: string;
   subtitle?: string;
   action?: React.ReactNode;
   eyebrow?: string;
+  /** The header sits on a dark band: light text. */
+  onDark?: boolean;
 }) {
   return (
     <Box sx={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 2, mb: 2 }}>
@@ -62,11 +69,11 @@ export function SectionHeader({
         {eyebrow && (
           <Typography sx={{ ...sectionEyebrowSx, color: COLORS.PRIMARY_PURPLE }}>{eyebrow}</Typography>
         )}
-        <Typography component="h2" sx={sectionTitleSx}>
+        <Typography component="h2" sx={{ ...sectionTitleSx, ...(onDark && { color: COLORS.WHITE }) }}>
           {title}
         </Typography>
         {subtitle && (
-          <Typography sx={sectionSubtitleSx}>{subtitle}</Typography>
+          <Typography sx={{ ...sectionSubtitleSx, ...(onDark && { color: "rgba(255,255,255,0.8)" }) }}>{subtitle}</Typography>
         )}
       </Box>
       {action && <Box sx={{ flexShrink: 0, whiteSpace: "nowrap", alignSelf: "flex-end", pb: 0.25 }}>{action}</Box>}

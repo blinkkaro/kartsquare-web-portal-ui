@@ -136,7 +136,7 @@ export default function SupplierOnboardingPage() {
               fontWeight: "bold",
               color:
                 theme.palette.mode === "light" ? "text.primary" : "#ffffff",
-              letterSpacing: "-0.02em",
+              letterSpacing: "-0.01em",
               fontSize: isLargeScreen ? "4rem" : "3rem",
             }}
           >
@@ -192,7 +192,7 @@ export default function SupplierOnboardingPage() {
               sx={{
                 fontWeight: 700,
                 color: theme.palette.mode === "light" ? "text.primary" : "#fff",
-                letterSpacing: "-0.02em",
+                letterSpacing: "-0.01em",
                 fontSize: "1.5rem",
                 mt: 1,
               }}

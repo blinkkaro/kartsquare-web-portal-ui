@@ -60,9 +60,9 @@ export function GET(req: NextRequest) {
           <div
             style={{
               fontSize: 30,
-              fontWeight: 800,
+              fontWeight: 700,
               color: "#8800ff",
-              letterSpacing: "-0.5px",
+              letterSpacing: "-0.01em",
             }}
           >
             kartsquare
@@ -87,12 +87,12 @@ export function GET(req: NextRequest) {
         <div
           style={{
             fontSize: heading.length > 50 ? 44 : 56,
-            fontWeight: 800,
+            fontWeight: 700,
             color: "#ffffff",
             lineHeight: 1.1,
             marginBottom: 20,
             maxWidth: 960,
-            letterSpacing: "-1px",
+            letterSpacing: "-0.01em",
           }}
         >
           {heading}

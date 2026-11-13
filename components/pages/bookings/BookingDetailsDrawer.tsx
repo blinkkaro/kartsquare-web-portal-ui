@@ -148,7 +148,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                 <span
                   style={{
                     color: COLORS.PRIMARY_PURPLE,
-                    fontWeight: 900,
+                    fontWeight: 700,
                     fontSize: "0.8em",
                   }}
                 >
@@ -192,7 +192,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                       bgcolor: "rgba(255,255,255,0.9)",
                       color: COLORS.PRIMARY_PURPLE,
                       backdropFilter: "blur(10px)",
-                      fontWeight: 800,
+                      fontWeight: 700,
                       fontSize: "0.7rem",
                       height: 24,
                       borderRadius: "8px",
@@ -221,7 +221,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                   <Box>
                     <Typography
                       variant="h5"
-                      sx={{ fontWeight: 900, color: "white", mb: 0.5 }}
+                      sx={{ fontWeight: 700, color: "white", mb: 0.5 }}
                     >
                       {currentBooking.service_name}
                     </Typography>
@@ -244,7 +244,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                         />
                         <Typography
                           variant="caption"
-                          sx={{ color: "white", fontWeight: 800 }}
+                          sx={{ color: "white", fontWeight: 700 }}
                         >
                           {dayjs(currentBooking.booking_at).format(
                             "MMM DD, h:mm A",
@@ -267,7 +267,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                         <LocationOn sx={{ fontSize: 14, color: "#FCD34D" }} />
                         <Typography
                           variant="caption"
-                          sx={{ color: "white", fontWeight: 800 }}
+                          sx={{ color: "white", fontWeight: 700 }}
                         >
                           {currentBooking.service_location === "at_customer"
                             ? "At Home"
@@ -292,7 +292,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                     </Typography>
                     <Typography
                       variant="h5"
-                      sx={{ fontWeight: 900, color: "white" }}
+                      sx={{ fontWeight: 700, color: "white" }}
                     >
                       {currentBooking.service_currency ||
                         initialBooking.currency}{" "}
@@ -302,7 +302,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                     ): (
                     <Typography
                       variant="body1"
-                      sx={{ fontWeight: 900, color: "white" }}
+                      sx={{ fontWeight: 700, color: "white" }}
                     >
                       {t("getQuote")}
                     </Typography>
@@ -368,7 +368,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                     variant="subtitle2"
                     sx={{
                       color: COLORS.SECONDARY_ORANGE,
-                      fontWeight: 800,
+                      fontWeight: 700,
                       textTransform: "uppercase",
                       letterSpacing: "1.5px",
                     }}
@@ -403,7 +403,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                           alignItems: "center",
                           justifyContent: "center",
                           fontSize: "1.5rem",
-                          fontWeight: 800,
+                          fontWeight: 700,
                           color: isDark
                             ? COLORS.WHITE
                             : COLORS.TEXT.PRIMARY_LIGHT,
@@ -470,7 +470,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                   </Typography>
                   <Typography
                     sx={{
-                      fontWeight: 800,
+                      fontWeight: 700,
                       fontSize: "1rem",
                       color: isDark ? "white" : "#1E293B",
                     }}
@@ -576,7 +576,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                   </Typography>
                   <Typography
                     sx={{
-                      fontWeight: 800,
+                      fontWeight: 700,
                       fontSize: "1rem",
                       mb: 0.8,
                       color: isDark ? "white" : "#1E293B",
@@ -727,7 +727,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                   borderRadius: "16px",
                   py: 1.8,
                   textTransform: "none",
-                  fontWeight: 800,
+                  fontWeight: 700,
                   borderColor: isDark ? "rgba(255,255,255,0.1)" : "#E2E8F0",
                   color: isDark ? "white" : "#475569",
                   "&:hover": { bgcolor: "rgba(0,0,0,0.02)" },
@@ -744,7 +744,7 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                   borderRadius: "16px",
                   py: 1.8,
                   textTransform: "none",
-                  fontWeight: 800,
+                  fontWeight: 700,
                   boxShadow: `0 8px 20px ${COLORS.PRIMARY_PURPLE}30`,
                   "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
                 }}

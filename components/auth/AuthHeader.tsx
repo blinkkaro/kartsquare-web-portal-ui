@@ -45,9 +45,9 @@ function AuthHeader({ showBack, onBack, showSkip, skipHref = "/" }: AuthHeaderPr
           />
           <Typography
             sx={{
-              fontWeight: 800,
+              fontWeight: 700,
               fontSize: "1.1rem",
-              letterSpacing: "-0.02em",
+              letterSpacing: "-0.01em",
             }}
           >
             kartsquare

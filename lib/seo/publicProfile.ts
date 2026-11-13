@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
 import { SITE_URL } from "./buildMetadata";
+import { fetchPublicJson, getApiBaseUrl } from "./upstream";
 
-export function getApiBaseUrl(): string {
-  const raw =
-    process.env.API_BASE_URL ||
-    process.env.NEXT_PUBLIC_API_URL ||
-    "http://localhost:5500/api/v1";
-  return String(raw).replace(/\/$/, "");
-}
+export { getApiBaseUrl };
 
 export type PublicProfileVariant = "provider" | "supplier";
 
@@ -16,9 +11,14 @@ export type PublicProfileSeoPayload = {
   variant: PublicProfileVariant;
 };
 
+type ProfileResponse = { data?: { profile?: Record<string, unknown> } };
+
 /**
  * Server-only public profile fetch for SEO (metadata + JSON-LD).
- * Uses native fetch so generateMetadata works without the browser axios stack.
+ *
+ * Returns the profile, or `null` only when the API answered "not found" for both
+ * the provider and the supplier lookup. A network error, timeout or 5xx throws
+ * UpstreamError: an outage must never be rendered (or cached) as a 404.
  * Next.js deduplicates identical fetch calls in the same render.
  */
 export async function fetchPublicProfileForSeo(
@@ -27,24 +27,14 @@ export async function fetchPublicProfileForSeo(
   const base = getApiBaseUrl();
   const enc = encodeURIComponent(username);
 
-  const providerRes = await fetch(`${base}/profile/provider/${enc}`, {
-    next: { revalidate: 300 },
-    headers: { Accept: "application/json" },
-  });
-  if (providerRes.ok) {
-    const json = await providerRes.json();
-    const profile = json?.data?.profile;
-    if (profile) return { profile, variant: "provider" };
+  const provider = await fetchPublicJson<ProfileResponse>(`${base}/profile/provider/${enc}`);
+  if (provider.status === "ok" && provider.body?.data?.profile) {
+    return { profile: provider.body.data.profile, variant: "provider" };
   }
 
-  const supplierRes = await fetch(`${base}/profile/supplier/${enc}`, {
-    next: { revalidate: 300 },
-    headers: { Accept: "application/json" },
-  });
-  if (supplierRes.ok) {
-    const json = await supplierRes.json();
-    const profile = json?.data?.profile;
-    if (profile) return { profile, variant: "supplier" };
+  const supplier = await fetchPublicJson<ProfileResponse>(`${base}/profile/supplier/${enc}`);
+  if (supplier.status === "ok" && supplier.body?.data?.profile) {
+    return { profile: supplier.body.data.profile, variant: "supplier" };
   }
 
   return null;
@@ -87,28 +77,8 @@ function descriptionFromProfile(
     str(profile.meta_description) ||
     str(profile.description) ||
     str(profile.bio) ||
-    `View ${display} on kartsquare — book services, see work, and connect with a verified business profile.`
+    `View ${display} on kartsquare — book services, see work, and connect with a business profile.`
   );
-}
-
-function parseStructuredData(
-  raw: unknown,
-): Record<string, unknown> | null {
-  if (!raw) return null;
-  if (typeof raw === "object" && raw !== null && !Array.isArray(raw)) {
-    return raw as Record<string, unknown>;
-  }
-  if (typeof raw === "string") {
-    try {
-      const parsed = JSON.parse(raw) as unknown;
-      if (typeof parsed === "object" && parsed !== null) {
-        return parsed as Record<string, unknown>;
-      }
-    } catch {
-      return null;
-    }
-  }
-  return null;
 }
 
 function buildGeoJsonLd(
@@ -128,6 +98,7 @@ function buildGeoJsonLd(
   const postal: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": variant === "supplier" ? "Store" : "ProfessionalService",
+    "@id": `${canonicalUrl}#profile`,
     name: display,
     description: description.slice(0, 2000),
     url: canonicalUrl,
@@ -168,7 +139,7 @@ function buildGeoJsonLd(
     postal.provider = {
       "@type": "Person",
       name: personName,
-      url: `${String(SITE_URL).replace(/\/$/, "")}/in/${uname}`,
+      url: `${String(SITE_URL).replace(/\/$/, "")}/in/${encodeURIComponent(uname)}`,
     };
   }
 
@@ -184,17 +155,8 @@ export function buildProfileJsonLd(
   const display = displayName(profile, variant);
   const description = descriptionFromProfile(profile, display);
 
-  const stored = parseStructuredData(profile.structured_data);
-  if (stored) {
-    return {
-      ...stored,
-      "@context": stored["@context"] || "https://schema.org",
-      url: canonicalUrl,
-      name: (stored.name as string) || display,
-      description: (stored.description as string) || description,
-    };
-  }
-
+  // The stored `structured_data` is AI-generated and has carried guessed URLs, so it
+  // is never used: the node is built from real fields and the canonical URL only.
   return buildGeoJsonLd(profile, variant, canonicalUrl, display, description);
 }
 

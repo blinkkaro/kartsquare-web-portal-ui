@@ -5,7 +5,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 // Plus Jakarta Sans for Latin; Mukta supplies the matching Devanagari so Hindi
-// never falls back to a mismatched system font. Weights kept to 400/600/700.
+// never falls back to a mismatched system font. Weights 400/500/600/700 only, the same set the whole app uses.
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   display: "swap",
@@ -13,7 +13,7 @@ const jakarta = Plus_Jakarta_Sans({
 });
 const mukta = Mukta({
   subsets: ["devanagari", "latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
   variable: "--font-mukta",
 });

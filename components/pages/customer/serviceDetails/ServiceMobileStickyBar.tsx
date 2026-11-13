@@ -49,7 +49,7 @@ const ServiceMobileStickyBar = ({
         <Typography
           sx={{
             fontSize: hasPrice ? "1.2rem" : "0.95rem",
-            fontWeight: 800,
+            fontWeight: 700,
             color: "text.primary",
             lineHeight: 1.2,
           }}

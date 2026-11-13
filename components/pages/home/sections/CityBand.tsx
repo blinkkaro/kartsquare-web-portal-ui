@@ -31,11 +31,11 @@ export default function CityBand() {
           borderColor: dark ? `${a}44` : `${a}88`,
         }}
       >
-        <Typography sx={{ fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: dark ? "#ffc2d6" : "#be185d" }}>
+        <Typography sx={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: dark ? "#ffc2d6" : "#be185d" }}>
           {city.nicknameLocal ? `${city.nicknameLocal} · ` : ""}
           {city.nickname}
         </Typography>
-        <Typography sx={{ mt: 0.75, fontSize: { xs: "1.3rem", md: "1.8rem" }, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.2 }}>
+        <Typography sx={{ mt: 0.75, fontSize: { xs: "1.3rem", md: "1.8rem" }, fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.2 }}>
           {location.city} mein kaam ho, bina bhaag-daud ke.
         </Typography>
         <Typography sx={{ mt: 0.75, color: "text.secondary", fontSize: "0.9rem" }}>

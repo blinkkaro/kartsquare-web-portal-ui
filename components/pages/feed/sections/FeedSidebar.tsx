@@ -12,6 +12,8 @@ import { selectIsAuthenticated } from "@/features/ui/authSlice";
 import { openLoginModal } from "@/features/ui/loginModalSlice";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { AppUserType } from "@/services/auth/auth.interface";
+import { motion, useReducedMotion } from "framer-motion";
+import { FEED_SPRING, FEED_STAGGER } from "../feedMotion";
 
 const YEAR = new Date().getFullYear();
 
@@ -21,6 +23,7 @@ interface FeedSidebarProps {
 
 /** Desktop right rail: you, providers to follow, and a way back into services. */
 export default function FeedSidebar({ currentUser }: FeedSidebarProps) {
+  const reduce = useReducedMotion() === true;
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
   const dispatch = useDispatch();
@@ -40,7 +43,7 @@ export default function FeedSidebar({ currentUser }: FeedSidebarProps) {
     boxShadow: dark ? COLORS.NEW_UI.CARD_SHADOW_DARK : COLORS.NEW_UI.CARD_SHADOW_LIGHT,
     p: 2,
   };
-  const avatarSx = { fontWeight: 800, bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10, color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE };
+  const avatarSx = { fontWeight: 700, bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10, color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE };
 
   const suggestions = (provider ?? []).filter((p) => p.id !== currentUser?.id).slice(0, 5);
   const meName = currentUser?.business_name?.trim() || `${currentUser?.first_name ?? ""} ${currentUser?.last_name ?? ""}`.trim();
@@ -71,7 +74,7 @@ export default function FeedSidebar({ currentUser }: FeedSidebarProps) {
             {(meName || "Y").charAt(0).toUpperCase()}
           </Avatar>
           <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography sx={{ fontSize: "0.88rem", fontWeight: 800, color: "text.primary" }} noWrap>
+            <Typography sx={{ fontSize: "0.88rem", fontWeight: 700, color: "text.primary" }} noWrap>
               {meName || "Your profile"}
             </Typography>
             {currentUser.username && (
@@ -87,7 +90,7 @@ export default function FeedSidebar({ currentUser }: FeedSidebarProps) {
       )}
 
       <Box sx={cardSx}>
-        <Typography component="h2" sx={{ fontSize: "0.9rem", fontWeight: 800, color: "text.primary", mb: 1 }}>
+        <Typography component="h2" sx={{ fontSize: "0.9rem", fontWeight: 700, color: "text.primary", mb: 1 }}>
           Suggested for you
         </Typography>
         {isLoading
@@ -104,11 +107,18 @@ export default function FeedSidebar({ currentUser }: FeedSidebarProps) {
           ? (
               <Typography sx={{ fontSize: "0.82rem", color: "text.secondary" }}>No suggestions right now.</Typography>
             )
-          : suggestions.map((p) => {
+          : suggestions.map((p, idx) => {
               const name = p.business_name?.trim() || `${p.first_name ?? ""} ${p.last_name ?? ""}`.trim() || "Provider";
               const isFollowed = followed.has(p.id);
               return (
-                <Box key={p.id} sx={{ display: "flex", alignItems: "center", gap: 1.25, py: 1 }}>
+                <Box
+                  key={p.id}
+                  component={motion.div}
+                  initial={reduce ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ ...FEED_SPRING, delay: reduce ? 0 : Math.min(idx, 6) * FEED_STAGGER }}
+                  sx={{ display: "flex", alignItems: "center", gap: 1.25, py: 1 }}
+                >
                   <ButtonBase
                     onClick={() => dispatch(openDrawer({ userId: p.id, role: AppUserType.SERVICE_PROVIDER }))}
                     aria-label={`View ${name}'s profile`}
@@ -143,7 +153,7 @@ export default function FeedSidebar({ currentUser }: FeedSidebarProps) {
 
       {categories && categories.length > 0 && (
         <Box sx={cardSx}>
-          <Typography component="h2" sx={{ fontSize: "0.9rem", fontWeight: 800, color: "text.primary", mb: 1.25 }}>
+          <Typography component="h2" sx={{ fontSize: "0.9rem", fontWeight: 700, color: "text.primary", mb: 1.25 }}>
             Explore services
           </Typography>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>

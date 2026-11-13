@@ -7,6 +7,7 @@ import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import ExploreRoundedIcon from "@mui/icons-material/ExploreRounded";
 import { COLORS } from "@/constants/colors";
 import { useGetInfinitePosts, useGetReels } from "@/hooks/usePosts";
+import { ShimmerBox } from "./HomeLoading";
 import { Visibility, Posts } from "@/services/post/postInterfaces";
 import { Section, sectionTitleSx, sectionSubtitleSx } from "./shared";
 import { HOME_PHOTOS } from "./homePhotos";
@@ -41,82 +42,6 @@ const categorizePost = (caption?: string | null, postType?: string | null): "hom
   return "business";
 };
 
-const DUMMY_DISCOVER_ITEMS: DiscoverItem[] = [
-  {
-    id: "disc-1",
-    badge: "Portfolio",
-    title: "Wedding moments captured",
-    subtitle: "Royal Lens Studio · Photography",
-    category: "photo",
-    image: HOME_PHOTOS.weddingPortrait.src,
-    link: "/cus/reels",
-  },
-  {
-    id: "disc-2",
-    badge: "Reel",
-    title: "Hair spa, start to finish",
-    subtitle: "Bliss Beauty Lounge · Beauty & salon",
-    category: "reels",
-    image: HOME_PHOTOS.salonHairSpa.src,
-    isReel: true,
-    link: "/cus/reels",
-  },
-  {
-    id: "disc-3",
-    badge: "Project",
-    title: "Sink trap replaced in under an hour",
-    subtitle: "Rapid Plumbing · Plumbing",
-    category: "home",
-    image: HOME_PHOTOS.plumberSink.src,
-    link: "/cus/reels",
-  },
-  {
-    id: "disc-4",
-    badge: "Local business",
-    title: "Forty years behind the chair",
-    subtitle: "Heritage Barber Shop · Barber",
-    category: "business",
-    image: HOME_PHOTOS.barber.src,
-    link: "/cus/reels",
-  },
-  {
-    id: "disc-5",
-    badge: "Look",
-    title: "Classic red bridal look",
-    subtitle: "Shringaar Makeovers · Bridal makeup",
-    category: "beauty",
-    image: HOME_PHOTOS.bridalRed.src,
-    link: "/cus/reels",
-  },
-  {
-    id: "disc-6",
-    badge: "Project",
-    title: "Panel rewiring, done safely",
-    subtitle: "Current Master · Electrician",
-    category: "home",
-    image: HOME_PHOTOS.electricianPanel.src,
-    link: "/cus/reels",
-  },
-  {
-    id: "disc-7",
-    badge: "Showcase",
-    title: "A calm new studio in town",
-    subtitle: "Aura Salon · Salon",
-    category: "beauty",
-    image: HOME_PHOTOS.salonStudio.src,
-    link: "/cus/reels",
-  },
-  {
-    id: "disc-8",
-    badge: "Local business",
-    title: "Late-night trims in the old market",
-    subtitle: "Old City Barbers · Barber",
-    category: "business",
-    image: HOME_PHOTOS.barbershopLamp.src,
-    link: "/cus/reels",
-  },
-];
-
 const TABS = [
   { id: "all", label: "All" },
   { id: "home", label: "Home projects" },
@@ -142,8 +67,9 @@ export default function NewDiscoverSection() {
     setSlide(Math.round(el.scrollLeft / ((el.firstElementChild as HTMLElement).offsetWidth + 12)));
   }, []);
 
-  const { data: postsData } = useGetInfinitePosts({ limit: 4, visibility: Visibility.PUBLIC });
-  const { data: reelsData } = useGetReels();
+  const { data: postsData, isLoading: postsLoading } = useGetInfinitePosts({ limit: 4, visibility: Visibility.PUBLIC });
+  const { data: reelsData, isLoading: reelsLoading } = useGetReels();
+  const loading = postsLoading || reelsLoading;
 
   const rawPosts: Posts[] = useMemo(
     () => (postsData?.pages.flatMap((p) => p.posts) ?? []).filter((p) => !!p.media_urls),
@@ -192,22 +118,17 @@ export default function NewDiscoverSection() {
       });
     });
 
-    // If combined has enough items, return top 8. Otherwise, augment with dummy items
-    if (combined.length >= 8) {
-      return combined.slice(0, 8);
-    }
-
-    // Append dummy items not already covered
-    return [...combined, ...DUMMY_DISCOVER_ITEMS].slice(0, 8);
+    // Real posts and reels only; never made-up items.
+    return combined.slice(0, 8);
   }, [rawPosts, rawReels]);
 
   const filteredItems = useMemo(() => {
     if (activeTab === "all") return items;
-    const matched = items.filter((item) => item.category === activeTab);
-    if (matched.length > 0) return matched;
-    // Fallback to dummy items for this tab if API had no matching category posts
-    return DUMMY_DISCOVER_ITEMS.filter((item) => item.category === activeTab);
+    return items.filter((item) => item.category === activeTab);
   }, [items, activeTab]);
+
+  // Loaded, and there is nothing real to show: hide the section rather than invent one.
+  if (!loading && items.length === 0) return null;
 
   return (
     <Section id="discover" sx={{ py: { xs: 3.5, md: 7 }, px: 0 }}>
@@ -224,7 +145,7 @@ export default function NewDiscoverSection() {
             bgcolor: COLORS.PURPLE_ALPHA_10,
             color: COLORS.PRIMARY_PURPLE,
             fontSize: "0.75rem",
-            fontWeight: 800,
+            fontWeight: 700,
             letterSpacing: "0.06em",
             textTransform: "uppercase",
             mb: 1.25,
@@ -372,7 +293,14 @@ export default function NewDiscoverSection() {
           "@media (prefers-reduced-motion: reduce)": { "& > a": { animation: "none !important" } },
         }}
       >
-        {filteredItems.map((item, index) => {
+        {loading &&
+          [0, 1, 2, 3].map((i) => (
+            <ShimmerBox
+              key={`skeleton-${i}`}
+              sx={{ flex: { xs: "0 0 66%", sm: "initial" }, height: { xs: 330, sm: i === 0 ? 260 : 240, md: 340 }, borderRadius: { xs: 3, md: 4 } }}
+            />
+          ))}
+        {(loading ? [] : filteredItems).map((item, index) => {
           const isLarge = index === 0;
           return (
             <Box
@@ -443,7 +371,7 @@ export default function NewDiscoverSection() {
                   bgcolor: "rgba(255,255,255,0.92)",
                   color: "#1c1924",
                   fontSize: { xs: "0.75rem", md: "0.75rem" },
-                  fontWeight: 800,
+                  fontWeight: 700,
                   boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
                 }}
               >
@@ -494,7 +422,7 @@ export default function NewDiscoverSection() {
                 <Typography
                   sx={{
                     color: "#fff",
-                    fontWeight: 800,
+                    fontWeight: 700,
                     fontSize: { xs: "1rem", sm: "0.92rem", md: "1.05rem" },
                     lineHeight: 1.25,
                     letterSpacing: "-0.01em",

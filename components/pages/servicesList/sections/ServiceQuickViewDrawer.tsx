@@ -161,7 +161,7 @@ export default function ServiceQuickViewDrawer({
                   bgcolor: "rgba(255,255,255,0.92)",
                   color: "#166534",
                   fontSize: "0.72rem",
-                  fontWeight: 800,
+                  fontWeight: 700,
                   mb: 0.5,
                 }}
               >
@@ -172,8 +172,8 @@ export default function ServiceQuickViewDrawer({
                 sx={{
                   color: "#fff",
                   fontSize: "1.25rem",
-                  fontWeight: 800,
-                  letterSpacing: "-0.02em",
+                  fontWeight: 700,
+                  letterSpacing: "-0.01em",
                   lineHeight: 1.2,
                 }}
               >
@@ -186,7 +186,7 @@ export default function ServiceQuickViewDrawer({
                 <Typography sx={{ color: "rgba(255,255,255,0.8)", fontSize: "0.68rem" }}>
                   Starting from
                 </Typography>
-                <Typography sx={{ color: "#fff", fontSize: "1.1rem", fontWeight: 800 }}>
+                <Typography sx={{ color: "#fff", fontSize: "1.1rem", fontWeight: 700 }}>
                   ₹{service.price}
                 </Typography>
               </Box>
@@ -202,7 +202,7 @@ export default function ServiceQuickViewDrawer({
               <StarRoundedIcon sx={{ color: COLORS.NEW_UI.STAR_AMBER, fontSize: 20 }} />
               {hasReviews ? (
                 <>
-                  <Typography sx={{ fontSize: "0.92rem", fontWeight: 800, color: "text.primary" }}>
+                  <Typography sx={{ fontSize: "0.92rem", fontWeight: 700, color: "text.primary" }}>
                     {ratingNum.toFixed(1)}
                   </Typography>
                   <Typography sx={{ fontSize: "0.82rem", color: "text.secondary" }}>
@@ -314,7 +314,7 @@ export default function ServiceQuickViewDrawer({
           {/* About / Description */}
           {service.service_desc && (
           <Box sx={{ mb: 3 }}>
-            <Typography sx={{ fontSize: "0.92rem", fontWeight: 800, color: "text.primary", mb: 0.75 }}>
+            <Typography sx={{ fontSize: "0.92rem", fontWeight: 700, color: "text.primary", mb: 0.75 }}>
               About this professional
             </Typography>
             <Typography sx={{ fontSize: "0.86rem", color: "text.secondary", lineHeight: 1.6 }}>
@@ -326,7 +326,7 @@ export default function ServiceQuickViewDrawer({
           {/* Services & Specializations */}
           {subServices.length > 0 && (
             <Box sx={{ mb: 3 }}>
-              <Typography sx={{ fontSize: "0.92rem", fontWeight: 800, color: "text.primary", mb: 1.25 }}>
+              <Typography sx={{ fontSize: "0.92rem", fontWeight: 700, color: "text.primary", mb: 1.25 }}>
                 Specialized in
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -352,7 +352,7 @@ export default function ServiceQuickViewDrawer({
           {/* Recent Work Portfolio */}
           {recentWorks.length > 0 && (
             <Box sx={{ mb: 2 }}>
-              <Typography sx={{ fontSize: "0.92rem", fontWeight: 800, color: "text.primary", mb: 1.25 }}>
+              <Typography sx={{ fontSize: "0.92rem", fontWeight: 700, color: "text.primary", mb: 1.25 }}>
                 Recent work & projects
               </Typography>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
@@ -468,7 +468,7 @@ export default function ServiceQuickViewDrawer({
                 <Avatar
                   src={service.provider_image_url || undefined}
                   alt={service.provider_name || displayName}
-                  sx={{ width: 22, height: 22, fontSize: "0.72rem", fontWeight: 800 }}
+                  sx={{ width: 22, height: 22, fontSize: "0.72rem", fontWeight: 700 }}
                 >
                   {(service.provider_name || displayName).charAt(0).toUpperCase()}
                 </Avatar>

@@ -343,7 +343,7 @@ const StoreView: React.FC = () => {
                       variant="overline"
                       sx={{
                         letterSpacing: 3,
-                        fontWeight: 900,
+                        fontWeight: 700,
                         opacity: 0.95,
                         backgroundColor: `${COLORS.PRIMARY_PURPLE}dd`,
                         px: 2,
@@ -389,7 +389,7 @@ const StoreView: React.FC = () => {
                         },
                         px: { xs: 4, md: 6 },
                         py: { xs: 1, sm: 1.5 },
-                        fontWeight: 800,
+                        fontWeight: 700,
                         borderRadius: "14px",
                         transition: "all 0.3s ease",
                         boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
@@ -698,7 +698,7 @@ const StoreView: React.FC = () => {
                           variant="caption"
                           sx={{
                             color: COLORS.PRIMARY_PURPLE,
-                            fontWeight: 800,
+                            fontWeight: 700,
                             textTransform: "uppercase",
                             letterSpacing: 1,
                           }}
@@ -745,7 +745,7 @@ const StoreView: React.FC = () => {
                             <Verified sx={{ fontSize: 14, color: "#059669" }} />
                             <Typography
                               variant="caption"
-                              sx={{ color: "#059669", fontWeight: 800 }}
+                              sx={{ color: "#059669", fontWeight: 700 }}
                             >
                               Trusted
                             </Typography>
@@ -1218,7 +1218,7 @@ const StoreView: React.FC = () => {
                         alignItems: "center",
                         justifyContent: "center",
                         color: "white",
-                        fontWeight: 800,
+                        fontWeight: 700,
                         boxShadow: "0 8px 16px rgba(94, 24, 233, 0.2)",
                       }}
                     >

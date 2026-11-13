@@ -119,7 +119,7 @@ const ServiceStatPills = ({
             {pill.label}
           </Typography>
           <Typography
-            sx={{ fontSize: "1rem", fontWeight: 800, color: "text.primary", lineHeight: 1.2 }}
+            sx={{ fontSize: "1rem", fontWeight: 700, color: "text.primary", lineHeight: 1.2 }}
           >
             {pill.value}
           </Typography>

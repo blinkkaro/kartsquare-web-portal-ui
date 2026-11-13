@@ -173,7 +173,7 @@ export default function ServiceCardHorizontal({
               bgcolor: "rgba(255,255,255,0.92)",
               color: "#166534",
               fontSize: "0.72rem",
-              fontWeight: 800,
+              fontWeight: 700,
               boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
             }}
           >
@@ -189,7 +189,7 @@ export default function ServiceCardHorizontal({
             <Typography
               sx={{
                 fontSize: "0.72rem",
-                fontWeight: 800,
+                fontWeight: 700,
                 color: COLORS.PRIMARY_PURPLE,
                 textTransform: "uppercase",
                 letterSpacing: "0.04em",
@@ -222,7 +222,7 @@ export default function ServiceCardHorizontal({
                       width: 30,
                       height: 30,
                       fontSize: "0.85rem",
-                      fontWeight: 800,
+                      fontWeight: 700,
                       bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10,
                       color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE,
                       border: "1.5px solid",
@@ -241,7 +241,7 @@ export default function ServiceCardHorizontal({
               onClick={() => onViewService(service)}
               sx={{
                 fontSize: { xs: "1.05rem", sm: "1.15rem" },
-                fontWeight: 800,
+                fontWeight: 700,
                 color: "text.primary",
                 cursor: "pointer",
                 "&:hover": { color: COLORS.PRIMARY_PURPLE },
@@ -428,9 +428,9 @@ export default function ServiceCardHorizontal({
                 <Typography
                   sx={{
                     fontSize: "1.35rem",
-                    fontWeight: 800,
+                    fontWeight: 700,
                     color: "text.primary",
-                    letterSpacing: "-0.02em",
+                    letterSpacing: "-0.01em",
                   }}
                 >
                   ₹{service.price}
@@ -441,7 +441,7 @@ export default function ServiceCardHorizontal({
                 <Typography sx={{ fontSize: "0.74rem", color: "text.secondary", fontWeight: 500 }}>
                   Pricing
                 </Typography>
-                <Typography sx={{ fontSize: "0.95rem", fontWeight: 800, color: "text.primary" }}>
+                <Typography sx={{ fontSize: "0.95rem", fontWeight: 700, color: "text.primary" }}>
                   Contact for price
                 </Typography>
               </>

@@ -467,7 +467,7 @@ export const english = {
   kartAi: "Kart AI",
   ai_powered_assistant: "AI-powered assistant",
   kartAiGreeting:
-    "Hi there! I’m Kart AI, your personal AI assistant. Let’s get you the perfect service.",
+    "Namaste! Main Kart AI hoon. Aapko kaunsi service chahiye? Apni problem batao, main sahi service dhoondhne mein help karungi.",
   find: "Find a",
   neatMyArea: "near my area",
   ai_thinking: "Searching for services...",

@@ -1,13 +1,12 @@
 "use client";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useId, useRef, useState, useEffect } from "react";
 import {
   Box,
   InputBase,
   InputAdornment,
-  styled,
   useTheme,
 } from "@mui/material";
-import { Search as SearchIcon, Tune as TuneIcon } from "@mui/icons-material";
+import { Search as SearchIcon } from "@mui/icons-material";
 import { COLORS } from "../../../../constants/colors";
 import GradientIcon from "../../GradientIcon";
 import SearchDropdown from "./SearchDropdown";
@@ -19,13 +18,26 @@ interface SearchBarProps {
   search: string;
   onSearchChange: (value: string) => void;
   placeholder: string;
+  /** "nav" is the compact pill in the header (default). "hero" is the large labelled form on the home page. */
+  variant?: "nav" | "hero";
+  /** hero only: called with the typed text when the form is submitted (Enter or the button). */
+  onSubmit?: (query: string) => void;
+  /** hero only: the accessible name of the field (also shown to screen readers, never as the only hint). */
+  label?: string;
+  /** hero only: text of the submit button. */
+  submitLabel?: string;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   search,
   onSearchChange,
   placeholder,
+  variant = "nav",
+  onSubmit,
+  label = "Search for a service",
+  submitLabel = "Search",
 }) => {
+  const inputId = useId();
   const theme = useTheme();
   const router = useRouter();
   const [isFocused, setIsFocused] = useState(false);
@@ -104,6 +116,99 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const showDropdown =
     isFocused &&
     (search.trim().length > 0 || loading || searchResults.users.length > 0 || searchResults.services.length > 0);
+
+  if (variant === "hero") {
+    return (
+      <Box
+        component="form"
+        role="search"
+        onSubmit={(e: React.FormEvent) => {
+          e.preventDefault();
+          setIsFocused(false);
+          onSubmit?.(search);
+        }}
+        sx={{ width: "100%" }}
+      >
+        <Box
+          component="label"
+          htmlFor={inputId}
+          sx={{ position: "absolute", width: "1px", height: "1px", margin: "-1px", overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap" }}
+        >
+          {label}
+        </Box>
+        <Box
+          ref={searchBoxRef}
+          sx={{
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            minHeight: 56,
+            pl: 1.75,
+            pr: 0.75,
+            borderRadius: "16px",
+            bgcolor: COLORS.WHITE,
+            border: "1px solid",
+            borderColor: COLORS.WHITE,
+            boxShadow: "0 10px 30px rgba(0,0,0,0.22)",
+            transition: "border-color 160ms ease, box-shadow 160ms ease",
+            "&:focus-within": {
+              borderColor: COLORS.WHITE,
+              boxShadow: `0 0 0 3px ${COLORS.SECONDARY_ORANGE}`,
+            },
+            "@media (prefers-reduced-motion: reduce)": { transition: "none" },
+          }}
+        >
+          <SearchIcon aria-hidden sx={{ color: "text.secondary", fontSize: 22, flexShrink: 0 }} />
+          <InputBase
+            id={inputId}
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            placeholder={placeholder}
+            inputProps={{ enterKeyHint: "search", autoComplete: "off", style: { fontSize: 16 } }}
+            sx={{ flex: 1, minWidth: 0, minHeight: 48, fontWeight: 500 }}
+          />
+          <Box
+            component="button"
+            type="submit"
+            sx={{
+              all: "unset",
+              boxSizing: "border-box",
+              cursor: "pointer",
+              minHeight: 44,
+              px: 2.25,
+              display: "flex",
+              alignItems: "center",
+              borderRadius: "12px",
+              bgcolor: COLORS.PRIMARY_PURPLE,
+              color: COLORS.WHITE,
+              fontWeight: 700,
+              fontSize: "0.92rem",
+              flexShrink: 0,
+              transition: "background-color 160ms ease",
+              "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
+              "&:focus-visible": { outline: `3px solid ${COLORS.PURPLE_ALPHA_30}`, outlineOffset: 2 },
+            }}
+          >
+            {submitLabel}
+          </Box>
+          {showDropdown && (
+            <SearchDropdown
+              open={showDropdown}
+              anchorEl={searchBoxRef.current}
+              users={searchResults.users}
+              services={searchResults.services}
+              loading={loading}
+              searchQuery={search}
+              onClose={() => setIsFocused(false)}
+              onSeeAll={handleSeeAll}
+            />
+          )}
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box

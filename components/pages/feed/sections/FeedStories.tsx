@@ -3,11 +3,17 @@ import React, { useMemo, useRef, useState } from "react";
 import { Avatar, Box, ButtonBase, Skeleton, Typography, useTheme } from "@mui/material";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import toast from "react-hot-toast";
+import { motion, useReducedMotion } from "framer-motion";
+import { keyframes } from "@mui/material/styles";
 import { COLORS } from "@/constants/colors";
+import { FEED_SPRING, FEED_STAGGER } from "../feedMotion";
 import { useAddStory, useGetStories } from "@/hooks/useStories";
 import { MediaType, StoriesList } from "@/services/stories/stories.interface";
 import StoryViewer from "@/components/pages/home/components/stories/StoryViewer";
 import AddStoryModal from "@/components/pages/home/components/stories/AddStoryModal";
+
+// An unseen story ring settles once when it appears, to draw the eye. It never loops.
+const ringIn = keyframes`0% { transform: scale(0.86); } 60% { transform: scale(1.06); } 100% { transform: scale(1); }`;
 
 const RING = `conic-gradient(${COLORS.ICON_GRADIENT.Light.START}, ${COLORS.ICON_GRADIENT.Light.END}, ${COLORS.ICON_GRADIENT.Light.START})`;
 
@@ -21,13 +27,21 @@ interface StoryBubbleProps {
   ariaLabel: string;
   onClick: () => void;
   children: React.ReactNode;
+  /** Position in the row: later bubbles enter slightly after earlier ones. */
+  index?: number;
 }
 
-function StoryBubble({ size, label, ariaLabel, onClick, children }: StoryBubbleProps) {
+function StoryBubble({ size, label, ariaLabel, onClick, children, index = 0 }: StoryBubbleProps) {
+  const reduce = useReducedMotion() === true;
   return (
     <ButtonBase
+      component={motion.button}
       onClick={onClick}
       aria-label={ariaLabel}
+      initial={reduce ? false : { opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ ...FEED_SPRING, delay: reduce ? 0 : Math.min(index, 8) * FEED_STAGGER }}
+      whileTap={reduce ? undefined : { scale: 0.94 }}
       sx={{ flexShrink: 0, width: size + 12, display: "flex", flexDirection: "column", alignItems: "center", gap: 0.75, borderRadius: "12px", py: 0.5 }}
     >
       {children}
@@ -105,9 +119,16 @@ export default function FeedStories({ currentUser }: FeedStoriesProps) {
   const size = 60;
 
   const ringed = (src: string | null | undefined, name: string, unseen: boolean) => (
-    <Box sx={{ p: "2.5px", borderRadius: "50%", background: unseen ? RING : dark ? COLORS.NEW_UI.DIVIDER_DARK : COLORS.NEW_UI.DIVIDER_LIGHT }}>
+    <Box
+      sx={{
+        p: "2.5px",
+        borderRadius: "50%",
+        background: unseen ? RING : dark ? COLORS.NEW_UI.DIVIDER_DARK : COLORS.NEW_UI.DIVIDER_LIGHT,
+        ...(unseen && { animation: `${ringIn} 520ms cubic-bezier(0.22, 1, 0.36, 1) 200ms backwards`, "@media (prefers-reduced-motion: reduce)": { animation: "none" } }),
+      }}
+    >
       <Box sx={{ p: "2px", borderRadius: "50%", bgcolor: "background.paper" }}>
-        <Avatar src={src || undefined} alt={name} sx={{ width: size - 9, height: size - 9, fontWeight: 800, bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10, color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE }}>
+        <Avatar src={src || undefined} alt={name} sx={{ width: size - 9, height: size - 9, fontWeight: 700, bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10, color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE }}>
           {name.charAt(0).toUpperCase()}
         </Avatar>
       </Box>
@@ -143,7 +164,7 @@ export default function FeedStories({ currentUser }: FeedStoriesProps) {
             {own ? (
               ringed(currentUser?.profile_pic, myName, true)
             ) : (
-              <Avatar src={currentUser?.profile_pic || undefined} alt={myName} sx={{ width: size, height: size, fontWeight: 800, bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10, color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE }}>
+              <Avatar src={currentUser?.profile_pic || undefined} alt={myName} sx={{ width: size, height: size, fontWeight: 700, bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10, color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE }}>
                 {myName.charAt(0).toUpperCase()}
               </Avatar>
             )}
@@ -186,6 +207,7 @@ export default function FeedStories({ currentUser }: FeedStoriesProps) {
                   label={name}
                   ariaLabel={`View ${name}'s story`}
                   onClick={() => setViewerIndex(own ? i + 1 : i)}
+                  index={i + 1}
                 >
                   {ringed(s.user_profile_image, name, unseen)}
                 </StoryBubble>

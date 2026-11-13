@@ -129,7 +129,7 @@ const ProductDetailInfo: React.FC<ProductDetailInfoProps> = ({
           <Typography
             variant="h4"
             sx={{
-              fontWeight: 800,
+              fontWeight: 700,
               mb: 1.5,
               color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
               lineHeight: 1.2,
@@ -146,14 +146,14 @@ const ProductDetailInfo: React.FC<ProductDetailInfoProps> = ({
                 alignItems: "center",
                 gap: 0.5,
                 color: "#1D4ED8",
-                fontWeight: 800,
+                fontWeight: 700,
                 cursor: "default",
               }}
             >
               <Verified sx={{ fontSize: "16px" }} />
               <Typography
                 sx={{
-                  fontWeight: 900,
+                  fontWeight: 700,
                   fontSize: "0.75rem",
                   fontStyle: "italic",
                   textTransform: "uppercase",
@@ -171,14 +171,14 @@ const ProductDetailInfo: React.FC<ProductDetailInfoProps> = ({
                   alignItems: "center",
                   gap: 0.5,
                   color: "#059669",
-                  fontWeight: 800,
+                  fontWeight: 700,
                   cursor: "default",
                 }}
               >
                 <Verified sx={{ fontSize: "16px" }} />
                 <Typography
                   sx={{
-                    fontWeight: 900,
+                    fontWeight: 700,
                     fontSize: "0.75rem",
                     fontStyle: "italic",
                     textTransform: "uppercase",

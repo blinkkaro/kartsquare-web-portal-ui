@@ -98,7 +98,7 @@ export default function ServicesFilterSidebar({
           mb: 2.5,
         }}
       >
-        <Typography sx={{ fontSize: "1.05rem", fontWeight: 800, color: "text.primary" }}>
+        <Typography sx={{ fontSize: "1.05rem", fontWeight: 700, color: "text.primary" }}>
           Filters
         </Typography>
         <Button

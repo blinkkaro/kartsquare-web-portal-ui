@@ -15,7 +15,7 @@ import { useAISearch } from "@/hooks/useAISearch";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setAiOpen, clearAiPendingQuery } from "@/features/ui/uiSlice";
 import { closeDrawer } from "@/features/ui/profileDrawerSlice";
-import { getServiceRouteParam } from "@/utils/serviceRoute";
+import { getServiceHref } from "@/utils/serviceRoute";
 import { getExampleQueries } from "@/constants/aiSearch";
 import { useAILocation } from "../useAILocation";
 import LocationChip from "./LocationChip";
@@ -52,6 +52,8 @@ type SpeechWindow = Window & {
 // Survives the drawer unmounting, so going results -> provider profile -> back
 // lands on the same conversation instead of an empty chat.
 let persisted: { messages: AIMessage[]; sessionId: string } | null = null;
+/** The last "new chat" request this module has acted on, so reopening the drawer later keeps the conversation. */
+let handledNewChat = 0;
 
 const newSessionId = () =>
   typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -77,6 +79,7 @@ export default function ChatInterface() {
   const sessionIdRef = useRef<string>(persisted?.sessionId ?? newSessionId());
 
   const pendingQuery = useAppSelector((state) => state.ui.aiPendingQuery);
+  const newChatToken = useAppSelector((state) => state.ui.aiNewChat);
   const { search, isLoading } = useAISearch();
   const { location, setLocation, locateMe, locating, locateError } = useAILocation();
 
@@ -126,6 +129,17 @@ export default function ChatInterface() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Something asked for a fresh conversation (the home hero's "Kart AI se poochho"): welcome message only,
+  // a new session, nothing carried over. Opening the drawer any other way keeps the conversation going.
+  useEffect(() => {
+    if (newChatToken <= handledNewChat) return;
+    handledNewChat = newChatToken;
+    sessionIdRef.current = newSessionId();
+    setSearchValue("");
+    setChatHistory([{ id: "greeting", role: "assistant", content: t("kartAiGreeting" as any), timestamp: new Date() }]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newChatToken]);
 
   useEffect(() => {
     persisted = { messages: chatHistory, sessionId: sessionIdRef.current };
@@ -219,7 +233,7 @@ export default function ChatInterface() {
     // The assistant must not stay on top of the profile the user just opened.
     dispatch(closeDrawer());
     dispatch(setAiOpen(false));
-    router.push(`/services/${getServiceRouteParam(s)}`);
+    router.push(getServiceHref(s));
   };
 
   const chipSx = {

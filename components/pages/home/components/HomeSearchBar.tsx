@@ -23,7 +23,7 @@ import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import { searchService } from "@/services/search/searchService";
 import { SearchResponse } from "@/services/search/searchInterface";
 import { COLORS } from "@/constants/colors";
-import { getServiceRouteParam } from "@/utils/serviceRoute";
+import { getServiceHref } from "@/utils/serviceRoute";
 
 interface HomeSearchBarProps {
     value: string;
@@ -197,8 +197,7 @@ const HomeSearchBar = forwardRef(({ value, onChange }: HomeSearchBarProps, ref) 
                                             key={service.id}
                                             onClick={() => {
                                                 onChange(service.name);
-                                                const serviceRoute = getServiceRouteParam(service);
-                                                router.push(`/services/${serviceRoute}`);
+                                                router.push(getServiceHref(service));
                                                 setShowSuggestions(false);
                                             }}
                                             sx={{

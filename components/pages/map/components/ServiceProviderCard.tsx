@@ -25,7 +25,7 @@ import { useRouter } from "next/navigation";
 import { useTranslate } from "@/hooks/useTranslate";
 import { Service } from "@/services/serviceList/listInteraface";
 import { useDispatch } from "react-redux";
-import { getServiceRouteParam } from "@/utils/serviceRoute";
+import { getServiceHref } from "@/utils/serviceRoute";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { AppUserType } from "@/services/auth/auth.interface";
 
@@ -86,7 +86,7 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
   /** The service name opens the service page; the provider picture opens their profile. */
   const handleOpenService = (e: React.MouseEvent) => {
     e.stopPropagation();
-    router.push(`/services/${getServiceRouteParam(service)}`);
+    router.push(getServiceHref(service));
   };
 
   const getDistance = () => {
@@ -229,7 +229,7 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
                   variant={isSmall ? "subtitle2" : "h6"}
                   onClick={handleOpenService}
                   sx={{
-                    fontWeight: 800,
+                    fontWeight: 700,
                     lineHeight: 1.2,
                     color:
                       theme.palette.mode === "dark"
@@ -360,7 +360,7 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
             <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
               <Typography
                 variant="subtitle2"
-                sx={{ fontWeight: 800, color: COLORS.TEXT.PRIMARY_LIGHT }}
+                sx={{ fontWeight: 700, color: COLORS.TEXT.PRIMARY_LIGHT }}
               >
                 {service.currency} {service.price}
               </Typography>

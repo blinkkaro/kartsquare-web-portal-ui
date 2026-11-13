@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
@@ -12,21 +12,12 @@ import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
 import { COLORS } from "@/constants/colors";
-import { useCategories } from "@/hooks/useCategories";
+import { useHomeServices } from "@/hooks/useHomeServices";
+import { homeServiceNames } from "@/lib/homeServices";
+import { KartLoadingNote, ShimmerBox } from "./HomeLoading";
 import { useAILocation } from "@/components/common/Ai/useAILocation";
 import { Section, sectionTitleSx, sectionSubtitleSx } from "./shared";
 import { HOME_PHOTOS, photoForCategory } from "./homePhotos";
-
-const DUMMY_CITY_SERVICES = [
-  "AC repair & gas refilling",
-  "Home deep cleaning",
-  "Water purifier service",
-  "Packers & movers",
-  "Electrician & wiring",
-  "Salon at home & bridal makeup",
-  "Plumbing & bathroom fittings",
-  "Carpentry & furniture assembly",
-];
 
 const AUTO_MS = 4200;
 const WHY_AUTO_MS = 2500;
@@ -83,7 +74,7 @@ export default function NewPopularInArea() {
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
   const { location } = useAILocation();
-  const { data: categories } = useCategories();
+  const { services, isLoading } = useHomeServices();
 
   // The services page reads the same shared location, so links carry no city.
   const city = location.city;
@@ -98,10 +89,8 @@ export default function NewPopularInArea() {
   const [userPaused, setUserPaused] = useState(false); // explicit pause button
   const listRef = useRef<HTMLDivElement>(null);
 
-  // Use API categories if available, else dummy services
-  const serviceList = (categories && categories.length > 0)
-    ? categories.slice(0, 8).map((c) => c.name)
-    : DUMMY_CITY_SERVICES;
+  // Service types we really have providers for (winter services first). No made-up fallback list.
+  const serviceList = useMemo(() => homeServiceNames(services, 8), [services]);
 
   useEffect(() => {
     const el = listRef.current;
@@ -167,6 +156,25 @@ export default function NewPopularInArea() {
     if (resumeRef.current) clearTimeout(resumeRef.current);
     resumeRef.current = setTimeout(() => setAuto(true), RESUME_MS);
   };
+
+  // While services load, hold the section's space (so the page below does not jump when it arrives).
+  if (isLoading) {
+    return (
+      <Section id="popular-area" sx={{ py: { xs: 3.5, md: 6 }, px: 0 }} aria-busy>
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 1fr) minmax(0, 1.4fr)" }, gap: { xs: 2.5, md: 4 } }}>
+          <Box sx={{ position: "relative", minHeight: { xs: 420, lg: 560 } }}>
+            <ShimmerBox sx={{ position: "absolute", inset: 0, borderRadius: 5 }} />
+            <Box sx={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
+              <KartLoadingNote />
+            </Box>
+          </Box>
+          <ShimmerBox sx={{ borderRadius: 5, minHeight: { xs: 300, lg: 560 } }} />
+        </Box>
+      </Section>
+    );
+  }
+  // Loaded, but nothing to show: hide the section rather than invent one.
+  if (serviceList.length === 0) return null;
 
   return (
     <Section id="popular-area" sx={{ py: { xs: 3.5, md: 6 }, px: 0 }}>
@@ -254,8 +262,8 @@ export default function NewPopularInArea() {
                   mt: 0.75,
                   display: "flex",
                   fontSize: { xs: "3.4rem", sm: "3.9rem" },
-                  fontWeight: 800,
-                  letterSpacing: "-0.04em",
+                  fontWeight: 700,
+                  letterSpacing: "-0.01em",
                   lineHeight: 1,
                   color: "transparent",
                   WebkitTextStroke: "1.5px rgba(255,255,255,0.9)",
@@ -382,7 +390,7 @@ export default function NewPopularInArea() {
                       sx={{
                         minWidth: 26,
                         fontSize: "0.78rem",
-                        fontWeight: 800,
+                        fontWeight: 700,
                         letterSpacing: "0.04em",
                         color: open ? COLORS.PRIMARY_PURPLE : "text.disabled",
                         transition: "color 200ms ease",
@@ -504,7 +512,7 @@ export default function NewPopularInArea() {
         <Box sx={{ minWidth: 0, display: "flex", flexDirection: "column", position: { lg: "sticky" }, top: { lg: 96 } }}>
           <Box sx={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 2, mb: 2.5 }}>
             <Box>
-              <Typography sx={{ fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: COLORS.PRIMARY_PURPLE }}>
+              <Typography sx={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: COLORS.PRIMARY_PURPLE }}>
                 Why us
               </Typography>
               <Typography component="h2" sx={{ ...sectionTitleSx, color: "text.primary" }}>
@@ -588,9 +596,9 @@ export default function NewPopularInArea() {
                   aria-hidden
                   sx={{
                     fontSize: { xs: "4.4rem", lg: "5rem" },
-                    fontWeight: 800,
+                    fontWeight: 700,
                     lineHeight: 0.95,
-                    letterSpacing: "-0.05em",
+                    letterSpacing: "-0.01em",
                     color: "transparent",
                     WebkitTextStroke: `1.5px ${ghost}`,
                     transition: "color 300ms ease, -webkit-text-stroke-width 300ms ease",
@@ -616,14 +624,14 @@ export default function NewPopularInArea() {
                   >
                     <Icon sx={{ fontSize: 20, color: fg === "#fff" ? "#2a0d73" : "#fff" }} />
                   </Box>
-                  <Typography component="h3" sx={{ fontSize: "1.15rem", fontWeight: 800, letterSpacing: "-0.015em", lineHeight: 1.2 }}>
+                  <Typography component="h3" sx={{ fontSize: "1.15rem", fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.2 }}>
                     {title}
                   </Typography>
                   <Typography sx={{ mt: 0.75, fontSize: "0.86rem", lineHeight: 1.5, color: sub }}>
                     {body}
                   </Typography>
                 </Box>
-                <Box aria-hidden sx={{ position: "absolute", top: 14, right: 18, fontSize: "0.75rem", fontWeight: 800, letterSpacing: "0.1em", color: sub }}>
+                <Box aria-hidden sx={{ position: "absolute", top: 14, right: 18, fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", color: sub }}>
                   {String(i + 1).padStart(2, "0")} / {String(WHY_REASONS.length).padStart(2, "0")}
                 </Box>
               </Box>

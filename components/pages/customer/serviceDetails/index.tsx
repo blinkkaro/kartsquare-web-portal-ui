@@ -44,7 +44,7 @@ import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
 import axios from "axios";
 import toast from "react-hot-toast";
 import GetQuoteModal from "./GetQuoteModal";
-import { getServiceRouteParam } from "@/utils/serviceRoute";
+import { getServiceHref } from "@/utils/serviceRoute";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 const NEW_LISTING_WINDOW_DAYS = 30;
@@ -53,7 +53,8 @@ const CustomerServiceDetails = () => {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const serviceId = params.id as string;
+  // Canonical route /services/[city]/[slug] (slug) or legacy /services/[first] (uuid or slug).
+  const serviceId = (params.slug ?? params.first ?? params.id) as string;
   const actions = searchParams.get("action");
   const theme = useTheme();
   const { t } = useTranslate();
@@ -192,8 +193,7 @@ const CustomerServiceDetails = () => {
 
   const handleReviewSubmit = () => {
     setReviewModalOpen(false);
-    const routeParam = getServiceRouteParam(service || { service_id: serviceId });
-    router.push(`/services/${routeParam}`);
+    router.push(getServiceHref(service || { service_id: serviceId }));
   };
 
   const totalReviews = reviewsData?.pages[0]?.meta.total || 0;
@@ -452,8 +452,8 @@ const CustomerServiceDetails = () => {
                     component="h2"
                     sx={{
                       fontSize: { xs: "1.1rem", sm: "1.25rem" },
-                      fontWeight: 800,
-                      letterSpacing: "-0.02em",
+                      fontWeight: 700,
+                      letterSpacing: "-0.01em",
                       color: "text.primary",
                       mb: 1.5,
                     }}

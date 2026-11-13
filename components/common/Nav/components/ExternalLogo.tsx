@@ -27,7 +27,7 @@ const ExternalLogo: React.FC<ExternalLogoProps> = ({ mode }) => {
       <Box
         component="span"
         sx={{
-          fontWeight: 800,
+          fontWeight: 700,
           fontSize: { xs: "1.15rem", md: "1.35rem" },
           letterSpacing: "0.2px",
           color:

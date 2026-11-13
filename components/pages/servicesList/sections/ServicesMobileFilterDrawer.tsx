@@ -120,7 +120,7 @@ export default function ServicesMobileFilterDrawer({
             <IconButton onClick={onClose} size="small">
               <CloseRoundedIcon sx={{ fontSize: 20 }} />
             </IconButton>
-            <Typography sx={{ fontSize: "1.05rem", fontWeight: 800, color: "text.primary" }}>
+            <Typography sx={{ fontSize: "1.05rem", fontWeight: 700, color: "text.primary" }}>
               Filters & sort
             </Typography>
           </Box>
@@ -386,7 +386,7 @@ export default function ServicesMobileFilterDrawer({
             sx={{
               bgcolor: COLORS.PRIMARY_PURPLE,
               color: "#fff",
-              fontWeight: 800,
+              fontWeight: 700,
               fontSize: "0.95rem",
               borderRadius: "14px",
               py: 1.25,

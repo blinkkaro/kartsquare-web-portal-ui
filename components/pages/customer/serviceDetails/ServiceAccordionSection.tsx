@@ -77,7 +77,7 @@ const ServiceAccordionSection = ({
           )}
           <Typography
             component="h2"
-            sx={{ fontWeight: 800, fontSize: "1rem", color: "text.primary" }}
+            sx={{ fontWeight: 700, fontSize: "1rem", color: "text.primary" }}
           >
             {title}
           </Typography>

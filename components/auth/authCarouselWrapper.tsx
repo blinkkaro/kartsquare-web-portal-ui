@@ -152,7 +152,7 @@ function AuthCarouselWrapper({
                   theme.palette.mode === "light"
                     ? COLORS.TEXT.PRIMARY_LIGHT
                     : COLORS.TEXT.PRIMARY_DARK,
-                letterSpacing: "-0.02em",
+                letterSpacing: "-0.01em",
                 fontSize: { xs: "1.1rem", lg: "3rem", xl: "4rem" },
               }}
             >

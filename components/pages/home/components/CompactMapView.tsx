@@ -9,7 +9,7 @@ import { useAutoGeolocation } from "@/hooks/useGeolocation";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useMapDetails } from "@/hooks/useMapDetails";
 import type { MapServiceItem, MapStoreItem } from "@/services/map/mapInterface";
-import { getServiceRouteParam } from "@/utils/serviceRoute";
+import { getServiceHref } from "@/utils/serviceRoute";
 import MapPinMarker from "@/components/pages/map/components/MapPinMarker";
 
 // Define libraries outside component to prevent recreation
@@ -158,7 +158,7 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
                   imageUrl={service.provider_image_url || service.image_urls?.[0]}
                   name={service.service_name}
                   username={service.provider_name}
-                  detailsHref={`/services/${getServiceRouteParam(service)}`}
+                  detailsHref={getServiceHref(service)}
                   profileUserId={service.provider_id}
                   selected={isHovered}
                   showPopup={true}

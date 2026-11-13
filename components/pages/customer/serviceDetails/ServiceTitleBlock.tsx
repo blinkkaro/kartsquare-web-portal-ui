@@ -40,7 +40,7 @@ const ServiceTitleBlock = ({
         <Typography
           sx={{
             fontSize: "0.72rem",
-            fontWeight: 800,
+            fontWeight: 700,
             color: dark ? COLORS.NEW_UI.ACCENT_TEXT_DARK : COLORS.PRIMARY_PURPLE,
             textTransform: "uppercase",
             letterSpacing: "0.04em",
@@ -56,8 +56,8 @@ const ServiceTitleBlock = ({
           component="h1"
           sx={{
             fontSize: { xs: "1.6rem", sm: "2rem", md: "2.25rem" },
-            fontWeight: 800,
-            letterSpacing: "-0.03em",
+            fontWeight: 700,
+            letterSpacing: "-0.01em",
             lineHeight: 1.15,
             color: "text.primary",
           }}
@@ -78,7 +78,7 @@ const ServiceTitleBlock = ({
               py: 0.25,
               borderRadius: "999px",
               fontSize: "0.72rem",
-              fontWeight: 800,
+              fontWeight: 700,
               bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10,
               color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE,
             }}
@@ -93,7 +93,7 @@ const ServiceTitleBlock = ({
           <StarRoundedIcon sx={{ color: COLORS.NEW_UI.STAR_AMBER, fontSize: 20 }} />
           {hasRating ? (
             <>
-              <Typography sx={{ fontSize: "0.92rem", fontWeight: 800, color: "text.primary" }}>
+              <Typography sx={{ fontSize: "0.92rem", fontWeight: 700, color: "text.primary" }}>
                 {ratingNumber.toFixed(1)}
               </Typography>
               {hasReviews && (

@@ -1,201 +1,128 @@
 import React, { useEffect, useState } from "react";
-import { Box, styled, useTheme } from "@mui/material";
 import Link from "next/link";
+import { Box, styled } from "@mui/material";
+import { useReducedMotion } from "framer-motion";
 import { COLORS } from "../../../../constants/colors";
-import GradientIcon from "../../GradientIcon";
-import { NavItem } from "../../../../constants/navRoutes";
-
-/** Height of the bar's content area, excluding the device safe-area inset. */
-export const MOBILE_NAV_HEIGHT = 60;
-/** Height while the user is scrolling down (icons only). */
-export const MOBILE_NAV_COMPACT_HEIGHT = 42;
-
-const EASE = "cubic-bezier(0.32, 0.72, 0, 1)";
-const SCROLL_THRESHOLD = 20;
+import { type NavItem } from "../../../../constants/navRoutes";
 
 /**
- * Uber-style collapsing bar: shrinks while the user scrolls down (more room for
- * content), grows back on any scroll up and whenever the page is at the top.
- * Also publishes its live height as --mobile-nav-h so other fixed UI (the AI
- * button) can sit just above it.
+ * Height of the dock, excluding the gap below it and the device safe-area inset.
+ * A 48px tab (icon over a 12px label) plus 4px of padding either side.
  */
-function useCompactOnScrollDown(): boolean {
-  const [compact, setCompact] = useState(false);
+export const MOBILE_NAV_HEIGHT = 56;
 
+const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+
+/** Which tab was open on the page you came from. Each page mounts its own dock, so this remembers it across pages. */
+let lastActive: string | null = null;
+
+/** Publishes the dock's height as --mobile-nav-h so other fixed UI (the AI button, back-to-top) can sit above it. */
+function usePublishHeight() {
   useEffect(() => {
-    // Pages differ in what scrolls (the window, or a full-height inner container),
-    // so listen in the capture phase and track each vertical scroller separately.
-    const lastTop = new WeakMap<object, number>();
-    // Seed with where the page already is; inner scrollers start from the top.
-    lastTop.set(window, window.scrollY);
-    let ticking = false;
-
-    const isPageScroller = (t: EventTarget | null): t is Document | HTMLElement => {
-      if (t === document || t === document.documentElement || t === document.body) return true;
-      if (!(t instanceof HTMLElement)) return false;
-      // Ignore small scrollers (carousels, chat lists) and anything inside a modal/drawer.
-      if (t.clientHeight < window.innerHeight * 0.5) return false;
-      return !t.closest('[role="dialog"], .MuiModal-root, .MuiDrawer-root');
-    };
-
-    const onScroll = (e: Event) => {
-      const target = e.target;
-      if (!isPageScroller(target) || ticking) return;
-      ticking = true;
-      window.requestAnimationFrame(() => {
-        ticking = false;
-        const isDoc = target === document || target === document.documentElement || target === document.body;
-        const y = Math.max(0, isDoc ? window.scrollY || document.documentElement.scrollTop : (target as HTMLElement).scrollTop);
-        const key = isDoc ? window : (target as HTMLElement);
-        const last = lastTop.get(key) ?? 0;
-        const dy = y - last;
-        if (y < 24) {
-          setCompact(false);
-          lastTop.set(key, y);
-        } else if (dy > SCROLL_THRESHOLD) {
-          setCompact(true);
-          lastTop.set(key, y);
-        } else if (dy < -SCROLL_THRESHOLD) {
-          setCompact(false);
-          lastTop.set(key, y);
-        }
-      });
-    };
-
-    document.addEventListener("scroll", onScroll, { passive: true, capture: true });
-    return () => document.removeEventListener("scroll", onScroll, { capture: true });
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.style.setProperty(
-      "--mobile-nav-h",
-      `${compact ? MOBILE_NAV_COMPACT_HEIGHT : MOBILE_NAV_HEIGHT}px`
-    );
-  }, [compact]);
-  useEffect(
-    () => () => {
+    document.documentElement.style.setProperty("--mobile-nav-h", `${MOBILE_NAV_HEIGHT}px`);
+    return () => {
       document.documentElement.style.removeProperty("--mobile-nav-h");
-    },
-    []
-  );
-
-  return compact;
+    };
+  }, []);
 }
 
-const MobileNavContainer = styled("nav")(({ theme }) => {
+/**
+ * A floating dock, lifted off the bottom edge. Every tab shows its icon and its name, so each link is easy
+ * to find. The current tab gets a violet pill behind its icon, a violet label and a "tubelight" lamp
+ * glowing on the dock's top edge. Pressing a tab dips it. Nothing loops.
+ */
+const Dock = styled("nav")(({ theme }) => {
   const dark = theme.palette.mode === "dark";
   return {
     position: "fixed",
-    left: 0,
-    right: 0,
-    bottom: 0,
+    left: 12,
+    right: 12,
+    // fixed + left/right + a max width: auto margins centre it on tablets
+    margin: "0 auto",
+    maxWidth: 520,
+    bottom: "calc(10px + env(safe-area-inset-bottom, 0px))",
     zIndex: 1000,
     display: "flex",
     alignItems: "stretch",
-    justifyContent: "space-around",
-    padding: "4px 8px",
-    paddingBottom: "calc(4px + env(safe-area-inset-bottom, 0px))",
-    minHeight: `var(--mobile-nav-h, ${MOBILE_NAV_HEIGHT}px)`,
-    boxSizing: "content-box",
-    transition: `min-height 0.35s ${EASE}, padding 0.35s ${EASE}, box-shadow 0.35s ease`,
-    '&[data-compact="true"]': {
-      paddingTop: 2,
-      paddingBottom: "calc(2px + env(safe-area-inset-bottom, 0px))",
-    },
-    "@media (prefers-reduced-motion: reduce)": { transition: "none" },
-    backgroundColor: dark ? "rgba(18, 15, 28, 0.96)" : "rgba(255, 255, 255, 0.97)",
-    backdropFilter: "blur(20px) saturate(180%)",
-    WebkitBackdropFilter: "blur(20px) saturate(180%)",
-    borderTop: `1px solid ${dark ? "rgba(255,255,255,0.08)" : "rgba(15, 12, 30, 0.08)"}`,
-    borderRadius: "22px 22px 0 0",
-    boxShadow: dark ? "0 -10px 32px rgba(0,0,0,0.5)" : "0 -8px 32px rgba(20, 10, 60, 0.10)",
-    // Tablets: a centred floating bar instead of edge-to-edge
-    [theme.breakpoints.up("sm")]: {
-      left: "50%",
-      right: "auto",
-      transform: "translateX(-50%)",
-      width: "min(560px, calc(100vw - 32px))",
-      bottom: 12,
-      paddingBottom: 4,
-      borderRadius: 26,
-      '&[data-compact="true"]': { paddingBottom: 2 },
-      border: `1px solid ${dark ? "rgba(255,255,255,0.1)" : "rgba(15, 12, 30, 0.08)"}`,
-    },
+    height: MOBILE_NAV_HEIGHT,
+    padding: 4,
+    boxSizing: "border-box",
+    borderRadius: 24,
+    backgroundColor: dark ? "rgba(18, 15, 28, 0.96)" : "rgba(255, 255, 255, 0.96)",
+    backdropFilter: "blur(16px) saturate(180%)",
+    WebkitBackdropFilter: "blur(16px) saturate(180%)",
+    border: `1px solid ${dark ? "rgba(255,255,255,0.1)" : "rgba(15, 12, 30, 0.08)"}`,
+    boxShadow: dark ? "0 10px 30px rgba(0,0,0,0.5)" : "0 10px 28px rgba(42, 13, 115, 0.2)",
   };
 });
 
-const MobileNavItem = styled(Link)(({ theme }) => {
+const Tab = styled(Link)(({ theme }) => {
   const dark = theme.palette.mode === "dark";
   return {
+    position: "relative",
     flex: "1 1 0",
     minWidth: 0,
-    minHeight: `calc(var(--mobile-nav-h, ${MOBILE_NAV_HEIGHT}px) - 8px)`,
+    height: 48,
+    borderRadius: 18,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     gap: 2,
     textDecoration: "none",
-    position: "relative",
-    color: dark ? "rgba(255,255,255,0.62)" : "rgba(15, 12, 30, 0.6)",
+    color: dark ? "rgba(255,255,255,0.78)" : COLORS.TEXT.SECONDARY_LIGHT,
     WebkitTapHighlightColor: "transparent",
-    transition: "color 0.2s ease, transform 0.15s ease",
-    "&:active": { transform: "scale(0.94)" },
-    // Icon sits in a pill that fills in when the tab is active
-    "& .icon-wrap": {
-      // Narrows only when six tabs share a small phone's width; 56px otherwise.
-      width: "min(56px, 100%)",
-      height: 30,
-      borderRadius: 15,
+    transition: `color 200ms ease, transform 120ms ease`,
+    "&:active": { transform: "scale(0.93)" },
+    "&:focus-visible": { outline: `3px solid ${COLORS.PURPLE_ALPHA_30}`, outlineOffset: 1 },
+    // The icon sits in a pill that fills in on the open tab.
+    "& .pill": {
+      width: 48,
+      height: 26,
+      borderRadius: 13,
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      transition: "background-color 0.25s ease, transform 0.25s ease",
+      backgroundColor: "transparent",
+      transform: "scaleX(0.7)",
+      transition: `background-color 220ms ease, transform 320ms ${EASE}`,
     },
-    "& .icon-wrap .MuiSvgIcon-root": { fontSize: "1.55rem", transition: `font-size 0.3s ${EASE}` },
+    "& .pill .icon": { display: "inline-flex", transform: "scaleX(1.4286)", transition: `transform 320ms ${EASE}` }, // undoes the pill's scale so the icon is never squashed
+    "& .MuiSvgIcon-root": { fontSize: "1.4rem" },
     "& .label": {
-      maxHeight: 16,
-      transition: `opacity 0.2s ease, max-height 0.3s ${EASE}, margin 0.3s ${EASE}`,
-      fontSize: "0.7rem",
-      fontWeight: 600,
-      lineHeight: 1.1,
-      letterSpacing: 0.1,
-      whiteSpace: "nowrap",
       maxWidth: "100%",
       overflow: "hidden",
       textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      fontSize: "0.75rem", // 12px: the smallest label size
+      fontWeight: 600,
+      lineHeight: 1.1,
     },
-    // Compact (scrolling down): icons only, tighter pill
-    '[data-compact="true"] &': {
-      gap: 0,
-      "& .icon-wrap": { width: 44, height: 26 },
-      "& .icon-wrap .MuiSvgIcon-root": { fontSize: "1.3rem" },
-      "& .label": { opacity: 0, maxHeight: 0, margin: 0 },
-    },
-    "&.active": { color: dark ? "#fff" : COLORS.PRIMARY_PURPLE },
-    "&.active .label": { fontWeight: 800 },
-    "&.active .icon-wrap": {
-      backgroundColor: dark ? "rgba(130, 72, 247, 0.28)" : COLORS.PURPLE_ALPHA_10,
-      transform: "translateY(-1px)",
-    },
-    // Uber-style top indicator on the active tab
-    "&.active::before": {
+    // The open tab: violet pill, violet icon, bold violet label.
+    "&.open": { color: dark ? "#d2bcff" : COLORS.PRIMARY_PURPLE },
+    "&.open .pill": { backgroundColor: dark ? "rgba(130, 72, 247, 0.32)" : COLORS.PURPLE_ALPHA_10, transform: "scaleX(1)" },
+    "&.open .pill .icon": { transform: "scaleX(1)" },
+    "&.open .label": { fontWeight: 700 },
+    // The tubelight: a short lamp on the dock's top edge, with a soft glow under it.
+    "&::before": {
       content: '""',
       position: "absolute",
-      top: -6,
+      top: -4,
       left: "50%",
-      width: 28,
+      width: 24,
       height: 3,
       borderRadius: "0 0 3px 3px",
-      transform: "translateX(-50%)",
+      transform: "translateX(-50%) scaleX(0.4)",
+      opacity: 0,
       backgroundColor: COLORS.PRIMARY_PURPLE,
+      boxShadow: `0 4px 14px 2px ${COLORS.PURPLE_ALPHA_30}`,
+      transition: `opacity 220ms ease, transform 320ms ${EASE}`,
     },
+    "&.open::before": { opacity: 1, transform: "translateX(-50%) scaleX(1)" },
     "@media (prefers-reduced-motion: reduce)": {
       transition: "none",
       "&:active": { transform: "none" },
-      "& .icon-wrap": { transition: "none" },
-      "& .icon-wrap .MuiSvgIcon-root": { transition: "none" },
-      "& .label": { transition: "none" },
+      "& .pill, & .pill .icon, &::before": { transition: "none" },
     },
   };
 });
@@ -205,45 +132,53 @@ interface MobileBottomNavProps {
   currentPath: string;
 }
 
-const isActivePath = (currentPath: string, href: string) =>
+export const isActivePath = (currentPath: string, href: string) =>
   href === "/" ? currentPath === "/" : currentPath === href || currentPath.startsWith(`${href}/`);
 
 const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ items, currentPath }) => {
-  const dark = useTheme().palette.mode === "dark";
-  const compact = useCompactOnScrollDown();
+  const reduce = useReducedMotion() === true;
+  usePublishHeight();
+
+  const active = items.find((item) => isActivePath(currentPath, item.href))?.href ?? null;
+  // On a new page the dock is new too: start with the tab that was open on the last page, then switch,
+  // so the old pill fades out and the new one fills in instead of the dock just appearing in its final state.
+  const startOpen = !reduce && lastActive && items.some((i) => i.href === lastActive) ? lastActive : active;
+  const [open, setOpen] = useState<string | null>(startOpen);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setOpen(active));
+    lastActive = active;
+    return () => cancelAnimationFrame(frame);
+  }, [active]);
+
   return (
-    <MobileNavContainer aria-label="Primary" data-compact={compact ? "true" : "false"}>
+    <Dock aria-label="Primary">
       {items.map((item) => {
-        const isActive = isActivePath(currentPath, item.href);
+        const isActive = item.href === active;
         return (
-          <MobileNavItem
+          <Tab
             key={item.label}
             href={item.href}
-            className={isActive ? "active" : ""}
+            className={open === item.href ? "open" : ""}
             aria-label={item.label}
             aria-current={isActive ? "page" : undefined}
+            // a short tick on tap, where the device has one
+            onClick={() => {
+              if (!reduce && typeof navigator !== "undefined") navigator.vibrate?.(8);
+            }}
           >
-            <Box className="icon-wrap">
-              {isActive && !dark ? (
-                <GradientIcon sx={{ fontSize: "1.55rem" }}>{item.icon}</GradientIcon>
-              ) : isActive ? (
-                // The brand gradient is too dark on the dark pill: use a light tint instead
-                React.cloneElement(item.icon as React.ReactElement<{ sx?: object }>, {
-                  sx: { fontSize: "1.55rem", color: "#d2bcff" },
-                })
-              ) : (
-                React.cloneElement(item.icon as React.ReactElement<{ sx?: object }>, {
-                  sx: { fontSize: "1.55rem" },
-                })
-              )}
+            <Box component="span" className="pill">
+              <Box component="span" className="icon">
+                {React.cloneElement(item.icon as React.ReactElement<{ sx?: object }>, { sx: { fontSize: "1.4rem" } })}
+              </Box>
             </Box>
             <Box component="span" className="label">
               {item.label}
             </Box>
-          </MobileNavItem>
+          </Tab>
         );
       })}
-    </MobileNavContainer>
+    </Dock>
   );
 };
 
