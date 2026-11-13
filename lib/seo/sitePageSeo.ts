@@ -22,6 +22,9 @@ export async function sitePageSeoOrFallback(
   pageKey: string,
   fallback: Metadata,
 ): Promise<Metadata> {
+  // No API configured (a preview build without env vars): use the fallback. Fetching "undefined/..."
+  // never returns, which stalls static generation until the build times out.
+  if (!API_BASE) return fallback;
   try {
     const res = await fetch(`${API_BASE}/seo/pages/${encodeURIComponent(pageKey)}`, {
       next: { revalidate: 3600 },
