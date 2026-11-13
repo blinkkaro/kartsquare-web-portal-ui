@@ -1,10 +1,13 @@
 import TermsConditionsView from "@/components/pages/termsConditions";
+import { manifestCopy } from "@/lib/seo/metaManifest";
 import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
 
 export const metadata = seoPublic({
-  title: "Terms & Conditions",
-  description:
-    "Read kartsquare's official terms and conditions for using the marketplace, booking services, supplier policies, and user responsibilities.",
+  ...(manifestCopy("terms_conditions") ?? {
+    title: "Terms & Conditions",
+    description:
+      "Read kartsquare's official terms and conditions for using the marketplace, booking services, supplier policies, and user responsibilities.",
+  }),
   path: "/terms-conditions",
 });
 

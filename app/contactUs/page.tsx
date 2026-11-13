@@ -1,12 +1,15 @@
 import MainLayout from "@/app/mainLayout";
 import ContactUsView from "@/components/pages/contactUs";
+import { manifestCopy } from "@/lib/seo/metaManifest";
 import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
 import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 
 export const metadata = seoPublic({
-  title: "Contact kartsquare — Support, Partnerships & Enquiries",
-  description:
-    "Reach the kartsquare team for partnerships, support, press, or marketplace questions. We respond to business and customer enquiries promptly.",
+  ...(manifestCopy("contact_us") ?? {
+    title: "Contact kartsquare — Support, Partnerships & Enquiries",
+    description:
+      "Reach the kartsquare team for partnerships, support, press, or marketplace questions. We respond to business and customer enquiries promptly.",
+  }),
   path: "/contact-us",
   keywords: [
     "kartsquare contact",

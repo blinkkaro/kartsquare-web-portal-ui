@@ -8,8 +8,8 @@ export const SITE_URL = String(
 function brandTitle(title: string): string {
   const s = title.trim();
   if (!s) return "kartsquare";
-  if (/\|\s*kartsquare\s*$/i.test(s)) return s;
-  if (/^kartsquare(\s|$|–|-)/i.test(s)) return s;
+  // Already carries the brand anywhere in the title: do not append a second one.
+  if (/kartsquare/i.test(s)) return s;
   return `${s} | kartsquare`;
 }
 

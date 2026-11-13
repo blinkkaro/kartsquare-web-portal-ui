@@ -26,8 +26,8 @@ export const blogs: BlogPost[] = [
     "date": "2026-03-20",
     "category": "General",
     "coverImage": "https://kartsquare-document.s3.ap-south-1.amazonaws.com/documents/03732433-f9a8-405f-b927-3bd3ec85e840.jpg",
-    "metaTitle": "What is kartsquare? | India's Leading Home Service Marketplace",
-    "metaDescription": "Learn how kartsquare connects you with verified plumbers, electricians, beauticians, and tutors in India. Explore services, pricing, and how to book instantly.",
+    "metaTitle": "What Is Kartsquare? How It Works, Services & Kart AI",
+    "metaDescription": "What Kartsquare is, how it connects Jaipur households with local service providers and coordinated teams, and how to request a service using Kart AI.",
     "tags": [
       "kartsquare",
       "Home Services",
@@ -62,8 +62,8 @@ export const blogs: BlogPost[] = [
     "date": "2026-03-20",
     "category": "General",
     "coverImage": "https://kartsquare-document.s3.ap-south-1.amazonaws.com/documents/f37d1b35-9d3e-4ced-b2ca-84484ea1955c.jpg",
-    "metaTitle": "Step-by-Step Guide to Booking Home Services | kartsquare",
-    "metaDescription": "Learn how to book home repairs, cleaning, and beauty services on kartsquare. Follow our simple tutorial for a seamless online booking experience.",
+    "metaTitle": "How to Request a Home Service on Kartsquare: Step-by-Step",
+    "metaDescription": "A simple walkthrough for requesting AC, electrical, cleaning and other home services on Kartsquare – from describing your need to paying after the service.",
     "tags": [
       "Booking Tutorial",
       "How to Use kartsquare",
@@ -98,8 +98,8 @@ export const blogs: BlogPost[] = [
     "date": "2026-03-20",
     "category": "General",
     "coverImage": "https://kartsquare-document.s3.ap-south-1.amazonaws.com/documents/c0b043f0-fdad-4950-bfcf-23237ffe3bd0.png",
-    "metaTitle": "kartsquare App Guide | Features, Download & Booking",
-    "metaDescription": "Master the kartsquare app with our guide to features like 30-second instant booking, verified professionals, and 24/7 support. Book your first home service today.",
+    "metaTitle": "Kartsquare App Guide – Features, Download & First Request",
+    "metaDescription": "Get started with the Kartsquare app: download it, describe your problem to Kart AI in Hindi or English, request a service and track it from your phone.",
     "tags": [
       "kartsquare App",
       "Home Service Guide",
@@ -378,9 +378,9 @@ export const blogs: BlogPost[] = [
     category: "General",
     coverImage:
       "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=400&fit=crop",
-    metaTitle: "Discover kartsquare Services - India's Best Home Services App",
+    metaTitle: "Kartsquare Services for Every Home Need in Jaipur",
     metaDescription:
-      "Learn about kartsquare services and how our home services app in India makes booking online simple and convenient. Join thousands of satisfied customers.",
+      "From AC and RO service to cleaning, painting, pest control and electrical work – a guide to the home services you can request on Kartsquare in Jaipur.",
     tags: [
       "kartsquare services",
       "home services app India",
@@ -671,9 +671,9 @@ export const blogs: BlogPost[] = [
     category: "Wellness",
     coverImage:
       "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?w=800&h=400&fit=crop",
-    metaTitle: "Luxury Salon at Home Services - Massage & Bridal Makeup",
+    metaTitle: "Salon at Home Guide – Massage, Facials & Bridal Makeup",
     metaDescription:
-      "Discover premium salon at home services including massage at home near me and bridal makeup artist near me. Book with kartsquare for convenience.",
+      "What to expect from salon at home services – massage, facials, grooming and bridal makeup – and how to choose the right professional for your home.",
     tags: [
       "salon at home services",
       "massage at home near me",
@@ -944,9 +944,9 @@ export const blogs: BlogPost[] = [
     category: "Cleaning",
     coverImage:
       "https://images.unsplash.com/photo-1686178827149-6d55c72d81df?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    metaTitle: "Ultimate Guide to Home Deep Cleaning Services",
+    metaTitle: "Home Deep Cleaning Guide – Kitchen, Bathroom & Sofa",
     metaDescription:
-      "Explore home deep cleaning services including kitchen cleaning and sofa cleaning near me. Professional services available on kartsquare.",
+      "What a home deep clean covers – kitchen, bathroom, sofa and water tank – how often to do it, and how to request cleaning in Jaipur on Kartsquare.",
     tags: [
       "home deep cleaning services",
       "kitchen cleaning service",
@@ -1068,9 +1068,9 @@ export const blogs: BlogPost[] = [
     category: "Repairs",
     coverImage:
       "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&h=400&fit=crop",
-    metaTitle: "Essential Home Repair Services - Plumber & Electrician",
+    metaTitle: "Home Repairs Guide – When to Call an Electrician or Plumber",
     metaDescription:
-      "Find plumber near me and electrician near me for AC repair, maintenance, and pipe leak repair service. Reliable solutions on kartsquare.",
+      "Common electrical and plumbing problems at home, which ones need a professional, and how to request an electrician or plumber in Jaipur on Kartsquare.",
     tags: [
       "plumber near me",
       "electrician near me",
@@ -1216,9 +1216,9 @@ export const blogs: BlogPost[] = [
     category: "Education",
     coverImage:
       "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&h=400&fit=crop",
-    metaTitle: "Best Home Tutor & Online Tutors India Services",
+    metaTitle: "How to Find a Good Home Tutor or Online Tutor",
     metaDescription:
-      "Find home tutor near me and online tutors India including coding tutor for kids. Quality education services on kartsquare.",
+      "Tips for choosing a home or online tutor – checking experience, trial classes, subjects like coding for kids – and finding tutors through Kartsquare.",
     tags: [
       "home tutor near me",
       "online tutors India",
@@ -1353,9 +1353,9 @@ export const blogs: BlogPost[] = [
     category: "General",
     coverImage:
       "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    metaTitle: "Comprehensive Home Services - kartsquare App India",
+    metaTitle: "All Your Home Services in One App – Kartsquare",
     metaDescription:
-      "Explore all home services on kartsquare app. Book online in India for wellness, cleaning, repairs, and more with ease.",
+      "Cleaning, repairs, appliance service and more through one app: how Kartsquare lets Jaipur households request and manage home services in one place.",
     tags: [
       "kartsquare app",
       "home services app India",

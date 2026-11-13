@@ -2,15 +2,18 @@ import type { Metadata } from "next";
 import React from "react";
 import MainLayout from "../mainLayout";
 import BlogView from "../../components/pages/blogs";
+import { manifestCopy } from "@/lib/seo/metaManifest";
 import { seoPublic } from "@/lib/seo/buildMetadata";
 import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 
 import { buildBreadcrumbJsonLd, BREADCRUMBS } from "@/lib/seo/breadcrumbs";
 
 const blogsFallback = seoPublic({
-  title: "Blog — tips for services & marketplace",
-  description:
-    "Expert guides on home services, booking on kartsquare, supplier growth, and getting the most from India's B2B marketplace.",
+  ...(manifestCopy("blogs") ?? {
+    title: "Blog — tips for services & marketplace",
+    description:
+      "Expert guides on home services, booking on kartsquare, supplier growth, and getting the most from India's B2B marketplace.",
+  }),
   path: "/blogs",
   keywords: [
     "kartsquare blog",
