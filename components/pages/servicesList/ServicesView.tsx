@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { useDispatch } from "react-redux";
-import { useCategories } from "@/hooks/useCategories";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
 import {
   Box,
   Container,
@@ -16,6 +15,7 @@ import {
   Button,
   useTheme,
 } from "@mui/material";
+import { useCategories } from "@/hooks/useCategories";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { getServiceHref } from "@/utils/serviceRoute";
 import { serviceListService } from "@/services/serviceList/serviceListService";
@@ -27,14 +27,14 @@ import { buildDirectionsUrl } from "@/utils/directions";
 import { DEFAULT_LOCATION } from "@/constants/aiSearch";
 import {
   mapRealServiceToEnriched,
-  EnrichedServiceItem,
+  type EnrichedServiceItem,
 } from "./servicesSampleData";
-import ServicesHeroHeader, { SubServiceChip } from "./sections/ServicesHeroHeader";
+import ServicesHeroHeader, { type SubServiceChip } from "./sections/ServicesHeroHeader";
 import ServicesFilterSidebar, {
-  ServicesFilterState,
-  AreaFilterItem,
+  type ServicesFilterState,
+  type AreaFilterItem,
 } from "./sections/ServicesFilterSidebar";
-import ServicesToolbar, { SortOptionType } from "./sections/ServicesToolbar";
+import ServicesToolbar, { type SortOptionType } from "./sections/ServicesToolbar";
 import ServiceCardHorizontal from "./sections/ServiceCardHorizontal";
 import ServiceQuickViewDrawer from "./sections/ServiceQuickViewDrawer";
 import ServicesMobileFilterDrawer from "./sections/ServicesMobileFilterDrawer";
@@ -286,6 +286,13 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
       setPage(1);
     } catch (err) {
       if (seq !== requestSeq.current) return;
+      // A 404 means "nothing matched", not "the server is down": show the empty state, not the error one.
+      if ((err as { response?: { status?: number } })?.response?.status === 404) {
+        setError(false);
+        setServices([]);
+        setServerTotal(0);
+        return;
+      }
       console.error("Failed to load services:", err);
       setError(true);
       setServices([]);
@@ -909,6 +916,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                   cityName={placeText}
                   onResetFilters={handleResetFilters}
                   hasActiveFilters={hasActiveFilters}
+                  searchText={searchQuery}
                 />
               ) : (
                 filteredServices.map((service) => (

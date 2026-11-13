@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { Box, Typography, Button, Chip, useTheme } from "@mui/material";
+import { stripMarkdown } from "@/utils/plainText";
 import { COLORS } from "../../../../constants/colors";
 import { english } from "../../../../features/i18n/en";
 
@@ -69,7 +70,7 @@ const ServiceDetailsInfo = ({
                     fontSize: { xs: "0.875rem", sm: "1rem" },
                 }}
             >
-                {serviceDesc || english.no_description_available}
+                {stripMarkdown(serviceDesc) || english.no_description_available}
             </Typography>
 
             {/* Continue Reading Link */}

@@ -31,7 +31,7 @@ const ReelOverlay: React.FC<ReelOverlayProps> = ({
                 left: 0,
                 right: 0,
                 pt: 10,
-                pb: 4,
+                pb: "calc(var(--mobile-nav-h, 0px) + 32px)",
                 px: 2,
                 color: 'white',
                 zIndex: 2,

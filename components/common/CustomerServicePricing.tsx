@@ -15,12 +15,13 @@ import {
   ArrowForwardIos,
   RequestQuote,
 } from "@mui/icons-material";
-import { COLORS } from "../../constants/colors";
+import { stripMarkdown } from "@/utils/plainText";
 import {
   PricingType,
-  ServicePriceItem,
+  type ServicePriceItem,
 } from "@/services/serviceList/listInteraface";
 import { useTranslate } from "@/hooks/useTranslate";
+import { COLORS } from "../../constants/colors";
 
 interface CustomerServicePricingProps {
   pricingType: PricingType;
@@ -334,7 +335,7 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
                       lineHeight: 1.45,
                     }}
                   >
-                    {item.service_desc}
+                    {stripMarkdown(item.service_desc)}
                   </Typography>
                 )}
               </Box>

@@ -1,31 +1,19 @@
 "use client";
 import React, { useState, useMemo, useEffect } from "react";
-import { Box, Container, Typography, useTheme } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
+import { Box, Container, Typography, useTheme } from "@mui/material";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import SellOutlined from "@mui/icons-material/SellOutlined";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import IosShareRoundedIcon from "@mui/icons-material/IosShareRounded";
 import { IconButton } from "@mui/material";
-import Image from "next/image";
-import ServiceImageCarousel from "../../../ServiceImageCarousel";
-import ProviderInfoCard from "../../../ProviderInfoCard";
-import ServiceCard from "../../../ServiceCard";
-import { COLORS } from "../../../../constants/colors";
-import CustomerServiceBreadcrumb from "./CustomerServiceBreadcrumb";
-import CustomerServiceInfo from "./CustomerServiceInfo";
-import CustomerServiceDetailsGrid from "./CustomerServiceDetailsGrid";
-import CustomerServicePricing from "../../../common/CustomerServicePricing";
-import ServiceTitleBlock from "./ServiceTitleBlock";
-import ServiceStatPills from "./ServiceStatPills";
-import ServiceAccordionSection from "./ServiceAccordionSection";
-import ServiceBookingSidebar from "./ServiceBookingSidebar";
-import ServiceMobileStickyBar from "./ServiceMobileStickyBar";
-import DescriptionDialog from "../../provider/serviceDetails/DescriptionDialog";
-import ReviewsSection from "../../provider/serviceDetails/ReviewsSection";
-import ServiceLocation from "../../provider/serviceDetails/ServiceLocation";
+import { useDispatch } from "react-redux";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { stripMarkdown } from "@/utils/plainText";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import MainLayout from "@/app/mainLayout";
 import {
   useServiceDetails,
@@ -35,17 +23,30 @@ import { useGetReviews } from "@/hooks/useReview";
 import EmptyState from "@/components/common/EmptyState";
 import { useTranslate } from "@/hooks/useTranslate";
 import { secureStorage } from "@/helper/SecureStorage";
-import { useDispatch } from "react-redux";
 import { openLoginModal } from "@/features/ui/loginModalSlice";
 import RightDrawer from "@/components/common/RightDrawer";
-import ReviewDrawerContent from "./ReviewDrawerContent";
 import { review_type } from "@/services/providerDashboard/providerDashboard.interface";
-import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
-import axios from "axios";
-import toast from "react-hot-toast";
-import GetQuoteModal from "./GetQuoteModal";
 import { getServiceHref } from "@/utils/serviceRoute";
 import { SERVICE_FALLBACK_IMAGE } from "@/constants/media";
+import ServiceImageCarousel from "../../../ServiceImageCarousel";
+import ProviderInfoCard from "../../../ProviderInfoCard";
+import ServiceCard from "../../../ServiceCard";
+import { COLORS } from "../../../../constants/colors";
+import CustomerServicePricing from "../../../common/CustomerServicePricing";
+import DescriptionDialog from "../../provider/serviceDetails/DescriptionDialog";
+import ReviewsSection from "../../provider/serviceDetails/ReviewsSection";
+import ServiceLocation from "../../provider/serviceDetails/ServiceLocation";
+import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
+import CustomerServiceBreadcrumb from "./CustomerServiceBreadcrumb";
+import CustomerServiceInfo from "./CustomerServiceInfo";
+import CustomerServiceDetailsGrid from "./CustomerServiceDetailsGrid";
+import ServiceTitleBlock from "./ServiceTitleBlock";
+import ServiceStatPills from "./ServiceStatPills";
+import ServiceAccordionSection from "./ServiceAccordionSection";
+import ServiceBookingSidebar from "./ServiceBookingSidebar";
+import ServiceMobileStickyBar from "./ServiceMobileStickyBar";
+import ReviewDrawerContent from "./ReviewDrawerContent";
+import GetQuoteModal from "./GetQuoteModal";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 const NEW_LISTING_WINDOW_DAYS = 30;
@@ -535,7 +536,7 @@ const CustomerServiceDetails = () => {
       <DescriptionDialog
         open={descriptionDrawerOpen}
         onClose={() => setDescriptionDrawerOpen(false)}
-        description={service.service_desc || ""}
+        description={stripMarkdown(service.service_desc)}
       />
       <RightDrawer
         open={reviewModalOpen}
