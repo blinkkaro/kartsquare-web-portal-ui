@@ -9,6 +9,7 @@ import { useAutoGeolocation } from "@/hooks/useGeolocation";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useMapDetails } from "@/hooks/useMapDetails";
 import type { MapServiceItem, MapStoreItem } from "@/services/map/mapInterface";
+import { getServiceHref } from "@/utils/serviceRoute";
 import MapPinMarker from "@/components/pages/map/components/MapPinMarker";
 
 // Define libraries outside component to prevent recreation
@@ -16,6 +17,17 @@ const LIBRARIES: "places"[] = ["places"];
 
 const SERVICE_MARKER_COLOR = COLORS.PRIMARY_PURPLE;
 const STORE_MARKER_COLOR = COLORS.PRIMARY_BLUE;
+
+/** Where to centre the map without a user location: the first real marker, else the whole world. */
+function firstMarkerCenter(items: Array<{ service_address?: { latitude?: number | null; longitude?: number | null } | null }>) {
+  for (const item of items) {
+    const lat = Number(item?.service_address?.latitude);
+    const lng = Number(item?.service_address?.longitude);
+    if (Number.isFinite(lat) && Number.isFinite(lng) && !(lat === 0 && lng === 0)) return { lat, lng };
+  }
+  return null;
+}
+const WORLD_VIEW = { lat: 20, lng: 0 };
 
 interface CompactMapViewProps {
   height?: string;
@@ -118,7 +130,7 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
         center={
           coordinates?.latitude && coordinates?.longitude
             ? { lat: coordinates.latitude, lng: coordinates.longitude }
-            : { lat: 26.9167, lng: 75.7833 }
+            : firstMarkerCenter(services) ?? WORLD_VIEW
         }
         options={mapOptions}
       >
@@ -145,6 +157,9 @@ const CompactMapView: React.FC<CompactMapViewProps> = ({
                   color={SERVICE_MARKER_COLOR}
                   imageUrl={service.provider_image_url || service.image_urls?.[0]}
                   name={service.service_name}
+                  username={service.provider_name}
+                  detailsHref={getServiceHref(service)}
+                  profileUserId={service.provider_id}
                   selected={isHovered}
                   showPopup={true}
                   directionsUrl={directionsUrl}

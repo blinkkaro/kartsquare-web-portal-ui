@@ -34,7 +34,7 @@ import AddressDrawer from "@/components/common/address/AddressDrawer";
 const CustomerServiceBooking = () => {
   const params = useParams();
   const router = useRouter();
-  const serviceId = params.id as string;
+  const serviceId = (params.first ?? params.id) as string;
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -142,7 +142,7 @@ const CustomerServiceBooking = () => {
             <Typography
               component="span"
               variant="body2"
-              onClick={() => router.push("/cus/servicesList")}
+              onClick={() => router.push("/cus/services-list")}
               sx={{
                 color: isDark
                   ? COLORS.TEXT.SECONDARY_DARK
@@ -227,7 +227,7 @@ const CustomerServiceBooking = () => {
             <Box>
               <Typography
                 variant="h5"
-                sx={{ fontWeight: 800, color: COLORS.PRIMARY_PURPLE }}
+                sx={{ fontWeight: 700, color: COLORS.PRIMARY_PURPLE }}
               >
                 {service.service_name}
               </Typography>
@@ -249,13 +249,13 @@ const CustomerServiceBooking = () => {
                     alignItems: "center",
                     gap: 0.5,
                     color: "#1D4ED8",
-                    fontWeight: 800,
+                    fontWeight: 700,
                   }}
                 >
                   <Verified sx={{ fontSize: "14px" }} />
                   <Typography
                     sx={{
-                      fontWeight: 900,
+                      fontWeight: 700,
                       fontSize: "0.65rem",
                       fontStyle: "italic",
                       textTransform: "uppercase",
@@ -281,7 +281,7 @@ const CustomerServiceBooking = () => {
                   <Bolt sx={{ fontSize: "12px" }} />
                   <Typography
                     sx={{
-                      fontWeight: 800,
+                      fontWeight: 700,
                       fontSize: "0.6rem",
                     }}
                   >
@@ -450,7 +450,7 @@ const CustomerServiceBooking = () => {
                         mb: 3,
                         "& .MuiPickersCalendarHeader-label": {
                           fontSize: "1.25rem",
-                          fontWeight: 800,
+                          fontWeight: 700,
                           color: isDark ? "white" : "#1E293B",
                         },
                       },
@@ -738,7 +738,7 @@ const CustomerServiceBooking = () => {
                                       <Typography
                                         variant="subtitle2"
                                         sx={{
-                                          fontWeight: 800,
+                                          fontWeight: 700,
                                           color: COLORS.PRIMARY_PURPLE,
                                           mb: 0.5,
                                           letterSpacing: "0.02em",
@@ -904,7 +904,7 @@ const CustomerServiceBooking = () => {
                               <Typography
                                 variant="subtitle2"
                                 sx={{
-                                  fontWeight: 800,
+                                  fontWeight: 700,
                                   color: COLORS.PRIMARY_PURPLE,
                                   mb: 0.5,
                                   letterSpacing: "0.02em",
@@ -1150,7 +1150,7 @@ const CustomerServiceBooking = () => {
             <Button
               fullWidth
               variant="contained"
-              onClick={() => router.push("/cus/servicesList")}
+              onClick={() => router.push("/cus/services-list")}
               sx={{
                 bgcolor: COLORS.PRIMARY_PURPLE,
                 color: "white",

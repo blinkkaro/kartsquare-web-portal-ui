@@ -39,7 +39,7 @@ const Footer: React.FC = () => {
       { label: t("aboutUs"), href: "/about-us" },
       { label: t("careers"), href: "/careers" },
       { label: t("blogs"), href: "/blogs" },
-      { label: t("contactUs"), href: "/contactUs" },
+      { label: t("contactUs"), href: "/contact-us" },
     ],
     services: [
       {
@@ -47,7 +47,7 @@ const Footer: React.FC = () => {
         href:
           (role as string) === UserRole.SERVICE_PROVIDER
             ? "/spr/servicesList"
-            : "/cus/servicesList",
+            : "/cus/services-list",
       },
       //   { label: t("events"), href: "/events" },
       { label: t("store"), href: "/store" },
@@ -58,8 +58,8 @@ const Footer: React.FC = () => {
       { label: t("faqs"), href: "/myAccount/FAQ" },
     ],
     legal: [
-      { label: t("privacy_policy"), href: "/privacyPolicy" },
-      { label: t("termsConditions"), href: "/termsConditions" },
+      { label: t("privacy_policy"), href: "/privacy-policy" },
+      { label: t("termsConditions"), href: "/terms-conditions" },
       { label: t("cookiePolicy"), href: "/cookie-policy" },
     ],
   };
@@ -86,7 +86,7 @@ const Footer: React.FC = () => {
           isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
         }`,
         pt: { xs: 4, md: 6 },
-        pb: { xs: 3, md: 4 },
+        pb: { xs: "calc(24px + var(--mobile-nav-h, 64px) + env(safe-area-inset-bottom, 0px))", md: 4 },
         position: "relative",
         "&::before": {
           content: '""',
@@ -141,6 +141,8 @@ const Footer: React.FC = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     sx={{
+                      width: { xs: 44, md: 34 },
+                      height: { xs: 44, md: 34 },
                       color: isDark
                         ? COLORS.TEXT.SECONDARY_DARK
                         : COLORS.TEXT.SECONDARY_LIGHT,
@@ -181,7 +183,7 @@ const Footer: React.FC = () => {
             >
               {t("company")}
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 0, md: 1 } }}>
               {footerLinks.company.map((link, index) => (
                 <Link
                   key={index}
@@ -196,6 +198,8 @@ const Footer: React.FC = () => {
                       : COLORS.TEXT.SECONDARY_LIGHT,
                     textDecoration: "none",
                     fontSize: "0.875rem",
+                    display: "block",
+                    py: { xs: 1.25, md: 0 },
                     transition: "color 0.2s ease",
                     "&:hover": {
                       color: COLORS.PRIMARY_PURPLE,
@@ -225,7 +229,7 @@ const Footer: React.FC = () => {
             >
               {t("services")}
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 0, md: 1 } }}>
               {footerLinks.services.map((link, index) => (
                 <Link
                   key={index}
@@ -240,6 +244,8 @@ const Footer: React.FC = () => {
                       : COLORS.TEXT.SECONDARY_LIGHT,
                     textDecoration: "none",
                     fontSize: "0.875rem",
+                    display: "block",
+                    py: { xs: 1.25, md: 0 },
                     transition: "color 0.2s ease",
                     "&:hover": {
                       color: COLORS.PRIMARY_PURPLE,
@@ -269,7 +275,7 @@ const Footer: React.FC = () => {
             >
               {t("support")}
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 0, md: 1 } }}>
               {footerLinks.support.map((link, index) => (
                 <Link
                   key={index}
@@ -284,6 +290,8 @@ const Footer: React.FC = () => {
                       : COLORS.TEXT.SECONDARY_LIGHT,
                     textDecoration: "none",
                     fontSize: "0.875rem",
+                    display: "block",
+                    py: { xs: 1.25, md: 0 },
                     transition: "color 0.2s ease",
                     "&:hover": {
                       color: COLORS.PRIMARY_PURPLE,
@@ -313,7 +321,7 @@ const Footer: React.FC = () => {
             >
               {t("legal")}
             </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 0, md: 1 } }}>
               {footerLinks.legal.map((link, index) => (
                 <Link
                   key={index}
@@ -328,6 +336,8 @@ const Footer: React.FC = () => {
                       : COLORS.TEXT.SECONDARY_LIGHT,
                     textDecoration: "none",
                     fontSize: "0.875rem",
+                    display: "block",
+                    py: { xs: 1.25, md: 0 },
                     transition: "color 0.2s ease",
                     "&:hover": {
                       color: COLORS.PRIMARY_PURPLE,
@@ -370,7 +380,7 @@ const Footer: React.FC = () => {
               fontSize: "0.875rem",
             }}
           >
-            © {currentYear} kartsquare. {t("allRightsReserved")}.
+            © {currentYear} Kartsquare. {t("allRightsReserved")}.
           </Typography>
 
           <Box
@@ -386,6 +396,7 @@ const Footer: React.FC = () => {
                 display: "flex",
                 alignItems: "center",
                 gap: 1,
+                minHeight: 44,
                 color: isDark
                   ? COLORS.TEXT.SECONDARY_DARK
                   : COLORS.TEXT.SECONDARY_LIGHT,

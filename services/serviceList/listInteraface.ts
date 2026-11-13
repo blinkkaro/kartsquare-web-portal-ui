@@ -75,6 +75,8 @@ export interface Service {
 
   // SEO Fields
   slug?: string;
+  /** /services/{city}/{slug} from the API; null without a canonical city or slug. */
+  canonical_path?: string | null;
   meta_title?: string;
   meta_description?: string;
   meta_keywords?: string;
@@ -104,6 +106,17 @@ export interface ServiceFilters {
   min_price?: number;
   max_price?: number;
   provider_id?: string;
+  /** The user's exact point: the backend returns providers whose own
+   *  service radius reaches it, nearest first. */
+  latitude?: number;
+  longitude?: number;
+  /** Whole-city view: also include businesses located within this many km of the point. */
+  within_km?: number;
+  /** "card": the API omits SEO/JSON-LD fields a list card never shows (~1/3 smaller). */
+  view?: "card";
+  /** Scope to a city / locality by slug (the backend resolves coverage). */
+  city_slug?: string;
+  locality_slug?: string;
 }
 
 export interface Category {
@@ -114,6 +127,14 @@ export interface Category {
   deleted_by?: string;
   created_at: string;
   updated_at: string;
+  /** URL segment for /{city}/{category}. */
+  slug?: string | null;
+  /** Iconify icon name, e.g. "ph:tractor-duotone" (backend migration 009). */
+  icon?: string | null;
+  /** Category colour as #rrggbb (migration 006). */
+  color?: string | null;
+  /** Category photo URL for the large home cards (migration 006). */
+  image?: string | null;
 }
 
 export interface CategoryListResponse {

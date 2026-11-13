@@ -6,7 +6,7 @@ import { seoPrivate } from "@/lib/seo/buildMetadata";
 export const metadata = seoPrivate({
   title: "Service provider dashboard",
   description:
-    "Overview of your kartsquare bookings, earnings, services, and performance as a verified provider.",
+    "Manage your services, leads and bookings on Kartsquare.",
 });
 
 export default function Dashboard() {

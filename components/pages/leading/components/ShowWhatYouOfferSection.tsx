@@ -158,11 +158,11 @@ const ShowWhatYouOfferSection = () => {
                     top: 20,
                     left: 20,
                     fontFamily: "var(--font-heading)",
-                    fontWeight: 800,
+                    fontWeight: 700,
                     fontSize: "3.5rem",
                     lineHeight: 1,
                     color: isDark ? "rgba(255,255,255,0.06)" : "rgba(94, 24, 233, 0.08)",
-                    letterSpacing: "-0.03em",
+                    letterSpacing: "-0.01em",
                   }}
                 >
                   01
@@ -193,7 +193,7 @@ const ShowWhatYouOfferSection = () => {
                   fontWeight={800}
                   sx={{
                     fontFamily: "var(--font-heading)",
-                    letterSpacing: "-0.02em",
+                    letterSpacing: "-0.01em",
                     color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                     mb: 1.25,
                   }}
@@ -289,7 +289,7 @@ const ShowWhatYouOfferSection = () => {
                         top: 12,
                         right: 12,
                         fontFamily: "var(--font-heading)",
-                        fontWeight: 800,
+                        fontWeight: 700,
                         fontSize: "1.5rem",
                         color: isDark ? "rgba(255,255,255,0.08)" : "rgba(94, 24, 233, 0.1)",
                       }}

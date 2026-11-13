@@ -231,7 +231,7 @@ const GetQuoteModal: React.FC<GetQuoteModalProps> = ({
           <Typography
             variant="h4"
             sx={{
-              fontWeight: 800,
+              fontWeight: 700,
               color: textPrimary,
               mb: 1,
             }}

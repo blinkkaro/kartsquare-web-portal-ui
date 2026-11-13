@@ -1,3 +1,4 @@
+import { serviceSitemapPath } from "@/lib/seo/sitemapPaths";
 import { NextResponse } from "next/server";
 import { blogs } from "@/data/blogs";
 import { blogPostSitemapEntry } from "@/lib/seo/blogSitemap";
@@ -39,25 +40,19 @@ export async function GET() {
 
   // 1. Static Routes
   const staticRoutes = [
-    { url: "/", priority: "1.0", changefreq: "daily" },
-    // NOTE: /services removed — app/services/page.tsx does not exist (only /services/[id]).
-    // A 404 URL in the sitemap signals bad quality to Google and wastes crawl budget.
-    { url: "/store", priority: "0.95", changefreq: "daily" },
-    { url: "/store/products", priority: "0.9", changefreq: "daily" },
-    { url: "/search", priority: "0.85", changefreq: "weekly" },
-    { url: "/map", priority: "0.75", changefreq: "weekly" },
-    { url: "/contact-us", priority: "0.7", changefreq: "monthly" },
-    { url: "/business-listing", priority: "0.8", changefreq: "weekly" },
-    { url: "/blogs", priority: "0.88", changefreq: "weekly" },
-    { url: "/careers", priority: "0.6", changefreq: "weekly" },
+    { url: "/" },
+    { url: "/store" },
+    { url: "/store/products" },
+    { url: "/map" },
+    { url: "/contact-us" },
+    { url: "/business-listing" },
+    { url: "/blogs" },
+    { url: "/careers" },
+    { url: "/search" },
     // Legal & policy
-    { url: "/terms-conditions", priority: "0.5", changefreq: "monthly" },
-    { url: "/privacy-policy", priority: "0.5", changefreq: "monthly" },
-    { url: "/cookie-policy", priority: "0.5", changefreq: "monthly" },
-    // NOTE: /cus/reels removed — /cus/ is disallowed in robots.txt.
-    // Having a disallowed URL in the sitemap is a direct contradiction that confuses Googlebot.
-    // NOTE: /External/* removed — these are thin-content webview pages for the mobile app.
-    // They are marked noindex in their page metadata; including them in the sitemap is misleading.
+    { url: "/terms-conditions" },
+    { url: "/privacy-policy" },
+    { url: "/cookie-policy" },
   ];
 
   // 2. Fetch Dynamic Data
@@ -77,15 +72,22 @@ export async function GET() {
     }
   };
 
-  const [productRes, serviceRes, profileRes] = await Promise.all([
+  const [productRes, serviceRes, profileRes, locationRes] = await Promise.all([
     fetchJson("products", `${API_URL}/products?limit=5000`),
     fetchJson("services", `${API_URL}/services/sitemap`),
     fetchJson("profiles", `${API_URL}/profile/sitemap`),
+    fetchJson("locations", `${API_URL}/locations/sitemap`),
   ]);
 
   const products = productRes?.data?.products || productRes?.data || [];
   const services = serviceRes?.data?.services || serviceRes?.data || [];
   const profiles = profileRes?.data?.profiles || profileRes?.data || [];
+  // The backend returns `{ urls: [], enabled: false }` while
+  // LOCATION_ROUTING_SITEMAP is off, so this is empty until the flag flips —
+  // no listing URL is ever advertised before it is ready to serve.
+  const locationUrls = locationRes?.data?.enabled
+    ? locationRes?.data?.urls || []
+    : [];
 
   // Build the XML header with namespaces
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -95,17 +97,14 @@ export async function GET() {
   // Helper to add mapping to XML
   const addUrl = (
     loc: string,
-    lastmod: string,
-    changefreq: string,
-    priority: string,
+    lastmod?: string,
     image?: string
   ) => {
     xml += `
   <url>
-    <loc>${escapeXml(loc.startsWith("http") ? loc : `${BASE_URL}${loc}`)}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <changefreq>${changefreq}</changefreq>
-    <priority>${priority}</priority>${
+    <loc>${escapeXml(loc.startsWith("http") ? loc : `${BASE_URL}${loc}`)}</loc>${
+      lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ""
+    }${
       image
         ? `
     <image:image>
@@ -117,7 +116,7 @@ export async function GET() {
   };
 
   // Add Static
-  staticRoutes.forEach((r) => addUrl(r.url, now, r.changefreq, r.priority));
+  staticRoutes.forEach((r) => addUrl(r.url));
 
   // Add Blogs
   blogs.forEach((blog) => {
@@ -127,39 +126,51 @@ export async function GET() {
         entry.url,
         entry.lastModified instanceof Date
           ? entry.lastModified.toISOString()
-          : now,
-        "monthly",
-        "0.78",
+          : undefined,
         entry.cover
       );
     }
   });
 
+  // Add location listing pages (/{city}/{category}, /{city}/{locality}/{category}).
+  // Generated from the database, so the sitemap, the page's own robots tag and
+  // the thin-page redirect all read one threshold and cannot disagree.
+  if (Array.isArray(locationUrls)) {
+    (locationUrls as Array<{ path?: string; lastmod?: string | null }>).forEach(
+      (u) => {
+        if (!u?.path) return;
+        addUrl(
+          `${BASE_URL}${u.path}`,
+          u.lastmod ? new Date(u.lastmod).toISOString() : undefined
+        );
+      }
+    );
+  }
+
   // Add Products
   if (Array.isArray(products)) {
     products.forEach((p: any) => {
       const url = `${BASE_URL}/store/product/${p.product_id || p.id}`;
-      const lastmod = p.updated_at || p.created_at || now;
+      const lastmod = p.updated_at || p.created_at;
       const images = p.product_images || p.images || [];
       const mainImage = Array.isArray(images) ? images[0] : p.image || null;
-      addUrl(url, new Date(lastmod).toISOString(), "weekly", "0.8", mainImage);
+      addUrl(url, lastmod ? new Date(lastmod).toISOString() : undefined, mainImage);
     });
   }
 
-  // Add Services
+  // Add Services: the API's canonical_path (/services/{slug}) only. Slug-less
+  // services have no canonical URL and a UUID URL 301s, so neither is listed.
   if (Array.isArray(services)) {
     services.forEach((s: any) => {
-      const pathSeg = (s.slug && String(s.slug).trim()) || s.service_id || "";
-      if (pathSeg) {
-        const url = `${BASE_URL}/services/${pathSeg}`;
-        const lastmod = s.updated_at || s.created_at || now;
+      const path = serviceSitemapPath(s);
+      if (path) {
+        const url = `${BASE_URL}${path}`;
+        const lastmod = s.updated_at || s.created_at;
         const mainImage =
           s.og_image || (Array.isArray(s.image_urls) ? s.image_urls[0] : null);
         addUrl(
           url,
-          new Date(lastmod).toISOString(),
-          "weekly",
-          "0.82",
+          lastmod ? new Date(lastmod).toISOString() : undefined,
           mainImage
         );
       }
@@ -169,9 +180,11 @@ export async function GET() {
   // Add Profiles
   if (Array.isArray(profiles)) {
     profiles.forEach((p: any) => {
-      const url = `${BASE_URL}/in/${p.username}`;
-      const lastmod = p.updated_at || now;
-      addUrl(url, new Date(lastmod).toISOString(), "daily", "0.9");
+      const username = typeof p.username === "string" ? p.username.trim() : "";
+      if (!username) return;
+      const url = `${BASE_URL}/in/${encodeURIComponent(username)}`;
+      const lastmod = p.updated_at;
+      addUrl(url, lastmod ? new Date(lastmod).toISOString() : undefined);
     });
   }
 

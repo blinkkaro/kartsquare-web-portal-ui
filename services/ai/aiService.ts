@@ -1,4 +1,5 @@
 import {
+  AgenticSearchContext,
   AgenticSearchRequest,
   AgenticSearchResponse,
   AIBOTRESPONSE,
@@ -18,8 +19,9 @@ export const aiService = {
   async agenticSearch(
     searchQuery: string,
     sessionId?: string,
+    context?: AgenticSearchContext,
   ): Promise<AgenticSearchResponse> {
-    const payload: AgenticSearchRequest = { searchQuery, sessionId };
+    const payload: AgenticSearchRequest = { searchQuery, sessionId, context };
 
     // apiClient.post returns ApiResponse<T> where data is T
     // The backend response is already in response.data

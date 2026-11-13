@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Box, Typography, Button, useTheme } from "@mui/material";
-import { CalendarMonth } from "@mui/icons-material";
+import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import { COLORS } from "../../../../constants/colors";
 
 interface ServiceMobileStickyBarProps {
@@ -18,8 +18,9 @@ const ServiceMobileStickyBar = ({
   onBookNow,
 }: ServiceMobileStickyBarProps) => {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+  const dark = theme.palette.mode === "dark";
   const currencySymbol = currency === "INR" ? "₹" : currency;
+  const hasPrice = isPriceRequired && price > 0;
 
   return (
     <Box
@@ -33,55 +34,49 @@ const ServiceMobileStickyBar = ({
         alignItems: "center",
         justifyContent: "space-between",
         gap: 2,
-        px: 2.5,
-        py: 1.75,
-        bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-        borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}`,
-        boxShadow: "0 -4px 20px rgba(0,0,0,0.08)",
+        px: 2,
+        py: 1.5,
+        bgcolor: "background.paper",
+        borderTop: "1px solid",
+        borderColor: dark ? COLORS.NEW_UI.CARD_BORDER_DARK : COLORS.NEW_UI.CARD_BORDER_LIGHT,
+        boxShadow: COLORS.NEW_UI.BOTTOM_BAR_SHADOW,
       }}
     >
-      {isPriceRequired && price > 0 ? (
-        <Box>
-          <Typography
-            sx={{
-              fontSize: "0.7rem",
-              fontWeight: 600,
-              color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-            }}
-          >
-            Starting from
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: "1.25rem",
-              fontWeight: 800,
-              color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-              lineHeight: 1.1,
-            }}
-          >
-            {currencySymbol}
-            {price.toFixed(0)}
-          </Typography>
-        </Box>
-      ) : (
-        <Box sx={{ flex: 1 }} />
-      )}
+      <Box sx={{ minWidth: 0 }}>
+        <Typography sx={{ fontSize: "0.72rem", color: "text.secondary" }}>
+          {hasPrice ? "Starting from" : "Pricing"}
+        </Typography>
+        <Typography
+          sx={{
+            fontSize: hasPrice ? "1.2rem" : "0.95rem",
+            fontWeight: 700,
+            color: "text.primary",
+            lineHeight: 1.2,
+          }}
+        >
+          {hasPrice ? `${currencySymbol}${price.toFixed(0)}` : "Contact for price"}
+        </Typography>
+      </Box>
       <Button
         variant="contained"
         onClick={onBookNow}
-        startIcon={<CalendarMonth />}
+        startIcon={<CalendarMonthRoundedIcon sx={{ fontSize: 18 }} />}
         sx={{
-          bgcolor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-          color: "white",
-          borderRadius: "30px",
-          px: 3.5,
-          py: 1.2,
-          textTransform: "none",
+          bgcolor: COLORS.PRIMARY_PURPLE,
+          color: COLORS.WHITE,
           fontWeight: 700,
+          fontSize: "0.9rem",
+          borderRadius: "10px",
+          px: 3,
+          py: 1.1,
+          textTransform: "none",
+          boxShadow: "none",
           whiteSpace: "nowrap",
+          "&:hover": { bgcolor: COLORS.PURPLE_HOVER, boxShadow: "none" },
+          "&:active": { transform: "scale(0.97)" },
         }}
       >
-        Book Now
+        Enquire now
       </Button>
     </Box>
   );

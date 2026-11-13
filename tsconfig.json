@@ -37,6 +37,10 @@
     "**/*.mts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "tests",
+    "__tests__",
+    "playwright.config.ts",
+    "jest.config.js"
   ]
 }

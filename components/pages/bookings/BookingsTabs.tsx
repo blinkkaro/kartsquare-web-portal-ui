@@ -90,7 +90,7 @@ const BookingsTabs: React.FC<BookingsTabsProps> = ({
                       px: 0.8,
                       py: 0.2,
                       fontSize: "0.75rem",
-                      fontWeight: 800,
+                      fontWeight: 700,
                       minWidth: "22px",
                       border: activeTab === index ? `1px solid ${COLORS.PRIMARY_PURPLE}40` : "none",
                     }}

@@ -9,6 +9,7 @@ import {
   fetchPublicProfileForSeo,
 } from "@/lib/seo/publicProfile";
 import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
+import { serializeJsonLd } from "@/lib/seo/jsonLd";
 
 interface ProfilePageProps {
   params: Promise<{
@@ -66,7 +67,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     { name: "Profiles", item: "/business-listing" },
     {
       name: username,
-      item: `/in/${username}`,
+      item: `/in/${encodeURIComponent(username)}`,
     },
   ]);
 
@@ -75,7 +76,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
       {jsonLd ? (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
         />
       ) : null}
       {breadcrumbJsonLd ? (

@@ -11,8 +11,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { COLORS } from "../../../constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
-import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { toggleTheme } from "@/features/ui/uiSlice";
+import { useAppSelector } from "@/store/hooks";
 import {
   getDesktopNavItems,
   getMobileNavItems,
@@ -20,6 +19,8 @@ import {
 
 // Import extracted components
 import NavLogo from "./components/NavLogo";
+import LocationChip from "../Ai/components/LocationChip";
+import { useAILocation } from "../Ai/useAILocation";
 import SearchBar from "./components/SearchBar";
 import DesktopNavLinks from "./components/DesktopNavLinks";
 import NavActions from "./components/NavActions";
@@ -55,18 +56,24 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  padding: "1rem 1rem",
+  width: "100%",
+  maxWidth: 1680,
+  margin: "0 auto",
+  padding: "0.75rem 1rem",
+  [theme.breakpoints.up("sm")]: {
+    padding: "0.75rem 1.25rem",
+  },
   [theme.breakpoints.up("md")]: {
-    padding: "0.5rem 1rem",
-    gap: "1rem",
+    padding: "0.5rem 1.75rem",
+    gap: "1.25rem",
   },
   [theme.breakpoints.up("lg")]: {
-    padding: "0.5rem 2rem",
-    gap: "2rem",
+    padding: "0.5rem 2.25rem",
+    gap: "1.75rem",
   },
   [theme.breakpoints.up("xl")]: {
-    padding: "1rem 12rem",
-    gap: "4rem",
+    padding: "0.5rem 2.5rem",
+    gap: "2.25rem",
   },
 }));
 
@@ -74,11 +81,11 @@ const Nav = () => {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down("lg"));
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { location, setLocation, locateMe, locating, locateError } = useAILocation();
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useTranslate();
   const mode = useAppSelector((state) => state.ui.mode);
-  const dispatch = useAppDispatch();
   const [showNotificationDrawer, setShowNotificationDrawer] = useState(false);
   const appBarRef = useRef<HTMLElement>(null);
   const [appBarHeight, setAppBarHeight] = useState(0);
@@ -105,10 +112,6 @@ const Nav = () => {
 
   const handleLogin = () => {
     router.push("/login?role=customer");
-  };
-
-  const handleThemeToggle = () => {
-    dispatch(toggleTheme());
   };
 
   const handleSearchChange = (value: string) => {
@@ -148,8 +151,19 @@ const Nav = () => {
       <StyledAppBar position="fixed" elevation={0} ref={appBarRef}>
         <StyledToolbar>
           {/* Left Section: Logo and Search */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: { xs: "0.5rem", sm: "1rem", lg: "1.5rem" }, minWidth: 0 }}>
             <NavLogo isMobile={isMobile} mode={mode} />
+
+            {/* Which city results are for (Jaipur by default) — one picker for the whole app. */}
+            <Box sx={{ minWidth: 0, maxWidth: { xs: 168, sm: 220 }, flexShrink: 1 }}>
+              <LocationChip
+                location={location}
+                onChange={setLocation}
+                onUseCurrent={() => locateMe()}
+                locating={locating}
+                error={locateError}
+              />
+            </Box>
 
             {!isMobile && !isTablet && (
               <SearchBar
@@ -179,13 +193,14 @@ const Nav = () => {
               isMobile={isMobile}
               isTablet={isTablet}
               mode={mode}
-              onThemeToggle={handleThemeToggle}
               onSearchToggle={toggleMobileSearch}
               profileClick={handleProfileClick}
               onLogin={handleLogin}
               loginText={t("login")}
               onNotificationToggle={toggleNotificationDrawer}
               onFreeListingClick={handleFreeListingClick}
+              // The home hero has the page's search, so the header drops its own there (phones/tablets only).
+              homeCompact={pathname === "/"}
             />
           </Box>
 

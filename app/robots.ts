@@ -39,6 +39,11 @@ export default function robots(): MetadataRoute.Robots {
     '/sup/',
     // ── Supplier portal — full prefix (auth pages + dashboard) ────────────
     '/supplier/',
+    '/search',
+    '/admin',
+    '/checkout',
+    '/cart',
+    '/orders',
   ] as const;
 
   return {

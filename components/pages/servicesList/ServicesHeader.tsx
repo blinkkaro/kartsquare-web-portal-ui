@@ -23,9 +23,9 @@ const ServicesHeader: React.FC<ServicesHeaderProps> = ({ title }) => {
         variant="h4"
         sx={{
           color: textPrimary,
-          fontWeight: 900,
+          fontWeight: 700,
           lineHeight: 1.2,
-          letterSpacing: "-0.03em",
+          letterSpacing: "-0.01em",
           background: isDark ? "none" : `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE}, ${COLORS.PURPLE_HOVER})`,
           WebkitBackgroundClip: isDark ? "none" : "text",
           WebkitTextFillColor: isDark ? "inherit" : "transparent",

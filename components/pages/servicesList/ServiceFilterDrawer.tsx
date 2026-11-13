@@ -24,6 +24,7 @@ import { Close, Tune, Sort, Star, Widgets } from "@mui/icons-material";
 import { Category } from "../../../services/serviceList/listInteraface";
 import { COLORS } from "../../../constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
+import CategoryIcon from "@/components/common/CategoryIcon";
 
 interface ServiceFilterDrawerProps {
   categories: Category[];
@@ -33,27 +34,6 @@ interface ServiceFilterDrawerProps {
   open: boolean;
   onClose: () => void;
 }
-
-const getCategoryIcon = (categoryName: string) => {
-  const name = categoryName.toLowerCase();
-  if (name.includes("business") || name.includes("finance")) return "💼";
-  if (name.includes("car") || name.includes("automotive") || name.includes("vehicle")) return "🚗";
-  if (name.includes("event") || name.includes("entertainment") || name.includes("party")) return "🎭";
-  if (name.includes("health") || name.includes("medical") || name.includes("wellness")) return "🩺";
-  if (name.includes("it") || name.includes("software") || name.includes("tech") || name.includes("computer")) return "💻";
-  if (name.includes("legal") || name.includes("compliance") || name.includes("law")) return "⚖️";
-  if (name.includes("lifestyle")) return "🏡";
-  if (name.includes("fitness") || name.includes("gym")) return "💪";
-  if (name.includes("beauty") || name.includes("salon") || name.includes("spa")) return "💄";
-  if (name.includes("sport")) return "⚽";
-  if (name.includes("fashion") || name.includes("clothing")) return "👗";
-  if (name.includes("cleaning")) return "🧹";
-  if (name.includes("home") || name.includes("repair") || name.includes("maintenance")) return "🛠️";
-  if (name.includes("education") || name.includes("learning") || name.includes("tutor")) return "🎓";
-  if (name.includes("food") || name.includes("dining") || name.includes("restaurant")) return "🍴";
-  if (name.includes("travel") || name.includes("tour")) return "✈️";
-  return "📋";
-};
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children: React.ReactElement<any, any> },
@@ -93,7 +73,7 @@ const SectionTitle = ({ icon, title }: { icon: any, title: string }) => (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, mt: 1 }}>
         {icon}
         <Typography variant="subtitle1" sx={{ 
-            fontWeight: 800, 
+            fontWeight: 700, 
             color: textPrimary, 
             letterSpacing: '0.02em',
             textTransform: 'uppercase',
@@ -124,7 +104,7 @@ const SectionTitle = ({ icon, title }: { icon: any, title: string }) => (
           display: "flex", 
           justifyContent: "space-between", 
           alignItems: "center",
-          fontWeight: 900,
+          fontWeight: 700,
           fontSize: "1.25rem",
           p: 3,
           pb: 2,
@@ -166,7 +146,7 @@ const SectionTitle = ({ icon, title }: { icon: any, title: string }) => (
                     onChange={(_, val) => setMinRating(val)}
                     sx={{ color: "#FFC107" }}
                 />
-                <Typography sx={{ fontWeight: 800, color: textPrimary, fontSize: '1.1rem' }}>{minRating}+</Typography>
+                <Typography sx={{ fontWeight: 700, color: textPrimary, fontSize: '1.1rem' }}>{minRating}+</Typography>
             </Box>
 
             <Divider sx={{ my: 3, borderColor }} />
@@ -204,19 +184,14 @@ const SectionTitle = ({ icon, title }: { icon: any, title: string }) => (
                                 "&:hover": { transform: "translateY(-4px)", bgcolor: isSelected ? COLORS.PURPLE_ALPHA_10 : (isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)") }
                             }}
                         >
-                            <Box sx={{
-                                width: 52,
-                                height: 52,
-                                borderRadius: "16px",
-                                bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#fff",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontSize: "1.75rem",
-                                boxShadow: "0 4px 12px rgba(0,0,0,0.03)",
-                            }}>
-                                {getCategoryIcon(cat.name)}
-                            </Box>
+                            <CategoryIcon
+                                icon={cat.icon}
+                                color={cat.color}
+                                tile={52}
+                                size={30}
+                                radius="16px"
+                                sx={{ boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}
+                            />
                             <Typography sx={{ 
                                 fontSize: "0.75rem", 
                                 fontWeight: isSelected ? 800 : 600, 
@@ -258,7 +233,7 @@ const SectionTitle = ({ icon, title }: { icon: any, title: string }) => (
                 onClick={handleApply}
                 sx={{ 
                     bgcolor: COLORS.PRIMARY_PURPLE, 
-                    fontWeight: 900, 
+                    fontWeight: 700, 
                     borderRadius: '16px',
                     textTransform: 'none',
                     py: 1.5,

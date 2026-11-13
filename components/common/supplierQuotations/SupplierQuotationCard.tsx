@@ -151,7 +151,7 @@ const SupplierQuotationCard: React.FC<SupplierQuotationCardProps> = ({
               <Typography
                 sx={{
                   fontSize: "18px",
-                  fontWeight: 800,
+                  fontWeight: 700,
                   color: isDark
                     ? COLORS.TEXT.PRIMARY_DARK
                     : COLORS.TEXT.PRIMARY_LIGHT,

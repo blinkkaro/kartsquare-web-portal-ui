@@ -134,10 +134,10 @@ const BenefitsSection = () => {
                         <Typography
                             variant="h1"
                             sx={{
-                                fontWeight: 800,
+                                fontWeight: 700,
                                 fontFamily: "var(--font-heading)",
                                 color: "#ffffff",
-                                letterSpacing: "-0.03em",
+                                letterSpacing: "-0.01em",
                                 mb: 3,
                                 lineHeight: 1.1,
                             }}
@@ -248,7 +248,7 @@ const BenefitsSection = () => {
                                         mb: 2,
                                         fontFamily: "var(--font-heading)",
                                         color: "#fff",
-                                        letterSpacing: "-0.02em"
+                                        letterSpacing: "-0.01em"
                                     }}
                                 >
                                     {t("benefitServiceTitle")}
@@ -312,7 +312,7 @@ const BenefitsSection = () => {
                                         mb: 2,
                                         fontFamily: "var(--font-heading)",
                                         color: "#fff",
-                                        letterSpacing: "-0.02em"
+                                        letterSpacing: "-0.01em"
                                     }}
                                 >
                                     {t("benefitShopTitle")}

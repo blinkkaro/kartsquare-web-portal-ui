@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 import { useTranslate } from "@/hooks/useTranslate";
 import { Service } from "@/services/serviceList/listInteraface";
 import { useDispatch } from "react-redux";
+import { getServiceHref } from "@/utils/serviceRoute";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 import { AppUserType } from "@/services/auth/auth.interface";
 
@@ -80,6 +81,12 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
         username: service.provider_name,
       }),
     );
+  };
+
+  /** The service name opens the service page; the provider picture opens their profile. */
+  const handleOpenService = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(getServiceHref(service));
   };
 
   const getDistance = () => {
@@ -195,7 +202,11 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
               <Avatar
                 src={service.provider_image_url || undefined}
                 alt={service.provider_name}
+                onClick={handleOpenDrawer}
+                role="button"
+                aria-label={`View ${service.provider_name || "provider"}'s profile`}
                 sx={{
+                  cursor: "pointer",
                   width: isSmall ? 48 : 72,
                   height: isSmall ? 48 : 72,
                   border: `2px solid ${theme.palette.mode === "dark" ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE}`,
@@ -216,9 +227,9 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
               <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Typography
                   variant={isSmall ? "subtitle2" : "h6"}
-                  onClick={handleOpenDrawer}
+                  onClick={handleOpenService}
                   sx={{
-                    fontWeight: 800,
+                    fontWeight: 700,
                     lineHeight: 1.2,
                     color:
                       theme.palette.mode === "dark"
@@ -349,7 +360,7 @@ const ServiceProviderCard: React.FC<ServiceProviderCardProps> = ({
             <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
               <Typography
                 variant="subtitle2"
-                sx={{ fontWeight: 800, color: COLORS.TEXT.PRIMARY_LIGHT }}
+                sx={{ fontWeight: 700, color: COLORS.TEXT.PRIMARY_LIGHT }}
               >
                 {service.currency} {service.price}
               </Typography>

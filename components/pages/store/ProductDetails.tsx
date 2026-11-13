@@ -122,13 +122,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             />
 
             {/* Map View */}
-            <Box sx={{ mt: 7 }}>
-              <ProductMap
-                latitude={product.supplier.latitude || 26.9124}
-                longitude={product.supplier.longitude || 75.7873}
-                storeName={product.supplier.name}
-              />
-            </Box>
+            {product.supplier.latitude && product.supplier.longitude ? (
+              <Box sx={{ mt: 7 }}>
+                <ProductMap
+                  latitude={product.supplier.latitude}
+                  longitude={product.supplier.longitude}
+                  storeName={product.supplier.name}
+                />
+              </Box>
+            ) : null}
           </Box>
 
           {/* Middle Column - Details */}
@@ -367,7 +369,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 fontWeight={900}
                 sx={{
                   color: isDark ? "text.primary" : "#1a1a2e",
-                  letterSpacing: "-0.5px",
+                  letterSpacing: "-0.01em",
                   textTransform: "uppercase",
                 }}
               >
@@ -384,7 +386,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   py: 0.5,
                   borderRadius: "20px",
                   fontSize: "0.7rem",
-                  fontWeight: 800,
+                  fontWeight: 700,
                   letterSpacing: "1px",
                   display: { xs: "none", sm: "block" },
                 }}

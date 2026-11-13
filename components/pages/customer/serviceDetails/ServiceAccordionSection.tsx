@@ -1,7 +1,14 @@
 "use client";
 import React from "react";
-import { Accordion, AccordionSummary, AccordionDetails, Box, Typography, useTheme } from "@mui/material";
-import { ExpandMore } from "@mui/icons-material";
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Box,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import { COLORS } from "../../../../constants/colors";
 
 interface ServiceAccordionSectionProps {
@@ -18,7 +25,7 @@ const ServiceAccordionSection = ({
   defaultExpanded,
 }: ServiceAccordionSectionProps) => {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+  const dark = theme.palette.mode === "dark";
 
   return (
     <Accordion
@@ -26,25 +33,27 @@ const ServiceAccordionSection = ({
       disableGutters
       elevation={0}
       sx={{
-        bgcolor: isDark ? "rgba(255, 255, 255, 0.05)" : "white",
-        border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)"}`,
+        bgcolor: "background.paper",
+        backgroundImage: "none",
+        border: "1px solid",
+        borderColor: dark ? COLORS.NEW_UI.CARD_BORDER_DARK : COLORS.NEW_UI.CARD_BORDER_LIGHT,
         borderRadius: "16px !important",
-        boxShadow: isDark ? "none" : "0 1px 3px rgba(30, 20, 60, 0.05), 0 8px 24px rgba(30, 20, 60, 0.04)",
+        boxShadow: dark ? COLORS.NEW_UI.CARD_SHADOW_DARK : COLORS.NEW_UI.CARD_SHADOW_LIGHT,
+        overflow: "hidden",
+        transition: "border-color 180ms ease, box-shadow 180ms ease",
         "&:before": { display: "none" },
         "&.Mui-expanded": { margin: 0 },
+        "&:hover": {
+          borderColor: dark
+            ? COLORS.NEW_UI.CARD_BORDER_HOVER_DARK
+            : COLORS.NEW_UI.CARD_BORDER_HOVER_LIGHT,
+        },
       }}
     >
       <AccordionSummary
-        expandIcon={
-          <ExpandMore
-            sx={{
-              color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-            }}
-          />
-        }
+        expandIcon={<KeyboardArrowDownRoundedIcon sx={{ color: "text.secondary" }} />}
         sx={{
-          px: 2.5,
-          py: 0.5,
+          px: { xs: 2, sm: 2.5 },
           minHeight: 60,
           "&.Mui-expanded": { minHeight: 60 },
         }}
@@ -53,31 +62,28 @@ const ServiceAccordionSection = ({
           {icon && (
             <Box
               sx={{
-                width: 30,
-                height: 30,
-                borderRadius: "9px",
+                width: 32,
+                height: 32,
+                borderRadius: "10px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                bgcolor: isDark ? "rgba(130, 72, 247, 0.16)" : COLORS.PURPLE_ALPHA_10,
-                color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+                bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10,
+                color: dark ? COLORS.NEW_UI.ACCENT_TEXT_DARK : COLORS.PRIMARY_PURPLE,
               }}
             >
               {icon}
             </Box>
           )}
           <Typography
-            sx={{
-              fontWeight: 700,
-              fontSize: "1.05rem",
-              color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-            }}
+            component="h2"
+            sx={{ fontWeight: 700, fontSize: "1rem", color: "text.primary" }}
           >
             {title}
           </Typography>
         </Box>
       </AccordionSummary>
-      <AccordionDetails sx={{ px: 2.5, pb: 2.5, pt: 0 }}>
+      <AccordionDetails sx={{ px: { xs: 2, sm: 2.5 }, pb: 2.5, pt: 0 }}>
         {children}
       </AccordionDetails>
     </Accordion>

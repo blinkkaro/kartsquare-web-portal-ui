@@ -1,28 +1,18 @@
 "use client";
-import React, { useMemo, useState, useEffect } from "react";
-import {
-  Box,
-  Paper,
-  Typography,
-  Avatar,
-  Divider,
-  useTheme,
-  Card,
-  CardMedia,
-  CardContent,
-  Rating,
-  useMediaQuery,
-} from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
-import { Star, Person, Business } from "@mui/icons-material";
-import { COLORS } from "../../../../constants/colors";
-import { SearchUser, SearchService } from "../../../../services/search/searchInterface";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslate } from "@/hooks/useTranslate";
+import { Avatar, Box, ButtonBase, Skeleton, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { keyframes } from "@mui/material/styles";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
+import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import { useDispatch } from "react-redux";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
+import { openAiWithQuery } from "@/features/ui/uiSlice";
+import { getServiceHref } from "@/utils/serviceRoute";
+import { COLORS } from "../../../../constants/colors";
+import { type SearchUser, type SearchService } from "../../../../services/search/searchInterface";
 import { getUserRole, UserRole } from "../../../../utils/auth";
-import { getServiceRouteParam } from "@/utils/serviceRoute";
 
 interface SearchDropdownProps {
   open: boolean;
@@ -34,6 +24,86 @@ interface SearchDropdownProps {
   onClose: () => void;
   onSeeAll: () => void;
 }
+
+const pop = keyframes`from { opacity: 0; transform: translateY(-6px) scale(0.985); } to { opacity: 1; transform: none; }`;
+
+/** Space the panel leaves under itself: the phone dock (56px + 10px gap) plus breathing room. */
+const BOTTOM_RESERVE_MOBILE = 56 + 10 + 20;
+const BOTTOM_RESERVE_DESKTOP = 20;
+
+/** Bolds the part of `text` that matches what was typed, so the match is easy to spot. */
+function Highlight({ text, query }: { text: string; query: string }) {
+  const q = query.trim();
+  const at = q ? text.toLowerCase().indexOf(q.toLowerCase()) : -1;
+  if (at < 0) return <>{text}</>;
+  return (
+    <>
+      {text.slice(0, at)}
+      <Box component="mark" sx={{ bgcolor: "transparent", color: COLORS.PRIMARY_PURPLE, fontWeight: 700 }}>
+        {text.slice(at, at + q.length)}
+      </Box>
+      {text.slice(at + q.length)}
+    </>
+  );
+}
+
+function Row({
+  onClick,
+  children,
+  accent,
+}: {
+  onClick: () => void;
+  children: React.ReactNode;
+  accent?: boolean;
+}) {
+  return (
+    <ButtonBase
+      onClick={onClick}
+      sx={{
+        width: "100%",
+        justifyContent: "flex-start",
+        textAlign: "left",
+        gap: 1.5,
+        px: 1.5,
+        py: 1,
+        minHeight: 56,
+        borderRadius: "14px",
+        transition: "background-color 140ms ease, transform 120ms ease",
+        "&:hover, &:focus-visible": { bgcolor: accent ? COLORS.PURPLE_ALPHA_10 : "action.hover" },
+        "&:active": { transform: "scale(0.985)" },
+        "&:focus-visible": { outline: `2px solid ${COLORS.PRIMARY_PURPLE}`, outlineOffset: -2 },
+        "@media (prefers-reduced-motion: reduce)": { transition: "none", "&:active": { transform: "none" } },
+      }}
+    >
+      {children}
+    </ButtonBase>
+  );
+}
+
+const IconTile = ({ children, filled }: { children: React.ReactNode; filled?: boolean }) => (
+  <Box
+    sx={{
+      width: 40,
+      height: 40,
+      flexShrink: 0,
+      borderRadius: "12px",
+      display: "grid",
+      placeItems: "center",
+      color: filled ? COLORS.WHITE : COLORS.PRIMARY_PURPLE,
+      background: filled
+        ? `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE}, ${COLORS.PURPLE_HOVER})`
+        : COLORS.PURPLE_ALPHA_10,
+    }}
+  >
+    {children}
+  </Box>
+);
+
+const Label = ({ children }: { children: React.ReactNode }) => (
+  <Typography sx={{ px: 1.5, pt: 1.25, pb: 0.5, fontSize: "0.75rem", fontWeight: 700, color: "text.secondary" }}>
+    {children}
+  </Typography>
+);
 
 const SearchDropdown: React.FC<SearchDropdownProps> = ({
   open,
@@ -48,504 +118,174 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   const theme = useTheme();
   const router = useRouter();
   const dispatch = useDispatch();
-  const { t } = useTranslate();
-  const isDark = theme.palette.mode === "dark";
+  const dark = theme.palette.mode === "dark";
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [viewportHeight, setViewportHeight] = useState(0);
 
-  // Get viewport height on mount and resize
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setViewportHeight(window.innerHeight);
-
-      const handleResize = () => {
-        setViewportHeight(window.innerHeight);
-      };
-
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }
+    const update = () => setViewportHeight(window.innerHeight);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
   }, []);
 
   if (!open || !anchorEl) return null;
 
-  const handleUserClick = (userId: string) => {
-    // Open profile drawer instead of navigating
-    dispatch(openDrawer({ userId }));
-    onClose();
-  };
-
-  const handleServiceClick = (service: SearchService) => {
-    const serviceRoute = getServiceRouteParam(service);
-    // Determine the route based on the user's role
-    const role = getUserRole();
-    if (role === UserRole.SERVICE_PROVIDER) {
-      // Redirect to provider service detail page
-      router.push(`/spr/services/${service.id}`);
-    } else {
-      // Default detail page (customer view)
-      router.push(`/services/${serviceRoute}`);
-    }
-    onClose();
-  };
-
+  const query = searchQuery.trim();
   const hasResults = users.length > 0 || services.length > 0;
-  const showSeeAll = hasResults && searchQuery.trim().length > 0;
 
-  // Calculate max height based on viewport height for mobile devices
-  // iPhone SE has ~568px viewport height, so we need to be careful
-  const maxHeight = useMemo(() => {
-    if (typeof window === "undefined" || !anchorEl) return 600;
+  // The panel ends above the phone dock, never under it.
+  const rect = anchorEl.getBoundingClientRect();
+  const room = viewportHeight - rect.bottom - 8 - (isMobile ? BOTTOM_RESERVE_MOBILE : BOTTOM_RESERVE_DESKTOP);
+  const maxHeight = Math.max(220, Math.min(room, 480));
 
-    const searchBarTop = anchorEl.getBoundingClientRect().top;
-    const searchBarHeight = anchorEl.offsetHeight;
-    const bottomPadding = 16; // Padding from bottom
-    const topPadding = 8; // Gap between search bar and dropdown
-
-    // Calculate available height
-    const availableHeight = viewportHeight - searchBarTop - searchBarHeight - topPadding - bottomPadding;
-
-    // For very small screens (iPhone SE ~568px), use more conservative limits
-    if (viewportHeight <= 667) {
-      // iPhone SE and similar small devices - use 70% of available or 350px max
-      return Math.min(availableHeight * 0.7, 350);
-    } else if (viewportHeight <= 812) {
-      // iPhone X/11/12 - use 75% of available or 500px max
-      return Math.min(availableHeight * 0.75, 500);
-    } else {
-      // Larger screens - use 600px max
-      return Math.min(availableHeight, 600);
-    }
-  }, [viewportHeight, anchorEl]);
+  const openService = (service: SearchService) => {
+    if (getUserRole() === UserRole.SERVICE_PROVIDER) router.push(`/spr/services/${service.id}`);
+    else router.push(getServiceHref(service));
+    onClose();
+  };
+  const openUser = (id: string) => {
+    dispatch(openDrawer({ userId: id }));
+    onClose();
+  };
+  const askAi = () => {
+    dispatch(openAiWithQuery(query));
+    onClose();
+  };
 
   return (
-    <Paper
-      elevation={8}
+    <Box
+      role="listbox"
+      aria-label="Search suggestions"
       sx={{
         position: "absolute",
-        top: anchorEl.offsetHeight + 8,
+        top: "calc(100% + 8px)",
         left: 0,
-        width: anchorEl.offsetWidth,
-        maxHeight: `${maxHeight}px`,
-        height: "auto",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        bgcolor: isDark
-          ? COLORS.BACKGROUND.PAPER_DARK
-          : COLORS.BACKGROUND.PAPER_LIGHT,
-        border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
-          }`,
-        borderRadius: "16px",
+        right: 0,
+        minWidth: { sm: 320 },
         zIndex: 1300,
-        boxShadow: isDark
-          ? "0px 8px 32px rgba(0, 0, 0, 0.4)"
-          : "0px 8px 32px rgba(0, 0, 0, 0.12)",
-        // On mobile, ensure it doesn't overflow viewport
-        ...(isMobile && {
-          maxWidth: "calc(100vw - 48px)", // Account for padding on mobile
-        }),
+        maxHeight,
+        overflowY: "auto",
+        overscrollBehavior: "contain",
+        p: 0.75,
+        borderRadius: "20px",
+        bgcolor: "background.paper",
+        color: "text.primary",
+        border: `1px solid ${dark ? "rgba(255,255,255,0.1)" : "rgba(42,13,115,0.08)"}`,
+        boxShadow: dark ? "0 18px 44px rgba(0,0,0,0.55)" : "0 18px 44px rgba(42,13,115,0.28)",
+        transformOrigin: "top center",
+        animation: `${pop} 180ms cubic-bezier(0.22, 1, 0.36, 1)`,
+        scrollbarWidth: "thin",
+        "@media (prefers-reduced-motion: reduce)": { animation: "none" },
       }}
     >
-      <Box
-        sx={{
-          overflowY: "auto",
-          overflowX: "hidden",
-          maxHeight: `${maxHeight}px`,
-          // Always show scrollbar for better UX, especially on mobile
-          scrollbarWidth: "thin", // Firefox
-          scrollbarColor: isDark
-            ? `${COLORS.PRIMARY_PURPLE}80 ${COLORS.BACKGROUND.SECONDARY_DARK}`
-            : `${COLORS.PRIMARY_PURPLE}80 ${COLORS.BACKGROUND.SECONDARY_LIGHT}`,
-          "&::-webkit-scrollbar": {
-            width: isMobile ? "8px" : "6px",
-            display: "block",
-            WebkitAppearance: "none",
-          },
-          "&::-webkit-scrollbar-track": {
-            background: isDark
-              ? COLORS.BACKGROUND.SECONDARY_DARK
-              : COLORS.BACKGROUND.SECONDARY_LIGHT,
-            borderRadius: "4px",
-            border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
-              }`,
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: isDark
-              ? `${COLORS.PRIMARY_PURPLE}CC`
-              : `${COLORS.PRIMARY_PURPLE}CC`,
-            borderRadius: "4px",
-            border: `1px solid ${isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT
-              }`,
-            "&:hover": {
-              background: isDark
-                ? COLORS.PRIMARY_PURPLE
-                : COLORS.PRIMARY_PURPLE,
-            },
-            "&:active": {
-              background: isDark
-                ? `${COLORS.PRIMARY_PURPLE}FF`
-                : `${COLORS.PRIMARY_PURPLE}FF`,
-            },
-          },
-          // Ensure smooth scrolling on iOS
-          WebkitOverflowScrolling: "touch",
-          // Force scrollbar to be more visible on iOS
-          ...(isMobile && {
-            scrollbarGutter: "stable",
-          }),
-        }}
-      >
-        {loading ? (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              py: 4,
-            }}
-          >
-            <LogoLoader size={32} />
-          </Box>
-        ) : !hasResults && searchQuery.trim().length > 0 ? (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              py: 4,
-              px: 2,
-            }}
-          >
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ textAlign: "center" }}
-            >
-              No results found for "{searchQuery}"
-            </Typography>
-          </Box>
-        ) : (
-          <>
-            {/* Users Section */}
-            {users?.length > 0 && (
-              <Box sx={{ p: 2 }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    mb: 1.5,
-                  }}
-                >
-                  <Person
-                    sx={{
-                      fontSize: 18,
-                      color: COLORS.PRIMARY_PURPLE,
-                    }}
-                  />
-                  <Typography
-                    variant="subtitle2"
-                    sx={{
-                      fontWeight: 600,
-                      color: isDark
-                        ? COLORS.TEXT.PRIMARY_DARK
-                        : COLORS.TEXT.PRIMARY_LIGHT,
-                    }}
-                  >
-                    Users
-                  </Typography>
-                </Box>
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                  {users.map((user) => (
-                    <Box
-                      key={user.id}
-                      onClick={() => handleUserClick(user.id)}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1.5,
-                        p: 1.5,
-                        borderRadius: "12px",
-                        cursor: "pointer",
-                        transition: "all 0.2s ease",
-                        bgcolor: "transparent",
-                        "&:hover": {
-                          bgcolor: isDark
-                            ? COLORS.BACKGROUND.SECONDARY_DARK
-                            : COLORS.BACKGROUND.SECONDARY_LIGHT,
-                          transform: "translateX(4px)",
-                        },
-                      }}
-                    >
-                      <Avatar
-                        src={user.profile_pic || undefined}
-                        sx={{
-                          width: 48,
-                          height: 48,
-                          border: `2px solid ${COLORS.PRIMARY_PURPLE}`,
-                        }}
-                      >
-                        {user.first_name.charAt(0).toUpperCase()}
-                      </Avatar>
-                      <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            fontWeight: 600,
-                            color: isDark
-                              ? COLORS.TEXT.PRIMARY_DARK
-                              : COLORS.TEXT.PRIMARY_LIGHT,
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {user.first_name} {user.last_name}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color: isDark
-                              ? COLORS.TEXT.SECONDARY_DARK
-                              : COLORS.TEXT.SECONDARY_LIGHT,
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 0.5,
-                          }}
-                        >
-                          <Star
-                            sx={{
-                              fontSize: 12,
-                              color: "#FFC107",
-                            }}
-                          />
-                          {user.rating.toFixed(1)} • {user.city}
-                        </Typography>
-                      </Box>
-                      {user.type === "SERVICE_PROVIDER" && (
-                        <Business
-                          sx={{
-                            fontSize: 18,
-                            color: COLORS.PRIMARY_PURPLE,
-                          }}
-                        />
-                      )}
-                    </Box>
-                  ))}
-                </Box>
-              </Box>
-            )}
-
-            {/* Services Section */}
-            {services.length > 0 && (
-              <Box sx={{ p: 2 }}>
-                {users.length > 0 && <Divider sx={{ my: 1 }} />}
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    mb: 1.5,
-                  }}
-                >
-                  <Business
-                    sx={{
-                      fontSize: 18,
-                      color: COLORS.PRIMARY_PURPLE,
-                    }}
-                  />
-                  <Typography
-                    variant="subtitle2"
-                    sx={{
-                      fontWeight: 600,
-                      color: isDark
-                        ? COLORS.TEXT.PRIMARY_DARK
-                        : COLORS.TEXT.PRIMARY_LIGHT,
-                    }}
-                  >
-                    Services
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 1.5,
-                  }}
-                >
-                  {services.map((service) => (
-                    <Card
-                      key={service.id}
-                      onClick={() => handleServiceClick(service)}
-                      sx={{
-                        cursor: "pointer",
-                        borderRadius: "12px",
-                        border: `1px solid ${isDark
-                          ? COLORS.BORDER.DEFAULT_DARK
-                          : COLORS.BORDER.DEFAULT_LIGHT
-                          }`,
-                        bgcolor: isDark
-                          ? COLORS.BACKGROUND.SECONDARY_DARK
-                          : COLORS.BACKGROUND.SECONDARY_LIGHT,
-                        transition: "all 0.2s ease",
-                        "&:hover": {
-                          transform: "translateY(-2px)",
-                          boxShadow: isDark
-                            ? "0px 4px 16px rgba(94, 24, 233, 0.3)"
-                            : "0px 4px 16px rgba(94, 24, 233, 0.15)",
-                          borderColor: COLORS.PRIMARY_PURPLE,
-                        },
-                      }}
-                    >
-                      <Box sx={{ display: "flex", gap: 1.5 }}>
-                        <CardMedia
-                          component="img"
-                          image={
-                            service.image ||
-                            "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                          }
-                          alt={service.name}
-                          sx={{
-                            width: 80,
-                            height: 80,
-                            objectFit: "cover",
-                            borderRadius: "8px",
-                            bgcolor: isDark
-                              ? COLORS.BACKGROUND.SECONDARY_DARK
-                              : COLORS.BACKGROUND.SECONDARY_LIGHT,
-                          }}
-                        />
-                        <CardContent
-                          sx={{
-                            flex: 1,
-                            p: "12px !important",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <Box>
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                fontWeight: 600,
-                                color: isDark
-                                  ? COLORS.TEXT.PRIMARY_DARK
-                                  : COLORS.TEXT.PRIMARY_LIGHT,
-                                mb: 0.5,
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                display: "-webkit-box",
-                                WebkitLineClamp: 1,
-                                WebkitBoxOrient: "vertical",
-                              }}
-                            >
-                              {service.name}
-                            </Typography>
-                            <Typography
-                              variant="caption"
-                              sx={{
-                                color: isDark
-                                  ? COLORS.TEXT.SECONDARY_DARK
-                                  : COLORS.TEXT.SECONDARY_LIGHT,
-                              }}
-                            >
-                              by {service.provider_name}
-                            </Typography>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                              mt: 1,
-                            }}
-                          >
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 0.5,
-                              }}
-                            >
-                              <Rating
-                                value={service.rating}
-                                readOnly
-                                size="small"
-                                sx={{
-                                  "& .MuiRating-iconFilled": {
-                                    color: "#FFC107",
-                                  },
-                                }}
-                              />
-                              <Typography
-                                variant="caption"
-                                sx={{
-                                  color: isDark
-                                    ? COLORS.TEXT.SECONDARY_DARK
-                                    : COLORS.TEXT.SECONDARY_LIGHT,
-                                }}
-                              >
-                                {service.rating.toFixed(1)}
-                              </Typography>
-                            </Box>
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                fontWeight: 700,
-                                color: COLORS.PRIMARY_PURPLE,
-                              }}
-                            >
-                              ₹{service.price}
-                            </Typography>
-                          </Box>
-                        </CardContent>
-                      </Box>
-                    </Card>
-                  ))}
-                </Box>
-              </Box>
-            )}
-          </>
-        )}
-      </Box>
-
-      {/* See All Button */}
-      {showSeeAll && (
+      {/* Two always-there actions: search everything, or ask Kart AI */}
+      {query && (
         <>
-          <Divider />
-          <Box
-            onClick={onSeeAll}
-            sx={{
-              p: 1.5,
-              cursor: "pointer",
-              textAlign: "center",
-              bgcolor: isDark
-                ? COLORS.BACKGROUND.SECONDARY_DARK
-                : COLORS.BACKGROUND.SECONDARY_LIGHT,
-              transition: "all 0.2s ease",
-              "&:hover": {
-                bgcolor: isDark
-                  ? COLORS.BACKGROUND.PRIMARY_DARK
-                  : COLORS.BACKGROUND.PRIMARY_LIGHT,
-              },
-            }}
-          >
-            <Typography
-              variant="body2"
-              sx={{
-                fontWeight: 600,
-                color: COLORS.PRIMARY_PURPLE,
-              }}
-            >
-              {t("seeAllResults")} "{searchQuery}"
-            </Typography>
-          </Box>
+          <Row onClick={onSeeAll}>
+            <IconTile>
+              <SearchRoundedIcon fontSize="small" />
+            </IconTile>
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Typography noWrap sx={{ fontWeight: 700, fontSize: "0.95rem" }}>
+                Search “{query}”
+              </Typography>
+              <Typography sx={{ fontSize: "0.8rem", color: "text.secondary" }}>All services and people</Typography>
+            </Box>
+            <ChevronRightRoundedIcon sx={{ color: "text.disabled" }} />
+          </Row>
+          <Row onClick={askAi} accent>
+            <IconTile filled>
+              <AutoAwesomeRoundedIcon fontSize="small" />
+            </IconTile>
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Typography noWrap sx={{ fontWeight: 700, fontSize: "0.95rem" }}>
+                Ask Kart AI
+              </Typography>
+              <Typography sx={{ fontSize: "0.8rem", color: "text.secondary" }} noWrap>
+                Tell it your problem, it finds the right pro
+              </Typography>
+            </Box>
+            <ChevronRightRoundedIcon sx={{ color: "text.disabled" }} />
+          </Row>
         </>
       )}
-    </Paper>
+
+      {loading && !hasResults ? (
+        <Box aria-busy sx={{ px: 1.5, py: 1 }}>
+          {[0, 1, 2].map((i) => (
+            <Box key={i} sx={{ display: "flex", gap: 1.5, alignItems: "center", py: 0.9 }}>
+              <Skeleton variant="rounded" width={44} height={44} sx={{ borderRadius: "12px" }} />
+              <Box sx={{ flex: 1 }}>
+                <Skeleton width="62%" />
+                <Skeleton width="38%" />
+              </Box>
+            </Box>
+          ))}
+        </Box>
+      ) : !hasResults && query ? (
+        <Typography sx={{ px: 1.5, py: 2, fontSize: "0.88rem", color: "text.secondary" }}>
+          Nothing found for “{query}”. Try another word, or ask Kart AI.
+        </Typography>
+      ) : (
+        <>
+          {services.length > 0 && (
+            <>
+              <Label>Services</Label>
+              {services.map((service) => (
+                <Row key={service.id} onClick={() => openService(service)}>
+                  <Avatar
+                    variant="rounded"
+                    src={service.image || undefined}
+                    alt=""
+                    sx={{ width: 44, height: 44, borderRadius: "12px", bgcolor: COLORS.PURPLE_ALPHA_10, color: COLORS.PRIMARY_PURPLE, fontWeight: 700 }}
+                  >
+                    {service.name.charAt(0).toUpperCase()}
+                  </Avatar>
+                  <Box sx={{ minWidth: 0, flex: 1 }}>
+                    <Typography noWrap sx={{ fontWeight: 700, fontSize: "0.95rem" }}>
+                      <Highlight text={service.name} query={query} />
+                    </Typography>
+                    <Typography noWrap sx={{ fontSize: "0.8rem", color: "text.secondary" }}>
+                      {service.provider_name ? `by ${service.provider_name}` : "Service"}
+                    </Typography>
+                  </Box>
+                  {service.price > 0 && (
+                    <Typography sx={{ fontWeight: 700, fontSize: "0.85rem", color: COLORS.PRIMARY_PURPLE, flexShrink: 0 }}>
+                      ₹{service.price}
+                    </Typography>
+                  )}
+                </Row>
+              ))}
+            </>
+          )}
+
+          {users.length > 0 && (
+            <>
+              <Label>People</Label>
+              {users.map((user) => {
+                const name = `${user.first_name} ${user.last_name}`.trim();
+                return (
+                  <Row key={user.id} onClick={() => openUser(user.id)}>
+                    <Avatar src={user.profile_pic || undefined} alt="" sx={{ width: 44, height: 44, bgcolor: COLORS.PURPLE_ALPHA_10, color: COLORS.PRIMARY_PURPLE, fontWeight: 700 }}>
+                      {user.first_name.charAt(0).toUpperCase()}
+                    </Avatar>
+                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                      <Typography noWrap sx={{ fontWeight: 700, fontSize: "0.95rem" }}>
+                        <Highlight text={name} query={query} />
+                      </Typography>
+                      <Typography noWrap sx={{ fontSize: "0.8rem", color: "text.secondary" }}>
+                        {[user.type === "SERVICE_PROVIDER" ? "Service provider" : null, user.city].filter(Boolean).join(" · ")}
+                      </Typography>
+                    </Box>
+                  </Row>
+                );
+              })}
+            </>
+          )}
+        </>
+      )}
+    </Box>
   );
 };
 

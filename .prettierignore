@@ -1,0 +1,9 @@
+.next
+node_modules
+coverage
+playwright-report
+test-results
+public
+package-lock.json
+data/categoryIcons.json
+*.tsbuildinfo

@@ -1,7 +1,8 @@
 "use client";
 import React from "react";
-import { Box, Typography, Button, Chip, useTheme } from "@mui/material";
-import { Bolt, Verified } from "@mui/icons-material";
+import { Box, Typography, Button, useTheme } from "@mui/material";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
 import { COLORS } from "../../../../constants/colors";
 import { english } from "../../../../features/i18n/en";
 
@@ -18,46 +19,46 @@ const CustomerServiceInfo = ({
   showContinueReading,
 }: CustomerServiceInfoProps) => {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+  const dark = theme.palette.mode === "dark";
+
+  const chipSx = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 0.5,
+    px: 1.25,
+    py: 0.4,
+    borderRadius: "999px",
+    fontSize: "0.76rem",
+    fontWeight: 700,
+    bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10,
+    color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE,
+  };
 
   return (
     <>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap", mb: 1.5 }}>
-        <Chip
-          icon={<Verified sx={{ fontSize: "15px !important" }} />}
-          label={english.verified_service}
-          size="small"
-          sx={{
-            bgcolor: isDark ? "rgba(29, 78, 216, 0.16)" : "#EFF6FF",
-            color: "#1D4ED8",
-            fontWeight: 800,
-            fontSize: "0.7rem",
-          }}
-        />
-        <Chip
-          icon={<Bolt sx={{ fontSize: "14px !important" }} />}
-          label={english.high_success_rate}
-          size="small"
-          sx={{
-            bgcolor: isDark ? "rgba(16, 185, 129, 0.16)" : "#ECFDF5",
-            color: "#059669",
-            fontWeight: 800,
-            fontSize: "0.7rem",
-          }}
-        />
+        <Box component="span" sx={chipSx}>
+          <CheckCircleRoundedIcon sx={{ fontSize: 14, color: COLORS.NEW_UI.VERIFIED_GREEN }} />
+          {english.verified_service}
+        </Box>
+        <Box component="span" sx={chipSx}>
+          <BoltRoundedIcon sx={{ fontSize: 14 }} />
+          {english.high_success_rate}
+        </Box>
       </Box>
 
       <Typography
-        variant="body1"
         sx={{
-          mb: showContinueReading ? 0.5 : 0,
-          lineHeight: 1.65,
-          color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+          fontSize: "0.9rem",
+          lineHeight: 1.6,
+          color: "text.secondary",
+          mb: showContinueReading ? 0.75 : 0,
           display: "-webkit-box",
           WebkitLineClamp: 10,
           WebkitBoxOrient: "vertical",
           overflow: "hidden",
           textOverflow: "ellipsis",
+          whiteSpace: "pre-line",
         }}
       >
         {serviceDesc || english.no_description_available}
@@ -67,14 +68,13 @@ const CustomerServiceInfo = ({
         <Button
           onClick={onContinueReading}
           sx={{
-            textTransform: "none",
+            fontSize: "0.84rem",
             fontWeight: 700,
-            color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
+            color: dark ? COLORS.NEW_UI.ACCENT_TEXT_DARK : COLORS.PRIMARY_PURPLE,
+            textTransform: "none",
             p: 0,
-            "&:hover": {
-              bgcolor: "transparent",
-              textDecoration: "underline",
-            },
+            minWidth: 0,
+            "&:hover": { textDecoration: "underline", bgcolor: "transparent" },
           }}
         >
           {english.continue_reading}

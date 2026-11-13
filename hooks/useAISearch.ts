@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import {
+  AgenticSearchContext,
   SuggestedCategory,
   AgenticSearchResponse,
   isSuccessResponse,
@@ -14,7 +15,11 @@ interface UseAISearchReturn {
   suggestedCategories: SuggestedCategory[];
   isLoading: boolean;
   error: string | null;
-  search: (query: string, sessionId?: string) => Promise<AgenticSearchResponse | undefined>;
+  search: (
+    query: string,
+    sessionId?: string,
+    context?: AgenticSearchContext,
+  ) => Promise<AgenticSearchResponse | undefined>;
   messages: string;
 }
 
@@ -27,8 +32,15 @@ export const useAISearch = (): UseAISearchReturn => {
   const [error, setError] = useState<string | null>(null);
 
   const mutation = useMutation({
-    mutationFn: ({ query, sessionId }: { query: string; sessionId?: string }) =>
-      aiService.agenticSearch(query, sessionId),
+    mutationFn: ({
+      query,
+      sessionId,
+      context,
+    }: {
+      query: string;
+      sessionId?: string;
+      context?: AgenticSearchContext;
+    }) => aiService.agenticSearch(query, sessionId, context),
     onSuccess: (data: AgenticSearchResponse) => {
       setError(null);
       if (isSuccessResponse(data)) {
@@ -49,9 +61,13 @@ export const useAISearch = (): UseAISearchReturn => {
     },
   });
 
-  const search = async (query: string, sessionId?: string) => {
+  const search = async (
+    query: string,
+    sessionId?: string,
+    context?: AgenticSearchContext,
+  ) => {
     if (!query.trim()) return;
-    return await mutation.mutateAsync({ query, sessionId });
+    return await mutation.mutateAsync({ query, sessionId, context });
   };
 
   return {

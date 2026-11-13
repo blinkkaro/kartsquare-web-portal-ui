@@ -4,6 +4,8 @@ export const COLORS = {
   // Primary Colors
   PRIMARY_PURPLE: "#5e18e9",
   PURPLE_HOVER: "#4b12bb",
+  // Deep violet for solid dark shapes behind white cards (home hero)
+  PURPLE_DEEP: "#2a0d73",
   PURPLE_ALPHA_04: "rgba(94, 24, 233, 0.04)",
   PURPLE_ALPHA_10: "rgba(94, 24, 233, 0.1)",
   PURPLE_ALPHA_20: "rgba(94, 24, 233, 0.2)",
@@ -38,7 +40,7 @@ export const COLORS = {
   TEXT: {
     PRIMARY_LIGHT: "#30263E",
     PRIMARY_DARK: "#ffffff",
-    SECONDARY_LIGHT: "#6b7280",
+    SECONDARY_LIGHT: "#5b6170",
     SECONDARY_DARK: "#9ca3af",
   },
 
@@ -87,4 +89,36 @@ export const COLORS = {
 
   // error
   ERROR_RED: "#ff4d4f",
+
+  // Services 2.0 (new UI) — values the redesigned services list uses
+  NEW_UI: {
+    PAGE_BG_LIGHT: "#FCFBF9",
+    CARD_BORDER_LIGHT: "#ede9f2",
+    CARD_BORDER_DARK: "rgba(255,255,255,0.08)",
+    CARD_BORDER_HOVER_LIGHT: "#d6cbef",
+    CARD_BORDER_HOVER_DARK: "rgba(130,72,247,0.4)",
+    DIVIDER_LIGHT: "#e2deea",
+    DIVIDER_DARK: "rgba(255,255,255,0.15)",
+    SURFACE_SOFT_LIGHT: "#f8f6fb",
+    SURFACE_SOFT_DARK: "rgba(255,255,255,0.03)",
+    CARD_SHADOW_LIGHT: "0 2px 12px rgba(0,0,0,0.03)",
+    CARD_SHADOW_DARK: "0 4px 16px rgba(0,0,0,0.2)",
+    CARD_SHADOW_HOVER_LIGHT: "0 8px 24px rgba(105,39,218,0.08)",
+    CARD_SHADOW_HOVER_DARK: "0 8px 24px rgba(0,0,0,0.35)",
+    CRUMB_SEPARATOR_LIGHT: "#a39fb0",
+    CRUMB_SEPARATOR_DARK: "rgba(255,255,255,0.3)",
+    ACCENT_TEXT_DARK: "#c4a3ff",
+    CHIP_TEXT_DARK: "#d6b8ff",
+    CHIP_BG_DARK: "rgba(130,72,247,0.12)",
+    OUTLINE_LIGHT: "#d6d0e0",
+    OUTLINE_DARK: "rgba(255,255,255,0.2)",
+    VERIFIED_GREEN: "#16a34a",
+    STAR_AMBER: "#f59e0b",
+    WHATSAPP: "#25D366",
+    WHATSAPP_HOVER: "#20bd5a",
+    /** Near-black used for selected pills on light backgrounds (services list chips, feed tabs). */
+    INK: "#1c1924",
+    BUTTON_SHADOW_HOVER: "0 4px 14px rgba(105,39,218,0.3)",
+    BOTTOM_BAR_SHADOW: "0 -4px 20px rgba(0,0,0,0.06)",
+  },
 };

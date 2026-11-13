@@ -3,7 +3,11 @@ import React, { useState, useMemo, useEffect } from "react";
 import { Box, Container, Typography, useTheme } from "@mui/material";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { Share, InfoOutlined, Sell, Room, StarBorder } from "@mui/icons-material";
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
+import SellOutlined from "@mui/icons-material/SellOutlined";
+import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import IosShareRoundedIcon from "@mui/icons-material/IosShareRounded";
 import { IconButton } from "@mui/material";
 import Image from "next/image";
 import ServiceImageCarousel from "../../../ServiceImageCarousel";
@@ -40,7 +44,7 @@ import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
 import axios from "axios";
 import toast from "react-hot-toast";
 import GetQuoteModal from "./GetQuoteModal";
-import { getServiceRouteParam } from "@/utils/serviceRoute";
+import { getServiceHref } from "@/utils/serviceRoute";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 const NEW_LISTING_WINDOW_DAYS = 30;
@@ -49,7 +53,8 @@ const CustomerServiceDetails = () => {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const serviceId = params.id as string;
+  // Canonical route /services/[city]/[slug] (slug) or legacy /services/[first] (uuid or slug).
+  const serviceId = (params.second ?? params.slug ?? params.first ?? params.id) as string;
   const actions = searchParams.get("action");
   const theme = useTheme();
   const { t } = useTranslate();
@@ -188,8 +193,7 @@ const CustomerServiceDetails = () => {
 
   const handleReviewSubmit = () => {
     setReviewModalOpen(false);
-    const routeParam = getServiceRouteParam(service || { service_id: serviceId });
-    router.push(`/services/${routeParam}`);
+    router.push(getServiceHref(service || { service_id: serviceId }));
   };
 
   const totalReviews = reviewsData?.pages[0]?.meta.total || 0;
@@ -213,9 +217,7 @@ const CustomerServiceDetails = () => {
       <MainLayout>
         <Box
           sx={{
-            bgcolor: isDark
-              ? COLORS.BACKGROUND.PRIMARY_DARK
-              : COLORS.BACKGROUND.SECONDARY_LIGHT,
+            bgcolor: isDark ? "background.default" : COLORS.NEW_UI.PAGE_BG_LIGHT,
             minHeight: "100vh",
           }}
         >
@@ -252,50 +254,56 @@ const CustomerServiceDetails = () => {
     !!(service.provider_whatsapp_country_code && service.provider_whatsapp_number) ||
     !!service.provider_phone_number;
 
+  const cardBorder = isDark ? COLORS.NEW_UI.CARD_BORDER_DARK : COLORS.NEW_UI.CARD_BORDER_LIGHT;
+  const cardShadow = isDark ? COLORS.NEW_UI.CARD_SHADOW_DARK : COLORS.NEW_UI.CARD_SHADOW_LIGHT;
+
+  const iconButtonSx = {
+    width: 38,
+    height: 38,
+    bgcolor: "background.paper",
+    border: "1px solid",
+    borderColor: isDark ? COLORS.NEW_UI.DIVIDER_DARK : COLORS.NEW_UI.DIVIDER_LIGHT,
+    color: "text.primary",
+    transition: "all 0.15s ease",
+    "&:hover": {
+      borderColor: COLORS.PRIMARY_PURPLE,
+      color: COLORS.PRIMARY_PURPLE,
+      bgcolor: COLORS.PURPLE_ALPHA_04,
+    },
+  };
+
   return (
     <MainLayout>
       <Box
         sx={{
-          bgcolor: isDark
-            ? COLORS.BACKGROUND.PRIMARY_DARK
-            : COLORS.BACKGROUND.SECONDARY_LIGHT,
+          bgcolor: isDark ? "background.default" : COLORS.NEW_UI.PAGE_BG_LIGHT,
           minHeight: "100vh",
-          pt: { xs: 2, sm: 4, md: 10 },
-          pb: { xs: 12, md: 4 },
-          px: { xs: 0.5, sm: 1, md: 2 },
+          pb: { xs: 12, md: 10 },
           width: "100%",
           maxWidth: "100%",
           overflowX: "hidden",
         }}
       >
-        <Container
-          maxWidth="xl"
-          sx={{
-            px: { xs: 1, sm: 2, md: 3 },
-            width: "100%",
-            maxWidth: "100%",
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2, mb: 1 }}>
+        <Container maxWidth="xl" sx={{ px: { xs: 1.5, sm: 2.5, md: 3, lg: 4 } }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 2,
+              pt: { xs: 2, md: 3 },
+              pb: 2,
+            }}
+          >
             <CustomerServiceBreadcrumb serviceName={service.service_name || ""} />
             <Box sx={{ display: "flex", gap: 1, flexShrink: 0 }}>
-              <IconButton
-                onClick={handleShare}
-                size="small"
-                sx={{
-                  bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-                  border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)"}`,
-                }}
-              >
-                <Share fontSize="small" sx={{ color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }} />
+              <IconButton onClick={handleShare} aria-label="Share this service" sx={iconButtonSx}>
+                <IosShareRoundedIcon sx={{ fontSize: 18 }} />
               </IconButton>
               <IconButton
                 onClick={handleChatClick}
-                size="small"
-                sx={{
-                  bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-                  border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)"}`,
-                }}
+                aria-label="Chat with provider"
+                sx={iconButtonSx}
               >
                 <Image
                   src={isDark ? "/icons/darkThemeChat.svg" : "/icons/chat.svg"}
@@ -310,16 +318,27 @@ const CustomerServiceDetails = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1.7fr 1fr" },
-              gap: { xs: 3, md: 4 },
+              gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) 340px", lg: "minmax(0, 1fr) 360px" },
+              gap: { xs: 2.5, md: 3 },
               alignItems: "start",
               width: "100%",
               maxWidth: "100%",
             }}
           >
             {/* Main column */}
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 3, minWidth: 0 }}>
-              <ServiceImageCarousel images={images} serviceName={service.service_name || ""} />
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, minWidth: 0 }}>
+              <Box
+                sx={{
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                  border: "1px solid",
+                  borderColor: cardBorder,
+                  boxShadow: cardShadow,
+                  bgcolor: isDark ? COLORS.NEW_UI.SURFACE_SOFT_DARK : COLORS.NEW_UI.SURFACE_SOFT_LIGHT,
+                }}
+              >
+                <ServiceImageCarousel images={images} serviceName={service.service_name || ""} />
+              </Box>
 
               <ServiceTitleBlock
                 name={service.business_name || service.service_name || ""}
@@ -347,7 +366,7 @@ const CustomerServiceDetails = () => {
               )}
 
               <ServiceAccordionSection
-                title="About This Service"
+                title="About this service"
                 icon={<InfoOutlined sx={{ fontSize: 17 }} />}
                 defaultExpanded
               >
@@ -362,8 +381,8 @@ const CustomerServiceDetails = () => {
               </ServiceAccordionSection>
 
               <ServiceAccordionSection
-                title="Services & Pricing"
-                icon={<Sell sx={{ fontSize: 16 }} />}
+                title="Services & pricing"
+                icon={<SellOutlined sx={{ fontSize: 17 }} />}
                 defaultExpanded
               >
                 <CustomerServicePricing
@@ -376,7 +395,7 @@ const CustomerServiceDetails = () => {
                 />
               </ServiceAccordionSection>
 
-              <ServiceAccordionSection title="Location" icon={<Room sx={{ fontSize: 17 }} />}>
+              <ServiceAccordionSection title="Location" icon={<PlaceRoundedIcon sx={{ fontSize: 17 }} />}>
                 <ServiceLocation
                   address={{
                     address: service.service_address?.address || "",
@@ -395,7 +414,7 @@ const CustomerServiceDetails = () => {
                   serviceRadius={service.service_radius}
                 />
                 {service.service_address?.latitude && service.service_address?.longitude && (
-                  <Box sx={{ mt: 2 }}>
+                  <Box sx={{ mt: 2, borderRadius: "12px", overflow: "hidden" }}>
                     <ServiceDetailsMap
                       latitude={service.service_address.latitude}
                       longitude={service.service_address.longitude}
@@ -405,24 +424,38 @@ const CustomerServiceDetails = () => {
                 )}
               </ServiceAccordionSection>
 
-              <ProviderInfoCard
-                providerId={service.provider_id || ""}
-                providerName={service.provider_name || ""}
-                providerImageUrl={service.provider_image_url || ""}
-                isHotSeller={true}
-                providerPhoneNumber={service.provider_phone_number || ""}
-                businessName={service.business_name || ""}
-                isFollowing={service.is_following}
-              />
+              <Box
+                sx={{
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                  border: "1px solid",
+                  borderColor: cardBorder,
+                  boxShadow: cardShadow,
+                  bgcolor: "background.paper",
+                }}
+              >
+                <ProviderInfoCard
+                  providerId={service.provider_id || ""}
+                  providerName={service.provider_name || ""}
+                  providerImageUrl={service.provider_image_url || ""}
+                  isHotSeller={true}
+                  providerPhoneNumber={service.provider_phone_number || ""}
+                  businessName={service.business_name || ""}
+                  isFollowing={service.is_following}
+                />
+              </Box>
 
               {relatedServices.length > 0 && (
-                <Box>
+                <Box component="section" aria-labelledby="other-services-heading">
                   <Typography
-                    variant="h6"
+                    id="other-services-heading"
+                    component="h2"
                     sx={{
+                      fontSize: { xs: "1.1rem", sm: "1.25rem" },
                       fontWeight: 700,
-                      mb: 2,
-                      color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                      letterSpacing: "-0.01em",
+                      color: "text.primary",
+                      mb: 1.5,
                     }}
                   >
                     {t("other_services")}
@@ -432,19 +465,10 @@ const CustomerServiceDetails = () => {
                       display: "flex",
                       gap: 2,
                       overflowX: "auto",
-                      pb: 2,
-                      "&::-webkit-scrollbar": { height: "8px" },
-                      "&::-webkit-scrollbar-track": {
-                        bgcolor: isDark
-                          ? COLORS.BACKGROUND.SECONDARY_DARK
-                          : COLORS.BACKGROUND.SECONDARY_LIGHT,
-                        borderRadius: "4px",
-                      },
-                      "&::-webkit-scrollbar-thumb": {
-                        bgcolor: isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT,
-                        borderRadius: "4px",
-                        "&:hover": { bgcolor: COLORS.PRIMARY_PURPLE },
-                      },
+                      pb: 1.5,
+                      scrollbarWidth: "none",
+                      "&::-webkit-scrollbar": { display: "none" },
+                      WebkitOverflowScrolling: "touch",
                     }}
                   >
                     {relatedServices.map((relatedService) => (
@@ -461,7 +485,7 @@ const CustomerServiceDetails = () => {
 
               <ServiceAccordionSection
                 title={`Reviews (${totalReviews})`}
-                icon={<StarBorder sx={{ fontSize: 17 }} />}
+                icon={<StarRoundedIcon sx={{ fontSize: 18 }} />}
               >
                 <ReviewsSection
                   reviews={reviews}
@@ -481,6 +505,7 @@ const CustomerServiceDetails = () => {
                 display: { xs: "none", md: "block" },
                 position: "sticky",
                 top: 96,
+                alignSelf: "start",
               }}
             >
               <ServiceBookingSidebar

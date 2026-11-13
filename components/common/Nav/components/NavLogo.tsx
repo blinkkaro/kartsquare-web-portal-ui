@@ -30,6 +30,11 @@ const NavLogo: React.FC<NavLogoProps> = ({ isMobile, mode }) => {
         sx={{
           fontWeight: 700,
           fontSize: { xs: "1rem", md: "1.125rem" },
+          // Phones show the icon + the city picker instead of the wordmark (the
+          // icon is the brand there); the wordmark returns from 600px. A media
+          // query must be its own key in sx, not a key inside a breakpoint object.
+          display: "none",
+          "@media (min-width:600px)": { display: "inline" },
           color:
             mode === "dark"
               ? COLORS.TEXT.PRIMARY_DARK

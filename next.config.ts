@@ -1,5 +1,14 @@
 import type { NextConfig } from "next";
 
+/**
+ * Local development only: proxy /api/* to a backend running on this machine (default :5900), so the
+ * browser talks to its own origin and CORS never applies. Use with
+ * NEXT_PUBLIC_API_URL=http://localhost:3000/api/v1 (see docs/01-project-overview.md).
+ * Never active in production builds.
+ */
+const LOCAL_API_TARGET = process.env.LOCAL_API_PROXY_TARGET ?? "http://localhost:5900";
+const proxyLocalApi = process.env.NODE_ENV !== "production";
+
 const nextConfig: NextConfig = {
   compress: true, // gzip responses
   poweredByHeader: false, // remove X-Powered-By header
@@ -13,10 +22,16 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      // ── Services: /services → /cus/servicesList ──────────────────────────
+      // ── Services: /services → /cus/services-list ─────────────────────────
       {
         source: "/services",
-        destination: "/cus/servicesList",
+        destination: "/cus/services-list",
+        permanent: true,
+      },
+      // old camelCase URL (existing bookmarks / indexed links); query string is preserved
+      {
+        source: "/cus/servicesList",
+        destination: "/cus/services-list",
         permanent: true,
       },
       // ── camelCase → kebab-case (Google prefers kebab-case) ───────────────
@@ -89,9 +104,14 @@ const nextConfig: NextConfig = {
       { source: "/contact-us", destination: "/contactUs" },
       { source: "/privacy-policy", destination: "/privacyPolicy" },
       { source: "/terms-conditions", destination: "/termsConditions" },
+      ...(proxyLocalApi
+        ? [{ source: "/api/:path*", destination: `${LOCAL_API_TARGET}/api/:path*` }]
+        : []),
     ];
   },
   images: {
+    // AVIF first where Next optimizes an image itself (Cloudinary photos use their own loader).
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",

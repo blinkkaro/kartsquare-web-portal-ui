@@ -1,13 +1,16 @@
 "use client";
 import React from "react";
-import { Box, Typography, Chip, useTheme } from "@mui/material";
-import { Room, Verified, Star } from "@mui/icons-material";
+import { Box, Typography, useTheme } from "@mui/material";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import { COLORS } from "../../../../constants/colors";
 
 interface ServiceTitleBlockProps {
   name: string;
   categoryName: string[];
   city?: string;
+  area?: string;
   isNew?: boolean;
   avgRating?: number;
   reviewCount?: number;
@@ -17,103 +20,118 @@ const ServiceTitleBlock = ({
   name,
   categoryName,
   city,
+  area,
   isNew,
   avgRating,
   reviewCount,
 }: ServiceTitleBlockProps) => {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+  const dark = theme.palette.mode === "dark";
   const ratingNumber = Number(avgRating);
-  const hasRating = Number.isFinite(ratingNumber) && ratingNumber > 0;
+  const hasReviews = !!reviewCount && reviewCount > 0;
+  // avg_service_rating defaults to 4.00 in the DB, so a rating only means
+  // something once there is at least one review behind it.
+  const hasRating = hasReviews && Number.isFinite(ratingNumber) && ratingNumber > 0;
+  const showArea = !!area && !!city && area.toLowerCase() !== city.toLowerCase();
 
   return (
-    <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}>
-      <Box>
-        {categoryName.length > 0 && (
-          <Typography
-            sx={{
-              fontSize: "0.75rem",
-              fontWeight: 800,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-              mb: 0.5,
-            }}
-          >
-            {categoryName.join(" · ")}
-          </Typography>
-        )}
+    <Box>
+      {categoryName.length > 0 && (
         <Typography
           sx={{
-            fontSize: { xs: "1.6rem", sm: "2.1rem" },
-            fontWeight: 800,
-            lineHeight: 1.12,
+            fontSize: "0.72rem",
+            fontWeight: 700,
+            color: dark ? COLORS.NEW_UI.ACCENT_TEXT_DARK : COLORS.PRIMARY_PURPLE,
+            textTransform: "uppercase",
+            letterSpacing: "0.04em",
+            mb: 0.75,
+          }}
+        >
+          {categoryName.join(" · ")}
+        </Typography>
+      )}
+
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap", mb: 1 }}>
+        <Typography
+          component="h1"
+          sx={{
+            fontSize: { xs: "1.6rem", sm: "2rem", md: "2.25rem" },
+            fontWeight: 700,
             letterSpacing: "-0.01em",
-            color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+            lineHeight: 1.15,
+            color: "text.primary",
           }}
         >
           {name}
         </Typography>
-        <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 1.5, mt: 1 }}>
-          {hasRating && (
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 0.4,
-                  bgcolor: "rgba(245, 158, 11, 0.12)",
-                  color: "#b45309",
-                  borderRadius: "8px",
-                  px: 0.9,
-                  py: 0.25,
-                }}
-              >
-                <Star sx={{ fontSize: 15 }} />
-                <Typography sx={{ fontSize: "0.82rem", fontWeight: 800 }}>
-                  {ratingNumber.toFixed(1)}
-                </Typography>
-              </Box>
-              {!!reviewCount && (
-                <Typography
-                  sx={{
-                    fontSize: "0.82rem",
-                    color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                  }}
-                >
+        <CheckCircleRoundedIcon
+          sx={{ fontSize: 24, color: COLORS.NEW_UI.VERIFIED_GREEN }}
+          titleAccess="Listed on Kartsquare"
+        />
+        {isNew && (
+          <Box
+            component="span"
+            sx={{
+              display: "inline-flex",
+              alignItems: "center",
+              px: 1.25,
+              py: 0.25,
+              borderRadius: "999px",
+              fontSize: "0.72rem",
+              fontWeight: 700,
+              bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10,
+              color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE,
+            }}
+          >
+            New
+          </Box>
+        )}
+      </Box>
+
+      <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap" }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.35 }}>
+          <StarRoundedIcon sx={{ color: COLORS.NEW_UI.STAR_AMBER, fontSize: 20 }} />
+          {hasRating ? (
+            <>
+              <Typography sx={{ fontSize: "0.92rem", fontWeight: 700, color: "text.primary" }}>
+                {ratingNumber.toFixed(1)}
+              </Typography>
+              {hasReviews && (
+                <Typography sx={{ fontSize: "0.86rem", color: "text.secondary" }}>
                   ({reviewCount} review{reviewCount === 1 ? "" : "s"})
                 </Typography>
               )}
-            </Box>
+            </>
+          ) : (
+            <Typography sx={{ fontSize: "0.86rem", color: "text.secondary" }}>
+              New · No reviews yet
+            </Typography>
           )}
-          {city && (
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-              <Room sx={{ fontSize: 16, color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT }} />
+        </Box>
+
+        {city && (
+          <>
+            <Typography sx={{ fontSize: "0.86rem", color: "text.secondary" }}>·</Typography>
+            <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.35 }}>
+              <PlaceRoundedIcon sx={{ fontSize: 17, color: COLORS.PRIMARY_PURPLE }} />
+              {showArea && (
+                <Typography sx={{ fontSize: "0.88rem", fontWeight: 700, color: "text.primary" }}>
+                  {area},&nbsp;
+                </Typography>
+              )}
               <Typography
                 sx={{
-                  fontSize: "0.85rem",
-                  color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                  fontSize: "0.88rem",
+                  fontWeight: showArea ? 400 : 700,
+                  color: showArea ? "text.secondary" : "text.primary",
                 }}
               >
                 {city}
               </Typography>
             </Box>
-          )}
-        </Box>
+          </>
+        )}
       </Box>
-      {isNew && (
-        <Chip
-          icon={<Verified sx={{ fontSize: "16px !important" }} />}
-          label="New"
-          size="small"
-          sx={{
-            bgcolor: "rgba(51, 207, 77, 0.14)",
-            color: COLORS.SUCCESS_GREEN,
-            fontWeight: 700,
-            flexShrink: 0,
-          }}
-        />
-      )}
     </Box>
   );
 };

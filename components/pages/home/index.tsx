@@ -1,253 +1,78 @@
 "use client";
-import React, { useEffect, useRef, useMemo } from "react";
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  useTheme,
-  Grid,
-  useMediaQuery,
-} from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
+import React from "react";
+import { Box } from "@mui/material";
 import { COLORS } from "@/constants/colors";
-import HomeBanner from "./components/HomeBanner";
-import CombinedFeaturedSection from "./components/CombinedFeaturedSection";
-import StoriesSection from "./components/StoriesSection";
-import PostCard from "./components/PostCard";
-import AdCard from "./components/AdCard";
-import { useGetInfinitePosts, usePrefetchReels } from "@/hooks/usePosts";
-import { useGetInfiniteAds } from "@/hooks/useAdvertisements";
-import Blogs from "./components/Blogs";
-import TopSuggestions from "./components/TopSuggestions";
-import { useGetStories } from "@/hooks/useStories";
-import CompactMapView from "./components/CompactMapView";
-import { Posts, Visibility } from "@/services/post/postInterfaces";
-import AdvertisementSlider from "./components/AdvertisementSlider";
-import { AdvertiseActiveAd } from "@/services/advertise/advertise.intreface";
-import { seededRandom } from "@/helper/helper";
+import NewHeroSection from "./sections/NewHeroSection";
+import ServiceMarquee from "./sections/ServiceMarquee";
+import { HomeLoadingBar } from "./sections/HomeLoading";
+import NewCategoryGrid from "./sections/NewCategoryGrid";
+import NewTopPros from "./sections/NewTopPros";
+import { HOME_GUTTER, HOME_MAX_WIDTH } from "./sections/shared";
+import NewDiscoverSection from "./sections/NewDiscoverSection";
+import NewPopularInArea from "./sections/NewPopularInArea";
+import PartnerBanner from "./sections/PartnerBanner";
+import FaqSection from "./sections/FaqSection";
+
+const GUTTER = HOME_GUTTER;
 
 function HomeView() {
-  // Prefetch reels data so it's ready when user navigates to Reels page
-  usePrefetchReels();
-
-  const {
-    data: postsData,
-    isLoading: postsLoading,
-    fetchNextPage: fetchNextPosts,
-    hasNextPage: hasNextPosts,
-    isFetchingNextPage: isFetchingNextPosts,
-  } = useGetInfinitePosts({
-    limit: 10,
-    visibility: Visibility.PUBLIC,
-  });
-
-  const {
-    data: adsData,
-    isLoading: adsLoading,
-    fetchNextPage: fetchNextAds,
-    hasNextPage: hasNextAds,
-    isFetchingNextPage: isFetchingNextAds,
-  } = useGetInfiniteAds(5);
-
-  const { data: stories, isLoading: storiesLoading } = useGetStories({
-    page: 1,
-    limit: 10,
-  });
-  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
-
-  // Ref for the loader element at the bottom
-  const loaderRef = useRef<HTMLDivElement>(null);
-
-  // Intersection Observer for infinite scroll
-  useEffect(() => {
-    if (!loaderRef.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const target = entries[0];
-        if (target.isIntersecting) {
-          if (hasNextPosts && !isFetchingNextPosts) {
-            fetchNextPosts();
-          }
-          // Only fetch more ads if we've used up most of our current pool
-          // and we're not already fetching.
-          if (
-            hasNextAds &&
-            !isFetchingNextAds &&
-            adIndexRef.current >= allAds.length - 2
-          ) {
-            fetchNextAds();
-          }
-        }
-      },
-      {
-        root: null,
-        rootMargin: "100px",
-        threshold: 0.1,
-      }
-    );
-
-    observer.observe(loaderRef.current);
-
-    return () => {
-      if (loaderRef.current) {
-        observer.unobserve(loaderRef.current);
-      }
-    };
-  }, [
-    hasNextPosts,
-    hasNextAds,
-    isFetchingNextPosts,
-    isFetchingNextAds,
-    fetchNextPosts,
-    fetchNextAds,
-  ]);
-
-  // Flatten all posts and ads from all pages
-  const allPosts = postsData?.pages.flatMap((page) => page.posts) || [];
-  const allAds = adsData?.pages.flatMap((page) => page.ads) || [];
-
-  // Track how many ads have been placed
-  const adIndexRef = useRef(0);
-
-  // Merge posts and ads with random placement (5-15 posts apart)
-  const mergedFeed = useMemo(() => {
-    if (allPosts.length === 0) return [];
-
-    const feed: Array<{
-      type: "post" | "ad";
-      data: Posts | AdvertiseActiveAd;
-      key: string;
-    }> = [];
-    let adIndex = 0;
-    const rng = seededRandom(12345); // Fixed seed for deterministic placement
-    let nextAdPosition = Math.floor(rng() * 11) + 5; // seededRandom returns 0-1 like Math.random()
-
-    allPosts.forEach((post, index) => {
-      // Add post
-      feed.push({ type: "post", data: post, key: `post-${post.id}` });
-
-      // Check if we should insert an ad
-      if (index + 1 === nextAdPosition && adIndex < allAds.length) {
-        feed.push({
-          type: "ad",
-          data: allAds[adIndex],
-          key: `ad-${allAds[adIndex].advertise_id}`,
-        });
-        adIndex++;
-        // Calculate next ad position (5-15 posts from current position)
-        nextAdPosition = index + 1 + Math.floor(rng() * 11) + 5;
-      }
-    });
-
-    adIndexRef.current = adIndex;
-    return feed;
-  }, [allPosts, allAds]);
-
-  const isLoading = postsLoading || adsLoading;
-  const isFetchingNext = isFetchingNextPosts || isFetchingNextAds;
-
   return (
-    <Box sx={{ position: "relative", maxHeight: "100vh" }}>
-      <Grid container spacing={3}>
-        {!isMobile && (
-          /* Left Sidebar - Map & Blogs (Hidden on MD, Visible on LG) */
-          <Grid
-            size={{ xs: 12, lg: 3 }}
-            sx={{
-              order: { xs: 2, md: 1 },
-              display: { xs: "none", lg: "block" }, // Hide on md, show on lg
-              maxHeight: "calc(100vh - 5rem)",
-              overflowY: "auto",
-              scrollbarWidth: "none",
-            }}
-          >
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              {/* Compact Map View */}
-              <CompactMapView height="300px" />
-              <Blogs />
-            </Box>
-          </Grid>
-        )}
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
+      {/* Full-width violet hero band. It clips its own glows, so nothing can cause sideways scroll; the
+          negative margin cancels the shell's 16px gap under the header. */}
+      <Box
+        sx={{
+          mt: -2,
+          position: "relative",
+          color: COLORS.WHITE,
+          background: `linear-gradient(135deg, ${COLORS.PURPLE_DEEP} 0%, ${COLORS.PURPLE_HOVER} 55%, ${COLORS.PRIMARY_PURPLE} 100%)`,
+          overflow: "hidden",
+        }}
+      >
+        <HomeLoadingBar />
+        <Box sx={{ maxWidth: HOME_MAX_WIDTH, mx: "auto", width: "100%", px: GUTTER }}>
+          <NewHeroSection />
+          <ServiceMarquee />
+        </Box>
+      </Box>
 
-        {/* Middle Section - Stories & Feed */}
-        <Grid
-          size={{ xs: 12, md: 8, lg: 6 }}
-          sx={{
-            order: { xs: 1, md: 2 },
-            overflowY: "auto",
-            maxHeight: "calc(100vh - 5rem)",
-            scrollbarWidth: "none",
-          }}
-        >
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {/* Banner Section */}
-            <HomeBanner />
+      <Box
+        sx={{
+          maxWidth: HOME_MAX_WIDTH,
+          mx: "auto",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          px: GUTTER,
+          pt: { xs: 1, md: 2 },
+          pb: 0,
+          overflowX: "clip", // clip (not hidden) so position: sticky children keep working
+        }}
+      >
+        <NewCategoryGrid />
+      </Box>
 
-            <div id="posts-feed-section">
-              <StoriesSection data={stories} isLoading={storiesLoading} />
-            </div>
+      {/* A full-width violet band of its own: it draws itself and renders nothing when there is nothing to show. */}
+      <NewTopPros />
 
-            {/* Compact Map - Mobile/Tablet View */}
-            <Box
-              sx={{
-                display: { lg: "none", md: "block" },
-                mt: 3,
-              }}
-            >
-              <CompactMapView height="300px" />
-            </Box>
-
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              {mergedFeed.map((item) =>
-                item.type === "post" ? (
-                  <PostCard post={item.data as Posts} key={item.key} />
-                ) : (
-                  <AdCard ad={item.data as AdvertiseActiveAd} key={item.key} />
-                )
-              )}
-            </Box>
-
-            {/* Loading Indicator */}
-            {(isLoading || isFetchingNext) && (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  padding: 3,
-                }}
-              >
-                <LogoLoader />
-              </Box>
-            )}
-
-            {/* Intersection Observer Target */}
-            <div ref={loaderRef} style={{ height: "20px" }} />
-          </Box>
-        </Grid>
-
-        {!isMobile && (
-          /* Right Sidebar - Suggestions */
-          <Grid
-            size={{ xs: 12, md: 4, lg: 3 }}
-            sx={{
-              order: { xs: 3, md: 3 },
-              overflowY: "auto",
-              maxHeight: "calc(100vh - 5rem)",
-              scrollbarWidth: "none",
-            }}
-          >
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              <AdvertisementSlider
-                ads={allAds.slice(0, 5)}
-                isLoading={adsLoading}
-              />
-              <TopSuggestions />
-            </Box>
-          </Grid>
-        )}
-      </Grid>
+      <Box
+        sx={{
+          maxWidth: HOME_MAX_WIDTH,
+          mx: "auto",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          px: GUTTER,
+          pt: 0,
+          pb: 4,
+          overflowX: "clip", // clip (not hidden) so position: sticky children keep working
+        }}
+      >
+        <NewDiscoverSection />
+        <NewPopularInArea />
+        <PartnerBanner />
+        <FaqSection />
+      </Box>
     </Box>
   );
 }

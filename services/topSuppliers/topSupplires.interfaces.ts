@@ -23,4 +23,9 @@ export interface TopService {
   provider_first_name: string;
   provider_last_name: string;
   provider_profile_pic: string;
+  /** Added by the backend later than the fields above, so older servers omit them. */
+  category_name?: string[];
+  /** Real customer reviews for this service. A rating is only trustworthy when this is > 0. */
+  review_count?: number;
+  city_town?: string | null;
 }

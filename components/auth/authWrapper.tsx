@@ -89,7 +89,7 @@ function AuthWrapper({ children, align = "center" }: AuthWrapperProps) {
               fontWeight: "bold",
               color:
                 theme.palette.mode === "light" ? "text.primary" : "#ffffff",
-              letterSpacing: "-0.02em",
+              letterSpacing: "-0.01em",
               fontSize: isLargeScreen ? "4rem" : "3rem",
             }}
           >

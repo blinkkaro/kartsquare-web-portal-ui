@@ -138,12 +138,12 @@ const SupplierQuotationDetailsModal: React.FC<
             }}
           />
           <Box>
-            <Typography variant="h5" sx={{ fontWeight: 800, mb: 1 }}>
+            <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
               {enquiry.product_name}
             </Typography>
             <Typography
               variant="h4"
-              sx={{ fontWeight: 800, color: COLORS.PRIMARY_PURPLE }}
+              sx={{ fontWeight: 700, color: COLORS.PRIMARY_PURPLE }}
             >
               {enquiry.currency} {enquiry.price}
             </Typography>

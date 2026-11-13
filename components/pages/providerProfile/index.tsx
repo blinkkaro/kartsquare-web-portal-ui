@@ -405,7 +405,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
               <Typography
                 variant="h4"
                 sx={{
-                  fontWeight: 800,
+                  fontWeight: 700,
                   color: COLORS.WHITE,
                   lineHeight: 1.2,
                 }}

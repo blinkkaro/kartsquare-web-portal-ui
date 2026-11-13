@@ -77,7 +77,7 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
                     mb: 1,
                     display: "block",
                     color: COLORS.PRIMARY_PURPLE,
-                    fontWeight: 800,
+                    fontWeight: 700,
                   }}
                 >
                   Categories
@@ -109,7 +109,7 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
                     mb: 1,
                     display: "block",
                     color: COLORS.PRIMARY_PURPLE,
-                    fontWeight: 800,
+                    fontWeight: 700,
                   }}
                 >
                   Products

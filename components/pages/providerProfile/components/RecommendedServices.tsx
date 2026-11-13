@@ -134,7 +134,7 @@ const RecommendedServices: React.FC<RecommendedServicesProps> = ({ services }) =
                                 <Typography
                                     variant="subtitle2"
                                     sx={{
-                                        fontWeight: 800,
+                                        fontWeight: 700,
                                         color: COLORS.PRIMARY_PURPLE,
                                     }}
                                 >

@@ -1,7 +1,22 @@
 import type { Metadata, Viewport } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Plus_Jakarta_Sans, Mukta } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+
+// Plus Jakarta Sans for Latin; Mukta supplies the matching Devanagari so Hindi
+// never falls back to a mismatched system font. Weights 400/500/600/700 only, the same set the whole app uses.
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-jakarta",
+});
+const mukta = Mukta({
+  subsets: ["devanagari", "latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-mukta",
+});
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com";
 
@@ -10,10 +25,9 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#172023" },
-  ],
+  // Lets the bottom nav pad for the iPhone home indicator via env(safe-area-inset-bottom)
+  viewportFit: "cover",
+  themeColor: "#ffffff",
 };
 
 export const metadata: Metadata = {
@@ -137,9 +151,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={`${jakarta.variable} ${mukta.variable}`} suppressHydrationWarning>
       <body
-        style={{ fontFamily: "'Poppins', system-ui, -apple-system, sans-serif" }}
+        style={{ fontFamily: "var(--font-jakarta), var(--font-mukta), system-ui, -apple-system, sans-serif" }}
         suppressHydrationWarning
       >
         {/* Flags the Kartsquare mobile app WebView before first paint so

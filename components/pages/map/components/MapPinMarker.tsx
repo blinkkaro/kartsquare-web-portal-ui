@@ -11,6 +11,7 @@ import { COLORS } from "@/constants/colors";
 import type { SelectedItem } from "@/services/map/mapInterface";
 import { AppUserType } from "@/services/auth/auth.interface";
 import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 
 const PIN_BUBBLE_SIZE = 42;
@@ -31,6 +32,10 @@ export interface MapPinMarkerProps {
   role?: AppUserType;
   id?: string;
   username?: string;
+  /** Service pins: the service's page, opened by clicking its name. */
+  detailsHref?: string;
+  /** Service pins: the provider's user id, opened by clicking their picture. */
+  profileUserId?: string;
 }
 
 const MapPinMarker: React.FC<MapPinMarkerProps> = ({
@@ -47,6 +52,8 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
   role,
   id,
   username,
+  detailsHref,
+  profileUserId,
 }) => {
   const Icon = type === "store" ? ShoppingBag : HomeRepairService;
   const bubbleSize = size === "compact" ? 32 : PIN_BUBBLE_SIZE;
@@ -61,15 +68,33 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
       window.open(directionsUrl, "_blank", "noopener,noreferrer");
   };
 
+  const router = useRouter();
+
   const handleOpenDrawer = (e: React.MouseEvent) => {
     e.stopPropagation();
     dispatch(
       openDrawer({
-        userId: id || "",
+        userId: profileUserId || id || "",
         role: role || AppUserType.SERVICE_PROVIDER,
         username: username || "",
       }),
     );
+  };
+
+  /** The name opens the service page (services) or the profile (stores). */
+  const handleNameClick = (e: React.MouseEvent) => {
+    if (detailsHref) {
+      e.stopPropagation();
+      router.push(detailsHref);
+      return;
+    }
+    handleOpenDrawer(e);
+  };
+
+  /** The picture opens the provider's profile, when we know who they are. */
+  const handlePictureClick = (e: React.MouseEvent) => {
+    if (!profileUserId) return;
+    handleOpenDrawer(e);
   };
 
   return (
@@ -175,7 +200,11 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
             <Close fontSize="inherit" />
           </IconButton>
           <Box
+            onClick={handlePictureClick}
+            role={profileUserId ? "button" : undefined}
+            aria-label={profileUserId ? `View ${username || "provider"}'s profile` : undefined}
             sx={{
+              cursor: profileUserId ? "pointer" : "default",
               width: 40,
               height: 40,
               borderRadius: 2,
@@ -202,10 +231,10 @@ const MapPinMarker: React.FC<MapPinMarkerProps> = ({
           </Box>
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography
-              onClick={handleOpenDrawer}
+              onClick={handleNameClick}
               variant="body2"
               sx={{
-                fontWeight: 800,
+                fontWeight: 700,
                 color: COLORS.TEXT.PRIMARY_LIGHT,
                 overflow: "hidden",
                 textOverflow: "ellipsis",

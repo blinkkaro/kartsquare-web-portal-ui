@@ -191,7 +191,7 @@ function AnimatedCounter({ text, color }: { text: string; color: string }) {
   }, [inView, numeric]);
 
   return (
-    <Typography ref={ref} component="div" sx={{ fontSize: { xs: "2.1rem", md: "2.75rem" }, fontWeight: 800, color, lineHeight: 1 }}>
+    <Typography ref={ref} component="div" sx={{ fontSize: { xs: "2.1rem", md: "2.75rem" }, fontWeight: 700, color, lineHeight: 1 }}>
       {display.toLocaleString("en-IN")}{suffix}
     </Typography>
   );
@@ -244,10 +244,10 @@ function SectionHeading({ kicker, title, sub, primaryTxt, secondaryTxt }: { kick
   return (
     <Reveal>
       <Box sx={{ mb: { xs: 4.5, md: 6.5 }, textAlign: "center", maxWidth: 640, mx: "auto" }}>
-        <Typography sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 800, letterSpacing: 2.5, fontSize: "0.75rem", mb: 1.25, textTransform: "uppercase" }}>
+        <Typography sx={{ color: COLORS.PRIMARY_PURPLE, fontWeight: 700, letterSpacing: 2.5, fontSize: "0.75rem", mb: 1.25, textTransform: "uppercase" }}>
           {kicker}
         </Typography>
-        <Typography sx={{ fontSize: { xs: "1.75rem", md: "2.5rem" }, fontWeight: 800, letterSpacing: "-0.01em", lineHeight: 1.2, color: primaryTxt, mb: sub ? 1.25 : 0 }}>
+        <Typography sx={{ fontSize: { xs: "1.75rem", md: "2.5rem" }, fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.2, color: primaryTxt, mb: sub ? 1.25 : 0 }}>
           {title}
         </Typography>
         {sub && <Typography sx={{ color: secondaryTxt, fontSize: { xs: "0.95rem", md: "1.05rem" }, lineHeight: 1.6 }}>{sub}</Typography>}
@@ -385,7 +385,7 @@ export default function JoinAsProviderView() {
             </motion.div>
 
             <motion.div variants={fadeUp}>
-              <Typography component="h1" sx={{ fontSize: { xs: "2.4rem", sm: "3rem", md: "4rem" }, fontWeight: 800, lineHeight: 1.08, letterSpacing: "-0.02em", color: primaryTxt, mb: 2.5 }}>
+              <Typography component="h1" sx={{ fontSize: { xs: "2.4rem", sm: "3rem", md: "4rem" }, fontWeight: 700, lineHeight: 1.08, letterSpacing: "-0.01em", color: primaryTxt, mb: 2.5 }}>
                 Grow Your Business with{" "}
                 <Box component="span" sx={{ background: `linear-gradient(90deg, ${COLORS.PRIMARY_PURPLE}, #00bcff)`, backgroundClip: "text", WebkitBackgroundClip: "text", color: "transparent" }}>
                   kartsquare
@@ -433,7 +433,7 @@ export default function JoinAsProviderView() {
               <Box sx={{ display: "flex", gap: { xs: 3, md: 6 }, justifyContent: "center", flexWrap: "wrap" }}>
                 {heroStats.map((s, i) => (
                   <Box key={i} sx={{ textAlign: "center" }}>
-                    <Typography sx={{ fontSize: { xs: "1.5rem", md: "1.9rem" }, fontWeight: 800, color: primaryTxt }}>{s.value}</Typography>
+                    <Typography sx={{ fontSize: { xs: "1.5rem", md: "1.9rem" }, fontWeight: 700, color: primaryTxt }}>{s.value}</Typography>
                     <Typography sx={{ fontSize: "0.8rem", color: secondaryTxt, fontWeight: 600 }}>{s.label}</Typography>
                   </Box>
                 ))}
@@ -511,7 +511,7 @@ export default function JoinAsProviderView() {
                         <Box sx={{ width: 46, height: 46, borderRadius: "13px", background: `linear-gradient(135deg,${COLORS.PRIMARY_PURPLE},#00bcff)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
                           <s.icon sx={{ color: "#fff", fontSize: 22 }} />
                         </Box>
-                        <Box sx={{ position: "absolute", top: -6, right: -6, width: 20, height: 20, borderRadius: "50%", bgcolor: COLORS.SECONDARY_ORANGE, color: "#fff", fontSize: "0.65rem", fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <Box sx={{ position: "absolute", top: -6, right: -6, width: 20, height: 20, borderRadius: "50%", bgcolor: COLORS.SECONDARY_ORANGE, color: "#fff", fontSize: "0.65rem", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>
                           {i + 1}
                         </Box>
                       </Box>
@@ -576,7 +576,7 @@ export default function JoinAsProviderView() {
                     <Grid size={{ xs: 6 }}>
                       <Box sx={{ bgcolor: cardBg, borderRadius: "14px", p: 2, border: `1px solid ${border}` }}>
                         <Typography sx={{ fontSize: "0.72rem", color: secondaryTxt, fontWeight: 600, mb: 0.5 }}>THIS WEEK</Typography>
-                        <Typography sx={{ fontSize: "1.6rem", fontWeight: 800, color: primaryTxt }}>32</Typography>
+                        <Typography sx={{ fontSize: "1.6rem", fontWeight: 700, color: primaryTxt }}>32</Typography>
                         <Typography sx={{ fontSize: "0.75rem", color: secondaryTxt }}>New bookings</Typography>
                       </Box>
                     </Grid>
@@ -584,7 +584,7 @@ export default function JoinAsProviderView() {
                       <Box sx={{ bgcolor: cardBg, borderRadius: "14px", p: 2, border: `1px solid ${border}` }}>
                         <Typography sx={{ fontSize: "0.72rem", color: secondaryTxt, fontWeight: 600, mb: 0.5 }}>RATING</Typography>
                         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                          <Typography sx={{ fontSize: "1.6rem", fontWeight: 800, color: primaryTxt }}>4.8</Typography>
+                          <Typography sx={{ fontSize: "1.6rem", fontWeight: 700, color: primaryTxt }}>4.8</Typography>
                           <StarIcon sx={{ fontSize: 18, color: "#f59e0b" }} />
                         </Box>
                         <Typography sx={{ fontSize: "0.75rem", color: secondaryTxt }}>Average rating</Typography>
@@ -615,7 +615,7 @@ export default function JoinAsProviderView() {
               <Grid size={{ xs: 12, md: 6 }}>
                 <motion.div variants={fadeUp} style={{ height: "100%" }}>
                   <Box sx={{ border: `1.5px solid ${border}`, borderRadius: "20px", p: { xs: 3, md: 3.5 }, height: "100%" }}>
-                    <Typography sx={{ fontWeight: 800, fontSize: "1.05rem", color: secondaryTxt, mb: 2.25 }}>Without kartsquare</Typography>
+                    <Typography sx={{ fontWeight: 700, fontSize: "1.05rem", color: secondaryTxt, mb: 2.25 }}>Without kartsquare</Typography>
                     {withoutUs.map((t, i) => (
                       <Box key={i} sx={{ display: "flex", gap: 1.5, alignItems: "flex-start", mb: 1.5 }}>
                         <CloseIcon sx={{ color: "#e63946", fontSize: 18, mt: 0.2, flexShrink: 0 }} />
@@ -628,7 +628,7 @@ export default function JoinAsProviderView() {
               <Grid size={{ xs: 12, md: 6 }}>
                 <motion.div variants={fadeUp} style={{ height: "100%" }}>
                   <Box sx={{ border: `1.5px solid ${COLORS.PRIMARY_PURPLE}`, borderRadius: "20px", p: { xs: 3, md: 3.5 }, height: "100%", bgcolor: COLORS.PURPLE_ALPHA_04 }}>
-                    <Typography sx={{ fontWeight: 800, fontSize: "1.05rem", color: COLORS.PRIMARY_PURPLE, mb: 2.25 }}>With kartsquare</Typography>
+                    <Typography sx={{ fontWeight: 700, fontSize: "1.05rem", color: COLORS.PRIMARY_PURPLE, mb: 2.25 }}>With kartsquare</Typography>
                     {withUs.map((t, i) => (
                       <Box key={i} sx={{ display: "flex", gap: 1.5, alignItems: "flex-start", mb: 1.5 }}>
                         <CheckIcon sx={{ color: "#0d9488", fontSize: 18, mt: 0.2, flexShrink: 0 }} />
@@ -658,7 +658,7 @@ export default function JoinAsProviderView() {
                         <Typography sx={{ color: secondaryTxt, lineHeight: 1.7, mb: 2.5, fontStyle: "italic", fontSize: "0.92rem" }}>&ldquo;{t.quote}&rdquo;</Typography>
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                           <Box sx={{ width: 42, height: 42, borderRadius: "50%", bgcolor: t.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                            <Typography sx={{ color: "#fff", fontWeight: 800 }}>{t.initial}</Typography>
+                            <Typography sx={{ color: "#fff", fontWeight: 700 }}>{t.initial}</Typography>
                           </Box>
                           <Box>
                             <Typography sx={{ fontWeight: 700, color: primaryTxt, fontSize: "0.88rem", lineHeight: 1.2 }}>{t.name}</Typography>
@@ -762,7 +762,7 @@ export default function JoinAsProviderView() {
               {success ? (
                 <Box sx={{ textAlign: "center", py: 5 }}>
                   <CheckCircleOutlineIcon sx={{ fontSize: 72, color: COLORS.SUCCESS_GREEN, mb: 2 }} />
-                  <Typography sx={{ fontWeight: 800, fontSize: "1.4rem", color: primaryTxt, mb: 1 }}>Registration Submitted!</Typography>
+                  <Typography sx={{ fontWeight: 700, fontSize: "1.4rem", color: primaryTxt, mb: 1 }}>Registration Submitted!</Typography>
                   <Typography sx={{ color: secondaryTxt, mb: 4 }}>
                     Our team will verify your business and get in touch within 24 hours.
                   </Typography>
@@ -945,7 +945,7 @@ export default function JoinAsProviderView() {
         <Box sx={{ mb: { xs: 9, md: 10 } }}>
           <Reveal>
             <Box sx={{ borderRadius: "28px", p: { xs: 4, md: 7 }, textAlign: "center", position: "relative", overflow: "hidden", background: `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE}, ${COLORS.PURPLE_HOVER})` }}>
-              <Typography sx={{ fontSize: { xs: "1.9rem", md: "2.6rem" }, fontWeight: 800, color: "#fff", mb: 1.5, letterSpacing: "-0.01em" }}>
+              <Typography sx={{ fontSize: { xs: "1.9rem", md: "2.6rem" }, fontWeight: 700, color: "#fff", mb: 1.5, letterSpacing: "-0.01em" }}>
                 Ready to Grow Your Automotive Business?
               </Typography>
               <Typography sx={{ color: "rgba(255,255,255,0.8)", mb: 4, maxWidth: 460, mx: "auto", fontSize: "1.02rem" }}>

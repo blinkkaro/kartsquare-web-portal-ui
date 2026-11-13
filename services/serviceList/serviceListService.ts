@@ -25,6 +25,14 @@ class ServiceListService {
             if (filters?.min_price) params.min_price = filters.min_price;
             if (filters?.max_price) params.max_price = filters.max_price;
             if (filters?.provider_id) params.provider_id = filters.provider_id;
+            if (filters?.view) params.view = filters.view;
+            if (filters?.city_slug) params.city_slug = filters.city_slug;
+            if (filters?.locality_slug) params.locality_slug = filters.locality_slug;
+            if (typeof filters?.latitude === "number" && typeof filters?.longitude === "number") {
+                params.latitude = filters.latitude;
+                params.longitude = filters.longitude;
+                if (filters.within_km) params.within_km = filters.within_km;
+            }
 
             const response = await GET<ServiceListResponse>(
                 SERVICE_API_ENDPOINTS.GET_SERVICES,
@@ -64,7 +72,7 @@ class ServiceListService {
             const response = await GET<Category[]>(
                 SERVICE_API_ENDPOINTS.GET_CATEGORIES,
                 {},
-                true // requiresAuth = true as per backend routes
+                false // public endpoint, no auth required
             );
             return response.data;
         } catch (error) {

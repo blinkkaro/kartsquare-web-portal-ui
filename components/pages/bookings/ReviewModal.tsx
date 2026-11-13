@@ -73,7 +73,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
         <Typography
           variant="h5"
           sx={{
-            fontWeight: 800,
+            fontWeight: 700,
             mb: 1,
             background: `linear-gradient(135deg, ${COLORS.PRIMARY_PURPLE}, ${COLORS.SECONDARY_ORANGE})`,
             WebkitBackgroundClip: "text",

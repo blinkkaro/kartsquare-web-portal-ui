@@ -20,9 +20,9 @@ interface SectionHeadingProps {
 
 const sectionHeadingStyles = {
   title: {
-    fontFamily: 'var(--font-heading), "Plus Jakarta Sans", "Poppins", sans-serif',
-    fontWeight: 800,
-    letterSpacing: "-0.03em",
+    fontFamily: 'var(--font-heading), sans-serif',
+    fontWeight: 700,
+    letterSpacing: "-0.01em",
     lineHeight: 1.2,
   },
   subtitle: {

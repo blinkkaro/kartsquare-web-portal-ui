@@ -181,9 +181,17 @@ api.interceptors.response.use(
         // Clear session and show login modal instead of redirecting
         store.dispatch(logout());
 
-        // Redirect to login page
+        // Public pages (service details, home, lists) must never be yanked away
+        // because a background call hit an expired session — show the login modal.
+        // Only account-only areas hard-redirect to /login.
         if (typeof window !== "undefined") {
-          window.location.href = "/login";
+          const path = window.location.pathname;
+          const needsAuth = /^\/(myAccount|spr|chat|cus\/bookings|services\/[^/]+\/book)(\/|$)/.test(path);
+          if (needsAuth) {
+            window.location.href = "/login";
+          } else {
+            store.dispatch(openLoginModal());
+          }
         }
 
         return Promise.resolve({

@@ -150,6 +150,7 @@ export type TranslationKey =
   | "home"
   | "dashboard"
   | "store"
+  | "feed"
   | "services"
   | "events"
   | "bookings"

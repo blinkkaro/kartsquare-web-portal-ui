@@ -9,8 +9,6 @@ import {
   styled,
 } from "@mui/material";
 import {
-  LightMode as LightModeIcon,
-  DarkMode as DarkModeIcon,
   Search as SearchIcon,
   Login as LoginIcon,
   Business,
@@ -41,6 +39,8 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
       ? COLORS.TEXT.PRIMARY_DARK
       : COLORS.TEXT.PRIMARY_LIGHT,
   padding: "0.5rem",
+  // 44px touch target on phones/tablets (the 20px icon is unchanged)
+  [theme.breakpoints.down("md")]: { minWidth: 44, minHeight: 44 },
   transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
   backgroundColor:
     theme.palette.mode === "dark"
@@ -60,13 +60,17 @@ interface NavActionsProps {
   isMobile: boolean;
   isTablet: boolean;
   mode: "light" | "dark";
-  onThemeToggle: () => void;
   onSearchToggle: () => void;
   profileClick: () => void;
   onLogin: () => void;
   loginText: string;
   onNotificationToggle: () => void;
   onFreeListingClick: () => void;
+  /**
+   * Customer home on phones/tablets: the hero carries the search, so the header drops its search icon.
+   * The business listing icon stays. Every other page is unchanged.
+   */
+  homeCompact?: boolean;
 }
 
 import { useSocket } from "@/contexts/SocketContext";
@@ -79,19 +83,20 @@ const NavActions: React.FC<NavActionsProps> = ({
   isMobile,
   isTablet,
   mode,
-  onThemeToggle,
   onSearchToggle,
   profileClick,
   onLogin,
   loginText,
   onNotificationToggle,
   onFreeListingClick,
+  homeCompact = false,
 }) => {
   const profile = secureStorage.getItem("user_details");
   const { unreadCount } = useSocket();
   const { t } = useTranslate();
   const isDark = mode === "dark";
   const router = useRouter();
+  const compact = homeCompact && (isMobile || isTablet);
 
   if (isAuthenticated) {
     return (
@@ -155,18 +160,6 @@ const NavActions: React.FC<NavActionsProps> = ({
           </Badge>
         </StyledIconButton>
 
-        {/* Theme Toggle */}
-        <StyledIconButton
-          size="small"
-          onClick={onThemeToggle}
-          aria-label="toggle theme"
-        >
-          {mode === "dark" ? (
-            <LightModeIcon fontSize="small" />
-          ) : (
-            <DarkModeIcon fontSize="small" />
-          )}
-        </StyledIconButton>
 
         {/* User Avatar */}
         <Avatar
@@ -304,7 +297,7 @@ const NavActions: React.FC<NavActionsProps> = ({
       </Box>
 
       {/* Mobile/Tablet Search Icon */}
-      {(isMobile || isTablet) && (
+      {(isMobile || isTablet) && !compact && (
         <StyledIconButton
           size="small"
           aria-label="search"
@@ -314,18 +307,6 @@ const NavActions: React.FC<NavActionsProps> = ({
         </StyledIconButton>
       )}
 
-      {/* Theme Toggle */}
-      <StyledIconButton
-        size="small"
-        onClick={onThemeToggle}
-        aria-label="toggle theme"
-      >
-        {mode === "dark" ? (
-          <LightModeIcon fontSize="small" />
-        ) : (
-          <DarkModeIcon fontSize="small" />
-        )}
-      </StyledIconButton>
 
       {/* Login Button */}
       <Button
@@ -342,8 +323,9 @@ const NavActions: React.FC<NavActionsProps> = ({
           fontWeight: 600,
           borderColor: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
           color: isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE,
-          minWidth: { xs: "auto", md: "64px" },
-          padding: { xs: "4px 8px", md: "4px 10px" },
+          minWidth: { xs: 44, md: "64px" },
+          minHeight: { xs: 40, md: "auto" },
+          padding: { xs: "6px 10px", md: "4px 10px" },
           transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           "&:hover": {
             borderColor: isDark
@@ -365,6 +347,7 @@ const NavActions: React.FC<NavActionsProps> = ({
           {loginText}
         </Box>
       </Button>
+
     </ActionsContainer>
   );
 };

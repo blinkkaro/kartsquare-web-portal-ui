@@ -1,19 +1,16 @@
 "use client";
 import React from "react";
 import { Box, Typography, useTheme } from "@mui/material";
-import {
-  AccountBalanceWallet,
-  GpsFixed,
-  AccessTime,
-  Room,
-} from "@mui/icons-material";
+import AccountBalanceWalletRoundedIcon from "@mui/icons-material/AccountBalanceWalletRounded";
+import GpsFixedRoundedIcon from "@mui/icons-material/GpsFixedRounded";
+import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
+import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
 import { COLORS } from "../../../../constants/colors";
 
 interface StatPill {
   icon: React.ReactNode;
   label: string;
   value: string;
-  accent: string;
 }
 
 interface ServiceStatPillsProps {
@@ -42,42 +39,42 @@ const ServiceStatPills = ({
   serviceAtLocation,
 }: ServiceStatPillsProps) => {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+  const dark = theme.palette.mode === "dark";
   const currencySymbol = currency === "INR" ? "₹" : currency;
 
   const locationLabel =
-    serviceAtLocation === "at_customer" ? "At Customer" : "At Shop";
+    serviceAtLocation === "at_customer"
+      ? "At your place"
+      : serviceAtLocation === "virtual_call"
+      ? "Online"
+      : "At shop";
 
   const pills: StatPill[] = [
     {
-      icon: <AccountBalanceWallet sx={{ fontSize: 18 }} />,
-      label: "Visiting Charge",
+      icon: <AccountBalanceWalletRoundedIcon sx={{ fontSize: 18 }} />,
+      label: "Visiting charge",
       value:
         visitingCharge != null && visitingCharge > 0
           ? `${currencySymbol}${visitingCharge}`
           : "Free",
-      accent: COLORS.PRIMARY_PURPLE,
     },
     {
-      icon: <GpsFixed sx={{ fontSize: 18 }} />,
-      label: "Service Radius",
+      icon: <GpsFixedRoundedIcon sx={{ fontSize: 18 }} />,
+      label: "Service radius",
       value: serviceRadius ? `${serviceRadius} km` : "—",
-      accent: "#b8860b",
     },
     {
-      icon: <AccessTime sx={{ fontSize: 18 }} />,
-      label: "Avg. Duration",
+      icon: <AccessTimeRoundedIcon sx={{ fontSize: 18 }} />,
+      label: "Avg. duration",
       value:
         hasServiceDuration && serviceDuration
           ? formatDuration(serviceDuration)
           : "Varies",
-      accent: COLORS.SUCCESS_GREEN,
     },
     {
-      icon: <Room sx={{ fontSize: 18 }} />,
-      label: "Location",
+      icon: <PlaceRoundedIcon sx={{ fontSize: 18 }} />,
+      label: "Service at",
       value: locationLabel,
-      accent: COLORS.PRIMARY_BLUE,
     },
   ];
 
@@ -85,10 +82,7 @@ const ServiceStatPills = ({
     <Box
       sx={{
         display: "grid",
-        gridTemplateColumns: {
-          xs: "repeat(2, 1fr)",
-          sm: "repeat(4, 1fr)",
-        },
+        gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(4, 1fr)" },
         gap: 1.5,
       }}
     >
@@ -96,11 +90,12 @@ const ServiceStatPills = ({
         <Box
           key={pill.label}
           sx={{
-            bgcolor: isDark ? "rgba(255, 255, 255, 0.05)" : "white",
-            border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)"}`,
+            bgcolor: "background.paper",
+            border: "1px solid",
+            borderColor: dark ? COLORS.NEW_UI.CARD_BORDER_DARK : COLORS.NEW_UI.CARD_BORDER_LIGHT,
             borderRadius: "16px",
-            boxShadow: isDark ? "none" : "0 1px 3px rgba(30, 20, 60, 0.05), 0 8px 24px rgba(30, 20, 60, 0.04)",
-            p: 1.75,
+            boxShadow: dark ? COLORS.NEW_UI.CARD_SHADOW_DARK : COLORS.NEW_UI.CARD_SHADOW_LIGHT,
+            p: 2,
             display: "flex",
             flexDirection: "column",
             gap: 0.75,
@@ -114,30 +109,17 @@ const ServiceStatPills = ({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              bgcolor: `${pill.accent}1a`,
-              color: pill.accent,
+              bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10,
+              color: dark ? COLORS.NEW_UI.ACCENT_TEXT_DARK : COLORS.PRIMARY_PURPLE,
             }}
           >
             {pill.icon}
           </Box>
-          <Typography
-            sx={{
-              fontSize: "0.72rem",
-              fontWeight: 600,
-              color: isDark
-                ? COLORS.TEXT.SECONDARY_DARK
-                : COLORS.TEXT.SECONDARY_LIGHT,
-            }}
-          >
+          <Typography sx={{ fontSize: "0.76rem", fontWeight: 500, color: "text.secondary" }}>
             {pill.label}
           </Typography>
           <Typography
-            sx={{
-              fontSize: "1rem",
-              fontWeight: 800,
-              color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
-              lineHeight: 1.1,
-            }}
+            sx={{ fontSize: "1rem", fontWeight: 700, color: "text.primary", lineHeight: 1.2 }}
           >
             {pill.value}
           </Typography>

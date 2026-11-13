@@ -111,11 +111,11 @@ const Hero: React.FC = () => {
                   component="h1"
                   sx={{
                     fontFamily: "var(--font-heading)",
-                    fontWeight: 800,
+                    fontWeight: 700,
                     color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                     lineHeight: 1.18,
                     mb: 1.5,
-                    letterSpacing: "-0.025em",
+                    letterSpacing: "-0.01em",
                   }}
                 >
                   <Box component="span" sx={{ color: PURPLE }}>
@@ -315,7 +315,7 @@ const Hero: React.FC = () => {
                             sx={{
                               fontSize: "1.125rem",
                               lineHeight: 1.2,
-                              letterSpacing: "-0.02em",
+                              letterSpacing: "-0.01em",
                               color: statColor,
                               fontFamily: "var(--font-heading)",
                             }}
