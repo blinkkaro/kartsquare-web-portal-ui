@@ -1,3 +1,4 @@
+import { GET_TIMEOUT_MS, shouldRetryOnTimeout } from "@/lib/http/retry";
 import { secureStorage } from "@/helper/SecureStorage";
 import axios, {
   AxiosInstance,
@@ -64,6 +65,11 @@ api.interceptors.request.use(
     if (token && config.requiresAuth !== false) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    // A GET that gets no answer in a few seconds is stuck, not slow: fail early so the
+    // retry (see response interceptor) can use a fresh connection. Uploads/POSTs keep 10 s+.
+    if ((config.method ?? "get").toLowerCase() === "get") {
+      config.timeout = Math.min(config.timeout ?? GET_TIMEOUT_MS, GET_TIMEOUT_MS);
+    }
     return config;
   },
   (error: AxiosError) => {
@@ -100,7 +106,15 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
+      _timeoutRetried?: boolean;
     };
+
+    // No response at all (timeout / dropped connection) on a GET: retry once. The
+    // first attempt may have hit a stale connection; the retry gets a fresh one.
+    if (shouldRetryOnTimeout(error)) {
+      originalRequest._timeoutRetried = true;
+      return api(originalRequest);
+    }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (!secureStorage.getItem("token")) {

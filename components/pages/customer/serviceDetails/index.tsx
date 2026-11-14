@@ -180,7 +180,14 @@ const CustomerServiceDetails = () => {
     isLoading: reviewsLoading,
     fetchNextPage,
     hasNextPage,
-  } = useGetReviews(review_type.SERVICE, serviceId, 1);
+  } = useGetReviews(
+    review_type.SERVICE,
+    // Reviews are keyed by the service UUID; the URL carries the slug. Wait for the
+    // loaded service instead of sending the slug (which the API rejected with a 400).
+    service?.service_id ?? "",
+    1,
+    Boolean(service?.service_id),
+  );
 
   // Flatten reviews from all pages
   const reviews = useMemo(() => {
