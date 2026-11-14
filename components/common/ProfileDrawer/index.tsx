@@ -1,3 +1,4 @@
+import { CHAT_ENABLED } from "@/lib/featureFlags";
 import { RootState } from "@/store/store";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -135,7 +136,7 @@ export function ProfileDrawer() {
       open={isOpen}
       profile={profile || undefined}
       onClose={() => dispatch(closeDrawer())}
-      onChatClick={handleChatClick}
+      onChatClick={CHAT_ENABLED ? handleChatClick : undefined}
       onLocationClick={() => {}}
       onBookmarkClick={() => {}}
       width={700}

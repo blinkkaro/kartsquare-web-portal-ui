@@ -1,4 +1,5 @@
 "use client";
+import { CHAT_ENABLED } from "@/lib/featureFlags";
 import React, { useState, useMemo, useEffect } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
@@ -309,18 +310,20 @@ const CustomerServiceDetails = () => {
               <IconButton onClick={handleShare} aria-label="Share this service" sx={iconButtonSx}>
                 <IosShareRoundedIcon sx={{ fontSize: 18 }} />
               </IconButton>
-              <IconButton
-                onClick={handleChatClick}
-                aria-label="Chat with provider"
-                sx={iconButtonSx}
-              >
-                <Image
-                  src={isDark ? "/icons/darkThemeChat.svg" : "/icons/chat.svg"}
-                  alt="Chat"
-                  width={18}
-                  height={18}
-                />
-              </IconButton>
+              {CHAT_ENABLED && (
+                <IconButton
+                  onClick={handleChatClick}
+                  aria-label="Chat with provider"
+                  sx={iconButtonSx}
+                >
+                  <Image
+                    src={isDark ? "/icons/darkThemeChat.svg" : "/icons/chat.svg"}
+                    alt="Chat"
+                    width={18}
+                    height={18}
+                  />
+                </IconButton>
+              )}
             </Box>
           </Box>
 
