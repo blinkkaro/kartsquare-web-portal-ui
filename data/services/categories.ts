@@ -10,6 +10,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "home-services",
     name: "Home Services",
+    tagline: "Plumbers, electricians, carpenters, painters, cleaners, and all home repair and maintenance professionals.",
     seoTitle: "Home Services: Plumbers, Electricians, Cleaners",
     metaDescription:
       "Find plumbers, electricians, carpenters, painters and cleaners on Kartsquare. Read provider profiles and send a service request for your home.",
@@ -66,6 +67,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "mobile-electronics-repair",
     name: "Mobile & Electronics Repair",
+    tagline: "Mobile phone repair, laptop repair, TV repair, CCTV repair, and all electronic device servicing.",
     seoTitle: "Mobile, Laptop and TV Repair Providers",
     metaDescription:
       "Look up mobile, laptop, TV and CCTV repair providers on Kartsquare. Check what each repairer lists and send a request describing the fault.",
@@ -111,6 +113,10 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
         q: "Can a TV or CCTV camera be repaired at my home?",
         a: "Some providers visit; others work from a shop. Check the listing for the service area and mention your preference in the request.",
       },
+      {
+        q: "Can I ask for a quote before handing over my device?",
+        a: "You can ask in your request. Many faults need a look at the device before a repairer can say what the repair costs, so some will give a range only after checking it.",
+      },
     ],
     related: ["home-services", "security-services", "it-digital-services"],
     reviewed: false,
@@ -118,6 +124,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "automotive",
     name: "Automotive",
+    tagline: "Car and bike repair, car wash, spare parts, driving schools, rentals, and all vehicle services.",
     seoTitle: "Car and Bike Repair and Services",
     metaDescription:
       "Browse car and bike repair, car wash and vehicle service providers on Kartsquare, read their profiles and send a request with your vehicle details.",
@@ -163,6 +170,10 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
         q: "Can I book a driving school through Kartsquare?",
         a: "Where a driving school has listed itself, you can read its profile and send a request. Lesson details and fees are agreed with the school.",
       },
+      {
+        q: "Can I ask for an estimate before the work starts?",
+        a: "Yes, ask in your request. A mechanic often needs to see the vehicle before giving a figure, so ask what the estimate covers and whether it can change once the fault is found.",
+      },
     ],
     related: ["mobile-electronics-repair", "security-services", "energy-environment"],
     reviewed: false,
@@ -170,6 +181,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "security-services",
     name: "Security Services",
+    tagline: "Security guards, CCTV, fire safety, alarm systems, and all safety and surveillance services.",
     seoTitle: "Security Guards, CCTV and Fire Safety",
     metaDescription:
       "Find security guard, CCTV, fire safety and alarm system providers on Kartsquare. Review their profiles and send a request for your premises.",
@@ -215,6 +227,10 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
         q: "What should a CCTV quote include?",
         a: "Ask for the number and type of cameras, the recorder and storage, cabling and installation, and what support is available afterwards.",
       },
+      {
+        q: "Can I ask what equipment an installation will use?",
+        a: "Yes. Ask which cameras, recorders or alarm units the provider plans to use, and what happens if a part stops working. Get the answer in writing before work starts.",
+      },
     ],
     related: ["home-services", "mobile-electronics-repair", "energy-environment"],
     reviewed: false,
@@ -222,6 +238,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "energy-environment",
     name: "Energy & Environment",
+    tagline: "Solar panels, inverters, RO water purifiers, borewells, waste management, and green energy services.",
     seoTitle: "Solar, Inverter and RO Purifier Providers",
     metaDescription:
       "Browse solar panel, inverter, RO water purifier, borewell and waste management providers on Kartsquare and send a request with your needs.",
@@ -267,6 +284,10 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
         q: "Which RO purifier is right for my water?",
         a: "It depends on the water source and what is in it. Ask the provider to explain what a given model treats, and consider having the water tested.",
       },
+      {
+        q: "Can I ask for a site visit before agreeing a price?",
+        a: "You can ask. Jobs such as solar panels or a borewell depend on the roof, the land and your usage, so providers often need to see the site before they can quote.",
+      },
     ],
     related: ["home-services", "security-services", "automotive"],
     reviewed: false,
@@ -274,6 +295,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "fitness-sports",
     name: "Fitness & Sports",
+    tagline: "Gyms, yoga, swimming, cricket, badminton, martial arts, personal training, and all fitness services.",
     seoTitle: "Gyms, Yoga and Sports Coaching Providers",
     metaDescription:
       "Find gyms, yoga teachers, personal trainers and sports coaches on Kartsquare. Read their profiles and send a request to ask about your goals.",
@@ -319,6 +341,10 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
         q: "I have a health condition. Can I still sign up?",
         a: "Speak to your doctor first, and tell the provider about it in your request so they can plan around it.",
       },
+      {
+        q: "Can I ask about batch timings and class sizes?",
+        a: "Yes. Ask in your request how many people are in a batch, what the timings are and what happens if you miss a session.",
+      },
     ],
     related: ["religious-spiritual", "restaurants-food", "home-services"],
     reviewed: false,
@@ -326,6 +352,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "it-digital-services",
     name: "IT & Digital Services",
+    tagline: "Website development, app development, SEO, social media, software, cloud, and all digital services.",
     seoTitle: "Website, App and Digital Marketing Providers",
     metaDescription:
       "Browse website, app, SEO, social media and software providers on Kartsquare. Review their profiles and send a request with your project brief.",
@@ -371,6 +398,10 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
         q: "How should I describe a project in my request?",
         a: "Say what you want to achieve, who the users are, the features you expect and your timeline. A short, clear brief gets more useful replies.",
       },
+      {
+        q: "Can I ask to see earlier work before I decide?",
+        a: "Yes. Check the provider's profile for examples and ask for more in your request. Also ask who will own the final files, code or accounts when the project ends.",
+      },
     ],
     related: ["mobile-electronics-repair", "photography-videography", "security-services"],
     reviewed: false,
@@ -378,6 +409,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "photography-videography",
     name: "Photography & Videography",
+    tagline: "Wedding photography, product shoots, passport photos, studio, and all photography services.",
     seoTitle: "Photographers and Videographers",
     metaDescription:
       "Find wedding, product and studio photographers and videographers on Kartsquare. Read their profiles and send a request with your event details.",
@@ -423,6 +455,10 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
         q: "Can I see a photographer's earlier work?",
         a: "Ask the provider for samples similar to your shoot. Many profiles include images, and you can request more before deciding.",
       },
+      {
+        q: "Can I ask who owns the photos and videos?",
+        a: "Ask before you agree. Providers differ on how many edited photos you receive, how long they keep the files and whether you can use them for your own business.",
+      },
     ],
     related: ["it-digital-services", "restaurants-food", "religious-spiritual"],
     reviewed: false,
@@ -430,6 +466,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "religious-spiritual",
     name: "Religious & Spiritual",
+    tagline: "Pandits, temples, mosques, churches, astrologers, vastu consultants, and all spiritual services.",
     seoTitle: "Pandits, Astrologers and Vastu Consultants",
     metaDescription:
       "Find pandits, astrologers and vastu consultants on Kartsquare. Read their profiles and send a request about the ceremony or consultation you need.",
@@ -475,6 +512,10 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
         q: "Are astrology readings predictions I can rely on?",
         a: "Treat them as the provider's guidance. They should not replace medical, legal or financial advice.",
       },
+      {
+        q: "Can I ask what a ceremony involves before I agree?",
+        a: "Yes. Ask the provider what the ritual includes, how long it takes and which materials you need to arrange, so there are no surprises on the day.",
+      },
     ],
     related: ["restaurants-food", "photography-videography", "fitness-sports"],
     reviewed: false,
@@ -482,6 +523,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
   {
     slug: "restaurants-food",
     name: "Restaurants & Food",
+    tagline: "Restaurants, dhabas, cafes, caterers, tiffin services, cloud kitchens, and all food businesses.",
     seoTitle: "Caterers, Tiffin Services and Restaurants",
     metaDescription:
       "Browse restaurants, cafes, caterers and tiffin services on Kartsquare. Read their profiles and send a request about menus, events or regular meals.",
@@ -526,6 +568,10 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
       {
         q: "What if someone in my family has a food allergy?",
         a: "Tell the provider before ordering and ask how they handle it. Be cautious, because no kitchen can promise to be allergen-free.",
+      },
+      {
+        q: "Can I ask about the menu and quantities before I order?",
+        a: "Yes. Ask in your request for the menu, the portion sizes for your number of guests and how the food is packed or served, and confirm them in writing.",
       },
     ],
     related: ["photography-videography", "religious-spiritual", "fitness-sports"],

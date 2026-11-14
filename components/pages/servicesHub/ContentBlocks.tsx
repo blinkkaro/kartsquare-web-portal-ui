@@ -191,10 +191,17 @@ export function Faq({ items }: { items: FaqItem[] }) {
 }
 
 /** Category card: photo (or icon tile) on top, name and a short line below. */
-export function CategoryCard({ href, name, text, media }: { href: string; name: string; text?: string; media?: CategoryMedia }) {
+export function CategoryCard({ href, name, text, media, badge }: { href: string; name: string; text?: string; media?: CategoryMedia; badge?: string }) {
   return (
     <Box component={Link} href={href} sx={{ ...tappableCard, display: "block", p: 1.25, color: "text.primary", textDecoration: "none", "&:focus-visible": { outline: `2px solid ${COLORS.PRIMARY_PURPLE}`, outlineOffset: 2 } }}>
-      <CategoryVisual media={media} height={{ xs: 130, md: 150 }} radius="14px" iconSize={48} />
+      <Box sx={{ position: "relative" }}>
+        <CategoryVisual media={media} height={{ xs: 130, md: 150 }} radius="14px" iconSize={48} />
+        {badge && (
+          <Typography component="span" sx={{ position: "absolute", top: 10, left: 10, px: 1.25, py: 0.5, borderRadius: 9999, bgcolor: COLORS.WHITE, color: COLORS.PRIMARY_PURPLE, fontSize: "0.75rem", fontWeight: 700 }}>
+            {badge}
+          </Typography>
+        )}
+      </Box>
       <Box sx={{ px: 1, pt: 1.5, pb: 1 }}>
         <Typography component="span" sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1, fontWeight: 700, fontSize: "1.0625rem" }}>
           {name}

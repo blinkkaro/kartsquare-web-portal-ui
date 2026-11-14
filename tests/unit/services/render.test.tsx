@@ -11,6 +11,7 @@ import { LANDING_CONTENT } from "@/data/services/landing";
 import { findBannedClaims } from "@/lib/services/claims";
 import type { Service } from "@/services/serviceList/listInteraface";
 
+jest.mock("@/store/hooks", () => ({ useAppDispatch: () => jest.fn() }));
 jest.mock("@/app/mainLayout", () => ({ __esModule: true, default: ({ children }: { children: React.ReactNode }) => <main>{children}</main> }));
 
 const text = (html: string) => html.replace(/<style[\s\S]*?<\/style>/g, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");

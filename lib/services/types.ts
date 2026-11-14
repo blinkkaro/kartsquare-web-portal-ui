@@ -15,6 +15,8 @@ export interface CategoryContent {
   /** Must match categories.slug in the API. */
   slug: string;
   name: string;
+  /** One line saying what the category covers (the category description from the API). */
+  tagline?: string;
   /** <title>, without the brand: the metadata builder adds it. */
   seoTitle: string;
   metaDescription: string;
