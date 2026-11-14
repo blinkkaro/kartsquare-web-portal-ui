@@ -71,12 +71,10 @@ describe("sitemap.xml static routes", () => {
     expect(staticUrls).toContain("/");
   });
 
-  it("should include /store", () => {
-    expect(staticUrls).toContain("/store");
-  });
-
-  it("should include /store/products", () => {
-    expect(staticUrls).toContain("/store/products");
+  it("should NOT list the /store pages", () => {
+    expect(staticUrls).not.toContain("/store");
+    expect(staticUrls).not.toContain("/store/products");
+    expect(routeSource).not.toContain("/store/product/");
   });
 
   it("should not include /search (it is blocked by robots.txt and noindex)", () => {

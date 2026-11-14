@@ -1,6 +1,5 @@
 /**
- * Review flag for the /services hub itself. A person flips this to true in a pull request after
- * reading the hub copy in components/pages/servicesHub/ServicesHubView.tsx. Until then the hub
- * is noindex and not in the sitemap.
+ * Review flag for the /services hub itself. Set to true on 2026-11-14 at the owner's request, so the hub is
+ * indexable and listed in the sitemap. Set it back to false to hide the hub from search again.
  */
-export const HUB_REVIEWED = false;
+export const HUB_REVIEWED = true;

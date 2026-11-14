@@ -36,9 +36,9 @@ describe("category content", () => {
     for (const c of CATEGORY_CONTENT) for (const r of c.related) expect(slugs.has(r) && r !== c.slug).toBe(true);
   });
 
-  it("nothing is indexable until a person marks it reviewed", () => {
-    expect(CATEGORY_CONTENT.filter((c) => c.reviewed)).toHaveLength(indexableCategories().length);
-    expect(indexableCategories()).toHaveLength(0);
+  it("only entries marked reviewed are indexable", () => {
+    const reviewed = CATEGORY_CONTENT.filter((c) => c.reviewed);
+    expect(indexableCategories()).toEqual(reviewed);
   });
 
   it("builds a lowercase canonical path", () => {
@@ -67,11 +67,11 @@ describe("banned claims", () => {
 });
 
 describe("draft visibility", () => {
-  it("serves draft content to readers but never marks it indexable", async () => {
+  it("serves content to readers and marks it indexable only when reviewed", async () => {
     const { getCategoryContent, isCategoryIndexable } = await import("@/lib/services/content");
     const c = getCategoryContent("HOME-SERVICES");
     expect(c?.slug).toBe("home-services");
-    expect(c && isCategoryIndexable(c)).toBe(false);
+    expect(c && isCategoryIndexable(c)).toBe(c?.reviewed);
     expect(getCategoryContent("nope")).toBeUndefined();
   });
 });

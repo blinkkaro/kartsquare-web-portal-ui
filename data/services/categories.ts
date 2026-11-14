@@ -1,7 +1,7 @@
 import type { CategoryContent } from "@/lib/services/types";
 
 /**
- * Static category content for /services/c/{slug}. Every entry ships with reviewed: false.
+ * Static category content for /services/c/{slug}. Entries are indexed only while reviewed is true.
  * A person reads the copy and flips the flag in a pull request; until then the page is
  * noindex and stays out of the sitemap. Write only what Kartsquare can stand behind: no
  * ratings, prices, availability, response times or claims about providers.
@@ -62,7 +62,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
       },
     ],
     related: ["mobile-electronics-repair", "security-services", "energy-environment"],
-    reviewed: false,
+    reviewed: true,
   },
   {
     slug: "mobile-electronics-repair",
@@ -119,7 +119,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
       },
     ],
     related: ["home-services", "security-services", "it-digital-services"],
-    reviewed: false,
+    reviewed: true,
   },
   {
     slug: "automotive",
@@ -176,7 +176,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
       },
     ],
     related: ["mobile-electronics-repair", "security-services", "energy-environment"],
-    reviewed: false,
+    reviewed: true,
   },
   {
     slug: "security-services",
@@ -233,7 +233,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
       },
     ],
     related: ["home-services", "mobile-electronics-repair", "energy-environment"],
-    reviewed: false,
+    reviewed: true,
   },
   {
     slug: "energy-environment",
@@ -290,7 +290,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
       },
     ],
     related: ["home-services", "security-services", "automotive"],
-    reviewed: false,
+    reviewed: true,
   },
   {
     slug: "fitness-sports",
@@ -347,7 +347,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
       },
     ],
     related: ["religious-spiritual", "restaurants-food", "home-services"],
-    reviewed: false,
+    reviewed: true,
   },
   {
     slug: "it-digital-services",
@@ -404,7 +404,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
       },
     ],
     related: ["mobile-electronics-repair", "photography-videography", "security-services"],
-    reviewed: false,
+    reviewed: true,
   },
   {
     slug: "photography-videography",
@@ -461,7 +461,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
       },
     ],
     related: ["it-digital-services", "restaurants-food", "religious-spiritual"],
-    reviewed: false,
+    reviewed: true,
   },
   {
     slug: "religious-spiritual",
@@ -518,7 +518,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
       },
     ],
     related: ["restaurants-food", "photography-videography", "fitness-sports"],
-    reviewed: false,
+    reviewed: true,
   },
   {
     slug: "restaurants-food",
@@ -575,7 +575,7 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
       },
     ],
     related: ["photography-videography", "religious-spiritual", "fitness-sports"],
-    reviewed: false,
+    reviewed: true,
   },
 ];
 
