@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Box, Card, CardActionArea, CardContent, Grid, Typography, useTheme } from "@mui/material";
+import React, { useEffect } from "react";
+import { Box, Grid, Typography, useTheme } from "@mui/material";
 import { Campaign } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -13,12 +13,13 @@ import RevenueChart from "./components/RevenueChart";
 import UpcomingBookings from "./components/UpcomingBookings";
 import LatestReviews from "./components/LatestReviews"; // Add this
 import LatestLeads from "./components/LatestLeads";
-import UpcomingEvents from "./components/UpcomingEvents";
-import RecentTransactions from "./components/RecentTransactions";
-import { useProviderDashboard } from "@/hooks/useProviderDashboard";
+import { useProviderDashboard, useSetAvailability } from "@/hooks/useProviderDashboard";
+import type { ProviderDashboardChartResponse, stats as ProviderStats } from "@/services/providerDashboard/providerDashboard.interface";
 import { useSupplierDashboard } from "@/hooks/useSupplierDashboard";
-import ProviderBookingDetailsDrawer from "../provider/bookings/ProviderBookingDetailsDrawer";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
+import toast from "react-hot-toast";
+import ErrorMessage from "@/components/common/ErrorMessage";
+import ProviderDashboardLayout from "./ProviderDashboardLayout";
 
 function DashboardView() {
   const theme = useTheme();
@@ -40,6 +41,10 @@ function DashboardView() {
     isLoading: isSupplierLoading,
     error: supplierError,
   } = useSupplierDashboard(role === "SUPPLIER");
+
+  const setAvailability = useSetAvailability();
+  const providerProfile = role === "SUPPLIER" ? undefined : providerDashboardData?.profile;
+  const attention = role === "SUPPLIER" ? undefined : providerDashboardData?.attention;
 
   const isLoading = role === "SUPPLIER" ? isSupplierLoading : isProviderLoading;
   const error = role === "SUPPLIER" ? supplierError : providerError;
@@ -69,17 +74,6 @@ function DashboardView() {
     );
   }
 
-  if (error) {
-    console.error("Dashboard Error:", error);
-    // return (
-    //   <Box sx={{ py: { xs: 2, md: 3 } }}>
-    //     <Typography variant="h4">
-    //       Error: {(error as any).data.message}
-    //     </Typography>
-    //   </Box>
-    // );
-  }
-
   const stats =
     role === "SUPPLIER"
       ? supplierDashboardData?.stats
@@ -97,8 +91,30 @@ function DashboardView() {
       ? supplierDashboardData?.latest_reviews
       : providerDashboardData?.latest_reviews;
 
+  // Service providers get their own layout; suppliers keep the original one below.
+  if (providerProfile) {
+    return (
+      <ProviderDashboardLayout
+        profile={providerProfile}
+        attention={attention}
+        stats={stats as ProviderStats | undefined}
+        chartData={chartData as ProviderDashboardChartResponse | undefined}
+        upcomingBookings={providerDashboardData?.upcoming_bookings ?? []}
+        latestReviews={providerDashboardData?.latest_reviews ?? []}
+        hasError={Boolean(error)}
+        onToggleAvailability={(accepting) =>
+          setAvailability.mutate(accepting, {
+            onError: () => toast.error(t("pd_availability_error")),
+          })
+        }
+        isTogglingAvailability={setAvailability.isPending}
+      />
+    );
+  }
+
   return (
     <Box sx={{ py: { xs: 2, md: 3 }, mx: { xs: 2, md: 3, lg: 10, xl: 20 } }}>
+      <ErrorMessage isVisible={Boolean(error)} error={t("pd_dashboard_error")} />
       {/* Header row: Title + Tools */}
       <Box
         sx={{
@@ -225,7 +241,9 @@ function DashboardView() {
             <RevenueChart chartData={chartData} />
 
             {/* Latest Leads - Only for Service Providers since Suppliers have enquiries */}
-            <LatestLeads />
+            <Box id="leads" sx={{ scrollMarginTop: 96 }}>
+              <LatestLeads />
+            </Box>
           </Box>
         </Grid>
 

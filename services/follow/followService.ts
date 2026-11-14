@@ -35,7 +35,6 @@ class FollowService {
     limit: number,
   ): Promise<IFollowResponse> {
     try {
-      console.log(id, page, limit);
       const response = await GET<IFollowResponse>(
         `${API_ENDPOINT.GET_FOLLOWERS(id)}?page=${page}&limit=${limit}`,
       );

@@ -1,201 +1,151 @@
 "use client";
-import React, { useState } from "react";
-import {
-    Box,
-    Container,
-    Typography,
-    useTheme,
-    Button,
-} from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
-import { Service } from "../../../../services/serviceList/listInteraface";
-import { COLORS } from "../../../../constants/colors";
-import { getUserRole, UserRole } from "../../../../utils/auth";
-import AddServiceDrawer from "../addService";
-import { english } from "../../../../features/i18n/en";
-import ProviderServicesHeader from "./ProviderServicesHeader";
-import ProviderServicesSearchBar from "./ProviderServicesSearchBar";
-import ProviderCategoriesBar from "./ProviderCategoriesBar";
-import ProviderServicesGrid from "./ProviderServicesGrid";
+import React, { useMemo, useState } from "react";
+import { Box } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import MainLayout from "@/app/mainLayout";
 import { useCategories } from "@/hooks/useCategories";
+import { useDebounce } from "@/hooks/useDebounce";
 import { useProviderServicesList, useServicesList } from "@/hooks/useServicesList";
-import { useQueryClient } from "@tanstack/react-query";
+import { useTranslate } from "@/hooks/useTranslate";
+import { getUserRole, UserRole } from "@/utils/auth";
+import AddServiceDrawer from "../addService";
+import ProviderCategoriesBar from "./ProviderCategoriesBar";
+import ProviderServicesGrid from "./ProviderServicesGrid";
+import ProviderServicesHeader from "./ProviderServicesHeader";
+import ProviderServicesSearchBar from "./ProviderServicesSearchBar";
+import ServiceStatusFilter, {
+  countByGroup,
+  statusGroup,
+  type StatusFilter,
+} from "./ServiceStatusFilter";
+
+const LIMIT = 12;
 
 const ProviderServicesList = () => {
-    const theme = useTheme();
-    const isDark = theme.palette.mode === "dark";
-    const queryClient = useQueryClient();
+  const { t } = useTranslate();
+  const queryClient = useQueryClient();
+  const isProvider = getUserRole() === UserRole.SERVICE_PROVIDER;
 
-    // Get user role
-    const userRole = getUserRole();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchInput, setSearchInput] = useState("");
+  // Search answers as you type, after a short pause, so each keystroke is not a request.
+  const search = useDebounce(searchInput.trim(), 300);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [page, setPage] = useState(1);
+  const [addServiceDrawerOpen, setAddServiceDrawerOpen] = useState(false);
 
-    // State
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [search, setSearch] = useState("");
-    const [searchInput, setSearchInput] = useState("");
-    const [page, setPage] = useState(1);
-    const limit = 12;
-    const [addServiceDrawerOpen, setAddServiceDrawerOpen] = useState(false);
+  const { data: categories = [], isLoading: categoriesLoading } = useCategories();
 
-    // Use TanStack Query hook for categories
-    const { data: categories = [], isLoading: categoriesLoading } = useCategories();
+  const providerServicesQuery = useProviderServicesList(search, isProvider);
+  const customerServicesQuery = useServicesList(
+    {
+      page,
+      limit: LIMIT,
+      ...(selectedCategory && { category_id: selectedCategory }),
+      ...(search && { search }),
+    },
+    !isProvider,
+  );
+  const servicesQuery = isProvider ? providerServicesQuery : customerServicesQuery;
 
-    // Use TanStack Query hooks for services - prevents duplicate calls
-    const isProvider = userRole === UserRole.SERVICE_PROVIDER;
-    
-    const providerServicesQuery = useProviderServicesList(search, isProvider);
-    const customerServicesQuery = useServicesList(
-        {
-            page,
-            limit,
-            ...(selectedCategory && { category_id: selectedCategory }),
-            ...(search && { search }),
-        },
-        !isProvider // Only enable for non-providers
-    );
+  const allServices = useMemo(() => servicesQuery.data?.services ?? [], [servicesQuery.data]);
+  const counts = useMemo(() => countByGroup(allServices), [allServices]);
+  // Providers get the whole list at once, so the status chips filter it here.
+  const services = useMemo(
+    () =>
+      isProvider && statusFilter !== "all"
+        ? allServices.filter((s) => statusGroup(s.status) === statusFilter)
+        : allServices,
+    [allServices, isProvider, statusFilter],
+  );
+  const totalPages = servicesQuery.data?.pagination?.total_pages || 1;
+  const total = servicesQuery.data?.pagination?.total ?? allServices.length;
+  const loading = servicesQuery.isLoading;
 
-    // Determine which query to use based on role
-    const servicesQuery = isProvider ? providerServicesQuery : customerServicesQuery;
+  const subtitle = isProvider
+    ? total > 0
+      ? t("sv_subtitle", { total, active: counts.active })
+      : t("sv_subtitle_none")
+    : undefined;
 
-    const services = servicesQuery.data?.services || [];
-    const totalPages = servicesQuery.data?.pagination?.total_pages || 1;
-    const total = servicesQuery.data?.pagination?.total || 0;
-    const loading = servicesQuery.isLoading;
+  const handleServiceAdded = () => {
+    setPage(1);
+    queryClient.invalidateQueries({ queryKey: ["provider-services-list"] });
+  };
 
-    const handleCategoryClick = (categoryId: string | null) => {
-        setSelectedCategory(categoryId);
-        setPage(1); // Reset to first page when category changes
-    };
+  return (
+    <MainLayout>
+      <Box sx={{ py: { xs: 2, md: 3 }, px: { xs: 2, md: 3 }, mx: "auto", maxWidth: 1200 }}>
+        <ProviderServicesHeader
+          title={isProvider ? t("sv_title") : t("services_for_you")}
+          subtitle={subtitle}
+          // The empty state already carries its own "Add service" button, so the header one waits for a list.
+          onAdd={
+            isProvider && (loading || allServices.length > 0 || search)
+              ? () => setAddServiceDrawerOpen(true)
+              : undefined
+          }
+        />
 
-    const handleSearchSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setSearch(searchInput);
-        setPage(1); // Reset to first page when searching
-    };
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            alignItems: { md: "center" },
+            justifyContent: "space-between",
+            gap: 2,
+            mb: 3,
+          }}
+        >
+          <ProviderServicesSearchBar
+            searchInput={searchInput}
+            onSearchInputChange={(value) => {
+              setSearchInput(value);
+              setPage(1);
+            }}
+            onSearchSubmit={(e) => e.preventDefault()}
+          />
+          {isProvider && (
+            <ServiceStatusFilter value={statusFilter} counts={counts} onChange={setStatusFilter} />
+          )}
+        </Box>
 
-    const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
-        setPage(value);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    };
+        {!isProvider && (
+          <ProviderCategoriesBar
+            categories={categories}
+            selectedCategory={selectedCategory}
+            categoriesLoading={categoriesLoading}
+            onCategoryClick={(id) => {
+              setSelectedCategory(id);
+              setPage(1);
+            }}
+          />
+        )}
 
-    const handleServiceAdded = () => {
-        // Invalidate and refetch services list after adding a new service
-        setPage(1);
-        queryClient.invalidateQueries({ queryKey: ["provider-services-list"] });
-    };
+        <ProviderServicesGrid
+          services={services}
+          totalPages={totalPages}
+          currentPage={page}
+          onPageChange={(_event, value) => {
+            setPage(value);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          loading={loading}
+          isProvider={isProvider}
+          searchTerm={search}
+          filtered={isProvider && statusFilter !== "all"}
+          onClearSearch={() => setSearchInput("")}
+          onAdd={() => setAddServiceDrawerOpen(true)}
+        />
+      </Box>
 
-    return (
-        <MainLayout>
-            <Box
-                sx={{
-                    bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
-                    pt: { xs: 2, sm: 4, md: 10 },
-                    pb: { xs: 2, sm: 3, md: 4 },
-                    px: { xs: 1, sm: 2 },
-                }}
-            >
-                <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
-                    {/* Header Section */}
-                    <Box sx={{
-                        display: "flex",
-                        flexDirection: { xs: "column", sm: "row" },
-                        justifyContent: "space-between",
-                        alignItems: { xs: "flex-start", sm: "center" },
-                        mb: { xs: 2, sm: 3 },
-                        gap: { xs: 2, sm: 2 },
-                    }}>
-                        <ProviderServicesHeader />
-
-                        <Box sx={{ 
-                            display: "flex", 
-                            gap: { xs: 1, sm: 2 }, 
-                            alignItems: "center", 
-                            width: { xs: "100%", sm: "auto" },
-                            flexDirection: { xs: "column", sm: "row" },
-                        }}>
-                            {/* Search Bar */}
-                            <Box sx={{ width: { xs: "100%", sm: "auto" }, flex: { xs: 1, sm: "none" } }}>
-                                <ProviderServicesSearchBar
-                                    searchInput={searchInput}
-                                    onSearchInputChange={setSearchInput}
-                                    onSearchSubmit={handleSearchSubmit}
-                                />
-                            </Box>
-
-                            {/* Add Service Button - Only for Service Providers */}
-                            {userRole === UserRole.SERVICE_PROVIDER && (
-                                <Button
-                                    variant="contained"
-                                    onClick={() => setAddServiceDrawerOpen(true)}
-                                    sx={{
-                                        bgcolor: COLORS.PRIMARY_PURPLE,
-                                        color: "white",
-                                        borderRadius: { xs: "8px", sm: "12px" },
-                                        px: { xs: 2, sm: 3 },
-                                        py: { xs: 0.75, sm: 1 },
-                                        textTransform: "none",
-                                        fontWeight: 600,
-                                        whiteSpace: "nowrap",
-                                        fontSize: { xs: "0.875rem", sm: "1rem" },
-                                        width: { xs: "100%", sm: "auto" },
-                                        "&:hover": {
-                                            bgcolor: COLORS.PURPLE_HOVER,
-                                        },
-                                    }}
-                                >
-                                    {english.add_service}
-                                </Button>
-                            )}
-                        </Box>
-                    </Box>
-
-                    {/* Categories Bar - Hidden for Service Providers */}
-                    {userRole !== UserRole.SERVICE_PROVIDER && (
-                        <ProviderCategoriesBar
-                            categories={categories}
-                            selectedCategory={selectedCategory}
-                            categoriesLoading={categoriesLoading}
-                            onCategoryClick={handleCategoryClick}
-                        />
-                    )}
-
-                    {/* Results Count */}
-                    {!loading && (
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                mb: { xs: 1.5, sm: 2 },
-                                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
-                                fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                            }}
-                        >
-                            {total} {english.services_found}
-                        </Typography>
-                    )}
-
-                    {/* Loading State */}
-                    {loading ? (
-                        <CenteredLoader py={8} size={60} />
-                    ) : (
-                        <ProviderServicesGrid
-                            services={services}
-                            totalPages={totalPages}
-                            currentPage={page}
-                            onPageChange={handlePageChange}
-                        />
-                    )}
-                </Container>
-            </Box>
-
-            {/* Add Service Drawer */}
-            <AddServiceDrawer
-                open={addServiceDrawerOpen}
-                onClose={() => setAddServiceDrawerOpen(false)}
-                onSuccess={handleServiceAdded}
-            /> 
-        </MainLayout>
-    );
+      <AddServiceDrawer
+        open={addServiceDrawerOpen}
+        onClose={() => setAddServiceDrawerOpen(false)}
+        onSuccess={handleServiceAdded}
+      />
+    </MainLayout>
+  );
 };
 
 export default ProviderServicesList;

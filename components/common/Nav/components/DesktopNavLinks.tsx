@@ -1,17 +1,16 @@
 import React from "react";
-import { Box, styled } from "@mui/material";
 import Link from "next/link";
+import { Box, styled } from "@mui/material";
 import { COLORS } from "../../../../constants/colors";
-import { NavItem } from "../../../../constants/navRoutes";
+import { type NavItem } from "../../../../constants/navRoutes";
 
 const NavLinksContainer = styled(Box)(({ theme }) => ({
   display: "none",
   gap: "0.75rem",
   alignItems: "center",
-  [theme.breakpoints.up("md")]: {
-    display: "flex",
-  },
+  // Shown from the same width the bottom dock disappears (lg), so the two are never on screen together.
   [theme.breakpoints.up("lg")]: {
+    display: "flex",
     gap: ".25rem",
   },
   [theme.breakpoints.up("xl")]: {

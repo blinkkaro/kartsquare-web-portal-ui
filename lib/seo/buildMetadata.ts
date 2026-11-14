@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 
 /** Normalized site origin (no trailing slash). */
 export const SITE_URL = String(
-  process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com"
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.kartsquare.com"
 ).replace(/\/$/, "");
 
 function brandTitle(title: string): string {
   const s = title.trim();
   if (!s) return "kartsquare";
-  if (/\|\s*kartsquare\s*$/i.test(s)) return s;
-  if (/^kartsquare(\s|$|–|-)/i.test(s)) return s;
+  // Already carries the brand anywhere in the title: do not append a second one.
+  if (/kartsquare/i.test(s)) return s;
   return `${s} | kartsquare`;
 }
 

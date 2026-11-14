@@ -27,6 +27,7 @@ export default function MainLayoutClient({
   return (
     <>
       <Box
+        data-main-shell
         sx={{
           minHeight: "100vh",
           display: "flex",
@@ -107,8 +108,8 @@ export default function MainLayoutClient({
         <Ai open={aiOpen} onClose={() => dispatch(setAiOpen(false))} />
       </Box>
       <LoginModal />
-      {/* Footer is desktop/tablet only; mobile uses the bottom nav */}
-      <Box sx={{ display: { xs: "none", md: "block" } }}>
+      {/* Footer is desktop/tablet only; mobile uses the bottom nav. Hidden inside the native app. */}
+      <Box data-native-hide sx={{ display: { xs: "none", md: "block" } }}>
         <Footer />
       </Box>
     </>

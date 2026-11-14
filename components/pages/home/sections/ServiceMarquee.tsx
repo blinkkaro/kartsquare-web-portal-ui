@@ -15,7 +15,7 @@ const scroll = keyframes`from { transform: translateX(0); } to { transform: tran
  * A slow, endless strip of the service types we really have providers for. Each one is a search link.
  * It pauses on hover and keyboard focus. The second copy exists only to make the loop seamless, so it is
  * hidden from assistive tech and the tab order. Under reduced motion nothing moves: the strip becomes a
- * wrapped list of the same links. Renders nothing until real services have loaded.
+ * one swipeable row of the same links. Renders nothing until real services have loaded.
  */
 export default function ServiceMarquee() {
   const { services, isLoading } = useHomeServices();
@@ -72,7 +72,7 @@ export default function ServiceMarquee() {
         overflow: "hidden",
         maskImage: "linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent)",
         WebkitMaskImage: "linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent)",
-        "@media (prefers-reduced-motion: reduce)": { maskImage: "none", WebkitMaskImage: "none" },
+        "@media (prefers-reduced-motion: reduce)": { maskImage: "none", WebkitMaskImage: "none", overflowX: "auto", scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" } },
       }}
     >
       <Box
@@ -82,7 +82,7 @@ export default function ServiceMarquee() {
           py: 0.5,
           animation: `${scroll} ${Math.max(24, names.length * 4)}s linear infinite`,
           "&:hover, &:focus-within": { animationPlayState: "paused" },
-          "@media (prefers-reduced-motion: reduce)": { animation: "none", width: "auto", flexWrap: "wrap", px: 0.5 },
+          "@media (prefers-reduced-motion: reduce)": { animation: "none", px: 0.5 },
         }}
       >
         {names.map((n) => item(n, 0))}

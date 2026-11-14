@@ -116,13 +116,29 @@ const getDesignTokens = (mode: "light" | "dark"): ThemeOptions => ({
     },
   },
   components: {
+    // One button: the same pill and type as the shared Button (components/common/Button), in three heights.
+    // 36 for dense rows, 44 for everything you tap (the touch minimum), 48 for a hero action.
     MuiButton: {
+      defaultProps: { disableElevation: true },
       styleOverrides: {
         root: {
-          borderRadius: "8px",
+          borderRadius: "30px",
           textTransform: "none",
           fontWeight: 600,
+          fontSize: "0.875rem",
         },
+        sizeSmall: { minHeight: 36, paddingInline: 16 },
+        sizeMedium: { minHeight: 44, paddingInline: 20 },
+        sizeLarge: { minHeight: 48, paddingInline: 24, fontSize: "1rem" },
+      },
+    },
+    // One text field: compact (40px) by default, a 10px radius and the body2 size, matching the shared Input
+    // (components/common/Input). Pass size="medium" only where a form needs a taller field.
+    MuiTextField: { defaultProps: { size: "small" } },
+    MuiFormControl: { defaultProps: { size: "small" } },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: { borderRadius: "10px", fontSize: "0.875rem" },
       },
     },
   },

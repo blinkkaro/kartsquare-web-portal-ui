@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 
-const BASE_URL = "https://kartsquare.com".replace(/\/$/, "");
+// One canonical origin for the sitemap link, the same as every canonical tag (the www host).
+const BASE_URL = String(process.env.NEXT_PUBLIC_SITE_URL || "https://www.kartsquare.com").replace(/\/$/, "");
 
 /**
  * Robots.txt tuned for marketplace SEO:
@@ -53,7 +54,9 @@ export default function robots(): MetadataRoute.Robots {
         // A duplicate Googlebot block with identical rules wastes robots.txt space and
         // can confuse some parsers. Removed.
         userAgent: '*',
-        allow: '/',
+        // Google needs the built JS and CSS to render pages, so those stay crawlable even though
+        // the rest of /_next/ is not. The longer Allow paths win over the Disallow.
+        allow: ['/', '/_next/static/', '/_next/image'],
         disallow: [...privateDisallow],
       },
     ],

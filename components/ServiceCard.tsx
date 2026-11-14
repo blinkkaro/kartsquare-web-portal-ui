@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardMedia,
@@ -18,14 +19,15 @@ import {
   Bolt,
   WorkspacePremium,
 } from "@mui/icons-material";
-import { COLORS } from "../constants/colors";
-import { Service, ServiceStatus } from "../services/serviceList/listInteraface";
-import { useRouter } from "next/navigation";
-import { getUserRole, getUserId, UserRole } from "../utils/auth";
-import { useTranslate } from "@/hooks/useTranslate";
 import { useDispatch } from "react-redux";
+import { useTranslate } from "@/hooks/useTranslate";
+import { stripMarkdown } from "@/utils/plainText";
 import { closeDrawer } from "@/features/ui/profileDrawerSlice";
 import { getServiceHref } from "@/utils/serviceRoute";
+import { SERVICE_FALLBACK_IMAGE } from "@/constants/media";
+import { COLORS } from "@/constants/colors";
+import { getUserRole, getUserId, UserRole } from "@/utils/auth";
+import { type Service, ServiceStatus } from "@/services/serviceList/listInteraface";
 
 interface ServiceCardProps {
   service: Service;
@@ -45,7 +47,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
       : [
-          "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+          SERVICE_FALLBACK_IMAGE,
         ];
 
   const handlePrevImage = (e: React.MouseEvent) => {
@@ -445,7 +447,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
               : COLORS.TEXT.SECONDARY_LIGHT,
           }}
         >
-          {service.service_desc || "No description available"}
+          {stripMarkdown(service.service_desc) || "No description available"}
         </Typography>
       </CardContent>
     </Card>

@@ -23,6 +23,7 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       // ── Services: /services → /cus/services-list ─────────────────────────
+      // /services stays the app's list. The content hub lives at /explore-services.
       {
         source: "/services",
         destination: "/cus/services-list",

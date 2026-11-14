@@ -113,6 +113,7 @@ function SignUpView() {
           ? initialData.whatsapp_country_code || data.country_code || "+91"
           : data.country_code,
         password: data.password,
+        confirm_password: data.password,
         role: role,
         whatsapp_number: data.whatsapp_number || "",
         whatsapp_country_code: data.whatsapp_country_code || "",

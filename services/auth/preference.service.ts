@@ -44,7 +44,6 @@ class PrefranceService {
       const response = await GET<preferences[]>(
         API_ENDPOINTS.GET_USER_PREFERENCES,
       );
-      console.log("response.data", response.data);
       return response.data;
     } catch (error: any) {
       const errorMessage =

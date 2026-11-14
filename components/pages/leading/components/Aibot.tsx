@@ -76,7 +76,7 @@ const MessageBubble = ({ message }: { message: Message }) => {
         }}
       >
         <Box
-          sx={{ fontFamily: "Inter", lineHeight: 1.5, fontSize: "0.875rem" }}
+          sx={{ fontFamily: "inherit", lineHeight: 1.5, fontSize: "0.875rem" }}
         >
           {isBot ? (
             <ReactMarkdown
@@ -289,7 +289,7 @@ const Aibot: React.FC = () => {
                 variant="body2"
                 sx={{
                   fontWeight: 600,
-                  fontFamily: "Plus Jakarta Sans",
+                  fontFamily: "inherit",
                   fontSize: "13px",
                   whiteSpace: { xs: "normal", md: "nowrap" }
                 }}
@@ -373,7 +373,7 @@ const Aibot: React.FC = () => {
                       variant="subtitle1"
                       sx={{
                         fontWeight: 700,
-                        fontFamily: "Plus Jakarta Sans",
+                        fontFamily: "inherit",
                         lineHeight: 1.2,
                       }}
                     >

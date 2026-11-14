@@ -10,7 +10,7 @@ export const changePasswordSchema = (t: TFunction) =>
       .min(8, t("passwordMin"))
       .max(100, t("valNameMax"))
       .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        /^(?=.*[A-Z])(?=.*\d).{8,}$/,
         t("passwordComplexity"),
       )
       .required(t("currentPasswordRequired")),
@@ -20,7 +20,7 @@ export const changePasswordSchema = (t: TFunction) =>
       .min(8, t("passwordMin"))
       .max(100, t("valNameMax"))
       .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        /^(?=.*[A-Z])(?=.*\d).{8,}$/,
         t("passwordComplexity"),
       )
       .notOneOf([yup.ref("currentPassword")], t("newPasswordNotMatch"))
@@ -31,7 +31,7 @@ export const changePasswordSchema = (t: TFunction) =>
       .min(8, t("passwordMin"))
       .max(100, t("valNameMax"))
       .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        /^(?=.*[A-Z])(?=.*\d).{8,}$/,
         t("passwordComplexity"),
       )
       .oneOf([yup.ref("password")], t("passwordMatch"))

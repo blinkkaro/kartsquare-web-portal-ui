@@ -8,7 +8,6 @@ class AddressServices {
   async getAddress(): Promise<Address[]> {
     try {
       const response = await GET(APIENDPOINTS.GET_ADDRESS);
-      console.log("response", response);
       return response.data as Address[];
     } catch (error) {
       throw error;
@@ -35,7 +34,6 @@ class AddressServices {
       );
       return response.data;
     } catch (error) {
-      console.log("error", error);
       throw error;
     }
   }

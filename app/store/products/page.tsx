@@ -4,13 +4,16 @@ import { Box, Typography } from "@mui/material";
 import MainLayout from "@/app/mainLayout";
 import StoreProductsView from "@/components/pages/store/ProductsListing";
 import { buildBreadcrumbJsonLd, BREADCRUMBS } from "@/lib/seo/breadcrumbs";
+import { manifestCopy } from "@/lib/seo/metaManifest";
 import { seoPublic } from "@/lib/seo/buildMetadata";
 import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 
 const storeProductsFallback = seoPublic({
-  title: "Browse all products",
-  description:
-    "Search and filter products from kartsquare suppliers — compare prices, SKUs, and availability across categories.",
+  ...(manifestCopy("store_products") ?? {
+    title: "Browse all products",
+    description:
+      "Search and filter products from kartsquare suppliers — compare prices, SKUs, and availability across categories.",
+  }),
   path: "/store/products",
   keywords: ["product catalog", "supplier products", "B2B catalog India"],
 });

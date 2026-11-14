@@ -7,8 +7,11 @@ import { motion, useReducedMotion } from "framer-motion";
 import { keyframes } from "@mui/material/styles";
 import { COLORS } from "@/constants/colors";
 import { FEED_SPRING, FEED_STAGGER } from "../feedMotion";
+import Button from "@/components/common/Button";
 import { useAddStory, useGetStories } from "@/hooks/useStories";
-import { MediaType, StoriesList } from "@/services/stories/stories.interface";
+import { useTranslate } from "@/hooks/useTranslate";
+import { canCreatePosts } from "@/utils/auth";
+import { MediaType, type StoriesList } from "@/services/stories/stories.interface";
 import StoryViewer from "@/components/pages/home/components/stories/StoryViewer";
 import AddStoryModal from "@/components/pages/home/components/stories/AddStoryModal";
 
@@ -18,7 +21,9 @@ const ringIn = keyframes`0% { transform: scale(0.86); } 60% { transform: scale(1
 const RING = `conic-gradient(${COLORS.ICON_GRADIENT.Light.START}, ${COLORS.ICON_GRADIENT.Light.END}, ${COLORS.ICON_GRADIENT.Light.START})`;
 
 interface FeedStoriesProps {
-  currentUser: { id?: string; profile_pic?: string | null; first_name?: string; business_name?: string } | null;
+  /** Providers get a create-post button at the top of the stories band (phones; tablets and up have the composer card). */
+  onCreatePost?: () => void;
+  currentUser: { id?: string; role?: string; profile_pic?: string | null; first_name?: string; business_name?: string } | null;
 }
 
 interface StoryBubbleProps {
@@ -59,11 +64,14 @@ const storyName = (s: StoriesList) => s.business_name?.trim() || s.user_name?.tr
  * unseen stories, then seen ones (grey ring). Signed-in users only — the
  * stories API requires a login.
  */
-export default function FeedStories({ currentUser }: FeedStoriesProps) {
+export default function FeedStories({ currentUser, onCreatePost }: FeedStoriesProps) {
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
   const { data, isLoading } = useGetStories({ page: 1, limit: 20 });
   const { mutate: addStory, isPending } = useAddStory();
+  const { t } = useTranslate();
+  // Only providers add stories, for now. Everyone else just watches.
+  const canAdd = canCreatePosts(currentUser?.role);
 
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
   const [addOpen, setAddOpen] = useState(false);
@@ -95,7 +103,11 @@ export default function FeedStories({ currentUser }: FeedStoriesProps) {
     if (!picked) return;
     const ok = mediaType === MediaType.VIDEO ? picked.type.startsWith("video/") : ["image/png", "image/jpeg", "image/jpg"].includes(picked.type);
     if (!ok) {
-      toast.error(mediaType === MediaType.VIDEO ? "Please choose a video file." : "Please choose a JPG or PNG photo.");
+      toast.error(mediaType === MediaType.VIDEO ? t("st_err_video") : t("st_err_photo"));
+      return;
+    }
+    if (picked.size > 50 * 1024 * 1024) {
+      toast.error(t("st_err_size"));
       return;
     }
     setFile(picked);
@@ -107,12 +119,14 @@ export default function FeedStories({ currentUser }: FeedStoriesProps) {
     addStory(
       { media: file, caption, media_type: mediaType },
       {
-        onSuccess: () => toast.success("Story added"),
-        onError: () => toast.error("Couldn't add your story. Please try again."),
+        onSuccess: () => {
+          toast.success(t("st_added"));
+          setAddOpen(false);
+          setFile(null);
+        },
+        onError: () => toast.error(t("st_failed")),
       },
     );
-    setAddOpen(false);
-    setFile(null);
   };
 
   const border = dark ? COLORS.NEW_UI.CARD_BORDER_DARK : COLORS.NEW_UI.CARD_BORDER_LIGHT;
@@ -152,13 +166,24 @@ export default function FeedStories({ currentUser }: FeedStoriesProps) {
         py: { xs: 1.25, sm: 2 },
       }}
     >
+      {onCreatePost && (
+        <Box sx={{ display: { xs: "flex", sm: "none" }, alignItems: "center", justifyContent: "space-between", mb: 1 }}>
+          <Typography variant="h6" component="h2">
+            {t("st_stories")}
+          </Typography>
+          <Button onClick={onCreatePost} startIcon={<AddRoundedIcon />} sx={{ minHeight: 44, px: 2.5 }}>
+            {t("st_create_post")}
+          </Button>
+        </Box>
+      )}
       <Box sx={{ display: "flex", gap: { xs: 1, sm: 1.5 }, overflowX: "auto", scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" } }}>
         {/* Your story: view it if you have one, otherwise add one */}
+        {(own || canAdd) && (
         <StoryBubble
           size={size}
           label="Your story"
           ariaLabel={own ? "View your story" : "Add a story"}
-          onClick={() => (own ? setViewerIndex(0) : pickMedia(MediaType.IMAGE))}
+          onClick={() => (own ? setViewerIndex(0) : setAddOpen(true))}
         >
           <Box sx={{ position: "relative" }}>
             {own ? (
@@ -168,27 +193,30 @@ export default function FeedStories({ currentUser }: FeedStoriesProps) {
                 {myName.charAt(0).toUpperCase()}
               </Avatar>
             )}
+            {canAdd && (
             <Box
               role="button"
               aria-label="Add to your story"
               tabIndex={0}
               onClick={(e) => {
                 e.stopPropagation();
-                pickMedia(MediaType.IMAGE);
+                setAddOpen(true);
               }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
                   e.stopPropagation();
-                  pickMedia(MediaType.IMAGE);
+                  setAddOpen(true);
                 }
               }}
               sx={{ position: "absolute", right: -2, bottom: -2, width: 22, height: 22, borderRadius: "50%", bgcolor: COLORS.PRIMARY_PURPLE, color: COLORS.WHITE, border: "2px solid", borderColor: "background.paper", display: "grid", placeItems: "center", cursor: "pointer" }}
             >
               <AddRoundedIcon sx={{ fontSize: 16 }} />
             </Box>
+            )}
           </Box>
         </StoryBubble>
+        )}
 
         {isLoading
           ? Array.from({ length: 6 }).map((_, i) => (

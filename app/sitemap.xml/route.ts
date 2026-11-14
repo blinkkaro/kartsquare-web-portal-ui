@@ -2,9 +2,10 @@ import { serviceSitemapPath } from "@/lib/seo/sitemapPaths";
 import { NextResponse } from "next/server";
 import { blogs } from "@/data/blogs";
 import { blogPostSitemapEntry } from "@/lib/seo/blogSitemap";
+import { contentSitemapPaths } from "@/lib/services/sitemap";
 
 const BASE_URL = String(
-  process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com"
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.kartsquare.com"
 ).replace(/\/$/, "");
 const API_URL = "https://api.kartsquare.com/api/v1";
 
@@ -41,14 +42,11 @@ export async function GET() {
   // 1. Static Routes
   const staticRoutes = [
     { url: "/" },
-    { url: "/store" },
-    { url: "/store/products" },
     { url: "/map" },
     { url: "/contact-us" },
     { url: "/business-listing" },
     { url: "/blogs" },
     { url: "/careers" },
-    { url: "/search" },
     // Legal & policy
     { url: "/terms-conditions" },
     { url: "/privacy-policy" },
@@ -72,14 +70,12 @@ export async function GET() {
     }
   };
 
-  const [productRes, serviceRes, profileRes, locationRes] = await Promise.all([
-    fetchJson("products", `${API_URL}/products?limit=5000`),
+  const [serviceRes, profileRes, locationRes] = await Promise.all([
     fetchJson("services", `${API_URL}/services/sitemap`),
     fetchJson("profiles", `${API_URL}/profile/sitemap`),
     fetchJson("locations", `${API_URL}/locations/sitemap`),
   ]);
 
-  const products = productRes?.data?.products || productRes?.data || [];
   const services = serviceRes?.data?.services || serviceRes?.data || [];
   const profiles = profileRes?.data?.profiles || profileRes?.data || [];
   // The backend returns `{ urls: [], enabled: false }` while
@@ -118,6 +114,9 @@ export async function GET() {
   // Add Static
   staticRoutes.forEach((r) => addUrl(r.url));
 
+  // The /explore-services hub and the reviewed /services/c/{category} pages. The /store pages are intentionally not listed.
+  contentSitemapPaths().forEach((p) => addUrl(p));
+
   // Add Blogs
   blogs.forEach((blog) => {
     const entry = blogPostSitemapEntry(blog);
@@ -145,17 +144,6 @@ export async function GET() {
         );
       }
     );
-  }
-
-  // Add Products
-  if (Array.isArray(products)) {
-    products.forEach((p: any) => {
-      const url = `${BASE_URL}/store/product/${p.product_id || p.id}`;
-      const lastmod = p.updated_at || p.created_at;
-      const images = p.product_images || p.images || [];
-      const mainImage = Array.isArray(images) ? images[0] : p.image || null;
-      addUrl(url, lastmod ? new Date(lastmod).toISOString() : undefined, mainImage);
-    });
   }
 
   // Add Services: the API's canonical_path (/services/{slug}) only. Slug-less

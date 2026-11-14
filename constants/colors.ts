@@ -93,6 +93,10 @@ export const COLORS = {
   // Services 2.0 (new UI) — values the redesigned services list uses
   NEW_UI: {
     PAGE_BG_LIGHT: "#FCFBF9",
+    /** Soft violet surface for editorial panels (explore-services pages). */
+    EDITORIAL_TINT: "#F1EAFF",
+    /** Light violet for small labels on dark editorial bands. */
+    EDITORIAL_LILAC: "#CDB8FF",
     CARD_BORDER_LIGHT: "#ede9f2",
     CARD_BORDER_DARK: "rgba(255,255,255,0.08)",
     CARD_BORDER_HOVER_LIGHT: "#d6cbef",

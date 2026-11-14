@@ -17,6 +17,7 @@ import { COLORS } from "../../../constants/colors";
 import { english } from "../../../features/i18n/en";
 import dayjs from "dayjs";
 import BookingActionButtons from "./BookingActionButtons";
+import { SERVICE_FALLBACK_IMAGE } from "@/constants/media";
 
 interface BookingsTableProps {
     bookings: UserBooking[];
@@ -90,7 +91,7 @@ const BookingsTable: React.FC<BookingsTableProps> = ({ bookings, activeTab, onVi
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                     <Box
                                         component="img"
-                                        src={(booking as any).service_images?.[0] || (booking as any).service_image?.[0] || booking.photo_url?.[0] || "/placeholder.png"}
+                                        src={(booking as any).service_images?.[0] || (booking as any).service_image?.[0] || booking.photo_url?.[0] || SERVICE_FALLBACK_IMAGE}
                                         sx={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover" }}
                                     />
                                     <Typography variant="body2" fontWeight={600}>

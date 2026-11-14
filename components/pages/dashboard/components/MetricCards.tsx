@@ -21,6 +21,7 @@ import {
   Call,
 } from "@mui/icons-material";
 import { COLORS } from "@/constants/colors";
+import AnimatedNumber from "./AnimatedNumber";
 import { useTranslate } from "@/hooks/useTranslate";
 import { ProviderDashboardResponse } from "@/services/providerDashboard/providerDashboard.interface";
 import { SupplierDashboardResponse } from "@/services/supplierDashboard/supplierDashoard.interface";
@@ -139,7 +140,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
                       : COLORS.TEXT.PRIMARY_LIGHT,
                 }}
               >
-                {value}
+                {typeof value === "number" ? <AnimatedNumber value={value} /> : value}
               </Typography>
             </Box>
           </Box>

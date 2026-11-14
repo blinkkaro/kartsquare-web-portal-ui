@@ -39,7 +39,6 @@ class ProductService {
         url += `?${queryString}`;
       }
       const response = await GET<ProductCategoriesResponse>(url);
-      console.log("categories", response.data);
       return response.data.categories;
     } catch (error) {
       throw error;
@@ -102,7 +101,6 @@ class ProductService {
     try {
       let url = APIENDPOINTS.GET_PRODUCTS_SPECIFICATIONS(subCategoryId);
       const response = await GET<ProductSpecificationResponse>(url);
-      console.log("specifications", response.data);
       return response.data.specifications;
     } catch (error) {
       throw error;

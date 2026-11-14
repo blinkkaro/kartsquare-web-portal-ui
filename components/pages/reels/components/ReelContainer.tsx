@@ -1,10 +1,5 @@
 import React, { useState } from "react";
 import { Box, useMediaQuery, useTheme } from "@mui/material";
-import ReelPlayer from "./ReelPlayer";
-import ReelActions from "./ReelActions";
-import ReelOverlay from "./ReelOverlay";
-import ReelComments from "./ReelComments";
-import { Posts } from "../../../../services/post/postInterfaces";
 import { useFollowProvider } from "@/hooks/useProviderProfile";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
@@ -12,6 +7,11 @@ import { selectCurrentUser } from "@/features/ui/authSlice";
 import { AppUserType } from "@/services/auth/auth.interface";
 import { getMediaUrls } from "@/helper/helper";
 import { reelVideoUrl } from "@/services/post/postMedia";
+import { type Posts } from "../../../../services/post/postInterfaces";
+import ReelComments from "./ReelComments";
+import ReelOverlay from "./ReelOverlay";
+import ReelActions from "./ReelActions";
+import ReelPlayer from "./ReelPlayer";
 
 interface ReelContainerProps {
   reel: Posts;
@@ -121,7 +121,8 @@ const ReelContainer: React.FC<ReelContainerProps> = ({
             sx={{
               position: "absolute",
               right: 8,
-              bottom: 100,
+              // clear of the phone dock (--mobile-nav-h + its 10px gap) so a tap on the comment icon never lands on it
+              bottom: "calc(max(100px, var(--mobile-nav-h, 0px) + 56px) + env(safe-area-inset-bottom, 0px))",
               zIndex: 3,
             }}
           >

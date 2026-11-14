@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
 import MainLayout from "./mainLayout";
 import HomeView from "@/components/pages/home";
+import { manifestCopy } from "@/lib/seo/metaManifest";
 import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
 import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 
-const HOME_TITLE = "Local Services in Jaipur: AC, Plumber, Electrician";
-const HOME_DESCRIPTION =
-  "Find approved local pros in Jaipur: AC repair, plumbers, electricians, photographers & more. Search in English, Hindi or Hinglish and contact providers directly.";
+const HOME_COPY = manifestCopy("home") ?? {
+  title: "Local Services in Jaipur: AC, Plumber, Electrician",
+  description:
+    "Find approved local pros in Jaipur: AC repair, plumbers, electricians, photographers & more. Search in English, Hindi or Hinglish and contact providers directly.",
+};
+const HOME_TITLE = HOME_COPY.title;
+const HOME_DESCRIPTION = HOME_COPY.description;
 
 // Jaipur-first fallback. If admin-managed SEO exists for the "home" page key it wins
 // (see sitePageSeoOrFallback); the geo tags below are added either way.

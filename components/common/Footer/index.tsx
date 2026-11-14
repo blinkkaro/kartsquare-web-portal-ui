@@ -23,11 +23,14 @@ import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useRouter } from "next/navigation";
 import NavLogo from "../Nav/components/NavLogo";
+import { useAppSelector } from "@/store/hooks";
+import { UserRole } from "@/utils/auth";
 
 const Footer: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslate();
   const router = useRouter();
+  const role = useAppSelector((state) => state.auth.user?.role);
   const isDark = theme.palette.mode === "dark";
   const currentYear = new Date().getFullYear();
 
@@ -39,7 +42,10 @@ const Footer: React.FC = () => {
       { label: t("contactUs"), href: "/contact-us" },
     ],
     services: [
-      { label: t("services"), href: "/cus/services-list" },
+      // Customers and visitors go to the content hub. Providers keep their own list.
+      (role as string) === UserRole.SERVICE_PROVIDER
+        ? { label: t("services"), href: "/spr/servicesList" }
+        : { label: t("explore_services"), href: "/explore-services" },
       //   { label: t("events"), href: "/events" },
       { label: t("store"), href: "/store" },
       { label: t("becomeServiceProvider"), href: "/supplier/register" },

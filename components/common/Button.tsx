@@ -20,10 +20,6 @@ const StyledButton = styled(MuiButton)<ButtonProps>(
     fontWeight: 600,
     fontSize: "0.875rem",
     padding: "8px 20px",
-    [theme.breakpoints.up("xl")]: {
-      fontSize: "1rem",
-      padding: "10px 24px",
-    },
     transition: "all 0.2s ease-in-out",
     ...(fullWidth && { width: "100%" }),
     boxShadow:

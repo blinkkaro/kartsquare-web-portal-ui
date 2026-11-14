@@ -15,6 +15,7 @@ import { SocketProvider } from "@/contexts/SocketContext";
 
 import { useHydrateStore } from "@/hooks/useHydrateStore";
 import { Toaster } from "react-hot-toast";
+import NativeBridge from "@/components/common/NativeBridge";
 
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
   const mode = useAppSelector((state) => state.ui.mode);
@@ -72,6 +73,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             <SocketProvider>
               <ThemeWrapper>
                 <Toaster position="top-right" toastOptions={{ style: { fontFamily: "inherit" } }} />
+                <NativeBridge />
                 <RegistrationGuard>{children}</RegistrationGuard>
               </ThemeWrapper>
             </SocketProvider>

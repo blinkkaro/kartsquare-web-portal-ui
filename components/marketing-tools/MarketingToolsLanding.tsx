@@ -3,6 +3,7 @@ import React from "react";
 import { Box, Typography, Grid, Card, CardContent, Button, Chip } from "@mui/material";
 import { Email as EmailIcon, WhatsApp as WhatsAppIcon } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
+import PageTitle from "@/components/common/PageTitle";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 
 interface MarketingToolsLandingProps {
@@ -28,12 +29,9 @@ export default function MarketingToolsLanding({ role }: MarketingToolsLandingPro
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1200, margin: "0 auto" }}>
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
+      <PageTitle subtitle={translate("marketing_tools_subtitle", "Grow your business by reaching out to your customers effectively.")}>
         {translate("marketing_tools_title", "Marketing Tools")}
-      </Typography>
-      <Typography variant="body1" color="text.secondary" paragraph>
-        {translate("marketing_tools_subtitle", "Grow your business by reaching out to your customers effectively.")}
-      </Typography>
+      </PageTitle>
 
       <Grid container spacing={4} sx={{ mt: 2 }}>
         {/* Email Marketing Card */}
@@ -69,10 +67,9 @@ export default function MarketingToolsLanding({ role }: MarketingToolsLandingPro
               <Button 
                 variant="contained" 
                 color="primary" 
-                size="large"
                 fullWidth
                 onClick={() => handleNavigate('email-marketing')}
-                sx={{ mt: "auto", py: 1.5, borderRadius: 2, fontWeight: "bold" }}
+                sx={{ mt: "auto" }}
               >
                 {translate("go_to_email_dashboard", "Go to Email Dashboard")}
               </Button>
@@ -117,10 +114,9 @@ export default function MarketingToolsLanding({ role }: MarketingToolsLandingPro
               <Button 
                 variant="outlined" 
                 color="inherit" 
-                size="large"
                 fullWidth
                 disabled
-                sx={{ mt: "auto", py: 1.5, borderRadius: 2, fontWeight: "bold" }}
+                sx={{ mt: "auto" }}
               >
                 {translate("available_soon", "Available Soon")}
               </Button>

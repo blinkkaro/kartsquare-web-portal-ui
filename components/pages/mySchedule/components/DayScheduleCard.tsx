@@ -39,7 +39,6 @@ const DayScheduleCard: React.FC<DayScheduleCardProps> = ({
   const theme = useTheme();
 
   const handleBreakClick = () => {
-    console.log("break press");
     onBreakToggle();
   };
 

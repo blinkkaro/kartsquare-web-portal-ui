@@ -13,10 +13,13 @@ import {
   Login as LoginIcon,
   Business,
   Campaign,
+  DashboardRounded,
+  StorefrontRounded,
 } from "@mui/icons-material";
 import Image from "next/image";
 import { COLORS } from "../../../../constants/colors";
 import { secureStorage } from "@/helper/SecureStorage";
+import { publicProfilePath } from "@/lib/providerDashboard";
 
 const ActionsContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -112,6 +115,30 @@ const NavActions: React.FC<NavActionsProps> = ({
           </StyledIconButton>
         )} */}
 
+        {/* Provider shortcuts: dashboard + the page customers see */}
+        {!isMobile && !isTablet && profile?.role?.toUpperCase() === AppUserType.SERVICE_PROVIDER && (
+          <>
+            <StyledIconButton
+              size="small"
+              aria-label="provider dashboard"
+              title="Dashboard"
+              onClick={() => router.push("/dashboard")}
+            >
+              <DashboardRounded />
+            </StyledIconButton>
+            {publicProfilePath(profile?.username) && (
+              <StyledIconButton
+                size="small"
+                aria-label="view my public page"
+                title="View my public page"
+                onClick={() => router.push(publicProfilePath(profile?.username) as string)}
+              >
+                <StorefrontRounded />
+              </StyledIconButton>
+            )}
+          </>
+        )}
+
         {/* Free Listing */}
         {(profile?.role?.toUpperCase() === AppUserType.SUPPLIER ||
           profile?.role?.toUpperCase() === AppUserType.SERVICE_PROVIDER) && (
@@ -175,7 +202,11 @@ const NavActions: React.FC<NavActionsProps> = ({
               boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
             },
           }}
-          alt="User Avatar"
+          alt={
+            profile?.role?.toUpperCase() === AppUserType.SERVICE_PROVIDER
+              ? "Service provider"
+              : "User Avatar"
+          }
           src={profile?.profile_pic}
           onClick={profileClick}
         />

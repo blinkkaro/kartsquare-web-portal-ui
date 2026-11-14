@@ -1,10 +1,13 @@
 import PrivacyPolicyView from "@/components/pages/privacyPolicy";
+import { manifestCopy } from "@/lib/seo/metaManifest";
 import { seoPublic } from "@/lib/seo/buildMetadata";
 
 export const metadata = seoPublic({
-  title: "Privacy Policy | kartsquare",
-  description:
-    "How kartsquare collects, uses, and protects your personal data across our marketplace, bookings, and supplier tools.",
+  ...(manifestCopy("privacy_policy") ?? {
+    title: "Privacy Policy | kartsquare",
+    description:
+      "How kartsquare collects, uses, and protects your personal data across our marketplace, bookings, and supplier tools.",
+  }),
   path: "/privacy-policy",
   keywords: [
     "kartsquare privacy policy",

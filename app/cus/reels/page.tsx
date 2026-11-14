@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import ReelsView from "@/components/pages/reels";
+import { manifestCopy } from "@/lib/seo/metaManifest";
 import { seoPublic } from "@/lib/seo/buildMetadata";
 import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 
 const reelsFallback = seoPublic({
-  title: "Reels — short videos from providers & suppliers",
-  description:
-    "Watch and explore short videos from kartsquare service providers and suppliers. Discover local businesses and products in seconds.",
+  ...(manifestCopy("reels") ?? {
+    title: "Reels — short videos from providers & suppliers",
+    description:
+      "Watch and explore short videos from kartsquare service providers and suppliers. Discover local businesses and products in seconds.",
+  }),
   path: "/cus/reels",
   keywords: [
     "kartsquare reels",

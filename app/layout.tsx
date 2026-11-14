@@ -18,7 +18,7 @@ const mukta = Mukta({
   variable: "--font-mukta",
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://kartsquare.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kartsquare.com";
 
 /** Viewport — must be exported separately from metadata in Next.js 14+ */
 export const viewport: Viewport = {
@@ -151,15 +151,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${mukta.variable}`}>
+    <html lang="en" className={`${jakarta.variable} ${mukta.variable}`} suppressHydrationWarning>
       <body
         style={{ fontFamily: "var(--font-jakarta), var(--font-mukta), system-ui, -apple-system, sans-serif" }}
         suppressHydrationWarning
       >
-        {/* Plain script avoids Turbopack chunk split issues from next/script in RootLayout */}
+        {/* Flags the Kartsquare mobile app before first paint so [data-native-hide]
+            elements (footer, bottom nav) never flash. Only builds that have a native tab bar
+            announce themselves: they set window.__KARTSQUARE_WEBVIEW__ (or add "KartsquareApp" to
+            the user agent). Do NOT key this on window.ReactNativeWebView: every React Native
+            WebView has that, including older app builds with no native tab bar, and the page would
+            then hide its own nav and leave the user with none. */}
         <script
-          async
-          src="https://t.contentsquare.net/uxa/c3689fc1ad6ad.js"
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(window.__KARTSQUARE_WEBVIEW__||/KartsquareApp/i.test(navigator.userAgent)){document.documentElement.setAttribute("data-native","1");}}catch(e){}})();`,
+          }}
+        />
+        {/* Plain script avoids Turbopack chunk split issues from next/script in RootLayout */}
+        {/* Loaded after window load + 3s so it never competes with hydration. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.addEventListener("load",function(){setTimeout(function(){var s=document.createElement("script");s.async=true;s.src="https://t.contentsquare.net/uxa/c3689fc1ad6ad.js";document.head.appendChild(s);},3000);});`,
+          }}
         />
         <script
           type="application/ld+json"

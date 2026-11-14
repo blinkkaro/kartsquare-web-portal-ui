@@ -2,6 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
+import { useDispatch } from "react-redux";
+import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import {
   Box,
   Typography,
@@ -17,6 +19,7 @@ import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import SearchOffRoundedIcon from "@mui/icons-material/SearchOffRounded";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+import { openAiWithQuery } from "@/features/ui/uiSlice";
 import { COLORS } from "@/constants/colors";
 import { RELATED_CATEGORIES_FOR_EMPTY } from "../servicesSampleData";
 
@@ -117,6 +120,8 @@ interface ServicesEmptyStateProps {
   cityName?: string;
   onResetFilters?: () => void;
   hasActiveFilters?: boolean;
+  /** What the person typed, if anything: handed to Kart AI so it can understand Hinglish and typos. */
+  searchText?: string;
 }
 
 export const ServicesEmptyState: React.FC<ServicesEmptyStateProps> = ({
@@ -124,9 +129,12 @@ export const ServicesEmptyState: React.FC<ServicesEmptyStateProps> = ({
   cityName,
   onResetFilters,
   hasActiveFilters = false,
+  searchText,
 }) => {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const dark = theme.palette.mode === "dark";
+  const aiQuery = (searchText?.trim() || [categoryName, cityName].filter(Boolean).join(" ")).trim();
 
   return (
     <Box
@@ -205,6 +213,27 @@ export const ServicesEmptyState: React.FC<ServicesEmptyStateProps> = ({
           }}
         >
           Reset all filters
+        </Button>
+      )}
+
+      {aiQuery && (
+        <Button
+          variant="outlined"
+          onClick={() => dispatch(openAiWithQuery(aiQuery))}
+          startIcon={<AutoAwesomeRoundedIcon sx={{ fontSize: 18 }} />}
+          sx={{
+            ml: hasActiveFilters && onResetFilters ? 1.5 : 0,
+            mt: hasActiveFilters && onResetFilters ? { xs: 1.5, sm: 0 } : 0,
+            borderRadius: "12px",
+            px: 3,
+            py: 1,
+            fontWeight: 700,
+            textTransform: "none",
+            borderColor: COLORS.PRIMARY_PURPLE,
+            color: COLORS.PRIMARY_PURPLE,
+          }}
+        >
+          Ask Kart AI to find it
         </Button>
       )}
 

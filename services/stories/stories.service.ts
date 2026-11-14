@@ -23,7 +23,6 @@ class StoriesService {
       }
       return response.data;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
@@ -33,13 +32,11 @@ class StoriesService {
       const response = await GET<StoriesListResponse>(
         APIENDPOINT.GET_STORIES(page, limit)
       );
-      console.log("Get Stories Response:", response);
       if (response.status !== "success") {
         throw new Error(response.message);
       }
       return response.data;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
@@ -70,9 +67,7 @@ class StoriesService {
 
   async viewStory(id: string): Promise<boolean> {
     try {
-      console.log("View Story ID:", id);
       const response = await POST(APIENDPOINT.VIEW_STORY(id), {}, {}, true);
-      console.log("View Story Response:", response);
       if (response.status !== "success") {
         throw new Error(response.message);
       }

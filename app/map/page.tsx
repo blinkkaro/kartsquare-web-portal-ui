@@ -2,14 +2,17 @@ import type { Metadata } from "next";
 import React from "react";
 import MainLayout from "../mainLayout";
 import MapeView from "@/components/pages/map";
+import { manifestCopy } from "@/lib/seo/metaManifest";
 import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
 import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
 import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 
 const mapFallback = seoPublic({
-  title: "Map — find businesses & services",
-  description:
-    "Explore kartsquare providers, suppliers, and service areas on an interactive map. Discover local professionals near you.",
+  ...(manifestCopy("map") ?? {
+    title: "Map — find businesses & services",
+    description:
+      "Explore kartsquare providers, suppliers, and service areas on an interactive map. Discover local professionals near you.",
+  }),
   path: "/map",
   keywords: ["service map", "local providers India", "business map kartsquare"],
 });
