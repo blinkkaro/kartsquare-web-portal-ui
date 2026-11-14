@@ -373,7 +373,7 @@ export default function ServicesMobileFilterDrawer({
         <Box
           sx={{
             p: 2,
-            pb: "calc(16px + env(safe-area-inset-bottom, 16px))",
+            pb: "calc(16px + var(--safe-bottom))",
             borderTop: "1px solid",
             borderColor: dark ? "rgba(255,255,255,0.08)" : "#ede9f2",
             bgcolor: "background.paper",

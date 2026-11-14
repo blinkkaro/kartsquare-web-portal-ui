@@ -118,7 +118,7 @@ function ReelsView() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "100vh",
+          height: "100%",
         }}
       >
         <CircularProgress color="inherit" />
@@ -133,8 +133,8 @@ function ReelsView() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "100vh",
-          color: "white",
+          height: "100%",
+          color: "text.secondary",
         }}
       >
         <Typography variant="h6">No reels found</Typography>
@@ -147,12 +147,9 @@ function ReelsView() {
       <Box
         ref={containerRef}
         sx={{
-          height: {
-            xs: "calc(100vh - 70px - 60px)",
-            sm: "calc(100vh - 64px - 60px)",
-            md: "calc(100vh - 72px)",
-          },
+          height: "100%",
           overflowY: "scroll",
+          overscrollBehavior: "contain",
           scrollSnapType: "y mandatory",
           scrollBehavior: "auto",
           "&::-webkit-scrollbar": { display: "none" },
@@ -168,11 +165,7 @@ function ReelsView() {
             sx={{
               scrollSnapAlign: "start",
               scrollSnapStop: "always",
-              height: {
-                xs: "calc(100vh - 70px - 60px)",
-                sm: "calc(100vh - 64px - 60px)",
-                md: "calc(100vh - 72px)",
-              },
+              height: "100%",
               flexShrink: 0,
             }}
           >
@@ -201,9 +194,12 @@ function ReelsView() {
 
   return (
     <>
+      {/* Exactly one screen tall: the header (Nav also renders its own spacer), then the reels,
+          then room for the phone/tablet tab dock so a reel's buttons never sit under it. */}
       <Box
         sx={{
-          minHeight: "100vh",
+          height: "100dvh",
+          overflow: "hidden",
           display: "flex",
           flexDirection: "column",
           backgroundColor:
@@ -219,9 +215,10 @@ function ReelsView() {
           component="main"
           sx={{
             flex: 1,
-            mx: "auto",
+            minHeight: 0,
             width: "100%",
-            mt: { xs: 7, sm: 8, md: 9, lg: 8 },
+            // The dock: --mobile-nav-h tall, 10px above the device's bottom inset (MobileBottomNav).
+            pb: { xs: "calc(var(--mobile-nav-h, 56px) + 10px + var(--safe-bottom))", lg: 0 },
             backgroundColor:
               theme.palette.mode === "dark"
                 ? COLORS.BACKGROUND.PAPER_DARK

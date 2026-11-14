@@ -32,6 +32,9 @@ type FeedUser = {
   role?: string;
 } | null;
 
+/** Widest the post column gets (px): Instagram-like, so photos and text stay readable on large screens. */
+const FEED_COLUMN_MAX = 630;
+
 /** Calls `onVisible` when the sentinel scrolls near the viewport (infinite scroll). */
 function useLoadMore(enabled: boolean, onVisible: () => void) {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -179,13 +182,16 @@ export default function FeedView() {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: "minmax(0, 1fr) 340px" },
+              // Posts sit in one centred column of a readable width on every screen;
+              // from lg the suggestions rail sits beside it and the pair is centred.
+              gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: `minmax(0, ${FEED_COLUMN_MAX}px) 340px` },
+              justifyContent: "center",
               gap: { lg: 4 },
               pt: { xs: 0, sm: 3 },
             }}
           >
             {/* Main column */}
-            <Box sx={{ minWidth: 0, width: "100%" }}>
+            <Box sx={{ minWidth: 0, width: "100%", maxWidth: { sm: FEED_COLUMN_MAX }, mx: "auto" }}>
               {isAuthenticated && (
                 <>
                   <Box sx={{ mb: { xs: 0, sm: 2 } }}>

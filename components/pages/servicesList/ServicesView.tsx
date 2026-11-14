@@ -44,7 +44,6 @@ import {
   ServicesErrorState,
   ServicesLocationPrompt,
 } from "./sections/ServicesStates";
-import { ServicesExploreSection } from "./sections/ServicesExploreSection";
 
 interface ServicesViewProps {
   initialListing?: Listing;
@@ -1003,9 +1002,6 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
               )}
           </Box>
         </Box>
-
-        {/* 3. Explore Section */}
-        <ServicesExploreSection categoryName={categoryName} cityName={placeText} />
       </Container>
 
       {/* Slide-over Quick View Drawer */}

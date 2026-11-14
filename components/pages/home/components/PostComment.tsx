@@ -12,7 +12,9 @@ import {
 } from "@mui/material";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { Close, Send } from "@mui/icons-material";
-import { Posts, Comment } from "@/services/post/postInterfaces";
+import toast from "react-hot-toast";
+import { type Posts, type Comment } from "@/services/post/postInterfaces";
+import { postSlides } from "@/services/post/postMedia";
 import { useGetPostComments, useAddPostComment } from "@/hooks/usePosts";
 import { COLORS } from "@/constants/colors";
 import { formatTimestamp } from "@/helper/helper";
@@ -26,7 +28,9 @@ interface PostCommentProps {
 
 const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  // The media panel only fits beside the comments from md up; below that the
+  // comments (and the box to write one) get the whole dialog.
+  const showMedia = useMediaQuery(theme.breakpoints.up("md"));
   const { t } = useTranslate();
 
   const [commentText, setCommentText] = useState("");
@@ -34,20 +38,28 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
   const { data: commentsData, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetPostComments(post.id, 10, open);
   const addCommentMutation = useAddPostComment(post.id);
 
-  const handleSubmitComment = async () => {
-    try {
-      if (commentText.trim()) {
-        await addCommentMutation.mutateAsync(commentText);
-        setCommentText("");
-      }
-    } catch (error) {
-      onClose();
-    }
+  const COMMENT_MAX = 500; // backend commentSchema max
+  const authorName =
+    post.user?.business_name?.trim() ||
+    `${post.user?.first_name ?? ""} ${post.user?.last_name ?? ""}`.trim() ||
+    post.user?.username ||
+    "Kartsquare user";
+  const firstSlide = postSlides(post)[0];
 
+  const handleSubmitComment = async () => {
+    const text = commentText.trim();
+    if (!text || addCommentMutation.isPending) return;
+    try {
+      await addCommentMutation.mutateAsync(text);
+      setCommentText("");
+    } catch {
+      // Keep the dialog and the typed text so the user can try again.
+      toast.error("Couldn't post your comment. Please try again.");
+    }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
       handleSubmitComment();
     }
@@ -68,22 +80,23 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
       <Box
         sx={{
           width: { xs: "100%", sm: "90%", md: "85%", lg: "75%" },
-          height: { xs: "100%", sm: "90%", md: "85%" },
-          maxHeight: { xs: "100vh", sm: "90vh" },
+          maxWidth: { sm: 560, md: 1100 },
+          height: { xs: "100dvh", sm: "85vh" },
+          maxHeight: { xs: "100dvh", sm: "90vh" },
           bgcolor: theme.palette.mode === "dark" ? "#1a1a1a" : "#fff",
           borderRadius: { xs: 0, sm: 2 },
           overflow: "hidden",
           display: "flex",
-          flexDirection: { xs: "column", md: "row" },
+          flexDirection: "row",
           outline: "none",
         }}
       >
         {/* Left Side - Post Image (Desktop and Tablet) */}
-        {!isMobile && (
+        {showMedia && firstSlide && (
           <Box
             sx={{
-              flex: { md: 1 },
-              minWidth: { md: 0 },
+              flex: 1,
+              minWidth: 0,
               bgcolor: "#000",
               display: "flex",
               alignItems: "center",
@@ -91,28 +104,37 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
               position: "relative",
             }}
           >
-            <img
-              src={post.media_urls}
-              alt="Post"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "contain",
-              }}
-            />
+            {firstSlide.video ? (
+              <Box
+                component="video"
+                src={firstSlide.url}
+                poster={firstSlide.poster}
+                controls
+                playsInline
+                preload="none"
+                sx={{ width: "100%", height: "100%", objectFit: "contain" }}
+              />
+            ) : (
+              <Box
+                component="img"
+                src={firstSlide.url}
+                alt={`Post by ${authorName}`}
+                sx={{ width: "100%", height: "100%", objectFit: "contain" }}
+              />
+            )}
           </Box>
         )}
 
         {/* Right Side - Comments Section */}
         <Box
           sx={{
-            flex: 1, // Changed from flex: { md: 1 } to flex: 1 to ensure it fills height on mobile
+            flex: { xs: 1, md: "0 0 420px" },
             display: "flex",
             flexDirection: "column",
-            width: { xs: "100%", md: "auto" },
-            maxWidth: { md: 500 },
-            minWidth: { md: 400 },
-            height: "100%", // Explicitly set height to fill parent
+            width: { xs: "100%", md: 420 },
+            minWidth: 0,
+            minHeight: 0,
+            height: "100%",
           }}
         >
           {/* Header */}
@@ -129,8 +151,8 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
               <Avatar
-                src={post.user.profile_pic || ""}
-                alt={post.user.first_name}
+                src={post.user?.profile_pic || ""}
+                alt={authorName}
                 sx={{ width: 40, height: 40 }}
               />
               <Box>
@@ -144,11 +166,11 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
                         : COLORS.TEXT.PRIMARY_LIGHT,
                   }}
                 >
-                  {post.user.first_name} {post.user.last_name}
+                  {authorName}
                 </Typography>
               </Box>
             </Box>
-            <IconButton onClick={onClose} size="small">
+            <IconButton onClick={onClose} size="small" aria-label="Close comments">
               <Close
                 sx={{
                   color:
@@ -165,6 +187,11 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
             <Box
               sx={{
                 p: 2,
+                maxHeight: "30%",
+                overflowY: "auto",
+                flexShrink: 0,
+                whiteSpace: "pre-line",
+                wordBreak: "break-word",
                 borderBottom: `1px solid ${
                   theme.palette.mode === "dark" ? "#333" : "#dbdbdb"
                 }`,
@@ -172,11 +199,11 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
             >
               <Box sx={{ display: "flex", gap: 1.5 }}>
                 <Avatar
-                  src={post.user.profile_pic || ""}
-                  alt={post.user.first_name}
+                  src={post.user?.profile_pic || ""}
+                  alt={authorName}
                   sx={{ width: 32, height: 32 }}
                 />
-                <Box sx={{ flex: 1 }}>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
                   <Typography
                     variant="body2"
                     sx={{
@@ -186,7 +213,7 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
                           : COLORS.TEXT.PRIMARY_LIGHT,
                     }}
                   >
-                    <strong>{post.user.first_name}</strong> {post.caption}
+                    <strong>{authorName}</strong> {post.caption}
                   </Typography>
                   <Typography
                     variant="caption"
@@ -210,8 +237,9 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
           <Box
             sx={{
               flex: 1,
+              minHeight: 0,
               overflowY: "auto",
-              p: { xs: 1.5, sm: 2 }, // Reduced padding on mobile
+              p: { xs: 1.5, sm: 2 },
               "&::-webkit-scrollbar": {
                 width: "8px",
               },
@@ -339,6 +367,8 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
           <Box
             sx={{
               p: 2,
+              pb: { xs: "calc(16px + var(--safe-bottom))", sm: 2 },
+              flexShrink: 0,
               borderTop: `1px solid ${
                 theme.palette.mode === "dark" ? "#333" : "#dbdbdb"
               }`,
@@ -349,8 +379,9 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
                 fullWidth
                 placeholder={t("commentPlaceholder")}
                 value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onChange={(e) => setCommentText(e.target.value.slice(0, COMMENT_MAX))}
+                onKeyDown={handleKeyDown}
+                slotProps={{ htmlInput: { maxLength: COMMENT_MAX, "aria-label": "Write a comment" } }}
                 variant="standard"
                 multiline
                 maxRows={3}
@@ -378,6 +409,7 @@ const PostComment: React.FC<PostCommentProps> = ({ open, onClose, post }) => {
               />
               <IconButton
                 onClick={handleSubmitComment}
+                aria-label="Post comment"
                 disabled={!commentText.trim() || addCommentMutation.isPending}
                 sx={{
                   color: commentText.trim()

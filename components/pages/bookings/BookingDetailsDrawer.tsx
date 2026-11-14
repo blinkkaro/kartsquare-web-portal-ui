@@ -32,6 +32,7 @@ import LogoLoader from "../../common/Loader/LogoLoader";
 import { Phone, CalendarToday, LocationOn } from "@mui/icons-material";
 import ReviewModal from "./ReviewModal";
 import { useTranslate } from "@/hooks/useTranslate";
+import ServiceCatalogFiles, { catalogUrls } from "@/components/common/ServiceCatalogFiles";
 
 interface BookingDetailsDrawerProps {
   open: boolean;
@@ -109,6 +110,9 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
   const currentBooking = booking || initialBooking;
   const statusStyle = getStatusColor(currentBooking.status);
   const totalAmount = currentBooking.service_price;
+  // The full details (not the list row) carry the service's catalogue.
+  const catalogFiles =
+    booking?.service_pricing_type === "catalog" ? catalogUrls(booking.service_price_catalog_url) : [];
 
   return (
     <RightDrawer
@@ -607,6 +611,25 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
 
             {/* Secondary Flow: Instructions & Evidence */}
             <Box sx={{ px: 1 }}>
+              {/* Price catalogue (images or PDFs) from the service */}
+              {catalogFiles.length > 0 && (
+                <Box sx={{ mb: 4 }}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "#94A3B8",
+                      fontWeight: 700,
+                      letterSpacing: "0.1em",
+                      mb: 2,
+                      display: "block",
+                    }}
+                  >
+                    PRICE CATALOGUE
+                  </Typography>
+                  <ServiceCatalogFiles urls={catalogFiles} thumbSize={96} />
+                </Box>
+              )}
+
               {/* Notes Section with Subtle Quote Style */}
               {currentBooking.customer_notes && (
                 <Box sx={{ mb: 4 }}>

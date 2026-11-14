@@ -202,8 +202,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     updateProfile(
       {
         banner_image: bannerFile || "",
-        first_name: firstName,
-        last_name: lastName,
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
         bio: bio,
         profile_pic: profilePicFile || "",
         ...(isServiceProvider && username ? { username } : {}),
@@ -615,8 +615,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               onClick={handleSave}
               isLoading={isPending}
               disabled={
+                // Last name is optional; only the first name is required.
                 !firstName.trim() ||
-                !lastName.trim() ||
                 firstName.length > 50 ||
                 lastName.length > 50 ||
                 bio.length > 500 ||

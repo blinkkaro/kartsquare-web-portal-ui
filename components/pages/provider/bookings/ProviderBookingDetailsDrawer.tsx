@@ -28,6 +28,7 @@ import RightDrawer from "../../../common/RightDrawer";
 import { bookingDetailsService } from "../../../../services/booking/bookingDetails";
 import { Link } from "@mui/material";
 import LogoLoader from "../../../common/Loader/LogoLoader";
+import ServiceCatalogFiles, { catalogUrls } from "@/components/common/ServiceCatalogFiles";
 import {
   Phone,
   CalendarToday,
@@ -93,6 +94,8 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
   };
 
   const currentBooking = booking;
+  const catalogFiles =
+    booking?.service_pricing_type === "catalog" ? catalogUrls(booking.service_price_catalog_url) : [];
 
   if (!currentBooking) {
     return (
@@ -414,6 +417,14 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                 </Box>
               </Box>
             </Box>
+
+            {/* Price catalogue (images or PDFs) from the service */}
+            {catalogFiles.length > 0 && (
+              <Box sx={{ mb: 3 }}>
+                <SectionLabel>PRICE CATALOGUE</SectionLabel>
+                <ServiceCatalogFiles urls={catalogFiles} thumbSize={96} />
+              </Box>
+            )}
 
             {/* Subdued Instructions */}
             {currentBooking.customer_notes && (

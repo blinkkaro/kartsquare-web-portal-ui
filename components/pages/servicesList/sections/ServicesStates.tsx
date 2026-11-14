@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import {
   Box,
@@ -20,6 +20,7 @@ import SearchOffRoundedIcon from "@mui/icons-material/SearchOffRounded";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { openAiWithQuery } from "@/features/ui/uiSlice";
+import { selectIsAuthenticated } from "@/features/ui/authSlice";
 import { COLORS } from "@/constants/colors";
 import { RELATED_CATEGORIES_FOR_EMPTY } from "../servicesSampleData";
 
@@ -133,6 +134,8 @@ export const ServicesEmptyState: React.FC<ServicesEmptyStateProps> = ({
 }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
+  // Signed-in users already have an account (customer or provider): don't pitch a new listing.
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   const dark = theme.palette.mode === "dark";
   const aiQuery = (searchText?.trim() || [categoryName, cityName].filter(Boolean).join(" ")).trim();
 
@@ -286,7 +289,8 @@ export const ServicesEmptyState: React.FC<ServicesEmptyStateProps> = ({
         </Box>
       </Box>
 
-      {/* Merchant / Provider Callout */}
+      {/* Merchant / Provider Callout: only for visitors who aren't signed in */}
+      {!isAuthenticated && (
       <Box
         sx={{
           mt: 4,
@@ -324,7 +328,7 @@ export const ServicesEmptyState: React.FC<ServicesEmptyStateProps> = ({
         </Box>
         <Button
           component={Link}
-          href="/auth/register"
+          href="/business-listing"
           variant="contained"
           endIcon={<ArrowForwardRoundedIcon sx={{ fontSize: 15 }} />}
           sx={{
@@ -346,6 +350,7 @@ export const ServicesEmptyState: React.FC<ServicesEmptyStateProps> = ({
           List your business
         </Button>
       </Box>
+      )}
     </Box>
   );
 };

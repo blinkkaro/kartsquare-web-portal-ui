@@ -59,12 +59,10 @@ const ReelContainer: React.FC<ReelContainerProps> = ({
   return (
     <Box
       sx={{
-        height: {
-          xs: "calc(100vh - 70px - 60px)",
-          sm: "calc(100vh - 64px - 60px)",
-          md: "calc(100vh - 72px)",
-        },
+        height: "100%",
         width: "100%",
+        boxSizing: "border-box",
+        py: { xs: 0, md: 2 },
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -76,10 +74,9 @@ const ReelContainer: React.FC<ReelContainerProps> = ({
       <Box
         sx={{
           display: "flex",
-          flexDirection: isDesktop ? "row" : "column",
-          height: isDesktop ? "calc(100% - 2px)" : "calc(100% - 2px)",
-          mb: isDesktop ? 0 : 8,
-          width: "auto",
+          flexDirection: "row",
+          height: "100%",
+          width: isDesktop ? "auto" : "100%",
           maxWidth: "100%",
           position: "relative",
           // bgcolor: isDesktop ? '#1a1a1a' : 'black',
@@ -91,9 +88,12 @@ const ReelContainer: React.FC<ReelContainerProps> = ({
         <Box
           sx={{
             position: "relative",
-            aspectRatio: "9/16",
+            // Phones: the whole width, video letterboxed; desktop: a 9:16 card.
+            aspectRatio: { xs: "auto", md: "9/16" },
+            width: { xs: "100%", md: "auto" },
             height: "100%",
-            // bgcolor: 'black',
+            maxWidth: "100%",
+            bgcolor: "#000",
           }}
         >
           <ReelPlayer
@@ -121,8 +121,8 @@ const ReelContainer: React.FC<ReelContainerProps> = ({
             sx={{
               position: "absolute",
               right: 8,
-              // clear of the phone dock (--mobile-nav-h + its 10px gap) so a tap on the comment icon never lands on it
-              bottom: "calc(max(100px, var(--mobile-nav-h, 0px) + 56px) + env(safe-area-inset-bottom, 0px))",
+              // The page already ends above the phone dock, so this only clears the progress bar.
+              bottom: 16,
               zIndex: 3,
             }}
           >

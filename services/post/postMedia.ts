@@ -1,4 +1,4 @@
-import { PostType } from "./postInterfaces";
+import { PostType, type Posts } from "./postInterfaces";
 
 /**
  * How a post's media decides what it is. A reel is not a separate kind of post:
@@ -41,3 +41,37 @@ export const mediaAspect = (width: number, height: number): number =>
   width > 0 && height > 0 && Number.isFinite(width / height)
     ? Math.min(MEDIA_ASPECT_MAX, Math.max(MEDIA_ASPECT_MIN, width / height))
     : MEDIA_ASPECT_DEFAULT;
+
+/** media_urls arrives as an array of urls (older rows: a single url string). */
+export function postMedia(post: Pick<Posts, "media_urls">): string[] {
+  const raw = post.media_urls as unknown;
+  if (Array.isArray(raw)) return raw.filter((u): u is string => typeof u === "string" && !!u);
+  if (typeof raw === "string" && raw.trim()) {
+    const value = raw.trim();
+    if (value.startsWith("[")) {
+      try {
+        const parsed = JSON.parse(value);
+        if (Array.isArray(parsed)) return parsed.filter((u) => typeof u === "string" && u);
+      } catch {
+        /* fall through: treat as a single url */
+      }
+    }
+    return [value];
+  }
+  return [];
+}
+
+/**
+ * What to show for a post: video posts carry a thumbnail image and the video
+ * file in media_urls, so they show the video with the image as its poster;
+ * photo posts show every image.
+ */
+export function postSlides(post: Pick<Posts, "media_urls" | "post_type">): Array<{ url: string; video: boolean; poster?: string }> {
+  const urls = postMedia(post);
+  const videos = urls.filter(isVideoUrl);
+  const images = urls.filter((u) => !isVideoUrl(u));
+  if (post.post_type === "video" || videos.length > 0) {
+    return videos.map((url) => ({ url, video: true, poster: images[0] }));
+  }
+  return images.map((url) => ({ url, video: false }));
+}

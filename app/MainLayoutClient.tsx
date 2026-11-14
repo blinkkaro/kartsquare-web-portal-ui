@@ -38,7 +38,7 @@ export default function MainLayoutClient({
               ? COLORS.BACKGROUND.PAPER_DARK
               : COLORS.BACKGROUND.PAPER_LIGHT,
           // The bottom nav shows below `lg` (phones + tablets): reserve its height plus the safe area
-          pb: { xs: "calc(6rem + env(safe-area-inset-bottom, 0px))", lg: "0" },
+          pb: { xs: "calc(6rem + var(--safe-bottom))", lg: "0" },
         }}
       >
         <Nav />

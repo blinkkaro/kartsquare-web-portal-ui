@@ -463,7 +463,7 @@ export default function ChatInterface() {
           left: 0,
           right: 0,
           p: 2,
-          pb: "max(16px, env(safe-area-inset-bottom))",
+          pb: "max(16px, var(--safe-bottom))",
           background: dark ? "rgba(10,10,10,0.9)" : "rgba(248,250,252,0.92)",
           backdropFilter: "blur(12px)",
           borderTop: `1px solid ${dark ? "rgba(130, 72, 247, 0.15)" : COLORS.PURPLE_ALPHA_10}`,

@@ -1,18 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Typography,
   Paper,
   useTheme,
-  Dialog,
-  IconButton,
   Button,
 } from "@mui/material";
 import {
-  Description,
-  Close,
-  ArrowBackIosNew,
-  ArrowForwardIos,
   RequestQuote,
 } from "@mui/icons-material";
 import { stripMarkdown } from "@/utils/plainText";
@@ -22,6 +16,7 @@ import {
 } from "@/services/serviceList/listInteraface";
 import { useTranslate } from "@/hooks/useTranslate";
 import { COLORS } from "../../constants/colors";
+import ServiceCatalogFiles from "./ServiceCatalogFiles";
 
 interface CustomerServicePricingProps {
   pricingType: PricingType;
@@ -43,8 +38,6 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { t } = useTranslate();
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const textPrimary = isDark
     ? COLORS.TEXT.PRIMARY_DARK
@@ -148,141 +141,7 @@ const CustomerServicePricing: React.FC<CustomerServicePricingProps> = ({
         >
           {t("tap_to_view_full")}
         </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2,
-            flexWrap: "wrap",
-          }}
-        >
-          {priceCatalogUrls.map((url, index) => (
-            <Box
-              key={index}
-              component="img"
-              src={url}
-              alt={t("priceCatalog") + ` ${index + 1}`}
-              onClick={() => {
-                setLightboxOpen(true);
-                setSelectedImageIndex(index);
-              }}
-              sx={{
-                width: "10rem",
-                height: "10rem",
-                borderRadius: 2,
-                border: `2px solid ${borderColor}`,
-                objectFit: "cover",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-                "&:hover": {
-                  opacity: 0.9,
-                  borderColor: COLORS.PRIMARY_PURPLE,
-                  boxShadow: `0 4px 12px ${COLORS.PURPLE_ALPHA_20}`,
-                },
-              }}
-            />
-          ))}
-        </Box>
-        <Dialog
-          open={lightboxOpen}
-          onClose={() => setLightboxOpen(false)}
-          fullWidth
-          PaperProps={{
-            sx: {
-              bgcolor: "transparent",
-              boxShadow: "none",
-              overflow: "hidden",
-              width: "100%",
-              height: "100%",
-              maxWidth: "none",
-              margin: 0,
-            },
-          }}
-        >
-          <Box
-            sx={{
-              position: "relative",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "100%",
-              width: "100%",
-            }}
-          >
-            <Box
-              component="img"
-              src={priceCatalogUrls[selectedImageIndex]}
-              alt={`Catalog Full ${selectedImageIndex + 1}`}
-              sx={{
-                maxHeight: "90vh",
-                maxWidth: "90vw",
-                objectFit: "contain",
-                borderRadius: 2,
-              }}
-            />
-            {priceCatalogUrls.length > 1 && (
-              <>
-                <IconButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedImageIndex((prev) =>
-                      prev > 0 ? prev - 1 : priceCatalogUrls.length - 1,
-                    );
-                  }}
-                  sx={{
-                    position: "absolute",
-                    left: { xs: 10, md: 40 },
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    color: "white",
-                    bgcolor: "rgba(255,255,255,0.1)",
-                    "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
-                    zIndex: 10,
-                    width: 48,
-                    height: 48,
-                  }}
-                >
-                  <ArrowBackIosNew />
-                </IconButton>
-                <IconButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedImageIndex((prev) =>
-                      prev < priceCatalogUrls.length - 1 ? prev + 1 : 0,
-                    );
-                  }}
-                  sx={{
-                    position: "absolute",
-                    right: { xs: 10, md: 40 },
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    color: "white",
-                    bgcolor: "rgba(255,255,255,0.1)",
-                    "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
-                    zIndex: 10,
-                    width: 48,
-                    height: 48,
-                  }}
-                >
-                  <ArrowForwardIos />
-                </IconButton>
-              </>
-            )}
-            <IconButton
-              onClick={() => setLightboxOpen(false)}
-              sx={{
-                position: "absolute",
-                top: 20,
-                right: 20,
-                color: "white",
-                bgcolor: "rgba(255,255,255,0.1)",
-                "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
-                zIndex: 10,
-              }}
-            >
-              <Close />
-            </IconButton>
-          </Box>
-        </Dialog>
+        <ServiceCatalogFiles urls={priceCatalogUrls} />
       </Box>
     );
   }

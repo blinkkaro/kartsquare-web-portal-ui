@@ -1,5 +1,9 @@
 
 :root {
+    /* Space the device keeps at the bottom (iPhone home indicator, Android nav bar).
+       Use var(--safe-bottom) for anything pinned to the bottom of the screen, never env() directly. */
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+
     /* Gradient colors */
     --color-primary: #8800FF;
     --color-primary2: #79adff;
@@ -235,4 +239,11 @@ svg text,
 .recharts-tooltip-wrapper,
 .swiper {
     font-family: inherit;
+}
+
+/* Android app WebViews (Play Store build) that draw behind the system navigation bar
+   often report a 0px safe-area inset. The pre-paint script in app/layout.tsx sets
+   data-wv-inset when it detects that, and we reserve room for the nav bar ourselves. */
+:root[data-wv-inset] {
+    --safe-bottom: max(env(safe-area-inset-bottom, 0px), var(--wv-nav-bar, 48px));
 }

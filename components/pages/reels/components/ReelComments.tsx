@@ -33,7 +33,9 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { useFollowProvider } from "@/hooks/useProviderProfile";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
-import { selectCurrentUser } from "@/features/ui/authSlice";
+import { selectCurrentUser, selectIsAuthenticated } from "@/features/ui/authSlice";
+import { openLoginModal } from "@/features/ui/loginModalSlice";
+import toast from "react-hot-toast";
 import { AppUserType } from "@/services/auth/auth.interface";
 import ExpandableText from "@/components/common/ExpandableText";
 
@@ -66,15 +68,27 @@ const ReelComments: React.FC<ReelCommentsProps> = ({
   const { t } = useTranslate();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(selectCurrentUser);
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const followMutation = useFollowProvider(post.user.id);
 
   const comments = commentsData?.pages.flatMap((page) => page.comments) || [];
   const isOwnReel = currentUser?.id === post.user.id;
 
+  const COMMENT_MAX = 500; // backend commentSchema max
+
   const handleSend = async () => {
-    if (commentText.trim()) {
-      await addCommentMutation.mutateAsync(commentText);
+    const text = commentText.trim();
+    if (!text || addCommentMutation.isPending) return;
+    // Posting needs an account: open the login sheet and keep what was typed.
+    if (!isAuthenticated) {
+      dispatch(openLoginModal());
+      return;
+    }
+    try {
+      await addCommentMutation.mutateAsync(text);
       setCommentText("");
+    } catch {
+      toast.error("Couldn't post your comment. Please try again.");
     }
   };
 
@@ -134,14 +148,14 @@ const ReelComments: React.FC<ReelCommentsProps> = ({
                     <Typography variant="h6" sx={{ fontWeight: 700 }}>{t("reels")}</Typography>
                 )} */}
         {!isSidebar && (
-          <IconButton onClick={onClose} sx={{ color: "inherit" }}>
+          <IconButton onClick={onClose} sx={{ color: "inherit" }} aria-label="Close comments">
             <Close />
           </IconButton>
         )}
       </Box>
 
       {/* Comment List */}
-      <Box sx={{ flexGrow: 1, overflowY: "auto", p: 2 }}>
+      <Box sx={{ flexGrow: 1, minHeight: 0, overflowY: "auto", p: 2 }}>
         {/* Caption (Top of list on desktop/sidebar) */}
         {isSidebar && post.caption && (
           <Box sx={{ display: "flex", gap: 1.5, mb: 3 }}>
@@ -293,7 +307,9 @@ const ReelComments: React.FC<ReelCommentsProps> = ({
       <Box
         sx={{
           p: 2,
-          pb: { xs: 4, md: 2 },
+          // clear of the phone's home indicator / navigation buttons
+          pb: { xs: "calc(16px + var(--safe-bottom))", md: 2 },
+          flexShrink: 0,
           borderTop: `1px solid ${isDark ? "#333" : "#eee"}`,
           display: "flex",
           alignItems: "center",
@@ -301,7 +317,7 @@ const ReelComments: React.FC<ReelCommentsProps> = ({
           bgcolor: "inherit",
         }}
       >
-        <Avatar src="" sx={{ width: 32, height: 32 }} />
+        <Avatar src={currentUser?.profile_pic || ""} sx={{ width: 32, height: 32 }} />
         <Box
           sx={{
             flex: 1,
@@ -318,7 +334,9 @@ const ReelComments: React.FC<ReelCommentsProps> = ({
             placeholder="Add a comment..."
             variant="standard"
             value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
+            onChange={(e) => setCommentText(e.target.value.slice(0, COMMENT_MAX))}
+            disabled={addCommentMutation.isPending}
+            slotProps={{ htmlInput: { maxLength: COMMENT_MAX, "aria-label": "Write a comment" } }}
             sx={{
               "& .MuiInput-root": {
                 color: "inherit",
@@ -327,9 +345,19 @@ const ReelComments: React.FC<ReelCommentsProps> = ({
                 "&:hover:not(.Mui-disabled):before": { borderBottom: "none" },
               },
             }}
-            onKeyPress={(e) => e.key === "Enter" && handleSend()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+                e.preventDefault();
+                void handleSend();
+              }
+            }}
           />
-          <IconButton sx={{ color: "inherit", p: 0.5 }} onClick={handleSend}>
+          <IconButton
+            sx={{ color: "inherit", p: 0.5 }}
+            onClick={() => void handleSend()}
+            disabled={!commentText.trim() || addCommentMutation.isPending}
+            aria-label="Post comment"
+          >
             {addCommentMutation.isPending ? (
               <CircularProgress size={18} color="inherit" />
             ) : (
@@ -349,7 +377,8 @@ const ReelComments: React.FC<ReelCommentsProps> = ({
         onClose={onClose}
         PaperProps={{
           sx: {
-            height: "80vh",
+            height: "80dvh",
+            maxHeight: "calc(100dvh - 24px)",
             borderTopLeftRadius: 16,
             borderTopRightRadius: 16,
           },

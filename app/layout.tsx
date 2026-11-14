@@ -25,7 +25,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  // Lets the bottom nav pad for the iPhone home indicator via env(safe-area-inset-bottom)
+  // Lets the bottom nav pad for the device's bottom inset (see --safe-bottom in globals.css)
   viewportFit: "cover",
   themeColor: "#ffffff",
 };
@@ -165,6 +165,15 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{if(window.__KARTSQUARE_WEBVIEW__||/KartsquareApp/i.test(navigator.userAgent)){document.documentElement.setAttribute("data-native","1");}}catch(e){}})();`,
+          }}
+        />
+        {/* Android app WebViews (the Play Store build) can draw the page behind the system
+            navigation bar while reporting env(safe-area-inset-bottom) as 0, which hides the bottom
+            tab dock under the back/home buttons. When the WebView fills the whole screen
+            (no room left for the bars), flag it so globals.css reserves space for the nav bar. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var ua=navigator.userAgent;if(!/Android/i.test(ua)||!(/; wv\\)/.test(ua)||/Version\\/[\\d.]+ (Mobile )?Chrome\\//.test(ua)||window.ReactNativeWebView))return;var d=document.documentElement;function check(){var h=window.innerHeight;if(h>0&&screen.height-h<32){d.setAttribute("data-wv-inset","1");}}check();window.addEventListener("load",check);window.addEventListener("orientationchange",function(){setTimeout(check,300);});}catch(e){}})();`,
           }}
         />
         {/* Plain script avoids Turbopack chunk split issues from next/script in RootLayout */}

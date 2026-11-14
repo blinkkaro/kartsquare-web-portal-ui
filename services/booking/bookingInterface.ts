@@ -141,6 +141,10 @@ export interface BookingDetails {
   service_currency: string;
   service_is_price_required: boolean;
   service_visiting_charge: number | null;
+  /** Service pricing type ("single" | "catalog" | "multiple" | "noPrice"). */
+  service_pricing_type?: string;
+  /** The service's price catalogue files (images or PDFs). */
+  service_price_catalog_url?: string[];
   service_provider_address_id: string;
   booking_at: string;
   booking_created_at?: string;

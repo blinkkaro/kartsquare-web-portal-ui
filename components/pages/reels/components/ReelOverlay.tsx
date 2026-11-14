@@ -31,8 +31,10 @@ const ReelOverlay: React.FC<ReelOverlayProps> = ({
                 left: 0,
                 right: 0,
                 pt: 10,
-                pb: "calc(var(--mobile-nav-h, 0px) + 32px)",
-                px: 2,
+                pb: 2.5,
+                pl: 2,
+                // leave the right edge to the like/comment buttons
+                pr: 9,
                 color: 'white',
                 zIndex: 2,
                 background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)',

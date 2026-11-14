@@ -47,6 +47,29 @@ export const useGetPostComments = (
   });
 };
 
+interface PostsCountPage {
+  posts?: Array<{ id: string; comments_count?: number }>;
+}
+
+/** Changes one post's comments_count in a ["posts"] or ["reels"] cache entry: a flat list or an infinite query's pages. */
+function bumpCommentsCount(old: unknown, postId: string, delta: number): unknown {
+  const bumpPage = (page: PostsCountPage): PostsCountPage =>
+    page?.posts
+      ? {
+          ...page,
+          posts: page.posts.map((post) =>
+            post.id === postId
+              ? { ...post, comments_count: Math.max(0, (post.comments_count || 0) + delta) }
+              : post,
+          ),
+        }
+      : page;
+  if (!old || typeof old !== "object") return old;
+  const data = old as { pages?: PostsCountPage[] } & PostsCountPage;
+  if (Array.isArray(data.pages)) return { ...data, pages: data.pages.map(bumpPage) };
+  return bumpPage(data);
+}
+
 export const useAddPostComment = (postId: string) => {
   const queryClient = useQueryClient();
   const profile = secureStorage.getItem("user_details");
@@ -93,17 +116,12 @@ export const useAddPostComment = (postId: string) => {
         };
       });
 
-      queryClient.setQueriesData({ queryKey: ["posts"] }, (old: any) => {
-        if (!old?.posts) return old;
-        return {
-          ...old,
-          posts: old.posts.map((post: any) =>
-            post.id === postId
-              ? { ...post, comments_count: (post.comments_count || 0) + 1 }
-              : post,
-          ),
-        };
-      });
+      queryClient.setQueriesData({ queryKey: ["posts"] }, (old: unknown) =>
+        bumpCommentsCount(old, postId, 1),
+      );
+      queryClient.setQueriesData({ queryKey: ["reels"] }, (old: unknown) =>
+        bumpCommentsCount(old, postId, 1),
+      );
 
       return { previousComments, newCommentId };
     },
@@ -133,23 +151,21 @@ export const useAddPostComment = (postId: string) => {
         };
       });
     },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ["post-comments", postId] });
+    },
     onError: (err, newTodo, context) => {
       if (context?.previousComments) {
         context.previousComments.forEach(([key, data]) => {
           queryClient.setQueryData(key, data);
         });
       }
-      queryClient.setQueriesData({ queryKey: ["posts"] }, (old: any) => {
-        if (!old?.posts) return old;
-        return {
-          ...old,
-          posts: old.posts.map((post: any) =>
-            post.id === postId
-              ? { ...post, comments_count: (post.comments_count || 0) - 1 }
-              : post,
-          ),
-        };
-      });
+      queryClient.setQueriesData({ queryKey: ["posts"] }, (old: unknown) =>
+        bumpCommentsCount(old, postId, -1),
+      );
+      queryClient.setQueriesData({ queryKey: ["reels"] }, (old: unknown) =>
+        bumpCommentsCount(old, postId, -1),
+      );
     },
   });
 };

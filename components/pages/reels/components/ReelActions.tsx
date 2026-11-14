@@ -36,7 +36,7 @@ const ReelActions: React.FC<ReelActionsProps> = ({
   };
 
   return (
-    <Stack spacing={2} alignItems="center" sx={{ mb: 5 }}>
+    <Stack spacing={1.5} alignItems="center" sx={{ mb: 5 }}>
       <Box textAlign="center">
         <IconButton
           onClick={handleLike}
@@ -54,6 +54,8 @@ const ReelActions: React.FC<ReelActionsProps> = ({
         <Typography
           variant="caption"
           sx={{
+            display: "block",
+            mt: -0.5,
             color: "white",
             fontWeight: "bold",
             textShadow: "0px 1px 2px rgba(0,0,0,0.8)",
@@ -66,6 +68,7 @@ const ReelActions: React.FC<ReelActionsProps> = ({
       <Box textAlign="center">
         <IconButton
           onClick={onCommentClick}
+          aria-label="Comments"
           sx={{
             color: "white",
             filter: "drop-shadow(0px 2px 2px rgba(0,0,0,0.5))",
@@ -76,6 +79,8 @@ const ReelActions: React.FC<ReelActionsProps> = ({
         <Typography
           variant="caption"
           sx={{
+            display: "block",
+            mt: -0.5,
             color: "white",
             fontWeight: "bold",
             textShadow: "0px 1px 2px rgba(0,0,0,0.8)",
