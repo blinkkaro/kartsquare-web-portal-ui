@@ -13,6 +13,7 @@ Read the file(s) for your task **before** editing. They are the standards, and t
 | Any UI: colours, fonts, spacing, motion | [docs/03-design-system.md](docs/03-design-system.md) |
 | Backend calls, auth, errors | [docs/04-api-contracts.md](docs/04-api-contracts.md) |
 | URLs, metadata, sitemap, redirects | [docs/05-seo-url-architecture.md](docs/05-seo-url-architecture.md) (full spec: [docs/seo-url-architecture.md](docs/seo-url-architecture.md)) |
+| **Service URLs, SEO, sitemap, indexing: current state and open items (read first)** | [docs/10-url-seo-index-state.md](docs/10-url-seo-index-state.md) |
 | Writing any code | [docs/06-coding-standards.md](docs/06-coding-standards.md) |
 | Tests | [docs/07-testing-strategy.md](docs/07-testing-strategy.md) |
 
