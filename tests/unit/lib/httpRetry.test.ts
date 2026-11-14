@@ -30,3 +30,18 @@ describe("shouldRetryOnTimeout", () => {
     expect(GET_TIMEOUT_MS).toBeLessThan(10000);
   });
 });
+
+import { UPLOAD_TIMEOUT_MS, requestTimeoutMs } from "@/lib/http/retry";
+
+describe("requestTimeoutMs", () => {
+  it("gives multipart uploads a long deadline (the old 10 s cancelled big files)", () => {
+    expect(requestTimeoutMs({ method: "post", isFormData: true, current: 10000 })).toBe(UPLOAD_TIMEOUT_MS);
+    expect(requestTimeoutMs({ method: "put", isFormData: true, current: 10000 })).toBe(UPLOAD_TIMEOUT_MS);
+    expect(UPLOAD_TIMEOUT_MS).toBeGreaterThanOrEqual(60000);
+  });
+
+  it("keeps GETs short and everything else on the configured timeout", () => {
+    expect(requestTimeoutMs({ method: "get", isFormData: false, current: 10000 })).toBe(GET_TIMEOUT_MS);
+    expect(requestTimeoutMs({ method: "post", isFormData: false, current: 10000 })).toBe(10000);
+  });
+});

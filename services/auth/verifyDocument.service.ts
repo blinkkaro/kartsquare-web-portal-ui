@@ -27,6 +27,10 @@ class VerifyDocumentService {
       }
     } catch (error) {
       console.error("Upload Images Error:", error);
+      const status = (error as { response?: { status?: number } })?.response?.status;
+      if (status === 413) {
+        throw new Error("That file is too large to upload. Please choose a smaller file.");
+      }
       throw new Error("Failed to upload document images. Please try again.");
     }
   }

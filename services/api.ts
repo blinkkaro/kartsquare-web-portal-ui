@@ -1,4 +1,4 @@
-import { GET_TIMEOUT_MS, shouldRetryOnTimeout } from "@/lib/http/retry";
+import { requestTimeoutMs, shouldRetryOnTimeout } from "@/lib/http/retry";
 import { secureStorage } from "@/helper/SecureStorage";
 import axios, {
   AxiosInstance,
@@ -65,11 +65,13 @@ api.interceptors.request.use(
     if (token && config.requiresAuth !== false) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    // A GET that gets no answer in a few seconds is stuck, not slow: fail early so the
-    // retry (see response interceptor) can use a fresh connection. Uploads/POSTs keep 10 s+.
-    if ((config.method ?? "get").toLowerCase() === "get") {
-      config.timeout = Math.min(config.timeout ?? GET_TIMEOUT_MS, GET_TIMEOUT_MS);
-    }
+    // Uploads get a long deadline; a GET that gets no answer in a few seconds is stuck, not
+    // slow (the response interceptor retries it once on a fresh connection).
+    config.timeout = requestTimeoutMs({
+      method: config.method,
+      isFormData: typeof FormData !== "undefined" && config.data instanceof FormData,
+      current: config.timeout,
+    });
     return config;
   },
   (error: AxiosError) => {
