@@ -1,5 +1,6 @@
 "use client";
 
+import { CHAT_ENABLED } from "@/lib/featureFlags";
 import React, {
   createContext,
   useContext,
@@ -119,6 +120,10 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
       setUnreadCount(user.unread_notification_count);
     }
 
+    // Chat/realtime is switched off (lib/featureFlags): never open the socket. Notifications
+    // still load over REST below.
+    if (!CHAT_ENABLED) return;
+
     const newSocket = io(SOCKET_URL, {
       path: "/socket.io",
       auth: {
@@ -205,10 +210,11 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [token]);
 
   useEffect(() => {
-    if (isConnected) {
+    // Without the socket there is no "connected" event to wait for: load once per login.
+    if (isConnected || (!CHAT_ENABLED && token)) {
       fetchNotifications();
     }
-  }, [isConnected, fetchNotifications]);
+  }, [isConnected, fetchNotifications, token]);
 
   const markAllAsRead = async () => {
     if (!token) return;

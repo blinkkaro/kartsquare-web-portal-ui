@@ -77,6 +77,7 @@ interface NavActionsProps {
 }
 
 import { useSocket } from "@/contexts/SocketContext";
+import { CHAT_ENABLED } from "@/lib/featureFlags";
 import { useTranslate } from "@/hooks/useTranslate";
 import { AppUserType } from "@/services/auth/auth.interface";
 import { useRouter } from "next/navigation";
@@ -151,7 +152,9 @@ const NavActions: React.FC<NavActionsProps> = ({
           </StyledIconButton>
         )}
 
-        {/* Chat - Hide on mobile */}
+        {/* Chat is switched off for now (lib/featureFlags). */}
+        {CHAT_ENABLED && (
+          <>
         <StyledIconButton
           size="small"
           aria-label="chat"
@@ -168,6 +171,8 @@ const NavActions: React.FC<NavActionsProps> = ({
             />
           </Badge>
         </StyledIconButton>
+          </>
+        )}
 
         {/* Notifications */}
         <StyledIconButton
