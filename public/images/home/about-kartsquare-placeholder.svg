@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 560" role="img" aria-label="Illustration of a woman holding a phone showing the Kartsquare app">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eedaff"/>
+      <stop offset="1" stop-color="#c2edff"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5e18e9"/>
+      <stop offset="1" stop-color="#2a0d73"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="560" rx="32" fill="url(#bg)"/>
+  <circle cx="390" cy="90" r="60" fill="#fff" opacity=".45"/>
+  <circle cx="80" cy="470" r="80" fill="#fff" opacity=".35"/>
+  <!-- body -->
+  <path d="M120 560c0-92 52-150 120-150s120 58 120 150z" fill="#4b12bb"/>
+  <!-- neck + head -->
+  <rect x="222" y="352" width="36" height="52" rx="16" fill="#e0a98a"/>
+  <circle cx="240" cy="300" r="62" fill="#e8b496"/>
+  <!-- hair -->
+  <path d="M176 296c-6-62 36-96 80-90 44 6 66 44 54 92-10-34-34-52-70-52-26 0-50 16-64 50z" fill="#2b1b17"/>
+  <path d="M178 290c-10 44-4 96 14 118-30-16-46-60-14-118z" fill="#2b1b17"/>
+  <!-- face -->
+  <circle cx="218" cy="304" r="4" fill="#2b1b17"/>
+  <circle cx="262" cy="304" r="4" fill="#2b1b17"/>
+  <path d="M222 328q18 14 36 0" fill="none" stroke="#b5483b" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="240" cy="236" r="5" fill="#d33a4a"/>
+  <!-- arm holding phone -->
+  <path d="M330 470c20-40 30-90 24-130l-30-6c4 40-4 78-24 112z" fill="#e0a98a"/>
+  <path d="M300 520c-8-60 6-120 30-160l40 14c-8 50-10 100-6 146z" fill="#4b12bb"/>
+  <!-- phone -->
+  <g transform="rotate(8 360 300)">
+    <rect x="316" y="196" width="110" height="196" rx="18" fill="#1a1230"/>
+    <rect x="323" y="206" width="96" height="176" rx="12" fill="url(#screen)"/>
+    <rect x="352" y="198" width="38" height="5" rx="2.5" fill="#1a1230"/>
+    <text x="371" y="250" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">kartsquare</text>
+    <rect x="334" y="268" width="74" height="22" rx="11" fill="#fff" opacity=".9"/>
+    <rect x="334" y="300" width="74" height="26" rx="8" fill="#fff" opacity=".25"/>
+    <rect x="334" y="334" width="74" height="26" rx="8" fill="#fff" opacity=".25"/>
+  </g>
+  <!-- fingers -->
+  <ellipse cx="322" cy="352" rx="10" ry="16" fill="#e0a98a" transform="rotate(-18 322 352)"/>
+</svg>
