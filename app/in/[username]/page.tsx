@@ -1,11 +1,12 @@
 import React from "react";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import MainLayout from "../../mainLayout";
 import ProviderProfilePage from "@/components/pages/providerProfile";
 import { Metadata } from "next";
 import {
   buildProfileJsonLd,
   buildProfileMetadata,
+  fetchCurrentUsernameForOldHandle,
   fetchPublicProfileForSeo,
 } from "@/lib/seo/publicProfile";
 import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
@@ -58,6 +59,10 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   // This ensures Google receives a proper 404 HTTP status and removes the
   // URL from its index naturally — better than serving a noindex page.
   if (!seoPayload) {
+    // A retired handle (generated username cleaned up) redirects permanently to the
+    // current one, so indexed /in/{old} URLs keep their ranking instead of 404ing.
+    const current = await fetchCurrentUsernameForOldHandle(username);
+    if (current) permanentRedirect(`/in/${encodeURIComponent(current)}`);
     notFound();
   }
 

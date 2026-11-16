@@ -40,6 +40,21 @@ export async function fetchPublicProfileForSeo(
   return null;
 }
 
+/**
+ * A retired handle (a vendor whose generated username was cleaned up) -> its current
+ * handle, or null when the handle was never retired. Lets /in/{old} answer with a
+ * permanent redirect instead of a 404. Throws UpstreamError on outage, like the above.
+ */
+export async function fetchCurrentUsernameForOldHandle(
+  username: string,
+): Promise<string | null> {
+  const r = await fetchPublicJson<{ data?: { username?: string } }>(
+    `${getApiBaseUrl()}/seo/username/${encodeURIComponent(username)}`,
+  );
+  const next = r.status === "ok" ? r.body?.data?.username : undefined;
+  return typeof next === "string" && next && next !== username ? next : null;
+}
+
 function str(v: unknown): string | undefined {
   if (v == null) return undefined;
   return typeof v === "string" && v.trim() ? v : undefined;
