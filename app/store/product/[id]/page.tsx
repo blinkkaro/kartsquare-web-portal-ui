@@ -10,6 +10,9 @@ type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
+const str = (v: unknown): string | undefined =>
+  typeof v === "string" && v.trim() ? v.trim() : undefined;
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const base = SITE_URL;
@@ -23,13 +26,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const supplierName = (product as any).supplier?.name || (product as any).business_name;
     
     // Dynamic branded title: "Product by Business | kartsquare"
-    const titleText = brand 
+    const titleText = str((product as any).seo_title)
+      ? str((product as any).seo_title)!
+      : brand
       ? `Buy ${productName} by ${brand} | kartsquare`
       : supplierName
         ? `Buy ${productName} from ${supplierName} | kartsquare`
         : `${productName} | kartsquare`;
 
     const productDesc =
+      str((product as any).seo_description) ||
       product.product_description ||
       (product as any).description ||
       `Buy ${productName} from ${supplierName || "verified suppliers"} on kartsquare. Discover quality products with clear pricing and secure business checkout.`;

@@ -12,6 +12,10 @@ export type ServiceSeo = {
   canonical_path?: string | null;
   service_name?: string | null;
   service_desc?: string | null;
+  /** Reviewed copy (migration 014): wins over the generated meta_* fields. */
+  seo_title?: string | null;
+  seo_description?: string | null;
+  seo_h1?: string | null;
   meta_title?: string | null;
   meta_description?: string | null;
   meta_keywords?: string | null;

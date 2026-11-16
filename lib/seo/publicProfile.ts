@@ -89,6 +89,7 @@ function descriptionFromProfile(
   display: string,
 ): string {
   return (
+    str(profile.seo_description) ||
     str(profile.meta_description) ||
     str(profile.description) ||
     str(profile.bio) ||
@@ -182,7 +183,7 @@ export function buildProfileMetadata(
   const { profile, variant } = payload;
   const display = displayName(profile, variant);
   const title =
-    str(profile.meta_title) || `${display} | kartsquare`;
+    str(profile.seo_title) || str(profile.meta_title) || `${display} | kartsquare`;
   const description = descriptionFromProfile(profile, display);
   const keywordsRaw = str(profile.meta_keywords);
   const canonicalPath = `/in/${encodeURIComponent(username)}`;

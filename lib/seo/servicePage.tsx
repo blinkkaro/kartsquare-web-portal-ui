@@ -40,6 +40,7 @@ export async function serviceMetadata(lookupId: string, legacyPath: string): Pro
   const bizName = service.business_name || service.provider_name;
   const city = service.service_address?.city_town;
   const titleText =
+    service.seo_title ||
     service.meta_title ||
     (bizName && city
       ? `${serviceName} in ${city} by ${bizName} | kartsquare`
@@ -47,6 +48,7 @@ export async function serviceMetadata(lookupId: string, legacyPath: string): Pro
         ? `${serviceName} by ${bizName} | kartsquare`
         : `${serviceName} | kartsquare`);
   const desc =
+    service.seo_description ||
     service.meta_description ||
     service.service_desc ||
     `Book ${serviceName}${city ? ` in ${city}` : ""} by ${bizName || "providers"} on kartsquare. Clear pricing and secure booking.`;
