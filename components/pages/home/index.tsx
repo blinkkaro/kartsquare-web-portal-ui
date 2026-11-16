@@ -12,6 +12,7 @@ import NewDiscoverSection from "./sections/NewDiscoverSection";
 import NewPopularInArea from "./sections/NewPopularInArea";
 import PartnerBanner from "./sections/PartnerBanner";
 import FaqSection from "./sections/FaqSection";
+import AboutKartsquare from "./sections/AboutKartsquare";
 
 const GUTTER = HOME_GUTTER;
 
@@ -71,6 +72,7 @@ function HomeView() {
         <NewDiscoverSection />
         <NewPopularInArea />
         <PartnerBanner />
+        <AboutKartsquare />
         <FaqSection />
       </Box>
     </Box>
