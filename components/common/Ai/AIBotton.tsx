@@ -92,7 +92,7 @@ function AIBotton({ setOpen }: { setOpen: (open: boolean) => void }) {
         position: "fixed",
         // Sits just above the bottom nav (60px bar + 12px tablet float gap + breathing room)
         bottom:
-          "calc(var(--mobile-nav-h, 60px) + 12px + 16px + env(safe-area-inset-bottom, 0px))",
+          "calc(var(--mobile-nav-h, 60px) + 12px + 16px + var(--safe-bottom))",
         transition: "bottom 0.35s cubic-bezier(0.32, 0.72, 0, 1)",
         "@media (prefers-reduced-motion: reduce)": { transition: "none" },
         right: "16px",

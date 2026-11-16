@@ -43,7 +43,7 @@ export default function BackToTop() {
             zIndex: 1100,
             left: { xs: 16, lg: 24 },
             // clears the phone bottom nav (its height is published as --mobile-nav-h) and the home indicator
-            bottom: "calc(var(--mobile-nav-h, 0px) + 16px + env(safe-area-inset-bottom, 0px))",
+            bottom: "calc(var(--mobile-nav-h, 0px) + 16px + var(--safe-bottom))",
             width: 48,
             height: 48,
             p: 0,

@@ -16,7 +16,7 @@ const Dock = styled("nav")({
   right: 12,
   margin: "0 auto",
   maxWidth: 520,
-  bottom: "calc(10px + env(safe-area-inset-bottom, 0px))",
+  bottom: "calc(10px + var(--safe-bottom))",
   zIndex: 1000,
   display: "flex",
   alignItems: "stretch",
@@ -198,7 +198,7 @@ const ProviderBottomNav: React.FC<ProviderBottomNavProps> = ({ primary, more, cu
             sx: {
               borderTopLeftRadius: 24,
               borderTopRightRadius: 24,
-              pb: "calc(16px + env(safe-area-inset-bottom, 0px))",
+              pb: "calc(16px + var(--safe-bottom))",
               maxWidth: 520,
               mx: "auto",
             },

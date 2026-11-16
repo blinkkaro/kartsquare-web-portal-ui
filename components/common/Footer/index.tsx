@@ -83,7 +83,7 @@ const Footer: React.FC = () => {
           isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
         }`,
         pt: { xs: 4, md: 6 },
-        pb: { xs: "calc(24px + var(--mobile-nav-h, 64px) + env(safe-area-inset-bottom, 0px))", md: 4 },
+        pb: { xs: "calc(24px + var(--mobile-nav-h, 64px) + var(--safe-bottom))", md: 4 },
         position: "relative",
         "&::before": {
           content: '""',

@@ -40,7 +40,7 @@ const Dock = styled("nav")(({ theme }) => {
     // fixed + left/right + a max width: auto margins centre it on tablets
     margin: "0 auto",
     maxWidth: 520,
-    bottom: "calc(10px + env(safe-area-inset-bottom, 0px))",
+    bottom: "calc(10px + var(--safe-bottom))",
     zIndex: 1000,
     display: "flex",
     alignItems: "stretch",
