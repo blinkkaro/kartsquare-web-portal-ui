@@ -21,18 +21,23 @@ type ProfileResponse = { data?: { profile?: Record<string, unknown> } };
  * UpstreamError: an outage must never be rendered (or cached) as a 404.
  * Next.js deduplicates identical fetch calls in the same render.
  */
+const PROFILE_CACHE_VERSION = 2;
+
 export async function fetchPublicProfileForSeo(
   username: string,
 ): Promise<PublicProfileSeoPayload | null> {
   const base = getApiBaseUrl();
   const enc = encodeURIComponent(username);
+  // `v` is a cache key only (ignored by the API). Bump it to drop cached profile responses that a
+  // 404 can never replace: Next keeps serving a stale 200 for a handle that no longer exists.
+  const v = `?v=${PROFILE_CACHE_VERSION}`;
 
-  const provider = await fetchPublicJson<ProfileResponse>(`${base}/profile/provider/${enc}`);
+  const provider = await fetchPublicJson<ProfileResponse>(`${base}/profile/provider/${enc}${v}`);
   if (provider.status === "ok" && provider.body?.data?.profile) {
     return { profile: provider.body.data.profile, variant: "provider" };
   }
 
-  const supplier = await fetchPublicJson<ProfileResponse>(`${base}/profile/supplier/${enc}`);
+  const supplier = await fetchPublicJson<ProfileResponse>(`${base}/profile/supplier/${enc}${v}`);
   if (supplier.status === "ok" && supplier.body?.data?.profile) {
     return { profile: supplier.body.data.profile, variant: "supplier" };
   }
