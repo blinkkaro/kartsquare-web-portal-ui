@@ -158,13 +158,13 @@ export default function RootLayout({
       >
         {/* Flags the Kartsquare mobile app before first paint so [data-native-hide]
             elements (footer, bottom nav) never flash. Only builds that have a native tab bar
-            announce themselves: they set window.__KARTSQUARE_WEBVIEW__ (or add "KartsquareApp" to
-            the user agent). Do NOT key this on window.ReactNativeWebView: every React Native
-            WebView has that, including older app builds with no native tab bar, and the page would
-            then hide its own nav and leave the user with none. */}
+            announce themselves: they set window.__KARTSQUARE_NATIVE_TABS__ (or add "KartsquareApp"
+            to the user agent). Do NOT key this on window.ReactNativeWebView or
+            window.__KARTSQUARE_WEBVIEW__: app builds with no native tab bar (Play Store v2.0.3 and
+            older) set those too, and the page would then hide its own nav and leave the user with none. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{if(window.__KARTSQUARE_WEBVIEW__||/KartsquareApp/i.test(navigator.userAgent)){document.documentElement.setAttribute("data-native","1");}}catch(e){}})();`,
+            __html: `(function(){try{if(window.__KARTSQUARE_NATIVE_TABS__||/KartsquareApp/i.test(navigator.userAgent)){document.documentElement.setAttribute("data-native","1");}}catch(e){}})();`,
           }}
         />
         {/* Android app WebViews (the Play Store build) can draw the page behind the system

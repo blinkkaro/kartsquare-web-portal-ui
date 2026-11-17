@@ -9,6 +9,8 @@ declare global {
   interface Window {
     ReactNativeWebView?: { postMessage: (message: string) => void };
     __KARTSQUARE_WEBVIEW__?: boolean;
+    /** Set only by app builds that draw their own native tab bar. */
+    __KARTSQUARE_NATIVE_TABS__?: boolean;
   }
 }
 
@@ -24,7 +26,7 @@ export default function NativeBridge() {
   const role = user?.role ?? null;
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.__KARTSQUARE_WEBVIEW__) {
+    if (typeof window !== "undefined" && window.__KARTSQUARE_NATIVE_TABS__) {
       // Fallback in case the pre-paint script in layout ran before the app injected its flag.
       // Only app builds that carry a native tab bar set the flag, so older builds keep the web nav.
       document.documentElement.setAttribute("data-native", "1");
