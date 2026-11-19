@@ -7,3 +7,4 @@ public
 package-lock.json
 data/categoryIcons.json
 *.tsbuildinfo
+data/indiaLocations.json

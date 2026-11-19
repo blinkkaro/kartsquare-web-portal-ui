@@ -1,4 +1,7 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import {
   Box,
   Typography,
@@ -10,37 +13,34 @@ import {
   InputAdornment,
   MenuItem,
 } from "@mui/material";
+import { useForm, Controller, type Resolver } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
 import Button from "@/components/common/Button";
 import { COLORS } from "@/constants/colors";
-
 import ErrorMessage from "@/components/common/ErrorMessage";
 import SuccessModel from "@/components/common/SuccessModel";
 import RightDrawer from "@/components/common/RightDrawer";
 import { useTranslate } from "@/hooks/useTranslate";
 import ImageUpload from "@/components/common/ImageUpload";
 import { useEditSupplierStore } from "@/hooks/useSupplier";
-import { SupplierStore } from "@/services/supplier/supplier.service";
-
-import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { type SupplierStore } from "@/services/supplier/supplier.service";
 import Input from "@/components/common/Input";
 import { STORE_CATEGORIES, OPERATING_LOCATIONS } from "@/constants/common";
-import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
-import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
 import { verifyDocumentService } from "@/services/auth/verifyDocument.service";
-
-import {
-  useGetAddress,
-  useUpdateAddress,
-  useDeleteAddress,
-} from "@/hooks/useAddress";
-import AddressDrawer from "@/components/common/address/AddressDrawer";
+import { useGetAddress, useUpdateAddress, useDeleteAddress } from "@/hooks/useAddress";
 import AddressCard from "@/components/pages/address/components/AddressCard";
 import WarningModel from "@/components/common/WarningModel";
-import { Address } from "@/services/address/addressInterface";
+import { type Address } from "@/services/address/addressInterface";
+
+// Opened on demand: loaded after the page instead of in its first bundle.
+const AddressDrawer = dynamic(() => import("@/components/common/address/AddressDrawer"), {
+  ssr: false,
+});
 
 interface EditStoreInfoModalProps {
   open: boolean;
@@ -48,11 +48,7 @@ interface EditStoreInfoModalProps {
   initialData?: Partial<SupplierStore>;
 }
 
-const EditStoreInfoModal: React.FC<EditStoreInfoModalProps> = ({
-  open,
-  onClose,
-  initialData,
-}) => {
+const EditStoreInfoModal: React.FC<EditStoreInfoModalProps> = ({ open, onClose, initialData }) => {
   const theme = useTheme();
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
@@ -108,7 +104,10 @@ const EditStoreInfoModal: React.FC<EditStoreInfoModalProps> = ({
           .of(yup.string().trim())
           .min(1, t("store_setup_categories_min"))
           .required(t("store_setup_categories_required")),
-        operating_locations: yup.array().of(yup.string().trim()).required(t("store_setup_operating_locations_required")),
+        operating_locations: yup
+          .array()
+          .of(yup.string().trim())
+          .required(t("store_setup_operating_locations_required")),
         business_type: yup.string().trim().required(t("store_setup_business_type_required")),
         establishment_year: yup
           .string()
@@ -128,7 +127,8 @@ const EditStoreInfoModal: React.FC<EditStoreInfoModalProps> = ({
     watch,
     formState: { errors },
   } = useForm<SupplierStore>({
-    resolver: yupResolver(schema) as any,
+    // The schema checks the editable fields only; the form carries the whole store record.
+    resolver: yupResolver(schema) as unknown as Resolver<SupplierStore>,
     defaultValues: {
       store_name: "",
       description: "",
@@ -178,16 +178,13 @@ const EditStoreInfoModal: React.FC<EditStoreInfoModalProps> = ({
       onSuccess: () => {
         setSuccessModelOpen(true);
       },
-      onError: (error: any) => {
+      onError: (error: Error) => {
         setErrorMsg(error?.message || "Failed to update store info");
       },
     });
   };
 
-  const handleImageChange = async (
-    files: (File | string)[],
-    field: "logo_url" | "banner_url",
-  ) => {
+  const handleImageChange = async (files: (File | string)[], field: "logo_url" | "banner_url") => {
     const newFile = files.find((f) => typeof f !== "string") as File | undefined;
     if (!newFile) {
       const currentString = files.find((f) => typeof f === "string") as string | undefined;
@@ -272,30 +269,30 @@ const EditStoreInfoModal: React.FC<EditStoreInfoModalProps> = ({
 
           {/* Business Images */}
           <Grid container spacing={2}>
-             <Grid size={{ xs: 12, sm: 6 }}>
-                 <ImageUpload
-                  variant="document"
-                  title={t("storeLogo") || "Store Logo"}
-                  images={logoUrl ? [logoUrl] : []}
-                  onChange={(files) => handleImageChange(files, "logo_url")}
-                  maxImages={1}
-                  error={!!errors.logo_url}
-                  helperText={errors.logo_url?.message}
-                />
-             </Grid>
-             <Grid size={{ xs: 12, sm: 6 }}>
-                <ImageUpload
-                  variant="document"
-                  title={t("storeBanner") || "Store Banner"}
-                  images={bannerUrl ? [bannerUrl] : []}
-                  onChange={(files) => handleImageChange(files, "banner_url")}
-                  maxImages={1}
-                  error={!!errors.banner_url}
-                  helperText={errors.banner_url?.message}
-                />
-             </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <ImageUpload
+                variant="document"
+                title={t("storeLogo") || "Store Logo"}
+                images={logoUrl ? [logoUrl] : []}
+                onChange={(files) => handleImageChange(files, "logo_url")}
+                maxImages={1}
+                error={!!errors.logo_url}
+                helperText={errors.logo_url?.message}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <ImageUpload
+                variant="document"
+                title={t("storeBanner") || "Store Banner"}
+                images={bannerUrl ? [bannerUrl] : []}
+                onChange={(files) => handleImageChange(files, "banner_url")}
+                maxImages={1}
+                error={!!errors.banner_url}
+                helperText={errors.banner_url?.message}
+              />
+            </Grid>
           </Grid>
-          
+
           <Box>
             <Input
               name="store_name"
@@ -315,75 +312,73 @@ const EditStoreInfoModal: React.FC<EditStoreInfoModalProps> = ({
               rows={3}
             />
           </Box>
-          
+
           <Grid container spacing={2}>
             <Grid size={{ xs: 12, sm: 6 }}>
-                <Input
-                  name="primary_mobile"
-                  control={control}
-                  label={t("primaryMobile") || "Primary Number"}
-                  placeholder="Enter Primary Number"
-                />
-             </Grid>
-             <Grid size={{ xs: 12, sm: 6 }}>
-                <Input
-                  name="contact_email"
-                  control={control}
-                  label={t("contactEmail") || "Contact Email"}
-                  placeholder="Enter Contact Email"
-                />
-             </Grid>
-             <Grid size={{ xs: 12, sm: 6 }}>
-                <Input
-                  name="whatsapp_number"
-                  control={control}
-                  label={t("whatsappNumberRequired") || "Whatsapp Number"}
-                  placeholder="Enter Whatsapp Number"
-                />
-             </Grid>
-             <Grid size={{ xs: 12, sm: 6 }}>
-                <Input
-                  name="establishment_year"
-                  control={control}
-                  label={t("establishmentYear") || "Establishment Year"}
-                  placeholder="Enter Year"
-                />
-             </Grid>
-             <Grid size={{ xs: 12 }}>
-                <Input
-                  name="business_type"
-                  control={control}
-                  select
-                  label={t("businessType") || "Business Type"}
-                  placeholder={t("store_setup_business_type_placeholder")}
-                  startIcon={<BusinessOutlinedIcon fontSize="small" />}
-                >
-                  <MenuItem value="Wholesaler">{t("wholesaler")}</MenuItem>
-                  <MenuItem value="Retailer">{t("retailer")}</MenuItem>
-                  <MenuItem value="Exporter">{t("exporter")}</MenuItem>
-                  <MenuItem value="Manufacturer">{t("manufacturer")}</MenuItem>
-                </Input>
-             </Grid>
+              <Input
+                name="primary_mobile"
+                control={control}
+                label={t("primaryMobile") || "Primary Number"}
+                placeholder="Enter Primary Number"
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Input
+                name="contact_email"
+                control={control}
+                label={t("contactEmail") || "Contact Email"}
+                placeholder="Enter Contact Email"
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Input
+                name="whatsapp_number"
+                control={control}
+                label={t("whatsappNumberRequired") || "Whatsapp Number"}
+                placeholder="Enter Whatsapp Number"
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Input
+                name="establishment_year"
+                control={control}
+                label={t("establishmentYear") || "Establishment Year"}
+                placeholder="Enter Year"
+              />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <Input
+                name="business_type"
+                control={control}
+                select
+                label={t("businessType") || "Business Type"}
+                placeholder={t("store_setup_business_type_placeholder")}
+                startIcon={<BusinessOutlinedIcon fontSize="small" />}
+              >
+                <MenuItem value="Wholesaler">{t("wholesaler")}</MenuItem>
+                <MenuItem value="Retailer">{t("retailer")}</MenuItem>
+                <MenuItem value="Exporter">{t("exporter")}</MenuItem>
+                <MenuItem value="Manufacturer">{t("manufacturer")}</MenuItem>
+              </Input>
+            </Grid>
           </Grid>
           <Grid size={{ xs: 12 }}>
-                <Input
-                  name="website_url"
-                  control={control}
-                  label={t("websiteUrl")}
-                  placeholder="Enter Website URL"
-                />
-             </Grid>
+            <Input
+              name="website_url"
+              control={control}
+              label={t("websiteUrl")}
+              placeholder="Enter Website URL"
+            />
+          </Grid>
 
-           {/* Address Selection */}
+          {/* Address Selection */}
           <Box>
             <Typography
               variant="subtitle2"
               sx={{
                 mb: 1,
-                color: isDark
-                  ? COLORS.TEXT.SECONDARY_DARK
-                  : COLORS.TEXT.SECONDARY_LIGHT,
-                fontWeight: 600
+                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                fontWeight: 600,
               }}
             >
               {t("address") || "Address"}*
@@ -397,9 +392,7 @@ const EditStoreInfoModal: React.FC<EditStoreInfoModalProps> = ({
                   ? COLORS.BACKGROUND.SECONDARY_DARK
                   : COLORS.BACKGROUND.SECONDARY_LIGHT,
                 border: `1px solid ${
-                  isDark
-                    ? COLORS.BORDER.DEFAULT_DARK
-                    : COLORS.BORDER.DEFAULT_LIGHT
+                  isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
                 }`,
               }}
             >
@@ -424,9 +417,7 @@ const EditStoreInfoModal: React.FC<EditStoreInfoModalProps> = ({
                             watchedAddressId === addr.id
                               ? `2px solid ${COLORS.PRIMARY_PURPLE}`
                               : `1px solid ${
-                                  isDark
-                                    ? COLORS.BORDER.DEFAULT_DARK
-                                    : COLORS.BORDER.DEFAULT_LIGHT
+                                  isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
                                 }`,
                           borderRadius: "12px",
                           position: "relative",
@@ -476,129 +467,118 @@ const EditStoreInfoModal: React.FC<EditStoreInfoModalProps> = ({
 
           <Box>
             <Typography variant="body2" fontWeight="500" mb={0.5}>
-                {t("categoriesServed") || "Categories Served"}*
+              {t("categoriesServed") || "Categories Served"}*
             </Typography>
             <Controller
-                name="categories_served"
-                control={control}
-                render={({ field: { onChange, value } }) => (
+              name="categories_served"
+              control={control}
+              render={({ field: { onChange, value } }) => (
                 <Box>
-                    <Autocomplete
+                  <Autocomplete
                     multiple
                     options={STORE_CATEGORIES || []}
                     value={(Array.isArray(value) ? value : []) as string[]}
                     onChange={(_, newValue) => onChange(newValue)}
                     renderTags={() => null} // Don't show inside
                     renderInput={(params) => (
-                        <TextField
+                      <TextField
                         {...params}
                         placeholder="Select Categories"
                         error={!!errors.categories_served}
-                        helperText={
-                            errors.categories_served?.message
-                        }
+                        helperText={errors.categories_served?.message}
                         InputProps={{
-                            ...params.InputProps,
-                            startAdornment: (
+                          ...params.InputProps,
+                          startAdornment: (
                             <>
-                                <InputAdornment
-                                position="start"
-                                sx={{ pl: 1 }}
-                                >
+                              <InputAdornment position="start" sx={{ pl: 1 }}>
                                 <CategoryOutlinedIcon fontSize="small" />
-                                </InputAdornment>
-                                {params.InputProps.startAdornment}
+                              </InputAdornment>
+                              {params.InputProps.startAdornment}
                             </>
-                            ),
-                            sx: { borderRadius: "12px" },
+                          ),
+                          sx: { borderRadius: "12px" },
                         }}
-                        />
+                      />
                     )}
-                    />
-                    <Box
+                  />
+                  <Box
                     sx={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: 1,
-                        mt: 1.5,
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 1,
+                      mt: 1.5,
                     }}
-                    >
+                  >
                     {((value as string[]) || []).map((option) => (
-                        <Chip
+                      <Chip
                         key={option}
                         label={option}
-                        onDelete={() =>
-                            onChange(
-                            (value as string[]).filter((v) => v !== option),
-                            )
-                        }
+                        onDelete={() => onChange((value as string[]).filter((v) => v !== option))}
                         variant="filled"
                         size="medium"
                         sx={{
-                            bgcolor: `${COLORS.PRIMARY_PURPLE}10`,
-                            color: COLORS.PRIMARY_PURPLE,
-                            fontWeight: 500,
-                            borderRadius: "8px",
-                            "& .MuiChip-deleteIcon": {
+                          bgcolor: `${COLORS.PRIMARY_PURPLE}10`,
+                          color: COLORS.PRIMARY_PURPLE,
+                          fontWeight: 500,
+                          borderRadius: "8px",
+                          "& .MuiChip-deleteIcon": {
                             color: COLORS.PRIMARY_PURPLE,
                             fontSize: "18px",
-                            },
+                          },
                         }}
-                        />
+                      />
                     ))}
-                    </Box>
+                  </Box>
                 </Box>
-                )}
+              )}
             />
           </Box>
           <Box>
-             <Typography variant="body2" fontWeight="500" mb={0.5}>
-                {t("operatingLocations") || "Operating Locations"}
+            <Typography variant="body2" fontWeight="500" mb={0.5}>
+              {t("operatingLocations") || "Operating Locations"}
             </Typography>
             <Controller
-                name="operating_locations"
-                control={control}
-                render={({ field: { onChange, value } }) => (
+              name="operating_locations"
+              control={control}
+              render={({ field: { onChange, value } }) => (
                 <Autocomplete
-                    multiple
-                    options={OPERATING_LOCATIONS || []}
-                    value={(Array.isArray(value) ? value : []) as string[]}
-                    onChange={(_, newValue) => onChange(newValue)}
-                    renderTags={(value: readonly string[], getTagProps) =>
+                  multiple
+                  options={OPERATING_LOCATIONS || []}
+                  value={(Array.isArray(value) ? value : []) as string[]}
+                  onChange={(_, newValue) => onChange(newValue)}
+                  renderTags={(value: readonly string[], getTagProps) =>
                     value.map((option: string, index: number) => (
-                        <Chip
+                      <Chip
                         variant="outlined"
                         label={option}
                         {...getTagProps({ index })}
                         key={option}
                         size="small"
-                        />
+                      />
                     ))
-                    }
-                    renderInput={(params) => (
+                  }
+                  renderInput={(params) => (
                     <TextField
-                        {...params}
-                        placeholder="Select Locations"
-                        error={!!errors.operating_locations}
-                        helperText={
-                        errors.operating_locations?.message
-                        }
-                        InputProps={{
+                      {...params}
+                      placeholder="Select Locations"
+                      error={!!errors.operating_locations}
+                      helperText={errors.operating_locations?.message}
+                      InputProps={{
                         ...params.InputProps,
                         startAdornment: (
-                            <>
+                          <>
                             <InputAdornment position="start" sx={{ pl: 1 }}>
-                                <LocationOnOutlinedIcon fontSize="small" />
+                              <LocationOnOutlinedIcon fontSize="small" />
                             </InputAdornment>
                             {params.InputProps.startAdornment}
-                            </>
+                          </>
                         ),
                         sx: { borderRadius: "12px" },
-                        }}
+                      }}
                     />
-                    )}
+                  )}
                 />
-                )}
+              )}
             />
           </Box>
 
@@ -619,8 +599,7 @@ const EditStoreInfoModal: React.FC<EditStoreInfoModalProps> = ({
         onClose={() => setSuccessModelOpen(false)}
         title={t("storeInfoUpdated") || "Store Info Updated"}
         description={
-          t("storeInfoUpdatedDesc") ||
-          "Your store information has been successfully updated."
+          t("storeInfoUpdatedDesc") || "Your store information has been successfully updated."
         }
         onAction={() => {
           setSuccessModelOpen(false);
@@ -628,7 +607,7 @@ const EditStoreInfoModal: React.FC<EditStoreInfoModalProps> = ({
         }}
       />
 
-       {/* Add Address Drawer */}
+      {/* Add Address Drawer */}
       <AddressDrawer
         open={isAddressDrawerOpen}
         onClose={() => setIsAddressDrawerOpen(false)}

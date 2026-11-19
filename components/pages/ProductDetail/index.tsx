@@ -1,29 +1,25 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Box,
-  Container,
-  Grid,
-  Typography,
-  Button,
-  Divider,
-} from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+import { Box, Container, Grid, Typography, Button, Divider } from "@mui/material";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { useGetProductById, useDeleteProduct } from "@/hooks/useProducts";
-import ProductDetailHeader from "./components/ProductDetailHeader";
-import ProductDetailInfo from "./components/ProductDetailInfo";
-import ProductDetailSpecs from "./components/ProductDetailSpecs";
 import ServiceImageCarousel from "@/components/ServiceImageCarousel";
-import ProductMap from "../store/ProductMap";
 import ProviderInfoCard from "@/components/ProviderInfoCard";
 import { AppUserType } from "@/services/auth/auth.interface";
 import WarningModel from "@/components/common/WarningModel";
 import SuccessModel from "@/components/common/SuccessModel";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
+import ProductDetailSpecs from "./components/ProductDetailSpecs";
+import ProductDetailInfo from "./components/ProductDetailInfo";
+import ProductDetailHeader from "./components/ProductDetailHeader";
+
+// Map (Google Maps loader) in its own chunk; still server-rendered, so the page hydrates without waiting for it.
+const ProductMap = dynamic(() => import("../store/ProductMap"));
 
 interface ProductDetailViewProps {
   productId: string;
@@ -72,8 +68,7 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
     <Box
       sx={{
         py: { xs: 2, sm: 4 },
-        bgcolor: (theme) =>
-          theme.palette.mode === "dark" ? "transparent" : "#FDFBFF",
+        bgcolor: (theme) => (theme.palette.mode === "dark" ? "transparent" : "#FDFBFF"),
         minHeight: "100vh",
       }}
     >
@@ -99,8 +94,8 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
 
               {/* Map View */}
               {product.supplier?.store_address &&
-                parseFloat(String(product.supplier.store_address.lat)) &&
-                parseFloat(String(product.supplier.store_address.long)) ? (
+              parseFloat(String(product.supplier.store_address.lat)) &&
+              parseFloat(String(product.supplier.store_address.long)) ? (
                 <Box sx={{ mt: 7 }}>
                   <ProductMap
                     latitude={parseFloat(String(product.supplier.store_address.lat))}
@@ -140,7 +135,7 @@ const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
                     providerName={product.supplier.name}
                     providerImageUrl={product.supplier.logo_url}
                     isHotSeller={true}
-                    providerPhoneNumber={`${product.supplier.country_code || '+91'}${product.supplier.primary_mobile || ''}`}
+                    providerPhoneNumber={`${product.supplier.country_code || "+91"}${product.supplier.primary_mobile || ""}`}
                     businessName={product.supplier.name}
                     isFollowing={false}
                     gstNumber={product.supplier.gst_in ?? undefined}

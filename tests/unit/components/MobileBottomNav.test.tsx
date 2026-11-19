@@ -6,7 +6,9 @@ import { render, screen } from "@testing-library/react";
 import MobileBottomNav, { isActivePath } from "@/components/common/Nav/components/MobileBottomNav";
 
 const mockReduce = jest.fn(() => false);
-jest.mock("framer-motion", () => ({ ...jest.requireActual("framer-motion"), useReducedMotion: () => mockReduce() }));
+jest.mock("@/hooks/usePrefersReducedMotion", () => ({
+  usePrefersReducedMotion: () => mockReduce(),
+}));
 jest.mock("next/link", () => ({
   __esModule: true,
   default: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => (

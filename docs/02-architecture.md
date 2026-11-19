@@ -33,28 +33,32 @@ docs/           This documentation
 
 Default to **server components**. Of the ~85 `page.tsx` files, ~76 are server components that export `metadata` / `generateMetadata` and render a client view from `components/pages/*`. That split matters: SEO tags and JSON-LD are produced on the server; MUI-heavy interactivity is a client island.
 
-| Surface | Strategy | How |
-| --- | --- | --- |
-| Marketing, blogs, legal pages | Static | Server component, no data fetch. |
-| `/{city}/{category}[/{sub}]`, `/in/{username}`, `/services/{slug}` | Server-rendered with cache | `fetch(..., { next: { revalidate } })` in `lib/seo/*` (300 s for profiles, 3600 s for page SEO). Metadata + JSON-LD built server-side. |
-| `sitemap.xml`, `robots.txt`, `og` | Route handlers | `app/sitemap.xml/route.ts`, `app/robots.ts`, `app/og/route.tsx`. |
-| Home, search, services list | Server shell + client islands | Client components fetch with TanStack Query. |
-| Customer account, bookings, feed, provider/supplier dashboards | Client-rendered, `noindex` | Auth-gated, `seoPrivate(...)` metadata. |
+| Surface                                                            | Strategy                      | How                                                                                                                                    |
+| ------------------------------------------------------------------ | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Marketing, blogs, legal pages                                      | Static                        | Server component, no data fetch.                                                                                                       |
+| `/{city}/{category}[/{sub}]`, `/in/{username}`, `/services/{slug}` | Server-rendered with cache    | `fetch(..., { next: { revalidate } })` in `lib/seo/*` (300 s for profiles, 3600 s for page SEO). Metadata + JSON-LD built server-side. |
+| `sitemap.xml`, `robots.txt`, `og`                                  | Route handlers                | `app/sitemap.xml/route.ts`, `app/robots.ts`, `app/og/route.tsx`.                                                                       |
+| Home, search, services list                                        | Server shell + client islands | Client components fetch with TanStack Query.                                                                                           |
+| Customer account, bookings, feed, provider/supplier dashboards     | Client-rendered, `noindex`    | Auth-gated, `seoPrivate(...)` metadata.                                                                                                |
 
 Rules:
+
 - A file gets `"use client"` only for state, effects, event handlers, browser APIs or MUI components that need them. Push the boundary down: keep the page server-side and import a small client view.
 - Never fetch with Axios in a server component. Server-side fetches use `fetch` with an explicit `next.revalidate` (or `cache: "no-store"` for personalised data).
 - Private pages must use `seoPrivate()` (noindex). Public pages must use the builders in `lib/seo/buildMetadata.ts`.
+- **Keep the always-on shell light.** Everything in `app/providers.tsx` and `app/MainLayoutClient.tsx` ships on every page. Overlays (profile drawer, Kart AI, login modal, notifications, mobile search) are `next/dynamic` imports mounted on first open with `useLazyMount` (`hooks/useLazyMount.ts`) and prefetched when the browser is idle. Add new drawers/modals the same way, never as a static import into the shell. Sentry and socket.io-client are also loaded with `import()`; framer-motion on the home hero uses `LazyMotion` + `m`.
+- **Loading feedback (phones included).** Every client navigation shows the top bar in `components/common/Loader/NavigationProgress.tsx`, started from `onRouterTransitionStart` in `instrumentation-client.ts` (see `lib/navigationProgress.ts`). A route that renders on the server per request also gets a `loading.tsx` that returns `<PageSkeleton variant="detail" | "list" | "profile" />`, which keeps the header and bottom nav on screen. Loaders must stay visible under `prefers-reduced-motion` (Android battery saver turns it on): fade instead of `animation: none`.
+- **Split what a page does not need for its first screen.** Drawers and modals that are closed on load: `dynamic(() => import(...), { ssr: false })`. Below-the-fold maps: `dynamic(() => import(...))` (still server-rendered, own chunk). Never import a whole-world dataset for one country: India's states and cities come from `lib/indiaLocations.ts` (`npm run locations:india` rebuilds it), not `country-state-city`.
 
 ## State management
 
-| Kind of state | Tool | Examples |
-| --- | --- | --- |
-| Server data (anything from the API) | **TanStack Query** | categories, services, bookings, profile |
-| UI state shared across the tree | **Redux Toolkit** (`features/ui/*`) | login modal open, profile drawer, auth user, theme mode |
-| Component state | `useState` / `useReducer` | form inputs, open/closed, selected tab |
-| Forms | React Hook Form + Yup | signup, business info, address |
-| Realtime | `SocketContext` | notification push only |
+| Kind of state                       | Tool                                | Examples                                                |
+| ----------------------------------- | ----------------------------------- | ------------------------------------------------------- |
+| Server data (anything from the API) | **TanStack Query**                  | categories, services, bookings, profile                 |
+| UI state shared across the tree     | **Redux Toolkit** (`features/ui/*`) | login modal open, profile drawer, auth user, theme mode |
+| Component state                     | `useState` / `useReducer`           | form inputs, open/closed, selected tab                  |
+| Forms                               | React Hook Form + Yup               | signup, business info, address                          |
+| Realtime                            | `SocketContext`                     | notification push only                                  |
 
 Never copy server data into Redux. Never put UI flags into TanStack Query.
 
@@ -76,14 +80,14 @@ Details in `04-api-contracts.md`. ESLint warns on `axios` / `@/services/api` imp
 
 ## Routing
 
-| Zone | Routes | Access |
-| --- | --- | --- |
-| **Public / SEO** | `/`, `/about-us`, `/blogs/*`, `/careers`, `/contact-us`, `/{city}/{category}[/{sub}]`, `/in/{username}`, `/services/{slug}`, `/search`, legal pages | Anyone. Indexable (except `/search`). |
-| **Auth** | `/login`, `/signUp`, `/forgotPassword`, `/resetPassword`, `/emailVerfication`, `/selectRole`, `/supplier/login`, `/supplier/register` | Logged-out. |
-| **Customer** | `/cus/bookings`, `/cus/feed`, `/cus/reels`, `/cus/services-list`, `/myAccount/*` | Logged-in customer. `noindex`. |
-| **Provider** | `/dashboard`, `/schedule`, `/business-listing`, `/verifyDocuments`, `/preferences`, `/myAccount/*` (business, schedule, advertise), `/spr/*` | Logged-in `SERVICE_PROVIDER`. `noindex`. |
-| **Supplier** | `/sup/*`, `/supplier/(dashboard)`, `/supplier/onboarding` | Logged-in `SUPPLIER`. `noindex`. |
-| **Admin** | none in this repo | Separate `kartsquare-admin-ui`. |
+| Zone             | Routes                                                                                                                                              | Access                                   |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| **Public / SEO** | `/`, `/about-us`, `/blogs/*`, `/careers`, `/contact-us`, `/{city}/{category}[/{sub}]`, `/in/{username}`, `/services/{slug}`, `/search`, legal pages | Anyone. Indexable (except `/search`).    |
+| **Auth**         | `/login`, `/signUp`, `/forgotPassword`, `/resetPassword`, `/emailVerfication`, `/selectRole`, `/supplier/login`, `/supplier/register`               | Logged-out.                              |
+| **Customer**     | `/cus/bookings`, `/cus/feed`, `/cus/reels`, `/cus/services-list`, `/myAccount/*`                                                                    | Logged-in customer. `noindex`.           |
+| **Provider**     | `/dashboard`, `/schedule`, `/business-listing`, `/verifyDocuments`, `/preferences`, `/myAccount/*` (business, schedule, advertise), `/spr/*`        | Logged-in `SERVICE_PROVIDER`. `noindex`. |
+| **Supplier**     | `/sup/*`, `/supplier/(dashboard)`, `/supplier/onboarding`                                                                                           | Logged-in `SUPPLIER`. `noindex`.         |
+| **Admin**        | none in this repo                                                                                                                                   | Separate `kartsquare-admin-ui`.          |
 
 Gates: `helper/RegistrationGuard.tsx` wraps routes that need a completed registration. `middleware.ts` only 308-redirects numeric blog ids to slugs. `next.config.ts` holds the static redirects (camelCase to kebab-case URLs) and rewrites.
 

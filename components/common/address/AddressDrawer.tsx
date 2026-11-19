@@ -9,24 +9,28 @@ import {
   FormControlLabel,
   Autocomplete,
   TextField,
-  IconButton,
 } from "@mui/material";
 import { Controller } from "react-hook-form";
 import { Skeleton } from "@mui/material";
-import { State, City } from "country-state-city";
-import { HomeOutlined, WorkOutline, LocationOnOutlined, LocationOn, MyLocation } from "@mui/icons-material";
+import {
+  HomeOutlined,
+  WorkOutline,
+  LocationOnOutlined,
+  LocationOn,
+  MyLocation,
+} from "@mui/icons-material";
+import { getCitiesOfIndianState, getIndianStates } from "@/lib/indiaLocations";
 import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
 import RightDrawer from "@/components/common/RightDrawer";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
-import { Address } from "@/services/address/addressInterface";
+import { type Address } from "@/services/address/addressInterface";
 import { COLORS } from "@/constants/colors";
-import { AddressFormData } from "./AddressSchema";
 import { useAddressForm } from "@/hooks/useAddressForm";
 import { useAddressMap } from "@/hooks/useAddressMap";
 import { useAddressSubmit } from "@/hooks/useAddressSubmit";
-import ErrorMessage from "../ErrorMessage";
 import { useGeolocation } from "@/hooks/useGeolocation";
+import ErrorMessage from "../ErrorMessage";
 import MapView from "./components/mapView";
 import MapSearchSuggestions from "./components/MapSearchSuggestions";
 
@@ -52,29 +56,33 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
 
   const [step, setStep] = useState<"map" | "form">("map");
 
-  const {
-    coordinates,
-    error: locationError,
-    getCoordinates,
-  } = useGeolocation();
+  const { coordinates, error: locationError, getCoordinates } = useGeolocation();
+
+  const firstStep = mode === "edit" ? "form" : "map";
+
+  // Each time the drawer opens (or switches mode while open), start at the right step.
+  // Adjusted during render, React's pattern for state that follows props.
+  const openKey = open ? `open:${mode}` : "closed";
+  const [lastOpenKey, setLastOpenKey] = useState(openKey);
+  if (openKey !== lastOpenKey) {
+    setLastOpenKey(openKey);
+    if (open) setStep(firstStep);
+  }
 
   useEffect(() => {
     if (open) {
       getCoordinates();
-      setStep(mode === "edit" ? "form" : "map");
-    } else {
-      setTimeout(() => setStep(mode === "edit" ? "form" : "map"), 300);
+      return;
     }
+    // Reset once the close animation is over, so the drawer does not visibly jump while closing.
+    const timer = setTimeout(() => setStep(firstStep), 300);
+    return () => clearTimeout(timer);
+    // getCoordinates changes identity with the translation function; re-running on that would
+    // ask for GPS again on every re-render while open. Only opening (or a mode change) should.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, mode]);
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useAddressForm({
+  const { control, handleSubmit, reset, setValue, watch } = useAddressForm({
     initialData,
     mode,
     open,
@@ -82,17 +90,13 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
     isDefault: isDefault ? true : false,
   });
 
-  const {
-    mapCoordinates,
-    handleMapLocationChange,
-    handleLocationSelect,
-    isValidating
-  } = useAddressMap({
-    initialData,
-    setValue,
-    coordinates,
-    watch, 
-  });
+  const { mapCoordinates, handleMapLocationChange, handleLocationSelect, isValidating } =
+    useAddressMap({
+      initialData,
+      setValue,
+      coordinates,
+      watch,
+    });
 
   const { handleFormSubmit, isPending } = useAddressSubmit({
     mode,
@@ -104,12 +108,10 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
     onError: (msg) => setError(msg),
   });
 
-  const indianStates = State.getStatesOfCountry("IN");
+  const indianStates = getIndianStates();
   const currentStateName = watch("state");
   const currentStateObj = indianStates.find((s) => s.name === currentStateName);
-  const cities = currentStateObj
-    ? City.getCitiesOfState("IN", currentStateObj.isoCode)
-    : [];
+  const cities = currentStateObj ? getCitiesOfIndianState(currentStateObj.isoCode) : [];
 
   const closeDrawer = () => {
     onClose();
@@ -124,20 +126,39 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
     <RightDrawer
       open={open}
       onClose={closeDrawer}
-      title={step === "map" ? "Select Location" : (mode === "add" ? t("addNewAddress") : t("editAddress"))}
+      title={
+        step === "map" ? "Select Location" : mode === "add" ? t("addNewAddress") : t("editAddress")
+      }
       width={600}
     >
-      <Box sx={{ px: 3, pb: 3, display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Box sx={{ px: 3, pb: 3, display: "flex", flexDirection: "column", height: "100%" }}>
         <ErrorMessage
           error={error || locationError || ""}
           isVisible={(!!error || !!locationError) && open}
         />
-        
-        <form onSubmit={handleSubmit(handleFormSubmit)} style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-          
+
+        <form
+          onSubmit={handleSubmit(handleFormSubmit)}
+          style={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
+        >
           {step === "map" && (
-            <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, height: { xs: "calc(100vh - 120px)", sm: "calc(100vh - 180px)" } }}>
-              <Box sx={{ position: "relative", flexGrow: 1, borderRadius: "16px", overflow: "hidden", mb: { xs: 1.5, sm: 3 } }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
+                height: { xs: "calc(100vh - 120px)", sm: "calc(100vh - 180px)" },
+              }}
+            >
+              <Box
+                sx={{
+                  position: "relative",
+                  flexGrow: 1,
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                  mb: { xs: 1.5, sm: 3 },
+                }}
+              >
                 <MapView
                   latitude={mapCoordinates.lat}
                   longitude={mapCoordinates.lng}
@@ -145,7 +166,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                   height="100%"
                   isValidating={isValidating}
                 />
-                
+
                 <Box sx={{ position: "absolute", top: 16, left: 16, right: 16, zIndex: 1000 }}>
                   <MapSearchSuggestions
                     currentLocation={mapCoordinates}
@@ -155,15 +176,24 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
               </Box>
 
               {/* Bottom Target Sheet */}
-              <Box sx={{ 
-                p: { xs: 2, sm: 3 }, 
-                bgcolor: isDarkMode ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE, 
-                borderRadius: "24px", 
-                border: `1px solid ${isDarkMode ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
-                boxShadow: `0 4px 24px ${COLORS.SHADOW.DEFAULT}` 
-              }}>
-                <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: { xs: 1.5, sm: 3 } }}>
-                  <LocationOn sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: { xs: 24, sm: 32 }, mr: 1.5, mt: 0.5 }} />
+              <Box
+                sx={{
+                  p: { xs: 2, sm: 3 },
+                  bgcolor: isDarkMode ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE,
+                  borderRadius: "24px",
+                  border: `1px solid ${isDarkMode ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+                  boxShadow: `0 4px 24px ${COLORS.SHADOW.DEFAULT}`,
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "flex-start", mb: { xs: 1.5, sm: 3 } }}>
+                  <LocationOn
+                    sx={{
+                      color: COLORS.PRIMARY_PURPLE,
+                      fontSize: { xs: 24, sm: 32 },
+                      mr: 1.5,
+                      mt: 0.5,
+                    }}
+                  />
                   <Box sx={{ flex: 1 }}>
                     {isValidating ? (
                       <>
@@ -173,9 +203,22 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                     ) : (
                       <>
                         <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2, mb: 0.5 }}>
-                          {watch("landmark") || watch("building_no") || watch("address")?.split(',')[0] || "Locating..."}
+                          {watch("landmark") ||
+                            watch("building_no") ||
+                            watch("address")?.split(",")[0] ||
+                            "Locating..."}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                            fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                          }}
+                        >
                           {[watch("building_no"), watch("address"), watch("city_town")]
                             .filter(Boolean)
                             .join(", ")}
@@ -184,42 +227,42 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                     )}
                   </Box>
                 </Box>
-                
+
                 <Button
                   variant="contained"
                   fullWidth
                   onClick={() => setStep("form")}
                   disabled={isValidating}
-                  sx={{ 
-                    py: { xs: 1.2, sm: 1.8 }, 
-                    borderRadius: "12px", 
+                  sx={{
+                    py: { xs: 1.2, sm: 1.8 },
+                    borderRadius: "12px",
                     bgcolor: COLORS.PRIMARY_PURPLE,
                     color: COLORS.WHITE,
                     fontWeight: 700,
-                    fontSize: { xs: '0.85rem', sm: '1rem' },
-                    transition: 'all 0.2s',
-                    '&:hover': {
+                    fontSize: { xs: "0.85rem", sm: "1rem" },
+                    transition: "all 0.2s",
+                    "&:hover": {
                       bgcolor: COLORS.PURPLE_HOVER,
-                      transform: 'translateY(-2px)',
-                      boxShadow: `0 4px 12px ${COLORS.SHADOW.DEFAULT}`
-                    }
+                      transform: "translateY(-2px)",
+                      boxShadow: `0 4px 12px ${COLORS.SHADOW.DEFAULT}`,
+                    },
                   }}
                 >
                   {isValidating ? "Fetching address..." : "Confirm Location & Proceed"}
                 </Button>
-                
+
                 <Button
                   variant="outlined"
                   fullWidth
                   onClick={() => getCoordinates()}
-                  sx={{ 
+                  sx={{
                     mt: 1,
-                    py: { xs: 1, sm: 1.2 }, 
-                    borderRadius: "12px", 
+                    py: { xs: 1, sm: 1.2 },
+                    borderRadius: "12px",
                     borderColor: COLORS.PRIMARY_PURPLE,
                     color: COLORS.PRIMARY_PURPLE,
                     fontWeight: 600,
-                    fontSize: { xs: '0.8rem', sm: '0.9rem' }
+                    fontSize: { xs: "0.8rem", sm: "0.9rem" },
                   }}
                 >
                   <MyLocation sx={{ mr: 1, fontSize: 20 }} />
@@ -230,24 +273,47 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
           )}
 
           {step === "form" && (
-            <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
               {/* Mini Map Banner */}
-              <Box sx={{ height: 140, mb: 3, borderRadius: "16px", overflow: "hidden", position: 'relative', flexShrink: 0 }}>
+              <Box
+                sx={{
+                  height: 140,
+                  mb: 3,
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                  position: "relative",
+                  flexShrink: 0,
+                }}
+              >
                 <MapView
                   latitude={mapCoordinates.lat}
                   longitude={mapCoordinates.lng}
                   height="100%"
                   isValidating={isValidating}
                 />
-                <Box sx={{ position: 'absolute', inset: 0, zIndex: 10, ...(!isDarkMode && { bgcolor: 'rgba(255,255,255,0.1)' }) }} />
-                <Button 
+                <Box
+                  sx={{
+                    position: "absolute",
+                    inset: 0,
+                    zIndex: 10,
+                    ...(!isDarkMode && { bgcolor: "rgba(255,255,255,0.1)" }),
+                  }}
+                />
+                <Button
                   onClick={() => setStep("map")}
-                  sx={{ 
-                    position: 'absolute', bottom: 12, right: 12, zIndex: 11, 
-                    bgcolor: COLORS.WHITE, color: COLORS.PRIMARY_PURPLE, 
-                    fontWeight: 600, py: 0.5, px: 2, borderRadius: '8px',
+                  sx={{
+                    position: "absolute",
+                    bottom: 12,
+                    right: 12,
+                    zIndex: 11,
+                    bgcolor: COLORS.WHITE,
+                    color: COLORS.PRIMARY_PURPLE,
+                    fontWeight: 600,
+                    py: 0.5,
+                    px: 2,
+                    borderRadius: "8px",
                     boxShadow: `0 2px 8px ${COLORS.SHADOW.DEFAULT}`,
-                    '&:hover': { bgcolor: COLORS.WHITE } 
+                    "&:hover": { bgcolor: COLORS.WHITE },
                   }}
                 >
                   Change
@@ -260,24 +326,36 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                 </Typography>
 
                 <Grid container spacing={2.5}>
-                  
                   {/* Save As Tags */}
                   <Grid size={{ xs: 12 }}>
-                    <Typography variant="body2" sx={{ mb: 1, fontWeight: 600, color: isDarkMode ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mb: 1,
+                        fontWeight: 600,
+                        color: isDarkMode ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                      }}
+                    >
                       Save address as <span style={{ color: COLORS.SECONDARY_ORANGE }}>*</span>
                     </Typography>
-                    <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
-                      {['Home', 'Work', 'Other'].map(tag => {
-                        const isSelected = tag === 'Other' 
-                          ? (tagValue !== 'Home' && tagValue !== 'Work')
-                          : tagValue === tag;
-                        const Icon = tag === 'Home' ? HomeOutlined : tag === 'Work' ? WorkOutline : LocationOnOutlined;
+                    <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
+                      {["Home", "Work", "Other"].map((tag) => {
+                        const isSelected =
+                          tag === "Other"
+                            ? tagValue !== "Home" && tagValue !== "Work"
+                            : tagValue === tag;
+                        const Icon =
+                          tag === "Home"
+                            ? HomeOutlined
+                            : tag === "Work"
+                              ? WorkOutline
+                              : LocationOnOutlined;
 
                         return (
                           <Button
                             key={tag}
                             onClick={() => {
-                              if (tag === 'Other') {
+                              if (tag === "Other") {
                                 setValue("address_name", "", { shouldValidate: false });
                               } else {
                                 setValue("address_name", tag, { shouldValidate: true });
@@ -285,22 +363,40 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                             }}
                             sx={{
                               flex: 1,
-                              minWidth: '90px',
+                              minWidth: "90px",
                               py: 1,
-                              borderRadius: '12px',
-                              border: `1px solid ${isSelected ? COLORS.PRIMARY_PURPLE : (isDarkMode ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT)}`,
-                              bgcolor: isSelected ? bgSubtle : (isDarkMode ? 'rgba(255,255,255,0.02)' : COLORS.WHITE),
-                              color: isSelected ? COLORS.PRIMARY_PURPLE : (isDarkMode ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT),
+                              borderRadius: "12px",
+                              border: `1px solid ${isSelected ? COLORS.PRIMARY_PURPLE : isDarkMode ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+                              bgcolor: isSelected
+                                ? bgSubtle
+                                : isDarkMode
+                                  ? "rgba(255,255,255,0.02)"
+                                  : COLORS.WHITE,
+                              color: isSelected
+                                ? COLORS.PRIMARY_PURPLE
+                                : isDarkMode
+                                  ? COLORS.TEXT.SECONDARY_DARK
+                                  : COLORS.TEXT.SECONDARY_LIGHT,
                               fontWeight: isSelected ? 700 : 500,
-                              textTransform: 'none',
-                              transition: 'all 0.2s',
-                              '&:hover': {
+                              textTransform: "none",
+                              transition: "all 0.2s",
+                              "&:hover": {
                                 borderColor: COLORS.PRIMARY_PURPLE,
-                                bgcolor: isSelected ? bgSubtle : (isDarkMode ? 'rgba(255,255,255,0.05)' : COLORS.PURPLE_ALPHA_04)
-                              }
+                                bgcolor: isSelected
+                                  ? bgSubtle
+                                  : isDarkMode
+                                    ? "rgba(255,255,255,0.05)"
+                                    : COLORS.PURPLE_ALPHA_04,
+                              },
                             }}
                           >
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
                               <Icon sx={{ mr: 1, fontSize: 20 }} />
                               {tag}
                             </Box>
@@ -308,7 +404,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                         );
                       })}
                     </Box>
-                    {(tagValue !== 'Home' && tagValue !== 'Work') && (
+                    {tagValue !== "Home" && tagValue !== "Work" && (
                       <Box sx={{ mt: 1.5 }}>
                         <Input
                           name="address_name"
@@ -323,12 +419,25 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
 
                   {/* House / Flat / Block No. */}
                   <Grid size={{ xs: 12 }}>
-                    <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500, color: isDarkMode ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }}>
-                      House / Flat / Block No. <span style={{ color: COLORS.SECONDARY_ORANGE }}>*</span>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mb: 0.5,
+                        fontWeight: 500,
+                        color: isDarkMode ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                      }}
+                    >
+                      House / Flat / Block No.{" "}
+                      <span style={{ color: COLORS.SECONDARY_ORANGE }}>*</span>
                     </Typography>
-                    <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Box sx={{ display: "flex", gap: 2 }}>
                       <Box sx={{ flex: 2 }}>
-                        <Input name="building_no" control={control} placeholder="House/Flat No." size="small" />
+                        <Input
+                          name="building_no"
+                          control={control}
+                          placeholder="House/Flat No."
+                          size="small"
+                        />
                       </Box>
                       <Box sx={{ flex: 1 }}>
                         <Input name="floor" control={control} placeholder="Floor" size="small" />
@@ -338,29 +447,65 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
 
                   {/* Apartment / Road / Area */}
                   <Grid size={{ xs: 12 }}>
-                    <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500, color: isDarkMode ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }}>
-                      Apartment / Road / Area <span style={{ color: COLORS.SECONDARY_ORANGE }}>*</span>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mb: 0.5,
+                        fontWeight: 500,
+                        color: isDarkMode ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                      }}
+                    >
+                      Apartment / Road / Area{" "}
+                      <span style={{ color: COLORS.SECONDARY_ORANGE }}>*</span>
                     </Typography>
-                    <Input name="address" control={control} placeholder="Street Name or Locality" size="small" />
+                    <Input
+                      name="address"
+                      control={control}
+                      placeholder="Street Name or Locality"
+                      size="small"
+                    />
                   </Grid>
 
                   {/* Landmark */}
                   <Grid size={{ xs: 12 }}>
-                    <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 500, color: isDarkMode ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mb: 0.5,
+                        fontWeight: 500,
+                        color: isDarkMode ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+                      }}
+                    >
                       Landmark
                     </Typography>
-                    <Input name="landmark" control={control} placeholder="Nearby landmark" size="small" />
+                    <Input
+                      name="landmark"
+                      control={control}
+                      placeholder="Nearby landmark"
+                      size="small"
+                    />
                   </Grid>
 
                   {/* Location Details Block */}
                   <Grid size={{ xs: 12 }}>
-                    <Box sx={{ 
-                      p: 2, 
-                      bgcolor: bgSubtle, 
-                      borderRadius: '12px', 
-                      border: `1px solid ${isDarkMode ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}` 
-                    }}>
-                      <Typography variant="body2" sx={{ fontWeight: 600, mb: 2, color: isDarkMode ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT }}>
+                    <Box
+                      sx={{
+                        p: 2,
+                        bgcolor: bgSubtle,
+                        borderRadius: "12px",
+                        border: `1px solid ${isDarkMode ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+                      }}
+                    >
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 600,
+                          mb: 2,
+                          color: isDarkMode
+                            ? COLORS.TEXT.SECONDARY_DARK
+                            : COLORS.TEXT.SECONDARY_LIGHT,
+                        }}
+                      >
                         Auto-filled Location Details
                       </Typography>
                       <Grid container spacing={2}>
@@ -373,8 +518,14 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                                 options={indianStates.map((s) => s.name)}
                                 value={field.value || null}
                                 onChange={(_, newValue) => {
-                                  setValue("state", newValue || "", { shouldValidate: true, shouldDirty: true });
-                                  setValue("city_town", "", { shouldValidate: true, shouldDirty: true });
+                                  setValue("state", newValue || "", {
+                                    shouldValidate: true,
+                                    shouldDirty: true,
+                                  });
+                                  setValue("city_town", "", {
+                                    shouldValidate: true,
+                                    shouldDirty: true,
+                                  });
                                 }}
                                 renderInput={(params) => (
                                   <TextField
@@ -385,7 +536,9 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                                     error={!!fieldState.error}
                                     helperText={fieldState.error?.message}
                                     sx={{
-                                      bgcolor: isDarkMode ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.WHITE,
+                                      bgcolor: isDarkMode
+                                        ? COLORS.BACKGROUND.PRIMARY_DARK
+                                        : COLORS.WHITE,
                                       borderRadius: "12px",
                                       "& .MuiOutlinedInput-root": { borderRadius: "12px" },
                                     }}
@@ -395,7 +548,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                             )}
                           />
                         </Grid>
-                        
+
                         <Grid size={{ xs: 6 }}>
                           <Controller
                             name="city_town"
@@ -405,7 +558,10 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                                 options={cities.map((c) => c.name)}
                                 value={field.value || null}
                                 onChange={(_, newValue) => {
-                                  setValue("city_town", newValue || "", { shouldValidate: true, shouldDirty: true });
+                                  setValue("city_town", newValue || "", {
+                                    shouldValidate: true,
+                                    shouldDirty: true,
+                                  });
                                 }}
                                 disabled={!currentStateName}
                                 renderInput={(params) => (
@@ -417,7 +573,9 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                                     error={!!fieldState.error}
                                     helperText={fieldState.error?.message}
                                     sx={{
-                                      bgcolor: isDarkMode ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.WHITE,
+                                      bgcolor: isDarkMode
+                                        ? COLORS.BACKGROUND.PRIMARY_DARK
+                                        : COLORS.WHITE,
                                       borderRadius: "12px",
                                       "& .MuiOutlinedInput-root": { borderRadius: "12px" },
                                     }}
@@ -427,13 +585,24 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                             )}
                           />
                         </Grid>
-                        
+
                         <Grid size={{ xs: 6 }}>
-                          <Input name="pincode" control={control} placeholder={t("enterPincode")} size="small" />
+                          <Input
+                            name="pincode"
+                            control={control}
+                            placeholder={t("enterPincode")}
+                            size="small"
+                          />
                         </Grid>
-                        
+
                         <Grid size={{ xs: 6 }}>
-                          <Input name="country" control={control} placeholder={t("selectCountry")} size="small" disabled />
+                          <Input
+                            name="country"
+                            control={control}
+                            placeholder={t("selectCountry")}
+                            size="small"
+                            disabled
+                          />
                         </Grid>
                       </Grid>
                     </Box>
@@ -450,13 +619,22 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                               {...field}
                               checked={field.value}
                               sx={{
-                                color: isDarkMode ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                                color: isDarkMode
+                                  ? COLORS.TEXT.SECONDARY_DARK
+                                  : COLORS.TEXT.SECONDARY_LIGHT,
                                 "&.Mui-checked": { color: COLORS.PRIMARY_PURPLE },
                               }}
                             />
                           }
                           label={
-                            <Typography variant="body2" sx={{ color: isDarkMode ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT }}>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                color: isDarkMode
+                                  ? COLORS.TEXT.PRIMARY_DARK
+                                  : COLORS.TEXT.PRIMARY_LIGHT,
+                              }}
+                            >
                               {t("saveAsDefault")}
                             </Typography>
                           }
@@ -464,11 +642,17 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                       )}
                     />
                   </Grid>
-
                 </Grid>
               </Box>
 
-              <Box sx={{ mt: 4, pt: 2, pb: 1, borderTop: `1px solid ${isDarkMode ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`}}>
+              <Box
+                sx={{
+                  mt: 4,
+                  pt: 2,
+                  pb: 1,
+                  borderTop: `1px solid ${isDarkMode ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
+                }}
+              >
                 <Button
                   type="submit"
                   variant="contained"
@@ -480,7 +664,7 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
                     py: 1.8,
                     borderRadius: "12px",
                     textTransform: "none",
-                    fontSize: { xs: '0.9rem', sm: '1.05rem' },
+                    fontSize: { xs: "0.9rem", sm: "1.05rem" },
                     fontWeight: 700,
                     boxShadow: `0 8px 16px ${COLORS.PURPLE_ALPHA_04}`,
                     "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
@@ -491,7 +675,6 @@ const AddressDrawer: React.FC<AddressDrawerProps> = ({
               </Box>
             </Box>
           )}
-
         </form>
       </Box>
     </RightDrawer>

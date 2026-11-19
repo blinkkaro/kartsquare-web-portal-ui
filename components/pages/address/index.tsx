@@ -1,20 +1,20 @@
 "use client";
-import ProfileWrapper from "@/components/common/profile/profileWrapper";
+import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { Box, Typography, Grid } from "@mui/material";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
-import React, { useState } from "react";
+import ProfileWrapper from "@/components/common/profile/profileWrapper";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import Button from "@/components/common/Button";
-import AddressCard from "./components/AddressCard";
-import {
-  useGetAddress,
-  useAddAddress,
-  useUpdateAddress,
-  useDeleteAddress,
-} from "@/hooks/useAddress";
-import { Address } from "@/services/address/addressInterface";
+import { useGetAddress, useUpdateAddress, useDeleteAddress } from "@/hooks/useAddress";
+import { type Address } from "@/services/address/addressInterface";
 import WarningModel from "@/components/common/WarningModel";
-import AddressDrawer from "@/components/common/address/AddressDrawer";
+import AddressCard from "./components/AddressCard";
+
+// Opened on demand: loaded after the page instead of in its first bundle.
+const AddressDrawer = dynamic(() => import("@/components/common/address/AddressDrawer"), {
+  ssr: false,
+});
 
 function AddressView() {
   const { t } = useTranslationContext();
@@ -128,11 +128,7 @@ function AddressView() {
         )}
 
         {/* Add Address Modal */}
-        <AddressDrawer
-          open={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
-          mode="add"
-        />
+        <AddressDrawer open={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} mode="add" />
 
         {/* Edit Address Modal */}
         <AddressDrawer

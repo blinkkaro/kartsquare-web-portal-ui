@@ -1,26 +1,25 @@
-import CryptoJS from "crypto-js";
+// Only the AES cipher and UTF-8 encoder, not the whole crypto-js bundle (SHA-3, RIPEMD, other
+// ciphers). Output is byte-for-byte the same as CryptoJS.AES, so stored values still decrypt.
+import AES from "crypto-js/aes";
+import Utf8 from "crypto-js/enc-utf8";
 
-const SECRET_KEY =
-  process.env.NEXT_PUBLIC_SECRET_KEY || "your-fallback-secret-key";
+const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY || "your-fallback-secret-key";
 
 export const secureStorage = {
   // 1. Encrypt and Save
-  setItem: (key: string, value: any) => {
+  setItem: (key: string, value: unknown) => {
     if (typeof window === "undefined") return; // Guard for server-side
 
     if (!SECRET_KEY) {
       console.warn(
-        "SecureStorage: SECRET_KEY is not defined. Data will not be encrypted properly."
+        "SecureStorage: SECRET_KEY is not defined. Data will not be encrypted properly.",
       );
       return;
     }
 
     try {
       // Encrypt the value
-      const encrypted = CryptoJS.AES.encrypt(
-        JSON.stringify(value),
-        SECRET_KEY
-      ).toString();
+      const encrypted = AES.encrypt(JSON.stringify(value), SECRET_KEY).toString();
 
       // Save to local storage
       localStorage.setItem(key, encrypted);
@@ -43,8 +42,8 @@ export const secureStorage = {
       if (!encrypted) return null;
 
       // Decrypt the value
-      const bytes = CryptoJS.AES.decrypt(encrypted, SECRET_KEY);
-      const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+      const bytes = AES.decrypt(encrypted, SECRET_KEY);
+      const decrypted = bytes.toString(Utf8);
 
       if (!decrypted) {
         // Handle case where decryption fails (unavailable key or bad data)
@@ -52,12 +51,8 @@ export const secureStorage = {
       }
 
       return JSON.parse(decrypted);
-    } catch (error) {
-      console.warn(
-        "SecureStorage: Decryption failed for key:",
-        key,
-        "clearing item."
-      );
+    } catch {
+      console.warn("SecureStorage: Decryption failed for key:", key, "clearing item.");
       localStorage.removeItem(key); // Clear invalid data
       return null;
     }

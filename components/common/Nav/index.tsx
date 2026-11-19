@@ -1,57 +1,39 @@
 "use client";
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import {
-  AppBar,
-  Toolbar,
-  Box,
-  styled,
-  useTheme,
-  useMediaQuery,
-} from "@mui/material";
+import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
-import { COLORS } from "../../../constants/colors";
+import { AppBar, Toolbar, Box, styled, useTheme, useMediaQuery } from "@mui/material";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useAppSelector } from "@/store/hooks";
-import {
-  getDesktopNavItems,
-  getMobileNavItems,
-  getProviderDockItems,
-} from "../../../constants/navRoutes";
 import { AppUserType } from "@/services/auth/auth.interface";
 import { publicProfilePath } from "@/lib/providerDashboard";
-
-// Import extracted components
-import NavLogo from "./components/NavLogo";
+import { useLazyMount } from "@/hooks/useLazyMount";
+import { secureStorage } from "@/helper/SecureStorage";
+import { selectIsAuthenticated, selectCurrentUser } from "@/features/ui/authSlice";
+import { COLORS } from "@/constants/colors";
+import { getDesktopNavItems, getMobileNavItems, getProviderDockItems } from "@/constants/navRoutes";
 import LocationChip from "../Ai/components/LocationChip";
 import { useAILocation } from "../Ai/useAILocation";
+import RightDrawer from "../RightDrawer";
+import NavLogo from "./components/NavLogo";
 import SearchBar from "./components/SearchBar";
 import DesktopNavLinks from "./components/DesktopNavLinks";
 import NavActions from "./components/NavActions";
 import MobileBottomNav from "./components/MobileBottomNav";
 import ProviderBottomNav from "./components/ProviderBottomNav";
-import MobileSearchDrawer from "./components/MobileSearchDrawer";
-import NotificationList from "./components/NotificationList";
-import RightDrawer from "../RightDrawer";
-import { secureStorage } from "@/helper/SecureStorage";
-import {
-  selectIsAuthenticated,
-  selectCurrentUser,
-} from "@/features/ui/authSlice";
+
+// Opened on demand; kept out of the bundle every page loads.
+const MobileSearchDrawer = dynamic(() => import("./components/MobileSearchDrawer"), { ssr: false });
+const NotificationList = dynamic(() => import("./components/NotificationList"), { ssr: false });
 
 // Styled Components
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor:
-    theme.palette.mode === "dark"
-      ? COLORS.BACKGROUND.PAPER_DARK
-      : COLORS.BACKGROUND.PAPER_LIGHT,
+    theme.palette.mode === "dark" ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
   boxShadow:
-    theme.palette.mode === "dark"
-      ? "0 1px 3px rgba(0, 0, 0, 0.3)"
-      : "0 1px 3px rgba(0, 0, 0, 0.1)",
+    theme.palette.mode === "dark" ? "0 1px 3px rgba(0, 0, 0, 0.3)" : "0 1px 3px rgba(0, 0, 0, 0.1)",
   borderBottom: `1px solid ${
-    theme.palette.mode === "dark"
-      ? COLORS.BORDER.DEFAULT_DARK
-      : COLORS.BORDER.DEFAULT_LIGHT
+    theme.palette.mode === "dark" ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
   }`,
   zIndex: 1200,
 }));
@@ -101,6 +83,8 @@ const Nav = () => {
   // Local state
   const [search, setSearch] = useState("");
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const mountMobileSearch = useLazyMount(mobileSearchOpen);
+  const mountNotifications = useLazyMount(showNotificationDrawer);
 
   // Get navigation items
   const desktopNavItems = useMemo(() => getDesktopNavItems(role, t), [role, t]);
@@ -110,7 +94,8 @@ const Nav = () => {
   );
 
   const isProviderDock = isAuthenticated && role === AppUserType.SERVICE_PROVIDER;
-  const providerUsername = (secureStorage.getItem("user_details") as { username?: string } | null)?.username;
+  const providerUsername = (secureStorage.getItem("user_details") as { username?: string } | null)
+    ?.username;
   const providerDock = useMemo(
     () => getProviderDockItems(t, publicProfilePath(providerUsername)),
     [t, providerUsername],
@@ -162,7 +147,14 @@ const Nav = () => {
       <StyledAppBar position="fixed" elevation={0} ref={appBarRef}>
         <StyledToolbar>
           {/* Left Section: Logo and Search */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: { xs: "0.5rem", sm: "1rem", lg: "1.5rem" }, minWidth: 0 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: { xs: "0.5rem", sm: "1rem", lg: "1.5rem" },
+              minWidth: 0,
+            }}
+          >
             <NavLogo isMobile={isMobile} mode={mode} />
 
             {/* Which city results are for (Jaipur by default) — one picker for the whole app. */}
@@ -193,11 +185,7 @@ const Nav = () => {
               gap: { md: "0.5rem", lg: "1.5rem" },
             }}
           >
-            <DesktopNavLinks
-              items={desktopNavItems}
-              currentPath={pathname}
-              mode={mode}
-            />
+            <DesktopNavLinks items={desktopNavItems} currentPath={pathname} mode={mode} />
 
             <NavActions
               isAuthenticated={isAuthenticated}
@@ -218,7 +206,11 @@ const Nav = () => {
           {/* Mobile Bottom Navigation */}
           {(isMobile || isTablet) &&
             (isProviderDock ? (
-              <ProviderBottomNav primary={providerDock.primary} more={providerDock.more} currentPath={pathname} />
+              <ProviderBottomNav
+                primary={providerDock.primary}
+                more={providerDock.more}
+                currentPath={pathname}
+              />
             ) : (
               <MobileBottomNav items={mobileNavItems} currentPath={pathname} />
             ))}
@@ -230,7 +222,7 @@ const Nav = () => {
       <Box sx={{ height: appBarHeight }} />
 
       {/* Mobile Search Drawer */}
-      {(isMobile || isTablet) && (
+      {(isMobile || isTablet) && mountMobileSearch && (
         <MobileSearchDrawer
           isOpen={mobileSearchOpen}
           search={search}
@@ -247,7 +239,9 @@ const Nav = () => {
         title={t("notifications")}
         width={500}
       >
-        <NotificationList onClose={() => setShowNotificationDrawer(false)} />
+        {mountNotifications && (
+          <NotificationList onClose={() => setShowNotificationDrawer(false)} />
+        )}
       </RightDrawer>
     </>
   );

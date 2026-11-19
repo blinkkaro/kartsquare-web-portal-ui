@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, type ReactNode } from "react";
 import { english } from "./en";
 // Define available languages
 // export type Locale = "en" | "es" | "hi";
@@ -318,6 +318,9 @@ export type TranslationKey =
   | "buildingNo"
   | "floor"
   | "address"
+  | "myReels"
+  | "businessInfoUpdated"
+  | "businessInfoUpdatedDesc"
   | "landmark"
   | "pincode"
   | "cityTown"
@@ -1467,17 +1470,12 @@ interface TranslationContextType {
   t: (key: TranslationKey, params?: Record<string, string | number>) => string;
 }
 
-const TranslationContext = createContext<TranslationContextType | undefined>(
-  undefined
-);
+const TranslationContext = createContext<TranslationContextType | undefined>(undefined);
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<"en">("en");
 
-  const t = (
-    key: TranslationKey,
-    params?: Record<string, string | number>
-  ): string => {
+  const t = (key: TranslationKey, params?: Record<string, string | number>): string => {
     let text = dictionaries[locale][key] || key;
     if (params) {
       Object.entries(params).forEach(([paramKey, value]) => {
@@ -1497,9 +1495,7 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
 export function useTranslationContext() {
   const context = useContext(TranslationContext);
   if (context === undefined) {
-    throw new Error(
-      "useTranslationContext must be used within a TranslationProvider"
-    );
+    throw new Error("useTranslationContext must be used within a TranslationProvider");
   }
   return context;
 }

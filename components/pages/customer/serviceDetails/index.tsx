@@ -1,6 +1,6 @@
 "use client";
-import { CHAT_ENABLED } from "@/lib/featureFlags";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Box, Container, Typography, useTheme } from "@mui/material";
@@ -11,15 +11,12 @@ import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import IosShareRoundedIcon from "@mui/icons-material/IosShareRounded";
 import { IconButton } from "@mui/material";
 import { useDispatch } from "react-redux";
-import axios from "axios";
 import toast from "react-hot-toast";
+import { CHAT_ENABLED } from "@/lib/featureFlags";
 import { stripMarkdown } from "@/utils/plainText";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import MainLayout from "@/app/mainLayout";
-import {
-  useServiceDetails,
-  useProviderServices,
-} from "@/hooks/useServiceDetails";
+import { useServiceDetails, useProviderServices } from "@/hooks/useServiceDetails";
 import { useGetReviews } from "@/hooks/useReview";
 import EmptyState from "@/components/common/EmptyState";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -29,6 +26,7 @@ import RightDrawer from "@/components/common/RightDrawer";
 import { review_type } from "@/services/providerDashboard/providerDashboard.interface";
 import { getServiceHref } from "@/utils/serviceRoute";
 import { SERVICE_FALLBACK_IMAGE } from "@/constants/media";
+import { startConversation } from "@/services/chat/chatService";
 import ServiceImageCarousel from "../../../ServiceImageCarousel";
 import ProviderInfoCard from "../../../ProviderInfoCard";
 import ServiceCard from "../../../ServiceCard";
@@ -37,7 +35,6 @@ import CustomerServicePricing from "../../../common/CustomerServicePricing";
 import DescriptionDialog from "../../provider/serviceDetails/DescriptionDialog";
 import ReviewsSection from "../../provider/serviceDetails/ReviewsSection";
 import ServiceLocation from "../../provider/serviceDetails/ServiceLocation";
-import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
 import CustomerServiceBreadcrumb from "./CustomerServiceBreadcrumb";
 import CustomerServiceInfo from "./CustomerServiceInfo";
 import CustomerServiceDetailsGrid from "./CustomerServiceDetailsGrid";
@@ -49,7 +46,9 @@ import ServiceMobileStickyBar from "./ServiceMobileStickyBar";
 import ReviewDrawerContent from "./ReviewDrawerContent";
 import GetQuoteModal from "./GetQuoteModal";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
+// Map (Google Maps loader) in its own chunk; still server-rendered, so the page hydrates without waiting for it.
+const ServiceDetailsMap = dynamic(() => import("../../map/components/ServiceDetailsMap"));
+
 const NEW_LISTING_WINDOW_DAYS = 30;
 
 const CustomerServiceDetails = () => {
@@ -66,6 +65,8 @@ const CustomerServiceDetails = () => {
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [descriptionDrawerOpen, setDescriptionDrawerOpen] = useState(false);
   const [getQuoteModalOpen, setGetQuoteModalOpen] = useState(false);
+  // Read the clock once per mount: render must not depend on when React happens to render.
+  const [now] = useState(() => Date.now());
 
   const handleBookNow = () => {
     const token = secureStorage.getItem("token");
@@ -82,13 +83,15 @@ const CustomerServiceDetails = () => {
       if (code.startsWith("+")) {
         code = code.substring(1);
       }
-      const text = encodeURIComponent(`Hi, I am interested in your service: ${service.service_name}`);
+      const text = encodeURIComponent(
+        `Hi, I am interested in your service: ${service.service_name}`,
+      );
       const url = `https://wa.me/${code}${service.provider_whatsapp_number}?text=${text}`;
       window.open(url, "_blank");
     } else if (service?.provider_phone_number) {
       // Fallback to phone number if specifically whatsapp is not there,
       // assuming phone number might have whatsapp.
-      const url = `https://wa.me/${service.provider_phone_number.replace('+', '')}?text=${encodeURIComponent(`Hi, I am interested in your service: ${service.service_name}`)}`;
+      const url = `https://wa.me/${service.provider_phone_number.replace("+", "")}?text=${encodeURIComponent(`Hi, I am interested in your service: ${service.service_name}`)}`;
       window.open(url, "_blank");
     }
   };
@@ -131,19 +134,8 @@ const CustomerServiceDetails = () => {
     }
 
     try {
-      const res = await axios.post(
-        `${API_URL}/chat/conversations`,
-        {
-          participant2_id: targetUserId,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (res.data.status === "success") {
-        router.push(`/chat?conversationId=${res.data.data.id}`);
-      }
+      const conversationId = await startConversation(targetUserId);
+      router.push(`/chat?conversationId=${conversationId}`);
     } catch (err) {
       console.error("Failed to initialize chat", err);
       toast.error("Could not start chat.");
@@ -160,21 +152,21 @@ const CustomerServiceDetails = () => {
   };
 
   // Use TanStack Query hooks - prevents duplicate API calls
-  const {
-    data: service,
-    isLoading: loading,
-    error: serviceError,
-  } = useServiceDetails(serviceId);
+  const { data: service, isLoading: loading } = useServiceDetails(serviceId);
 
   // Fetch related services only if service has provider_id
-  const { data: providerServices = [], isLoading: relatedServicesLoading } =
-    useProviderServices(service?.provider_id, 10, !!service?.provider_id);
+  const { data: providerServices } = useProviderServices(
+    service?.provider_id,
+    10,
+    !!service?.provider_id,
+  );
 
   // Filter out current service from related services
-  const relatedServices = useMemo(() => {
-    if (!service?.service_id) return providerServices;
-    return providerServices.filter((s) => s.service_id !== service.service_id);
-  }, [providerServices, service?.service_id]);
+  // At most 10 items: a plain filter is cheaper than memoizing it.
+  const currentServiceId = service?.service_id;
+  const relatedServices = (providerServices ?? []).filter(
+    (s) => !currentServiceId || s.service_id !== currentServiceId,
+  );
 
   const {
     data: reviewsData,
@@ -195,11 +187,13 @@ const CustomerServiceDetails = () => {
     return reviewsData?.pages.flatMap((page) => page.reviews) || [];
   }, [reviewsData]);
 
-  useEffect(() => {
-    if (actions === "review") {
-      setReviewModalOpen(true);
-    }
-  }, [actions]);
+  // A link with ?actions=review opens the review form. Follows `actions` as it changes, adjusted
+  // during render (React's pattern) instead of in an effect.
+  const [handledActions, setHandledActions] = useState<typeof actions | undefined>(undefined);
+  if (actions !== handledActions) {
+    setHandledActions(actions);
+    if (actions === "review") setReviewModalOpen(true);
+  }
 
   const handleReviewSubmit = () => {
     setReviewModalOpen(false);
@@ -231,11 +225,7 @@ const CustomerServiceDetails = () => {
             minHeight: "100vh",
           }}
         >
-          <EmptyState
-            titleKey="service_not_found"
-            variant="notFound"
-            minHeight="80vh"
-          />
+          <EmptyState titleKey="service_not_found" variant="notFound" minHeight="80vh" />
         </Box>
       </MainLayout>
     );
@@ -248,17 +238,13 @@ const CustomerServiceDetails = () => {
   const images =
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
-      : [
-          SERVICE_FALLBACK_IMAGE,
-        ];
+      : [SERVICE_FALLBACK_IMAGE];
 
-  const isPriceRequired =
-    service.pricing_type === "noPrice" ? false : service.is_price_required;
+  const isPriceRequired = service.pricing_type === "noPrice" ? false : service.is_price_required;
 
   const isNewListing =
     !!service.created_at &&
-    Date.now() - new Date(service.created_at).getTime() <
-      NEW_LISTING_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+    now - new Date(service.created_at).getTime() < NEW_LISTING_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 
   const showWhatsApp =
     !!(service.provider_whatsapp_country_code && service.provider_whatsapp_number) ||
@@ -330,7 +316,11 @@ const CustomerServiceDetails = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) 340px", lg: "minmax(0, 1fr) 360px" },
+              gridTemplateColumns: {
+                xs: "1fr",
+                md: "minmax(0, 1fr) 340px",
+                lg: "minmax(0, 1fr) 360px",
+              },
               gap: { xs: 2.5, md: 3 },
               alignItems: "start",
               width: "100%",
@@ -346,7 +336,9 @@ const CustomerServiceDetails = () => {
                   border: "1px solid",
                   borderColor: cardBorder,
                   boxShadow: cardShadow,
-                  bgcolor: isDark ? COLORS.NEW_UI.SURFACE_SOFT_DARK : COLORS.NEW_UI.SURFACE_SOFT_LIGHT,
+                  bgcolor: isDark
+                    ? COLORS.NEW_UI.SURFACE_SOFT_DARK
+                    : COLORS.NEW_UI.SURFACE_SOFT_LIGHT,
                 }}
               >
                 <ServiceImageCarousel images={images} serviceName={service.service_name || ""} />
@@ -386,9 +378,7 @@ const CustomerServiceDetails = () => {
                   serviceName={service.service_name || ""}
                   serviceDesc={service.service_desc || ""}
                   onContinueReading={() => setDescriptionDrawerOpen(true)}
-                  showContinueReading={
-                    !!(service.service_desc && service.service_desc.length > 50)
-                  }
+                  showContinueReading={!!(service.service_desc && service.service_desc.length > 50)}
                 />
               </ServiceAccordionSection>
 
@@ -407,7 +397,10 @@ const CustomerServiceDetails = () => {
                 />
               </ServiceAccordionSection>
 
-              <ServiceAccordionSection title="Location" icon={<PlaceRoundedIcon sx={{ fontSize: 17 }} />}>
+              <ServiceAccordionSection
+                title="Location"
+                icon={<PlaceRoundedIcon sx={{ fontSize: 17 }} />}
+              >
                 <ServiceLocation
                   address={{
                     address: service.service_address?.address || "",

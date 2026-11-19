@@ -1,10 +1,10 @@
 import React from "react";
 import type { Metadata } from "next";
-import MainLayout from "../../mainLayout";
-import { blogs } from "../../../data/blogs";
 import BlogsDetailView from "@/components/pages/blogDetails";
 import { SITE_URL } from "@/lib/seo/buildMetadata";
 import { buildBreadcrumbJsonLd, BREADCRUMBS } from "@/lib/seo/breadcrumbs";
+import { blogs } from "../../../data/blogs";
+import MainLayout from "../../mainLayout";
 
 function findBlog(slugOrId: string) {
   return blogs.find((b) => b.id === slugOrId || b.slug === slugOrId);
@@ -12,6 +12,11 @@ function findBlog(slugOrId: string) {
 
 function canonicalBlogPath(blog: (typeof blogs)[number]): string {
   return `/blogs/${blog.slug || blog.id}`;
+}
+
+/** Blog posts are bundled data: prerender every one at build so it is served as static HTML. */
+export function generateStaticParams(): { slug: string }[] {
+  return blogs.map((b) => ({ slug: b.slug || b.id }));
 }
 
 export async function generateMetadata({
@@ -32,9 +37,7 @@ export async function generateMetadata({
   const path = canonicalBlogPath(blog);
   const canonical = `${SITE_URL}${path}`;
   const rawTitle = blog.metaTitle || blog.title;
-  const titleText = /kartsquare/i.test(rawTitle)
-    ? rawTitle
-    : `${rawTitle} | kartsquare`;
+  const titleText = /kartsquare/i.test(rawTitle) ? rawTitle : `${rawTitle} | kartsquare`;
   const keywords = blog.tags?.length ? blog.tags : undefined;
   const description =
     blog.metaDescription?.trim() ||
@@ -67,11 +70,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function BlogDetailsPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function BlogDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const blog = findBlog(slug);
 
@@ -106,16 +105,10 @@ export default async function BlogDetailsPage({
   return (
     <MainLayout>
       {jsonLd ? (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: jsonLd }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       ) : null}
       {breadcrumbJsonLd ? (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }} />
       ) : null}
       <BlogsDetailView />
     </MainLayout>

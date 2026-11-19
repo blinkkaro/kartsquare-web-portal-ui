@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import {
   Box,
   Typography,
@@ -14,15 +15,22 @@ import {
 } from "@mui/material";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { COLORS } from "@/constants/colors";
-import { UserAddress } from "@/services/userAddress/userAddressInterface";
-import AddressDrawer from "@/components/common/address/AddressDrawer";
+import { type UserAddress } from "@/services/userAddress/userAddressInterface";
 import { english } from "@/features/i18n/en";
 
+// Opened on demand: loaded after the page instead of in its first bundle.
+const AddressDrawer = dynamic(() => import("@/components/common/address/AddressDrawer"), {
+  ssr: false,
+});
+
+const LOCATION_TYPES = ["at_customer", "at_provider", "virtual_call"] as const;
+type LocationType = (typeof LOCATION_TYPES)[number];
+const isLocationType = (value: string): value is LocationType =>
+  (LOCATION_TYPES as readonly string[]).includes(value);
+
 interface ServiceLocationProps {
-  locationType: "at_customer" | "at_provider" | "virtual_call";
-  onLocationTypeChange: (
-    value: "at_customer" | "at_provider" | "virtual_call",
-  ) => void;
+  locationType: LocationType;
+  onLocationTypeChange: (value: LocationType) => void;
   addresses: UserAddress[];
   selectedAddressId: string;
   onAddressSelect: (addressId: string) => void;
@@ -64,7 +72,9 @@ const ServiceLocation = ({
       <FormControl component="fieldset" sx={{ mb: 2 }}>
         <RadioGroup
           value={locationType}
-          onChange={(e) => onLocationTypeChange(e.target.value as any)}
+          onChange={(e) => {
+            if (isLocationType(e.target.value)) onLocationTypeChange(e.target.value);
+          }}
         >
           <FormControlLabel
             value="at_provider"
@@ -94,9 +104,7 @@ const ServiceLocation = ({
         {addressesLoading ? (
           <LogoLoader size={20} />
         ) : addresses.length > 0 ? (
-          <Box
-            sx={{ display: "flex", flexDirection: "column", gap: 1.5, mb: 2 }}
-          >
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mb: 2 }}>
             {addresses.map((addr) => (
               <Box
                 key={addr.id}
@@ -148,11 +156,7 @@ const ServiceLocation = ({
                   {addr.address}
                 </Typography>
                 {addr.landmark && (
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mb: 0.5 }}
-                  >
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
                     {english.near} {addr.landmark}
                   </Typography>
                 )}
@@ -203,8 +207,7 @@ const ServiceLocation = ({
               const val = e.target.value.replace(/[^0-9.]/g, "");
               if (
                 val === "" ||
-                (parseFloat(val) <= 10000 &&
-                  (val.match(/\./g) || []).length <= 1)
+                (parseFloat(val) <= 10000 && (val.match(/\./g) || []).length <= 1)
               ) {
                 onVisitingChargeChange(val);
               }
@@ -222,9 +225,7 @@ const ServiceLocation = ({
           </Typography>
           <Slider
             value={parseInt(serviceRadius) || 5}
-            onChange={(_, newValue) =>
-              onServiceRadiusChange(newValue.toString())
-            }
+            onChange={(_, newValue) => onServiceRadiusChange(newValue.toString())}
             min={5}
             max={50}
             step={1}
@@ -233,9 +234,7 @@ const ServiceLocation = ({
               color: COLORS.PRIMARY_PURPLE,
             }}
           />
-          <Box
-            sx={{ display: "flex", justifyContent: "space-between", mt: -1 }}
-          >
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: -1 }}>
             <Typography variant="caption" color="text.secondary">
               5 km
             </Typography>
@@ -247,11 +246,7 @@ const ServiceLocation = ({
       )}
 
       {/* Address Drawer */}
-      <AddressDrawer
-        open={addressDrawerOpen}
-        onClose={handleAddressDrawerClose}
-        mode="add"
-      />
+      <AddressDrawer open={addressDrawerOpen} onClose={handleAddressDrawerClose} mode="add" />
     </>
   );
 };

@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
+import { useParams, useRouter } from "next/navigation";
 import {
   Box,
   Container,
@@ -16,20 +18,30 @@ import {
   Dialog,
   DialogContent,
 } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { CheckCircle, Bolt, Verified } from "@mui/icons-material";
-import { useParams, useRouter } from "next/navigation";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
+import MainLayout from "@/app/mainLayout";
+import {
+  defaultBookingPlace,
+  isBookingPlace,
+  offersAtCustomer,
+  offersAtProvider,
+} from "@/lib/serviceLocation";
+import type { BookingResponse } from "@/services/booking/bookingInterface";
 import { COLORS } from "../../../../constants/colors";
 import ImageUpload from "../../../ImageUpload";
 import { english } from "../../../../features/i18n/en";
 import { useBookingData } from "./useBookingData";
 import { useBookingForm } from "./useBookingForm";
-import MainLayout from "@/app/mainLayout";
-import AddressDrawer from "@/components/common/address/AddressDrawer";
+
+// Opened on demand: loaded after the page instead of in its first bundle.
+const AddressDrawer = dynamic(() => import("@/components/common/address/AddressDrawer"), {
+  ssr: false,
+});
 
 const CustomerServiceBooking = () => {
   const params = useParams();
@@ -38,12 +50,10 @@ const CustomerServiceBooking = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [bookingResponse, setBookingResponse] = useState<any>(null);
+  const [bookingResponse, setBookingResponse] = useState<BookingResponse | null>(null);
 
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(dayjs());
-  const [location, setLocation] = useState<"at_provider" | "at_customer">(
-    "at_provider",
-  );
+  const [location, setLocation] = useState<"at_provider" | "at_customer">("at_provider");
   const [addressDrawerOpen, setAddressDrawerOpen] = useState(false);
 
   const {
@@ -86,14 +96,8 @@ const CustomerServiceBooking = () => {
 
   // Set initial location based on service availability
   React.useEffect(() => {
-    const loc = service?.service_at_location as any;
-    if (loc) {
-      if (loc === "at_customer" || loc === "AT_CUSTOMER") {
-        setLocation("at_customer");
-      } else if (loc === "at_provider" || loc === "AT_PROVIDER") {
-        setLocation("at_provider");
-      }
-    }
+    const place = defaultBookingPlace(service?.service_at_location);
+    if (place) setLocation(place);
   }, [service, setLocation]);
 
   if (loading) {
@@ -113,9 +117,7 @@ const CustomerServiceBooking = () => {
             justifyContent: "center",
             alignItems: "center",
             minHeight: "100vh",
-            bgcolor: isDark
-              ? COLORS.BACKGROUND.PRIMARY_DARK
-              : COLORS.BACKGROUND.SECONDARY_LIGHT,
+            bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
           }}
         >
           <Typography variant="h6">{english.service_not_found}</Typography>
@@ -128,9 +130,7 @@ const CustomerServiceBooking = () => {
     <MainLayout>
       <Box
         sx={{
-          bgcolor: isDark
-            ? COLORS.BACKGROUND.PRIMARY_DARK
-            : COLORS.BACKGROUND.SECONDARY_LIGHT,
+          bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
           minHeight: "100vh",
           pt: { xs: 8, md: 10 },
           pb: 4,
@@ -144,9 +144,7 @@ const CustomerServiceBooking = () => {
               variant="body2"
               onClick={() => router.push("/cus/services-list")}
               sx={{
-                color: isDark
-                  ? COLORS.TEXT.SECONDARY_DARK
-                  : COLORS.TEXT.SECONDARY_LIGHT,
+                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                 cursor: "pointer",
                 "&:hover": {
                   color: COLORS.PRIMARY_PURPLE,
@@ -160,9 +158,7 @@ const CustomerServiceBooking = () => {
               component="span"
               variant="body2"
               sx={{
-                color: isDark
-                  ? COLORS.TEXT.SECONDARY_DARK
-                  : COLORS.TEXT.SECONDARY_LIGHT,
+                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                 mx: 1,
               }}
             >
@@ -173,9 +169,7 @@ const CustomerServiceBooking = () => {
               variant="body2"
               onClick={() => router.push(`/services/${serviceId}`)}
               sx={{
-                color: isDark
-                  ? COLORS.TEXT.SECONDARY_DARK
-                  : COLORS.TEXT.SECONDARY_LIGHT,
+                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                 cursor: "pointer",
                 "&:hover": {
                   color: COLORS.PRIMARY_PURPLE,
@@ -189,9 +183,7 @@ const CustomerServiceBooking = () => {
               component="span"
               variant="body2"
               sx={{
-                color: isDark
-                  ? COLORS.TEXT.SECONDARY_DARK
-                  : COLORS.TEXT.SECONDARY_LIGHT,
+                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                 mx: 1,
               }}
             >
@@ -201,9 +193,7 @@ const CustomerServiceBooking = () => {
               component="span"
               variant="body2"
               sx={{
-                color: isDark
-                  ? COLORS.TEXT.PRIMARY_DARK
-                  : COLORS.TEXT.PRIMARY_LIGHT,
+                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                 fontWeight: 500,
               }}
             >
@@ -225,10 +215,7 @@ const CustomerServiceBooking = () => {
               }}
             />
             <Box>
-              <Typography
-                variant="h5"
-                sx={{ fontWeight: 700, color: COLORS.PRIMARY_PURPLE }}
-              >
+              <Typography variant="h5" sx={{ fontWeight: 700, color: COLORS.PRIMARY_PURPLE }}>
                 {service.service_name}
               </Typography>
 
@@ -291,24 +278,17 @@ const CustomerServiceBooking = () => {
               </Box>
               {service.is_price_required ? (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <Box
-                    sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}
-                  >
+                  <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
                     <Typography
                       sx={{
-                        color: isDark
-                          ? COLORS.TEXT.SECONDARY_DARK
-                          : COLORS.TEXT.SECONDARY_LIGHT,
+                        color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                         fontWeight: 300,
                         fontSize: "1rem",
                       }}
                     >
                       {service.currency}
                     </Typography>
-                    <Typography
-                      variant="h6"
-                      sx={{ fontWeight: 600, color: COLORS.PRIMARY_PURPLE }}
-                    >
+                    <Typography variant="h6" sx={{ fontWeight: 600, color: COLORS.PRIMARY_PURPLE }}>
                       {service.price?.toFixed(2)}
                     </Typography>
                   </Box>
@@ -316,9 +296,7 @@ const CustomerServiceBooking = () => {
                 </Box>
               ) : (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <Box
-                    sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}
-                  >
+                  <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
                     <Typography
                       variant="body1"
                       sx={{ fontWeight: 600, color: COLORS.PRIMARY_PURPLE }}
@@ -338,11 +316,7 @@ const CustomerServiceBooking = () => {
             </Alert>
           )}
           {error && (
-            <Alert
-              severity="error"
-              sx={{ mb: 3 }}
-              onClose={() => setFormError(null)}
-            >
+            <Alert severity="error" sx={{ mb: 3 }} onClose={() => setFormError(null)}>
               {error}
             </Alert>
           )}
@@ -360,9 +334,7 @@ const CustomerServiceBooking = () => {
               {/* Date Selection */}
               <Box
                 sx={{
-                  bgcolor: isDark
-                    ? COLORS.BACKGROUND.PAPER_DARK
-                    : COLORS.BACKGROUND.PAPER_LIGHT,
+                  bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
                   borderRadius: "16px",
                   p: 3,
                   mb: 3,
@@ -373,9 +345,7 @@ const CustomerServiceBooking = () => {
                   sx={{
                     fontWeight: 700,
                     mb: 2,
-                    color: isDark
-                      ? COLORS.TEXT.PRIMARY_DARK
-                      : COLORS.TEXT.PRIMARY_LIGHT,
+                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                   }}
                 >
                   {english.select_date}
@@ -400,9 +370,7 @@ const CustomerServiceBooking = () => {
                         mb: 2,
                         "& .MuiTypography-root": {
                           fontWeight: 700,
-                          color: isDark
-                            ? "rgba(255,255,255,0.4)"
-                            : "rgba(109, 103, 103, 0.4)",
+                          color: isDark ? "rgba(255,255,255,0.4)" : "rgba(109, 103, 103, 0.4)",
                         },
                       },
                       "& .MuiDayCalendar-slideTransition": {
@@ -419,15 +387,11 @@ const CustomerServiceBooking = () => {
                         height: "42px",
                         fontSize: "0.9rem",
                         fontWeight: 500,
-                        color: isDark
-                          ? COLORS.TEXT.PRIMARY_DARK
-                          : COLORS.TEXT.PRIMARY_LIGHT,
+                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                         borderRadius: "12px",
                         transition: "all 0.2s ease",
                         "&:hover": {
-                          bgcolor: isDark
-                            ? "rgba(94, 24, 233, 0.1)"
-                            : "rgba(94, 24, 233, 0.05)",
+                          bgcolor: isDark ? "rgba(94, 24, 233, 0.1)" : "rgba(94, 24, 233, 0.05)",
                           color: COLORS.PRIMARY_PURPLE,
                         },
                         "&.MuiDayCalendar-dayOutsideMonth": {
@@ -463,9 +427,7 @@ const CustomerServiceBooking = () => {
               {service.have_slots && (
                 <Box
                   sx={{
-                    bgcolor: isDark
-                      ? COLORS.BACKGROUND.PAPER_DARK
-                      : COLORS.BACKGROUND.PAPER_LIGHT,
+                    bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
                     borderRadius: "16px",
                     p: 3,
                   }}
@@ -482,9 +444,7 @@ const CustomerServiceBooking = () => {
                       variant="h6"
                       sx={{
                         fontWeight: 700,
-                        color: isDark
-                          ? COLORS.TEXT.PRIMARY_DARK
-                          : COLORS.TEXT.PRIMARY_LIGHT,
+                        color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                       }}
                     >
                       {english.start_time}
@@ -492,9 +452,7 @@ const CustomerServiceBooking = () => {
                     <Typography
                       variant="body2"
                       sx={{
-                        color: isDark
-                          ? COLORS.TEXT.SECONDARY_DARK
-                          : COLORS.TEXT.SECONDARY_LIGHT,
+                        color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                       }}
                     >
                       {english.duration_min.replace(
@@ -506,8 +464,7 @@ const CustomerServiceBooking = () => {
                   <Box
                     sx={{
                       display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fill, minmax(100px, 1fr))",
+                      gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))",
                       gap: 1.5,
                     }}
                   >
@@ -529,9 +486,7 @@ const CustomerServiceBooking = () => {
                           gridColumn: "1 / -1",
                           textAlign: "center",
                           py: 4,
-                          color: isDark
-                            ? COLORS.TEXT.SECONDARY_DARK
-                            : COLORS.TEXT.SECONDARY_LIGHT,
+                          color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                         }}
                       >
                         {english.no_available_slots}
@@ -543,9 +498,7 @@ const CustomerServiceBooking = () => {
                         const isSelected = selectedTime === slot.slot_time;
 
                         // Check if slot is in the past (with 30 min buffer)
-                        const isPast = slotTime.isBefore(
-                          dayjs().add(30, "minute"),
-                        );
+                        const isPast = slotTime.isBefore(dayjs().add(30, "minute"));
                         const isDisabled = slot.is_booked || isPast;
 
                         return (
@@ -595,9 +548,7 @@ const CustomerServiceBooking = () => {
                                     : isDark
                                       ? "rgba(94, 24, 233, 0.08)"
                                       : "rgba(94, 24, 233, 0.04)",
-                                borderColor: isDisabled
-                                  ? "inherit"
-                                  : COLORS.PRIMARY_PURPLE,
+                                borderColor: isDisabled ? "inherit" : COLORS.PRIMARY_PURPLE,
                               },
                               opacity: isDisabled ? 0.6 : 1,
                               cursor: isDisabled ? "not-allowed" : "pointer",
@@ -622,9 +573,7 @@ const CustomerServiceBooking = () => {
               {/* Location Preference */}
               <Box
                 sx={{
-                  bgcolor: isDark
-                    ? COLORS.BACKGROUND.PAPER_DARK
-                    : COLORS.BACKGROUND.PAPER_LIGHT,
+                  bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
                   borderRadius: "16px",
                   p: 3,
                   mb: 3,
@@ -635,9 +584,7 @@ const CustomerServiceBooking = () => {
                   sx={{
                     fontWeight: 700,
                     mb: 2,
-                    color: isDark
-                      ? COLORS.TEXT.PRIMARY_DARK
-                      : COLORS.TEXT.PRIMARY_LIGHT,
+                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                   }}
                 >
                   {english.location_preference}
@@ -645,26 +592,21 @@ const CustomerServiceBooking = () => {
                 <FormControl component="fieldset" fullWidth>
                   <RadioGroup
                     value={location}
-                    onChange={(e) => setLocation(e.target.value as any)}
+                    onChange={(e) => {
+                      if (isBookingPlace(e.target.value)) setLocation(e.target.value);
+                    }}
                   >
-                    {((service.service_at_location as any) === "at_customer" ||
-                      (service.service_at_location as any) === "AT_CUSTOMER" ||
-                      (service.service_at_location as any) === "BOTH") && (
+                    {offersAtCustomer(service.service_at_location) && (
                       <>
                         <FormControlLabel
                           value="at_customer"
-                          control={
-                            <Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />
-                          }
+                          control={<Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />}
                           label={
                             <Box>
                               <Typography variant="body1" fontWeight={600}>
                                 {english.at_home}
                               </Typography>
-                              <Typography
-                                variant="caption"
-                                color="text.secondary"
-                              >
+                              <Typography variant="caption" color="text.secondary">
                                 {english.service_at_your_location}
                               </Typography>
                             </Box>
@@ -685,9 +627,7 @@ const CustomerServiceBooking = () => {
                                 {userAddresses.map((addr) => (
                                   <Box
                                     key={addr.id}
-                                    onClick={() =>
-                                      setSelectedAddressId(addr.id)
-                                    }
+                                    onClick={() => setSelectedAddressId(addr.id)}
                                     sx={{
                                       p: 2.5,
                                       position: "relative",
@@ -706,8 +646,7 @@ const CustomerServiceBooking = () => {
                                         selectedAddressId === addr.id
                                           ? `0 8px 24px -6px ${COLORS.PRIMARY_PURPLE}25`
                                           : "none",
-                                      transition:
-                                        "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
                                       display: "flex",
                                       flexDirection: "column",
                                       "&:hover": {
@@ -728,9 +667,7 @@ const CustomerServiceBooking = () => {
                                           color: COLORS.PRIMARY_PURPLE,
                                         }}
                                       >
-                                        <CheckCircle
-                                          sx={{ fontSize: "20px" }}
-                                        />
+                                        <CheckCircle sx={{ fontSize: "20px" }} />
                                       </Box>
                                     )}
 
@@ -774,10 +711,8 @@ const CustomerServiceBooking = () => {
                                           : COLORS.TEXT.PRIMARY_LIGHT,
                                       }}
                                     >
-                                      {addr.building_no &&
-                                        `${addr.building_no}, `}
-                                      {addr.floor &&
-                                        `${english.floor} ${addr.floor}, `}
+                                      {addr.building_no && `${addr.building_no}, `}
+                                      {addr.floor && `${english.floor} ${addr.floor}, `}
                                       {addr.address}
                                     </Typography>
                                     {addr.landmark && (
@@ -792,10 +727,7 @@ const CustomerServiceBooking = () => {
                                           fontWeight: 500,
                                         }}
                                       >
-                                        <Box
-                                          component="span"
-                                          sx={{ opacity: 0.6, mr: 0.5 }}
-                                        >
+                                        <Box component="span" sx={{ opacity: 0.6, mr: 0.5 }}>
                                           {english.near}
                                         </Box>{" "}
                                         {addr.landmark}
@@ -811,18 +743,13 @@ const CustomerServiceBooking = () => {
                                         opacity: 0.8,
                                       }}
                                     >
-                                      {addr.city_town}, {addr.state} -{" "}
-                                      {addr.pincode}
+                                      {addr.city_town}, {addr.state} - {addr.pincode}
                                     </Typography>
                                   </Box>
                                 ))}
                               </Box>
                             ) : (
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                                sx={{ mb: 1 }}
-                              >
+                              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                                 {english.no_saved_addresses}
                               </Typography>
                             )}
@@ -850,26 +777,18 @@ const CustomerServiceBooking = () => {
                         )}
                       </>
                     )}
-                    {((service.service_at_location as any) === "at_provider" ||
-                      (service.service_at_location as any) === "AT_PROVIDER" ||
-                      (service.service_at_location as any) === "BOTH") && (
+                    {offersAtProvider(service.service_at_location) && (
                       <>
                         <FormControlLabel
                           value="at_provider"
-                          control={
-                            <Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />
-                          }
+                          control={<Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />}
                           label={
                             <Box>
                               <Typography variant="body1" fontWeight={600}>
                                 {english.at_service_provider_location}
                               </Typography>
-                              <Typography
-                                variant="caption"
-                                color="text.secondary"
-                              >
-                                I will visit the provider's location for this
-                                service
+                              <Typography variant="caption" color="text.secondary">
+                                I will visit the provider&apos;s location for this service
                               </Typography>
                             </Box>
                           }
@@ -912,9 +831,7 @@ const CustomerServiceBooking = () => {
                                   fontSize: "0.7rem",
                                 }}
                               >
-                                {service.provider_name?.toUpperCase() ||
-                                  "PROVIDER"}{" "}
-                                ADDRESS
+                                {service.provider_name?.toUpperCase() || "PROVIDER"} ADDRESS
                               </Typography>
 
                               <Typography
@@ -930,8 +847,7 @@ const CustomerServiceBooking = () => {
                               >
                                 {service.service_address
                                   ? `${service.service_address.building_no}${service.service_address.floor ? `, ${service.service_address.floor} Floor` : ""}, ${service.service_address.address}`
-                                  : service.service_provider_address ||
-                                    english.providers_location}
+                                  : service.service_provider_address || english.providers_location}
                               </Typography>
 
                               {service.service_address && (
@@ -962,9 +878,7 @@ const CustomerServiceBooking = () => {
               {/* Additional Notes */}
               <Box
                 sx={{
-                  bgcolor: isDark
-                    ? COLORS.BACKGROUND.PAPER_DARK
-                    : COLORS.BACKGROUND.PAPER_LIGHT,
+                  bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
                   borderRadius: "16px",
                   p: 3,
                   mb: 3,
@@ -975,9 +889,7 @@ const CustomerServiceBooking = () => {
                   sx={{
                     fontWeight: 700,
                     mb: 2,
-                    color: isDark
-                      ? COLORS.TEXT.PRIMARY_DARK
-                      : COLORS.TEXT.PRIMARY_LIGHT,
+                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                   }}
                 >
                   {english.additional_notes}
@@ -996,9 +908,7 @@ const CustomerServiceBooking = () => {
               {/* Photo Upload */}
               <Box
                 sx={{
-                  bgcolor: isDark
-                    ? COLORS.BACKGROUND.PAPER_DARK
-                    : COLORS.BACKGROUND.PAPER_LIGHT,
+                  bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
                   borderRadius: "16px",
                   p: 3,
                   mb: 3,
@@ -1074,10 +984,7 @@ const CustomerServiceBooking = () => {
             <CheckCircle sx={{ fontSize: 48, color: COLORS.PRIMARY_PURPLE }} />
           </Box>
 
-          <Typography
-            variant="h4"
-            sx={{ fontWeight: 700, color: "#1E1E1E", mb: 1 }}
-          >
+          <Typography variant="h4" sx={{ fontWeight: 700, color: "#1E1E1E", mb: 1 }}>
             {english.thank_you_booking}
           </Typography>
           <Typography variant="body1" sx={{ color: "#666", mb: 3 }}>
@@ -1094,16 +1001,11 @@ const CustomerServiceBooking = () => {
                 textAlign: "left",
               }}
             >
-              <Box
-                sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
-              >
+              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
                 <Typography variant="body2" sx={{ color: "#666" }}>
                   {english.booking_id}:
                 </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: 600, color: "#1E1E1E" }}
-                >
+                <Typography variant="body2" sx={{ fontWeight: 600, color: "#1E1E1E" }}>
                   #{bookingResponse.booking_id || "N/A"}
                 </Typography>
               </Box>
@@ -1111,13 +1013,9 @@ const CustomerServiceBooking = () => {
                 <Typography variant="body2" sx={{ color: "#666" }}>
                   {english.scheduled_for}:
                 </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: 600, color: "#1E1E1E" }}
-                >
+                <Typography variant="body2" sx={{ fontWeight: 600, color: "#1E1E1E" }}>
                   {selectedDate?.format("MMM DD, YYYY")}{" "}
-                  {selectedTime &&
-                    `${english.at_time} ${dayjs(selectedTime).format("h:mma")}`}
+                  {selectedTime && `${english.at_time} ${dayjs(selectedTime).format("h:mma")}`}
                 </Typography>
               </Box>
             </Box>

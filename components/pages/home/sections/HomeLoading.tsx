@@ -16,9 +16,19 @@ import type { SxProps, Theme } from "@mui/material/styles";
 const sweep = keyframes`from { transform: translateX(-100%); } to { transform: translateX(100%); }`;
 const draw = keyframes`0% { stroke-dashoffset: 1; } 55% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; }`;
 const slide = keyframes`from { transform: translateX(-110%); } to { transform: translateX(320%); }`;
+// Reduced motion (often switched on by Android battery saver) must not freeze a loader into a static
+// box that looks broken: nothing moves, the placeholder just fades gently in and out.
+const fade = keyframes`0%, 100% { opacity: 1; } 50% { opacity: 0.45; }`;
+const REDUCED_MOTION = "@media (prefers-reduced-motion: reduce)";
 
 /** A placeholder block. Give it the same width and height as the content that replaces it. */
-export function ShimmerBox({ sx, tone = "light" }: { sx?: SxProps<Theme>; tone?: "light" | "onDark" }) {
+export function ShimmerBox({
+  sx,
+  tone = "light",
+}: {
+  sx?: SxProps<Theme>;
+  tone?: "light" | "onDark";
+}) {
   const onDark = tone === "onDark";
   return (
     <Box
@@ -35,8 +45,9 @@ export function ShimmerBox({ sx, tone = "light" }: { sx?: SxProps<Theme>; tone?:
             inset: 0,
             background: `linear-gradient(90deg, transparent, ${onDark ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.7)"}, transparent)`,
             animation: `${sweep} 1.4s ease-in-out infinite`,
-            "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+            [REDUCED_MOTION]: { animation: "none" },
           },
+          [REDUCED_MOTION]: { animation: `${fade} 1.6s ease-in-out infinite` },
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
@@ -45,7 +56,13 @@ export function ShimmerBox({ sx, tone = "light" }: { sx?: SxProps<Theme>; tone?:
 }
 
 /** The Kartsquare "k" mark, its outline drawing itself in a loop. Still under reduced motion. */
-export function KartMark({ size = 32, color = COLORS.PRIMARY_PURPLE }: { size?: number; color?: string }) {
+export function KartMark({
+  size = 32,
+  color = COLORS.PRIMARY_PURPLE,
+}: {
+  size?: number;
+  color?: string;
+}) {
   return (
     <Box
       component="svg"
@@ -66,19 +83,45 @@ export function KartMark({ size = 32, color = COLORS.PRIMARY_PURPLE }: { size?: 
         stroke={color}
         strokeWidth="3"
         pathLength="1"
-        sx={{ strokeDasharray: 1, animation: `${draw} 1.8s ease-in-out infinite`, "@media (prefers-reduced-motion: reduce)": { animation: "none", strokeDashoffset: 0 } }}
+        sx={{
+          strokeDasharray: 1,
+          animation: `${draw} 1.8s ease-in-out infinite`,
+          [REDUCED_MOTION]: { strokeDashoffset: 0, animation: `${fade} 1.6s ease-in-out infinite` },
+        }}
       />
-      <path d="M13 10v16M13 19l8-8M16 18l6 8" stroke={color} strokeWidth="3" strokeLinecap="round" fill="none" />
+      <path
+        d="M13 10v16M13 19l8-8M16 18l6 8"
+        stroke={color}
+        strokeWidth="3"
+        strokeLinecap="round"
+        fill="none"
+      />
     </Box>
   );
 }
 
 /** The mark with a short line of Kartsquare's own voice, for a placeholder big enough to carry it. */
-export function KartLoadingNote({ children = "Aapke liye services dhoondh rahe hain…" }: { children?: React.ReactNode }) {
+export function KartLoadingNote({
+  children = "Aapke liye services dhoondh rahe hain…",
+}: {
+  children?: React.ReactNode;
+}) {
   return (
-    <Box role="status" sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1.25, textAlign: "center", px: 2 }}>
+    <Box
+      role="status"
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 1.25,
+        textAlign: "center",
+        px: 2,
+      }}
+    >
       <KartMark />
-      <Typography sx={{ fontSize: "0.9rem", fontWeight: 600, color: "text.secondary" }}>{children}</Typography>
+      <Typography sx={{ fontSize: "0.9rem", fontWeight: 600, color: "text.secondary" }}>
+        {children}
+      </Typography>
     </Box>
   );
 }
@@ -101,7 +144,19 @@ export function HomeLoadingBar() {
 
   if (!visible) return null;
   return (
-    <Box aria-hidden sx={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, overflow: "hidden", zIndex: 2, bgcolor: "rgba(255,255,255,0.18)" }}>
+    <Box
+      aria-hidden
+      sx={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 3,
+        overflow: "hidden",
+        zIndex: 2,
+        bgcolor: "rgba(255,255,255,0.18)",
+      }}
+    >
       <Box
         sx={{
           width: "30%",
@@ -109,7 +164,11 @@ export function HomeLoadingBar() {
           borderRadius: 3,
           background: `linear-gradient(90deg, transparent, ${COLORS.SECONDARY_ORANGE}, ${COLORS.WHITE})`,
           animation: `${slide} 1.1s ease-in-out infinite`,
-          "@media (prefers-reduced-motion: reduce)": { animation: "none", width: "100%", background: COLORS.SECONDARY_ORANGE },
+          [REDUCED_MOTION]: {
+            width: "100%",
+            background: COLORS.SECONDARY_ORANGE,
+            animation: `${fade} 1.2s ease-in-out infinite`,
+          },
         }}
       />
     </Box>

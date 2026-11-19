@@ -14,7 +14,9 @@ const TABS = [
 
 function setup(value: (typeof TABS)[number]["id"] = "for_you", trailing?: React.ReactNode) {
   const onChange = jest.fn();
-  render(<FeedTabs tabs={TABS} value={value} onChange={onChange} ariaLabel="Feed" trailing={trailing} />);
+  render(
+    <FeedTabs tabs={TABS} value={value} onChange={onChange} ariaLabel="Feed" trailing={trailing} />,
+  );
   return onChange;
 }
 
@@ -43,8 +45,12 @@ describe("FeedTabs", () => {
     screen.getByRole("tab", { name: "For you" }).focus();
     await userEvent.keyboard("{ArrowRight}");
     expect(onChange).toHaveBeenLastCalledWith("posts");
+    await userEvent.keyboard("{ArrowLeft}"); // focus followed to Posts, so this goes back
+    expect(onChange).toHaveBeenLastCalledWith("for_you");
     await userEvent.keyboard("{ArrowLeft}");
     expect(onChange).toHaveBeenLastCalledWith("reels"); // wraps from the first to the last
+    await userEvent.keyboard("{ArrowRight}");
+    expect(onChange).toHaveBeenLastCalledWith("for_you"); // and from the last to the first
     await userEvent.keyboard("{End}");
     expect(onChange).toHaveBeenLastCalledWith("reels");
     await userEvent.keyboard("{Home}");
@@ -53,7 +59,10 @@ describe("FeedTabs", () => {
 
   it("points each tab at the panel it controls", () => {
     setup();
-    expect(screen.getByRole("tab", { name: "Posts" })).toHaveAttribute("aria-controls", "feed-panel");
+    expect(screen.getByRole("tab", { name: "Posts" })).toHaveAttribute(
+      "aria-controls",
+      "feed-panel",
+    );
   });
 
   it("renders the trailing control (the phone create button) beside the tabs", () => {

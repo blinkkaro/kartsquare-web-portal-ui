@@ -1,19 +1,13 @@
 "use client";
 import React, { useState, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
-import {
-  Box,
-  Container,
-  Typography,
-  useTheme,
-  Divider,
-} from "@mui/material";
+import { Box, Container, useTheme, Divider } from "@mui/material";
 import { Edit, Delete, Share } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { stripMarkdown } from "@/utils/plainText";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
-import { useTranslate } from "@/hooks/useTranslate";
 import EmptyState from "@/components/common/EmptyState";
 import MainLayout from "@/app/mainLayout";
 import { useServiceDetails } from "@/hooks/useServiceDetails";
@@ -26,7 +20,6 @@ import ServiceImageCarousel from "../../../ServiceImageCarousel";
 import { COLORS } from "../../../../constants/colors";
 import AddServiceDrawer from "../addService";
 import { serviceListService } from "../../../../services/serviceList/serviceListService";
-import ServiceDetailsMap from "../../map/components/ServiceDetailsMap";
 import ServiceDetailsBreadcrumb from "./ServiceDetailsBreadcrumb";
 import ServiceDetailsHeader from "./ServiceDetailsHeader";
 import ServiceDetailsInfo from "./ServiceDetailsInfo";
@@ -36,21 +29,21 @@ import ReviewsSection from "./ReviewsSection";
 import DescriptionDrawer from "./DescriptionDialog";
 import DeleteDialog from "./DeleteDialog";
 import ShareDialog from "./ShareDialog";
-import AdvancePayInfo from "./AdvancePayInfo";
+
+// Map (Google Maps loader) in its own chunk; still server-rendered, so the page hydrates without waiting for it.
+const ServiceDetailsMap = dynamic(() => import("../../map/components/ServiceDetailsMap"));
 
 const ProviderServiceDetails = () => {
   const params = useParams();
   const router = useRouter();
   const serviceId = params.id as string;
   const theme = useTheme();
-  const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
   const queryClient = useQueryClient();
   const { data: profile } = useProfile();
   const { mutate: updateShowNumber } = useUpdateShowNumber();
 
   // State
-  const reviewsPerPage = 5;
   const [descriptionDrawerOpen, setDescriptionDrawerOpen] = useState(false);
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -58,11 +51,7 @@ const ProviderServiceDetails = () => {
   const [deleting, setDeleting] = useState(false);
 
   // Use TanStack Query hooks - prevents duplicate API calls
-  const {
-    data: service,
-    isLoading: loading,
-    error: serviceError,
-  } = useServiceDetails(serviceId);
+  const { data: service, isLoading: loading } = useServiceDetails(serviceId);
 
   const {
     data: reviewsData,
@@ -139,17 +128,11 @@ const ProviderServiceDetails = () => {
       <MainLayout>
         <Box
           sx={{
-            bgcolor: isDark
-              ? COLORS.BACKGROUND.PRIMARY_DARK
-              : COLORS.BACKGROUND.SECONDARY_LIGHT,
+            bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
             minHeight: "100vh",
           }}
         >
-          <EmptyState
-            titleKey="service_not_found"
-            variant="notFound"
-            minHeight="80vh"
-          />
+          <EmptyState titleKey="service_not_found" variant="notFound" minHeight="80vh" />
         </Box>
       </MainLayout>
     );
@@ -158,17 +141,13 @@ const ProviderServiceDetails = () => {
   const images =
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
-      : [
-          SERVICE_FALLBACK_IMAGE,
-        ];
+      : [SERVICE_FALLBACK_IMAGE];
 
   return (
     <MainLayout>
       <Box
         sx={{
-          bgcolor: isDark
-            ? COLORS.BACKGROUND.PRIMARY_DARK
-            : COLORS.BACKGROUND.SECONDARY_LIGHT,
+          bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
           minHeight: "100vh",
           pt: { xs: 2, sm: 4, md: 10 },
           pb: { xs: 2, sm: 3, md: 4 },
@@ -201,10 +180,7 @@ const ProviderServiceDetails = () => {
               }}
             >
               <Box sx={{ order: { xs: 2, md: "unset" }, width: "100%" }}>
-                <ServiceImageCarousel
-                  images={images}
-                  serviceName={service.service_name}
-                />
+                <ServiceImageCarousel images={images} serviceName={service.service_name} />
               </Box>
               <Box sx={{ py: 2, order: { xs: 3, md: "unset" }, width: "100%" }}>
                 <CustomerServicePricing
@@ -215,14 +191,13 @@ const ProviderServiceDetails = () => {
                 />
                 <Box sx={{ mt: 2 }}>
                   {" "}
-                  {service.service_address?.latitude &&
-                    service.service_address?.longitude && (
-                      <ServiceDetailsMap
-                        latitude={service.service_address.latitude}
-                        longitude={service.service_address.longitude}
-                        providerName={service.business_name || ""}
-                      />
-                    )}
+                  {service.service_address?.latitude && service.service_address?.longitude && (
+                    <ServiceDetailsMap
+                      latitude={service.service_address.latitude}
+                      longitude={service.service_address.longitude}
+                      providerName={service.business_name || ""}
+                    />
+                  )}
                 </Box>
               </Box>
             </Box>
@@ -244,9 +219,7 @@ const ProviderServiceDetails = () => {
                   currency={service.currency || "INR"}
                   categoryName={service.category_name || ""}
                   isPriceRequired={
-                    service.pricing_type === "noPrice"
-                      ? false
-                      : service.is_price_required
+                    service.pricing_type === "noPrice" ? false : service.is_price_required
                   }
                 />
               </Box>
@@ -261,9 +234,7 @@ const ProviderServiceDetails = () => {
                   status={service.status || "ACTIVE"}
                   createdAt={service.created_at}
                   onContinueReading={() => setDescriptionDrawerOpen(true)}
-                  showContinueReading={
-                    !!(service.service_desc && service.service_desc.length > 50)
-                  }
+                  showContinueReading={!!(service.service_desc && service.service_desc.length > 50)}
                 />
               </Box>
 
@@ -337,17 +308,11 @@ const ProviderServiceDetails = () => {
               <IconButton
                 onClick={handleEdit}
                 sx={{
-                  bgcolor: isDark
-                    ? "rgba(255, 255, 255, 0.08)"
-                    : "rgba(255, 255, 255, 0.9)",
+                  bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.9)",
                   border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"}`,
-                  color: isDark
-                    ? COLORS.TEXT.PRIMARY_DARK
-                    : COLORS.TEXT.PRIMARY_LIGHT,
+                  color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                   "&:hover": {
-                    bgcolor: isDark
-                      ? "rgba(255, 255, 255, 0.12)"
-                      : "rgba(255, 255, 255, 1)",
+                    bgcolor: isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 1)",
                   },
                   width: { xs: 40, sm: 44 },
                   height: { xs: 40, sm: 44 },
@@ -358,15 +323,11 @@ const ProviderServiceDetails = () => {
               <IconButton
                 onClick={() => setDeleteDialogOpen(true)}
                 sx={{
-                  bgcolor: isDark
-                    ? "rgba(255, 255, 255, 0.08)"
-                    : "rgba(255, 255, 255, 0.9)",
+                  bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.9)",
                   border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"}`,
                   color: "error.main",
                   "&:hover": {
-                    bgcolor: isDark
-                      ? "rgba(255, 255, 255, 0.12)"
-                      : "rgba(255, 255, 255, 1)",
+                    bgcolor: isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 1)",
                   },
                   width: { xs: 40, sm: 44 },
                   height: { xs: 40, sm: 44 },
@@ -377,17 +338,11 @@ const ProviderServiceDetails = () => {
               <IconButton
                 onClick={() => setShareDialogOpen(true)}
                 sx={{
-                  bgcolor: isDark
-                    ? "rgba(255, 255, 255, 0.08)"
-                    : "rgba(255, 255, 255, 0.9)",
+                  bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.9)",
                   border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"}`,
-                  color: isDark
-                    ? COLORS.TEXT.PRIMARY_DARK
-                    : COLORS.TEXT.PRIMARY_LIGHT,
+                  color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                   "&:hover": {
-                    bgcolor: isDark
-                      ? "rgba(255, 255, 255, 0.12)"
-                      : "rgba(255, 255, 255, 1)",
+                    bgcolor: isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 1)",
                   },
                   width: { xs: 40, sm: 44 },
                   height: { xs: 40, sm: 44 },

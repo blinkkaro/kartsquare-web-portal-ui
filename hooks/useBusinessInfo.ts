@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { businessInfoService } from "@/services/auth/businessInfo.service";
-import { BusinessInfoFormData } from "@/components/pages/businessInfo/businessInfoSchema";
+import type { BusinessInfoFormData } from "@/components/pages/businessInfo/businessInfoSchema";
+import { businessInfoService, type BusinessInfoUpdate } from "@/services/auth/businessInfo.service";
 
 export const useGetBusinessInfo = () => {
   return useQuery({
@@ -12,8 +12,7 @@ export const useGetBusinessInfo = () => {
 export const useAddBusinessInfo = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: BusinessInfoFormData) =>
-      businessInfoService.addBusinessInfo(data),
+    mutationFn: (data: BusinessInfoFormData) => businessInfoService.addBusinessInfo(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["businessInfo"] });
     },
@@ -23,8 +22,7 @@ export const useAddBusinessInfo = () => {
 export const useUpdateBusinessInfo = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: BusinessInfoFormData) =>
-      businessInfoService.updateBusinessInfo(data),
+    mutationFn: (data: BusinessInfoUpdate) => businessInfoService.updateBusinessInfo(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["businessInfo"] });
     },

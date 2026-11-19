@@ -1,7 +1,7 @@
-import { GET, POST, PUT, DELETE, PATCH } from "../api";
-import { SUPPLIER_ENDPOINTS } from "./apiEndPoint";
 import { secureStorage } from "@/helper/SecureStorage";
-import { CreateSupplierQuotation, getQuotationsResponse } from "./supplier.interface";
+import { GET, POST, PUT, DELETE } from "../api";
+import { SUPPLIER_ENDPOINTS } from "./apiEndPoint";
+import { type CreateSupplierQuotation, type getQuotationsResponse } from "./supplier.interface";
 
 export interface SupplierProfile {
   business_name: string;
@@ -47,6 +47,8 @@ export interface SupplierStore {
   logo_url?: string;
   banner_url?: string;
   contact_email?: string;
+  /** The account email; older stores have no contact_email and fall back to it. */
+  email?: string;
   contact_phone?: string;
   primary_mobile?: string;
   whatsapp_number?: string;
@@ -78,11 +80,7 @@ class SupplierService {
 
   // Profile
   async getProfile() {
-    return GET<SupplierProfile>(
-      SUPPLIER_ENDPOINTS.PROFILE,
-      { userId: this.getUserId() },
-      true,
-    );
+    return GET<SupplierProfile>(SUPPLIER_ENDPOINTS.PROFILE, { userId: this.getUserId() }, true);
   }
 
   async updateProfile(data: Partial<SupplierProfile>) {
@@ -96,11 +94,7 @@ class SupplierService {
 
   // KYC
   async getKyc() {
-    return GET<SupplierKyc>(
-      SUPPLIER_ENDPOINTS.KYC,
-      { userId: this.getUserId() },
-      true,
-    );
+    return GET<SupplierKyc>(SUPPLIER_ENDPOINTS.KYC, { userId: this.getUserId() }, true);
   }
 
   async updateKyc(data: SupplierKyc) {
@@ -114,11 +108,7 @@ class SupplierService {
 
   // Store
   async getStore() {
-    return GET<SupplierStore>(
-      SUPPLIER_ENDPOINTS.STORE,
-      { userId: this.getUserId() },
-      true,
-    );
+    return GET<SupplierStore>(SUPPLIER_ENDPOINTS.STORE, { userId: this.getUserId() }, true);
   }
 
   async updateStore(data: Partial<SupplierStore>) {
@@ -130,17 +120,12 @@ class SupplierService {
     );
   }
 
-  async editStore(data:Partial<SupplierStore>){
-    return PUT<SupplierStore>(
-      SUPPLIER_ENDPOINTS.STORE,
-      data,
-      {},
-      true,
-    );
+  async editStore(data: Partial<SupplierStore>) {
+    return PUT<SupplierStore>(SUPPLIER_ENDPOINTS.STORE, data, {}, true);
   }
 
   // Products
-  async getProducts(params: any = {}) {
+  async getProducts(params: object = {}) {
     return GET(SUPPLIER_ENDPOINTS.PRODUCTS, params, true);
   }
 
@@ -148,11 +133,11 @@ class SupplierService {
     return GET(SUPPLIER_ENDPOINTS.PRODUCT_DETAIL(id), {}, true);
   }
 
-  async createProduct(data: any) {
+  async createProduct(data: object) {
     return POST(SUPPLIER_ENDPOINTS.PRODUCTS, data, {}, true);
   }
 
-  async updateProduct(id: string, data: any) {
+  async updateProduct(id: string, data: object) {
     return PUT(SUPPLIER_ENDPOINTS.PRODUCT_DETAIL(id), data, {}, true);
   }
 
@@ -161,17 +146,12 @@ class SupplierService {
   }
 
   // Enquiries
-  async getEnquiries(params: any = {}) {
+  async getEnquiries(params: object = {}) {
     return GET(SUPPLIER_ENDPOINTS.ENQUIRIES, params, true);
   }
 
   async updateEnquiryStatus(id: string, status: string) {
-    return PUT(
-      SUPPLIER_ENDPOINTS.ENQUIRIES + `/${id}/status`,
-      { status },
-      {},
-      true,
-    );
+    return PUT(SUPPLIER_ENDPOINTS.ENQUIRIES + `/${id}/status`, { status }, {}, true);
   }
 
   // Dashboard
@@ -186,7 +166,10 @@ class SupplierService {
     search?: string;
     is_viewed?: boolean;
   }): Promise<getQuotationsResponse> {
-    const query = new URLSearchParams(params as any).toString();
+    // Same as URLSearchParams(params): every value is stringified, as before.
+    const query = new URLSearchParams(
+      Object.entries(params).map(([key, value]) => [key, String(value)]),
+    ).toString();
     const res = await GET<getQuotationsResponse>(
       SUPPLIER_ENDPOINTS.SUPPLIER_QUOTATIONS + `?${query}`,
       {},

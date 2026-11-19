@@ -1,6 +1,6 @@
-import { Posts } from "../post/postInterfaces";
-import { Service } from "../serviceList/listInteraface";
-import { UserRegisterSteps } from "../../types/resgistrationFlow";
+import { type Posts } from "../post/postInterfaces";
+import { type Service } from "../serviceList/listInteraface";
+import { type UserRegisterSteps } from "../../types/resgistrationFlow";
 
 export enum service_location_type {
   USER_LOCATION = "at_customer",
@@ -109,6 +109,8 @@ export interface providerProfileInterface {
   following_count: number;
   services_count: number;
   total_posts: string;
+  /** Number of reels; shown on the public profile. Not always sent, hence optional. */
+  total_reels?: number;
   is_following?: boolean;
   follows_back?: boolean;
   total_bookings: number | null;
@@ -123,7 +125,7 @@ export interface providerProfileInterface {
   og_title?: string;
   og_description?: string;
   og_image?: string;
-  structured_data?: any;
+  structured_data?: unknown;
 }
 
 export interface ProviderProfileByUsernameResponse {
@@ -133,6 +135,8 @@ export interface ProviderProfileByUsernameResponse {
 }
 
 export interface ISupplierProfile extends providerProfileInterface {
+  /** The supplier's user account id (the profile `id` is the store's). Used to start a chat. */
+  user_id?: string;
   store_name?: string;
   logo_url?: string;
   description?: string;
@@ -149,7 +153,8 @@ export interface ProductListItem {
   product_id: string;
   product_name: string;
   price: number;
-  product_images: any; // JSONB
+  /** Image URLs (a JSONB array in the database); may be null. */
+  product_images: string[] | null;
   product_description: string;
   sku_number?: string;
   currency?: string;
@@ -157,10 +162,10 @@ export interface ProductListItem {
   product_origin?: string;
   is_available?: boolean;
   supplier_id: string;
-  similar_products?: any[];
+  similar_products?: unknown[];
   specifications?: {
     name: string;
-    value: any;
+    value: unknown;
   }[];
   supplier?: {
     store_name: string;

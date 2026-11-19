@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Plus_Jakarta_Sans, Mukta } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -16,6 +16,9 @@ const mukta = Mukta({
   weight: ["400", "500", "600", "700"],
   display: "swap",
   variable: "--font-mukta",
+  // Not preloaded: 8 files (~320 KB) that only draw Devanagari (Latin uses Jakarta first). The
+  // @font-face rules stay, so the browser fetches them only on pages that show Hindi text.
+  preload: false,
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kartsquare.com";
@@ -132,7 +135,6 @@ const organizationJsonLd = {
   ],
 };
 
-
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
@@ -153,7 +155,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${jakarta.variable} ${mukta.variable}`} suppressHydrationWarning>
       <body
-        style={{ fontFamily: "var(--font-jakarta), var(--font-mukta), system-ui, -apple-system, sans-serif" }}
+        style={{
+          fontFamily:
+            "var(--font-jakarta), var(--font-mukta), system-ui, -apple-system, sans-serif",
+        }}
         suppressHydrationWarning
       >
         {/* Flags the Kartsquare mobile app before first paint so [data-native-hide]

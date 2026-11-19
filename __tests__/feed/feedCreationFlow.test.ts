@@ -14,7 +14,13 @@
 import fs from "fs";
 import path from "path";
 import { PostType } from "@/services/post/postInterfaces";
-import { isVideoUrl, mediaAspect, MEDIA_ASPECT_DEFAULT, postTypeForFiles, reelVideoUrl } from "@/services/post/postMedia";
+import {
+  isVideoUrl,
+  mediaAspect,
+  MEDIA_ASPECT_DEFAULT,
+  postTypeForFiles,
+  reelVideoUrl,
+} from "@/services/post/postMedia";
 import { API_ENDPOINTS as POST_ENDPOINTS } from "@/services/post/apiEndpoints";
 import { APIENDPOINT as STORY_ENDPOINTS } from "@/services/stories/apiEndPoint";
 import { getDesktopNavItems, getMobileNavItems } from "@/constants/navRoutes";
@@ -71,7 +77,12 @@ describe("composer: what a provider's upload becomes", () => {
 
   it("the post types match the values the backend accepts", () => {
     // kartsquare-app-backend createPostSchema: z.enum(["text", "image", "video", "mixed"])
-    expect([PostType.TEXT, PostType.IMAGE, PostType.VIDEO, PostType.MIXED]).toEqual(["text", "image", "video", "mixed"]);
+    expect([PostType.TEXT, PostType.IMAGE, PostType.VIDEO, PostType.MIXED]).toEqual([
+      "text",
+      "image",
+      "video",
+      "mixed",
+    ]);
   });
 
   it("the composer uses this rule to set post_type", () => {
@@ -95,7 +106,9 @@ describe("reel player: plays the video, not the thumbnail", () => {
   });
 
   it("URLs with a query string are still recognised as video", () => {
-    expect(reelVideoUrl([THUMB, `${VIDEO}?X-Amz-Signature=abc`])).toBe(`${VIDEO}?X-Amz-Signature=abc`);
+    expect(reelVideoUrl([THUMB, `${VIDEO}?X-Amz-Signature=abc`])).toBe(
+      `${VIDEO}?X-Amz-Signature=abc`,
+    );
   });
 
   it("compressed uploads (.webm) are recognised as video", () => {
@@ -104,11 +117,15 @@ describe("reel player: plays the video, not the thumbnail", () => {
   });
 
   it("URLs without an extension fall back to the file after the thumbnail", () => {
-    expect(reelVideoUrl(["https://cdn.example.com/a", "https://cdn.example.com/b"])).toBe("https://cdn.example.com/b");
+    expect(reelVideoUrl(["https://cdn.example.com/a", "https://cdn.example.com/b"])).toBe(
+      "https://cdn.example.com/b",
+    );
   });
 
   it("the reel player uses this rule", () => {
-    expect(read("components/pages/reels/components/ReelContainer.tsx")).toMatch(/reelVideoUrl\(urls\)/);
+    expect(read("components/pages/reels/components/ReelContainer.tsx")).toMatch(
+      /reelVideoUrl\(urls\)/,
+    );
   });
 });
 
@@ -127,8 +144,12 @@ describe("feed page: creating is for service providers and suppliers", () => {
   });
 
   it("puts every way of opening the composer behind that rule", () => {
-    // the desktop composer card, the phone "+" button and the drawer itself
-    expect((feed.match(/canCreate && \(/g) ?? []).length).toBeGreaterThanOrEqual(3);
+    // the desktop composer card and the drawer itself
+    expect((feed.match(/canCreate && \(/g) ?? []).length).toBeGreaterThanOrEqual(2);
+    // the stories row's "+" only gets an opener for creators
+    expect(feed).toMatch(
+      /onCreatePost=\{canCreate \? \(\) => setComposerOpen\(true\) : undefined\}/,
+    );
     // the empty state offers "Create a post" only to creators
     expect(feed).toMatch(/canCreate \? \(\s*<Button onClick=\{\(\) => setComposerOpen\(true\)\}/);
     // and no composer control is gated on being logged in alone

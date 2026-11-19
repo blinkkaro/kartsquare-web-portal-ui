@@ -1,58 +1,40 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import {
-  Box,
-  Typography,
-  Grid,
-  useTheme,
-  TextField,
-  Autocomplete,
-  MenuItem,
-  Paper,
-  Divider,
-  IconButton,
-} from "@mui/material";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
+import { Box, Typography, Grid, useTheme, TextField, Autocomplete, Paper } from "@mui/material";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
 import { Chip } from "@mui/material";
 import { useTranslate } from "@/hooks/useTranslate";
-import {
-  BusinessInfoSchema,
-  BusinessInfoFormData,
-} from "../businessInfoSchema";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import ImageUpload from "@/components/common/ImageUpload";
-import AddressDrawer from "@/components/common/address/AddressDrawer";
 import AddressCard from "@/components/pages/address/components/AddressCard";
 import WarningModel from "@/components/common/WarningModel";
-import {
-  useGetAddress,
-  useUpdateAddress,
-  useDeleteAddress,
-} from "@/hooks/useAddress";
+import { useGetAddress, useUpdateAddress, useDeleteAddress } from "@/hooks/useAddress";
 import { useGetBusinessInfo } from "@/hooks/useBusinessInfo";
-import { Address } from "@/services/address/addressInterface";
+import { type Address } from "@/services/address/addressInterface";
 import { COLORS } from "@/constants/colors";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import { useCategories } from "@/hooks/useCategories";
 import { useSubCategories } from "@/hooks/useSubCategories";
+import { BusinessInfoSchema, type BusinessInfoFormData } from "../businessInfoSchema";
+
+// Opened on demand: loaded after the page instead of in its first bundle.
+const AddressDrawer = dynamic(() => import("@/components/common/address/AddressDrawer"), {
+  ssr: false,
+});
 
 interface BusinessInfoFormProps {
   onSubmit: (data: BusinessInfoFormData) => void;
   isLoading?: boolean;
 }
 
-const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
-  onSubmit,
-  isLoading,
-}) => {
+const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({ onSubmit, isLoading }) => {
   const { t } = useTranslate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -121,7 +103,6 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
   const selectedAddressId = watch("address_id");
   const businessImages = watch("business_images") as (File | string)[];
   const selectedCategory = watch("category");
-  const selectedSubCategory = watch("sub_category");
 
   const { data: categories } = useCategories();
   const { data: subCategories } = useSubCategories(selectedCategory ? [selectedCategory] : []);
@@ -134,27 +115,24 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
         address_id: businessInfo.address_id || "",
         business_images: businessInfo.business_images || [],
         category: businessInfo.category || "",
-        sub_category: Array.isArray(businessInfo.sub_category) 
-          ? businessInfo.sub_category 
-          : businessInfo.sub_category 
-            ? [businessInfo.sub_category] 
+        sub_category: Array.isArray(businessInfo.sub_category)
+          ? businessInfo.sub_category
+          : businessInfo.sub_category
+            ? [businessInfo.sub_category]
             : [],
       });
     }
   }, [businessInfo, reset]);
 
-  const selectedAddress = addresses?.find(
-    (addr: Address) => addr.id === selectedAddressId,
-  );
-
   // Sort addresses to show the newest one first
-  const displayedAddresses = addresses
-    ? [...addresses]
-      .sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-      )
-    : [];
+  // Newest first. Memoized so effects that depend on it run when the addresses change, not on every render.
+  const displayedAddresses = useMemo(
+    () =>
+      [...(addresses ?? [])].sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      ),
+    [addresses],
+  );
 
   useEffect(() => {
     if (displayedAddresses.length > 0 && !selectedAddressId) {
@@ -169,20 +147,28 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
   };
 
   return (
-    <Box sx={{
-      maxWidth: "1100px",
-      mx: "auto",
-      width: "100%",
-      pb: 4,
-      position: 'relative'
-    }}>
-
+    <Box
+      sx={{
+        maxWidth: "1100px",
+        mx: "auto",
+        width: "100%",
+        pb: 4,
+        position: "relative",
+      }}
+    >
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={3}>
-
           {/* Section 1: Business Identity */}
           <Grid size={{ xs: 12 }}>
-            <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 700, color: isDark ? COLORS.WHITE : "#374151", fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                mb: 2,
+                fontWeight: 700,
+                color: isDark ? COLORS.WHITE : "#374151",
+                fontSize: { xs: "0.8rem", sm: "0.9rem" },
+              }}
+            >
               {t("businessName")}
             </Typography>
             <Input
@@ -190,11 +176,11 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
               control={control}
               placeholder={t("enterBusinessName")}
               sx={{
-                '& .MuiOutlinedInput-root': {
-                  height: '44px',
-                  fontSize: '15px',
-                  color: '#111827'
-                }
+                "& .MuiOutlinedInput-root": {
+                  height: "44px",
+                  fontSize: "15px",
+                  color: "#111827",
+                },
               }}
             />
           </Grid>
@@ -202,10 +188,16 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
           {/* Section 2: Visual Identity */}
           <Grid size={{ xs: 12 }}>
             <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? COLORS.WHITE : "#374151", fontSize: '0.9rem' }}>
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  fontWeight: 700,
+                  color: isDark ? COLORS.WHITE : "#374151",
+                  fontSize: "0.9rem",
+                }}
+              >
                 {t("businessImages")}
               </Typography>
-
             </Box>
 
             <ImageUpload
@@ -220,11 +212,17 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
 
           {/* Section 3: Business Classification */}
           <Grid size={{ xs: 12 }}>
-
-
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, md: 6 }}>
-                <Typography variant="body2" sx={{ mb: 1, fontWeight: 700, color: "#374151", fontSize: { xs: '0.75rem', sm: '0.85rem' } }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mb: 1,
+                    fontWeight: 700,
+                    color: "#374151",
+                    fontSize: { xs: "0.75rem", sm: "0.85rem" },
+                  }}
+                >
                   {t("businessCategory")}*
                 </Typography>
                 <Controller
@@ -244,7 +242,8 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                         return options.filter(
                           (option) =>
                             option.name.toLowerCase().includes(search) ||
-                            (option.description && option.description.toLowerCase().includes(search))
+                            (option.description &&
+                              option.description.toLowerCase().includes(search)),
                         );
                       }}
                       renderOption={(props, option, { selected }) => (
@@ -253,25 +252,46 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                           {...props}
                           key={option.id}
                           sx={{
-                            display: 'flex !important',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
+                            display: "flex !important",
+                            justifyContent: "space-between",
+                            alignItems: "center",
                             py: 2,
                             px: 3,
-                            borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}`,
-                            '&:last-child': { borderBottom: 'none' },
-                            bgcolor: selected ? (isDark ? 'rgba(94, 24, 233, 0.15) !important' : 'rgba(94, 24, 233, 0.04) !important') : 'transparent',
-                            '&:hover': {
-                              bgcolor: isDark ? 'rgba(94, 24, 233, 0.2) !important' : 'rgba(94, 24, 233, 0.08) !important',
-                            }
+                            borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)"}`,
+                            "&:last-child": { borderBottom: "none" },
+                            bgcolor: selected
+                              ? isDark
+                                ? "rgba(94, 24, 233, 0.15) !important"
+                                : "rgba(94, 24, 233, 0.04) !important"
+                              : "transparent",
+                            "&:hover": {
+                              bgcolor: isDark
+                                ? "rgba(94, 24, 233, 0.2) !important"
+                                : "rgba(94, 24, 233, 0.08) !important",
+                            },
                           }}
                         >
                           <Box sx={{ flex: 1, pr: 2 }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 700, color: isDark ? COLORS.WHITE : "#111827", fontSize: '1rem', mb: 0.5 }}>
+                            <Typography
+                              variant="subtitle1"
+                              sx={{
+                                fontWeight: 700,
+                                color: isDark ? COLORS.WHITE : "#111827",
+                                fontSize: "1rem",
+                                mb: 0.5,
+                              }}
+                            >
                               {option.name}
                             </Typography>
                             {option.description && (
-                              <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.4, fontSize: '0.85rem' }}>
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: "text.secondary",
+                                  lineHeight: 1.4,
+                                  fontSize: "0.85rem",
+                                }}
+                              >
                                 {option.description}
                               </Typography>
                             )}
@@ -282,16 +302,18 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                         </Box>
                       )}
                       PaperComponent={({ children }) => (
-                        <Paper sx={{
-                          mt: 1,
-                          borderRadius: '16px',
-                          boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
-                          border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
-                          width: 'max-content',
-                          minWidth: '100%',
-                          maxWidth: { xs: '90vw', md: '450px' },
-                          overflow: 'hidden'
-                        }}>
+                        <Paper
+                          sx={{
+                            mt: 1,
+                            borderRadius: "16px",
+                            boxShadow: "0 20px 50px rgba(0,0,0,0.15)",
+                            border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "#e2e8f0"}`,
+                            width: "max-content",
+                            minWidth: "100%",
+                            maxWidth: { xs: "90vw", md: "450px" },
+                            overflow: "hidden",
+                          }}
+                        >
                           {children}
                         </Paper>
                       )}
@@ -301,11 +323,11 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                           placeholder={t("selectBusinessCategory")}
                           error={!!error}
                           sx={{
-                            '& .MuiOutlinedInput-root': {
-                              height: '44px',
-                              fontSize: '14px',
-                              borderRadius: '8px'
-                            }
+                            "& .MuiOutlinedInput-root": {
+                              height: "44px",
+                              fontSize: "14px",
+                              borderRadius: "8px",
+                            },
                           }}
                         />
                       )}
@@ -314,7 +336,10 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                 />
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
-                <Typography variant="body2" sx={{ mb: 1, fontWeight: 700, color: "#374151", fontSize: '0.85rem' }}>
+                <Typography
+                  variant="body2"
+                  sx={{ mb: 1, fontWeight: 700, color: "#374151", fontSize: "0.85rem" }}
+                >
                   {t("businessSubCategory")}*
                 </Typography>
                 <Controller
@@ -326,9 +351,11 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                         multiple
                         options={subCategories || []}
                         getOptionLabel={(option) => option.name}
-                        value={(subCategories || []).filter(opt => Array.isArray(value) && value.includes(opt.id))}
+                        value={(subCategories || []).filter(
+                          (opt) => Array.isArray(value) && value.includes(opt.id),
+                        )}
                         onChange={(_, newValue) => {
-                          onChange(newValue.map(v => v.id));
+                          onChange(newValue.map((v) => v.id));
                         }}
                         renderTags={() => null} // Hide tags inside the input
                         disabled={!selectedCategory}
@@ -337,7 +364,8 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                           return options.filter(
                             (option) =>
                               option.name.toLowerCase().includes(search) ||
-                              (option.description && option.description.toLowerCase().includes(search))
+                              (option.description &&
+                                option.description.toLowerCase().includes(search)),
                           );
                         }}
                         renderOption={(props, option, { selected }) => (
@@ -346,25 +374,46 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                             {...props}
                             key={option.id}
                             sx={{
-                              display: 'flex !important',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
+                              display: "flex !important",
+                              justifyContent: "space-between",
+                              alignItems: "center",
                               py: 2,
                               px: 3,
-                              borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}`,
-                              '&:last-child': { borderBottom: 'none' },
-                              bgcolor: selected ? (isDark ? 'rgba(94, 24, 233, 0.15) !important' : 'rgba(94, 24, 233, 0.04) !important') : 'transparent',
-                              '&:hover': {
-                                bgcolor: isDark ? 'rgba(94, 24, 233, 0.2) !important' : 'rgba(94, 24, 233, 0.08) !important',
-                              }
+                              borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)"}`,
+                              "&:last-child": { borderBottom: "none" },
+                              bgcolor: selected
+                                ? isDark
+                                  ? "rgba(94, 24, 233, 0.15) !important"
+                                  : "rgba(94, 24, 233, 0.04) !important"
+                                : "transparent",
+                              "&:hover": {
+                                bgcolor: isDark
+                                  ? "rgba(94, 24, 233, 0.2) !important"
+                                  : "rgba(94, 24, 233, 0.08) !important",
+                              },
                             }}
                           >
                             <Box sx={{ flex: 1, pr: 2 }}>
-                              <Typography variant="subtitle1" sx={{ fontWeight: 700, color: isDark ? COLORS.WHITE : "#111827", fontSize: '1rem', mb: 0.5 }}>
+                              <Typography
+                                variant="subtitle1"
+                                sx={{
+                                  fontWeight: 700,
+                                  color: isDark ? COLORS.WHITE : "#111827",
+                                  fontSize: "1rem",
+                                  mb: 0.5,
+                                }}
+                              >
                                 {option.name}
                               </Typography>
                               {option.description && (
-                                <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.4, fontSize: '0.85rem' }}>
+                                <Typography
+                                  variant="body2"
+                                  sx={{
+                                    color: "text.secondary",
+                                    lineHeight: 1.4,
+                                    fontSize: "0.85rem",
+                                  }}
+                                >
                                   {option.description}
                                 </Typography>
                               )}
@@ -375,16 +424,18 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                           </Box>
                         )}
                         PaperComponent={({ children }) => (
-                          <Paper sx={{
-                            mt: 1,
-                            borderRadius: '16px',
-                            boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
-                            border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
-                            width: 'max-content',
-                            minWidth: '100%',
-                            maxWidth: { xs: '90vw', md: '450px' },
-                            overflow: 'hidden'
-                          }}>
+                          <Paper
+                            sx={{
+                              mt: 1,
+                              borderRadius: "16px",
+                              boxShadow: "0 20px 50px rgba(0,0,0,0.15)",
+                              border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "#e2e8f0"}`,
+                              width: "max-content",
+                              minWidth: "100%",
+                              maxWidth: { xs: "90vw", md: "450px" },
+                              overflow: "hidden",
+                            }}
+                          >
                             {children}
                           </Paper>
                         )}
@@ -394,12 +445,12 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                             placeholder={t("selectSubCategory")}
                             error={!!error}
                             sx={{
-                              '& .MuiOutlinedInput-root': {
-                                minHeight: '44px',
-                                fontSize: '14px',
-                                borderRadius: '8px',
-                                padding: '4px 12px !important'
-                              }
+                              "& .MuiOutlinedInput-root": {
+                                minHeight: "44px",
+                                fontSize: "14px",
+                                borderRadius: "8px",
+                                padding: "4px 12px !important",
+                              },
                             }}
                           />
                         )}
@@ -407,10 +458,10 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
 
                       {/* Custom Selected Chips Below */}
                       {Array.isArray(value) && value.length > 0 && (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1.5 }}>
+                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1.5 }}>
                           {value.map((id: string | undefined) => {
                             if (!id) return null;
-                            const subCat = subCategories?.find(s => s.id === id);
+                            const subCat = subCategories?.find((s) => s.id === id);
                             if (!subCat) return null;
                             return (
                               <Chip
@@ -419,17 +470,28 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                                 onDelete={() => {
                                   onChange(value.filter((val: string | undefined) => val !== id));
                                 }}
-                                deleteIcon={<CloseIcon sx={{ fontSize: '14px !important', color: COLORS.PRIMARY_PURPLE }} />}
+                                deleteIcon={
+                                  <CloseIcon
+                                    sx={{
+                                      fontSize: "14px !important",
+                                      color: COLORS.PRIMARY_PURPLE,
+                                    }}
+                                  />
+                                }
                                 sx={{
-                                  bgcolor: isDark ? 'rgba(94, 24, 233, 0.1)' : 'rgba(94, 24, 233, 0.05)',
+                                  bgcolor: isDark
+                                    ? "rgba(94, 24, 233, 0.1)"
+                                    : "rgba(94, 24, 233, 0.05)",
                                   color: COLORS.PRIMARY_PURPLE,
                                   fontWeight: 600,
-                                  borderRadius: '8px',
-                                  border: `1px solid ${isDark ? 'rgba(94, 24, 233, 0.2)' : 'rgba(94, 24, 233, 0.1)'}`,
-                                  '& .MuiChip-label': { px: 1.5 },
-                                  '&:hover': {
-                                    bgcolor: isDark ? 'rgba(94, 24, 233, 0.2)' : 'rgba(94, 24, 233, 0.1)',
-                                  }
+                                  borderRadius: "8px",
+                                  border: `1px solid ${isDark ? "rgba(94, 24, 233, 0.2)" : "rgba(94, 24, 233, 0.1)"}`,
+                                  "& .MuiChip-label": { px: 1.5 },
+                                  "&:hover": {
+                                    bgcolor: isDark
+                                      ? "rgba(94, 24, 233, 0.2)"
+                                      : "rgba(94, 24, 233, 0.1)",
+                                  },
                                 }}
                               />
                             );
@@ -446,7 +508,14 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
           {/* Section 4: Location & Address */}
           <Grid size={{ xs: 12 }}>
             <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isDark ? COLORS.WHITE : "#374151", fontSize: '0.9rem' }}>
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  fontWeight: 700,
+                  color: isDark ? COLORS.WHITE : "#374151",
+                  fontSize: "0.9rem",
+                }}
+              >
                 {t("businessLocation")}
               </Typography>
             </Box>
@@ -458,13 +527,15 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
               />
             )}
 
-            <Box sx={{
-              bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
-              borderRadius: '16px',
-              border: `1px dashed ${isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'}`,
-              p: displayedAddresses && displayedAddresses.length > 0 ? 3 : 6,
-              textAlign: 'center'
-            }}>
+            <Box
+              sx={{
+                bgcolor: isDark ? "rgba(255,255,255,0.02)" : "#f8fafc",
+                borderRadius: "16px",
+                border: `1px dashed ${isDark ? "rgba(255,255,255,0.1)" : "#cbd5e1"}`,
+                p: displayedAddresses && displayedAddresses.length > 0 ? 3 : 6,
+                textAlign: "center",
+              }}
+            >
               {isAddressLoading || isBusinessLoading ? (
                 <Typography>{t("loading")}</Typography>
               ) : displayedAddresses && displayedAddresses.length > 0 ? (
@@ -475,9 +546,12 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                         onClick={() => setValue("address_id", addr.id, { shouldValidate: true })}
                         sx={{
                           cursor: "pointer",
-                          border: selectedAddressId === addr.id ? `2px solid ${COLORS.PRIMARY_PURPLE}` : `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
+                          border:
+                            selectedAddressId === addr.id
+                              ? `2px solid ${COLORS.PRIMARY_PURPLE}`
+                              : `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "#e2e8f0"}`,
                           borderRadius: "12px",
-                          transition: 'all 0.2s ease',
+                          transition: "all 0.2s ease",
                           bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.WHITE,
                         }}
                       >
@@ -502,9 +576,11 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                   </Grid>
                 </Grid>
               ) : (
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <LocationOnOutlinedIcon sx={{ fontSize: 48, color: '#94a3b8', mb: 2 }} />
-                  <Typography sx={{ mb: 1, fontWeight: 700, color: '#64748b' }}>{t("noAddressesYet")}</Typography>
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <LocationOnOutlinedIcon sx={{ fontSize: 48, color: "#94a3b8", mb: 2 }} />
+                  <Typography sx={{ mb: 1, fontWeight: 700, color: "#64748b" }}>
+                    {t("noAddressesYet")}
+                  </Typography>
                   <Button
                     variant="text"
                     onClick={() => setIsAddressDrawerOpen(true)}
@@ -520,17 +596,27 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
         </Grid>
 
         {/* Action Buttons Below Form */}
-        <Box sx={{
-          mt: 4,
-          pt: 3,
-          borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
-          display: 'flex',
-          justifyContent: 'flex-end',
-          gap: 2,
-        }}>
+        <Box
+          sx={{
+            mt: 4,
+            pt: 3,
+            borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "#e2e8f0"}`,
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: 2,
+          }}
+        >
           <Button
             variant="outlined"
-            sx={{ px: { xs: 2, sm: 4 }, py: 1, borderRadius: '8px', color: '#374151', borderColor: '#e2e8f0', bgcolor: 'white', '&:hover': { bgcolor: '#f8fafc' } }}
+            sx={{
+              px: { xs: 2, sm: 4 },
+              py: 1,
+              borderRadius: "8px",
+              color: "#374151",
+              borderColor: "#e2e8f0",
+              bgcolor: "white",
+              "&:hover": { bgcolor: "#f8fafc" },
+            }}
           >
             {t("cancel")}
           </Button>
@@ -538,7 +624,14 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
             type="submit"
             isLoading={isLoading}
             disabled={isLoading}
-            sx={{ px: { xs: 2, sm: 4 }, py: 1, borderRadius: '8px', bgcolor: COLORS.PRIMARY_PURPLE, fontWeight: 600, fontSize: { xs: '0.85rem', sm: '1rem' } }}
+            sx={{
+              px: { xs: 2, sm: 4 },
+              py: 1,
+              borderRadius: "8px",
+              bgcolor: COLORS.PRIMARY_PURPLE,
+              fontWeight: 600,
+              fontSize: { xs: "0.85rem", sm: "1rem" },
+            }}
           >
             Add Business Details
           </Button>
@@ -546,17 +639,47 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
       </form>
 
       {/* Drawers & Models */}
-      <AddressDrawer open={isAddressDrawerOpen} onClose={() => setIsAddressDrawerOpen(false)} mode="add" isDefault={true} />
-      <AddressDrawer open={isEditModalOpen} onClose={() => { setIsEditModalOpen(false); setAddressToEdit(null); }} initialData={addressToEdit} mode="edit" />
+      <AddressDrawer
+        open={isAddressDrawerOpen}
+        onClose={() => setIsAddressDrawerOpen(false)}
+        mode="add"
+        isDefault={true}
+      />
+      <AddressDrawer
+        open={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setAddressToEdit(null);
+        }}
+        initialData={addressToEdit}
+        mode="edit"
+      />
       <WarningModel
         open={isDeleteDialogOpen}
-        onClose={() => { setIsDeleteDialogOpen(false); setAddressToDelete(null); }}
+        onClose={() => {
+          setIsDeleteDialogOpen(false);
+          setAddressToDelete(null);
+        }}
         title={t("deleteAddress")}
         description={t("deleteAddressDescription")}
         ActionsButtons={
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button variant="outlined" onClick={() => { setIsDeleteDialogOpen(false); setAddressToDelete(null); }}>{t("cancel")}</Button>
-            <Button variant="contained" onClick={handleDeleteAddress} sx={{ bgcolor: COLORS.PRIMARY_PURPLE }}>{t("delete")}</Button>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setIsDeleteDialogOpen(false);
+                setAddressToDelete(null);
+              }}
+            >
+              {t("cancel")}
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleDeleteAddress}
+              sx={{ bgcolor: COLORS.PRIMARY_PURPLE }}
+            >
+              {t("delete")}
+            </Button>
           </Box>
         }
       />

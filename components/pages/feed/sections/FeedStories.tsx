@@ -1,19 +1,30 @@
 "use client";
 import React, { useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { Avatar, Box, ButtonBase, Skeleton, Typography, useTheme } from "@mui/material";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import toast from "react-hot-toast";
 import { motion, useReducedMotion } from "framer-motion";
 import { keyframes } from "@mui/material/styles";
 import { COLORS } from "@/constants/colors";
-import { FEED_SPRING, FEED_STAGGER } from "../feedMotion";
 import Button from "@/components/common/Button";
 import { useAddStory, useGetStories } from "@/hooks/useStories";
 import { useTranslate } from "@/hooks/useTranslate";
 import { canCreatePosts } from "@/utils/auth";
 import { MediaType, type StoriesList } from "@/services/stories/stories.interface";
-import StoryViewer from "@/components/pages/home/components/stories/StoryViewer";
-import AddStoryModal from "@/components/pages/home/components/stories/AddStoryModal";
+import { FEED_SPRING, FEED_STAGGER } from "../feedMotion";
+
+// Opened on demand: loaded after the page instead of in its first bundle.
+const AddStoryModal = dynamic(
+  () => import("@/components/pages/home/components/stories/AddStoryModal"),
+  { ssr: false },
+);
+
+// Opened on demand: loaded after the page instead of in its first bundle.
+const StoryViewer = dynamic(
+  () => import("@/components/pages/home/components/stories/StoryViewer"),
+  { ssr: false },
+);
 
 // An unseen story ring settles once when it appears, to draw the eye. It never loops.
 const ringIn = keyframes`0% { transform: scale(0.86); } 60% { transform: scale(1.06); } 100% { transform: scale(1); }`;
@@ -23,7 +34,13 @@ const RING = `conic-gradient(${COLORS.ICON_GRADIENT.Light.START}, ${COLORS.ICON_
 interface FeedStoriesProps {
   /** Providers get a create-post button at the top of the stories band (phones; tablets and up have the composer card). */
   onCreatePost?: () => void;
-  currentUser: { id?: string; role?: string; profile_pic?: string | null; first_name?: string; business_name?: string } | null;
+  currentUser: {
+    id?: string;
+    role?: string;
+    profile_pic?: string | null;
+    first_name?: string;
+    business_name?: string;
+  } | null;
 }
 
 interface StoryBubbleProps {
@@ -47,17 +64,36 @@ function StoryBubble({ size, label, ariaLabel, onClick, children, index = 0 }: S
       animate={{ opacity: 1, y: 0 }}
       transition={{ ...FEED_SPRING, delay: reduce ? 0 : Math.min(index, 8) * FEED_STAGGER }}
       whileTap={reduce ? undefined : { scale: 0.94 }}
-      sx={{ flexShrink: 0, width: size + 12, display: "flex", flexDirection: "column", alignItems: "center", gap: 0.75, borderRadius: "12px", py: 0.5 }}
+      sx={{
+        flexShrink: 0,
+        width: size + 12,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 0.75,
+        borderRadius: "12px",
+        py: 0.5,
+      }}
     >
       {children}
-      <Typography sx={{ fontSize: "0.72rem", color: "text.primary", maxWidth: size + 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+      <Typography
+        sx={{
+          fontSize: "0.72rem",
+          color: "text.primary",
+          maxWidth: size + 12,
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+        }}
+      >
         {label}
       </Typography>
     </ButtonBase>
   );
 }
 
-const storyName = (s: StoriesList) => s.business_name?.trim() || s.user_name?.trim() || s.user_username || "Story";
+const storyName = (s: StoriesList) =>
+  s.business_name?.trim() || s.user_name?.trim() || s.user_username || "Story";
 
 /**
  * Stories row: the user's own story first (with + to add), then people with
@@ -101,7 +137,10 @@ export default function FeedStories({ currentUser, onCreatePost }: FeedStoriesPr
     const picked = e.target.files?.[0];
     e.target.value = "";
     if (!picked) return;
-    const ok = mediaType === MediaType.VIDEO ? picked.type.startsWith("video/") : ["image/png", "image/jpeg", "image/jpg"].includes(picked.type);
+    const ok =
+      mediaType === MediaType.VIDEO
+        ? picked.type.startsWith("video/")
+        : ["image/png", "image/jpeg", "image/jpg"].includes(picked.type);
     if (!ok) {
       toast.error(mediaType === MediaType.VIDEO ? t("st_err_video") : t("st_err_photo"));
       return;
@@ -138,11 +177,24 @@ export default function FeedStories({ currentUser, onCreatePost }: FeedStoriesPr
         p: "2.5px",
         borderRadius: "50%",
         background: unseen ? RING : dark ? COLORS.NEW_UI.DIVIDER_DARK : COLORS.NEW_UI.DIVIDER_LIGHT,
-        ...(unseen && { animation: `${ringIn} 520ms cubic-bezier(0.22, 1, 0.36, 1) 200ms backwards`, "@media (prefers-reduced-motion: reduce)": { animation: "none" } }),
+        ...(unseen && {
+          animation: `${ringIn} 520ms cubic-bezier(0.22, 1, 0.36, 1) 200ms backwards`,
+          "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+        }),
       }}
     >
       <Box sx={{ p: "2px", borderRadius: "50%", bgcolor: "background.paper" }}>
-        <Avatar src={src || undefined} alt={name} sx={{ width: size - 9, height: size - 9, fontWeight: 700, bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10, color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE }}>
+        <Avatar
+          src={src || undefined}
+          alt={name}
+          sx={{
+            width: size - 9,
+            height: size - 9,
+            fontWeight: 700,
+            bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10,
+            color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE,
+          }}
+        >
           {name.charAt(0).toUpperCase()}
         </Avatar>
       </Box>
@@ -161,66 +213,122 @@ export default function FeedStories({ currentUser, onCreatePost }: FeedStoriesPr
         border: { xs: "none", sm: `1px solid ${border}` },
         borderBottom: `1px solid ${border}`,
         borderRadius: { xs: 0, sm: "16px" },
-        boxShadow: { xs: "none", sm: dark ? COLORS.NEW_UI.CARD_SHADOW_DARK : COLORS.NEW_UI.CARD_SHADOW_LIGHT },
+        boxShadow: {
+          xs: "none",
+          sm: dark ? COLORS.NEW_UI.CARD_SHADOW_DARK : COLORS.NEW_UI.CARD_SHADOW_LIGHT,
+        },
         px: { xs: 1.5, sm: 2 },
         py: { xs: 1.25, sm: 2 },
       }}
     >
       {onCreatePost && (
-        <Box sx={{ display: { xs: "flex", sm: "none" }, alignItems: "center", justifyContent: "space-between", mb: 1 }}>
+        <Box
+          sx={{
+            display: { xs: "flex", sm: "none" },
+            alignItems: "center",
+            justifyContent: "space-between",
+            mb: 1,
+          }}
+        >
           <Typography variant="h6" component="h2">
             {t("st_stories")}
           </Typography>
-          <Button onClick={onCreatePost} startIcon={<AddRoundedIcon />} sx={{ minHeight: 44, px: 2.5 }}>
+          <Button
+            onClick={onCreatePost}
+            startIcon={<AddRoundedIcon />}
+            sx={{ minHeight: 44, px: 2.5 }}
+          >
             {t("st_create_post")}
           </Button>
         </Box>
       )}
-      <Box sx={{ display: "flex", gap: { xs: 1, sm: 1.5 }, overflowX: "auto", scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" } }}>
+      <Box
+        sx={{
+          display: "flex",
+          gap: { xs: 1, sm: 1.5 },
+          overflowX: "auto",
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": { display: "none" },
+        }}
+      >
         {/* Your story: view it if you have one, otherwise add one */}
         {(own || canAdd) && (
-        <StoryBubble
-          size={size}
-          label="Your story"
-          ariaLabel={own ? "View your story" : "Add a story"}
-          onClick={() => (own ? setViewerIndex(0) : setAddOpen(true))}
-        >
-          <Box sx={{ position: "relative" }}>
-            {own ? (
-              ringed(currentUser?.profile_pic, myName, true)
-            ) : (
-              <Avatar src={currentUser?.profile_pic || undefined} alt={myName} sx={{ width: size, height: size, fontWeight: 700, bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10, color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE }}>
-                {myName.charAt(0).toUpperCase()}
-              </Avatar>
-            )}
-            {canAdd && (
-            <Box
-              role="button"
-              aria-label="Add to your story"
-              tabIndex={0}
-              onClick={(e) => {
-                e.stopPropagation();
-                setAddOpen(true);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setAddOpen(true);
-                }
-              }}
-              sx={{ position: "absolute", right: -2, bottom: -2, width: 22, height: 22, borderRadius: "50%", bgcolor: COLORS.PRIMARY_PURPLE, color: COLORS.WHITE, border: "2px solid", borderColor: "background.paper", display: "grid", placeItems: "center", cursor: "pointer" }}
-            >
-              <AddRoundedIcon sx={{ fontSize: 16 }} />
+          <StoryBubble
+            size={size}
+            label="Your story"
+            ariaLabel={own ? "View your story" : "Add a story"}
+            onClick={() => (own ? setViewerIndex(0) : setAddOpen(true))}
+          >
+            <Box sx={{ position: "relative" }}>
+              {own ? (
+                ringed(currentUser?.profile_pic, myName, true)
+              ) : (
+                <Avatar
+                  src={currentUser?.profile_pic || undefined}
+                  alt={myName}
+                  sx={{
+                    width: size,
+                    height: size,
+                    fontWeight: 700,
+                    bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10,
+                    color: dark ? COLORS.NEW_UI.CHIP_TEXT_DARK : COLORS.PRIMARY_PURPLE,
+                  }}
+                >
+                  {myName.charAt(0).toUpperCase()}
+                </Avatar>
+              )}
+              {canAdd && (
+                <Box
+                  role="button"
+                  aria-label="Add to your story"
+                  tabIndex={0}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setAddOpen(true);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setAddOpen(true);
+                    }
+                  }}
+                  sx={{
+                    position: "absolute",
+                    right: -2,
+                    bottom: -2,
+                    width: 22,
+                    height: 22,
+                    borderRadius: "50%",
+                    bgcolor: COLORS.PRIMARY_PURPLE,
+                    color: COLORS.WHITE,
+                    border: "2px solid",
+                    borderColor: "background.paper",
+                    display: "grid",
+                    placeItems: "center",
+                    cursor: "pointer",
+                  }}
+                >
+                  <AddRoundedIcon sx={{ fontSize: 16 }} />
+                </Box>
+              )}
             </Box>
-            )}
-          </Box>
-        </StoryBubble>
+          </StoryBubble>
         )}
 
         {isLoading
           ? Array.from({ length: 6 }).map((_, i) => (
-              <Box key={i} sx={{ flexShrink: 0, width: size + 12, display: "flex", flexDirection: "column", alignItems: "center", gap: 0.75 }}>
+              <Box
+                key={i}
+                sx={{
+                  flexShrink: 0,
+                  width: size + 12,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 0.75,
+                }}
+              >
                 <Skeleton variant="circular" width={size} height={size} />
                 <Skeleton variant="text" width={size - 8} />
               </Box>
@@ -244,7 +352,11 @@ export default function FeedStories({ currentUser, onCreatePost }: FeedStoriesPr
       </Box>
 
       {viewerIndex !== null && viewerList.length > 0 && (
-        <StoryViewer storiesList={viewerList} initialUserIndex={viewerIndex} onClose={() => setViewerIndex(null)} />
+        <StoryViewer
+          storiesList={viewerList}
+          initialUserIndex={viewerIndex}
+          onClose={() => setViewerIndex(null)}
+        />
       )}
       <AddStoryModal
         open={addOpen}

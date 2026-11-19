@@ -7,7 +7,10 @@ import userEvent from "@testing-library/user-event";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import uiReducer from "@/features/ui/uiSlice";
-import KartAiPreview, { PREVIEW_LINES, STEP_DELAYS } from "@/components/pages/home/sections/KartAiPreview";
+import KartAiPreview, {
+  PREVIEW_LINES,
+  STEP_DELAYS,
+} from "@/components/pages/home/sections/KartAiPreview";
 
 // The two browser signals the preview depends on, controlled by the test.
 const mockReduce = jest.fn(() => false);
@@ -35,6 +38,9 @@ function setup() {
  *  "on screen" when it appears twice, and "not yet" when only the copy is there. */
 const onScreen = (text: string) => screen.queryAllByText(text).length === 2;
 const advance = (ms: number) => act(() => void jest.advanceTimersByTime(ms));
+// Each step's timer is scheduled by an effect after the previous step renders, so time has to move
+// one step at a time: a single big jump would only fire the first timer.
+const advanceSteps = (delays: readonly number[]) => delays.forEach((ms) => advance(ms));
 
 describe("KartAiPreview", () => {
   beforeEach(() => {
@@ -62,7 +68,9 @@ describe("KartAiPreview", () => {
     expect(onScreen(PREVIEW_LINES.customer)).toBe(true);
     expect(onScreen(PREVIEW_LINES.reply)).toBe(false);
 
-    advance(STEP_DELAYS[1] + STEP_DELAYS[2]);
+    advance(STEP_DELAYS[1]); // Kart AI "typing"
+    expect(onScreen(PREVIEW_LINES.reply)).toBe(false);
+    advance(STEP_DELAYS[2]);
     expect(onScreen(PREVIEW_LINES.reply)).toBe(true);
   });
 
@@ -86,7 +94,7 @@ describe("KartAiPreview", () => {
 
   it("can be replayed from the start after it finishes", async () => {
     const { user } = setup();
-    advance(10_000);
+    advanceSteps(STEP_DELAYS);
     expect(onScreen(PREVIEW_LINES.reply)).toBe(true);
 
     await user.click(screen.getByRole("button", { name: "Example dobara chalayein" }));
@@ -96,7 +104,9 @@ describe("KartAiPreview", () => {
 
   it("keeps the whole conversation readable as plain text whatever the animation is doing", () => {
     setup();
-    expect(screen.getByText(new RegExp(PREVIEW_LINES.reply))).toBeInTheDocument();
+    // The screen-reader copy holds every line from the first render, before any is revealed.
+    expect(screen.getByText(`Kart AI: ${PREVIEW_LINES.reply}`)).toBeInTheDocument();
+    expect(screen.getByText(`Customer: ${PREVIEW_LINES.customer}`)).toBeInTheDocument();
   });
 
   describe("with reduced motion", () => {

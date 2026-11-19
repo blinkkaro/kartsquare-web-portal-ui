@@ -69,7 +69,10 @@ describe("buildProfileJsonLd()", () => {
 });
 
 describe("External pages metadata — noindex", () => {
-  function extractMetadataFromSource(filePath: string): { isNoindex: boolean; usesSeoAuth: boolean } {
+  function extractMetadataFromSource(filePath: string): {
+    isNoindex: boolean;
+    usesSeoAuth: boolean;
+  } {
     const source = fs.readFileSync(filePath, "utf-8");
     return {
       isNoindex: source.includes("seoAuth"),
@@ -138,6 +141,7 @@ describe("in/[username]/page.tsx — profile 404 handling", () => {
     const profilePath = path.join(__dirname, "../../app/in/[username]/page.tsx");
     const source = fs.readFileSync(profilePath, "utf-8");
     // Check that notFound() is called in the page component (not just imported)
-    expect(source).toMatch(/if\s*\(!seoPayload\)\s*\{?\s*notFound\(\)/);
+    // A missing profile ends in notFound(); a retired handle may first redirect to the current one.
+    expect(source).toMatch(/if\s*\(!seoPayload\)\s*\{[\s\S]{0,400}?notFound\(\)/);
   });
 });

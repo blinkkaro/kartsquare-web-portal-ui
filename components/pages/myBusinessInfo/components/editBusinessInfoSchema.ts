@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { TranslationKey } from "@/features/i18n/TranslationContext";
+import { type TranslationKey } from "@/features/i18n/TranslationContext";
 
 type TFunction = (key: TranslationKey) => string;
 
@@ -18,12 +18,11 @@ export const EditBusinessInfoSchema = (t: TFunction) =>
     address_id: yup.string().trim().required(t("businessAddressRequired")),
     business_images: yup
       .array()
-      .of(yup.mixed())
+      // Existing images are URLs, newly picked ones are Files.
+      .of(yup.mixed<string | File>().defined())
       .required(t("businessImagesRequired"))
       .min(1, t("businessImagesRequired"))
-      .max(5, t("businessImagesMax" as any) || "Maximum 5 images allowed"), // Fallback if key doesn't exist perfectly or requires params
+      .max(5, t("businessImagesMax")),
   });
 
-export type EditBusinessInfoFormData = yup.InferType<
-  ReturnType<typeof EditBusinessInfoSchema>
->;
+export type EditBusinessInfoFormData = yup.InferType<ReturnType<typeof EditBusinessInfoSchema>>;

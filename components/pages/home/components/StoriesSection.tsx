@@ -1,28 +1,23 @@
+"use client";
+
 import React, { useState } from "react";
-import {
-  Box,
-  Avatar,
-  Typography,
-  Stack,
-  useTheme,
-  Skeleton,
-  Badge,
-} from "@mui/material";
+import dynamic from "next/dynamic";
+import { Box, Avatar, Typography, Stack, useTheme, Skeleton, Badge } from "@mui/material";
 import { Add } from "@mui/icons-material";
+import { type InfiniteData } from "@tanstack/react-query";
 import { COLORS } from "@/constants/colors";
-import StoryViewer from "./stories/StoryViewer";
-import AddStoryModal from "./stories/AddStoryModal";
-import { InfiniteData } from "@tanstack/react-query";
-import {
-  StoriesListResponse,
-  StoryItem,
-} from "@/services/stories/stories.interface";
+import { type StoriesListResponse, type StoryItem } from "@/services/stories/stories.interface";
 import { useAddStory } from "@/hooks/useStories";
 import { canCreatePosts } from "@/utils/auth";
 import { MediaType } from "@/services/stories/stories.interface";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import { secureStorage } from "@/helper/SecureStorage";
-import { AppUserType } from "@/services/auth/auth.interface";
+
+// Opened on demand: loaded after the page instead of in its first bundle.
+const AddStoryModal = dynamic(() => import("./stories/AddStoryModal"), { ssr: false });
+
+// Opened on demand: loaded after the page instead of in its first bundle.
+const StoryViewer = dynamic(() => import("./stories/StoryViewer"), { ssr: false });
 
 const StoriesSection = ({
   data,
@@ -49,8 +44,7 @@ const StoriesSection = ({
   const handleAddMedia = (type: MediaType) => {
     setMediaType(type);
     if (fileInputRef.current) {
-      fileInputRef.current.accept =
-        type === MediaType.VIDEO ? "video/*" : "image/*";
+      fileInputRef.current.accept = type === MediaType.VIDEO ? "video/*" : "image/*";
       fileInputRef.current.click();
     }
   };
@@ -103,23 +97,15 @@ const StoriesSection = ({
 
   // Sort stories: User story first, then unseen other stories, then seen other stories
   const userStory = storiesList.find((story) => story.user_id === profile?.id);
-  const otherStories = storiesList.filter(
-    (story) => story.user_id !== profile?.id,
-  );
+  const otherStories = storiesList.filter((story) => story.user_id !== profile?.id);
 
-  const unseenOtherStories = otherStories.filter((s) =>
-    hasUnseenStories(s.stories),
-  );
-  const seenOtherStories = otherStories.filter(
-    (s) => !hasUnseenStories(s.stories),
-  );
+  const unseenOtherStories = otherStories.filter((s) => hasUnseenStories(s.stories));
+  const seenOtherStories = otherStories.filter((s) => !hasUnseenStories(s.stories));
 
   const sortedOtherStories = [...unseenOtherStories, ...seenOtherStories];
 
   // Combined list for the viewer: User's story (if exists) + sorted others
-  const viewerStoriesList = userStory
-    ? [userStory, ...sortedOtherStories]
-    : sortedOtherStories;
+  const viewerStoriesList = userStory ? [userStory, ...sortedOtherStories] : sortedOtherStories;
 
   const handleStoryClick = (index: number) => {
     setSelectedUserIndex(index);
@@ -148,12 +134,7 @@ const StoriesSection = ({
         {/* Loading Skeletons */}
         {isLoading &&
           Array.from(new Array(5)).map((_, index) => (
-            <Stack
-              key={index}
-              alignItems="center"
-              spacing={1}
-              sx={{ minWidth: 64 }}
-            >
+            <Stack key={index} alignItems="center" spacing={1} sx={{ minWidth: 64 }}>
               <Skeleton variant="circular" width={56} height={56} />
               <Skeleton variant="text" width={40} />
             </Stack>
@@ -259,9 +240,7 @@ const StoriesSection = ({
                   alignItems="center"
                   spacing={1}
                   sx={{ minWidth: 64, cursor: "pointer" }}
-                  onClick={() =>
-                    handleStoryClick(userStory ? index + 1 : index)
-                  }
+                  onClick={() => handleStoryClick(userStory ? index + 1 : index)}
                 >
                   <Box
                     sx={{

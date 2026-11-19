@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import { motion } from "framer-motion";
+import { keyframes } from "@mui/material/styles";
 import { COLORS } from "@/constants/colors";
 
 interface LogoLoaderProps {
@@ -10,14 +10,20 @@ interface LogoLoaderProps {
   showText?: boolean;
 }
 
-const LogoLoader: React.FC<LogoLoaderProps> = ({ 
-  size = 60, 
-  showText = size >= 50 
-}) => {
-  const ringSize = size;
+const spin = keyframes`to { transform: rotate(360deg); }`;
+const spinBack = keyframes`to { transform: rotate(-360deg); }`;
+const rise = keyframes`from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; }`;
 
+/**
+ * Two counter-rotating rings. Pure CSS (it used to need framer-motion, which then shipped with
+ * every page that shows a spinner). The rings keep turning under reduced motion on purpose: a
+ * spinner is the loading feedback itself, and a frozen one reads as a broken page.
+ */
+const LogoLoader: React.FC<LogoLoaderProps> = ({ size = 60, showText = size >= 50 }) => {
   return (
     <Box
+      role="status"
+      aria-label="Loading"
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -29,24 +35,17 @@ const LogoLoader: React.FC<LogoLoaderProps> = ({
       <Box
         sx={{
           position: "relative",
-          width: ringSize,
-          height: ringSize,
+          width: size,
+          height: size,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        {/* Main Rotating Ring */}
-        <motion.div
-          animate={{
-            rotate: 360,
-          }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          style={{
+        {/* Main rotating ring */}
+        <Box
+          aria-hidden
+          sx={{
             position: "absolute",
             width: "100%",
             height: "100%",
@@ -54,40 +53,28 @@ const LogoLoader: React.FC<LogoLoaderProps> = ({
             border: "3px solid transparent",
             borderTopColor: COLORS.PRIMARY_PURPLE,
             borderRightColor: COLORS.PRIMARY_PURPLE,
+            animation: `${spin} 1.5s linear infinite`,
           }}
         />
-
-        {/* Inner Counter-Rotating Ring */}
-        <motion.div
-          animate={{
-            rotate: -360,
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          style={{
+        {/* Inner counter-rotating ring */}
+        <Box
+          aria-hidden
+          sx={{
             position: "absolute",
             width: "75%",
             height: "75%",
             borderRadius: "50%",
             border: "2px solid transparent",
-            borderBottomColor: COLORS.PRIMARY_BLUE || "#3B82F6",
-            borderLeftColor: COLORS.PRIMARY_BLUE || "#3B82F6",
+            borderBottomColor: COLORS.PRIMARY_BLUE,
+            borderLeftColor: COLORS.PRIMARY_BLUE,
             opacity: 0.6,
+            animation: `${spinBack} 2s linear infinite`,
           }}
         />
-
-        {/* Center space is now empty, showing only rings */}
       </Box>
 
       {showText && (
-        <motion.div
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <Box sx={{ animation: `${rise} 0.5s ease-out both` }}>
           <Typography
             variant="body2"
             sx={{
@@ -100,11 +87,10 @@ const LogoLoader: React.FC<LogoLoaderProps> = ({
           >
             Hold on !!
           </Typography>
-        </motion.div>
+        </Box>
       )}
     </Box>
   );
 };
 
 export default LogoLoader;
-

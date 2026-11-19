@@ -4,7 +4,11 @@
 import "@testing-library/jest-dom";
 import { act, render } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HomeLoadingBar, KartLoadingNote, ShimmerBox } from "@/components/pages/home/sections/HomeLoading";
+import {
+  HomeLoadingBar,
+  KartLoadingNote,
+  ShimmerBox,
+} from "@/components/pages/home/sections/HomeLoading";
 
 describe("ShimmerBox", () => {
   it("is decoration: hidden from assistive tech", () => {
@@ -40,8 +44,14 @@ describe("HomeLoadingBar", () => {
 
     let finish: () => void = () => undefined;
     act(() => {
-      void client.fetchQuery({ queryKey: ["slow"], queryFn: () => new Promise<void>((resolve) => (finish = resolve)) });
+      // TanStack Query v5 rejects a query that resolves to undefined, so this one returns a value.
+      void client.fetchQuery({
+        queryKey: ["slow"],
+        queryFn: () => new Promise<string>((resolve) => (finish = () => resolve("done"))),
+      });
     });
+    // TanStack Query batches "now fetching" on a 0 ms timer; let it reach the component first.
+    act(() => void jest.advanceTimersByTime(0));
 
     act(() => void jest.advanceTimersByTime(149));
     expect(bar(host)).toBeNull(); // not yet: a fast load would never have shown it
@@ -49,9 +59,19 @@ describe("HomeLoadingBar", () => {
     expect(bar(host)).not.toBeNull();
 
     await act(async () => finish());
+    act(() => void jest.advanceTimersByTime(0)); // the batched "done fetching" notification
     act(() => void jest.advanceTimersByTime(499));
     expect(bar(host)).not.toBeNull(); // lingers a moment after the data arrives
     act(() => void jest.advanceTimersByTime(1));
     expect(bar(host)).toBeNull();
+  });
+
+  it("renders nothing while nothing is loading", () => {
+    const { container } = render(
+      <QueryClientProvider client={new QueryClient()}>
+        <HomeLoadingBar />
+      </QueryClientProvider>,
+    );
+    expect(container).toBeEmptyDOMElement();
   });
 });

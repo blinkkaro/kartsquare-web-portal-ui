@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import {
   Share,
   ContentCopy,
@@ -57,20 +57,22 @@ import ServiceCard from "@/components/ServiceCard";
 import PostFeedGrid from "@/components/pages/myAccount/components/post/PostFeedGrid";
 import { type Posts } from "@/services/post/postInterfaces";
 import { type Service } from "@/services/serviceList/listInteraface";
-import { UserRole } from "@/utils/auth";
 import { AppUserType } from "@/services/auth/auth.interface";
-import {
-  type ISupplierProfile,
-  ISupplierProfileResponse,
-  ProductListItem,
-} from "@/services/profile/profileInterface";
+import { type ISupplierProfile } from "@/services/profile/profileInterface";
 import ReelFeedGrid from "@/components/pages/myAccount/components/post/ReelFeedGrid";
-import ReelViewModal from "@/components/pages/myAccount/components/post/ReelViewModal";
 import ProfileProducts from "../../common/ProfileDrawer/components/ProfileProducts";
 import ProviderReviews from "./components/ProviderReviews";
 import ProfileNotFound from "./components/ProfileNotFound";
-import ProviderMapSection from "./components/ProviderMapSection";
 import ContactUsSection from "./components/ContactUsSection";
+
+// Map (Google Maps loader) in its own chunk; still server-rendered, so the page hydrates without waiting for it.
+const ProviderMapSection = dynamic(() => import("./components/ProviderMapSection"));
+
+// Opened on demand: loaded after the page instead of in its first bundle.
+const ReelViewModal = dynamic(
+  () => import("@/components/pages/myAccount/components/post/ReelViewModal"),
+  { ssr: false },
+);
 
 interface ProviderProfilePageProps {
   username: string;
@@ -83,29 +85,87 @@ const PROFILE_TABS = {
   Reels: "Reels",
 };
 
-const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
-  username,
-}) => {
-  const router = useRouter();
+/** One stat line in the profile card. Module-level so it keeps its identity across renders. */
+const StatRow = ({
+  icon,
+  label,
+  value,
+  iconColor,
+  compact = false,
+}: {
+  icon: React.ReactElement;
+  label: string;
+  value: string | number;
+  iconColor: string;
+  compact?: boolean;
+}) => (
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      px: compact ? 0.75 : 1,
+      py: compact ? 0.6 : 1.2,
+      borderRadius: 2,
+    }}
+  >
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: compact ? 0.75 : 1.2,
+      }}
+    >
+      <Box
+        component="span"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          "& svg": { fontSize: compact ? 16 : 18, color: iconColor },
+        }}
+      >
+        {icon}
+      </Box>
+      <Typography
+        variant="body2"
+        sx={{
+          fontWeight: 600,
+          fontSize: compact ? "0.8rem" : "0.85rem",
+          color: (theme) =>
+            theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+        }}
+      >
+        {label}
+      </Typography>
+    </Box>
+    <Typography
+      variant="body1"
+      sx={{
+        fontWeight: 700,
+        fontSize: compact ? "0.875rem" : "0.95rem",
+        color: (theme) =>
+          theme.palette.mode === "dark" ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
+      }}
+    >
+      {value}
+    </Typography>
+  </Box>
+);
+
+const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) => {
   const theme = useTheme();
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
 
   const [activeTab, setActiveTab] = useState(PROFILE_TABS.Posts);
-  const [shareMenuAnchor, setShareMenuAnchor] = useState<null | HTMLElement>(
-    null,
-  );
+  const [shareMenuAnchor, setShareMenuAnchor] = useState<null | HTMLElement>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isBioExpanded, setIsBioExpanded] = useState(false);
   const [reviewsExpanded, setReviewsExpanded] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  const {
-    data: profileData,
-    isLoading,
-    error,
-  } = useProviderProfileByUsername(username);
+  const { data: profileData, isLoading, error } = useProviderProfileByUsername(username);
 
   const isSupplier = profileData?.profile?.role === AppUserType.SUPPLIER;
   const profile = profileData?.profile;
@@ -118,21 +178,14 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
     isFetchingNextPage: isFetchingNextReels,
   } = useProviderReels(profile?.id || "");
 
-  const {
-    data: postsData,
-    isLoading: postsLoading,
-  } = useProviderPosts(profile?.id || "");
+  const { data: postsData, isLoading: postsLoading } = useProviderPosts(profile?.id || "");
 
   // Type-safe data extraction
-  const services =
-    profileData && "services" in profileData ? profileData.services : [];
-  const profilePosts =
-    profileData && "posts" in profileData ? profileData.posts : [];
+  const services = profileData && "services" in profileData ? profileData.services : [];
+  const profilePosts = profileData && "posts" in profileData ? profileData.posts : [];
   const fetchedPosts = postsData?.pages.flatMap((page) => page.posts) || [];
   const posts = fetchedPosts.length > 0 ? fetchedPosts : profilePosts;
-  const products =
-    profileData && "products" in profileData ? profileData.products : [];
-  
+  const products = profileData && "products" in profileData ? profileData.products : [];
 
   const followMutation = useFollowProvider(profile?.id || "");
 
@@ -168,7 +221,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
       setSnackbarMessage(t("copiedToClipboard") || "Link copied to clipboard!");
       setSnackbarOpen(true);
       handleShareClose();
-    } catch (err) {
+    } catch {
       setSnackbarMessage(t("copyFailed") || "Failed to copy link");
       setSnackbarOpen(true);
     }
@@ -219,82 +272,10 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
   };
 
   // Transform posts to match the expected format (media_urls as string)
-  const transformedPosts: Posts[] = posts.map((post: any) => ({
+  const transformedPosts: Posts[] = posts.map((post) => ({
     ...post,
-    media_urls: Array.isArray(post.media_urls)
-      ? post.media_urls[0]
-      : post.media_urls,
+    media_urls: Array.isArray(post.media_urls) ? post.media_urls[0] : post.media_urls,
   }));
-
-  const StatRow = ({
-    icon,
-    label,
-    value,
-    iconColor,
-    compact = false,
-  }: {
-    icon: React.ReactElement;
-    label: string;
-    value: string | number;
-    iconColor: string;
-    compact?: boolean;
-  }) => (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        px: compact ? 0.75 : 1,
-        py: compact ? 0.6 : 1.2,
-        borderRadius: 2,
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: compact ? 0.75 : 1.2,
-        }}
-      >
-        <Box
-          component="span"
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            "& svg": { fontSize: compact ? 16 : 18, color: iconColor },
-          }}
-        >
-          {icon}
-        </Box>
-        <Typography
-          variant="body2"
-          sx={{
-            fontWeight: 600,
-            fontSize: compact ? "0.8rem" : "0.85rem",
-            color:
-              theme.palette.mode === "dark"
-                ? COLORS.TEXT.PRIMARY_DARK
-                : COLORS.TEXT.PRIMARY_LIGHT,
-          }}
-        >
-          {label}
-        </Typography>
-      </Box>
-      <Typography
-        variant="body1"
-        sx={{
-          fontWeight: 700,
-          fontSize: compact ? "0.875rem" : "0.95rem",
-          color:
-            theme.palette.mode === "dark"
-              ? COLORS.TEXT.PRIMARY_DARK
-              : COLORS.TEXT.PRIMARY_LIGHT,
-        }}
-      >
-        {value}
-      </Typography>
-    </Box>
-  );
 
   // Format location from default_address
   const getLocationString = () => {
@@ -321,19 +302,11 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
     return <ProfileNotFound />;
   }
 
-  const textPrimary = isDark
-    ? COLORS.TEXT.PRIMARY_DARK
-    : COLORS.TEXT.PRIMARY_LIGHT;
-  const textSecondary = isDark
-    ? COLORS.TEXT.SECONDARY_DARK
-    : COLORS.TEXT.SECONDARY_LIGHT;
-  const borderColorMui = isDark
-    ? COLORS.BORDER.DEFAULT_DARK
-    : COLORS.BORDER.DEFAULT_LIGHT;
+  const textPrimary = isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT;
+  const textSecondary = isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT;
+  const borderColorMui = isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT;
   const cardBg = isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.WHITE;
-  const surfaceBg = isDark
-    ? COLORS.BACKGROUND.PRIMARY_DARK
-    : COLORS.BACKGROUND.SECONDARY_LIGHT;
+  const surfaceBg = isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT;
 
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: surfaceBg }}>
@@ -385,11 +358,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Avatar
-              src={
-                isSupplier
-                  ? (profile as ISupplierProfile).logo_url
-                  : profile.profile_pic
-              }
+              src={isSupplier ? (profile as ISupplierProfile).logo_url : profile.profile_pic}
               alt={
                 isSupplier
                   ? (profile as ISupplierProfile).store_name
@@ -433,10 +402,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
         </Container>
       </Box>
 
-      <Container
-        maxWidth="xl"
-        sx={{ position: "relative", mt: -2, zIndex: 1, pb: 6 }}
-      >
+      <Container maxWidth="xl" sx={{ position: "relative", mt: -2, zIndex: 1, pb: 6 }}>
         <Grid container spacing={3}>
           {/* Left Sidebar — Business card */}
           <Grid size={{ xs: 12, md: 4 }}>
@@ -498,10 +464,9 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   {(() => {
                     const bioText = stripMarkdown(
                       profile.bio ||
-                      (isSupplier
-                        ? (profile as ISupplierProfile).description
-                        : "") ||
-                      "Professional service provider on kartsquare.");
+                        (isSupplier ? (profile as ISupplierProfile).description : "") ||
+                        "Professional service provider on kartsquare.",
+                    );
                     const words = bioText.split(" ");
                     const WORD_LIMIT = 12;
                     const isLongBio = words.length > WORD_LIMIT;
@@ -559,9 +524,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   }}
                 >
                   {profile.email && (
-                    <Box
-                      sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
-                    >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                       <EmailIcon sx={{ fontSize: 20, color: textSecondary }} />
                       <Typography
                         variant="body2"
@@ -580,9 +543,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     </Box>
                   )}
                   {getLocationString() && (
-                    <Box
-                      sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
-                    >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                       <LocationOn sx={{ fontSize: 20, color: textSecondary }} />
                       <Typography
                         variant="body2"
@@ -597,9 +558,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     </Box>
                   )}
                   {profile.phone_number && (
-                    <Box
-                      sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
-                    >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                       <Phone sx={{ fontSize: 20, color: textSecondary }} />
                       <Typography
                         variant="body2"
@@ -682,7 +641,9 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                     <StatRow
                       icon={<BusinessCenter />}
                       label={t("services")}
-                      value={(profile as any)?.services_count || 0}
+                      value={
+                        profile && "services_count" in profile ? profile.services_count || 0 : 0
+                      }
                       iconColor={COLORS.PRIMARY_PURPLE}
                       compact={isMobile}
                     />
@@ -690,14 +651,14 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   <StatRow
                     icon={<Visibility />}
                     label={t("posts")}
-                    value={(profile as any)?.total_posts || 0}
+                    value={profile && "total_posts" in profile ? profile.total_posts || 0 : 0}
                     iconColor={textSecondary}
                     compact={isMobile}
                   />
                   <StatRow
                     icon={<Visibility />}
                     label={t("reels")}
-                    value={(profile as any)?.total_reels || 0}
+                    value={profile && "total_reels" in profile ? profile.total_reels || 0 : 0}
                     iconColor={textSecondary}
                     compact={isMobile}
                   />
@@ -812,26 +773,17 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                         "&:hover": { opacity: 0.85 },
                       }}
                     >
-                      <Typography
-                        variant="subtitle2"
-                        sx={{ fontWeight: 700, color: textPrimary }}
-                      >
-                        {t("reviews" as any)} of {profile?.first_name}{" "}
-                        {profile?.last_name}
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700, color: textPrimary }}>
+                        {t("reviews")} of {profile?.first_name} {profile?.last_name}
                       </Typography>
-                      <IconButton
-                        size="small"
-                        sx={{ color: textPrimary, p: 0.5 }}
-                      >
+                      <IconButton size="small" sx={{ color: textPrimary, p: 0.5 }}>
                         {reviewsExpanded ? <ExpandLess /> : <ExpandMore />}
                       </IconButton>
                     </Box>
                     <Collapse in={reviewsExpanded}>
                       <ProviderReviews
                         providerId={profile?.id || ""}
-                        providerName={
-                          profile?.first_name + " " + profile?.last_name
-                        }
+                        providerName={profile?.first_name + " " + profile?.last_name}
                         hideTitle
                       />
                     </Collapse>
@@ -839,9 +791,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                 ) : (
                   <ProviderReviews
                     providerId={profile?.id || ""}
-                    providerName={
-                      profile?.first_name + " " + profile?.last_name
-                    }
+                    providerName={profile?.first_name + " " + profile?.last_name}
                   />
                 )}
               </Box>
@@ -863,10 +813,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                   ? `Our ${t("products")} & ${t("posts")}`
                   : `Our ${t("services")} & ${t("posts")}`}
               </Typography>
-              <Typography
-                variant="body2"
-                sx={{ color: textSecondary, fontSize: "0.9rem" }}
-              >
+              <Typography variant="body2" sx={{ color: textSecondary, fontSize: "0.9rem" }}>
                 {isSupplier
                   ? "Explore our range of quality products and latest updates."
                   : "Explore what we offer and our latest updates."}
@@ -879,9 +826,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                 gap: 0,
                 p: 0.5,
                 borderRadius: 2,
-                bgcolor: isDark
-                  ? COLORS.BACKGROUND.SECONDARY_DARK
-                  : COLORS.BACKGROUND.PAPER_LIGHT,
+                bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
                 border: `1px solid ${borderColorMui}`,
                 mb: 3,
               }}
@@ -896,13 +841,8 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       borderRadius: 1.5,
                       cursor: "pointer",
                       bgcolor:
-                        activeTab === PROFILE_TABS.Posts
-                          ? COLORS.PRIMARY_PURPLE
-                          : "transparent",
-                      color:
-                        activeTab === PROFILE_TABS.Posts
-                          ? COLORS.WHITE
-                          : textSecondary,
+                        activeTab === PROFILE_TABS.Posts ? COLORS.PRIMARY_PURPLE : "transparent",
+                      color: activeTab === PROFILE_TABS.Posts ? COLORS.WHITE : textSecondary,
                       fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 500,
                       fontSize: "0.95rem",
                       transition: "all 0.2s ease",
@@ -929,15 +869,9 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       borderRadius: 1.5,
                       cursor: "pointer",
                       bgcolor:
-                        activeTab === PROFILE_TABS.Products
-                          ? COLORS.PRIMARY_PURPLE
-                          : "transparent",
-                      color:
-                        activeTab === PROFILE_TABS.Products
-                          ? COLORS.WHITE
-                          : textSecondary,
-                      fontWeight:
-                        activeTab === PROFILE_TABS.Products ? 700 : 500,
+                        activeTab === PROFILE_TABS.Products ? COLORS.PRIMARY_PURPLE : "transparent",
+                      color: activeTab === PROFILE_TABS.Products ? COLORS.WHITE : textSecondary,
+                      fontWeight: activeTab === PROFILE_TABS.Products ? 700 : 500,
                       fontSize: "0.95rem",
                       transition: "all 0.2s ease",
                       "&:hover": {
@@ -963,13 +897,8 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       borderRadius: 1.5,
                       cursor: "pointer",
                       bgcolor:
-                        activeTab === PROFILE_TABS.Reels
-                          ? COLORS.PRIMARY_PURPLE
-                          : "transparent",
-                      color:
-                        activeTab === PROFILE_TABS.Reels
-                          ? COLORS.WHITE
-                          : textSecondary,
+                        activeTab === PROFILE_TABS.Reels ? COLORS.PRIMARY_PURPLE : "transparent",
+                      color: activeTab === PROFILE_TABS.Reels ? COLORS.WHITE : textSecondary,
                       fontWeight: activeTab === PROFILE_TABS.Reels ? 700 : 500,
                       fontSize: "0.95rem",
                       transition: "all 0.2s ease",
@@ -999,13 +928,8 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       borderRadius: 1.5,
                       cursor: "pointer",
                       bgcolor:
-                        activeTab === PROFILE_TABS.Posts
-                          ? COLORS.PRIMARY_PURPLE
-                          : "transparent",
-                      color:
-                        activeTab === PROFILE_TABS.Posts
-                          ? COLORS.WHITE
-                          : textSecondary,
+                        activeTab === PROFILE_TABS.Posts ? COLORS.PRIMARY_PURPLE : "transparent",
+                      color: activeTab === PROFILE_TABS.Posts ? COLORS.WHITE : textSecondary,
                       fontWeight: activeTab === PROFILE_TABS.Posts ? 700 : 500,
                       fontSize: "0.95rem",
                       transition: "all 0.2s ease",
@@ -1032,15 +956,9 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       borderRadius: 1.5,
                       cursor: "pointer",
                       bgcolor:
-                        activeTab === PROFILE_TABS.Services
-                          ? COLORS.PRIMARY_PURPLE
-                          : "transparent",
-                      color:
-                        activeTab === PROFILE_TABS.Services
-                          ? COLORS.WHITE
-                          : textSecondary,
-                      fontWeight:
-                        activeTab === PROFILE_TABS.Services ? 700 : 500,
+                        activeTab === PROFILE_TABS.Services ? COLORS.PRIMARY_PURPLE : "transparent",
+                      color: activeTab === PROFILE_TABS.Services ? COLORS.WHITE : textSecondary,
+                      fontWeight: activeTab === PROFILE_TABS.Services ? 700 : 500,
                       fontSize: "0.95rem",
                       transition: "all 0.2s ease",
                       "&:hover": {
@@ -1066,13 +984,8 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       borderRadius: 1.5,
                       cursor: "pointer",
                       bgcolor:
-                        activeTab === PROFILE_TABS.Reels
-                          ? COLORS.PRIMARY_PURPLE
-                          : "transparent",
-                      color:
-                        activeTab === PROFILE_TABS.Reels
-                          ? COLORS.WHITE
-                          : textSecondary,
+                        activeTab === PROFILE_TABS.Reels ? COLORS.PRIMARY_PURPLE : "transparent",
+                      color: activeTab === PROFILE_TABS.Reels ? COLORS.WHITE : textSecondary,
                       fontWeight: activeTab === PROFILE_TABS.Reels ? 700 : 500,
                       fontSize: "0.95rem",
                       transition: "all 0.2s ease",
@@ -1123,10 +1036,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                           opacity: 0.7,
                         }}
                       />
-                      <Typography
-                        variant="h6"
-                        sx={{ fontWeight: 600, mb: 1, color: textPrimary }}
-                      >
+                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, color: textPrimary }}>
                         {t("noPostsFound") || "No posts yet"}
                       </Typography>
                       <Typography
@@ -1172,10 +1082,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                           opacity: 0.7,
                         }}
                       />
-                      <Typography
-                        variant="h6"
-                        sx={{ fontWeight: 600, mb: 1, color: textPrimary }}
-                      >
+                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, color: textPrimary }}>
                         {t("noServicesFound") || "No services yet"}
                       </Typography>
                       <Typography
@@ -1192,7 +1099,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                           size={{ xs: 12, sm: 6, md: 4 }}
                           key={`${service.service_id}-${index}`}
                         >
-                          <ServiceCard service={service as any} />
+                          <ServiceCard service={service} />
                         </Grid>
                       ))}
                     </Grid>
@@ -1249,9 +1156,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       justifyContent: "center",
                     }}
                   >
-                    <LocationOn
-                      sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 24 }}
-                    />
+                    <LocationOn sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 24 }} />
                   </Box>
                   <Box>
                     <Typography
@@ -1310,9 +1215,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
                       justifyContent: "center",
                     }}
                   >
-                    <EmailIcon
-                      sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 24 }}
-                    />
+                    <EmailIcon sx={{ color: COLORS.PRIMARY_PURPLE, fontSize: 24 }} />
                   </Box>
                   <Box>
                     <Typography
@@ -1349,9 +1252,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({
         onClose={handleShareClose}
         PaperProps={{
           sx: {
-            bgcolor: isDark
-              ? COLORS.BACKGROUND.PRIMARY_DARK
-              : COLORS.BACKGROUND.PRIMARY_LIGHT,
+            bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
             minWidth: 220,
             mt: 1,
             borderRadius: 2,
