@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { TranslationKey } from "@/features/i18n/TranslationContext";
+import { type TranslationKey } from "@/features/i18n/TranslationContext";
 
 type TFunction = (key: TranslationKey) => string;
 
@@ -13,6 +13,7 @@ export const EditBusinessInfoSchema = (t: TFunction) =>
     description: yup
       .string()
       .trim()
+      .min(10, t("businessDescriptionMin"))
       .max(2000, t("valDescMax"))
       .required(t("businessDescriptionRequired")),
     address_id: yup.string().trim().required(t("businessAddressRequired")),
@@ -24,6 +25,4 @@ export const EditBusinessInfoSchema = (t: TFunction) =>
       .max(5, t("businessImagesMax" as any) || "Maximum 5 images allowed"), // Fallback if key doesn't exist perfectly or requires params
   });
 
-export type EditBusinessInfoFormData = yup.InferType<
-  ReturnType<typeof EditBusinessInfoSchema>
->;
+export type EditBusinessInfoFormData = yup.InferType<ReturnType<typeof EditBusinessInfoSchema>>;

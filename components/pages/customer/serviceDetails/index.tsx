@@ -1,5 +1,4 @@
 "use client";
-import { CHAT_ENABLED } from "@/lib/featureFlags";
 import React, { useState, useMemo, useEffect } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
@@ -13,13 +12,11 @@ import { IconButton } from "@mui/material";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { CHAT_ENABLED } from "@/lib/featureFlags";
 import { stripMarkdown } from "@/utils/plainText";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import MainLayout from "@/app/mainLayout";
-import {
-  useServiceDetails,
-  useProviderServices,
-} from "@/hooks/useServiceDetails";
+import { useServiceDetails, useProviderServices } from "@/hooks/useServiceDetails";
 import { useGetReviews } from "@/hooks/useReview";
 import EmptyState from "@/components/common/EmptyState";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -82,13 +79,15 @@ const CustomerServiceDetails = () => {
       if (code.startsWith("+")) {
         code = code.substring(1);
       }
-      const text = encodeURIComponent(`Hi, I am interested in your service: ${service.service_name}`);
+      const text = encodeURIComponent(
+        `Hi, I am interested in your service: ${service.service_name}`,
+      );
       const url = `https://wa.me/${code}${service.provider_whatsapp_number}?text=${text}`;
       window.open(url, "_blank");
     } else if (service?.provider_phone_number) {
       // Fallback to phone number if specifically whatsapp is not there,
       // assuming phone number might have whatsapp.
-      const url = `https://wa.me/${service.provider_phone_number.replace('+', '')}?text=${encodeURIComponent(`Hi, I am interested in your service: ${service.service_name}`)}`;
+      const url = `https://wa.me/${service.provider_phone_number.replace("+", "")}?text=${encodeURIComponent(`Hi, I am interested in your service: ${service.service_name}`)}`;
       window.open(url, "_blank");
     }
   };
@@ -138,7 +137,7 @@ const CustomerServiceDetails = () => {
         },
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       if (res.data.status === "success") {
@@ -160,15 +159,14 @@ const CustomerServiceDetails = () => {
   };
 
   // Use TanStack Query hooks - prevents duplicate API calls
-  const {
-    data: service,
-    isLoading: loading,
-    error: serviceError,
-  } = useServiceDetails(serviceId);
+  const { data: service, isLoading: loading, error: serviceError } = useServiceDetails(serviceId);
 
   // Fetch related services only if service has provider_id
-  const { data: providerServices = [], isLoading: relatedServicesLoading } =
-    useProviderServices(service?.provider_id, 10, !!service?.provider_id);
+  const { data: providerServices = [], isLoading: relatedServicesLoading } = useProviderServices(
+    service?.provider_id,
+    10,
+    !!service?.provider_id,
+  );
 
   // Filter out current service from related services
   const relatedServices = useMemo(() => {
@@ -231,11 +229,7 @@ const CustomerServiceDetails = () => {
             minHeight: "100vh",
           }}
         >
-          <EmptyState
-            titleKey="service_not_found"
-            variant="notFound"
-            minHeight="80vh"
-          />
+          <EmptyState titleKey="service_not_found" variant="notFound" minHeight="80vh" />
         </Box>
       </MainLayout>
     );
@@ -248,12 +242,9 @@ const CustomerServiceDetails = () => {
   const images =
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
-      : [
-          SERVICE_FALLBACK_IMAGE,
-        ];
+      : [SERVICE_FALLBACK_IMAGE];
 
-  const isPriceRequired =
-    service.pricing_type === "noPrice" ? false : service.is_price_required;
+  const isPriceRequired = service.pricing_type === "noPrice" ? false : service.is_price_required;
 
   const isNewListing =
     !!service.created_at &&
@@ -330,7 +321,11 @@ const CustomerServiceDetails = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) 340px", lg: "minmax(0, 1fr) 360px" },
+              gridTemplateColumns: {
+                xs: "1fr",
+                md: "minmax(0, 1fr) 340px",
+                lg: "minmax(0, 1fr) 360px",
+              },
               gap: { xs: 2.5, md: 3 },
               alignItems: "start",
               width: "100%",
@@ -346,7 +341,9 @@ const CustomerServiceDetails = () => {
                   border: "1px solid",
                   borderColor: cardBorder,
                   boxShadow: cardShadow,
-                  bgcolor: isDark ? COLORS.NEW_UI.SURFACE_SOFT_DARK : COLORS.NEW_UI.SURFACE_SOFT_LIGHT,
+                  bgcolor: isDark
+                    ? COLORS.NEW_UI.SURFACE_SOFT_DARK
+                    : COLORS.NEW_UI.SURFACE_SOFT_LIGHT,
                 }}
               >
                 <ServiceImageCarousel images={images} serviceName={service.service_name || ""} />
@@ -364,6 +361,7 @@ const CustomerServiceDetails = () => {
               <ServiceStatPills
                 currency={service.currency}
                 visitingCharge={service.visiting_charge}
+                visitingChargeTiers={service.visiting_charge_tiers}
                 serviceRadius={service.service_radius}
                 serviceDuration={service.service_duration}
                 hasServiceDuration={service.has_service_duration}
@@ -386,9 +384,7 @@ const CustomerServiceDetails = () => {
                   serviceName={service.service_name || ""}
                   serviceDesc={service.service_desc || ""}
                   onContinueReading={() => setDescriptionDrawerOpen(true)}
-                  showContinueReading={
-                    !!(service.service_desc && service.service_desc.length > 50)
-                  }
+                  showContinueReading={!!(service.service_desc && service.service_desc.length > 50)}
                 />
               </ServiceAccordionSection>
 
@@ -407,7 +403,10 @@ const CustomerServiceDetails = () => {
                 />
               </ServiceAccordionSection>
 
-              <ServiceAccordionSection title="Location" icon={<PlaceRoundedIcon sx={{ fontSize: 17 }} />}>
+              <ServiceAccordionSection
+                title="Location"
+                icon={<PlaceRoundedIcon sx={{ fontSize: 17 }} />}
+              >
                 <ServiceLocation
                   address={{
                     address: service.service_address?.address || "",
@@ -423,6 +422,7 @@ const CustomerServiceDetails = () => {
                   }}
                   serviceAtLocation={service.service_at_location}
                   visitingCharge={service.visiting_charge}
+                  visitingChargeTiers={service.visiting_charge_tiers}
                   serviceRadius={service.service_radius}
                 />
                 {service.service_address?.latitude && service.service_address?.longitude && (

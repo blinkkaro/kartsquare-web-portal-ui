@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { TranslationKey } from "@/features/i18n/TranslationContext";
+import { type TranslationKey } from "@/features/i18n/TranslationContext";
 import { AppUserType, Gender } from "@/services/auth/auth.interface";
 type TFunction = (key: TranslationKey) => string;
 
@@ -11,15 +11,12 @@ export const SignUpSchema = (t: TFunction, role: AppUserType) =>
       .min(2, t("firstNameMin"))
       .max(100, t("valNameMax"))
       .required(t("firstNameRequired")),
-    last_name:
-      role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER
-        ? yup.string().notRequired().default("")
-        : yup
-            .string()
-            .trim()
-            .min(2, t("lastNameMin"))
-            .max(100, t("valNameMax"))
-            .required(t("lastNameRequired")),
+    last_name: yup
+      .string()
+      .trim()
+      .min(2, t("lastNameMin"))
+      .max(100, t("valNameMax"))
+      .required(t("lastNameRequired")),
     email: yup
       .string()
       .trim()
@@ -70,7 +67,10 @@ export const SignUpSchema = (t: TFunction, role: AppUserType) =>
         : yup.string().required(t("birthDateRequired")),
     gender:
       role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER
-        ? yup.mixed<Gender>().oneOf(Object.values(Gender) as Gender[]).notRequired()
+        ? yup
+            .mixed<Gender>()
+            .oneOf(Object.values(Gender) as Gender[])
+            .notRequired()
         : yup
             .mixed<Gender>()
             .oneOf(Object.values(Gender) as Gender[])

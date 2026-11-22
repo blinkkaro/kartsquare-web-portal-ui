@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, type ReactNode } from "react";
 import { english } from "./en";
 // Define available languages
 // export type Locale = "en" | "es" | "hi";
@@ -775,6 +775,7 @@ export type TranslationKey =
   | "bankDetails"
   | "businessNameRequired"
   | "businessDescriptionRequired"
+  | "businessDescriptionMin"
   | "businessAddressRequired"
   | "businessImagesRequired"
   | "businessImagesMin"
@@ -1139,6 +1140,8 @@ export type TranslationKey =
   | "uploadDocument"
   | "my_address"
   | "visiting_charge_inr"
+  | "visiting_charge_tier_upto"
+  | "visiting_charge_tier_beyond"
   | "service_radius_km"
   | "provider_service_at_customer_location"
   | "this_service_have_a_specific_duration"
@@ -1467,17 +1470,12 @@ interface TranslationContextType {
   t: (key: TranslationKey, params?: Record<string, string | number>) => string;
 }
 
-const TranslationContext = createContext<TranslationContextType | undefined>(
-  undefined
-);
+const TranslationContext = createContext<TranslationContextType | undefined>(undefined);
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<"en">("en");
 
-  const t = (
-    key: TranslationKey,
-    params?: Record<string, string | number>
-  ): string => {
+  const t = (key: TranslationKey, params?: Record<string, string | number>): string => {
     let text = dictionaries[locale][key] || key;
     if (params) {
       Object.entries(params).forEach(([paramKey, value]) => {
@@ -1497,9 +1495,7 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
 export function useTranslationContext() {
   const context = useContext(TranslationContext);
   if (context === undefined) {
-    throw new Error(
-      "useTranslationContext must be used within a TranslationProvider"
-    );
+    throw new Error("useTranslationContext must be used within a TranslationProvider");
   }
   return context;
 }
