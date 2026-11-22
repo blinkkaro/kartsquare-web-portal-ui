@@ -98,15 +98,12 @@ describe("toSlug", () => {                                  // the subject, exac
 ## Coverage targets
 
 - **Target: 80 % statements and lines** for `lib/`, `utils/`, `hooks/` and `services/`.
-- Enforced per folder in `jest.config.js → coverageThreshold` as each folder reaches 80 %, so CI never fails on code nobody touched. Today only `lib/seo/` is gated. **Raise the list; never lower it.**
+- Enforced per folder in `jest.config.js → coverageThreshold` as each folder reaches 80 %, so the coverage run never fails on code nobody touched. Today only `lib/seo/` is gated. **Raise the list; never lower it.**
 - Coverage is measured on logic only (`collectCoverageFrom`). Pages and MUI views are excluded and covered by e2e instead.
 - Coverage is a floor, not a goal: a test that executes lines without asserting behaviour does not count in review.
 
 ## CI
 
-`.github/workflows/ci.yml` on every PR and on pushes to `main`/`development`:
-
-1. `check`: `npm ci` → `npm run lint` → `npm run typecheck` → `npm run test:coverage`
-2. `e2e` (after `check`): installs Chromium, `npm run build`, `npm run test:e2e`, uploads the Playwright report on failure.
+There is no CI workflow (removed 2026-11-22 by owner decision). Before merging, run by hand: `npm run lint`, `npm run typecheck`, `npm run test:coverage`, and for risky changes `npm run build && npm run test:e2e`.
 
 Locally, Husky runs lint-staged on commit (Prettier + ESLint on staged files, zero warnings) and `typecheck` on push.
