@@ -40,6 +40,16 @@ Last updated: 2026-11-14. No credentials in docs.
 - Tests: `tests/unit/lib` + `__tests__/seo` run (146 pass). 12 jsdom component suites cannot run
   (`jest-environment-jsdom` not installed). Browser smoke tests were never run.
 
+## Server-rendered listing and profile pages (2026-11-27)
+
+Search Console showed 98 sitemap URLs as "Discovered - currently not indexed" and 4 indexed. The sitemap itself was fine (all URLs 200, indexable, self-canonical). Separately, listing and profile pages sent about 8 to 18 words in their server HTML.
+
+- **Never call `useSearchParams()` in a large view.** On a static or ISR page the whole Suspense subtree is left out of the server HTML. Put it in a tiny component with its own boundary (`ReviewActionFromQuery`).
+- Listing and profile pages pass the server-fetched record to their query hook as `initialData` (stale at once, so the browser refetches).
+- **Anything given to a client component is written into the HTML.** Pass API records through `toPublicSnapshot` (`lib/seo/publicSnapshot.ts`). Add new personal fields there. The public profile API still returns email, phone, birth date, gender and full address: the backend should stop sending them.
+- Internal links: `/explore-services` lists every listing in the city, a listing links to its provider profile, and a profile links to its listings.
+- Open: some profiles still have no page linking to them; the API limit (100 requests per window) can fail server renders and builds.
+
 ## Status (2026-11-14)
 - Merged to `development` (PR #89). **Not merged/deployed to `main`/prod yet.** Prod backend is live with the new
   endpoints; prod public `sitemap.xml` has no `/services/...` URLs until this frontend deploys and the 1 h cache turns over.

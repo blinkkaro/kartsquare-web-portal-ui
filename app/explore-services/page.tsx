@@ -8,6 +8,7 @@ import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 import { serializeJsonLd } from "@/lib/seo/jsonLd";
 import { categoryContentPath, getCategoryContent, indexableSubServices, SERVICES_HUB_PATH, subServicePath } from "@/lib/services/content";
 import { SITE_URL } from "@/lib/seo/buildMetadata";
+import { getListingLinks } from "@/lib/services/listingDirectory";
 import { COVERAGE_CITY, getCategoryMedia, getCityCoverage } from "@/lib/services/coverage";
 import { HUB_REVIEWED } from "@/data/services/hub";
 
@@ -24,7 +25,7 @@ export function generateMetadata(): Metadata {
 }
 
 export default async function ServicesHubPage() {
-  const [coverage, media] = await Promise.all([getCityCoverage(), getCategoryMedia()]);
+  const [coverage, media, listings] = await Promise.all([getCityCoverage(), getCategoryMedia(), getListingLinks(COVERAGE_CITY.slug)]);
   const breadcrumbs = buildBreadcrumbJsonLd([
     { name: "Home", item: "/" },
     { name: "Services", item: SERVICES_HUB_PATH },
@@ -50,7 +51,7 @@ export default async function ServicesHubPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: collection }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbs }} />
-      <ServicesHubView heroStrip={<ServiceMarquee />} categories={CATEGORY_CONTENT} guides={SUB_SERVICE_CONTENT} coverage={coverage} media={media} contentSlugs={CATEGORY_CONTENT.filter((c) => getCategoryContent(c.slug)).map((c) => c.slug)} cityName={COVERAGE_CITY.name} citySlug={COVERAGE_CITY.slug} />
+      <ServicesHubView listings={listings} heroStrip={<ServiceMarquee />} categories={CATEGORY_CONTENT} guides={SUB_SERVICE_CONTENT} coverage={coverage} media={media} contentSlugs={CATEGORY_CONTENT.filter((c) => getCategoryContent(c.slug)).map((c) => c.slug)} cityName={COVERAGE_CITY.name} citySlug={COVERAGE_CITY.slug} />
     </>
   );
 }

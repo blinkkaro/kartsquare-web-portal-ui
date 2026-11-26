@@ -1,8 +1,7 @@
 import React from "react";
+import { type Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
-import MainLayout from "../../mainLayout";
 import ProviderProfilePage from "@/components/pages/providerProfile";
-import { Metadata } from "next";
 import {
   buildProfileJsonLd,
   buildProfileMetadata,
@@ -11,6 +10,9 @@ import {
 } from "@/lib/seo/publicProfile";
 import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 import { serializeJsonLd } from "@/lib/seo/jsonLd";
+import { toPublicSnapshot } from "@/lib/seo/publicSnapshot";
+import type { ProviderProfileByUsernameResponse } from "@/services/profile/profileInterface";
+import MainLayout from "../../mainLayout";
 
 interface ProfilePageProps {
   params: Promise<{
@@ -90,7 +92,12 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
         />
       ) : null}
-      <ProviderProfilePage username={username} />
+      <ProviderProfilePage
+        username={username}
+        initialProfile={
+          seoPayload.data ? (toPublicSnapshot(seoPayload.data) as unknown as ProviderProfileByUsernameResponse) : undefined
+        }
+      />
     </MainLayout>
   );
 }

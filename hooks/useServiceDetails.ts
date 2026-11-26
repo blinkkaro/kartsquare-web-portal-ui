@@ -1,14 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { serviceDetailsService } from "@/services/serviceDetails/serviceDetailsService";
-import { ServiceDetails } from "@/services/serviceDetails/serviceDetailsInterface";
-import { Service } from "@/services/serviceList/listInteraface";
+import { type ServiceDetails } from "@/services/serviceDetails/serviceDetailsInterface";
 
 /**
  * Hook to fetch service details by ID with TanStack Query
  * Prevents duplicate API calls and provides automatic caching
  */
-export const useServiceDetails = (serviceId: string, enabled: boolean = true) => {
+export const useServiceDetails = (serviceId: string, enabled: boolean = true, initialData?: ServiceDetails) => {
   return useQuery({
+    // The server-rendered copy has private fields removed and no signed-in state: show it at once, then
+    // treat it as stale so the browser fetches the full record on mount.
+    ...(initialData && { initialData, initialDataUpdatedAt: 0, refetchOnMount: true }),
     queryKey: ["service-details", serviceId],
     queryFn: () => serviceDetailsService.getServiceById(serviceId),
     enabled: enabled && !!serviceId,

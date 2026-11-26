@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
-
 import CustomerServiceDetails from "../../components/pages/customer/serviceDetails";
 import { BREADCRUMBS, buildBreadcrumbJsonLd } from "./breadcrumbs";
 import { SITE_URL } from "./buildMetadata";
 import { serializeJsonLd } from "./jsonLd";
+import { toPublicSnapshot } from "./publicSnapshot";
 import { buildServiceJsonLd, lookupService, type ServiceLookup, type ServiceSeo } from "./serviceSeo";
+import type { ServiceDetails } from "../../services/serviceDetails/serviceDetailsInterface";
 
 const NOINDEX: Metadata["robots"] = { index: false, follow: true };
 
@@ -96,10 +96,8 @@ export function ServiceDetailBody({ service }: { service: ServiceSeo }) {
       {breadcrumbJsonLd ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }} />
       ) : null}
-      {/* useSearchParams inside the details view needs a Suspense boundary for static/ISR rendering. */}
-      <Suspense fallback={null}>
-        <CustomerServiceDetails />
-      </Suspense>
+      {/* The record fetched for metadata also renders the page, so crawlers get its content in the HTML. */}
+      <CustomerServiceDetails initialService={toPublicSnapshot(service) as unknown as ServiceDetails} />
     </>
   );
 }

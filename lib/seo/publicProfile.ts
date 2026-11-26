@@ -6,12 +6,14 @@ export { getApiBaseUrl };
 
 export type PublicProfileVariant = "provider" | "supplier";
 
-export type PublicProfileSeoPayload = {
+export interface PublicProfileSeoPayload {
   profile: Record<string, unknown>;
   variant: PublicProfileVariant;
-};
+  /** The whole `data` object (profile with its services, posts or products), for server rendering. */
+  data?: Record<string, unknown>;
+}
 
-type ProfileResponse = { data?: { profile?: Record<string, unknown> } };
+interface ProfileResponse { data?: { profile?: Record<string, unknown> } }
 
 /**
  * Server-only public profile fetch for SEO (metadata + JSON-LD).
@@ -34,12 +36,12 @@ export async function fetchPublicProfileForSeo(
 
   const provider = await fetchPublicJson<ProfileResponse>(`${base}/profile/provider/${enc}${v}`);
   if (provider.status === "ok" && provider.body?.data?.profile) {
-    return { profile: provider.body.data.profile, variant: "provider" };
+    return { profile: provider.body.data.profile, variant: "provider", data: provider.body.data };
   }
 
   const supplier = await fetchPublicJson<ProfileResponse>(`${base}/profile/supplier/${enc}${v}`);
   if (supplier.status === "ok" && supplier.body?.data?.profile) {
-    return { profile: supplier.body.data.profile, variant: "supplier" };
+    return { profile: supplier.body.data.profile, variant: "supplier", data: supplier.body.data };
   }
 
   return null;

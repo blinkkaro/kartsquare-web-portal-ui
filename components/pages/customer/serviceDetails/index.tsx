@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { Suspense, useState, useMemo } from "react";
 import dynamic from "next/dynamic";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Box, Container, Typography, useTheme } from "@mui/material";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
@@ -27,6 +27,7 @@ import { review_type } from "@/services/providerDashboard/providerDashboard.inte
 import { getServiceHref } from "@/utils/serviceRoute";
 import { SERVICE_FALLBACK_IMAGE } from "@/constants/media";
 import { startConversation } from "@/services/chat/chatService";
+import type { ServiceDetails } from "@/services/serviceDetails/serviceDetailsInterface";
 import ServiceImageCarousel from "../../../ServiceImageCarousel";
 import ProviderInfoCard from "../../../ProviderInfoCard";
 import ServiceCard from "../../../ServiceCard";
@@ -44,6 +45,7 @@ import ServiceAccordionSection from "./ServiceAccordionSection";
 import ServiceBookingSidebar from "./ServiceBookingSidebar";
 import ServiceMobileStickyBar from "./ServiceMobileStickyBar";
 import ReviewDrawerContent from "./ReviewDrawerContent";
+import ReviewActionFromQuery from "./ReviewActionFromQuery";
 import GetQuoteModal from "./GetQuoteModal";
 
 // Map (Google Maps loader) in its own chunk; still server-rendered, so the page hydrates without waiting for it.
@@ -51,13 +53,11 @@ const ServiceDetailsMap = dynamic(() => import("../../map/components/ServiceDeta
 
 const NEW_LISTING_WINDOW_DAYS = 30;
 
-const CustomerServiceDetails = () => {
+const CustomerServiceDetails = ({ initialService }: { initialService?: ServiceDetails }) => {
   const params = useParams();
   const router = useRouter();
-  const searchParams = useSearchParams();
   // Canonical route /services/[city]/[slug] (slug) or legacy /services/[first] (uuid or slug).
   const serviceId = (params.second ?? params.slug ?? params.first ?? params.id) as string;
-  const actions = searchParams.get("action");
   const theme = useTheme();
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
@@ -152,7 +152,7 @@ const CustomerServiceDetails = () => {
   };
 
   // Use TanStack Query hooks - prevents duplicate API calls
-  const { data: service, isLoading: loading } = useServiceDetails(serviceId);
+  const { data: service, isLoading: loading } = useServiceDetails(serviceId, true, initialService);
 
   // Fetch related services only if service has provider_id
   const { data: providerServices } = useProviderServices(
@@ -186,14 +186,6 @@ const CustomerServiceDetails = () => {
   const reviews = useMemo(() => {
     return reviewsData?.pages.flatMap((page) => page.reviews) || [];
   }, [reviewsData]);
-
-  // A link with ?actions=review opens the review form. Follows `actions` as it changes, adjusted
-  // during render (React's pattern) instead of in an effect.
-  const [handledActions, setHandledActions] = useState<typeof actions | undefined>(undefined);
-  if (actions !== handledActions) {
-    setHandledActions(actions);
-    if (actions === "review") setReviewModalOpen(true);
-  }
 
   const handleReviewSubmit = () => {
     setReviewModalOpen(false);
@@ -270,6 +262,9 @@ const CustomerServiceDetails = () => {
 
   return (
     <MainLayout>
+      <Suspense fallback={null}>
+        <ReviewActionFromQuery onReview={() => setReviewModalOpen(true)} />
+      </Suspense>
       <Box
         sx={{
           bgcolor: isDark ? "background.default" : COLORS.NEW_UI.PAGE_BG_LIGHT,
@@ -444,6 +439,7 @@ const CustomerServiceDetails = () => {
                 <ProviderInfoCard
                   providerId={service.provider_id || ""}
                   providerName={service.provider_name || ""}
+                  username={service.provider_username || undefined}
                   providerImageUrl={service.provider_image_url || ""}
                   isHotSeller={true}
                   providerPhoneNumber={service.provider_phone_number || ""}

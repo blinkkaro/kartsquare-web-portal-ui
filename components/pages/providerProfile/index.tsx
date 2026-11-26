@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import NextLink from "next/link";
 import {
   Share,
   ContentCopy,
@@ -44,6 +45,7 @@ import {
   Collapse,
 } from "@mui/material";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
+import { getServiceHref } from "@/utils/serviceRoute";
 import { stripMarkdown } from "@/utils/plainText";
 import { COLORS } from "@/constants/colors";
 import {
@@ -58,7 +60,7 @@ import PostFeedGrid from "@/components/pages/myAccount/components/post/PostFeedG
 import { type Posts } from "@/services/post/postInterfaces";
 import { type Service } from "@/services/serviceList/listInteraface";
 import { AppUserType } from "@/services/auth/auth.interface";
-import { type ISupplierProfile } from "@/services/profile/profileInterface";
+import { type ISupplierProfile, type ProviderProfileByUsernameResponse } from "@/services/profile/profileInterface";
 import ReelFeedGrid from "@/components/pages/myAccount/components/post/ReelFeedGrid";
 import ProfileProducts from "../../common/ProfileDrawer/components/ProfileProducts";
 import ProviderReviews from "./components/ProviderReviews";
@@ -76,6 +78,8 @@ const ReelViewModal = dynamic(
 
 interface ProviderProfilePageProps {
   username: string;
+  /** Server-fetched public copy, so the profile is in the HTML. */
+  initialProfile?: ProviderProfileByUsernameResponse;
 }
 
 const PROFILE_TABS = {
@@ -152,7 +156,7 @@ const StatRow = ({
   </Box>
 );
 
-const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) => {
+const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username, initialProfile }) => {
   const theme = useTheme();
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
@@ -165,7 +169,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
   const [reviewsExpanded, setReviewsExpanded] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  const { data: profileData, isLoading, error } = useProviderProfileByUsername(username);
+  const { data: profileData, isLoading, error } = useProviderProfileByUsername(username, initialProfile);
 
   const isSupplier = profileData?.profile?.role === AppUserType.SUPPLIER;
   const profile = profileData?.profile;
@@ -298,7 +302,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
     return <CenteredLoader minHeight="60vh" />;
   }
 
-  if (error || !profile) {
+  if (!profile || (error && !initialProfile)) {
     return <ProfileNotFound />;
   }
 
@@ -374,6 +378,7 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
             <Box>
               <Typography
                 variant="h4"
+                component="h1"
                 sx={{
                   fontWeight: 700,
                   color: COLORS.WHITE,
@@ -1007,6 +1012,15 @@ const ProviderProfilePage: React.FC<ProviderProfilePageProps> = ({ username }) =
                 </>
               )}
             </Box>
+
+            {/* Real links to each listing, whichever tab is open: the tab content is not in the first HTML. */}
+            {!isSupplier && services.some((s: Service) => s.slug) && (
+              <Box component="nav" aria-label="Services offered" sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
+                {services.map((s: Service) => (
+                  <Chip key={s.service_id} component={NextLink} href={getServiceHref(s)} label={s.business_name || s.service_name} clickable variant="outlined" />
+                ))}
+              </Box>
+            )}
 
             <Box>
               {activeTab === PROFILE_TABS.Products && isSupplier && (

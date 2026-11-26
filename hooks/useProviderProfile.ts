@@ -1,17 +1,17 @@
-import followService from "@/services/follow/followService";
-import { profileService } from "@/services/profile/pofileService";
-import {
-  providerPostsInterface,
-  providerProfileInterface,
-  providerServicesInterface,
-  ProviderProfileByUsernameResponse,
-} from "@/services/profile/profileInterface";
 import {
   useQuery,
   useMutation,
   useQueryClient,
   useInfiniteQuery,
 } from "@tanstack/react-query";
+import followService from "@/services/follow/followService";
+import { profileService } from "@/services/profile/pofileService";
+import {
+  type providerPostsInterface,
+  type providerProfileInterface,
+  type providerServicesInterface,
+  type ProviderProfileByUsernameResponse,
+} from "@/services/profile/profileInterface";
 
 export const useProviderProfile = (userId: string) => {
   return useQuery({
@@ -26,10 +26,7 @@ export const useProviderServices = (userId: string) => {
     queryKey: ["providerServices", userId],
     queryFn: ({ pageParam = 1 }) =>
       profileService.getProviderServices(userId, pageParam, 10),
-    getNextPageParam: (
-      lastPage: providerServicesInterface,
-      allPages: providerServicesInterface[],
-    ) => {
+    getNextPageParam: (lastPage: providerServicesInterface) => {
       const morePagesExist =
         lastPage?.pagination?.currentPage < lastPage?.pagination?.totalPages;
       return morePagesExist ? lastPage.pagination.currentPage + 1 : undefined;
@@ -44,7 +41,7 @@ export const useProviderPosts = (userId: string) => {
     queryKey: ["providerPosts", userId],
     queryFn: ({ pageParam = 1 }) =>
       profileService.getProviderPosts(userId, pageParam, 12),
-    getNextPageParam: (lastPage: providerPostsInterface, allPages) => {
+    getNextPageParam: (lastPage: providerPostsInterface) => {
       const morePagesExist =
         lastPage?.pagination?.currentPage < lastPage?.pagination?.totalPages;
       return morePagesExist ? lastPage.pagination.currentPage + 1 : undefined;
@@ -59,7 +56,7 @@ export const useProviderReels = (userId: string) => {
     queryKey: ["providerReels", userId],
     queryFn: ({ pageParam = 1 }) =>
       profileService.getProviderReels(userId, pageParam, 12),
-    getNextPageParam: (lastPage: providerPostsInterface, allPages) => {
+    getNextPageParam: (lastPage: providerPostsInterface) => {
       const morePagesExist =
         lastPage?.pagination?.currentPage < lastPage?.pagination?.totalPages;
       return morePagesExist ? lastPage.pagination.currentPage + 1 : undefined;
@@ -69,13 +66,28 @@ export const useProviderReels = (userId: string) => {
   });
 };
 
-export const useProviderProfileByUsername = (username: string) => {
+export const useProviderProfileByUsername = (username: string, initialData?: ProviderProfileByUsernameResponse) => {
   return useQuery({
+    // Same rule as useServiceDetails: render the server copy, then fetch the full profile on mount.
+    ...(initialData && { initialData, initialDataUpdatedAt: 0, refetchOnMount: true }),
     queryKey: ["providerProfileByUsername", username],
     queryFn: () => profileService.getUnifiedProfileByUsername(username),
     enabled: !!username,
   });
 };
+
+/** Only the fields the optimistic follow update touches in cached post, reel and supplier data. */
+interface CachedPost {
+  user: { id: string };
+  is_following?: boolean;
+}
+interface CachedPosts {
+  posts?: CachedPost[];
+  pages?: { posts: CachedPost[] }[];
+}
+interface CachedSupplier {
+  profile?: { is_following?: boolean; followers_count?: number };
+}
 
 export const useFollowProvider = (userId: string, username?: string) => {
   const queryClient = useQueryClient();
@@ -109,21 +121,21 @@ export const useFollowProvider = (userId: string, username?: string) => {
         | ProviderProfileByUsernameResponse
         | undefined;
 
-      const previousReels = queryClient.getQueryData<any>(["reels"]);
+      const previousReels = queryClient.getQueryData<unknown>(["reels"]);
       const previousPosts = queryClient.getQueriesData({ queryKey: ["posts"] });
       const previousProviderPosts = queryClient.getQueriesData({ queryKey: ["providerPosts"] });
       const previousProviderReels = queryClient.getQueriesData({ queryKey: ["providerReels"] });
 
       // Helper function to update posts/reels in cache
-      const updatePostInCache = (old: any) => {
+      const updatePostInCache = (old: CachedPosts | undefined) => {
         if (!old) return old;
         // Handle infinite query structure (pages)
         if (old.pages) {
           return {
             ...old,
-            pages: old.pages.map((page: any) => ({
+            pages: old.pages.map((page) => ({
               ...page,
-              posts: page.posts.map((post: any) =>
+              posts: page.posts.map((post) =>
                 post.user.id === userId
                   ? { ...post, is_following: !isFollowing }
                   : post,
@@ -135,7 +147,7 @@ export const useFollowProvider = (userId: string, username?: string) => {
         if (old.posts) {
           return {
             ...old,
-            posts: old.posts.map((post: any) =>
+            posts: old.posts.map((post) =>
               post.user.id === userId
                 ? { ...post, is_following: !isFollowing }
                 : post,
@@ -173,20 +185,20 @@ export const useFollowProvider = (userId: string, username?: string) => {
         );
       }
 
-      queryClient.setQueriesData({ queryKey: ["reels"] }, updatePostInCache);
-      queryClient.setQueriesData({ queryKey: ["posts"] }, updatePostInCache);
-      queryClient.setQueriesData({ queryKey: ["providerPosts"] }, updatePostInCache);
-      queryClient.setQueriesData({ queryKey: ["providerReels"] }, updatePostInCache);
+      queryClient.setQueriesData<CachedPosts>({ queryKey: ["reels"] }, updatePostInCache);
+      queryClient.setQueriesData<CachedPosts>({ queryKey: ["posts"] }, updatePostInCache);
+      queryClient.setQueriesData<CachedPosts>({ queryKey: ["providerPosts"] }, updatePostInCache);
+      queryClient.setQueriesData<CachedPosts>({ queryKey: ["providerReels"] }, updatePostInCache);
 
       // Snapshot supplier profile if username is provided
       const supplierQueryKey = ["supplierProfile", username];
       const previousSupplierData = username
-        ? queryClient.getQueryData<any>(supplierQueryKey)
+        ? queryClient.getQueryData<CachedSupplier>(supplierQueryKey)
         : undefined;
 
       // Optimistically update supplier profile
       if (username && previousSupplierData) {
-        queryClient.setQueryData<any>(supplierQueryKey, {
+        queryClient.setQueryData<CachedSupplier>(supplierQueryKey, {
           ...previousSupplierData,
           profile: {
             ...previousSupplierData.profile,
@@ -226,17 +238,17 @@ export const useFollowProvider = (userId: string, username?: string) => {
         queryClient.setQueryData(["reels"], context.previousReels);
       }
       if (context?.previousPosts) {
-        context.previousPosts.forEach(([key, data]: [any, any]) => {
+        context.previousPosts.forEach(([key, data]) => {
           queryClient.setQueryData(key, data);
         });
       }
       if (context?.previousProviderPosts) {
-        context.previousProviderPosts.forEach(([key, data]: [any, any]) => {
+        context.previousProviderPosts.forEach(([key, data]) => {
           queryClient.setQueryData(key, data);
         });
       }
       if (context?.previousProviderReels) {
-        context.previousProviderReels.forEach(([key, data]: [any, any]) => {
+        context.previousProviderReels.forEach(([key, data]) => {
           queryClient.setQueryData(key, data);
         });
       }

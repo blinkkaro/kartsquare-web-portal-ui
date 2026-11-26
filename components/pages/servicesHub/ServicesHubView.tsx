@@ -8,6 +8,7 @@ import { COLORS } from "@/constants/colors";
 import { COMMITMENTS, HUB_FAQ, PLAYBOOK, SEASON_SOURCES, SEASONS, SITUATIONS } from "@/data/services/hubCopy";
 import { categoryContentPath, subServicePath } from "@/lib/services/content";
 import type { CategoryMedia } from "@/lib/services/coverage";
+import type { ListingLink } from "@/lib/services/listingDirectory";
 import { photoSrc } from "@/lib/services/photo";
 import type { CategoryContent, SubServiceContent } from "@/lib/services/types";
 import FaqSection from "./FaqSection";
@@ -29,6 +30,8 @@ interface Props {
   citySlug: string;
   /** Optional strip along the bottom of the hero (the home page's moving list of services). */
   heroStrip?: React.ReactNode;
+  /** Every listing page in the coverage city, linked in plain HTML. */
+  listings?: ListingLink[];
 }
 
 /** Real category slugs, grouped by what the customer needs. A category not listed here goes under "More services". */
@@ -45,7 +48,7 @@ const STEPS = [
   { title: "Send your request", text: "Add a photo and a time that suits you. The provider replies to you directly." },
 ];
 
-const ServicesHubView: React.FC<Props> = ({ categories, guides = [], coverage, media = {}, contentSlugs, cityName, citySlug, heroStrip }) => {
+const ServicesHubView: React.FC<Props> = ({ categories, guides = [], coverage, media = {}, contentSlugs, cityName, citySlug, heroStrip, listings = [] }) => {
   const isLive = (slug: string) => (coverage[slug] ?? 0) > 0;
   const liveCategories = categories.filter((c) => isLive(c.slug));
   // Every tile must open a real page: the category guide when it is viewable, else the city list if it has providers.
@@ -184,6 +187,19 @@ const ServicesHubView: React.FC<Props> = ({ categories, guides = [], coverage, m
                 <Box component={Link} href={`/${citySlug}/${c.slug}`} sx={{ textDecoration: "none", color: "inherit", "&:focus-visible": { outline: `3px solid ${COLORS.PRIMARY_PURPLE}`, outlineOffset: 2, borderRadius: "14px" } }}>
                   <ServiceChip>{c.name}</ServiceChip>
                 </Box>
+              </li>
+            ))}
+          </Box>
+        </Band>
+      )}
+
+      {listings.length > 0 && (
+        <Band tone="tint" id="listings" labelledBy="listings-title">
+          <Heading id="listings-title" eyebrow={cityName} title={`Businesses listed in ${cityName}`} lead="Open a listing to see what it offers, its charges where given and the area it covers." />
+          <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0, display: "grid", columnGap: 3, gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", lg: "repeat(3, minmax(0, 1fr))" } }}>
+            {listings.map((l) => (
+              <li key={l.href}>
+                <Box component={Link} href={l.href} sx={{ display: "flex", alignItems: "center", minHeight: 48, borderBottom: "1px solid", borderColor: COLORS.NEW_UI.CARD_BORDER_LIGHT, color: "text.primary", fontWeight: 600, textDecoration: "none", "&:hover": { color: COLORS.PRIMARY_PURPLE }, "&:focus-visible": { outline: `3px solid ${COLORS.PRIMARY_PURPLE}`, outlineOffset: 2 } }}>{l.name}</Box>
               </li>
             ))}
           </Box>
