@@ -274,6 +274,7 @@ const ProviderServiceDetails = () => {
                   }}
                   serviceAtLocation={service.service_at_location}
                   visitingCharge={service.visiting_charge}
+                  visitingChargeTiers={service.visiting_charge_tiers}
                   serviceRadius={service.service_radius}
                 />
               </Box>

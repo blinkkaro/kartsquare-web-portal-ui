@@ -13,6 +13,7 @@ export const EditBusinessInfoSchema = (t: TFunction) =>
     description: yup
       .string()
       .trim()
+      .min(10, t("businessDescriptionMin"))
       .max(2000, t("valDescMax"))
       .required(t("businessDescriptionRequired")),
     address_id: yup.string().trim().required(t("businessAddressRequired")),

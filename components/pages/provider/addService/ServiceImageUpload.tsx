@@ -33,11 +33,7 @@ const ServiceImageUpload = ({
         Main Image (Required)
         <span style={{ color: COLORS.SECONDARY_ORANGE }}>*</span>
       </Typography>
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        sx={{ mb: 2, display: "block" }}
-      >
+      <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: "block" }}>
         This will be the primary image displayed for your service.
       </Typography>
 
@@ -95,12 +91,7 @@ const ServiceImageUpload = ({
           }}
         >
           Upload Main Image
-          <input
-            type="file"
-            hidden
-            accept="image/jpeg,image/png"
-            onChange={onMainImageSelect}
-          />
+          <input type="file" hidden accept="image/jpeg,image/png" onChange={onMainImageSelect} />
         </Button>
       )}
 
@@ -115,11 +106,7 @@ const ServiceImageUpload = ({
       >
         {english.upload_images} (Optional Additional Images)
       </Typography>
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        sx={{ mb: 2, display: "block" }}
-      >
+      <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: "block" }}>
         {english.upload_images_helper}
       </Typography>
 
@@ -128,7 +115,7 @@ const ServiceImageUpload = ({
         variant="outlined"
         component="label"
         startIcon={<CloudUpload />}
-        disabled={imagePreviews.length >= 6}
+        disabled={imagePreviews.length >= 4}
         sx={{
           mb: 2,
           borderColor: COLORS.PRIMARY_PURPLE,
@@ -139,17 +126,8 @@ const ServiceImageUpload = ({
           },
         }}
       >
-        {english.upload_images_count.replace(
-          "{count}",
-          imagePreviews.length.toString(),
-        )}
-        <input
-          type="file"
-          hidden
-          multiple
-          accept="image/jpeg,image/png"
-          onChange={onImageSelect}
-        />
+        {english.upload_images_count.replace("{count}", imagePreviews.length.toString())}
+        <input type="file" hidden multiple accept="image/jpeg,image/png" onChange={onImageSelect} />
       </Button>
 
       {/* Image Previews */}

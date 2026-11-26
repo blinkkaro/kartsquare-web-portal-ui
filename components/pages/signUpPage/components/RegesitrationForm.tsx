@@ -149,55 +149,30 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       <Grid container spacing={2}>
         {/* Section: Personal Identity */}
 
-        {isServiceProvider ? (
-          <Grid size={{ xs: 12 }}>
-            <Typography
-              variant="caption"
-              sx={{
-                mb: 1,
-                fontWeight: 600,
-                color: "#374151",
-                fontSize: { xs: "0.8rem", sm: "0.875rem" },
-              }}
-            >
-              Full Name*
-            </Typography>
-            <Input
-              name="first_name"
-              control={control}
-              placeholder="Arjun Sharma"
-              startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-              sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-            />
-          </Grid>
-        ) : (
-          <>
-            <Grid size={{ xs: 6 }}>
-              <Typography variant="caption" sx={{ mb: 1, fontWeight: 600, color: "#374151" }}>
-                {t("first_name")}*
-              </Typography>
-              <Input
-                name="first_name"
-                control={control}
-                placeholder="Arjun"
-                startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-              />
-            </Grid>
-            <Grid size={{ xs: 6 }}>
-              <Typography variant="caption" sx={{ mb: 1, fontWeight: 600, color: "#374151" }}>
-                {t("last_name")}*
-              </Typography>
-              <Input
-                name="last_name"
-                control={control}
-                placeholder="Sharma"
-                startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-              />
-            </Grid>
-          </>
-        )}
+        <Grid size={{ xs: 6 }}>
+          <Typography variant="caption" sx={{ mb: 1, fontWeight: 600, color: "#374151" }}>
+            {t("first_name")}*
+          </Typography>
+          <Input
+            name="first_name"
+            control={control}
+            placeholder="Arjun"
+            startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+          />
+        </Grid>
+        <Grid size={{ xs: 6 }}>
+          <Typography variant="caption" sx={{ mb: 1, fontWeight: 600, color: "#374151" }}>
+            {t("last_name")}*
+          </Typography>
+          <Input
+            name="last_name"
+            control={control}
+            placeholder="Sharma"
+            startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+          />
+        </Grid>
 
         <Grid size={{ xs: 12 }}>
           <Typography variant="caption" sx={{ mb: 1, fontWeight: 600, color: "#374151" }}>

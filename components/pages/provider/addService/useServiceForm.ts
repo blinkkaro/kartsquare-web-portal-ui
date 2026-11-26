@@ -1,10 +1,51 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { serviceListService } from "@/services/serviceList/serviceListService";
 import { verifyDocumentService } from "@/services/auth/verifyDocument.service";
 import { getUserId } from "@/utils/auth";
-import { ServiceDetails } from "@/services/serviceDetails/serviceDetailsInterface";
+import { type ServiceDetails } from "@/services/serviceDetails/serviceDetailsInterface";
 import { english } from "@/features/i18n/en";
-import { PricingType } from "@/services/serviceList/listInteraface";
+import { PricingType, type VisitingChargeTier } from "@/services/serviceList/listInteraface";
+import { useGetBusinessInfo } from "@/hooks/useBusinessInfo";
+
+/** Matches the API: 2-3 rows, the last one covers "beyond". */
+export const MAX_VISITING_CHARGE_ROWS = 3;
+/** The API accepts at most 5 service images (main + 4). */
+const MAX_SERVICE_IMAGES = 5;
+
+export type VisitingChargeMode = "single" | "distance";
+export interface VisitingTierRow {
+  uptoKm: string;
+  charge: string;
+}
+const EMPTY_TIER_ROWS: VisitingTierRow[] = [
+  { uptoKm: "", charge: "" },
+  { uptoKm: "", charge: "" },
+];
+
+const isRemoteUrl = (url: string) => /^https?:\/\//.test(url);
+
+/** Rows -> API tiers, or null when any row is incomplete or out of order. */
+export const toVisitingChargeTiers = (
+  rows: VisitingTierRow[],
+  serviceRadiusKm: number,
+): VisitingChargeTier[] | null => {
+  if (rows.length < 2) return null;
+  let previous = 0;
+  const tiers: VisitingChargeTier[] = [];
+  for (let i = 0; i < rows.length; i++) {
+    const charge = parseInt(rows[i].charge, 10);
+    if (!(charge > 0)) return null;
+    if (i === rows.length - 1) {
+      tiers.push({ upto_km: null, charge });
+      break;
+    }
+    const km = parseInt(rows[i].uptoKm, 10);
+    if (!(km > previous) || (serviceRadiusKm && km >= serviceRadiusKm)) return null;
+    previous = km;
+    tiers.push({ upto_km: km, charge });
+  }
+  return tiers;
+};
 
 interface UseServiceFormProps {
   open: boolean;
@@ -30,10 +71,12 @@ export const useServiceForm = ({
   const [days, setDays] = useState("0");
   const [hours, setHours] = useState("0");
   const [minutes, setMinutes] = useState("0");
-  const [locationType, setLocationType] = useState<
-    "at_customer" | "at_provider" | "virtual_call"
-  >("at_provider");
+  const [locationType, setLocationType] = useState<"at_customer" | "at_provider" | "virtual_call">(
+    "at_provider",
+  );
   const [visitingCharge, setVisitingCharge] = useState("");
+  const [visitingChargeMode, setVisitingChargeMode] = useState<VisitingChargeMode>("single");
+  const [visitingTiers, setVisitingTiers] = useState<VisitingTierRow[]>(EMPTY_TIER_ROWS);
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [serviceRadius, setServiceRadius] = useState("5");
   const [hasServiceDuration, setHasServiceDuration] = useState(false);
@@ -77,9 +120,7 @@ export const useServiceForm = ({
         setServiceName(editService.service_name || "");
         setDescription(editService.service_desc || "");
 
-        const priceInCurrency = editService.price
-          ? editService.price.toString()
-          : "";
+        const priceInCurrency = editService.price ? editService.price.toString() : "";
         setPrice(priceInCurrency);
 
         const totalMinutes = editService.service_duration || 0;
@@ -89,23 +130,24 @@ export const useServiceForm = ({
         setDays(daysCalc.toString());
         setHours(hoursCalc.toString());
         setMinutes(minutesCalc.toString());
-        setHasServiceDuration(
-          editService.has_service_duration || totalMinutes > 0,
-        );
+        setHasServiceDuration(editService.has_service_duration || totalMinutes > 0);
 
         const locType = editService.service_at_location as string;
-        if (
-          locType === "at_customer" ||
-          locType === "at_provider" ||
-          locType === "virtual_call"
-        ) {
-          setLocationType(
-            locType as "at_customer" | "at_provider" | "virtual_call",
-          );
+        if (locType === "at_customer" || locType === "at_provider" || locType === "virtual_call") {
+          setLocationType(locType as "at_customer" | "at_provider" | "virtual_call");
         }
 
         if (editService.visiting_charge) {
           setVisitingCharge(editService.visiting_charge.toString());
+        }
+        if (editService.visiting_charge_tiers?.length) {
+          setVisitingChargeMode("distance");
+          setVisitingTiers(
+            editService.visiting_charge_tiers.map((tier) => ({
+              uptoKm: tier.upto_km === null ? "" : tier.upto_km.toString(),
+              charge: tier.charge.toString(),
+            })),
+          );
         }
 
         setSelectedAddressId(editService.service_provider_address_id || "");
@@ -141,10 +183,7 @@ export const useServiceForm = ({
           setIsPriceRequired(!!editService.price);
         }
 
-        if (
-          editService.price_catalog_url &&
-          editService.price_catalog_url.length > 0
-        ) {
+        if (editService.price_catalog_url && editService.price_catalog_url.length > 0) {
           setExistingCatalogUrls(editService.price_catalog_url);
         }
 
@@ -163,9 +202,42 @@ export const useServiceForm = ({
     prefillForm();
   }, [editService, open, setSubcategories]);
 
-  const handleMainImageSelect = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  // New service: start from the business details (category, sub-categories,
+  // photos) so the provider does not enter them twice. Once per opening, and
+  // only into fields that are still empty; everything stays editable.
+  const { data: businessInfo } = useGetBusinessInfo();
+  const prefilledFromBusiness = useRef(false);
+  useEffect(() => {
+    if (!open) {
+      prefilledFromBusiness.current = false;
+      return;
+    }
+    if (editService || !businessInfo || prefilledFromBusiness.current) return;
+    prefilledFromBusiness.current = true;
+
+    if (businessInfo.category) {
+      setCategoryIds((current) => (current.length ? current : [businessInfo.category as string]));
+    }
+    const businessSubs = Array.isArray(businessInfo.sub_category)
+      ? businessInfo.sub_category
+      : businessInfo.sub_category
+        ? [businessInfo.sub_category]
+        : [];
+    if (businessSubs.length) {
+      setSubcategoryIds((current) => (current.length ? current : (businessSubs as string[])));
+    }
+    const photos = (businessInfo.business_images || []).filter(
+      (url): url is string => typeof url === "string" && isRemoteUrl(url),
+    );
+    if (photos.length) {
+      setMainImagePreview((current) => current ?? photos[0]);
+      setImagePreviews((current) =>
+        current.length ? current : photos.slice(1, MAX_SERVICE_IMAGES),
+      );
+    }
+  }, [open, editService, businessInfo]);
+
+  const handleMainImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
     if (!files || files.length === 0) return;
 
@@ -189,36 +261,38 @@ export const useServiceForm = ({
 
     const fileArray = Array.from(files);
 
-    if (selectedImages.length + fileArray.length > 6) {
+    if (1 + imagePreviews.length + fileArray.length > MAX_SERVICE_IMAGES) {
       setError(english.max_images_error);
       return;
     }
 
-    const newPreviews: string[] = [];
-    fileArray.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        newPreviews.push(reader.result as string);
-        if (newPreviews.length === fileArray.length) {
-          setImagePreviews([...imagePreviews, ...newPreviews]);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+    // Read in file order so preview i always belongs to selectedImages i.
+    Promise.all(
+      fileArray.map(
+        (file) =>
+          new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.readAsDataURL(file);
+          }),
+      ),
+    ).then((newPreviews) => setImagePreviews((current) => [...current, ...newPreviews]));
 
     setSelectedImages([...selectedImages, ...fileArray]);
   };
 
+  // Previews hold already-uploaded URLs first, then data URLs of new files,
+  // so a new file's index is its preview index minus the URL count.
   const handleRemoveImage = (index: number) => {
-    const newImages = selectedImages.filter((_, i) => i !== index);
-    const newPreviews = imagePreviews.filter((_, i) => i !== index);
-    setSelectedImages(newImages);
-    setImagePreviews(newPreviews);
+    const remoteCount = imagePreviews.filter(isRemoteUrl).length;
+    if (index >= remoteCount) {
+      const fileIndex = index - remoteCount;
+      setSelectedImages(selectedImages.filter((_, i) => i !== fileIndex));
+    }
+    setImagePreviews(imagePreviews.filter((_, i) => i !== index));
   };
 
-  const handleCatalogFileSelect = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleCatalogFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
     if (!files?.length) return;
     const fileArray = Array.from(files);
@@ -248,10 +322,7 @@ export const useServiceForm = ({
   };
 
   const addPriceItem = () => {
-    setPriceItems((prev) => [
-      ...prev,
-      { name: "", price: "", description: "" },
-    ]);
+    setPriceItems((prev) => [...prev, { name: "", price: "", description: "" }]);
   };
 
   const removePriceItem = (index: number) => {
@@ -307,20 +378,14 @@ export const useServiceForm = ({
     }
     if (pricingType === PricingType.MULTIPLE) {
       const validItems = priceItems.filter(
-        (item) =>
-          item.name.trim() &&
-          item.price &&
-          parseFloat(item.price) > 0
+        (item) => item.name.trim() && item.price && parseFloat(item.price) > 0,
       );
       if (validItems.length === 0) {
         newFieldErrors.multiple = english.at_least_one_price_item;
         isValid = false;
       }
     }
-    if (!editService && !mainImage) {
-      setError(english.upload_image_error || "Main image is required");
-      isValid = false;
-    } else if (editService && !mainImage && !mainImagePreview) {
+    if (!mainImage && !mainImagePreview) {
       setError(english.upload_image_error || "Main image is required");
       isValid = false;
     }
@@ -328,12 +393,16 @@ export const useServiceForm = ({
       setError(english.select_address_error);
       isValid = false;
     }
-    if (
-      locationType === "at_customer" &&
-      (!visitingCharge || parseFloat(visitingCharge) < 0)
-    ) {
-      setError(english.enter_visiting_charge_error);
-      isValid = false;
+    if (locationType === "at_customer") {
+      if (visitingChargeMode === "distance") {
+        if (!toVisitingChargeTiers(visitingTiers, parseInt(serviceRadius))) {
+          setError(english.visiting_charge_tiers_error);
+          isValid = false;
+        }
+      } else if (!visitingCharge || parseFloat(visitingCharge) <= 0) {
+        setError(english.enter_visiting_charge_error);
+        isValid = false;
+      }
     }
 
     setFieldErrors(newFieldErrors);
@@ -359,32 +428,28 @@ export const useServiceForm = ({
         setUploadingImages(false);
       }
 
-      let uploadedUrls: string[] = [];
+      // Keep photos that are already uploaded (business photos, or the
+      // service's own when editing) and add the newly picked files.
+      let uploadedUrls: string[] = imagePreviews.filter(isRemoteUrl);
       if (selectedImages.length > 0) {
         setUploadingImages(true);
-        uploadedUrls = await verifyDocumentService.uploadImages(selectedImages);
+        const newUrls = await verifyDocumentService.uploadImages(selectedImages);
+        uploadedUrls = [...uploadedUrls, ...newUrls];
         setUploadingImages(false);
-      } else if (editService && imagePreviews.length > 0) {
-        uploadedUrls = imagePreviews;
       }
 
-      const finalImageUrls = [uploadedMainImageUrl, ...uploadedUrls].filter(
-        (url) => url !== "",
-      );
+      const finalImageUrls = [uploadedMainImageUrl, ...uploadedUrls].filter((url) => url !== "");
 
       let priceCatalogUrls: string[] = [...existingCatalogUrls];
       if (pricingType === "catalog" && priceCatalogFiles.length > 0) {
         setUploadingImages(true);
-        const newUrls =
-          await verifyDocumentService.uploadImages(priceCatalogFiles);
+        const newUrls = await verifyDocumentService.uploadImages(priceCatalogFiles);
         priceCatalogUrls = [...priceCatalogUrls, ...newUrls];
         setUploadingImages(false);
       }
 
       const totalMinutes =
-        parseInt(days || "0") * 24 * 60 +
-        parseInt(hours || "0") * 60 +
-        parseInt(minutes || "0");
+        parseInt(days || "0") * 24 * 60 + parseInt(hours || "0") * 60 + parseInt(minutes || "0");
 
       const userId = getUserId();
       if (!userId) {
@@ -393,10 +458,7 @@ export const useServiceForm = ({
       }
 
       const validPriceItems = priceItems.filter(
-        (item) =>
-          item.name.trim() &&
-          item.price &&
-          parseFloat(item.price) > 0
+        (item) => item.name.trim() && item.price && parseFloat(item.price) > 0,
       );
 
       const requestData: any = {
@@ -411,11 +473,9 @@ export const useServiceForm = ({
         currency: "INR",
         service_at_location: locationType,
         service_provider_address_id: selectedAddressId,
-        service_radius:
-          locationType === "virtual_call" ? 0 : parseInt(serviceRadius),
+        service_radius: locationType === "virtual_call" ? 0 : parseInt(serviceRadius),
         has_service_duration: hasServiceDuration,
-        service_duration:
-          hasServiceDuration && totalMinutes > 0 ? totalMinutes : undefined,
+        service_duration: hasServiceDuration && totalMinutes > 0 ? totalMinutes : undefined,
         have_slots: hasServiceDuration ? haveSlots : false,
         pricing_type: pricingType,
       };
@@ -423,7 +483,7 @@ export const useServiceForm = ({
       if (pricingType === "catalog" && priceCatalogUrls.length > 0) {
         requestData.price_catalog_url = priceCatalogUrls;
       }
-      
+
       if (pricingType === "multiple" && validPriceItems.length > 0) {
         requestData.price_items = validPriceItems.map((item) => ({
           service_name: item.name.trim(),
@@ -433,14 +493,24 @@ export const useServiceForm = ({
       }
 
       if (locationType === "at_customer") {
-        requestData.visiting_charge = parseFloat(visitingCharge);
+        if (visitingChargeMode === "distance") {
+          // The API sets visiting_charge to the lowest row.
+          requestData.visiting_charge_tiers = toVisitingChargeTiers(
+            visitingTiers,
+            parseInt(serviceRadius),
+          );
+        } else {
+          requestData.visiting_charge = parseFloat(visitingCharge);
+          // Only clear tiers that exist, so the request also works on an API
+          // whose database does not have the column yet.
+          if (editService?.visiting_charge_tiers?.length) {
+            requestData.visiting_charge_tiers = null;
+          }
+        }
       }
 
       if (editService) {
-        await serviceListService.updateService(
-          editService.service_id,
-          requestData,
-        );
+        await serviceListService.updateService(editService.service_id, requestData);
       } else {
         await serviceListService.createService(requestData);
       }
@@ -449,11 +519,8 @@ export const useServiceForm = ({
       onSuccess();
       onClose();
     } catch (err: any) {
-      console.error(
-        editService ? "Failed to update service:" : "Failed to create service:",
-        err,
-      );
-      
+      console.error(editService ? "Failed to update service:" : "Failed to create service:", err);
+
       const errorData = err?.response?.data;
       if (errorData?.errors && Array.isArray(errorData.errors)) {
         const formattedErrors = errorData.errors.map((e: any) => `• ${e.message}`).join("\n");
@@ -467,7 +534,9 @@ export const useServiceForm = ({
 
       // Scroll to the top of the drawer to ensure the user sees the error
       setTimeout(() => {
-        const errorElement = document.getElementById("add-service-drawer-scroll-container") || document.querySelector('.MuiDrawer-paper');
+        const errorElement =
+          document.getElementById("add-service-drawer-scroll-container") ||
+          document.querySelector(".MuiDrawer-paper");
         if (errorElement) {
           errorElement.scrollTo({ top: 0, behavior: "smooth" });
         }
@@ -489,6 +558,8 @@ export const useServiceForm = ({
     setMinutes("0");
     setLocationType("at_provider");
     setVisitingCharge("");
+    setVisitingChargeMode("single");
+    setVisitingTiers(EMPTY_TIER_ROWS);
     setSelectedAddressId("");
     setServiceRadius("5");
     setHasServiceDuration(false);
@@ -528,6 +599,10 @@ export const useServiceForm = ({
     setLocationType,
     visitingCharge,
     setVisitingCharge,
+    visitingChargeMode,
+    setVisitingChargeMode,
+    visitingTiers,
+    setVisitingTiers,
     selectedAddressId,
     setSelectedAddressId,
     serviceRadius,

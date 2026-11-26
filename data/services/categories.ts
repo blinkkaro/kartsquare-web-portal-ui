@@ -1,4 +1,5 @@
 import type { CategoryContent } from "@/lib/services/types";
+import { CATEGORY_GUIDES } from "./categoryGuides";
 
 /**
  * Static category content for /services/c/{slug}. Entries are indexed only while reviewed is true.
@@ -6,7 +7,7 @@ import type { CategoryContent } from "@/lib/services/types";
  * noindex and stays out of the sitemap. Write only what Kartsquare can stand behind: no
  * ratings, prices, availability, response times or claims about providers.
  */
-export const CATEGORY_CONTENT: CategoryContent[] = [
+const BASE_CONTENT: CategoryContent[] = [
   {
     slug: "home-services",
     name: "Home Services",
@@ -68,31 +69,65 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
     slug: "mobile-electronics-repair",
     name: "Mobile & Electronics Repair",
     tagline: "Mobile phone repair, laptop repair, TV repair, CCTV repair, and all electronic device servicing.",
-    seoTitle: "Mobile, Laptop and TV Repair Providers",
+    seoTitle: "Mobile, Laptop, TV and CCTV Repair Guide",
     metaDescription:
-      "Look up mobile, laptop, TV and CCTV repair providers on Kartsquare. Check what each repairer lists and send a request describing the fault.",
+      "Cracked phone screen or a laptop that won't charge? See what to check, what changes the repair cost and how to brief a repairer on Kartsquare.",
     h1: "Mobile & Electronics Repair",
     intro: [
-      "Phones, laptops, televisions and CCTV cameras all fail in different ways, and the cost of a repair depends on the fault, the model and whether parts can be sourced. A cracked screen is a different job from a phone that will not charge or a laptop that overheats.",
-      "Providers in this category list the devices and faults they work on. You can read their profiles, compare what they offer and send a request with the details of your device. Kartsquare connects you with the repairer; the diagnosis, parts and price are between you and them.",
+      "Most of us only think about a repair shop when something has already gone wrong: the phone slipped out of a pocket, the laptop stopped charging the night before a deadline, or the TV came on with sound but no picture. It is a stressful moment, and it is easy to hand a device to the first counter you see without asking much.",
+      "This guide is here to slow that moment down a little. Phones, laptops, televisions and CCTV systems fail in very different ways, and a fair repair price depends on the exact fault, the model and whether the right part can be found. A cracked screen is a different job from a phone that will not charge, and a laptop that overheats is a different job again.",
+      "Repairers on Kartsquare list the devices and faults they work on. You can read their profiles, compare what they say they do and send a request with the details of your device. Kartsquare connects you with the repairer; the diagnosis, the parts and the price are agreed between you and them.",
     ],
     commonServices: ["Mobile phone repair", "Laptop repair", "TV repair", "CCTV repair", "Screen replacement", "Battery replacement"],
+    guide: [
+      {
+        heading: "Repair it or replace it?",
+        paragraphs: [
+          "A simple rule of thumb: if the repair costs more than half of what a similar device of the same age would cost to buy, think twice. That is not a hard line. A two-year-old phone with a good camera and plenty of storage is often worth a new screen, while a five-year-old laptop with a failing motherboard may not be worth a new board.",
+          "Ask the repairer two questions before you decide. First, is this the only fault, or is there something else they noticed while checking? Second, how easy is the part to get for your model? Older and less common models can wait days for a part, and that matters if you use the device for work.",
+        ],
+      },
+      {
+        heading: "Shop, doorstep visit or pickup",
+        paragraphs: [
+          "Phones and laptops are usually repaired at a counter or workshop, because the work needs tools, a clean bench and sometimes a part from stock. Some repairers offer pickup and drop. Televisions and CCTV systems are different: a wall-mounted TV or a camera on the first-floor landing is often looked at where it is, at least for the first check.",
+          "Each profile shows whether a provider works at your location, at theirs, or both. Mention your preference in the request so nobody wastes a trip.",
+        ],
+      },
+      {
+        heading: "Original, compatible and refurbished parts",
+        paragraphs: [
+          "For screens, batteries and chargers you will usually hear three words. Original means a part made by or for the device brand. Compatible means a part made by another company to fit the same model. Refurbished means a used original part that has been reworked. Each has a different price and a different feel, especially for screens, where colour and touch response can vary.",
+          "None of these is wrong, but you should know which one you are paying for. Ask the repairer to name the part type in the estimate, and ask what they offer if the replaced part fails soon after.",
+        ],
+      },
+      {
+        heading: "Your data and your privacy",
+        paragraphs: [
+          "A repairer may need your passcode to test the device after the repair. If you are not comfortable sharing it, say so, and ask whether they can test with you present. Back up photos, chats and documents before handing anything over, and sign out of payment apps if the device still works.",
+          "For laptops, ask whether the storage drive will be touched. A screen or keyboard swap usually leaves your files alone; a storage or motherboard fault may not.",
+        ],
+      },
+    ],
     mayHelp: [
       "Diagnose why a device will not start, charge, connect or display",
-      "Replace screens, batteries, charging ports and keyboards where parts are available",
-      "Repair or set up CCTV cameras and recorders",
+      "Replace screens, batteries, charging ports, speakers and keyboards where parts are available",
+      "Clean and repair devices after water or dust damage, where the board can still be saved",
+      "Install, repair or reposition CCTV cameras and recorders",
       "Advise whether a repair is worth it compared with replacing the device",
     ],
     mayNotDo: [
       "Some faults cannot be repaired, and some parts may not be available for older or rarer models.",
       "A repairer cannot promise that data on a device will be kept. Back up first if you can.",
+      "Repairs by an independent shop may affect what the brand's own service centre will cover later.",
       "Kartsquare does not hold your device or take part in the repair.",
     ],
     howToChoose: [
       "Check the profile lists your device type, for example a laptop and not only phones.",
       "Ask whether the diagnosis is free and what happens to the cost if you decline the repair.",
-      "Ask what parts will be used and what the repairer says about the repaired part.",
+      "Ask which part type will be used (original, compatible or refurbished) and what cover the repairer gives on it.",
       "Prefer a clear written estimate over a verbal figure for larger repairs.",
+      "Note the device's condition, scratches included, before you hand it over, and take a photo.",
     ],
     requestInfo: [
       "Device type, brand and model",
@@ -116,6 +151,14 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
       {
         q: "Can I ask for a quote before handing over my device?",
         a: "You can ask in your request. Many faults need a look at the device before a repairer can say what the repair costs, so some will give a range only after checking it.",
+      },
+      {
+        q: "What is the difference between an original and a compatible part?",
+        a: "An original part is made by or for the device brand. A compatible part is made by another company to fit your model and usually costs less. Ask the repairer which one they are quoting for.",
+      },
+      {
+        q: "My device is still under the brand's warranty. Should I use a local repairer?",
+        a: "Check the brand's warranty terms first. Opening the device at an independent shop can affect what the brand will cover later, so many people go to the brand's service centre while the warranty lasts.",
       },
     ],
     related: ["home-services", "security-services", "it-digital-services"],
@@ -169,10 +212,6 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
       {
         q: "Can I book a driving school through Kartsquare?",
         a: "Where a driving school has listed itself, you can read its profile and send a request. Lesson details and fees are agreed with the school.",
-      },
-      {
-        q: "Can I ask for an estimate before the work starts?",
-        a: "Yes, ask in your request. A mechanic often needs to see the vehicle before giving a figure, so ask what the estimate covers and whether it can change once the fault is found.",
       },
     ],
     related: ["mobile-electronics-repair", "security-services", "energy-environment"],
@@ -455,10 +494,6 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
         q: "Can I see a photographer's earlier work?",
         a: "Ask the provider for samples similar to your shoot. Many profiles include images, and you can request more before deciding.",
       },
-      {
-        q: "Can I ask who owns the photos and videos?",
-        a: "Ask before you agree. Providers differ on how many edited photos you receive, how long they keep the files and whether you can use them for your own business.",
-      },
     ],
     related: ["it-digital-services", "restaurants-food", "religious-spiritual"],
     reviewed: true,
@@ -578,6 +613,12 @@ export const CATEGORY_CONTENT: CategoryContent[] = [
     reviewed: true,
   },
 ];
+
+/** Each page's base entry plus its long-form guide, extra FAQs and sources from categoryGuides.ts. */
+export const CATEGORY_CONTENT: CategoryContent[] = BASE_CONTENT.map((c) => {
+  const extra = CATEGORY_GUIDES[c.slug];
+  return extra ? { ...c, guide: [...(c.guide ?? []), ...extra.guide], faq: [...c.faq, ...extra.faq], sources: extra.sources } : c;
+});
 
 export const CATEGORY_BY_SLUG: Record<string, CategoryContent> = Object.fromEntries(
   CATEGORY_CONTENT.map((c) => [c.slug, c]),

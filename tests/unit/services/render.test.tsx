@@ -79,7 +79,7 @@ describe("rendered pages", () => {
     // no coverage and no viewable guide: no card, so no dead link
     expect(links).not.toContain("/services/c/fitness-sports");
     expect(links).not.toContain("/jaipur/fitness-sports");
-    expect(links.filter((h) => h.startsWith("/services/c/"))).toEqual(["/services/c/home-services"]);
+    expect([...new Set(links.filter((h) => h.startsWith("/services/c/")))]).toEqual(["/services/c/home-services"]);
   });
 
   it("category page breadcrumbs link to the hub at /explore-services", () => {

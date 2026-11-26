@@ -356,6 +356,7 @@ const CustomerServiceDetails = () => {
               <ServiceStatPills
                 currency={service.currency}
                 visitingCharge={service.visiting_charge}
+                visitingChargeTiers={service.visiting_charge_tiers}
                 serviceRadius={service.service_radius}
                 serviceDuration={service.service_duration}
                 hasServiceDuration={service.has_service_duration}
@@ -416,6 +417,7 @@ const CustomerServiceDetails = () => {
                   }}
                   serviceAtLocation={service.service_at_location}
                   visitingCharge={service.visiting_charge}
+                  visitingChargeTiers={service.visiting_charge_tiers}
                   serviceRadius={service.service_radius}
                 />
                 {service.service_address?.latitude && service.service_address?.longitude && (

@@ -12,11 +12,19 @@ import {
   FormControl,
   useTheme,
   Slider,
+  IconButton,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { COLORS } from "@/constants/colors";
 import { type UserAddress } from "@/services/userAddress/userAddressInterface";
 import { english } from "@/features/i18n/en";
+import {
+  MAX_VISITING_CHARGE_ROWS,
+  type VisitingChargeMode,
+  type VisitingTierRow,
+} from "./useServiceForm";
 
 // Opened on demand: loaded after the page instead of in its first bundle.
 const AddressDrawer = dynamic(() => import("@/components/common/address/AddressDrawer"), {
@@ -36,6 +44,10 @@ interface ServiceLocationProps {
   onAddressSelect: (addressId: string) => void;
   visitingCharge: string;
   onVisitingChargeChange: (value: string) => void;
+  visitingChargeMode: VisitingChargeMode;
+  onVisitingChargeModeChange: (value: VisitingChargeMode) => void;
+  visitingTiers: VisitingTierRow[];
+  onVisitingTiersChange: (rows: VisitingTierRow[]) => void;
   serviceRadius: string;
   onServiceRadiusChange: (value: string) => void;
   addressesLoading: boolean;
@@ -50,6 +62,10 @@ const ServiceLocation = ({
   onAddressSelect,
   visitingCharge,
   onVisitingChargeChange,
+  visitingChargeMode,
+  onVisitingChargeModeChange,
+  visitingTiers,
+  onVisitingTiersChange,
   serviceRadius,
   onServiceRadiusChange,
   addressesLoading,
@@ -58,6 +74,32 @@ const ServiceLocation = ({
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const [addressDrawerOpen, setAddressDrawerOpen] = useState(false);
+
+  const wholeNumber = (value: string, max: number) => {
+    const digits = value.replace(/[^0-9]/g, "");
+    return digits === "" || parseInt(digits, 10) <= max ? digits : null;
+  };
+
+  const updateTier = (index: number, field: keyof VisitingTierRow, raw: string) => {
+    const value = wholeNumber(raw, field === "uptoKm" ? 50 : 10000);
+    if (value === null) return;
+    onVisitingTiersChange(
+      visitingTiers.map((row, i) => (i === index ? { ...row, [field]: value } : row)),
+    );
+  };
+
+  const addTier = () => {
+    if (visitingTiers.length >= MAX_VISITING_CHARGE_ROWS) return;
+    // The new row goes before the open "beyond" row.
+    const rows = [...visitingTiers];
+    rows.splice(rows.length - 1, 0, { uptoKm: "", charge: "" });
+    onVisitingTiersChange(rows);
+  };
+
+  const removeTier = (index: number) => {
+    if (visitingTiers.length <= 2) return;
+    onVisitingTiersChange(visitingTiers.filter((_, i) => i !== index));
+  };
 
   const handleAddressDrawerClose = () => {
     setAddressDrawerOpen(false);
@@ -199,21 +241,127 @@ const ServiceLocation = ({
             {english.visiting_charge_inr}
             <span style={{ color: COLORS.SECONDARY_ORANGE }}>*</span>
           </Typography>
-          <TextField
-            fullWidth
-            size="small"
-            value={visitingCharge}
-            onChange={(e) => {
-              const val = e.target.value.replace(/[^0-9.]/g, "");
-              if (
-                val === "" ||
-                (parseFloat(val) <= 10000 && (val.match(/\./g) || []).length <= 1)
-              ) {
-                onVisitingChargeChange(val);
-              }
-            }}
-            placeholder={english.enter_visiting_charge}
-          />
+          <FormControl component="fieldset">
+            <RadioGroup
+              value={visitingChargeMode}
+              onChange={(e) => onVisitingChargeModeChange(e.target.value as VisitingChargeMode)}
+            >
+              <FormControlLabel
+                value="single"
+                control={<Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+                label={english.visiting_charge_same}
+              />
+              <FormControlLabel
+                value="distance"
+                control={<Radio sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+                label={english.visiting_charge_by_distance}
+              />
+            </RadioGroup>
+          </FormControl>
+          {visitingChargeMode === "distance" ? (
+            <Box sx={{ mt: 1 }}>
+              {visitingTiers.map((row, index) => {
+                const isLast = index === visitingTiers.length - 1;
+                const previousKm = visitingTiers[index - 1]?.uptoKm || "0";
+                return (
+                  <Box
+                    key={index}
+                    sx={{ display: "flex", gap: 1.5, alignItems: "flex-end", mb: 1.5 }}
+                  >
+                    <Box sx={{ flex: 1 }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ mb: 0.5, display: "block", fontWeight: 500 }}
+                      >
+                        {isLast
+                          ? english.visiting_charge_beyond_km.replace("{km}", previousKm)
+                          : english.visiting_charge_upto_km}
+                      </Typography>
+                      {isLast ? (
+                        <TextField fullWidth size="small" value="" disabled placeholder="—" />
+                      ) : (
+                        <TextField
+                          fullWidth
+                          size="small"
+                          inputProps={{ inputMode: "numeric", maxLength: 2 }}
+                          value={row.uptoKm}
+                          onChange={(e) => updateTier(index, "uptoKm", e.target.value)}
+                          placeholder="2"
+                        />
+                      )}
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ mb: 0.5, display: "block", fontWeight: 500 }}
+                      >
+                        {english.visiting_charge_amount}
+                      </Typography>
+                      <TextField
+                        fullWidth
+                        size="small"
+                        inputProps={{ inputMode: "numeric", maxLength: 5 }}
+                        value={row.charge}
+                        onChange={(e) => updateTier(index, "charge", e.target.value)}
+                        placeholder={isLast ? "250" : "150"}
+                      />
+                    </Box>
+                    {visitingTiers.length > 2 && !isLast ? (
+                      <IconButton
+                        size="small"
+                        onClick={() => removeTier(index)}
+                        color="error"
+                        aria-label={english.remove_price_item}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    ) : (
+                      // Same footprint as the remove button so every row's fields line up.
+                      <IconButton size="small" disabled aria-hidden sx={{ visibility: "hidden" }}>
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    )}
+                  </Box>
+                );
+              })}
+              <Button
+                variant="outlined"
+                startIcon={<AddIcon />}
+                onClick={addTier}
+                disabled={visitingTiers.length >= MAX_VISITING_CHARGE_ROWS}
+                sx={{
+                  borderStyle: "dashed",
+                  borderColor: COLORS.PRIMARY_PURPLE,
+                  color: COLORS.PRIMARY_PURPLE,
+                  py: 1.25,
+                  "&:hover": {
+                    borderColor: COLORS.PURPLE_HOVER,
+                    bgcolor: COLORS.PURPLE_ALPHA_04,
+                  },
+                }}
+              >
+                {english.add_distance_row}
+              </Button>
+            </Box>
+          ) : (
+            <TextField
+              fullWidth
+              size="small"
+              value={visitingCharge}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^0-9.]/g, "");
+                if (
+                  val === "" ||
+                  (parseFloat(val) <= 10000 && (val.match(/\./g) || []).length <= 1)
+                ) {
+                  onVisitingChargeChange(val);
+                }
+              }}
+              placeholder={english.enter_visiting_charge}
+            />
+          )}
         </Box>
       )}
 

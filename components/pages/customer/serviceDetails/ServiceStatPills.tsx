@@ -5,7 +5,15 @@ import AccountBalanceWalletRoundedIcon from "@mui/icons-material/AccountBalanceW
 import GpsFixedRoundedIcon from "@mui/icons-material/GpsFixedRounded";
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
+import type { VisitingChargeTier } from "@/services/serviceList/listInteraface";
 import { COLORS } from "../../../../constants/colors";
+
+/** "₹150–₹250" across distance rows; one value when every row costs the same. */
+const formatChargeRange = (symbol: string, charges: number[]) => {
+  const low = Math.min(...charges);
+  const high = Math.max(...charges);
+  return low === high ? `${symbol}${low}` : `${symbol}${low}–${symbol}${high}`;
+};
 
 interface StatPill {
   icon: React.ReactNode;
@@ -16,6 +24,7 @@ interface StatPill {
 interface ServiceStatPillsProps {
   currency?: string;
   visitingCharge?: number | null;
+  visitingChargeTiers?: VisitingChargeTier[] | null;
   serviceRadius?: number;
   serviceDuration?: number | null;
   hasServiceDuration?: boolean;
@@ -33,6 +42,7 @@ const formatDuration = (totalMinutes: number) => {
 const ServiceStatPills = ({
   currency = "INR",
   visitingCharge,
+  visitingChargeTiers,
   serviceRadius,
   serviceDuration,
   hasServiceDuration,
@@ -53,8 +63,12 @@ const ServiceStatPills = ({
     {
       icon: <AccountBalanceWalletRoundedIcon sx={{ fontSize: 18 }} />,
       label: "Visiting charge",
-      value:
-        visitingCharge != null && visitingCharge > 0
+      value: visitingChargeTiers?.length
+        ? formatChargeRange(
+            currencySymbol,
+            visitingChargeTiers.map((t) => t.charge),
+          )
+        : visitingCharge != null && visitingCharge > 0
           ? `${currencySymbol}${visitingCharge}`
           : visitingCharge === 0
             ? "Free"

@@ -13,6 +13,8 @@ import NewPopularInArea from "./sections/NewPopularInArea";
 import PartnerBanner from "./sections/PartnerBanner";
 import FaqSection from "./sections/FaqSection";
 import AboutKartsquare from "./sections/AboutKartsquare";
+import LocalGuide from "./sections/LocalGuide";
+import PopularNeeds from "./sections/PopularNeeds";
 
 const GUTTER = HOME_GUTTER;
 
@@ -65,7 +67,7 @@ function HomeView() {
           flexDirection: "column",
           px: GUTTER,
           pt: 0,
-          pb: 4,
+          pb: 0,
           overflowX: "clip", // clip (not hidden) so position: sticky children keep working
         }}
       >
@@ -73,6 +75,24 @@ function HomeView() {
         <NewPopularInArea />
         <PartnerBanner />
         <AboutKartsquare />
+      </Box>
+
+      {/* A full-width violet band of its own, like the hero and Top pros. */}
+      <LocalGuide />
+
+      <Box
+        sx={{
+          maxWidth: HOME_MAX_WIDTH,
+          mx: "auto",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          px: GUTTER,
+          pb: 4,
+          overflowX: "clip",
+        }}
+      >
+        <PopularNeeds />
         <FaqSection />
       </Box>
     </Box>

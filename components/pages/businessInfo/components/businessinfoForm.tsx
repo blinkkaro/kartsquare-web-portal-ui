@@ -93,6 +93,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({ onSubmit, isLoading
     resolver: yupResolver(BusinessInfoSchema(t)),
     defaultValues: {
       business_name: "",
+      description: "",
       address_id: "",
       business_images: [],
       category: "",
@@ -112,6 +113,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({ onSubmit, isLoading
     if (businessInfo) {
       reset({
         business_name: businessInfo.business_name || "",
+        description: businessInfo.description || "",
         address_id: businessInfo.address_id || "",
         business_images: businessInfo.business_images || [],
         category: businessInfo.category || "",
@@ -182,6 +184,28 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({ onSubmit, isLoading
                   color: "#111827",
                 },
               }}
+            />
+          </Grid>
+
+          {/* Business description: required, shown on the profile and used for SEO copy */}
+          <Grid size={{ xs: 12 }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                mb: 2,
+                fontWeight: 700,
+                color: isDark ? COLORS.WHITE : "#374151",
+                fontSize: { xs: "0.8rem", sm: "0.9rem" },
+              }}
+            >
+              {t("businessDescription")}
+            </Typography>
+            <Input
+              name="description"
+              control={control}
+              placeholder={t("enterBusinessDescription")}
+              multiline
+              rows={4}
             />
           </Grid>
 

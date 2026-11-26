@@ -92,7 +92,7 @@ function SignUpView() {
 
       const baseData = {
         first_name: data.first_name,
-        last_name: isSpOrSupplier ? "" : (data.last_name ?? ""),
+        last_name: data.last_name ?? "",
         email: data.email,
         phone_number: isSpOrSupplier
           ? initialData.whatsapp_number || data.phone_number || ""
