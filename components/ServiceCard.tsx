@@ -7,18 +7,10 @@ import {
   Typography,
   Box,
   Avatar,
-  Chip,
   IconButton,
   useTheme,
 } from "@mui/material";
-import {
-  Star,
-  ArrowBackIos,
-  ArrowForwardIos,
-  Verified,
-  Bolt,
-  WorkspacePremium,
-} from "@mui/icons-material";
+import { Star, ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { useTranslate } from "@/hooks/useTranslate";
 import { stripMarkdown } from "@/utils/plainText";
@@ -46,9 +38,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
   const images =
     service.image_urls && service.image_urls.length > 0
       ? service.image_urls
-      : [
-          SERVICE_FALLBACK_IMAGE,
-        ];
+      : [SERVICE_FALLBACK_IMAGE];
 
   const handlePrevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -62,8 +52,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
 
   const userRole = getUserRole();
   const userId = getUserId();
-  const isOwner =
-    userRole === UserRole.SERVICE_PROVIDER && service.provider_id === userId;
+  const isOwner = userRole === UserRole.SERVICE_PROVIDER && service.provider_id === userId;
+  const hasRealRating =
+    Number(service.review_count ?? 0) > 0 && Number(service.avg_service_rating) > 0;
 
   const handleCardClick = () => {
     // If service provider viewing their own service, go to provider details page
@@ -106,13 +97,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
       onClick={handleCardClick}
       sx={{
         borderRadius: "16px",
-        boxShadow: isDark
-          ? "0px 4px 20px rgba(0, 0, 0, 0.3)"
-          : "0px 4px 20px rgba(0, 0, 0, 0.05)",
+        boxShadow: isDark ? "0px 4px 20px rgba(0, 0, 0, 0.3)" : "0px 4px 20px rgba(0, 0, 0, 0.05)",
         border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
-        bgcolor: isDark
-          ? COLORS.BACKGROUND.PAPER_DARK
-          : COLORS.BACKGROUND.PAPER_LIGHT,
+        bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
         transition: "transform 0.2s, box-shadow 0.2s",
         cursor: "pointer",
         "&:hover": {
@@ -132,73 +119,36 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
           sx={{
             borderRadius: "16px 16px 0 0",
             objectFit: "cover",
-            bgcolor: isDark
-              ? COLORS.BACKGROUND.SECONDARY_DARK
-              : COLORS.BACKGROUND.SECONDARY_LIGHT,
+            bgcolor: isDark ? COLORS.BACKGROUND.SECONDARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
           }}
         />
 
-        {/* Rating Badge */}
-        <Box
-          sx={{
-            position: "absolute",
-            top: 12,
-            left: 12,
-            bgcolor: "rgba(30, 30, 30, 0.85)",
-            color: "white",
-            padding: "4px 10px",
-            borderRadius: "8px",
-            display: "flex",
-            alignItems: "center",
-            gap: 0.5,
-            backdropFilter: "blur(8px)",
-            zIndex: 1,
-          }}
-        >
-          <Star sx={{ fontSize: 14, color: "#FFC107" }} />
-          <Typography
-            variant="caption"
-            sx={{ fontWeight: "bold", fontSize: "0.75rem" }}
+        {/* Rating Badge: only with real reviews (avg_service_rating defaults to 4.00 and is not a rating). */}
+        {hasRealRating && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 12,
+              left: 12,
+              bgcolor: "rgba(30, 30, 30, 0.85)",
+              color: "white",
+              padding: "4px 10px",
+              borderRadius: "8px",
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+              backdropFilter: "blur(8px)",
+              zIndex: 1,
+            }}
           >
-            {service.avg_service_rating
-              ? Number(service.avg_service_rating).toFixed(1)
-              : "0.0"}
-          </Typography>
-        </Box>
+            <Star sx={{ fontSize: 14, color: "#FFC107" }} />
+            <Typography variant="caption" sx={{ fontWeight: "bold", fontSize: "0.75rem" }}>
+              {Number(service.avg_service_rating).toFixed(1)}
+            </Typography>
+          </Box>
+        )}
 
-        {/* Verified Badge (For all users when service is approved/active) */}
-        {!isOwner &&
-          (service.status === "APPROVED" || service.status === "ACTIVE") && (
-            <Box
-              sx={{
-                position: "absolute",
-                top: 12,
-                right: 12,
-                bgcolor: "rgba(29, 78, 216, 0.95)",
-                color: "white",
-                padding: "4px 10px",
-                borderRadius: "20px",
-                display: "flex",
-                alignItems: "center",
-                gap: 0.5,
-                backdropFilter: "blur(8px)",
-                zIndex: 1,
-                boxShadow: "0 2px 8px rgba(29, 78, 216, 0.3)",
-              }}
-            >
-              <Verified sx={{ fontSize: 14 }} />
-              <Typography
-                variant="caption"
-                sx={{
-                  fontWeight: 700,
-                  fontSize: "0.7rem",
-                  letterSpacing: "0.02em",
-                }}
-              >
-                {t("verified")}
-              </Typography>
-            </Box>
-          )}
+        {/* No "Verified" badge: an approved listing is not a verified provider (brand rule, docs/05). */}
 
         {/* Status Badge (Only for Provider's own services) */}
         {isOwner && service.status && (
@@ -286,19 +236,14 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Avatar
-              src={service.provider_image_url}
-              sx={{ width: 24, height: 24 }}
-            >
+            <Avatar src={service.provider_image_url} sx={{ width: 24, height: 24 }}>
               {/* {service?.provider_name.charAt(0).toUpperCase()} */}
             </Avatar>
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Typography
                 variant="caption"
                 sx={{
-                  color: isDark
-                    ? COLORS.TEXT.PRIMARY_DARK
-                    : COLORS.TEXT.PRIMARY_LIGHT,
+                  color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                   fontWeight: 600,
                   display: "flex",
                   alignItems: "center",
@@ -307,24 +252,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
                 }}
               >
                 {service.business_name}
-                <Box
-                  component="span"
-                  sx={{
-                    color: "#1D4ED8",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <Verified sx={{ fontSize: "12px" }} />
-                </Box>
               </Typography>
               {
                 <Typography
                   variant="caption"
                   sx={{
-                    color: isDark
-                      ? COLORS.TEXT.SECONDARY_DARK
-                      : COLORS.TEXT.SECONDARY_LIGHT,
+                    color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                     fontSize: "0.7rem",
                     lineHeight: 1.2,
                   }}
@@ -348,9 +281,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
                   variant="body2"
                   component="span"
                   sx={{
-                    color: isDark
-                      ? COLORS.TEXT.SECONDARY_DARK
-                      : COLORS.TEXT.SECONDARY_LIGHT,
+                    color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                     mr: 0.5,
                     fontSize: "0.85rem",
                   }}
@@ -361,18 +292,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
               </Typography>
             ) : null
           ) : (
-            <Typography
-              variant="subtitle1"
-              fontWeight="bold"
-              sx={{ color: COLORS.PRIMARY_PURPLE }}
-            >
+            <Typography variant="subtitle1" fontWeight="bold" sx={{ color: COLORS.PRIMARY_PURPLE }}>
               <Typography
                 variant="body2"
                 component="span"
                 sx={{
-                  color: isDark
-                    ? COLORS.TEXT.SECONDARY_DARK
-                    : COLORS.TEXT.SECONDARY_LIGHT,
+                  color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                   mr: 0.5,
                   fontSize: "0.85rem",
                 }}
@@ -404,32 +329,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
           >
             {service.service_name}
           </Typography>
-          {userRole !== UserRole.SERVICE_PROVIDER && (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 0.4,
-                background: "linear-gradient(135deg, #059669 0%, #10B981 100%)",
-                color: "white",
-                px: 1,
-                py: 0.25,
-                borderRadius: "6px",
-                boxShadow: "0 2px 6px rgba(16, 185, 129, 0.3)",
-              }}
-            >
-              <WorkspacePremium sx={{ fontSize: "12px" }} />
-              <Typography
-                sx={{
-                  fontWeight: 700,
-                  fontSize: "0.6rem",
-                  letterSpacing: "0.03em",
-                }}
-              >
-                TRUSTED
-              </Typography>
-            </Box>
-          )}
         </Box>
 
         {/* Description */}
@@ -442,9 +341,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
             lineHeight: 1.4,
-            color: isDark
-              ? COLORS.TEXT.SECONDARY_DARK
-              : COLORS.TEXT.SECONDARY_LIGHT,
+            color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
           }}
         >
           {stripMarkdown(service.service_desc) || "No description available"}

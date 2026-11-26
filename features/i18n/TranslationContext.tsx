@@ -756,6 +756,14 @@ export type TranslationKey =
   | "confirm"
   | "cancel"
   | "start"
+  | "cancel_request"
+  | "cancel_request_title"
+  | "keep_request"
+  | "yes_cancel_request"
+  | "booking_start_otp_description"
+  | "cancel_request_description"
+  | "booking_cancelled_success"
+  | "booking_cancel_failed"
   | "cancel_booking_title"
   | "cancel_booking_description"
   | "yes_cancel"
@@ -1408,7 +1416,11 @@ export type TranslationKey =
   | "bk_views_label"
   | "bk_none_title"
   | "bk_none_desc"
-  | "bk_none_cta";
+  | "bk_none_cta"
+  | "valFirstNameMax"
+  | "valLastNameMax"
+  | "valBioMax"
+  | "username";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {

@@ -46,8 +46,8 @@ const ServiceStatPills = ({
     serviceAtLocation === "at_customer"
       ? "At your place"
       : serviceAtLocation === "virtual_call"
-      ? "Online"
-      : "At shop";
+        ? "Online"
+        : "At shop";
 
   const pills: StatPill[] = [
     {
@@ -56,7 +56,9 @@ const ServiceStatPills = ({
       value:
         visitingCharge != null && visitingCharge > 0
           ? `${currencySymbol}${visitingCharge}`
-          : "Free",
+          : visitingCharge === 0
+            ? "Free"
+            : "Ask provider", // not set by the provider: do not promise "Free"
     },
     {
       icon: <GpsFixedRoundedIcon sx={{ fontSize: 18 }} />,
@@ -66,10 +68,7 @@ const ServiceStatPills = ({
     {
       icon: <AccessTimeRoundedIcon sx={{ fontSize: 18 }} />,
       label: "Avg. duration",
-      value:
-        hasServiceDuration && serviceDuration
-          ? formatDuration(serviceDuration)
-          : "Varies",
+      value: hasServiceDuration && serviceDuration ? formatDuration(serviceDuration) : "Varies",
     },
     {
       icon: <PlaceRoundedIcon sx={{ fontSize: 18 }} />,

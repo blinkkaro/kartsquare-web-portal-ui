@@ -1,23 +1,22 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Typography, Container, Stack, styled } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { Box, Typography, Stack } from "@mui/material";
 import BackButton from "@/components/common/BackButton";
 import Button from "@/components/common/Button";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import { workingHoursService } from "@/services/auth/schedule.service";
-import { IWorkingHour } from "@/services/auth/auth.interface";
+import { type IWorkingHour } from "@/services/auth/auth.interface";
 import { COLORS } from "@/constants/colors";
-import DayRow from "./components/DayRow";
-import { IOSSwitch } from "./components/IOSSwitch";
 import AuthWrapper from "@/components/auth/authWrapper";
-import { useRouter } from "next/navigation";
+import { useLogout } from "@/hooks/useLogout";
 import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { useAppDispatch } from "@/store/hooks";
 import { useTranslate } from "@/hooks/useTranslate";
-import Title from "@/components/auth/title";
-import { secureStorage } from "@/helper/SecureStorage";
-import { logout } from "@/features/ui/authSlice";
+import { errorMessage } from "@/lib/http/errorMessage";
+import { IOSSwitch } from "./components/IOSSwitch";
+import DayRow from "./components/DayRow";
 
 const DAYS = [
   { name: "Sunday", value: 0 },
@@ -44,6 +43,7 @@ const ScheduleView = () => {
   const [error, setError] = useState("");
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { handleLogout } = useLogout();
   const { t } = useTranslate();
 
   const handleToggle24By7 = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,11 +97,7 @@ const ScheduleView = () => {
     });
   };
 
-  const handleTimeChange = (
-    index: number,
-    field: "start_time" | "end_time",
-    value: string,
-  ) => {
+  const handleTimeChange = (index: number, field: "start_time" | "end_time", value: string) => {
     if (is24By7) return;
 
     setSchedule((prev) => {
@@ -146,30 +142,16 @@ const ScheduleView = () => {
 
     try {
       await workingHoursService.addBulkWorkingHours(schedule);
-      handleRegistrationStepNavigation(
-        dispatch,
-        router,
-        UserRegisterSteps.SCHEDULE_ADDED,
-      );
-    } catch (err: any) {
-      setError(err.message || "Failed to save schedule");
+      handleRegistrationStepNavigation(dispatch, router, UserRegisterSteps.SCHEDULE_ADDED);
+    } catch (err) {
+      setError(errorMessage(err, "Failed to save schedule"));
     } finally {
       setLoading(false);
     }
   };
 
-  const handleBack = () => {
-    // const role = secureStorage.getItem("role");
-    secureStorage.removeItem("token");
-    secureStorage.removeItem("refreshToken");
-    secureStorage.removeItem("register_step");
-    secureStorage.removeItem("role");
-    secureStorage.removeItem("user_details");
-
-
-    dispatch(logout());
-    router.push(`/business-listing`);
-  };
+  // Leaving registration signs the half-registered account out (one flow: useLogout).
+  const handleBack = () => handleLogout({ redirectTo: "/business-listing" });
 
   return (
     <AuthWrapper>
@@ -259,9 +241,7 @@ const ScheduleView = () => {
             startTime={schedule[index].start_time}
             endTime={schedule[index].end_time}
             onToggle={() => handleDayToggle(index)}
-            onStartTimeChange={(val) =>
-              handleTimeChange(index, "start_time", val)
-            }
+            onStartTimeChange={(val) => handleTimeChange(index, "start_time", val)}
             onEndTimeChange={(val) => handleTimeChange(index, "end_time", val)}
             disabled={is24By7}
           />

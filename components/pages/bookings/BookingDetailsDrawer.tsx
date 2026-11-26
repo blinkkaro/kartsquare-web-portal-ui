@@ -11,12 +11,18 @@ import {
   useTheme,
   Dialog,
   Fade,
+  Button,
 } from "@mui/material";
 import { Close, ChatBubbleOutline, NearMe, CheckCircle } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { Phone, CalendarToday, LocationOn } from "@mui/icons-material";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 import { useTranslate } from "@/hooks/useTranslate";
 import ServiceCatalogFiles, { catalogUrls } from "@/components/common/ServiceCatalogFiles";
+import WarningModel from "@/components/common/WarningModel";
+import { errorMessage } from "@/lib/http/errorMessage";
+import { bookingService } from "@/services/booking/bookingService";
 import {
   type UserBooking,
   type BookingDetails,
@@ -48,7 +54,27 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
   const [loading, setLoading] = React.useState(false);
   const [previewImage, setPreviewImage] = React.useState<string | null>(null);
   const [reviewModalOpen, setReviewModalOpen] = React.useState(false);
+  const [confirmCancelOpen, setConfirmCancelOpen] = React.useState(false);
+  const [cancelling, setCancelling] = React.useState(false);
+  const queryClient = useQueryClient();
   const { t } = useTranslate();
+
+  // The customer can withdraw a request until the job starts (the backend enforces the same rule).
+  const handleCancel = async () => {
+    if (!booking) return;
+    setCancelling(true);
+    try {
+      await bookingService.updateBookingStatus(booking.booking_id, "CANCELLED");
+      toast.success(t("booking_cancelled_success"));
+      setConfirmCancelOpen(false);
+      await fetchBookingDetails(booking.booking_id);
+    } catch (error) {
+      toast.error(errorMessage(error, t("booking_cancel_failed")));
+    } finally {
+      setCancelling(false);
+      queryClient.invalidateQueries({ queryKey: ["customer-bookings"] });
+    }
+  };
 
   React.useEffect(() => {
     if (open && initialBooking?.booking_id) {
@@ -223,9 +249,11 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
                       >
                         <LocationOn sx={{ fontSize: 14, color: "#FCD34D" }} />
                         <Typography variant="caption" sx={{ color: "white", fontWeight: 700 }}>
-                          {currentBooking.service_location === "at_customer"
-                            ? "At Home"
-                            : "At Provider"}
+                          {currentBooking.service_location === "virtual"
+                            ? "Online"
+                            : currentBooking.service_location === "at_customer"
+                              ? "At Home"
+                              : "At Provider"}
                         </Typography>
                       </Box>
                     </Box>
@@ -666,6 +694,23 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
 
             {/* Action Buttons */}
             <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+              {(currentBooking.status === "PENDING" || currentBooking.status === "CONFIRMED") && (
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  onClick={() => setConfirmCancelOpen(true)}
+                  sx={{
+                    borderRadius: "16px",
+                    py: 1.8,
+                    textTransform: "none",
+                    fontWeight: 700,
+                    borderColor: isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT,
+                    color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+                  }}
+                >
+                  {t("cancel_request")}
+                </Button>
+              )}
               {/* <Button
                 fullWidth
                 variant="outlined"
@@ -703,6 +748,49 @@ const BookingDetailsDrawer: React.FC<BookingDetailsDrawerProps> = ({
           </>
         )}
       </Box>
+
+      <WarningModel
+        open={confirmCancelOpen}
+        onClose={() => !cancelling && setConfirmCancelOpen(false)}
+        title={t("cancel_request_title")}
+        description={t("cancel_request_description")}
+        ActionsButtons={
+          <Box sx={{ width: "100%", display: "flex", gap: 2, mt: 2 }}>
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={() => setConfirmCancelOpen(false)}
+              disabled={cancelling}
+              sx={{
+                borderRadius: "12px",
+                py: 1.5,
+                textTransform: "none",
+                fontWeight: 600,
+                borderColor: isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT,
+                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
+              }}
+            >
+              {t("keep_request")}
+            </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={handleCancel}
+              disabled={cancelling}
+              sx={{
+                borderRadius: "12px",
+                py: 1.5,
+                textTransform: "none",
+                fontWeight: 600,
+                bgcolor: COLORS.PRIMARY_PURPLE,
+                "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
+              }}
+            >
+              {cancelling ? <LogoLoader size={24} /> : t("yes_cancel_request")}
+            </Button>
+          </Box>
+        }
+      />
 
       {/* Image Preview Modal */}
       <Dialog

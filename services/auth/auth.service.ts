@@ -1,17 +1,17 @@
-import { AuthResponse, IGuestRegisterParams, LoginCredentials, RegisterData } from "./auth.interface";
-import { API_ENDPOINTS } from "./apiEndPoint";
+import type { SessionTokens } from "@/utils/auth";
 import { GET, POST, PUT } from "../api";
-import { secureStorage } from "@/helper/SecureStorage";
+import {
+  type AuthResponse,
+  type IGuestRegisterParams,
+  type LoginCredentials,
+  type RegisterData,
+} from "./auth.interface";
+import { API_ENDPOINTS } from "./apiEndPoint";
 
 class AuthService {
   async login(data: LoginCredentials) {
     try {
-      const response = await POST<AuthResponse>(
-        API_ENDPOINTS.LOGIN,
-        data,
-        {},
-        false
-      );
+      const response = await POST<AuthResponse>(API_ENDPOINTS.LOGIN, data, {}, false);
       return response;
     } catch (error) {
       throw error;
@@ -26,10 +26,7 @@ class AuthService {
       //   {},
       //   false
       // );
-      const response = await PUT<AuthResponse>(
-        API_ENDPOINTS.REGISTER_DETAILS,
-        data,
-      );
+      const response = await PUT<AuthResponse>(API_ENDPOINTS.REGISTER_DETAILS, data);
       return response;
     } catch (error) {
       throw error;
@@ -38,39 +35,32 @@ class AuthService {
 
   async refreshToken(refreshToken: string) {
     try {
-      const response = await POST<any>(
+      const response = await POST<SessionTokens>(
         API_ENDPOINTS.REFRESH_TOKEN,
         {
           refreshToken,
         },
         {},
-        false
+        false,
       );
       return response;
     } catch (error) {
       throw error;
     }
   }
-  async logout(): Promise<void> {
+  /** Revoke the refresh token on the backend. Never throws: signing out must work offline too. Local data is
+   * cleared by `useLogout`, not here. */
+  async logout(refreshToken?: string | null): Promise<void> {
     try {
-      await POST(API_ENDPOINTS.LOGOUT, {}, {}, true);
-      secureStorage.removeItem("token");
-      secureStorage.removeItem("refreshToken");
-      secureStorage.removeItem("role");
-      secureStorage.removeItem("register_step");
-      secureStorage.removeItem("user_details");
-    } catch (error) {
-      // Swallow error - logout should proceed regardless
+      // Sending the refresh token lets the backend revoke exactly this session, even if the access token expired.
+      await POST(API_ENDPOINTS.LOGOUT, refreshToken ? { refreshToken } : {}, {}, true);
+    } catch {
+      // The session is cleared locally regardless.
     }
   }
   async verifyOtp(data: { email: string; otp: string }) {
     try {
-      const response = await POST<AuthResponse>(
-        API_ENDPOINTS.VERIFY_OTP,
-        data,
-        {},
-        false
-      );
+      const response = await POST<AuthResponse>(API_ENDPOINTS.VERIFY_OTP, data, {}, false);
       return response;
     } catch (error) {
       throw error;
@@ -79,12 +69,7 @@ class AuthService {
 
   async resendOtp(email: string) {
     try {
-      const response = await POST<any>(
-        API_ENDPOINTS.RESEND_OTP,
-        { email },
-        {},
-        false
-      );
+      const response = await POST<unknown>(API_ENDPOINTS.RESEND_OTP, { email }, {}, false);
       return response;
     } catch (error) {
       throw error;
@@ -100,12 +85,7 @@ class AuthService {
   }
   async guestLogin(data: IGuestRegisterParams) {
     try {
-      const response = await POST<AuthResponse>(
-        API_ENDPOINTS.GUEST_REGISTER,
-        data,
-        {},
-        false
-      );
+      const response = await POST<AuthResponse>(API_ENDPOINTS.GUEST_REGISTER, data, {}, false);
       return response;
     } catch (error) {
       throw error;

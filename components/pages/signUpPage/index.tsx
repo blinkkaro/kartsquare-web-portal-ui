@@ -1,25 +1,25 @@
 "use client";
-import AuthWrapper from "@/components/auth/authWrapper";
-import AuthHeader from "@/components/auth/AuthHeader";
-import Title from "@/components/auth/title";
-import { useTranslate } from "@/hooks/useTranslate";
+import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useEffect, useMemo } from "react";
-import { SignUpFormData } from "./signUpSchema";
-import { registerUser } from "@/features/ui/authSlice";
-import { AppUserType, RegisterData } from "@/services/auth/auth.interface";
-import Error from "@/components/common/ErrorMessage";
-import { Box, Divider, Link, Typography } from "@mui/material";
 import NextLink from "next/link";
-
+import { Box, Link, Typography } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import { AppUserType, type RegisterData } from "@/services/auth/auth.interface";
+import Error from "@/components/common/ErrorMessage";
 import { useAppDispatch } from "@/store/hooks";
 import { useLeadVerification } from "@/hooks/useLeadVerification";
-import { useQuery } from "@tanstack/react-query";
+import { registerUser } from "@/features/ui/authSlice";
+import { useTranslate } from "@/hooks/useTranslate";
+import Title from "@/components/auth/title";
+import AuthHeader from "@/components/auth/AuthHeader";
+import AuthWrapper from "@/components/auth/authWrapper";
 import { authService } from "@/services/auth/auth.service";
 import { secureStorage } from "@/helper/SecureStorage";
-import RegistrationForm from "./components/RegesitrationForm";
 import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
+import { errorMessage } from "@/lib/http/errorMessage";
+import { type SignUpFormData } from "./signUpSchema";
+import RegistrationForm from "./components/RegesitrationForm";
 
 function SignUpView() {
   const { t } = useTranslate();
@@ -27,9 +27,7 @@ function SignUpView() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const roleParam = searchParams.get("role")?.toUpperCase();
-  const role: AppUserType = Object.values(AppUserType).includes(
-    roleParam as AppUserType
-  )
+  const role: AppUserType = Object.values(AppUserType).includes(roleParam as AppUserType)
     ? (roleParam as AppUserType)
     : AppUserType.CUSTOMER;
   const [loading, setLoading] = useState(false);
@@ -57,10 +55,7 @@ function SignUpView() {
   }, [registerDetails]);
 
   useEffect(() => {
-    if (
-      role === AppUserType.SERVICE_PROVIDER ||
-      role === AppUserType.SUPPLIER
-    ) {
+    if (role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER) {
       const busLeadId = sessionStorage.getItem("bus_lead_id");
       if (!busLeadId) {
         router.replace("/business-listing");
@@ -79,32 +74,25 @@ function SignUpView() {
         country_code: leadDetailsQuery.data.whatsapp_country_code || "",
         // Keep whatsapp fields in sync too (used for registration payload)
         whatsapp_number: leadDetailsQuery.data.whatsapp_number || "",
-        whatsapp_country_code:
-          leadDetailsQuery.data.whatsapp_country_code || "",
+        whatsapp_country_code: leadDetailsQuery.data.whatsapp_country_code || "",
       }));
     }
     if (leadDetailsQuery.isError) {
       console.error("Failed to fetch lead info", leadDetailsQuery.error);
       router.replace("/business-listing");
     }
-  }, [
-    leadDetailsQuery.data,
-    leadDetailsQuery.isError,
-    leadDetailsQuery.error,
-    router,
-  ]);
+  }, [leadDetailsQuery.data, leadDetailsQuery.isError, leadDetailsQuery.error, router]);
 
   const OnSubmit = async (data: SignUpFormData) => {
     try {
       setLoading(true);
       setError("");
 
-      const isSpOrSupplier =
-        role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER;
+      const isSpOrSupplier = role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER;
 
       const baseData = {
         first_name: data.first_name,
-        last_name: isSpOrSupplier ? "" : data.last_name ?? "",
+        last_name: isSpOrSupplier ? "" : (data.last_name ?? ""),
         email: data.email,
         phone_number: isSpOrSupplier
           ? initialData.whatsapp_number || data.phone_number || ""
@@ -129,24 +117,18 @@ function SignUpView() {
             birth_date: data.birth_date ?? "",
           };
 
-      await dispatch(registerUser(registerData as any)).unwrap();
+      await dispatch(registerUser(registerData as RegisterData)).unwrap();
 
       if (isSpOrSupplier) {
+        // The lead is now an account; drop its id so it cannot prefill a later sign-up in this tab.
+        sessionStorage.removeItem("bus_lead_id");
         // Email already verified on backend — go straight to next step
-        handleRegistrationStepNavigation(
-          dispatch,
-          router,
-          UserRegisterSteps.EMAIL_VERIFIED
-        );
+        handleRegistrationStepNavigation(dispatch, router, UserRegisterSteps.EMAIL_VERIFIED);
       } else {
         router.replace("/emailVerfication");
       }
-    } catch (error: any) {
-      setError(
-        typeof error === "string"
-          ? error
-          : error?.message || "An unexpected error occurred"
-      );
+    } catch (error) {
+      setError(errorMessage(error, "An unexpected error occurred"));
     } finally {
       setLoading(false);
     }
@@ -160,8 +142,7 @@ function SignUpView() {
         onSubmit={OnSubmit}
         loading={
           loading ||
-          ((role === AppUserType.SERVICE_PROVIDER ||
-            role === AppUserType.SUPPLIER) &&
+          ((role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER) &&
             leadDetailsQuery.isLoading)
         }
         role={role}

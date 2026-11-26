@@ -16,21 +16,23 @@ The Axios response interceptor already unwraps the HTTP layer, so a service call
 
 ## Auth pattern
 
-| Step | What happens |
-| --- | --- |
-| Login | `POST /auth/login` (email) or Firebase OTP then `/auth/register` / guest login. Returns `tokens.access_token` + `tokens.refresh_token`, `user`. |
-| Store | `storeTokens()` in `utils/auth.ts` writes both, AES-encrypted by `helper/SecureStorage.ts`. |
-| Send | Request interceptor adds `Authorization: Bearer <access token>` on every call **unless** the service passes `requiresAuth = false`. |
-| Public endpoints | Pass `false` as the last argument: `GET(url, {}, false)`. Categories, listings, locations, top providers, SEO pages, and public profiles are public. |
-| Expire | On `401`, if a refresh token exists the interceptor calls `POST /auth/refresh-token` once, queues other 401s behind it, then replays them. |
-| Fail | No token: opens the login modal. Refresh fails: `logout()` (Redux) and tokens cleared. |
+| Step             | What happens                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Login            | `POST /auth/login` (email) or Firebase OTP then `/auth/register` / guest login. Returns `tokens.access_token` + `tokens.refresh_token`, `user`.                                                                                                                                                                                                                                                                                                                                                                                                         |
+| Store            | Every sign-in (login page, registration, guest sign-in in the login modal) goes through the auth slice: `loginUser` / `registerUser` / `sessionStarted`, which call `persistSession()` in `utils/auth.ts`. Keys are `SESSION_KEYS`, AES-encrypted by `helper/SecureStorage.ts`. Never write `token`, `user_details`, `role` or `register_step` by hand.                                                                                                                                                                                                 |
+| Send             | Request interceptor adds `Authorization: Bearer <access token>` on every call **unless** the service passes `requiresAuth = false`.                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Public endpoints | Pass `false` as the last argument: `GET(url, {}, false)`. Categories, listings, locations, top providers, SEO pages, and public profiles are public.                                                                                                                                                                                                                                                                                                                                                                                                    |
+| Expire           | On `401`, if a refresh token exists the interceptor calls `POST /auth/refresh-token` once, queues other 401s behind it, then replays them.                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Fail             | No token: opens the login modal. Refresh fails: `logout()` (Redux), which runs `clearSession()`.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Auth endpoints   | A 401 from `/auth/login`, `/auth/refresh-token`, `/auth/logout`, `/auth/forgot-password` or `/auth/reset-password` is handed to the caller as-is: no refresh, no login modal.                                                                                                                                                                                                                                                                                                                                                                           |
+| Sign out         | One flow: `useLogout().handleLogout({ redirectTo })`. It calls `POST /auth/logout` (best effort), dispatches `logout()`, and `router.replace`s. `logout()` runs `clearSession()`, which wipes every personal key (session keys, the legacy `user`, the OTP timer, the Kart AI location and prompt flag, `bus_lead_id` in sessionStorage) and fires `onSessionEnd`, which clears the TanStack Query cache (`app/providers.tsx`). Theme, language and cached app config stay. Logout buttons, "back" out of registration and account deletion all use it. |
 
 Roles from the token payload: `ADMIN | CUSTOMER | SERVICE_PROVIDER | SUPPLIER | MANAGER | SUPPORT`.
 
 ## Error handling pattern
 
 1. **Services** `try/catch`, `console.error("Error fetching X:", error)`, then **re-throw**. They never return fake data.
-2. **A 401 does not throw.** With no token or a failed refresh the interceptor *resolves* with `{ data: null, success: false, status: "failed", message: "Authentication required" }` so the UI can react (login modal) instead of crashing. Services must treat `data === null` as "not signed in".
+2. **A 401 does not throw.** With no token or a failed refresh the interceptor _resolves_ with `{ data: null, success: false, status: "failed", message: "Authentication required" }` so the UI can react (login modal) instead of crashing. Services must treat `data === null` as "not signed in".
 3. **Other 4xx/5xx reject** with an `AxiosError`; read `error.response?.status` and `error.response?.data?.message`.
 4. **TanStack Query** owns retry and error state: one retry, only for network errors and 5xx, never for 4xx (`app/providers.tsx`). Components render `isError` as an error state with a retry action, not an empty list.
 5. **Mutations** show `toast.error(message)` from the backend `message` when present, a generic line otherwise. Never show raw `AxiosError` text.
@@ -46,87 +48,87 @@ Paths with `:x` take a parameter. "Auth" = needs a bearer token. **Pub** = publi
 
 ### Catalogue and search
 
-| Method | Path | Auth | Domain file | Purpose |
-| --- | --- | --- | --- | --- |
-| GET | `/categories` | Pub | `serviceList` | Categories: `id, name, slug, description, icon` (`ph:*-duotone`), `color` (`#rrggbb`), `image` (Cloudinary URL), `is_deleted` |
-| GET | `/categories/:id` | Pub | `serviceList` | One category |
-| GET | `/services` | Pub | `serviceList` | Service search/list (filters in query) |
-| GET | `/services/:idOrSlug` | Pub | `serviceList` | Service detail; accepts UUID or slug |
-| GET | `/services/serviceProvider` | Auth | `serviceList` | The provider's own services |
-| POST | `/services` | Auth | `serviceList` | Create a service |
-| POST | `/services/:id/increasePhoneNumberViewCount` | Pub | `serviceList` | Count a phone reveal |
-| GET | `/locations?kind=city&active=true` | Pub | `location` | Active cities |
-| GET | `/locations/resolve?q=` | Pub | `location` | Resolve text/coords to a place |
-| GET | `/locations/:city/categories` | Pub | `location` | Categories available in a city |
-| GET | `/locations/:...segments/listing` | Pub | `location` | City/area/category/sub-category listing + `canonical_path` |
-| GET | `/locations/sitemap` | Pub | `location` | URLs for the sitemap |
-| GET | `/homepage/top-providers?limit&latitude&longitude` | Pub | `topSuppliers` | Home: nearby providers |
-| GET | `/homepage/top-services?limit&latitude&longitude` | Pub | `topSuppliers` | Home: nearby services |
-| GET | `/seo/pages/:pageKey` | Pub | `lib/seo/sitePageSeo.ts` | DB-backed meta title/description |
-| POST | `/agentic-search` | Pub | `ai` | AI search |
-| POST | `/agentic-search/aibot` | Pub | `ai` | Kart AI chat |
+| Method | Path                                               | Auth | Domain file              | Purpose                                                                                                                       |
+| ------ | -------------------------------------------------- | ---- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/categories`                                      | Pub  | `serviceList`            | Categories: `id, name, slug, description, icon` (`ph:*-duotone`), `color` (`#rrggbb`), `image` (Cloudinary URL), `is_deleted` |
+| GET    | `/categories/:id`                                  | Pub  | `serviceList`            | One category                                                                                                                  |
+| GET    | `/services`                                        | Pub  | `serviceList`            | Service search/list (filters in query)                                                                                        |
+| GET    | `/services/:idOrSlug`                              | Pub  | `serviceList`            | Service detail; accepts UUID or slug                                                                                          |
+| GET    | `/services/serviceProvider`                        | Auth | `serviceList`            | The provider's own services                                                                                                   |
+| POST   | `/services`                                        | Auth | `serviceList`            | Create a service                                                                                                              |
+| POST   | `/services/:id/increasePhoneNumberViewCount`       | Pub  | `serviceList`            | Count a phone reveal                                                                                                          |
+| GET    | `/locations?kind=city&active=true`                 | Pub  | `location`               | Active cities                                                                                                                 |
+| GET    | `/locations/resolve?q=`                            | Pub  | `location`               | Resolve text/coords to a place                                                                                                |
+| GET    | `/locations/:city/categories`                      | Pub  | `location`               | Categories available in a city                                                                                                |
+| GET    | `/locations/:...segments/listing`                  | Pub  | `location`               | City/area/category/sub-category listing + `canonical_path`                                                                    |
+| GET    | `/locations/sitemap`                               | Pub  | `location`               | URLs for the sitemap                                                                                                          |
+| GET    | `/homepage/top-providers?limit&latitude&longitude` | Pub  | `topSuppliers`           | Home: nearby providers                                                                                                        |
+| GET    | `/homepage/top-services?limit&latitude&longitude`  | Pub  | `topSuppliers`           | Home: nearby services                                                                                                         |
+| GET    | `/seo/pages/:pageKey`                              | Pub  | `lib/seo/sitePageSeo.ts` | DB-backed meta title/description                                                                                              |
+| POST   | `/agentic-search`                                  | Pub  | `ai`                     | AI search                                                                                                                     |
+| POST   | `/agentic-search/aibot`                            | Pub  | `ai`                     | Kart AI chat                                                                                                                  |
 
 ### Auth and account
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| POST | `/auth/login`, `/auth/register`, `/auth/logout`, `/auth/guest-login` | Sign in/up/out |
-| POST | `/auth/refresh-token` | Token refresh |
-| POST | `/auth/forgot-password`, `/auth/reset-password` | Password reset |
-| POST | `/otp/email_verify`, `/otp/resend` | Email OTP |
-| GET | `/auth/registration-details` | Registration progress |
-| GET/POST | `/auth/preferences`, `/auth/get-user-preferences`, `/auth/update-preferences` | Role and interests |
-| GET/POST | `/auth/get-business-info`, `/auth/add-business-info`, `/auth/update-business-info` | Provider business info |
-| POST | `/auth/upload-doc`, `/upload/documents`, `/auth/upload-acc-details` | Documents / account details |
-| GET/POST | `/auth/freeLead/getNumber/:id`, `/auth/freeLead/verify-otp/:id`, `/auth/freeLead/apply` | Free listing + phone OTP |
-| GET | `/profile/me` | Current user |
-| PUT | `/profile` | Update profile |
-| DELETE | `/profile/delete-account` | Delete account |
-| POST | `/profile/change-password` | Change password |
-| GET | `/profile/provider/:username` | **Public** provider profile by handle (`/in/{username}`) |
-| GET | `/profile/:id`, `/profile/:id/posts`, `/profile/:id/services`, `/profile/:id/reels`, `/profile/supplier/:id` | Profile sections (paged: `page`, `limit`) |
-| PUT | `/profile/show-number` | Opt in/out of showing the phone number |
-| POST | `/account-deletion-requests` | Public deletion request |
-| GET/POST/PUT/DELETE | `/user/addresses/getUserAddresses`, `createAddress`, `updateAddress/:id`, `deleteAddress/:id` | Saved addresses |
+| Method              | Path                                                                                                         | Purpose                                                  |
+| ------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
+| POST                | `/auth/login`, `/auth/register`, `/auth/logout`, `/auth/guest-login`                                         | Sign in/up/out                                           |
+| POST                | `/auth/refresh-token`                                                                                        | Token refresh                                            |
+| POST                | `/auth/forgot-password`, `/auth/reset-password`                                                              | Password reset                                           |
+| POST                | `/otp/email_verify`, `/otp/resend`                                                                           | Email OTP                                                |
+| GET                 | `/auth/registration-details`                                                                                 | Registration progress                                    |
+| GET/POST            | `/auth/preferences`, `/auth/get-user-preferences`, `/auth/update-preferences`                                | Role and interests                                       |
+| GET/POST            | `/auth/get-business-info`, `/auth/add-business-info`, `/auth/update-business-info`                           | Provider business info                                   |
+| POST                | `/auth/upload-doc`, `/upload/documents`, `/auth/upload-acc-details`                                          | Documents / account details                              |
+| GET/POST            | `/auth/freeLead/getNumber/:id`, `/auth/freeLead/verify-otp/:id`, `/auth/freeLead/apply`                      | Free listing + phone OTP                                 |
+| GET                 | `/profile/me`                                                                                                | Current user                                             |
+| PUT                 | `/profile`                                                                                                   | Update profile                                           |
+| DELETE              | `/profile/delete-account`                                                                                    | Delete account                                           |
+| POST                | `/profile/change-password`                                                                                   | Change password                                          |
+| GET                 | `/profile/provider/:username`                                                                                | **Public** provider profile by handle (`/in/{username}`) |
+| GET                 | `/profile/:id`, `/profile/:id/posts`, `/profile/:id/services`, `/profile/:id/reels`, `/profile/supplier/:id` | Profile sections (paged: `page`, `limit`)                |
+| PUT                 | `/profile/show-number`                                                                                       | Opt in/out of showing the phone number                   |
+| POST                | `/account-deletion-requests`                                                                                 | Public deletion request                                  |
+| GET/POST/PUT/DELETE | `/user/addresses/getUserAddresses`, `createAddress`, `updateAddress/:id`, `deleteAddress/:id`                | Saved addresses                                          |
 
 ### Booking, leads, schedule
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| POST | `/leads` | Create a service request (lead) |
-| POST | `/service-bookings/create` | Create a booking |
-| GET | `/service-bookings/user/bookings`, `/service-bookings/user/details` | Customer bookings |
-| GET | `/service-bookings/provider/details` | Provider booking detail |
-| PUT | `/service-bookings/:id/status` | Accept/reject/complete |
-| GET | `/service_appointment/appointments/slots` | Free slots |
-| GET/POST/DELETE | `/sp_schedule/providers/working-hours`, `/working-hours/bulk`, `/sp_schedule/working-hours` | Provider hours |
-| GET | `/provider-dashboard`, `/provider-dashboard/chart` | Provider analytics |
+| Method          | Path                                                                                        | Purpose                         |
+| --------------- | ------------------------------------------------------------------------------------------- | ------------------------------- |
+| POST            | `/leads`                                                                                    | Create a service request (lead) |
+| POST            | `/service-bookings/create`                                                                  | Create a booking                |
+| GET             | `/service-bookings/user/bookings`, `/service-bookings/user/details`                         | Customer bookings               |
+| GET             | `/service-bookings/provider/details`                                                        | Provider booking detail         |
+| PUT             | `/service-bookings/:id/status`                                                              | Accept/reject/complete          |
+| GET             | `/service_appointment/appointments/slots`                                                   | Free slots                      |
+| GET/POST/DELETE | `/sp_schedule/providers/working-hours`, `/working-hours/bulk`, `/sp_schedule/working-hours` | Provider hours                  |
+| GET             | `/provider-dashboard`, `/provider-dashboard/chart`                                          | Provider analytics              |
 
 ### Social, reviews, notifications, ads
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| GET/POST | `/social_posts/posts_feed`, `/social_posts/`, `/social_posts/reels` | Feed, create, reels |
-| GET/POST | `/social_posts/:id/comments`, `/social_posts/:id/like` | Comments, likes |
-| POST/DELETE/GET | `/follow/:id`, `/follow/:id/followers`, `/follow/:id/following` | Follow graph |
-| GET/POST/PUT/DELETE | `/stories`, `/stories/:id`, `/stories/:id/view` | Stories |
-| GET/POST | `/reviews`, `/reviews/submit` | Reviews |
-| GET | `/notifications` | Notification list (live pushes arrive over Socket.io) |
-| GET/POST/PUT/DELETE | `/advertise/*` | Provider ads; `GET /advertise/active` is public |
-| GET | `/appConfig/getAppTermsAndConditions`, `/getAppPrivacyPolicy`, `/getAIServiceConfig` | App config |
-| POST | `/waitlist/join` | Contact-us form |
+| Method              | Path                                                                                 | Purpose                                               |
+| ------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| GET/POST            | `/social_posts/posts_feed`, `/social_posts/`, `/social_posts/reels`                  | Feed, create, reels                                   |
+| GET/POST            | `/social_posts/:id/comments`, `/social_posts/:id/like`                               | Comments, likes                                       |
+| POST/DELETE/GET     | `/follow/:id`, `/follow/:id/followers`, `/follow/:id/following`                      | Follow graph                                          |
+| GET/POST/PUT/DELETE | `/stories`, `/stories/:id`, `/stories/:id/view`                                      | Stories                                               |
+| GET/POST            | `/reviews`, `/reviews/submit`                                                        | Reviews                                               |
+| GET                 | `/notifications`                                                                     | Notification list (live pushes arrive over Socket.io) |
+| GET/POST/PUT/DELETE | `/advertise/*`                                                                       | Provider ads; `GET /advertise/active` is public       |
+| GET                 | `/appConfig/getAppTermsAndConditions`, `/getAppPrivacyPolicy`, `/getAIServiceConfig` | App config                                            |
+| POST                | `/waitlist/join`                                                                     | Contact-us form                                       |
 
 ### Supplier / B2B
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| GET/POST | `/supplier/profile`, `/supplier/kyc`, `/supplier/store` | Supplier profile, KYC, store |
-| GET/POST/PUT | `/supplier/products`, `/supplier/products/:id`, `/products`, `/products/:id`, `/products/status/:id`, `/products/supplier` | Products |
-| GET | `/product-categories`, `/product-sub-categories/:id`, `/product-brands`, `/product-brands/:subId`, `/product-specifications/:subId` | Product taxonomy |
-| GET/PUT | `/supplier/enquiries`, `/supplier/enquiries/:id/status` | Enquiries |
-| GET/PUT | `/supplier-quotations`, `/supplier-quotations/:id/viewed` | Quotations |
-| GET | `/supplier/dashboard`, `/supplier-dashboard`, `/supplier-dashboard/chart` | Metrics |
-| GET/POST | `/email-marketing/smtp-settings`, `/campaigns`, `/campaigns/:id`, `/campaigns/:id/send`, `/unsubscribe` | Email campaigns (opt-in only) |
+| Method       | Path                                                                                                                                | Purpose                       |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| GET/POST     | `/supplier/profile`, `/supplier/kyc`, `/supplier/store`                                                                             | Supplier profile, KYC, store  |
+| GET/POST/PUT | `/supplier/products`, `/supplier/products/:id`, `/products`, `/products/:id`, `/products/status/:id`, `/products/supplier`          | Products                      |
+| GET          | `/product-categories`, `/product-sub-categories/:id`, `/product-brands`, `/product-brands/:subId`, `/product-specifications/:subId` | Product taxonomy              |
+| GET/PUT      | `/supplier/enquiries`, `/supplier/enquiries/:id/status`                                                                             | Enquiries                     |
+| GET/PUT      | `/supplier-quotations`, `/supplier-quotations/:id/viewed`                                                                           | Quotations                    |
+| GET          | `/supplier/dashboard`, `/supplier-dashboard`, `/supplier-dashboard/chart`                                                           | Metrics                       |
+| GET/POST     | `/email-marketing/smtp-settings`, `/campaigns`, `/campaigns/:id`, `/campaigns/:id/send`, `/unsubscribe`                             | Email campaigns (opt-in only) |
 
 ### Realtime
 

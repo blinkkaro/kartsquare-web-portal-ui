@@ -16,6 +16,7 @@ import { SocketProvider } from "@/contexts/SocketContext";
 import { useHydrateStore } from "@/hooks/useHydrateStore";
 import NativeBridge from "@/components/common/NativeBridge";
 import NavigationProgress from "@/components/common/Loader/NavigationProgress";
+import { onSessionEnd } from "@/utils/auth";
 
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
   const mode = useAppSelector((state) => state.ui.mode);
@@ -64,6 +65,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
         },
       }),
   );
+
+  // Signing out (by any path) drops every cached query, so the next person on this browser sees none of
+  // the previous person's data.
+  useEffect(() => onSessionEnd(() => queryClient.clear()), [queryClient]);
 
   return (
     <Provider store={store}>

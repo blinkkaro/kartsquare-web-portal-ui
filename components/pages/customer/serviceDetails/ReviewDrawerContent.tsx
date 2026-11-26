@@ -11,29 +11,26 @@ import {
   Rating,
   useTheme,
 } from "@mui/material";
+import { toast } from "react-hot-toast";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
 import { useReviewQuestions, useCreateReview } from "@/hooks/useReview";
-import { Service } from "@/services/serviceList/listInteraface";
+import { type Service } from "@/services/serviceList/listInteraface";
 import { COLORS } from "@/constants/colors";
 import {
   questions_input_type,
   review_type,
-  ReviewQuestionAnswer,
+  type ReviewQuestionAnswer,
 } from "@/services/review/reviewInterface";
-import { toast } from "react-hot-toast";
 import { useTranslate } from "@/hooks/useTranslate";
+import { errorMessage } from "@/lib/http/errorMessage";
 
 interface ReviewDrawerContentProps {
   service: Service;
   onClose: () => void;
 }
 
-const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
-  service,
-  onClose,
-}) => {
-  
+const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({ service, onClose }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { t } = useTranslate();
@@ -50,9 +47,7 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
 
   const { mutate: submitReview, isPending: isSubmitting } = useCreateReview();
 
-  const [answers, setAnswers] = useState<{ [key: string]: string | number }>(
-    {},
-  );
+  const [answers, setAnswers] = useState<{ [key: string]: string | number }>({});
   const [overallRating, setOverallRating] = useState<number>(0);
 
   const handleAnswerChange = (questionId: string, value: string | number) => {
@@ -72,7 +67,7 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
           input_type: q.input_type,
         }))
         .filter((q) => q.answer !== "" && q.answer !== 0) || [];
-    
+
     if (overallRating === 0) {
       toast.error(t("please_provide_rating"));
       return;
@@ -90,8 +85,9 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
           toast.success(t("review_submitted_success"));
           onClose();
         },
-        onError: (error: any) => {
-          toast.error(error.message || t("review_submit_failed"));
+        onError: (error: unknown) => {
+          // The backend says why (no completed booking yet, already reviewed).
+          toast.error(errorMessage(error, t("review_submit_failed")));
         },
       },
     );
@@ -136,9 +132,7 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
               rows={3}
               placeholder={t("review_answer_placeholder")}
               value={answers[q.review_question_id] || ""}
-              onChange={(e) =>
-                handleAnswerChange(q.review_question_id, e.target.value)
-              }
+              onChange={(e) => handleAnswerChange(q.review_question_id, e.target.value)}
               sx={{
                 bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
               }}
@@ -148,9 +142,7 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
           {q.input_type === questions_input_type.STAR && (
             <Rating
               value={(answers[q.review_question_id] as number) || 0}
-              onChange={(_, newValue) =>
-                handleAnswerChange(q.review_question_id, newValue || 0)
-              }
+              onChange={(_, newValue) => handleAnswerChange(q.review_question_id, newValue || 0)}
             />
           )}
 
@@ -159,20 +151,10 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
               <RadioGroup
                 row
                 value={answers[q.review_question_id] || ""}
-                onChange={(e) =>
-                  handleAnswerChange(q.review_question_id, e.target.value)
-                }
+                onChange={(e) => handleAnswerChange(q.review_question_id, e.target.value)}
               >
-                <FormControlLabel
-                  value="Yes"
-                  control={<Radio />}
-                  label={t("yes")}
-                />
-                <FormControlLabel
-                  value="No"
-                  control={<Radio />}
-                  label={t("no")}
-                />
+                <FormControlLabel value="Yes" control={<Radio />} label={t("yes")} />
+                <FormControlLabel value="No" control={<Radio />} label={t("no")} />
               </RadioGroup>
             </FormControl>
           )}
@@ -186,9 +168,7 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
           right: 0,
           width: { xs: "100%", md: 500 }, // Matching default drawer width if possible, but passing as prop might be safer. RightDrawer default is 1000px on desktop though?
           p: 3,
-          bgcolor: isDark
-            ? COLORS.BACKGROUND.PAPER_DARK
-            : COLORS.BACKGROUND.PAPER_LIGHT,
+          bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
           borderTop: `1px solid ${
             isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
           }`,
@@ -210,11 +190,7 @@ const ReviewDrawerContent: React.FC<ReviewDrawerContentProps> = ({
             "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
           }}
         >
-          {isSubmitting ? (
-            <LogoLoader size={24} />
-          ) : (
-            t("submit_review")
-          )}
+          {isSubmitting ? <LogoLoader size={24} /> : t("submit_review")}
         </Button>
       </Box>
     </Box>

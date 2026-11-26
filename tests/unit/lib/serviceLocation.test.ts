@@ -45,3 +45,12 @@ describe("serviceLocation", () => {
     expect(isBookingPlace("BOTH")).toBe(false);
   });
 });
+
+describe("online-only services", () => {
+  it("start on a virtual request, with no address", () => {
+    const { defaultBookingPlace, isBookingPlace } = jest.requireActual("@/lib/serviceLocation");
+    expect(defaultBookingPlace("virtual_call")).toBe("virtual");
+    expect(defaultBookingPlace("VIRTUAL")).toBe("virtual");
+    expect(isBookingPlace("virtual")).toBe(true);
+  });
+});

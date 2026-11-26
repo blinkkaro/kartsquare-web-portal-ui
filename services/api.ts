@@ -1,19 +1,21 @@
+import axios, {
+  type AxiosInstance,
+  type AxiosError,
+  type InternalAxiosRequestConfig,
+  type AxiosResponse,
+  type AxiosRequestConfig,
+} from "axios";
 import { requestTimeoutMs, shouldRetryOnTimeout } from "@/lib/http/retry";
 import { secureStorage } from "@/helper/SecureStorage";
-import axios, {
-  AxiosInstance,
-  AxiosError,
-  InternalAxiosRequestConfig,
-  AxiosResponse,
-  AxiosRequestConfig,
-} from "axios";
-import { store } from "@/store/store";
-import { openLoginModal } from "@/features/ui/loginModalSlice";
+import { persistTokens } from "@/utils/auth";
 import { authService } from "./auth/auth.service";
-import { logout } from "@/features/ui/authSlice";
+import { API_ENDPOINTS as AUTH_API } from "./auth/apiEndPoint";
 
 // Create Axios instance with default config
 
+// The response shape and client methods default to `any`, as Axios's own typings do: untyped call sites
+// across the app rely on it, and narrowing the defaults would be its own change.
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface ApiResponse<T = any> {
   errors: any;
   data: T;
@@ -25,28 +27,29 @@ export interface ApiResponse<T = any> {
 export interface CustomAxiosInstance extends AxiosInstance {
   get<T = any, R = ApiResponse<T>, D = any>(
     url: string,
-    config?: AxiosRequestConfig<D>
+    config?: AxiosRequestConfig<D>,
   ): Promise<R>;
   delete<T = any, R = ApiResponse<T>, D = any>(
     url: string,
-    config?: AxiosRequestConfig<D>
+    config?: AxiosRequestConfig<D>,
   ): Promise<R>;
   post<T = any, R = ApiResponse<T>, D = any>(
     url: string,
     data?: D,
-    config?: AxiosRequestConfig<D>
+    config?: AxiosRequestConfig<D>,
   ): Promise<R>;
   put<T = any, R = ApiResponse<T>, D = any>(
     url: string,
     data?: D,
-    config?: AxiosRequestConfig<D>
+    config?: AxiosRequestConfig<D>,
   ): Promise<R>;
   patch<T = any, R = ApiResponse<T>, D = any>(
     url: string,
     data?: D,
-    config?: AxiosRequestConfig<D>
+    config?: AxiosRequestConfig<D>,
   ): Promise<R>;
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 const api: CustomAxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL as string,
@@ -76,13 +79,40 @@ api.interceptors.request.use(
   },
   (error: AxiosError) => {
     return Promise.reject(error);
-  }
+  },
 );
 
-let isRefreshing = false;
-let failedQueue: any[] = [];
+/**
+ * The Redux store and its actions, loaded on first use. A static import made a cycle
+ * (authSlice -> auth.service -> api -> store -> authSlice) that crashed server rendering of pages
+ * importing the auth slice first ("Cannot access ... before initialization").
+ */
+const session = async () => {
+  const [{ store }, { logout }, { openLoginModal }] = await Promise.all([
+    import("@/store/store"),
+    import("@/features/ui/authSlice"),
+    import("@/features/ui/loginModalSlice"),
+  ]);
+  return {
+    signOut: () => store.dispatch(logout()),
+    askToSignIn: () => store.dispatch(openLoginModal()),
+  };
+};
 
-const processQueue = (error: any, token: string | null = null) => {
+const AUTH_ENDPOINTS_WITHOUT_REFRESH = [
+  AUTH_API.LOGIN,
+  AUTH_API.REFRESH_TOKEN,
+  AUTH_API.LOGOUT,
+  AUTH_API.FORGOT_PASSWORD,
+  AUTH_API.RESET_PASSWORD,
+];
+const isAuthEndpoint = (url?: string): boolean =>
+  !!url && AUTH_ENDPOINTS_WITHOUT_REFRESH.some((endpoint) => url.split("?")[0].endsWith(endpoint));
+
+let isRefreshing = false;
+let failedQueue: { resolve: (value: unknown) => void; reject: (reason?: unknown) => void }[] = [];
+
+const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.resolve({
@@ -103,7 +133,7 @@ const processQueue = (error: any, token: string | null = null) => {
 // Response Interceptor
 api.interceptors.response.use(
   (response: AxiosResponse<ApiResponse>) => {
-    return response.data as any;
+    return response.data as unknown as AxiosResponse;
   },
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & {
@@ -118,9 +148,16 @@ api.interceptors.response.use(
       return api(originalRequest);
     }
 
+    // A 401 from the auth endpoints themselves is an answer (wrong password, expired refresh token, already
+    // signed out), not an expired session: hand it to the caller. Refreshing here would loop, since the refresh
+    // call would queue behind itself, and would pop the login modal over the login page.
+    if (error.response?.status === 401 && isAuthEndpoint(originalRequest?.url)) {
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (!secureStorage.getItem("token")) {
-        store.dispatch(openLoginModal());
+        (await session()).askToSignIn();
         return Promise.resolve({
           data: null,
           errors: error,
@@ -133,7 +170,7 @@ api.interceptors.response.use(
         return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject });
         })
-          .then((token: any) => {
+          .then((token: unknown) => {
             if (typeof token === "string") {
               originalRequest.headers["Authorization"] = "Bearer " + token;
               return api(originalRequest);
@@ -159,8 +196,9 @@ api.interceptors.response.use(
         const refreshToken = secureStorage.getItem("refreshToken");
         if (!refreshToken) {
           // No refresh token — clear session and show login modal
-          store.dispatch(logout());
-          store.dispatch(openLoginModal());
+          const { signOut, askToSignIn } = await session();
+          signOut();
+          askToSignIn();
           return Promise.resolve({
             data: null,
             errors: error,
@@ -172,17 +210,11 @@ api.interceptors.response.use(
 
         const response = await authService.refreshToken(refreshToken);
         if (response.data) {
-          secureStorage.setItem("token", response.data.access_token);
-          secureStorage.setItem(
-            "refreshToken",
-            response.data.refresh_token,
-          );
+          persistTokens(response.data);
 
           // Update header
-          api.defaults.headers.common["Authorization"] =
-            `Bearer ${response.data.access_token}`;
-          originalRequest.headers["Authorization"] =
-            `Bearer ${response.data.access_token}`;
+          api.defaults.headers.common["Authorization"] = `Bearer ${response.data.access_token}`;
+          originalRequest.headers["Authorization"] = `Bearer ${response.data.access_token}`;
 
           processQueue(null, response.data.access_token);
 
@@ -194,18 +226,20 @@ api.interceptors.response.use(
         processQueue(refreshError, null);
 
         // Clear session and show login modal instead of redirecting
-        store.dispatch(logout());
+        const { signOut, askToSignIn } = await session();
+        signOut();
 
         // Public pages (service details, home, lists) must never be yanked away
         // because a background call hit an expired session — show the login modal.
         // Only account-only areas hard-redirect to /login.
         if (typeof window !== "undefined") {
           const path = window.location.pathname;
-          const needsAuth = /^\/(myAccount|spr|chat|cus\/bookings|services\/[^/]+\/book)(\/|$)/.test(path);
+          const needsAuth =
+            /^\/(myAccount|spr|chat|cus\/bookings|services\/[^/]+\/book)(\/|$)/.test(path);
           if (needsAuth) {
             window.location.href = "/login";
           } else {
-            store.dispatch(openLoginModal());
+            askToSignIn();
           }
         }
 
@@ -284,7 +318,7 @@ export const PATCH = async <T>(
   endpoint: string,
   data: object,
   params: object = {},
-  requiresAuth: boolean = true
+  requiresAuth: boolean = true,
 ) => {
   const config = {
     params,

@@ -1,16 +1,12 @@
 "use client";
-import ProfileWrapper from "@/components/common/profile/profileWrapper";
 import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
+import ProfileWrapper from "@/components/common/profile/profileWrapper";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import PreferenceCards from "@/components/pages/preferences/components/PreferenceCard";
-import {
-  useGetUserPreference,
-  usePreference,
-  useUpdatePreference,
-} from "@/hooks/usePreference";
+import { useGetUserPreference, useUpdatePreference } from "@/hooks/usePreference";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
-import { secureStorage } from "@/helper/SecureStorage";
+import { getUserRole } from "@/utils/auth";
 
 function MyPreferencesView() {
   const { t } = useTranslationContext();
@@ -20,10 +16,10 @@ function MyPreferencesView() {
 
   // Get user role from secure storage
   useEffect(() => {
-    const userData = secureStorage.getItem("user");
-    if (userData?.role) {
-      setUserRole(userData.role);
-    }
+    // The session role (the old "user" key was never written, so providers saw the customer title).
+    // Read after mount: storage does not exist during server rendering.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setUserRole(getUserRole() ?? "");
   }, []);
 
   // Initialize selected preferences from API data
@@ -32,6 +28,8 @@ function MyPreferencesView() {
       const activePreferences = preferencesData
         .filter((pref) => pref.is_selected)
         .map((pref) => pref.id);
+      // Seed the editable selection from the server copy each time it arrives.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedPreferences(activePreferences);
     }
   }, [preferencesData]);

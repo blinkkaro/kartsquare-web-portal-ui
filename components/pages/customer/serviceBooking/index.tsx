@@ -18,7 +18,7 @@ import {
   Dialog,
   DialogContent,
 } from "@mui/material";
-import { CheckCircle, Bolt, Verified } from "@mui/icons-material";
+import { CheckCircle } from "@mui/icons-material";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -31,6 +31,7 @@ import {
   offersAtCustomer,
   offersAtProvider,
 } from "@/lib/serviceLocation";
+import type { BookingPlace } from "@/lib/serviceLocation";
 import type { BookingResponse } from "@/services/booking/bookingInterface";
 import { COLORS } from "../../../../constants/colors";
 import ImageUpload from "../../../ImageUpload";
@@ -53,7 +54,7 @@ const CustomerServiceBooking = () => {
   const [bookingResponse, setBookingResponse] = useState<BookingResponse | null>(null);
 
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(dayjs());
-  const [location, setLocation] = useState<"at_provider" | "at_customer">("at_provider");
+  const [location, setLocation] = useState<BookingPlace>("at_provider");
   const [addressDrawerOpen, setAddressDrawerOpen] = useState(false);
 
   const {
@@ -219,7 +220,7 @@ const CustomerServiceBooking = () => {
                 {service.service_name}
               </Typography>
 
-              {/* Trust Badges */}
+              {/* Spacer kept for the gap above the price (trust badges removed: no data backs them) */}
               <Box
                 sx={{
                   display: "flex",
@@ -229,53 +230,7 @@ const CustomerServiceBooking = () => {
                   mt: 0.5,
                   mb: 1,
                 }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 0.5,
-                    color: "#1D4ED8",
-                    fontWeight: 700,
-                  }}
-                >
-                  <Verified sx={{ fontSize: "14px" }} />
-                  <Typography
-                    sx={{
-                      fontWeight: 700,
-                      fontSize: "0.65rem",
-                      fontStyle: "italic",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    Verified Service
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 0.5,
-                    bgcolor: "#ECFDF5",
-                    color: "#059669",
-                    px: 0.8,
-                    py: 0.2,
-                    borderRadius: "4px",
-                    border: "1px solid #10B98130",
-                  }}
-                >
-                  <Bolt sx={{ fontSize: "12px" }} />
-                  <Typography
-                    sx={{
-                      fontWeight: 700,
-                      fontSize: "0.6rem",
-                    }}
-                  >
-                    HIGH SUCCESS
-                  </Typography>
-                </Box>
-              </Box>
+              ></Box>
               {service.is_price_required ? (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
@@ -916,7 +871,7 @@ const CustomerServiceBooking = () => {
               >
                 <ImageUpload
                   onUploadComplete={(urls) => setPhotoUrls(urls)}
-                  maxImages={6}
+                  maxImages={5}
                   label={english.upload_photos_optional}
                   description={english.upload_photos_description}
                 />

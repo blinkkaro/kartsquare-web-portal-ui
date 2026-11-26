@@ -2,24 +2,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { Box, Typography, IconButton, Stack, useTheme } from "@mui/material";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import {
-  Visibility,
-  VisibilityOff,
-  EmailOutlined,
-  LockOutlined,
-  Google as GoogleIcon,
-} from "@mui/icons-material";
-import { useForm, Controller } from "react-hook-form";
+import { Box, Typography, IconButton, Stack } from "@mui/material";
+import { Visibility, VisibilityOff, EmailOutlined, LockOutlined } from "@mui/icons-material";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useTranslate } from "@/hooks/useTranslate";
-import { LoginSchema } from "../loginSchema";
-import { LoginFormData } from "../loginSchema";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
+import { roleQuery } from "@/utils/auth";
+import { type LoginFormData } from "../loginSchema";
+import { LoginSchema } from "../loginSchema";
 
 export default function LoginForm({
   role,
@@ -33,14 +27,9 @@ export default function LoginForm({
   error: string | null;
 }) {
   const { t } = useTranslate();
-  const theme = useTheme();
   const [showPassword, setShowPassword] = useState(false);
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const { control, handleSubmit } = useForm({
     resolver: yupResolver(LoginSchema(t)),
     defaultValues: {
       email: "",
@@ -51,12 +40,7 @@ export default function LoginForm({
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   return (
-    <Box
-      component="form"
-      noValidate
-      onSubmit={handleSubmit(onSubmit)}
-      sx={{ width: "100%" }}
-    >
+    <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ width: "100%" }}>
       <ErrorMessage isVisible={!!error} error={error!} />
       <Stack spacing={{ xs: 2, sm: 3, lg: 2, xl: 3 }}>
         <Box>
@@ -166,7 +150,7 @@ export default function LoginForm({
         </Typography>
 
         <Link
-          href={`/forgotPassword?role=${role}`}
+          href={`/forgotPassword${roleQuery(role)}`}
           style={{
             color: "inherit",
             textDecoration: "underline",

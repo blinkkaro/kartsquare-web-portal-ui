@@ -9,7 +9,6 @@ export enum Gender {
   MALE = "MALE",
   FEMALE = "FEMALE",
   OTHER = "OTHER",
-  PREFER_NOT_TO_SAY = "PREFER_NOT_TO_SAY",
 }
 
 export interface User {
@@ -75,7 +74,7 @@ export interface Doc {
   aadharNumber: string;
   frontImageUrl: string;
   backImageUrl: string;
-  profilePic: string; 
+  profilePic: string;
   policeVerification: string;
 }
 
@@ -96,7 +95,8 @@ export interface IBusinessInfo {
   business_images: File[] | string[];
   address_id: string;
   category?: string;
-  sub_category?: string[] | string;}
+  sub_category?: string[] | string;
+}
 
 export interface IFreeLeadParams {
   whatsapp_country_code: string;
@@ -105,21 +105,21 @@ export interface IFreeLeadParams {
   source_type: string;
 }
 
-export interface IFreeLeadResponse{
-  bus_lead_id:string,
-  whatsapp_number:string,
-  whatsapp_country_code:string,
-  status:string,
-  isRegistered:boolean,
+export interface IFreeLeadResponse {
+  bus_lead_id: string;
+  whatsapp_number: string;
+  whatsapp_country_code: string;
+  status: string;
+  isRegistered: boolean;
 }
 
-export interface IFreeLeadNumberResponse{
-  bus_lead_id:string,
-  whatsapp_number:string,
-  whatsapp_country_code:string,
-  status:string,
-  source:string,
-  source_type:string,
+export interface IFreeLeadNumberResponse {
+  bus_lead_id: string;
+  whatsapp_number: string;
+  whatsapp_country_code: string;
+  status: string;
+  source: string;
+  source_type: string;
 }
 
 export interface IGuestRegisterParams {

@@ -17,6 +17,10 @@ export interface SearchService {
   rating: number;
   image: string;
   provider_name: string;
+  provider_id?: string;
+  description?: string;
+  /** Real reviews; the card shows a rating only when this is above 0. */
+  review_count?: number;
   type: "SERVICE";
 }
 

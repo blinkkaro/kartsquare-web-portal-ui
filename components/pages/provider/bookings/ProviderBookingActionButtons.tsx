@@ -17,14 +17,16 @@ import {
   IconButton,
   Button,
 } from "@mui/material";
-import LogoLoader from "../../../common/Loader/LogoLoader";
-import { TransitionProps } from "@mui/material/transitions";
-import { UserBooking } from "../../../../services/booking/bookingInterface";
-import { useTranslate } from "@/hooks/useTranslate";
-import { bookingService } from "../../../../services/booking/bookingService";
+import { type TransitionProps } from "@mui/material/transitions";
 import { useQueryClient } from "@tanstack/react-query";
-import { COLORS } from "../../../../constants/colors";
+import { toast } from "react-hot-toast";
+import { useTranslate } from "@/hooks/useTranslate";
 import WarningModel from "@/components/common/WarningModel";
+import { errorMessage } from "@/lib/http/errorMessage";
+import LogoLoader from "../../../common/Loader/LogoLoader";
+import { type UserBooking } from "../../../../services/booking/bookingInterface";
+import { bookingService } from "../../../../services/booking/bookingService";
+import { COLORS } from "../../../../constants/colors";
 
 interface ProviderBookingActionButtonsProps {
   booking: UserBooking;
@@ -34,16 +36,18 @@ interface ProviderBookingActionButtonsProps {
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
-    children: React.ReactElement<any, any>;
+    children: React.ReactElement<unknown>;
   },
   ref: React.Ref<unknown>,
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const ProviderBookingActionButtons: React.FC<
-  ProviderBookingActionButtonsProps
-> = ({ booking, tabName, onViewDetails }) => {
+const ProviderBookingActionButtons: React.FC<ProviderBookingActionButtonsProps> = ({
+  booking,
+  tabName,
+  onViewDetails,
+}) => {
   const { t } = useTranslate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -56,17 +60,16 @@ const ProviderBookingActionButtons: React.FC<
   const handleUpdateStatus = async (status: string, otpValue?: string) => {
     setLoading(true);
     try {
-      await bookingService.updateBookingStatus(
-        booking.booking_id,
-        status,
-        otpValue,
-      );
+      await bookingService.updateBookingStatus(booking.booking_id, status, otpValue);
       // Invalidate the query to refresh the list
       queryClient.invalidateQueries({ queryKey: ["provider-bookings"] });
       setOpenOtpDialog(false);
       setOtp("");
     } catch (error) {
-      console.error("Failed to update status:", error);
+      // Show why (wrong OTP, attempts left, booking changed meanwhile) instead of failing silently.
+      toast.error(errorMessage(error, "Could not update the booking. Please try again."));
+      // The booking may have moved on (cancelled by the customer): show its real state.
+      queryClient.invalidateQueries({ queryKey: ["provider-bookings"] });
     } finally {
       setLoading(false);
     }
@@ -160,11 +163,7 @@ const ProviderBookingActionButtons: React.FC<
                   "&:hover": { bgcolor: "#B91C1C" },
                 }}
               >
-                {loading ? (
-                  <LogoLoader size={24} />
-                ) : (
-                  t("yes_cancel")
-                )}
+                {loading ? <LogoLoader size={24} /> : t("yes_cancel")}
               </Button>
             </Box>
           }
@@ -256,23 +255,15 @@ const ProviderBookingActionButtons: React.FC<
                 mb: 1,
               }}
             >
-              <LockOutlined
-                sx={{ fontSize: 40, color: COLORS.PRIMARY_PURPLE }}
-              />
+              <LockOutlined sx={{ fontSize: 40, color: COLORS.PRIMARY_PURPLE }} />
             </Box>
 
-            <Typography
-              variant="h5"
-              sx={{ fontWeight: 700, color: "text.primary" }}
-            >
+            <Typography variant="h5" sx={{ fontWeight: 700, color: "text.primary" }}>
               {t("otp_verification")}
             </Typography>
 
-            <Typography
-              variant="body2"
-              sx={{ color: "text.secondary", mb: 2, px: 2 }}
-            >
-              {t("enter_otp_description")}
+            <Typography variant="body2" sx={{ color: "text.secondary", mb: 2, px: 2 }}>
+              {t("booking_start_otp_description")}
             </Typography>
 
             <TextField
@@ -351,11 +342,7 @@ const ProviderBookingActionButtons: React.FC<
                   "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
                 }}
               >
-                {loading ? (
-                  <LogoLoader size={24} />
-                ) : (
-                  t("verify_and_start")
-                )}
+                {loading ? <LogoLoader size={24} /> : t("verify_and_start")}
               </Button>
             </Box>
           </Box>
@@ -400,11 +387,7 @@ const ProviderBookingActionButtons: React.FC<
                   "&:hover": { bgcolor: "#B91C1C" },
                 }}
               >
-                {loading ? (
-                  <LogoLoader size={24} />
-                ) : (
-                  t("yes_cancel")
-                )}
+                {loading ? <LogoLoader size={24} /> : t("yes_cancel")}
               </Button>
             </Box>
           }

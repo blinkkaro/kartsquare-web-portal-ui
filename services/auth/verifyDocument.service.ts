@@ -1,24 +1,24 @@
+import { compressImages } from "@/lib/media/compressImage";
+import { errorMessage } from "@/lib/http/errorMessage";
 import api, { POST } from "../api";
 import { API_ENDPOINTS } from "./apiEndPoint";
-import { Doc, ImageUploadApiResponse } from "./auth.interface";
+import { type Doc, type ImageUploadApiResponse } from "./auth.interface";
 
 class VerifyDocumentService {
   async uploadImages(files: File[]): Promise<string[]> {
     try {
+      // Photos are shrunk before upload (see lib/media/compressImage); PDFs and videos pass through.
+      const prepared = await compressImages(files);
       const formData = new FormData();
-      files.forEach((file) => {
+      prepared.forEach((file) => {
         formData.append("documents", file);
       });
 
-      const response = await api.post<ImageUploadApiResponse>(
-        API_ENDPOINTS.UPLOAD,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+      const response = await api.post<ImageUploadApiResponse>(API_ENDPOINTS.UPLOAD, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-      );
+      });
 
       if (response.data && response.data.urls) {
         return response.data.urls;
@@ -27,11 +27,17 @@ class VerifyDocumentService {
       }
     } catch (error) {
       console.error("Upload Images Error:", error);
-      const status = (error as { response?: { status?: number } })?.response?.status;
-      if (status === 413) {
+      const response = (error as { response?: { status?: number; data?: { message?: unknown } } })
+        ?.response;
+      if (response?.status === 413) {
         throw new Error("That file is too large to upload. Please choose a smaller file.");
       }
-      throw new Error("Failed to upload document images. Please try again.");
+      // The backend's reason (wrong file type, too many files) is more useful than a generic line.
+      const message = response?.data?.message;
+      if (response?.status === 400 && typeof message === "string" && message) {
+        throw new Error(message);
+      }
+      throw new Error("Upload failed. Please check your connection and try again.");
     }
   }
 
@@ -43,11 +49,7 @@ class VerifyDocumentService {
     policeVerificationFile?: File | null,
   ) {
     try {
-      const filesToUpload: File[] = [
-        frontImageFile,
-        backImageFile,
-        profilePicFile,
-      ];
+      const filesToUpload: File[] = [frontImageFile, backImageFile, profilePicFile];
 
       if (policeVerificationFile) {
         filesToUpload.push(policeVerificationFile);
@@ -66,23 +68,14 @@ class VerifyDocumentService {
         policeVerification: policeVerificationFile ? uploadedUrls[3] : "",
       };
 
-      const response = await POST(
-        API_ENDPOINTS.VERIFY_DOC,
-        verificationPayload,
-        {},
-        true,
-      );
+      const response = await POST(API_ENDPOINTS.VERIFY_DOC, verificationPayload, {}, true);
       if (response.status !== "success") {
         throw new Error(response.message || "Failed to verify document");
       }
 
       return response;
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to Verify User";
-      throw new Error(errorMessage);
+    } catch (error) {
+      throw new Error(errorMessage(error, "Failed to Verify User"));
     }
   }
 }

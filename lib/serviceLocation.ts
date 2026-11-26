@@ -3,7 +3,7 @@
  * ("at_customer" or "AT_CUSTOMER"), and "BOTH" means either place; these helpers read it once,
  * case-insensitively, so pages do not each compare every spelling.
  */
-export type BookingPlace = "at_customer" | "at_provider";
+export type BookingPlace = "at_customer" | "at_provider" | "virtual";
 
 const normalize = (value: string | null | undefined): string => (value ?? "").trim().toLowerCase();
 
@@ -27,10 +27,12 @@ export function defaultBookingPlace(value: string | null | undefined): BookingPl
   const v = normalize(value);
   if (v === "at_customer") return "at_customer";
   if (v === "at_provider") return "at_provider";
+  // An online-only service has no place to go: the request is "virtual" and carries no address.
+  if (v === "virtual_call" || v === "virtual") return "virtual";
   return undefined;
 }
 
 /** Narrows a radio button's string value to a booking place. */
 export function isBookingPlace(value: string): value is BookingPlace {
-  return value === "at_customer" || value === "at_provider";
+  return value === "at_customer" || value === "at_provider" || value === "virtual";
 }
