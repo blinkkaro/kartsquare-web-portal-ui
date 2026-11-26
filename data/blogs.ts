@@ -16,6 +16,320 @@ export interface BlogPost {
 
 export const blogs: BlogPost[] = [
   {
+    id: "12",
+    slug: "jaipur-wedding-season-photographer-caterer-pandit",
+    title: "Jaipur Wedding Season: Who to Book First, and What to Ask Them",
+    excerpt:
+      "The shehnai season is back in Jaipur. A practical, month-by-month plan for booking a photographer, caterer and pandit without the last-minute panic.",
+    description:
+      "Planning a wedding, sagai or griha pravesh in Jaipur this season? Here is the order to book your photographer, caterer and pandit, the questions to ask each one and the small details families usually forget.",
+    content: `
+<p>If you live in Jaipur, you already know the season has started. The baraat bands are back on Tonk Road on a Saturday night, every second banquet hall has a marigold gate, and somebody in your family WhatsApp group has just asked, <em>"photographer kiska tha unki shaadi mein?"</em></p>
+<p>Devuthani Ekadashi fell on 20 November this year, and with it the four months of Chaturmas came to an end. Weddings, sagai, griha pravesh and mundan ceremonies that were waiting for a good muhurat are now all trying to happen in the same few weeks. That is exactly why so many families end up stressed: not because the work is hard, but because everyone is booking the same people at the same time.</p>
+<p>This guide is the plan we wish someone had handed us. It covers who to book first, what to ask each of them, and the details that tend to slip through the cracks when there are two hundred guests and one very tired mama ji coordinating everything.</p>
+
+<h2>First, understand the calendar you are working with</h2>
+<p>Wedding dates in Rajasthan follow the panchang, not the weekend. After Devuthani Ekadashi there is usually a busy run of muhurats through late November and the first half of December. Then Kharmas begins, which by most panchangs this year starts around mid-December, and many families pause auspicious ceremonies until Makar Sankranti in mid-January. After that, the season picks up again and usually runs until the weather turns hot.</p>
+<p>So if your date falls before Kharmas, you are already in the crowded window. If it falls in late January or February, you have a little breathing room, but not as much as you think. Good photographers and caterers in Jaipur often get booked weeks ahead for the popular dates.</p>
+<p>One practical note: muhurat timings can differ slightly from city to city and from one panchang to another. Fix your date and time with your family pandit before you pay an advance to anyone else.</p>
+
+<h2>The order to book in</h2>
+<p>Every family's list is different, but for most functions in Jaipur this order saves the most trouble:</p>
+<ol>
+<li><strong>Pandit and muhurat.</strong> Everything else hangs on the date and time. Fix this first.</li>
+<li><strong>Venue.</strong> Garden, banquet hall, your own terrace or the community centre in your colony. The venue decides your guest count and your catering options.</li>
+<li><strong>Caterer.</strong> Some venues have their own kitchen or a fixed list of caterers. Ask the venue before you shortlist anyone.</li>
+<li><strong>Photographer and videographer.</strong> The popular ones go quickly on muhurat dates, so do not leave this for the last fortnight.</li>
+<li><strong>Everything else:</strong> decorator, mehendi artist, DJ or dhol, tent, lights, transport. These are easier to find at shorter notice, though not on the busiest nights.</li>
+</ol>
+
+<h2>Booking a pandit for the ceremony</h2>
+<p>For many Jaipur families the pandit is someone who has done every ceremony in the house for years. If that is you, call them before anyone else. If you are new to the city, or your family pandit is booked, here is what to ask a new one:</p>
+<ul>
+<li><strong>Which rituals will they perform, and how long will each take?</strong> A phera ceremony, a griha pravesh puja and a Satyanarayan katha are very different lengths. Ask for a rough schedule so the caterer and photographer can plan around it.</li>
+<li><strong>Who arranges the samagri?</strong> Some pandits bring everything; others hand you a list. If it is a list, ask for it early, because the shops near the old city get crowded in this season.</li>
+<li><strong>Which tradition do they follow?</strong> Rituals vary between communities. A short conversation now avoids surprises at the mandap.</li>
+<li><strong>What is the dakshina, and does it include travel?</strong> It is perfectly fine to ask. Agreeing it in advance is more respectful than an awkward moment at the end.</li>
+</ul>
+<p>You can browse pandits and spiritual services in our <a href="/services/c/religious-spiritual">religious and spiritual services guide</a>, which also explains what to include in your request.</p>
+
+<h2>Choosing a caterer in Jaipur</h2>
+<p>Food is what guests remember, and what they discuss in the car on the way home. A good caterer will ask you more questions than you ask them. Be wary of one who gives you a per-plate figure in the first two minutes without knowing your guest list.</p>
+<h3>What to sort out before you call</h3>
+<ul>
+<li>A realistic guest count, with a note of how many are children</li>
+<li>Pure vegetarian, Jain, or no onion and garlic for some dishes</li>
+<li>The style: buffet, served thali, or live counters</li>
+<li>Timing: lunch, dinner, or a late-night meal after the pheras</li>
+<li>What the venue provides: kitchen space, water, gas connection, tables</li>
+</ul>
+<h3>Questions to ask every caterer</h3>
+<ul>
+<li><strong>Can we do a tasting?</strong> Many caterers offer one for larger functions. Even a small tasting of two or three main dishes tells you a lot.</li>
+<li><strong>What exactly does the per-plate price include?</strong> Serving staff, crockery, counters, water, tea and coffee, and cleanup are sometimes extra. Get the inclusions in writing.</li>
+<li><strong>How do you handle extra guests?</strong> Indian functions almost always run over the count. Ask how many extra plates they can manage and how those are charged.</li>
+<li><strong>Who will be in charge on the day?</strong> You want one name and one phone number, not a call centre.</li>
+</ul>
+<p>Our <a href="/services/c/restaurants-food">restaurants and food guide</a> covers caterers, tiffin services and cloud kitchens in more detail.</p>
+
+<h2>Finding a wedding photographer you will still like in ten years</h2>
+<p>Trends change fast. The heavily filtered, slow-motion style that everyone wanted a few years ago already looks dated in some albums. What lasts is good light, real moments and a photographer who knows when to step back.</p>
+<h3>Look at full events, not highlight reels</h3>
+<p>Any photographer can put together a beautiful thirty-second reel. Ask to see a complete album or a full gallery from one wedding, start to finish. That shows you how they handle the boring parts: the crowded mandap, the dim haldi corner, the group photo with forty relatives.</p>
+<h3>Questions to ask</h3>
+<ul>
+<li><strong>Who will actually shoot our event?</strong> Larger studios sometimes send a different team from the one you met. Ask for the names.</li>
+<li><strong>How many people, and for how many hours?</strong> One photographer and one videographer is very different from a team of four.</li>
+<li><strong>What do we get, and when?</strong> Edited photos, raw files, a printed album, a film, a highlight reel. Agree the list and an approximate delivery time in writing.</li>
+<li><strong>What happens if the function runs late?</strong> It will. Ask about extra hours before the day, not at midnight.</li>
+<li><strong>Can you shoot in low light without a harsh flash?</strong> Jaipur's evening functions are often lit by fairy lights and diyas, and that light is beautiful only if the photographer knows how to use it.</li>
+</ul>
+<p>Our <a href="/services/c/photography-videography">photography and videography guide</a> lists what to check on a photographer's profile before you send a request.</p>
+
+<h2>The details families usually forget</h2>
+<p>These are small, and that is why they get missed:</p>
+<ul>
+<li><strong>Power backup at the venue.</strong> Ask who arranges the generator and who pays for diesel. A dark mandap at the muhurat time is nobody's idea of fun.</li>
+<li><strong>Parking and road access.</strong> Some colonies have narrow lanes where a tempo or a catering truck cannot turn. Tell your vendors before the day.</li>
+<li><strong>Noise timings.</strong> Check the local rules and your venue's policy for music late at night, and tell the DJ or band.</li>
+<li><strong>Food for the vendors.</strong> Photographers, decorators and the band are working for ten hours or more. Agree in advance whether they eat with the guests or separately.</li>
+<li><strong>A single point of contact.</strong> Pick one person in the family to answer vendor calls on the day. It is usually the calmest cousin, not the busiest uncle.</li>
+</ul>
+
+<h2>Advance payments and keeping things in writing</h2>
+<p>Most wedding vendors ask for an advance to hold your date, which is fair, because they are turning away other families. Protect yourself with a few simple habits:</p>
+<ul>
+<li>Get every agreement in writing, even if it is a WhatsApp message listing the date, the services, the price and the advance paid.</li>
+<li>Ask what happens to the advance if the date changes or the function is cancelled.</li>
+<li>Pay by a method that leaves a record, and keep the receipts together in one folder or one chat.</li>
+<li>Pay the balance after the work is done, as agreed, not before.</li>
+</ul>
+<p>None of this means you distrust anyone. It simply means that six weeks later, when nobody remembers exactly what was said, there is something to look at.</p>
+
+<h2>How Kartsquare fits in</h2>
+<p>Kartsquare is a local services marketplace that started in Jaipur. You can look through photographers, caterers, pandits and other providers, read what each one lists on their profile, and send a request with your date and details. The provider replies to you directly, and you agree the price and the arrangements between yourselves. Where a provider has real customer reviews, you will see them. Where they have none yet, you will see that too.</p>
+<p>If you are not sure what to call the service you need, describe it to Kart AI in Hindi, Hinglish or English, the way you would tell a friend: "sagai ke liye photographer chahiye, 15 December, Vaishali Nagar". It will point you to the right category.</p>
+
+<h2>Frequently asked questions</h2>
+<h3>When does the wedding season start in Jaipur?</h3>
+<p>Traditionally after Devuthani Ekadashi, which fell on 20 November in 2026. Weddings continue until Kharmas in mid-December, pause for about a month, and resume after Makar Sankranti. Confirm exact muhurats with your pandit.</p>
+<h3>How early should I book a wedding photographer in Jaipur?</h3>
+<p>For a popular muhurat date, as early as you can once the date and venue are fixed. Weeks ahead is common in the peak season. For a weekday or a smaller function, you will usually have more choice at shorter notice.</p>
+<h3>What should a catering quote include?</h3>
+<p>The menu, the per-plate price, the guest count it is based on, how extra plates are charged, and what is included: staff, crockery, counters, water, tea and coffee, and cleanup. Ask for all of it in writing.</p>
+<h3>Do I need to arrange samagri for the puja myself?</h3>
+<p>It depends on the pandit. Some bring everything; others give you a list. Ask when you book, and buy early in the season to avoid the rush.</p>
+
+<h2>Sources</h2>
+<ul>
+<li><a href="https://www.thedailyjagran.com/spiritual/devuthani-ekadashi-2026-november-20-or-21-know-exact-date-shubh-muhurat-and-puja-vidhi-10336151" target="_blank" rel="noopener noreferrer">Daily Jagran: Devuthani Ekadashi 2026 date</a></li>
+<li><a href="https://www.ganeshaspeaks.com/predictions/festivals/auspicious-marriage-dates-after-dev-uthani-ekadashi/" target="_blank" rel="noopener noreferrer">GaneshaSpeaks: marriage dates after Dev Uthani Ekadashi</a></li>
+<li><a href="https://business-standard.com/amp/india-news/rajasthan-sees-a-surge-of-weddings-in-november-after-summer-delays-124111501336_1.html" target="_blank" rel="noopener noreferrer">Business Standard: Rajasthan's November wedding season</a></li>
+</ul>
+`,
+    author: "kartsquare Team",
+    date: "2026-11-26",
+    category: "General",
+    coverImage: "https://res.cloudinary.com/dmltxho0z/image/upload/v1794303412/kartsquare/categories/photography-and-videography.webp",
+    metaTitle: "Jaipur Wedding Season: Who to Book First",
+    metaDescription:
+      "Planning a wedding or function in Jaipur this season? The order to book your pandit, caterer and photographer, and the questions to ask each one.",
+    tags: ["Jaipur wedding", "wedding photographer Jaipur", "caterers in Jaipur", "pandit for puja Jaipur", "wedding season 2026", "Devuthani Ekadashi", "function planning"],
+  },
+  {
+    id: "11",
+    slug: "geyser-safety-winter-jaipur-home-guide",
+    title: "Geyser Safety This Winter: A Practical Guide for Jaipur Homes",
+    excerpt:
+      "Your geyser sat idle all summer. Before the first cold morning, here is how to check it, use it safely and spot the warning signs that need an electrician.",
+    description:
+      "A plain-language guide to using electric and gas geysers safely in a Jaipur winter: the safety valve, earthing, bathroom ventilation, the warning signs and what to ask a technician.",
+    content: `
+<p>Jaipur winters sneak up on you. One week you are still running the fan at night, and the next you are standing in the bathroom at 7 a.m., waiting for the water to warm up and wondering when the geyser last saw a technician.</p>
+<p>For most of the year the geyser hangs on the wall doing nothing. Then, from about mid-November to February, it suddenly works harder than almost any other appliance in the house. That jump from idle to daily use is exactly when small problems show up: a valve stuck with hard-water scale, a loose wire, a thermostat that does not cut off.</p>
+<p>This is not meant to scare anyone. Geysers are safe when they are installed properly and looked after. It is a short guide to the checks worth doing now, and the signs that mean you should stop using one and call an electrician.</p>
+
+<h2>Electric or gas: know which one you have</h2>
+<p>Most Jaipur flats and houses use an electric storage geyser: a tank, usually 10 to 25 litres, mounted on the bathroom wall. Some homes, especially older ones and some kitchens, use tankless gas geysers that run on an LPG cylinder.</p>
+<p>The risks are different, so it helps to know which one you are dealing with. Electric geysers are mostly about water pressure and electrical safety. Gas geysers add one serious extra risk: carbon monoxide.</p>
+
+<h2>Five checks before the first cold morning</h2>
+<h3>1. Look at the safety valve and its pipe</h3>
+<p>Every storage geyser has a pressure release valve, a small brass fitting near the inlet that lets out water if the pressure inside the tank climbs too high. It is the part that stops an overheating tank from bursting. Jaipur's water is hard, and over a summer of sitting idle, scale can build up around it.</p>
+<p>You do not need to open anything. Just check that the outlet pipe from the valve is not blocked, kinked or capped, and that nobody has "fixed" a dripping valve by plugging it. A valve that drips a little while heating is often doing its job. A valve that has been sealed shut is a real problem.</p>
+<h3>2. Check the switch, the plug and the wiring</h3>
+<p>Look for scorch marks on the switch or socket, a plug that feels loose, or a wire that has been taped together. Geysers draw a lot of current, and a loose connection heats up. If anything looks brown, melted or smells of burning, do not switch it on. Call an electrician.</p>
+<h3>3. Ask about earthing and an MCB or RCCB</h3>
+<p>A geyser should be properly earthed and protected by an MCB on your distribution board. Many electricians also recommend an RCCB or ELCB, which cuts the power if current starts leaking somewhere it should not, such as through a damaged element into the water. If you are not sure your home has these, it is a fair question to ask the next time an electrician visits.</p>
+<h3>4. Set a sensible temperature</h3>
+<p>Many manufacturers suggest keeping the thermostat at around 50 to 55°C. Hotter than that wastes electricity, builds scale faster and makes scalding more likely, especially for children and elderly family members.</p>
+<h3>5. If it is a gas geyser, check the ventilation</h3>
+<p>This one matters more than the rest. A gas geyser burns LPG, and burning produces carbon monoxide, a gas you cannot see or smell. In a closed bathroom with no window or exhaust fan, it can build up to dangerous levels while someone is having a bath. Every winter there are news reports of families who lost someone this way.</p>
+<p>If your gas geyser is inside a bathroom, make sure there is a window that stays open or an exhaust fan that runs while it is on. Better still, ask a technician whether the geyser can be installed outside the bathroom, with only the hot water pipe going in. Do not let two or three people bathe one after the other in a closed room with the geyser running throughout.</p>
+
+<h2>Warning signs: switch it off and call someone</h2>
+<p>Stop using the geyser and get it checked if you notice any of these:</p>
+<ul>
+<li>Water coming out much hotter than usual, or steam from the tap</li>
+<li>Loud banging, crackling or hissing from the tank</li>
+<li>Water leaking from the body of the tank, not just the valve pipe</li>
+<li>The MCB or RCCB trips whenever the geyser is switched on</li>
+<li>A tingling feeling when you touch the tap or the geyser body</li>
+<li>Rust-coloured water from the hot tap only</li>
+<li>For gas geysers: a yellow or orange flame instead of blue, a gas smell, or anyone feeling dizzy, sleepy or getting a headache in the bathroom</li>
+</ul>
+<p>The last one is an emergency. Turn off the gas, open the door and windows, and get everyone out into fresh air.</p>
+
+<h2>Daily habits that help</h2>
+<ul>
+<li><strong>Switch it off once the water is hot.</strong> Leaving it on all morning wastes power and keeps the thermostat working hard.</li>
+<li><strong>Avoid immersion rods in a bucket as a backup,</strong> especially around children. Touching the water or the bucket while the rod is on can give a serious shock.</li>
+<li><strong>Keep the geyser's surroundings dry</strong> and do not hang wet towels over it.</li>
+<li><strong>Turn it off before you go on a trip,</strong> and at the main switch if you will be away for long.</li>
+</ul>
+
+<h2>When to book a geyser service</h2>
+<p>If your geyser is more than a couple of years old and has never been serviced, the start of winter is a good time. A typical service can include descaling the tank, checking or replacing the anode rod that protects the tank from corrosion, testing the thermostat and the safety valve, and checking the element, wiring and earthing.</p>
+<p>When you contact a technician, tell them the brand, the capacity in litres, roughly how old the geyser is, and anything unusual you have noticed. Ask whether there is a visiting charge, and ask for a written estimate before they replace any part. If you are buying a new geyser, look for the ISI mark on the product, and have it installed by someone who will connect it to a proper earth and a dedicated MCB.</p>
+<p>You can find electricians and appliance repair providers through our <a href="/services/c/home-services">home services guide</a>, which also explains what to put in your request.</p>
+
+<h2>Frequently asked questions</h2>
+<h3>Is it safe to leave the geyser on all the time?</h3>
+<p>It is better not to. Switch it on, let the water heat, and switch it off. Modern geysers have thermostats and cut-offs, but leaving them on continuously wastes electricity and adds wear.</p>
+<h3>Why does water drip from the small pipe on my geyser?</h3>
+<p>That is usually the pressure release valve letting out a little water as the tank heats and the water expands. Some dripping is normal. A steady stream, or water from the tank body itself, is not, and needs a technician.</p>
+<h3>Are gas geysers dangerous?</h3>
+<p>They are safe only with good ventilation. Gas geysers produce carbon monoxide, which you cannot see or smell. Never run one in a closed bathroom without a window or exhaust fan.</p>
+<h3>How often should a geyser be serviced?</h3>
+<p>Follow the manufacturer's manual. In hard-water areas like Jaipur, scale builds up faster, so many households have the geyser checked before each winter.</p>
+
+<h2>Sources</h2>
+<ul>
+<li><a href="https://www.voltas.com/blogs/articles/geyser-safety-tips" target="_blank" rel="noopener noreferrer">Voltas: geyser safety tips</a></li>
+<li><a href="https://www.tribuneindia.com/news/in-depth/beware-of-gas-geysers" target="_blank" rel="noopener noreferrer">The Tribune: beware of gas geysers</a></li>
+<li><a href="https://www.vijaysales.com/blog-listing/how-do-water-geysers-work-and-how-to-use-it" target="_blank" rel="noopener noreferrer">Vijay Sales: how geysers work and how to use them</a></li>
+<li><a href="https://www.lsin.panasonic.com/blogs/electrical-safety-tips-for-home-dos-donts-to-prevent-accidents" target="_blank" rel="noopener noreferrer">Panasonic: electrical safety tips for home</a></li>
+</ul>
+<p><small>Cover photo: <a href="https://commons.wikimedia.org/wiki/File:A_water_heater_is_mounted_on_a_textured_wall.jpg" target="_blank" rel="noopener noreferrer">A water heater is mounted on a textured wall</a> by Shixart1985, <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener noreferrer">CC BY 2.0</a>, cropped.</small></p>
+`,
+    author: "kartsquare Team",
+    date: "2026-11-25",
+    category: "Repairs",
+    coverImage: "/images/blogs/geyser-safety-water-heater-valve.jpg",
+    metaTitle: "Geyser Safety This Winter: Jaipur Home Guide",
+    metaDescription:
+      "Electric or gas geyser? Five checks before winter, the warning signs that need an electrician, and safe daily habits for Jaipur homes.",
+    tags: ["geyser safety", "geyser repair Jaipur", "gas geyser carbon monoxide", "winter home safety", "electrician Jaipur", "water heater service"],
+  },
+  {
+    id: "10",
+    slug: "ac-service-jaipur-before-summer-checklist",
+    title: "AC Service in Jaipur: Why February Beats May, and What a Proper Service Includes",
+    excerpt:
+      "Every May, half of Jaipur discovers its AC is not cooling, all in the same week. Here is when to book the service, what the technician should actually do, and how to read the bill.",
+    description:
+      "A practical guide to AC servicing in Jaipur: the right time to book, a checklist of what a proper split AC service covers, signs of trouble, and simple settings that keep the electricity bill down.",
+    content: `
+<p>There is a particular kind of afternoon in Jaipur in May. The temperature is somewhere in the mid-forties, the curtains are drawn, the AC has been running since noon, and the room still feels like the inside of a tandoor. You call the AC technician you used last year. He is very polite. He can come on Thursday. Next Thursday.</p>
+<p>Almost everyone in this city has had some version of that afternoon. The fix is simple, and a little boring: get the AC serviced before the heat, not during it.</p>
+<p>This guide explains why the timing matters so much here, what a proper service should include, the warning signs to watch for, and how to brief a technician so the visit actually solves the problem.</p>
+
+<h2>Why timing matters more in Jaipur than in most cities</h2>
+<p>The India Meteorological Department's climate record for Jaipur puts the hot season from March to May, with May temperatures regularly climbing into the 40s Celsius. An AC that is struggling with a dirty filter or a slightly low refrigerant charge will manage fine in March. In May, with the outdoor unit sitting on a sun-baked wall or terrace, the same AC simply gives up.</p>
+<p>That is why everyone's problems show up in the same fortnight, and why technicians are booked out exactly when you need them. AC manufacturers recommend a service before summer for this reason. In Jaipur, that means February or early March. You get your pick of time slots, the technician is not rushing to the next of fifteen calls, and if a part needs ordering, there is time for it to arrive.</p>
+<p>A second, lighter check after the monsoon is worth it too, because the rains bring dust storms before them and humidity after, both of which are hard on outdoor units.</p>
+
+<h2>What a proper split AC service should include</h2>
+<p>"Service" can mean anything from a quick filter wash to a full clean of the indoor and outdoor units. Before the technician starts, ask which one you are getting. A thorough service of a split AC usually covers:</p>
+<h3>Indoor unit</h3>
+<ul>
+<li><strong>Filters</strong> taken out, washed and dried before they go back in</li>
+<li><strong>Evaporator coil</strong> (the metal fins behind the filter) cleaned, often with a pump spray and a bag fitted under the unit to catch the water</li>
+<li><strong>Blower</strong> (the long fan inside) cleaned, because dust on its blades cuts airflow</li>
+<li><strong>Drain pipe</strong> checked and flushed so water does not drip down your wall</li>
+</ul>
+<h3>Outdoor unit</h3>
+<ul>
+<li><strong>Condenser coil</strong> cleaned of dust and debris. A low-pressure water spray is fine; a high-pressure jet can bend the delicate fins.</li>
+<li><strong>Fan</strong> checked for wobble or noise</li>
+<li><strong>Electrical connections</strong> tightened and checked for burning</li>
+</ul>
+<h3>Performance checks</h3>
+<ul>
+<li><strong>Refrigerant pressure</strong> checked with a gauge</li>
+<li><strong>Cooling</strong> tested by measuring the temperature of the air coming out</li>
+<li><strong>Current drawn</strong> by the compressor, which can show an early fault</li>
+</ul>
+<p>Not every visit needs every item, but you should know which ones were done. A good technician will tell you without being asked.</p>
+
+<h2>"Gas khatam ho gayi": what that really means</h2>
+<p>This is the line almost everyone has heard. Here is the thing: the refrigerant in an AC runs in a sealed loop. It does not get "used up" like petrol. If the gas is low, it has leaked out somewhere.</p>
+<p>So if a technician says your AC needs a gas top-up, ask two questions. First, can they show you the pressure reading on the gauge? Second, where is the leak, and will they fix it? Topping up gas without fixing a leak means you will be paying for the same top-up again next summer. Sometimes the leak is tiny and hard to find, and that is fair enough, but it should at least be looked for.</p>
+
+<h2>Warning signs your AC needs attention now</h2>
+<ul>
+<li>It runs for hours but the room never gets properly cool</li>
+<li>Water drips from the indoor unit onto the wall or floor</li>
+<li>Ice forms on the indoor coil or on the copper pipes outside</li>
+<li>A musty or burning smell when it starts</li>
+<li>The outdoor unit makes a loud rattling, clicking or humming noise</li>
+<li>The MCB trips when the compressor starts</li>
+<li>Your electricity bill jumps without any change in how you use it</li>
+</ul>
+<p>A burning smell or a repeatedly tripping MCB means: switch it off and call someone before using it again.</p>
+
+<h2>Settings that cut the bill (and are good for the AC)</h2>
+<p>The Bureau of Energy Efficiency made 24°C the default setting on room ACs sold in India from January 2020. Its own estimate is that each degree you raise the setting saves roughly six per cent of the AC's energy use. That adds up over a Jaipur summer.</p>
+<ul>
+<li><strong>Start at 24 to 26°C</strong> and use a ceiling fan on low. The moving air makes the room feel cooler than the number on the remote.</li>
+<li><strong>Clean the filters yourself every few weeks</strong> in peak summer. It takes ten minutes, needs only water, and is the single biggest thing you can do between services.</li>
+<li><strong>Shade the outdoor unit</strong> if it sits in direct afternoon sun, but do not box it in. It needs air flowing around it.</li>
+<li><strong>Close the curtains on west-facing windows</strong> in the afternoon. Jaipur's sun through glass is a heater.</li>
+<li><strong>Do not switch the AC off and on repeatedly</strong> over short periods. Use the timer or sleep mode instead.</li>
+</ul>
+
+<h2>How to brief a technician</h2>
+<p>A clear message gets you a useful visit. Include:</p>
+<ul>
+<li>The brand, whether it is split or window, and the tonnage (on the sticker on the indoor or outdoor unit)</li>
+<li>Roughly how old it is, and when it was last serviced</li>
+<li>What is wrong, in plain words: "cools for an hour, then just blows normal air"</li>
+<li>Where the outdoor unit is: on a balcony, a terrace, or high on a wall that needs a ladder</li>
+<li>Your locality and a time window that suits you</li>
+</ul>
+<p>Ask up front whether there is a visiting charge and whether it is adjusted if you go ahead with the service. Ask for the price of any part before it is fitted, and get the final bill in writing with the work listed on it.</p>
+<p>Our <a href="/services/c/home-services">home services guide</a> covers AC and appliance repair alongside electricians and plumbers. You can also see how the year usually unfolds for home repairs in our <a href="/explore-services#seasons">Jaipur through the year</a> calendar.</p>
+
+<h2>Frequently asked questions</h2>
+<h3>When is the right time to service an AC in Jaipur?</h3>
+<p>February or early March, before the heat sets in. Technicians have more time, and any parts can be ordered before you need the AC daily. A lighter check after the monsoon helps too.</p>
+<h3>How often should a split AC be serviced?</h3>
+<p>Many manufacturers suggest a full service once or twice a year, with filter cleaning every few weeks during heavy use. Check your AC's manual, since some brands specify their own schedule.</p>
+<h3>Why does my AC need a gas refill every year?</h3>
+<p>Because there is probably a leak. Refrigerant runs in a sealed system and should not need regular top-ups. Ask the technician to find and repair the leak, not just refill it.</p>
+<h3>What temperature should I set my AC to?</h3>
+<p>24°C is the default the Bureau of Energy Efficiency set for room ACs. Many people are comfortable at 24 to 26°C with a fan, and each degree higher saves energy.</p>
+
+<h2>Sources</h2>
+<ul>
+<li><a href="https://mausam.imd.gov.in/jaipur/docs/climate.pdf" target="_blank" rel="noopener noreferrer">India Meteorological Department: Climate of Jaipur</a></li>
+<li><a href="https://pib.gov.in/PressReleasePage.aspx?PRID=1598508" target="_blank" rel="noopener noreferrer">PIB, Ministry of Power: default 24°C setting for room ACs</a></li>
+<li><a href="https://www.thequint.com/tech-and-auto/tech-news/room-air-conditioner-india-set-default-temperature-24-degrees" target="_blank" rel="noopener noreferrer">The Quint: what the 24°C default means</a></li>
+<li><a href="https://www.carrier.com/us/en/residential/hvac-resources/air-conditioners/ac-maintenance.html" target="_blank" rel="noopener noreferrer">Carrier: AC maintenance tips</a></li>
+<li><a href="https://www.haier.com/in/blogs/is-your-ac-ready-for-peak-summer-signs-it-needs-servicing-now.shtml" target="_blank" rel="noopener noreferrer">Haier India: signs your AC needs servicing</a></li>
+</ul>
+<p><small>Cover photo: <a href="https://commons.wikimedia.org/wiki/File:Panasonic_AIR_CONDITIONER_INDOOR_UNIT_CS-C10KJ2_(2).jpg" target="_blank" rel="noopener noreferrer">Panasonic air conditioner indoor unit</a> by Dinkun Chen, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>, resized.</small></p>
+`,
+    author: "kartsquare Team",
+    date: "2026-11-24",
+    category: "Repairs",
+    coverImage: "/images/blogs/ac-service-jaipur-split-ac.jpg",
+    metaTitle: "AC Service in Jaipur: Book Before the Heat",
+    metaDescription:
+      "When to service your AC in Jaipur, what a proper split AC service includes, the truth about gas top-ups, and settings that cut your summer bill.",
+    tags: ["AC service Jaipur", "AC repair Jaipur", "split AC service checklist", "AC gas refill", "BEE 24 degree", "summer home care"],
+  },
+  {
     "id": "1",
     "slug": "what-is-kartsquare-everything-you-need-to-know",
     "title": "What is kartsquare? Everything You Need to Know",

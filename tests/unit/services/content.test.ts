@@ -9,6 +9,19 @@ describe("category content", () => {
     for (const c of CATEGORY_CONTENT) expect({ slug: c.slug, problems: validateContent(c) }).toEqual({ slug: c.slug, problems: [] });
   });
 
+  it("every category has a long guide, unique headings and no repeated question", () => {
+    for (const c of CATEGORY_CONTENT) {
+      const words = (c.guide ?? []).flatMap((g) => g.paragraphs).join(" ").split(/\s+/).length;
+      expect({ slug: c.slug, long: words >= 300, sections: (c.guide?.length ?? 0) >= 4 }).toEqual({ slug: c.slug, long: true, sections: true });
+      const questions = c.faq.map((f) => f.q.toLowerCase());
+      expect(new Set(questions).size).toBe(questions.length);
+      for (const s of c.sources ?? []) expect(s.href).toMatch(/^https:\/\//);
+      expect(findBannedClaims((c.sources ?? []).map((s) => s.label).join(" "))).toEqual([]);
+    }
+    const headings = CATEGORY_CONTENT.flatMap((c) => (c.guide ?? []).map((g) => g.heading.toLowerCase()));
+    expect(new Set(headings).size).toBe(headings.length);
+  });
+
   it("every landing entry is complete and free of banned claims", () => {
     for (const l of LANDING_CONTENT) expect({ slug: l.subCategorySlug, problems: validateContent(l) }).toEqual({ slug: l.subCategorySlug, problems: [] });
   });

@@ -1,18 +1,26 @@
 import { findBannedClaims } from "./claims";
-import type { CategoryContent, LandingContent } from "./types";
+import type { CategoryContent, LandingContent, SubServiceContent } from "./types";
+
+type Content = CategoryContent | LandingContent | SubServiceContent;
 
 const wordCount = (parts: string[]) => parts.join(" ").split(/\s+/).filter(Boolean).length;
 
-function allText(c: CategoryContent | LandingContent): string[] {
+function allText(c: Content): string[] {
   const out: string[] = [c.name, c.seoTitle, c.metaDescription, c.h1, ...c.intro, ...c.mayHelp, ...c.mayNotDo, ...c.requestInfo];
   if ("commonServices" in c) out.push(...c.commonServices, ...c.howToChoose);
   if ("localNotes" in c) out.push(...c.localNotes);
+  if ("symptoms" in c) {
+    out.push(c.tagline, ...c.howToChoose, ...c.costFactors, ...c.beforeRepair);
+    for (const s of c.symptoms) out.push(s.sign, s.meaning);
+  }
+  if ("tagline" in c && c.tagline && !("symptoms" in c)) out.push(c.tagline);
+  for (const g of ("guide" in c && c.guide) || []) out.push(g.heading, ...g.paragraphs);
   for (const f of c.faq) out.push(f.q, f.a);
   return out;
 }
 
 /** Problems that stop a page from being marked reviewed. Empty = the page is complete. */
-export function validateContent(c: CategoryContent | LandingContent): string[] {
+export function validateContent(c: Content): string[] {
   const problems: string[] = [];
   // The page title is the SEO title plus " | kartsquare" unless it already names the brand.
   const fullTitle = /kartsquare/i.test(c.seoTitle) ? c.seoTitle : `${c.seoTitle} | kartsquare`;
@@ -26,6 +34,14 @@ export function validateContent(c: CategoryContent | LandingContent): string[] {
   if (c.faq.length < 3) problems.push("faq needs 3+ items");
   if ("commonServices" in c && c.commonServices.length < 4) problems.push("commonServices needs 4+ items");
   if ("howToChoose" in c && c.howToChoose.length < 3) problems.push("howToChoose needs 3+ items");
+  if ("symptoms" in c) {
+    if (c.symptoms.length < 4) problems.push("symptoms needs 4+ items");
+    if (c.costFactors.length < 3) problems.push("costFactors needs 3+ items");
+    if (c.beforeRepair.length < 3) problems.push("beforeRepair needs 3+ items");
+    if (c.guide.length < 2) problems.push("guide needs 2+ sections");
+    if (c.faq.length < 4) problems.push("faq needs 4+ items");
+    if (wordCount(c.intro) + c.guide.reduce((n, g) => n + wordCount(g.paragraphs), 0) < 300) problems.push("intro and guide under 300 words");
+  }
   for (const text of allText(c)) {
     for (const claim of findBannedClaims(text)) problems.push(`banned claim "${claim}" in: ${text.slice(0, 60)}`);
   }

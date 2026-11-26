@@ -46,3 +46,6 @@ Last updated: 2026-11-14. No credentials in docs.
 - Open: deploy FE + purge CDN; **HTML sitemap page `/sitemap`** (not built: server page, `revalidate = 3600`, same data as
   XML via one shared helper, plain `<a>` links grouped by locations/services/providers/stores/blogs/static, footer link,
   `index, follow`; `sitemap` is a reserved slug); FE `.env` API URL for staging/prod builds; browser smoke tests.
+- 2026-11-26: added service guides `/services/c/{category}/{slug}` (6 under mobile-electronics-repair, `reviewed: false` = noindex, not in sitemap until flipped). Hub `/explore-services` and category pages redesigned (grouped tiles, guide cards, on-page nav, long-form copy).
+- 2026-11-26 (later): hub rebuilt around problems (`data/services/hubCopy.ts`: situations, Jaipur seasons with IMD source, hiring playbook, commitments, FAQ); home gets `LocalGuide` section + 3 FAQs, "approved" wording removed. All copy run through `lib/services/claims.ts` in `tests/unit/services/hubCopy.test.tsx`.
+- 2026-11-26: hub, category and service-guide pages restyled to the home editorial look (hairlines instead of cards, light arched hero, 30 px section headings, sticky text nav, one violet band on the hub). Shared pieces: components/pages/servicesHub/{editorial,guideBlocks}.tsx.

@@ -3,112 +3,92 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Box, Typography } from "@mui/material";
-import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { COLORS } from "@/constants/colors";
-import { Section, sectionEyebrowSx, SectionTitle } from "./shared";
+import { editorialBody, editorialEyebrow, editorialFocus, editorialSection, editorialTitle, HAIRLINE } from "./editorialStyles";
+import { Section } from "./shared";
 
-// Swap this file for a real photo (keep the path, or update it here). SVG is served as-is.
-const ABOUT_IMAGE = "/images/home/about-kartsquare-placeholder.svg";
+const ABOUT_IMAGE = "/images/home/hawa-mahal.jpg";
 
 // Every point describes behaviour the product has today (see the FAQ comment in FaqSection).
 const POINTS = [
-  "Search in English, Hindi or Hinglish and see approved providers near you",
+  "Search in English, Hindi or Hinglish and see providers listed near you",
   "Read real customer reviews, or “No reviews yet” when there are none",
   "Call or WhatsApp the provider directly from the listing",
 ] as const;
 
-const ctaBase = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  minHeight: 50,
-  borderRadius: 3,
-  textDecoration: "none",
-  fontSize: "0.95rem",
-  fontWeight: 700,
+/** Guides people open most from the home page. Every link is a page in data/services. */
+const GUIDE_LINKS = [
+  { href: "/services/c/home-services", label: "Home repairs" },
+  { href: "/services/c/mobile-electronics-repair/mobile-phone-repair", label: "Mobile phone repair" },
+  { href: "/services/c/mobile-electronics-repair/laptop-repair", label: "Laptop repair" },
+  { href: "/services/c/mobile-electronics-repair/screen-replacement", label: "Screen replacement" },
+  { href: "/services/c/automotive", label: "Car and bike service" },
+] as const;
+
+const textLink = {
+  color: COLORS.NEW_UI.INK,
+  textDecoration: "underline",
+  textDecorationColor: COLORS.PURPLE_ALPHA_30,
+  textUnderlineOffset: "5px",
+  transition: "color 150ms ease-out, text-decoration-color 150ms ease-out",
+  "&:hover": { color: COLORS.PRIMARY_PURPLE, textDecorationColor: COLORS.PRIMARY_PURPLE },
+  ...editorialFocus,
 } as const;
 
-/** Brand section: what Kartsquare is, in plain keyword-bearing copy, next to an app-in-hand image. */
+/** Brand section: what Kartsquare is, in plain keyword-bearing copy, beside a Jaipur photo framed as an arch. */
 export default function AboutKartsquare() {
   return (
-    <Section id="about-kartsquare" sx={{ pb: { xs: 3, md: 6 } }}>
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1fr) minmax(0, 1fr)" },
-          alignItems: "center",
-          gap: { xs: 3, md: 6 },
-          borderRadius: { xs: 5, md: 7 },
-          bgcolor: COLORS.PURPLE_ALPHA_04,
-          border: "1px solid",
-          borderColor: "divider",
-          px: { xs: 2, sm: 3.5, md: 6 },
-          py: { xs: 3, sm: 4, md: 6 },
-        }}
-      >
-        <Box sx={{ order: { xs: 2, md: 1 } }}>
-          <Typography sx={{ ...sectionEyebrowSx, color: COLORS.PRIMARY_PURPLE }}>About Kartsquare</Typography>
-          <SectionTitle sx={{ mt: 1 }}>Your local services app for Jaipur</SectionTitle>
-          <Typography sx={{ mt: 2, fontSize: { xs: "0.95rem", md: "1.02rem" }, lineHeight: 1.65, color: "text.secondary" }}>
-            Kartsquare is a local services marketplace that helps you find and contact trusted professionals in Jaipur,
-            from AC repair, plumbers and electricians to photographers, salons and home cleaning. Compare approved
-            providers, check their work and reviews, and get in touch directly, all in one place.
+    <Section id="about-kartsquare" sx={editorialSection}>
+      <Box sx={{ display: "grid", alignItems: "center", gap: { xs: 5, md: 8, lg: 12 }, gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 5fr) minmax(0, 7fr)" } }}>
+        {/* Arched like a jharokha window: the one decorative move in the section. */}
+        <Box component="figure" sx={{ m: 0, width: "100%", maxWidth: 440, justifySelf: { xs: "center", md: "end" } }}>
+          <Box sx={{ position: "relative", aspectRatio: "4 / 5", borderRadius: "999px 999px 24px 24px", overflow: "hidden", bgcolor: COLORS.NEW_UI.EDITORIAL_TINT }}>
+            <Image src={ABOUT_IMAGE} alt="The windows of Hawa Mahal in Jaipur" fill sizes="(max-width: 900px) 90vw, 440px" style={{ objectFit: "cover", objectPosition: "60% 70%" }} />
+          </Box>
+          <Typography component="figcaption" sx={{ mt: 1.5, textAlign: "center", fontSize: "0.8rem", color: "text.secondary" }}>Hawa Mahal, Jaipur</Typography>
+        </Box>
+
+        <Box sx={{ maxWidth: 640 }}>
+          <Typography sx={editorialEyebrow}>About Kartsquare</Typography>
+          <Typography component="h2" sx={{ ...editorialTitle, mt: 1.25 }}>Your local services app for Jaipur</Typography>
+          <Typography sx={{ ...editorialBody, mt: 3, fontSize: { xs: "1.0625rem", md: "1.1875rem" }, color: COLORS.TEXT.PRIMARY_LIGHT }}>
+            Kartsquare is a local services marketplace for Jaipur. When the AC stops cooling, the phone screen cracks or
+            you need a photographer for a family function, you can look up people who do that work near you, see what
+            they offer and contact them yourself. No middle desk, no reassigned jobs: you talk to the provider directly.
           </Typography>
-          <Typography sx={{ mt: 1.5, fontSize: { xs: "0.95rem", md: "1.02rem" }, lineHeight: 1.65, color: "text.secondary" }}>
-            Service providers get a free profile to showcase their work and reach customers nearby.
+          <Typography sx={{ ...editorialBody, mt: 2 }}>
+            Not sure what to ask? Our service guides explain what each kind of job involves, what usually changes the
+            price and what to tell a provider in your first message. And if you run a local business, you can create a
+            free profile and show your work to customers nearby.
           </Typography>
-          <Box component="ul" sx={{ listStyle: "none", m: 0, mt: 2.5, p: 0, display: "flex", flexDirection: "column", gap: 1.25 }}>
-            {POINTS.map((p) => (
-              <Box key={p} component="li" sx={{ display: "flex", alignItems: "flex-start", gap: 1.25, fontSize: "0.92rem" }}>
-                <CheckRoundedIcon sx={{ fontSize: 19, mt: "2px", color: COLORS.PRIMARY_PURPLE, flexShrink: 0 }} />
-                {p}
+
+          <Box component="ul" sx={{ listStyle: "none", m: 0, mt: 4, p: 0, borderTop: HAIRLINE }}>
+            {POINTS.map((p, i) => (
+              <Box component="li" key={p} sx={{ display: "flex", gap: 2.5, py: 1.75, borderBottom: HAIRLINE }}>
+                <Typography component="span" aria-hidden sx={{ pt: "3px", fontSize: "0.75rem", fontWeight: 700, color: COLORS.PRIMARY_PURPLE, fontVariantNumeric: "tabular-nums" }}>{`0${i + 1}`}</Typography>
+                <Typography component="span" sx={{ fontSize: "0.98rem", lineHeight: 1.6, color: COLORS.NEW_UI.INK, fontWeight: 500 }}>{p}</Typography>
               </Box>
             ))}
           </Box>
-          <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 1.5, mt: 3.5 }}>
-            <Box
-              component={Link}
-              href="/explore-services"
-              sx={{
-                ...ctaBase,
-                px: 3,
-                bgcolor: COLORS.PRIMARY_PURPLE,
-                color: "#fff",
-                transition: "background-color 160ms ease, transform 120ms ease",
-                "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
-                "&:active": { transform: "scale(0.97)" },
-              }}
-            >
-              Explore services
+
+          <Box sx={{ mt: 4, display: "flex", flexWrap: "wrap", alignItems: "center", gap: 3 }}>
+            <Box component={Link} href="/explore-services" sx={{ display: "inline-flex", alignItems: "center", gap: 1, minHeight: 52, px: 3.5, borderRadius: 999, bgcolor: COLORS.NEW_UI.INK, color: COLORS.WHITE, fontWeight: 600, textDecoration: "none", transition: "background-color 150ms ease-out", "&:hover": { bgcolor: COLORS.PRIMARY_PURPLE }, ...editorialFocus }}>
+              Explore services <ArrowForwardRoundedIcon aria-hidden sx={{ fontSize: 18 }} />
             </Box>
-            <Box
-              component={Link}
-              href="/about-us"
-              sx={{
-                ...ctaBase,
-                px: 2.5,
-                color: COLORS.PRIMARY_PURPLE,
-                boxShadow: `inset 0 0 0 1px ${COLORS.PURPLE_ALPHA_30}`,
-                transition: "background-color 160ms ease, transform 120ms ease",
-                "&:hover": { bgcolor: COLORS.PURPLE_ALPHA_10 },
-                "&:active": { transform: "scale(0.97)" },
-              }}
-            >
-              Learn more about us
+            <Box component={Link} href="/about-us" sx={{ ...textLink, display: "inline-flex", alignItems: "center", minHeight: 44, fontWeight: 600 }}>Learn more about us</Box>
+          </Box>
+
+          <Box sx={{ mt: 4, display: "flex", flexWrap: "wrap", alignItems: "center", columnGap: 2.5 }}>
+            <Typography component="span" sx={{ fontSize: "0.85rem", color: "text.secondary" }}>Popular guides</Typography>
+            <Box component="ul" aria-label="Service guides" sx={{ display: "flex", flexWrap: "wrap", columnGap: 2.5, listStyle: "none", m: 0, p: 0 }}>
+              {GUIDE_LINKS.map((g) => (
+                <li key={g.href}>
+                  <Box component={Link} href={g.href} sx={{ ...textLink, display: "inline-flex", alignItems: "center", minHeight: 44, fontSize: "0.88rem", fontWeight: 500 }}>{g.label}</Box>
+                </li>
+              ))}
             </Box>
           </Box>
-        </Box>
-
-        <Box sx={{ order: { xs: 1, md: 2 }, position: "relative", mx: "auto", width: "100%", maxWidth: { xs: 320, md: 420 }, aspectRatio: "480 / 560" }}>
-          <Image
-            src={ABOUT_IMAGE}
-            alt="A woman holding a phone with the Kartsquare local services app open"
-            fill
-            unoptimized
-            loading="lazy"
-            sizes="(max-width: 900px) 320px, 420px"
-            style={{ objectFit: "contain" }}
-          />
         </Box>
       </Box>
     </Section>

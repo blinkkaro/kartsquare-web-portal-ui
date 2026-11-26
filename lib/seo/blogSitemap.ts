@@ -1,4 +1,3 @@
-import type { MetadataRoute } from "next";
 import type { BlogPost } from "@/data/blogs";
 
 const BASE_URL = String(
@@ -16,16 +15,24 @@ export function slugFromBlogTitle(title: string): string {
     .slice(0, 96) || "post";
 }
 
-export function blogPostSitemapEntry(blog: BlogPost): any {
+/** One blog URL for app/sitemap.xml/route.ts, which also writes `cover` as an <image:image> tag. */
+export interface BlogSitemapEntry {
+  url: string;
+  lastModified: Date;
+  changeFrequency: "monthly";
+  priority: number;
+  cover?: string;
+}
+
+export function blogPostSitemapEntry(blog: BlogPost): BlogSitemapEntry | null {
   const slug = blog.slug?.trim() || slugFromBlogTitle(blog.title);
   if (!slug) return null;
 
   const url = `${BASE_URL}/blogs/${slug}`;
   const lastModified = blog.date ? new Date(blog.date) : new Date();
-  const cover =
-    blog.coverImage && /^https?:\/\//i.test(blog.coverImage.trim())
-      ? blog.coverImage.trim()
-      : undefined;
+  const raw = blog.coverImage?.trim();
+  // Covers in public/ are site paths; the sitemap needs absolute URLs.
+  const cover = raw && /^https?:\/\//i.test(raw) ? raw : raw?.startsWith("/") && !raw.startsWith("//") ? `${BASE_URL}${raw}` : undefined;
 
   return {
     url,
@@ -34,6 +41,6 @@ export function blogPostSitemapEntry(blog: BlogPost): any {
     priority: 0.78,
     // Custom property for our specialized XML generator (app/sitemap.xml/route.ts)
     // to include <image:image> tags.
-    cover: cover || null,
+    cover,
   };
 }

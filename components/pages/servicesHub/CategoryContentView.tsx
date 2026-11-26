@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Box, Typography } from "@mui/material";
 import MainLayout from "@/app/mainLayout";
 import { COLORS } from "@/constants/colors";
-import { categoryContentPath, relatedCategories, SERVICES_HUB_PATH } from "@/lib/services/content";
+import { categoryContentPath, relatedCategories, SERVICES_HUB_PATH, subServicePath, subServicesFor } from "@/lib/services/content";
 import type { CategoryMedia } from "@/lib/services/coverage";
 import type { CategoryContent } from "@/lib/services/types";
 import type { Service } from "@/services/serviceList/listInteraface";
@@ -14,6 +14,7 @@ import { CategoryVisual } from "./ContentBlocks";
 import FaqSection from "./FaqSection";
 import KartAiHowItWorks from "./KartAiHowItWorks";
 import { Band, CategoryTile, EditorialHero, Heading, MarkList, PillLink, PlayStoreButton, ProviderRow, RequestNote, ServiceChip, StepTimeline, TileGrid } from "./editorial";
+import { ChipLink, GuideArticle, GuideCard, GuideGrid, GuideToc, SourcesNote } from "./guideBlocks";
 
 interface Props {
   content: CategoryContent;
@@ -32,6 +33,19 @@ const CategoryContentView: React.FC<Props> = ({ content, providers, coverage, me
   const related = relatedCategories(content);
   const cityHref = `/${citySlug}/${content.slug}`;
   const primary = live ? { label: `View providers in ${cityName}`, href: cityHref } : { label: "Browse all services", href: "/cus/services-list" };
+  const guides = subServicesFor(content.slug);
+  const guideFor = (name: string) => guides.find((g) => g.name.toLowerCase() === name.toLowerCase());
+  const color = media[content.slug]?.color;
+  const toc = [
+    { id: "about", label: "What is included" },
+    ...(guides.length ? [{ id: "guides", label: "Guides" }] : []),
+    ...(content.guide?.length ? [{ id: "know", label: "Good to know" }] : []),
+    { id: "help", label: "What to expect" },
+    { id: "choose", label: "How to choose" },
+    { id: "info", label: "Your request" },
+    ...(live ? [{ id: "providers", label: `In ${cityName}` }] : []),
+    { id: "faq", label: "FAQ" },
+  ];
 
   return (
     <MainLayout>
@@ -42,8 +56,8 @@ const CategoryContentView: React.FC<Props> = ({ content, providers, coverage, me
         tagline={content.tagline}
         lead={content.intro[0]}
         aside={
-          <Box sx={{ display: { xs: "none", md: "block" }, p: 1.5, borderRadius: "32px", bgcolor: COLORS.WHITE, border: "1px solid", borderColor: COLORS.NEW_UI.CARD_BORDER_LIGHT }}>
-            <CategoryVisual media={media[content.slug]} height={320} radius="24px" iconSize={96} />
+          <Box sx={{ display: { xs: "none", md: "block" }, width: "100%", maxWidth: 440, justifySelf: "end" }}>
+            <CategoryVisual media={media[content.slug]} height={500} radius="999px 999px 24px 24px" iconSize={112} />
           </Box>
         }
       >
@@ -51,12 +65,17 @@ const CategoryContentView: React.FC<Props> = ({ content, providers, coverage, me
         <PillLink href={primary.href} onDark>{primary.label}</PillLink>
       </EditorialHero>
 
+      <GuideToc items={toc} />
+
       <Band id="about" labelledBy="about-title">
         <Box sx={{ display: "grid", gap: { xs: 3, md: 8 }, gridTemplateColumns: { xs: "1fr", md: "1fr 1.2fr" }, alignItems: "start" }}>
           <Heading id="about-title" eyebrow="What is included" title={`What ${content.name} covers`} />
           <Box>
             <Box component="ul" aria-label="Common services" sx={{ display: "flex", flexWrap: "wrap", gap: 1.25, listStyle: "none", m: 0, p: 0 }}>
-              {content.commonServices.map((s) => (<li key={s}><ServiceChip>{s}</ServiceChip></li>))}
+              {content.commonServices.map((s) => {
+                const g = guideFor(s);
+                return <li key={s}>{g ? <ChipLink href={subServicePath(g.categorySlug, g.slug)}>{s}</ChipLink> : <ServiceChip>{s}</ServiceChip>}</li>;
+              })}
             </Box>
             {content.intro.slice(1).map((p) => (
               <Typography key={p} sx={{ mt: 3, lineHeight: 1.75, color: "text.secondary" }}>{p}</Typography>
@@ -64,6 +83,23 @@ const CategoryContentView: React.FC<Props> = ({ content, providers, coverage, me
           </Box>
         </Box>
       </Band>
+
+      {guides.length > 0 && (
+        <Band tone="tint" id="guides" labelledBy="guides-title">
+          <Heading id="guides-title" eyebrow="Guides" title={`${content.name} guides`} lead="Each guide explains the common faults, what changes the cost and what to tell a repairer." />
+          <GuideGrid>
+            {guides.map((g) => (<GuideCard key={g.slug} href={subServicePath(g.categorySlug, g.slug)} name={g.name} text={g.tagline} icon={g.icon} color={color} />))}
+          </GuideGrid>
+        </Band>
+      )}
+
+      {content.guide && content.guide.length > 0 && (
+        <Band id="know" labelledBy="know-title">
+          <Heading id="know-title" eyebrow="Good to know" title={`${content.name} in ${cityName}: what to know`} />
+          <GuideArticle sections={content.guide} />
+          {content.sources && <SourcesNote items={content.sources} />}
+        </Band>
+      )}
 
       <Band tone="tint" id="help" labelledBy="help-title">
         <Heading id="help-title" eyebrow="What to expect" title="What providers may help with, and what they may not" />
