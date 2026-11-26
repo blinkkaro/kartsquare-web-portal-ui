@@ -1,9 +1,9 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Typography, useMediaQuery, useTheme } from "@mui/material";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
-import { useRouter } from "next/navigation";
 import { COLORS } from "@/constants/colors";
 import { useAppDispatch } from "@/store/hooks";
 import { setAiOpen } from "@/features/ui/uiSlice";
@@ -23,20 +23,32 @@ interface Faq {
 const faqs = (city: string): Faq[] => [
   {
     q: "What is Kartsquare?",
-    a: "Kartsquare is a marketplace that connects you with local service providers and suppliers. You describe what you need, compare approved providers, and contact them directly.",
+    a: "Kartsquare is a marketplace that connects you with local service providers and suppliers. You describe what you need, compare providers near you, and contact them directly.",
   },
   {
     q: `How do I find an AC repair, plumber or electrician in ${city}?`,
-    a: `Type what you need the way you would say it, in English, Hindi or Hinglish, for example "AC repair", "plumber near me" or "AC thanda nahi kar raha". Kartsquare works out the service and shows approved providers in ${city}. You can also browse by category. If nobody offers it in your area, you will see that clearly instead of unrelated results.`,
+    a: `Type what you need the way you would say it, in English, Hindi or Hinglish, for example "AC repair", "plumber near me" or "AC thanda nahi kar raha". Kartsquare works out the service and shows providers listed in ${city}. You can also browse by category. If nobody offers it in your area, you will see that clearly instead of unrelated results.`,
     action: "ask-ai",
   },
   {
     q: "How do ratings and reviews work?",
-    a: "A rating is shown only when a service has real customer reviews. If a provider has no reviews yet, you will see “No reviews yet” instead of a made-up score. Only approved listings appear on Kartsquare.",
+    a: "A rating is shown only when a service has real customer reviews. If a provider has no reviews yet, you will see “No reviews yet” instead of a made-up score.",
   },
   {
     q: "How do I contact a provider?",
     a: "Open the provider's profile. Where the provider has shared a phone or WhatsApp number you can call or message them directly from the listing.",
+  },
+  {
+    q: "What should I tell a provider in my first message?",
+    a: "What is wrong, where you are, when suits you and a photo if you can take one. Add the brand and model of any appliance or device. Ask whether there is a visiting charge before anyone comes over.",
+  },
+  {
+    q: `When should I get my AC serviced in ${city}?`,
+    a: "Before the summer rush, ideally in February or March. AC makers recommend servicing before the hot season, and booking early is easier than finding a slot once the heat has arrived.",
+  },
+  {
+    q: "Does Kartsquare decide the price?",
+    a: "No. Each provider quotes for your job. Ask for the quote in writing, with parts and labour named, and agree it before work starts.",
   },
   {
     q: "I offer a service. How do I list my business?",

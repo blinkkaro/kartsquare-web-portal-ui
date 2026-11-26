@@ -49,3 +49,18 @@ export async function getCategoryMedia(): Promise<Record<string, CategoryMedia>>
     return {};
   }
 }
+
+/** True when a listing names one of `terms` as a whole word in its name, sub-category or description. */
+export function serviceMatches(s: Service, terms: string[]): boolean {
+  const hay = [s.service_name, ...(s.sub_category_name ?? []), s.service_desc ?? ""].join(" ").toLowerCase();
+  return terms.some((t) => new RegExp(`\\b${t.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(hay));
+}
+
+/**
+ * Live services in the coverage city whose listing mentions one of `terms`. Only what providers wrote
+ * about themselves is matched, so a listing never appears under a service it does not name.
+ */
+export async function getSubServiceProviders(categorySlug: string, terms: string[], limit = 6): Promise<Service[]> {
+  const listing = await getLocationListing({ citySlug: COVERAGE_CITY.slug, categorySlug });
+  return (listing?.services ?? []).filter((s) => serviceMatches(s, terms)).slice(0, limit);
+}

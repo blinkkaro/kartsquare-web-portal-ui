@@ -60,7 +60,7 @@ const KartAiHowItWorks: React.FC<KartAiHowItWorksProps> = ({ screens = APP_SCREE
   const dispatch = useAppDispatch();
   return (
     <Band id="kart-ai" labelledBy="kart-ai-title">
-      <Box sx={{ display: "grid", gap: { xs: 4, md: 6 }, gridTemplateColumns: { xs: "1fr", md: "1.2fr 1fr" }, alignItems: "center", p: { xs: 3, md: 6 }, borderRadius: "32px", bgcolor: COLORS.NEW_UI.EDITORIAL_TINT }}>
+      <Box sx={{ display: "grid", gap: { xs: 4, md: 6 }, gridTemplateColumns: { xs: "1fr", md: "1.2fr 1fr" }, alignItems: "center",  }}>
         <Box>
           <Heading id="kart-ai-title" eyebrow="Kart AI" title="How Kart AI works" lead={intro ?? "Describe what is wrong in your own words and Kart AI points you to the right kind of service."} />
           <StepTimeline items={STEPS} />

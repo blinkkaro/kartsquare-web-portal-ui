@@ -20,10 +20,14 @@ const reviewed: CategoryContent = {
   reviewed: true,
 };
 const draft: CategoryContent = { ...reviewed, slug: "automotive", name: "Automotive", reviewed: false };
+const sub = (categorySlug: string, slug: string, ok: boolean) => ({ categorySlug, slug, reviewed: ok });
+const SUBS = [sub("home-services", "plumber-guide", true), sub("home-services", "draft-guide", false), sub("automotive", "under-draft-parent", true)];
+const bySubCategory = SUBS.reduce<Record<string, typeof SUBS>>((a, s) => ((a[s.categorySlug] ??= []).push(s), a), {});
 
 async function load(opts: { hubReviewed: boolean }) {
   jest.resetModules();
-  jest.doMock("@/data/services/categories", () => ({ CATEGORY_CONTENT: [reviewed, draft], CATEGORY_BY_SLUG: {} }));
+  jest.doMock("@/data/services/categories", () => ({ CATEGORY_CONTENT: [reviewed, draft], CATEGORY_BY_SLUG: { "home-services": reviewed, automotive: draft } }));
+  jest.doMock("@/data/services/subServices", () => ({ SUB_SERVICE_CONTENT: SUBS, SUB_SERVICES_BY_CATEGORY: bySubCategory }));
   jest.doMock("@/data/services/hub", () => ({ HUB_REVIEWED: opts.hubReviewed }));
   return import("@/lib/services/sitemap");
 }
@@ -31,7 +35,13 @@ async function load(opts: { hubReviewed: boolean }) {
 describe("contentSitemapPaths", () => {
   it("lists reviewed categories only, in lowercase canonical form", async () => {
     const { contentSitemapPaths } = await load({ hubReviewed: false });
-    expect(contentSitemapPaths()).toEqual(["/services/c/home-services"]);
+    expect(contentSitemapPaths()).toEqual(["/services/c/home-services", "/services/c/home-services/plumber-guide"]);
+  });
+
+  it("never lists a draft guide, or a reviewed guide under a draft category", async () => {
+    const paths = (await load({ hubReviewed: false })).contentSitemapPaths();
+    expect(paths).not.toContain("/services/c/home-services/draft-guide");
+    expect(paths).not.toContain("/services/c/automotive/under-draft-parent");
   });
 
   it("lists the hub at /explore-services only once it is reviewed", async () => {

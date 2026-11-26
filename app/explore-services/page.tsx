@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
+import ServiceMarquee from "@/components/pages/home/sections/ServiceMarquee";
 import ServicesHubView from "@/components/pages/servicesHub/ServicesHubView";
 import { CATEGORY_CONTENT } from "@/data/services/categories";
+import { SUB_SERVICE_CONTENT } from "@/data/services/subServices";
 import { seoPublic, seoPrivate } from "@/lib/seo/buildMetadata";
 import { buildBreadcrumbJsonLd } from "@/lib/seo/breadcrumbs";
 import { serializeJsonLd } from "@/lib/seo/jsonLd";
-import { categoryContentPath, getCategoryContent, SERVICES_HUB_PATH } from "@/lib/services/content";
+import { categoryContentPath, getCategoryContent, indexableSubServices, SERVICES_HUB_PATH, subServicePath } from "@/lib/services/content";
 import { SITE_URL } from "@/lib/seo/buildMetadata";
 import { COVERAGE_CITY, getCategoryMedia, getCityCoverage } from "@/lib/services/coverage";
 import { HUB_REVIEWED } from "@/data/services/hub";
 
 export const revalidate = 300;
 
-const TITLE = "Explore Services on Kartsquare: Find Local Providers";
+const TITLE = "Explore Local Services in Jaipur on Kartsquare";
 const DESCRIPTION =
-  "Browse service categories on Kartsquare, read what each covers and what to check before choosing a provider, then send a request to a local provider.";
+  "Home repair, phone and laptop repair, vehicles, events and more in Jaipur. Read plain guides on what to ask, then send a request to a local provider.";
 
 export function generateMetadata(): Metadata {
   // Until a person marks the hub reviewed it is visible but not indexed.
@@ -37,12 +39,10 @@ export default async function ServicesHubPage() {
     url: `${SITE_URL}${SERVICES_HUB_PATH}`,
     mainEntity: {
       "@type": "ItemList",
-      itemListElement: CATEGORY_CONTENT.filter((c) => c.reviewed).map((c, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        name: c.name,
-        url: `${SITE_URL}${categoryContentPath(c.slug)}`,
-      })),
+      itemListElement: [
+        ...CATEGORY_CONTENT.filter((c) => c.reviewed).map((c) => ({ name: c.name, path: categoryContentPath(c.slug) })),
+        ...indexableSubServices().map((s) => ({ name: s.name, path: subServicePath(s.categorySlug, s.slug) })),
+      ].map((x, i) => ({ "@type": "ListItem", position: i + 1, name: x.name, url: `${SITE_URL}${x.path}` })),
     },
   });
 
@@ -50,7 +50,7 @@ export default async function ServicesHubPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: collection }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbs }} />
-      <ServicesHubView categories={CATEGORY_CONTENT} coverage={coverage} media={media} contentSlugs={CATEGORY_CONTENT.filter((c) => getCategoryContent(c.slug)).map((c) => c.slug)} cityName={COVERAGE_CITY.name} citySlug={COVERAGE_CITY.slug} />
+      <ServicesHubView heroStrip={<ServiceMarquee />} categories={CATEGORY_CONTENT} guides={SUB_SERVICE_CONTENT} coverage={coverage} media={media} contentSlugs={CATEGORY_CONTENT.filter((c) => getCategoryContent(c.slug)).map((c) => c.slug)} cityName={COVERAGE_CITY.name} citySlug={COVERAGE_CITY.slug} />
     </>
   );
 }

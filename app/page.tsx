@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import MainLayout from "./mainLayout";
 import HomeView from "@/components/pages/home";
 import { manifestCopy } from "@/lib/seo/metaManifest";
 import { seoPublic, SITE_URL } from "@/lib/seo/buildMetadata";
 import { sitePageSeoOrFallback } from "@/lib/seo/sitePageSeo";
+import MainLayout from "./mainLayout";
 
 const HOME_COPY = manifestCopy("home") ?? {
   title: "Local Services in Jaipur: AC, Plumber, Electrician",
   description:
-    "Find approved local pros in Jaipur: AC repair, plumbers, electricians, photographers & more. Search in English, Hindi or Hinglish and contact providers directly.",
+    "Find local pros in Jaipur: AC repair, plumbers, electricians, photographers & more. Search in English, Hindi or Hinglish and contact providers directly.",
 };
 const HOME_TITLE = HOME_COPY.title;
 const HOME_DESCRIPTION = HOME_COPY.description;

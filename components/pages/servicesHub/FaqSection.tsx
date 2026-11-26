@@ -3,7 +3,6 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import Button from "@/components/common/Button";
-import { COLORS } from "@/constants/colors";
 import { openAiNewChat } from "@/features/ui/uiSlice";
 import { useAppDispatch } from "@/store/hooks";
 import type { FaqItem } from "@/lib/services/types";
@@ -22,13 +21,13 @@ const FaqSection: React.FC<FaqSectionProps> = ({ items, title = "Questions peopl
   return (
     <Band tone="tint" id="faq" labelledBy="faq-title">
       <Box sx={{ display: "grid", gap: { xs: 4, md: 8 }, gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) minmax(0, 1.7fr)" }, alignItems: "start" }}>
-        <Box sx={{ position: { md: "sticky" }, top: { md: 96 } }}>
+        <Box sx={{ position: { md: "sticky" }, top: { md: 140 } }}>
           <Heading id="faq-title" eyebrow="FAQ" title={title} lead={intro} />
-          <Box sx={{ p: 3, borderRadius: "20px", bgcolor: COLORS.WHITE, border: "1px solid", borderColor: COLORS.NEW_UI.CARD_BORDER_LIGHT }}>
+          <Box>
             <AvatarStack />
             <Typography component="h3" sx={{ mt: 2, fontWeight: 700, fontSize: "1.05rem" }}>Still not sure?</Typography>
             <Typography sx={{ mt: 0.5, mb: 2, color: "text.secondary", lineHeight: 1.65 }}>Ask Kart AI in Hindi, Hinglish or English and it will point you to the right service.</Typography>
-            <Button variant="outlined" onClick={() => dispatch(openAiNewChat())}>Ask Kart AI</Button>
+            <Button variant="outlined" sx={{ borderRadius: 999, minHeight: 48, px: 3 }} onClick={() => dispatch(openAiNewChat())}>Ask Kart AI</Button>
           </Box>
         </Box>
         <FaqAccordion items={items} />

@@ -90,7 +90,7 @@ export default function ServiceMarquee() {
           aria-hidden
           sx={{ display: "flex", "@media (prefers-reduced-motion: reduce)": { display: "none" } }}
           // the repeat is decoration for the loop: no focus, no announcement
-          {...({ inert: "" } as Record<string, string>)}
+          inert
         >
           {names.map((n) => item(n, 1))}
         </Box>

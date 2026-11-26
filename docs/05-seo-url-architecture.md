@@ -65,7 +65,7 @@ All permanent (308/301). Static ones live in `next.config.ts`; data-driven ones 
 
 Written as typed data in the repo, reviewed through pull requests. No database, no admin UI.
 
-- `data/services/categories.ts` (category pages), `data/services/landing.ts` (copy under existing `/{city}/{category}/{sub-category}` pages), `data/services/hub.ts` (hub review flag).
+- `data/services/categories.ts` (category pages), `data/services/subServices.ts` (service guides at `/services/c/{category}/{slug}`, e.g. `/services/c/mobile-electronics-repair/laptop-repair`; indexed only when both the guide and its parent category are reviewed; Jaipur providers shown only when their own listing names the service, via `matchTerms`), `data/services/landing.ts` (copy under existing `/{city}/{category}/{sub-category}` pages), `data/services/hub.ts` (hub review flag).
 - **`reviewed: false` is the default.** An unreviewed page is public so people can read it, but it is `noindex`, has no FAQPage JSON-LD and is absent from the sitemap. A person flips the flag in a PR after reading the copy.
 - **The hub is `/explore-services`.** `/services` is unchanged: it stays a redirect to `/cus/services-list`. The hub is visible to everyone but `noindex` and absent from the sitemap until `HUB_REVIEWED` is true. Each hub card opens a category guide when that page is viewable, else the city list when it has providers, else it is left out, so the hub never links to a 404.
 - Route priority: the static `c` segment in `app/services/c/[category]` wins over `[first]/[second]`. `c` is not a valid city or slug. `/services/c` itself 308s to `/services`. `/services/{city}/{slug}` and legacy `/services/{slug}` are untouched.

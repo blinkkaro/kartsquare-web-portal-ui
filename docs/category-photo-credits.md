@@ -44,3 +44,12 @@ Photos for the home page's "Popular categories" cards, served from Cloudinary (f
 | Stone, Marble & Tiles | [Granite Slabs (5571758891).jpg](https://commons.wikimedia.org/wiki/File:Granite_Slabs_(5571758891).jpg) | U.S. Fish and Wildlife Service Southeast Region | Public domain |
 | Transport & Cab Services | [Auto rickshaws in Ahmedabad.jpg](https://commons.wikimedia.org/wiki/File:Auto_rickshaws_in_Ahmedabad.jpg) | Bernard Gagnon | CC BY-SA 3.0 |
 | Travel & Hospitality | [Tourists at the Taj Mahal in the evening.jpg](https://commons.wikimedia.org/wiki/File:Tourists_at_the_Taj_Mahal_in_the_evening.jpg) | Jan Kranendonk (https://www.jankranendonk.nl) | CC BY-SA 4.0 |
+
+## Blog cover photos
+
+Stored in `public/images/blogs/` (JPEG, 1600 px wide, under 500 KB). Each post also credits its photo at the end of the article.
+
+| Post | File | Source | Author | Licence |
+|---|---|---|---|---|
+| Geyser Safety This Winter | geyser-safety-water-heater-valve.jpg (cropped) | [A water heater is mounted on a textured wall.jpg](https://commons.wikimedia.org/wiki/File:A_water_heater_is_mounted_on_a_textured_wall.jpg) | Shixart1985 | CC BY 2.0 |
+| AC Service in Jaipur | ac-service-jaipur-split-ac.jpg (resized) | [Panasonic AIR CONDITIONER INDOOR UNIT CS-C10KJ2 (2).jpg](https://commons.wikimedia.org/wiki/File:Panasonic_AIR_CONDITIONER_INDOOR_UNIT_CS-C10KJ2_(2).jpg) | Dinkun Chen | CC BY-SA 4.0 (the resized file is shared under the same licence) |

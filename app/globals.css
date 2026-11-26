@@ -146,6 +146,15 @@ body {
     overflow-x: hidden;
 }
 
+/* `hidden` on both html and body turns body into its own scroll container, which breaks every
+   position: sticky on the site. `clip` stops sideways scroll the same way without that side effect. */
+@supports (overflow: clip) {
+    html,
+    body {
+        overflow-x: clip;
+    }
+}
+
 body {
     color: rgb(var(--foreground-rgb));
     background: white;
