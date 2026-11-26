@@ -1,29 +1,32 @@
 "use client";
 import React, { useState } from "react";
-import { useTranslate } from "@/hooks/useTranslate";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Dialog,
-  Box,
-  Slide,
-  useTheme,
-} from "@mui/material";
-import { TransitionProps } from "@mui/material/transitions";
+import { Dialog, Box, Slide, useTheme } from "@mui/material";
+import { type TransitionProps } from "@mui/material/transitions";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import toast from "react-hot-toast";
-
-import { setCredentials } from "@/features/ui/authSlice";
-import WarningView from "./components/WarningView";
-import GuestFormView from "./components/GuestFormView";
-import { guestLoginSchema, GuestLoginFormData } from "./guestLogin.schema";
+import { useTranslate } from "@/hooks/useTranslate";
+import { sessionStarted } from "@/features/ui/authSlice";
+import type { User } from "@/services/auth/auth.interface";
 import { closeLoginModal } from "@/features/ui/loginModalSlice";
-import { secureStorage } from "@/helper/SecureStorage";
 import { authService } from "@/services/auth/auth.service";
+import GuestFormView from "./components/GuestFormView";
+import { guestLoginSchema, type GuestLoginFormData } from "./guestLogin.schema";
+import WarningView from "./components/WarningView";
 
 interface SafeAuthResponse {
   tokens?: { access_token: string; refresh_token: string };
-  user?: { id: string; role: string; register_step: number; first_name: string, last_name: string, email: string, phone_number: string, profile_pic?: string };
+  user?: {
+    id: string;
+    role: string;
+    register_step: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone_number: string;
+    profile_pic?: string;
+  };
   message?: string;
 }
 
@@ -31,7 +34,7 @@ const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement;
   },
-  ref: React.Ref<unknown>
+  ref: React.Ref<unknown>,
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -52,7 +55,7 @@ function LoginModal() {
     formState: { isSubmitting },
   } = useForm<GuestLoginFormData>({
     mode: "onChange",
-    resolver: yupResolver(guestLoginSchema(t as any)),
+    resolver: yupResolver(guestLoginSchema(t)),
     defaultValues: {
       first_name: "",
       last_name: "",
@@ -77,29 +80,29 @@ function LoginModal() {
     try {
       setLoading(true);
       const res = await authService.guestLogin(data);
-      const resData = (res as unknown as { data?: SafeAuthResponse }).data || (res as unknown as SafeAuthResponse);
-      
-      if (resData?.tokens) {
-        secureStorage.setItem("token", resData.tokens.access_token);
-        secureStorage.setItem("refreshToken", resData.tokens.refresh_token);
-        secureStorage.setItem("role", resData.user?.role || "");
-        secureStorage.setItem("register_step", resData.user?.register_step?.toString() || "0");
-        secureStorage.setItem("user_details", resData.user || {});
-        
-        // Dispatch credentials to Redux to update UI instantly without refresh
-        if (resData.user) {
-          dispatch(setCredentials({
-            user: resData.user as any,
-            token: resData.tokens.access_token,
-            register_step: resData.user.register_step || 0
-          }));
-        }
+      const resData =
+        (res as unknown as { data?: SafeAuthResponse }).data ||
+        (res as unknown as SafeAuthResponse);
 
-        toast.success(resData.message || (res as any).message || "Guest Login Successful");
+      if (resData?.tokens && resData.user) {
+        // Same sign-in path as the login page: Redux state plus persisted session.
+        dispatch(
+          sessionStarted({
+            message: resData.message ?? "",
+            tokens: resData.tokens,
+            user: { ...resData.user, register_step: resData.user.register_step ?? 0 } as User,
+          }),
+        );
+
+        toast.success(
+          resData.message ||
+            (res as unknown as { message?: string }).message ||
+            "Guest Login Successful",
+        );
         handleClose();
       }
     } catch (error) {
-      const err = error as {response?: { data?: { message?: string } } };
+      const err = error as { response?: { data?: { message?: string } } };
       toast.error(err.response?.data?.message || "Something went wrong during guest login");
     } finally {
       setLoading(false);
@@ -119,33 +122,31 @@ function LoginModal() {
           padding: { xs: "2rem 1.5rem", sm: "2rem 3rem" },
           maxWidth: "32rem",
           width: "100%",
-          boxShadow: theme.palette.mode === "dark" 
-            ? "0px 10px 40px rgba(0,0,0,0.5)" 
-            : "0px 10px 40px rgba(0,0,0,0.1)",
+          boxShadow:
+            theme.palette.mode === "dark"
+              ? "0px 10px 40px rgba(0,0,0,0.5)"
+              : "0px 10px 40px rgba(0,0,0,0.1)",
           margin: "16px",
           backgroundImage: "none",
         },
       }}
     >
       <Slide direction="left" in={view === "guest"} mountOnEnter unmountOnExit>
-       <Box style={{ display: view === "guest" ? "block" : "none" }}>
-         <GuestFormView
+        <Box style={{ display: view === "guest" ? "block" : "none" }}>
+          <GuestFormView
             control={control}
             handleSubmit={handleSubmit}
             onSubmitGuest={onSubmitGuest}
             loading={loading}
             isSubmitting={isSubmitting}
             onBack={() => setView("warning")}
-         />
-       </Box>
+          />
+        </Box>
       </Slide>
-      
+
       <Slide direction="right" in={view === "warning"} mountOnEnter unmountOnExit>
         <Box style={{ display: view === "warning" ? "block" : "none" }}>
-          <WarningView
-            onClose={handleClose}
-            onContinueAsGuest={() => setView("guest")}
-          />
+          <WarningView onClose={handleClose} onContinueAsGuest={() => setView("guest")} />
         </Box>
       </Slide>
     </Dialog>

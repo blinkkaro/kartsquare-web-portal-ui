@@ -1,31 +1,33 @@
 "use client";
 
+import { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Typography } from "@mui/material";
+import EmailIcon from "@mui/icons-material/EmailOutlined";
 import AuthWrapper from "@/components/auth/authWrapper";
 import AuthHeader from "@/components/auth/AuthHeader";
 import Title from "@/components/auth/title";
 import { useTranslate } from "@/hooks/useTranslate";
-import { useState } from "react";
 import Error from "@/components/common/ErrorMessage";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { useSearchParams, useRouter } from "next/navigation";
-import * as yup from "yup";
-import { TranslationKey } from "@/features/i18n/TranslationContext";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { type TranslationKey } from "@/features/i18n/TranslationContext";
 import { changePassService } from "@/services/auth/changePassword.service";
-import { Typography } from "@mui/material";
-import EmailIcon from "@mui/icons-material/EmailOutlined";
 import { COLORS } from "@/constants/colors";
+import { PASSWORD_RESET_EMAIL_KEY, roleQuery } from "@/utils/auth";
+import { errorMessage } from "@/lib/http/errorMessage";
 
 const getForgetPasswordSchema = (t: (key: TranslationKey) => string) =>
   yup.object({
     email: yup.string().email(t("emailInvalid")).required(t("emailRequired")),
   });
 
-export type ForgetPasswordInputs = {
+export interface ForgetPasswordInputs {
   email: string;
-};
+}
 
 export default function ForgetPasswordView() {
   const { t } = useTranslate();
@@ -43,16 +45,16 @@ export default function ForgetPasswordView() {
     resolver: yupResolver(getForgetPasswordSchema(t)),
   });
 
-  const handleForgetPassword: SubmitHandler<ForgetPasswordInputs> = async (
-    data
-  ) => {
+  const handleForgetPassword: SubmitHandler<ForgetPasswordInputs> = async (data) => {
     setLoading(true);
     setError("");
     try {
       await changePassService.forgotPassword(data.email);
-      router.push("/resetPassword?role=" + role + "&email=" + data.email);
-    } catch (e: any) {
-      setError(e.message || "An error occurred");
+      // The address goes to the next step through sessionStorage: in a URL it lands in history and server logs.
+      sessionStorage.setItem(PASSWORD_RESET_EMAIL_KEY, data.email);
+      router.push(`/resetPassword${roleQuery(role)}`);
+    } catch (e) {
+      setError(errorMessage(e, "An error occurred"));
     } finally {
       setLoading(false);
     }
@@ -61,20 +63,11 @@ export default function ForgetPasswordView() {
   return (
     <AuthWrapper align="top">
       <AuthHeader showBack />
-      <Title
-        title={t("forgetPassword")}
-        subtitle={t("forgetPasswordSubtitle")}
-      />
+      <Title title={t("forgetPassword")} subtitle={t("forgetPasswordSubtitle")} />
 
       <Error isVisible={!!error} error={error} />
-      <form
-        onSubmit={handleSubmit(handleForgetPassword)}
-        style={{ width: "100%" }}
-      >
-        <Typography
-          variant="body2"
-          sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
-        >
+      <form onSubmit={handleSubmit(handleForgetPassword)} style={{ width: "100%" }}>
+        <Typography variant="body2" sx={{ mb: 1, fontWeight: 600, color: "#374151" }}>
           {t("email_address")}*
         </Typography>
         <Input

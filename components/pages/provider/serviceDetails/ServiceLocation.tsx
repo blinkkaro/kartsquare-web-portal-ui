@@ -1,17 +1,19 @@
 "use client";
 import React from "react";
 import { Box, Typography, useTheme } from "@mui/material";
-import { COLORS } from "../../../../constants/colors";
-import { english } from "../../../../features/i18n/en";
 import { formatAddress } from "@/helper/helper";
-import { service_address } from "@/services/providerDashboard/providerDashboard.interface";
+import { type service_address } from "@/services/providerDashboard/providerDashboard.interface";
+import type { VisitingChargeTier } from "@/services/serviceList/listInteraface";
 import { useTranslate } from "@/hooks/useTranslate";
+import { english } from "../../../../features/i18n/en";
+import { COLORS } from "../../../../constants/colors";
 
 interface ServiceLocationProps {
   address: service_address;
   serviceAtLocation?: string;
   serviceRadius?: number;
   visitingCharge?: number | null;
+  visitingChargeTiers?: VisitingChargeTier[] | null;
 }
 
 const ServiceLocation = ({
@@ -19,10 +21,27 @@ const ServiceLocation = ({
   serviceAtLocation,
   serviceRadius,
   visitingCharge,
+  visitingChargeTiers,
 }: ServiceLocationProps) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { t } = useTranslate();
+  // "₹150 up to 2 km · ₹250 beyond 2 km" when the charge depends on distance.
+  const tierText = visitingChargeTiers?.length
+    ? visitingChargeTiers
+        .map((tier, i) =>
+          tier.upto_km === null
+            ? t("visiting_charge_tier_beyond", {
+                charge: tier.charge,
+                km: visitingChargeTiers[i - 1]?.upto_km ?? 0,
+              })
+            : t("visiting_charge_tier_upto", {
+                charge: tier.charge,
+                km: tier.upto_km as number,
+              }),
+        )
+        .join(" · ")
+    : null;
 
   return (
     <Box sx={{ mb: 0 }}>
@@ -31,9 +50,7 @@ const ServiceLocation = ({
         sx={{
           fontWeight: 600,
           mb: 1,
-          color: isDark
-            ? COLORS.TEXT.SECONDARY_DARK
-            : COLORS.TEXT.SECONDARY_LIGHT,
+          color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
           fontSize: { xs: "0.75rem", sm: "0.875rem" },
         }}
       >
@@ -60,9 +77,7 @@ const ServiceLocation = ({
             <Typography
               variant="caption"
               sx={{
-                color: isDark
-                  ? COLORS.TEXT.SECONDARY_DARK
-                  : COLORS.TEXT.SECONDARY_LIGHT,
+                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                 fontSize: "0.75rem",
                 fontWeight: 500,
                 display: "block",
@@ -75,12 +90,10 @@ const ServiceLocation = ({
               variant="body2"
               sx={{
                 fontWeight: 700,
-                color: isDark
-                  ? COLORS.TEXT.PRIMARY_DARK
-                  : COLORS.TEXT.PRIMARY_LIGHT,
+                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
               }}
             >
-              {visitingCharge ? `₹${visitingCharge}` : "₹0"}
+              {tierText ?? (visitingCharge ? `₹${visitingCharge}` : "₹0")}
             </Typography>
           </Box>
 
@@ -89,9 +102,7 @@ const ServiceLocation = ({
             <Typography
               variant="caption"
               sx={{
-                color: isDark
-                  ? COLORS.TEXT.SECONDARY_DARK
-                  : COLORS.TEXT.SECONDARY_LIGHT,
+                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                 fontSize: "0.75rem",
                 fontWeight: 500,
                 display: "block",
@@ -104,9 +115,7 @@ const ServiceLocation = ({
               variant="body2"
               sx={{
                 fontWeight: 700,
-                color: isDark
-                  ? COLORS.TEXT.PRIMARY_DARK
-                  : COLORS.TEXT.PRIMARY_LIGHT,
+                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
               }}
             >
               {serviceRadius ? `${serviceRadius} km` : "N/A"}
@@ -126,9 +135,7 @@ const ServiceLocation = ({
                 py: { xs: 0.6, sm: 0.8 },
                 borderRadius: "20px",
                 border: `1px solid ${isDark ? COLORS.ACCENT_BLUE_DARK : COLORS.PRIMARY_PURPLE}`,
-                bgcolor: isDark
-                  ? COLORS.ACCENT_BLUE_BG_DARK
-                  : "rgba(94, 24, 233, 0.04)",
+                bgcolor: isDark ? COLORS.ACCENT_BLUE_BG_DARK : "rgba(94, 24, 233, 0.04)",
               }}
             >
               <Typography

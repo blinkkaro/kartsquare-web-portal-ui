@@ -18,6 +18,7 @@
     "test:e2e": "playwright test",
     "generate-favicon": "node scripts/generate-favicon.cjs",
     "icons:category": "node scripts/generate-category-icons.cjs",
+    "locations:india": "node scripts/generate-india-locations.cjs",
     "update-assetlinks": "node scripts/update-assetlinks.cjs",
     "prepare": "husky"
   },

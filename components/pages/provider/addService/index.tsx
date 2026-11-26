@@ -1,16 +1,9 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  Paper,
-  useTheme,
-  alpha,
-} from "@mui/material";
+import { Box, Typography, Button, Paper, useTheme, alpha } from "@mui/material";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
 import RightDrawer from "@/components/common/RightDrawer";
-import { ServiceDetails } from "@/services/serviceDetails/serviceDetailsInterface";
+import { type ServiceDetails } from "@/services/serviceDetails/serviceDetailsInterface";
 import { COLORS } from "@/constants/colors";
 import { english } from "@/features/i18n/en";
 import { useServiceData } from "./useServiceData";
@@ -28,14 +21,10 @@ const SECTION_STYLE = (isDark: boolean) => ({
   border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
   borderLeft: `4px solid ${COLORS.PRIMARY_PURPLE}`,
   bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : "white",
-  boxShadow: isDark
-    ? "none"
-    : `0 1px 3px ${alpha(COLORS.PRIMARY_PURPLE, 0.06)}`,
+  boxShadow: isDark ? "none" : `0 1px 3px ${alpha(COLORS.PRIMARY_PURPLE, 0.06)}`,
   transition: "box-shadow 0.2s ease, border-color 0.2s ease",
   "&:hover": {
-    boxShadow: isDark
-      ? "none"
-      : `0 4px 12px ${alpha(COLORS.PRIMARY_PURPLE, 0.08)}`,
+    boxShadow: isDark ? "none" : `0 4px 12px ${alpha(COLORS.PRIMARY_PURPLE, 0.08)}`,
   },
 });
 
@@ -93,6 +82,10 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
     setLocationType,
     visitingCharge,
     setVisitingCharge,
+    visitingChargeMode,
+    setVisitingChargeMode,
+    visitingTiers,
+    setVisitingTiers,
     selectedAddressId,
     setSelectedAddressId,
     serviceRadius,
@@ -143,10 +136,7 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
 
   // Auto-remove orphaned subcategories when categories change
   // Only prune when subcategories have actually been loaded (not during initial fetch)
-  const subcategorySet = useMemo(
-    () => new Set(subcategories.map((s) => s.id)),
-    [subcategories]
-  );
+  const subcategorySet = useMemo(() => new Set(subcategories.map((s) => s.id)), [subcategories]);
   useEffect(() => {
     if (subcategoryIds.length > 0 && subcategories.length > 0 && !subcategoriesLoading) {
       const valid = subcategoryIds.filter((id) => subcategorySet.has(id));
@@ -154,7 +144,13 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
         setSubcategoryIds(valid);
       }
     }
-  }, [subcategorySet, subcategoryIds, setSubcategoryIds, subcategories.length, subcategoriesLoading]);
+  }, [
+    subcategorySet,
+    subcategoryIds,
+    setSubcategoryIds,
+    subcategories.length,
+    subcategoriesLoading,
+  ]);
 
   useEffect(() => {
     if (pricingType === "noPrice") {
@@ -226,9 +222,7 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
         <Typography
           variant="body2"
           sx={{
-            color: isDark
-              ? COLORS.TEXT.SECONDARY_DARK
-              : COLORS.TEXT.SECONDARY_LIGHT,
+            color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
             mb: 2,
             lineHeight: 1.5,
           }}
@@ -242,9 +236,7 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
           <Paper
             elevation={0}
             sx={{
-              bgcolor: isDark
-                ? "rgba(211, 47, 47, 0.08)"
-                : "rgba(211, 47, 47, 0.06)",
+              bgcolor: isDark ? "rgba(211, 47, 47, 0.08)" : "rgba(211, 47, 47, 0.06)",
               color: "error.main",
               p: 2,
               borderRadius: 2,
@@ -261,9 +253,7 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
         <Box sx={{ flex: 1 }}>
           {/* 1. Service Info */}
           <Paper elevation={0} sx={SECTION_STYLE(isDark)}>
-            <Box
-              sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}
-            >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
               <Box
                 sx={{
                   width: 32,
@@ -316,9 +306,7 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
 
           {/* 2. Pricing */}
           <Paper elevation={0} sx={SECTION_STYLE(isDark)}>
-            <Box
-              sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}
-            >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
               <Box
                 sx={{
                   width: 32,
@@ -367,9 +355,7 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
 
           {/* 3. Duration */}
           <Paper elevation={0} sx={SECTION_STYLE(isDark)}>
-            <Box
-              sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}
-            >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
               <Box
                 sx={{
                   width: 32,
@@ -411,9 +397,7 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
 
           {/* 4. Location */}
           <Paper elevation={0} sx={SECTION_STYLE(isDark)}>
-            <Box
-              sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}
-            >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
               <Box
                 sx={{
                   width: 32,
@@ -447,6 +431,10 @@ const AddServiceDrawer: React.FC<AddServiceDrawerProps> = ({
               onAddressSelect={setSelectedAddressId}
               visitingCharge={visitingCharge}
               onVisitingChargeChange={setVisitingCharge}
+              visitingChargeMode={visitingChargeMode}
+              onVisitingChargeModeChange={setVisitingChargeMode}
+              visitingTiers={visitingTiers}
+              onVisitingTiersChange={setVisitingTiers}
               serviceRadius={serviceRadius}
               onServiceRadiusChange={setServiceRadius}
               addressesLoading={addressesLoading}

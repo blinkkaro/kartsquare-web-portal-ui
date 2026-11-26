@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { alpha, Box, ButtonBase, Drawer, styled, Typography } from "@mui/material";
-import { useReducedMotion } from "framer-motion";
 import { COLORS } from "@/constants/colors";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { type NavItem, type ProviderDockItem, ProviderMoreIcon } from "@/constants/navRoutes";
 import { useTranslate } from "@/hooks/useTranslate";
 import { isActivePath, MOBILE_NAV_HEIGHT, usePublishHeight } from "./MobileBottomNav";
@@ -144,7 +144,7 @@ const TabInner: React.FC<{ item: Pick<NavItem, "label" | "icon"> }> = ({ item })
 
 const ProviderBottomNav: React.FC<ProviderBottomNavProps> = ({ primary, more, currentPath }) => {
   const { t } = useTranslate();
-  const reduce = useReducedMotion() === true;
+  const reduce = usePrefersReducedMotion();
   // The sheet remembers the path it was opened on, so moving to another page closes it by itself.
   const [sheetPath, setSheetPath] = useState<string | null>(null);
   const sheetOpen = sheetPath === currentPath;

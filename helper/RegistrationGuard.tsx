@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppSelector } from "@/store/hooks";
 import {
@@ -11,15 +12,11 @@ import {
 import { AppUserType } from "@/services/auth/auth.interface";
 import { secureStorage } from "./SecureStorage";
 
-import GlobalLoading from "@/components/common/Loader/GlobalLoading";
+// Only shown on auth/onboarding routes, so its code (and framer-motion) loads only there.
+const GlobalLoading = dynamic(() => import("@/components/common/Loader/GlobalLoading"));
 
 // 1. Move static constants outside the component to avoid recreation on re-renders
-const RESTRICTED_AUTH_PATHS = [
-  "/login",
-  "/signUp",
-  "/forgotPassword",
-  "/resetPassword",
-];
+const RESTRICTED_AUTH_PATHS = ["/login", "/signUp", "/forgotPassword", "/resetPassword"];
 
 const ONBOARDING_PATHS = [
   "/emailVerfication",
@@ -37,11 +34,7 @@ function isBlockingPath(pathname: string): boolean {
   );
 }
 
-export default function RegistrationGuard({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RegistrationGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -52,9 +45,7 @@ export default function RegistrationGuard({
   // page's server HTML was just the "Hold on !!" loader.
   const [isChecking, setIsChecking] = useState(() => isBlockingPath(pathname));
 
-  const { user, isAuthenticated: isAuthRedux } = useAppSelector(
-    (state) => state.auth,
-  );
+  const { user, isAuthenticated: isAuthRedux } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     // 3. All logic and localStorage access happens safely inside useEffect
@@ -63,13 +54,9 @@ export default function RegistrationGuard({
       const token = secureStorage.getItem("token");
       const isAuthenticated = !!token || isAuthRedux;
 
-      const isRestrictedPath = RESTRICTED_AUTH_PATHS.some((path) =>
-        pathname.startsWith(path),
-      );
+      const isRestrictedPath = RESTRICTED_AUTH_PATHS.some((path) => pathname.startsWith(path));
 
-      const isOnboardingPath = ONBOARDING_PATHS.some((path) =>
-        pathname.startsWith(path),
-      );
+      const isOnboardingPath = ONBOARDING_PATHS.some((path) => pathname.startsWith(path));
 
       // Re-arm the blocking loader on client-side navigation into an
       // auth/onboarding route (the initial-state check only covers first paint).
@@ -91,8 +78,8 @@ export default function RegistrationGuard({
         user?.register_step !== undefined && user?.register_step !== null
           ? user.register_step
           : registerStepFromStorage !== null && registerStepFromStorage !== undefined
-          ? parseInt(registerStepFromStorage, 10)
-          : null;
+            ? parseInt(registerStepFromStorage, 10)
+            : null;
 
       const currentRole = (user?.role ?? roleFromStorage) as AppUserType | null;
 
@@ -139,9 +126,8 @@ export default function RegistrationGuard({
       // Determine where they SHOULD be
       const roleMap = registrationStepMap[currentRole];
       if (roleMap && currentRegisterStep !== UserRegisterSteps.ANONYMOUS) {
-        const requiredScreen =
-          roleMap[currentRegisterStep as UserRegisterSteps];
-        
+        const requiredScreen = roleMap[currentRegisterStep as UserRegisterSteps];
+
         if (requiredScreen) {
           const requiredPath = getPathForScreen(requiredScreen);
           const basePath = requiredPath.split("?")[0];

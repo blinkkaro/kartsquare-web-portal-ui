@@ -2,20 +2,18 @@ import { DELETE, GET, PUT } from "../api";
 import { verifyDocumentService } from "../auth/verifyDocument.service";
 import { APIENDPOINTS } from "./apiEndPoints";
 import {
-  profileInterface,
-  providerPostsInterface,
-  providerProfileInterface,
-  providerServicesInterface,
-  ProviderProfileByUsernameResponse,
-  ISupplierProfileResponse,
+  type profileInterface,
+  type providerPostsInterface,
+  type providerProfileInterface,
+  type providerServicesInterface,
+  type ProviderProfileByUsernameResponse,
+  type ISupplierProfileResponse,
 } from "./profileInterface";
 
 class ProfileService {
   async getUserProfile(): Promise<profileInterface> {
     try {
-      const response = await GET<profileInterface>(
-        APIENDPOINTS.GET_USER_PROFILE,
-      );
+      const response = await GET<profileInterface>(APIENDPOINTS.GET_USER_PROFILE);
       return response.data;
     } catch (error) {
       throw error;
@@ -48,27 +46,21 @@ class ProfileService {
         !banner_image.toString().startsWith("https://") &&
         banner_image instanceof File
       ) {
-        bannerUrl = (
-          await verifyDocumentService.uploadImages([banner_image])
-        )[0];
-      } else if (
-        banner_image &&
-        banner_image.toString().startsWith("https://")
-      ) {
+        bannerUrl = (await verifyDocumentService.uploadImages([banner_image]))[0];
+      } else if (banner_image && banner_image.toString().startsWith("https://")) {
         bannerUrl = banner_image.toString();
       }
 
-      const response = await PUT<profileInterface>(
-        APIENDPOINTS.UPDATE_USER_PROFILE,
-        {
-          first_name,
-          last_name,
-          bio,
-          profile_pic: pic,
-          ...(username && { username }),
-          ...(bannerUrl && { banner_image: bannerUrl }),
-        },
-      );
+      const response = await PUT<profileInterface>(APIENDPOINTS.UPDATE_USER_PROFILE, {
+        first_name,
+        last_name,
+        bio,
+        // Only send a picture when there is one: the backend rejects "" as an invalid URL, which blocked every
+        // profile edit for people without a photo.
+        ...(pic && { profile_pic: pic }),
+        ...(username && { username }),
+        ...(bannerUrl && { banner_image: bannerUrl }),
+      });
       return response.data;
     } catch (error) {
       throw error;
@@ -77,7 +69,7 @@ class ProfileService {
 
   async deleteUserProfile(): Promise<void> {
     try {
-      const res = await DELETE(APIENDPOINTS.DELETE_USER_PROFILE);
+      await DELETE(APIENDPOINTS.DELETE_USER_PROFILE);
       // Logic for logout is handled in the hook
     } catch (error) {
       throw error;
@@ -116,18 +108,14 @@ class ProfileService {
 
   async getProviderProfile(id: string): Promise<providerProfileInterface> {
     try {
-      const response = await GET<providerProfileInterface>(
-        APIENDPOINTS.GET_PROVIDER_PROFILE(id),
-      );
+      const response = await GET<providerProfileInterface>(APIENDPOINTS.GET_PROVIDER_PROFILE(id));
       return response.data;
     } catch (error) {
       throw error;
     }
   }
 
-  async getProviderProfileByUsername(
-    username: string,
-  ): Promise<ProviderProfileByUsernameResponse> {
+  async getProviderProfileByUsername(username: string): Promise<ProviderProfileByUsernameResponse> {
     try {
       const response = await GET<ProviderProfileByUsernameResponse>(
         APIENDPOINTS.GET_PROVIDER_PROFILE_BY_USERNAME(username),
@@ -140,9 +128,7 @@ class ProfileService {
     }
   }
 
-  async getSupplierProfile(
-    username: string,
-  ): Promise<ISupplierProfileResponse> {
+  async getSupplierProfile(username: string): Promise<ISupplierProfileResponse> {
     try {
       const response = await GET<ISupplierProfileResponse>(
         APIENDPOINTS.GET_SUPPLIER_PROFILE(username),
@@ -167,7 +153,7 @@ class ProfileService {
       // Then try supplier
       try {
         return await this.getSupplierProfile(username);
-      } catch (supplierError) {
+      } catch {
         throw error; // Throw the original error or a unified one
       }
     }
@@ -190,12 +176,9 @@ class ProfileService {
 
   async updateShowNumber(show_number: boolean): Promise<profileInterface> {
     try {
-      const response = await PUT<profileInterface>(
-        APIENDPOINTS.UPDATE_SHOW_NUMBER,
-        {
-          show_number,
-        },
-      );
+      const response = await PUT<profileInterface>(APIENDPOINTS.UPDATE_SHOW_NUMBER, {
+        show_number,
+      });
       return response.data;
     } catch (error) {
       throw error;

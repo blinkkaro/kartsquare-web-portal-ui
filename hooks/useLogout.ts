@@ -1,38 +1,43 @@
-import { useDispatch } from "react-redux";
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
-import { authService } from "@/services/auth/auth.service";
 import { logout } from "@/features/ui/authSlice";
-import { secureStorage } from "@/helper/SecureStorage";
+import { authService } from "@/services/auth/auth.service";
+import { useAppDispatch } from "@/store/hooks";
+import { getTokens } from "@/utils/auth";
 
+export interface LogoutOptions {
+  /** Where to send the person afterwards. Default: the homepage. */
+  redirectTo?: string;
+}
+
+/**
+ * The one sign-out flow. Every logout button, "back" out of registration and account deletion uses it.
+ *
+ * 1. Ask the backend to revoke this session's refresh token (best effort; never blocks signing out).
+ * 2. `logout()` resets Redux and `clearSession()` wipes everything stored about the person. That also clears
+ *    the TanStack Query cache, through `onSessionEnd` (see app/providers.tsx).
+ * 3. Replace the current history entry, so Back does not return to a signed-in page.
+ */
 export const useLogout = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
-  const queryClient = useQueryClient();
 
-  const handleLogout = async () => {
-    try {
-      // 1. Call API logout
-      await authService.logout();
-    } catch (error) {
-      console.error("Logout API failed", error);
-    } finally {
-      // clear profile
-      dispatch(logout());
-
-      // 3. Clear React Query Cache (Critical for removing persisted data like stories)
-      queryClient.clear();
-
-      // 4. Force clear remaining localStorage items
-      secureStorage.removeItem("token");
-      secureStorage.removeItem("refreshToken");
-      secureStorage.removeItem("role");
-      secureStorage.removeItem("register_step");
-
-      // 5. Navigate to home
-      router.push("/");
-    }
-  };
+  const handleLogout = useCallback(
+    async ({ redirectTo = "/" }: LogoutOptions = {}) => {
+      try {
+        const { accessToken, refreshToken } = getTokens();
+        if (accessToken || refreshToken) {
+          await authService.logout(refreshToken);
+        }
+      } catch {
+        // Revoking is best effort; the local sign-out below always runs.
+      } finally {
+        dispatch(logout());
+        router.replace(redirectTo);
+      }
+    },
+    [dispatch, router],
+  );
 
   return { handleLogout };
 };

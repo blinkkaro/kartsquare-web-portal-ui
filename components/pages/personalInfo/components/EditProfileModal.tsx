@@ -1,7 +1,6 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Dialog,
   Box,
   Typography,
   IconButton,
@@ -9,17 +8,11 @@ import {
   Grid,
   TextField,
   useTheme,
-  Drawer,
   InputAdornment,
   CardMedia,
 } from "@mui/material";
+import { CameraAlt, CheckCircle, Error as ErrorIcon } from "@mui/icons-material";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
-import {
-  Close,
-  CameraAlt,
-  CheckCircle,
-  Error as ErrorIcon,
-} from "@mui/icons-material";
 import Button from "@/components/common/Button";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -30,20 +23,18 @@ import { getUserRole, UserRole } from "@/utils/auth";
 import { usernameValidationService } from "@/services/profile/usernameValidationService";
 import SuccessModel from "@/components/common/SuccessModel";
 import RightDrawer from "@/components/common/RightDrawer";
+import { errorMessage as apiErrorMessage } from "@/lib/http/errorMessage";
 
 export interface EditProfileModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-const EditProfileModal: React.FC<EditProfileModalProps> = ({
-  open,
-  onClose,
-}) => {
+const EditProfileModal: React.FC<EditProfileModalProps> = ({ open, onClose }) => {
   const theme = useTheme();
   const { t } = useTranslate();
   const profile = useProfile();
-  const { mutate: updateProfile, isPending, error } = useUpdateProfile();
+  const { mutate: updateProfile, isPending, error, reset: resetSaveState } = useUpdateProfile();
   const role = secureStorage.getItem("role") as UserRole;
 
   const [firstName, setFirstName] = useState("");
@@ -53,12 +44,12 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const [profilePicFile, setProfilePicFile] = useState<File | string>("");
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [successmodelOpen, setSuccessmodelOpen] = useState(false);
-  const [bannerImage, setBannerImage] = useState<string>("");
+  const [, setBannerImage] = useState<string>("");
   const [bannerFile, setBannerFile] = useState<File | string>("");
   const [bannerPreview, setBannerPreview] = useState<string>("");
 
   // Store original username to compare against
-  const originalUsernameRef = useRef<string>("");
+  const [originalUsername, setOriginalUsername] = useState<string>("");
 
   // Username validation states
   const [usernameValidation, setUsernameValidation] = useState<{
@@ -88,9 +79,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       setBio(profileData.bio || "");
       const initialUsername = profileData.username || "";
       setUsername(initialUsername);
-      originalUsernameRef.current = initialUsername;
+      setOriginalUsername(initialUsername);
       setProfilePicFile(profileData.profile_pic || "");
       setPreviewUrl(profileData.profile_pic || "");
+      // Each opening starts clean: no error left over from an earlier failed save.
+      resetSaveState();
       // Reset validation when modal opens
       setUsernameValidation({
         isValidating: false,
@@ -98,16 +91,14 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         error: null,
       });
     }
-  }, [open]); // Only depend on open, not profile
+    // Only on opening: re-reading the profile while the modal is open would overwrite what is being typed.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   // Debounced username validation
   useEffect(() => {
     // Don't validate if not service provider, username is empty, or hasn't changed
-    if (
-      !isServiceProvider ||
-      !username ||
-      username === originalUsernameRef.current
-    ) {
+    if (!isServiceProvider || !username || username === originalUsername) {
       return;
     }
 
@@ -120,8 +111,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
     const timeoutId = setTimeout(async () => {
       try {
-        const response =
-          await usernameValidationService.validateUsername(username);
+        const response = await usernameValidationService.validateUsername(username);
 
         if (response.status === "success" && response.data?.isAvailable) {
           setUsernameValidation({
@@ -131,32 +121,30 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
           });
         } else {
           const errorMessage =
-            response.errors?.[0]?.message ||
-            response.message ||
-            "Username is not available";
+            response.errors?.[0]?.message || response.message || "Username is not available";
           setUsernameValidation({
             isValidating: false,
             isValid: false,
             error: errorMessage,
           });
         }
-      } catch (error: any) {
+      } catch (error) {
         setUsernameValidation({
           isValidating: false,
           isValid: false,
-          error: error?.message || "Failed to validate username",
+          error: apiErrorMessage(error, "Failed to validate username"),
         });
       }
     }, 1500); // 2.5 seconds debounce
 
     return () => clearTimeout(timeoutId);
-  }, [username, isServiceProvider]); // Only depend on username and isServiceProvider
+  }, [username, isServiceProvider, originalUsername]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        setImageError(t("imageSizeTooLarge" as any));
+        setImageError(t("imageSizeTooLarge"));
         return;
       }
       setImageError(null);
@@ -174,7 +162,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        setImageError(t("imageSizeTooLarge" as any));
+        setImageError(t("imageSizeTooLarge"));
         return;
       }
       setImageError(null);
@@ -190,7 +178,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
   const handleSave = () => {
     // Validate username if service provider and username has changed
-    if (isServiceProvider && username !== originalUsernameRef.current) {
+    if (isServiceProvider && username !== originalUsername) {
       if (usernameValidation.isValidating) {
         return; // Don't save while validating
       }
@@ -220,12 +208,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
   return (
     <>
-      <RightDrawer
-        open={open}
-        onClose={onClose}
-        title={t("editPersonalInfo")}
-        width={500}
-      >
+      <RightDrawer open={open} onClose={onClose} title={t("editPersonalInfo")} width={500}>
         <Box sx={{ padding: "1rem" }}>
           <ErrorMessage
             error={error?.response?.data?.message || error?.message || imageError}
@@ -241,9 +224,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 mb: 2,
                 borderRadius: "12px",
                 overflow: "hidden",
-                bgcolor: isDark
-                  ? COLORS.BACKGROUND.PAPER_DARK
-                  : COLORS.BACKGROUND.PAPER_LIGHT,
+                bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
                 border: `2px dashed ${isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT}33`,
                 "&:hover .banner-overlay": {
                   opacity: 1,
@@ -275,18 +256,14 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   <CameraAlt
                     sx={{
                       fontSize: 48,
-                      color: isDark
-                        ? COLORS.TEXT.SECONDARY_DARK
-                        : COLORS.TEXT.SECONDARY_LIGHT,
+                      color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                       opacity: 0.4,
                     }}
                   />
                   <Typography
                     variant="body2"
                     sx={{
-                      color: isDark
-                        ? COLORS.TEXT.SECONDARY_DARK
-                        : COLORS.TEXT.SECONDARY_LIGHT,
+                      color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                       opacity: 0.6,
                     }}
                   >
@@ -321,10 +298,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   }}
                 >
                   <CameraAlt sx={{ fontSize: 36, color: "white" }} />
-                  <Typography
-                    variant="body2"
-                    sx={{ color: "white", fontWeight: 500 }}
-                  >
+                  <Typography variant="body2" sx={{ color: "white", fontWeight: 500 }}>
                     {bannerPreview ? "Change Banner" : "Upload Banner"}
                   </Typography>
                 </Box>
@@ -397,9 +371,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   <Typography
                     variant="body2"
                     sx={{
-                      color: isDark
-                        ? COLORS.TEXT.SECONDARY_DARK
-                        : COLORS.TEXT.SECONDARY_LIGHT,
+                      color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                     }}
                   >
                     {t("first_name")}
@@ -426,9 +398,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   onChange={(e) => setFirstName(e.target.value)}
                   placeholder={t("first_name")}
                   error={firstName.length > 50}
-                  helperText={
-                    firstName.length > 50 ? t("valFirstNameMax" as any) : ""
-                  }
+                  helperText={firstName.length > 50 ? t("valFirstNameMax") : ""}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "8px",
@@ -451,9 +421,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   <Typography
                     variant="body2"
                     sx={{
-                      color: isDark
-                        ? COLORS.TEXT.SECONDARY_DARK
-                        : COLORS.TEXT.SECONDARY_LIGHT,
+                      color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                     }}
                   >
                     {t("last_name")}
@@ -480,9 +448,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   onChange={(e) => setLastName(e.target.value)}
                   placeholder={t("last_name")}
                   error={lastName.length > 50}
-                  helperText={
-                    lastName.length > 50 ? t("valLastNameMax" as any) : ""
-                  }
+                  helperText={lastName.length > 50 ? t("valLastNameMax") : ""}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "8px",
@@ -502,27 +468,23 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   variant="body2"
                   sx={{
                     mb: 0.5,
-                    color: isDark
-                      ? COLORS.TEXT.SECONDARY_DARK
-                      : COLORS.TEXT.SECONDARY_LIGHT,
+                    color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                   }}
                 >
-                  {t("username" as any) || "Username"}
+                  {t("username") || "Username"}
                 </Typography>
                 <TextField
                   fullWidth
                   size="small"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder={t("username" as any) || "Username"}
+                  placeholder={t("username") || "Username"}
                   error={usernameValidation.isValid === false}
                   helperText={
                     usernameValidation.isValidating
                       ? "Validating..."
                       : usernameValidation.error ||
-                        (usernameValidation.isValid === true
-                          ? "Username is available"
-                          : "")
+                        (usernameValidation.isValid === true ? "Username is available" : "")
                   }
                   InputProps={{
                     endAdornment: usernameValidation.isValidating ? (
@@ -531,9 +493,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                       </InputAdornment>
                     ) : usernameValidation.isValid === true ? (
                       <InputAdornment position="end">
-                        <CheckCircle
-                          sx={{ color: COLORS.SUCCESS_GREEN, fontSize: 20 }}
-                        />
+                        <CheckCircle sx={{ color: COLORS.SUCCESS_GREEN, fontSize: 20 }} />
                       </InputAdornment>
                     ) : usernameValidation.isValid === false ? (
                       <InputAdornment position="end">
@@ -566,9 +526,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 <Typography
                   variant="body2"
                   sx={{
-                    color: isDark
-                      ? COLORS.TEXT.SECONDARY_DARK
-                      : COLORS.TEXT.SECONDARY_LIGHT,
+                    color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
                   }}
                 >
                   {t("bio")}
@@ -596,13 +554,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 onChange={(e) => setBio(e.target.value)}
                 placeholder={t("bioPlaceholder")}
                 error={bio.length > 500}
-                helperText={bio.length > 500 ? t("valBioMax" as any) : ""}
+                helperText={bio.length > 500 ? t("valBioMax") : ""}
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "8px",
-                    bgcolor: isDark
-                      ? COLORS.BACKGROUND.PAPER_DARK
-                      : COLORS.BACKGROUND.PAPER_LIGHT,
+                    bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
                   },
                 }}
               />
@@ -621,9 +577,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 lastName.length > 50 ||
                 bio.length > 500 ||
                 (isServiceProvider &&
-                  username !== originalUsernameRef.current &&
-                  (usernameValidation.isValidating ||
-                    usernameValidation.isValid === false))
+                  username !== originalUsername &&
+                  (usernameValidation.isValidating || usernameValidation.isValid === false))
               }
               sx={{
                 mt: 2,

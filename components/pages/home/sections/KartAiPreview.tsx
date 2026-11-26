@@ -6,7 +6,7 @@ import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import PauseRoundedIcon from "@mui/icons-material/PauseRounded";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import ReplayRoundedIcon from "@mui/icons-material/ReplayRounded";
-import { motion, useInView, useReducedMotion, useSpring } from "framer-motion";
+import { domAnimation, LazyMotion, m, useInView, useReducedMotion, useSpring } from "framer-motion";
 import { COLORS } from "@/constants/colors";
 import { useAppDispatch } from "@/store/hooks";
 import { openAiNewChat, setInlineAiVisible } from "@/features/ui/uiSlice";
@@ -19,7 +19,8 @@ import { KART_AI_EXAMPLE_QUERY } from "@/lib/homeHero";
 export const PREVIEW_LINES = {
   greeting: "Namaste! Aapko kya help chahiye?",
   customer: `${KART_AI_EXAMPLE_QUERY}.`,
-  reply: "Samajh gayi. Geyser repair ki service dhoondhne mein help karti hoon. Aap kis area mein hain?",
+  reply:
+    "Samajh gayi. Geyser repair ki service dhoondhne mein help karti hoon. Aap kis area mein hain?",
 } as const;
 
 /** Delay (ms) before each step after the first. The first message is on screen from the start. */
@@ -65,11 +66,17 @@ function Typing({ animate }: { animate: boolean }) {
       }}
     >
       {[0, 1, 2].map((i) => (
-        <motion.span
+        <m.span
           key={i}
           animate={animate ? { y: [0, -3, 0], opacity: [0.45, 1, 0.45] } : undefined}
           transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.15, ease: "easeInOut" }}
-          style={{ width: 6, height: 6, borderRadius: 3, background: COLORS.PRIMARY_PURPLE, display: "block" }}
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: 3,
+            background: COLORS.PRIMARY_PURPLE,
+            display: "block",
+          }}
         />
       ))}
     </Box>
@@ -81,7 +88,7 @@ function Conversation({ step, animate }: { step: number; animate: boolean }) {
   // Every line is its own motion element, so one that is already on screen never replays when the
   // next arrives. The greeting never animates in: it is there from the first paint.
   const item = (key: string, node: React.ReactNode) => (
-    <motion.div
+    <m.div
       key={key}
       initial={animate && key !== "greeting" ? { opacity: 0, y: 8 } : false}
       animate={{ opacity: 1, y: 0 }}
@@ -89,7 +96,7 @@ function Conversation({ step, animate }: { step: number; animate: boolean }) {
       style={{ display: "flex", flexDirection: "column" }}
     >
       {node}
-    </motion.div>
+    </m.div>
   );
   return (
     <>
@@ -101,7 +108,19 @@ function Conversation({ step, animate }: { step: number; animate: boolean }) {
   );
 }
 
+/**
+ * `m` components + LazyMotion ship only the animation features used here (no drag/layout engine),
+ * a much smaller framer-motion on the landing page. Self-contained so it animates wherever rendered.
+ */
 export default function KartAiPreview() {
+  return (
+    <LazyMotion features={domAnimation}>
+      <KartAiPreviewContent />
+    </LazyMotion>
+  );
+}
+
+function KartAiPreviewContent() {
   const dispatch = useAppDispatch();
   // `null` before hydration: render the finished conversation until we know the user's preference.
   const reducedMotion = useReducedMotion();
@@ -138,7 +157,10 @@ export default function KartAiPreview() {
   // Reveal one step at a time. Leaving the screen or pausing cancels the timer; coming back resumes.
   useEffect(() => {
     if (!running) return;
-    const timer = setTimeout(() => setStep((s) => Math.min(s + 1, LAST_STEP)), STEP_DELAYS[step - 1]);
+    const timer = setTimeout(
+      () => setStep((s) => Math.min(s + 1, LAST_STEP)),
+      STEP_DELAYS[step - 1],
+    );
     return () => clearTimeout(timer);
   }, [running, step]);
 
@@ -152,7 +174,11 @@ export default function KartAiPreview() {
     else setPaused((p) => !p);
   };
 
-  const playLabel = finished ? "Example dobara chalayein" : paused ? "Example chalayein" : "Example rokein";
+  const playLabel = finished
+    ? "Example dobara chalayein"
+    : paused
+      ? "Example chalayein"
+      : "Example rokein";
 
   return (
     // The wrapper carries a soft light half circle behind the card, so it stands off the violet band.
@@ -182,133 +208,171 @@ export default function KartAiPreview() {
         },
       }}
     >
-    <Box
-      ref={ref}
-      component={motion.section}
-      aria-labelledby="kart-ai-preview-title"
-      style={{ rotateX: tiltX, rotateY: tiltY }}
-      sx={{
-        position: "relative",
-        width: "100%",
-        bgcolor: COLORS.WHITE,
-        // The hero band around it sets white text; the card is white, so it sets its own.
-        color: "text.primary",
-        border: `1px solid ${COLORS.NEW_UI.CARD_BORDER_LIGHT}`,
-        borderRadius: "20px",
-        boxShadow: "0 24px 56px rgba(20, 5, 47, 0.45)",
-        overflow: "hidden",
-      }}
-    >
-      {/* header: who, what this is, and the example controls */}
       <Box
+        ref={ref}
+        component={m.section}
+        aria-labelledby="kart-ai-preview-title"
+        style={{ rotateX: tiltX, rotateY: tiltY }}
         sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 1,
-          pl: 2,
-          pr: 0.5,
-          py: 0.5,
-          borderBottom: `1px solid ${COLORS.NEW_UI.CARD_BORDER_LIGHT}`,
-        }}
-      >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, minWidth: 0 }}>
-          <Box
-            aria-hidden
-            sx={{
-              width: 28,
-              height: 28,
-              borderRadius: "50%",
-              display: "grid",
-              placeItems: "center",
-              flexShrink: 0,
-              color: COLORS.WHITE,
-              bgcolor: COLORS.PRIMARY_PURPLE,
-            }}
-          >
-            <AutoAwesomeRoundedIcon sx={{ fontSize: 16 }} />
-          </Box>
-          <Box sx={{ minWidth: 0 }}>
-            <Typography id="kart-ai-preview-title" component="h2" sx={{ fontSize: "0.92rem", fontWeight: 700, lineHeight: 1.2 }}>
-              Kart AI
-            </Typography>
-            <Typography sx={{ fontSize: "0.75rem", color: "text.secondary", lineHeight: 1.2 }}>
-              Example conversation
-            </Typography>
-          </Box>
-        </Box>
-
-        {/* nothing animates under reduced motion, so there is nothing to pause or replay */}
-        {!reduce && (
-          <Box sx={{ display: "flex", flexShrink: 0 }}>
-            <IconButton aria-label={playLabel} onClick={togglePause} sx={{ width: 44, height: 44, color: "text.secondary" }}>
-              {finished ? <ReplayRoundedIcon /> : paused ? <PlayArrowRoundedIcon /> : <PauseRoundedIcon />}
-            </IconButton>
-            {!finished && (
-              <IconButton aria-label="Example shuru se dekhein" onClick={replay} sx={{ width: 44, height: 44, color: "text.secondary" }}>
-                <ReplayRoundedIcon />
-              </IconButton>
-            )}
-          </Box>
-        )}
-      </Box>
-
-      {/* The whole conversation as plain text, so it reads in full whatever the animation is doing. */}
-      <Box
-        sx={{
-          position: "absolute",
-          width: "1px",
-          height: "1px",
-          margin: "-1px",
+          position: "relative",
+          width: "100%",
+          bgcolor: COLORS.WHITE,
+          // The hero band around it sets white text; the card is white, so it sets its own.
+          color: "text.primary",
+          border: `1px solid ${COLORS.NEW_UI.CARD_BORDER_LIGHT}`,
+          borderRadius: "20px",
+          boxShadow: "0 24px 56px rgba(20, 5, 47, 0.45)",
           overflow: "hidden",
-          clip: "rect(0 0 0 0)",
-          whiteSpace: "nowrap",
         }}
       >
-        <p>Example conversation. Kart AI: {PREVIEW_LINES.greeting}</p>
-        <p>Customer: {PREVIEW_LINES.customer}</p>
-        <p>Kart AI: {PREVIEW_LINES.reply}</p>
-      </Box>
-
-      {/* The invisible full conversation and the live one share one grid cell, so the card is always
-          its final height and nothing below it moves as messages appear. */}
-      <Box sx={{ display: "grid", p: 2, pb: 1.5 }} aria-hidden>
+        {/* header: who, what this is, and the example controls */}
         <Box
-          sx={{ gridArea: "1 / 1", display: "flex", flexDirection: "column", gap: 1, visibility: "hidden" }}
-          // the copy is never interactive or focusable
-          {...({ inert: "" } as Record<string, string>)}
-        >
-          <Conversation step={LAST_STEP} animate={false} />
-        </Box>
-        <Box sx={{ gridArea: "1 / 1", display: "flex", flexDirection: "column", gap: 1, alignContent: "start" }}>
-          <Conversation step={shown} animate={!reduce} />
-        </Box>
-      </Box>
-
-      {/* the way into the real assistant */}
-      <Box sx={{ px: 2, pb: 2 }}>
-        <ButtonBase
-          onClick={() => dispatch(openAiNewChat())}
           sx={{
-            width: "100%",
-            minHeight: 48,
-            gap: 0.75,
-            borderRadius: "12px",
-            bgcolor: COLORS.PRIMARY_PURPLE,
-            color: COLORS.WHITE,
-            fontWeight: 700,
-            fontSize: "0.92rem",
-            transition: "background-color 160ms ease, transform 120ms ease",
-            "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
-            "&:active": { transform: "scale(0.98)" },
-            "&.Mui-focusVisible": { outline: `3px solid ${COLORS.PURPLE_ALPHA_30}`, outlineOffset: 2 },
-            "@media (prefers-reduced-motion: reduce)": { transition: "none", "&:active": { transform: "none" } },
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 1,
+            pl: 2,
+            pr: 0.5,
+            py: 0.5,
+            borderBottom: `1px solid ${COLORS.NEW_UI.CARD_BORDER_LIGHT}`,
           }}
         >
-          Kart AI se poochho <ArrowForwardRoundedIcon sx={{ fontSize: 18 }} />
-        </ButtonBase>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, minWidth: 0 }}>
+            <Box
+              aria-hidden
+              sx={{
+                width: 28,
+                height: 28,
+                borderRadius: "50%",
+                display: "grid",
+                placeItems: "center",
+                flexShrink: 0,
+                color: COLORS.WHITE,
+                bgcolor: COLORS.PRIMARY_PURPLE,
+              }}
+            >
+              <AutoAwesomeRoundedIcon sx={{ fontSize: 16 }} />
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography
+                id="kart-ai-preview-title"
+                component="h2"
+                sx={{ fontSize: "0.92rem", fontWeight: 700, lineHeight: 1.2 }}
+              >
+                Kart AI
+              </Typography>
+              <Typography sx={{ fontSize: "0.75rem", color: "text.secondary", lineHeight: 1.2 }}>
+                Example conversation
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* nothing animates under reduced motion, so there is nothing to pause or replay */}
+          {!reduce && (
+            <Box sx={{ display: "flex", flexShrink: 0 }}>
+              <IconButton
+                aria-label={playLabel}
+                onClick={togglePause}
+                sx={{ width: 44, height: 44, color: "text.secondary" }}
+              >
+                {finished ? (
+                  <ReplayRoundedIcon />
+                ) : paused ? (
+                  <PlayArrowRoundedIcon />
+                ) : (
+                  <PauseRoundedIcon />
+                )}
+              </IconButton>
+              {!finished && (
+                <IconButton
+                  aria-label="Example shuru se dekhein"
+                  onClick={replay}
+                  sx={{ width: 44, height: 44, color: "text.secondary" }}
+                >
+                  <ReplayRoundedIcon />
+                </IconButton>
+              )}
+            </Box>
+          )}
+        </Box>
+
+        {/* The whole conversation as plain text, so it reads in full whatever the animation is doing. */}
+        <Box
+          sx={{
+            position: "absolute",
+            width: "1px",
+            height: "1px",
+            margin: "-1px",
+            overflow: "hidden",
+            clip: "rect(0 0 0 0)",
+            whiteSpace: "nowrap",
+          }}
+        >
+          <p>Example conversation. Kart AI: {PREVIEW_LINES.greeting}</p>
+          <p>Customer: {PREVIEW_LINES.customer}</p>
+          <p>Kart AI: {PREVIEW_LINES.reply}</p>
+        </Box>
+
+        {/* The invisible full conversation and the live one share one grid cell, so the card is always
+          its final height and nothing below it moves as messages appear. */}
+        <Box sx={{ display: "grid", p: 2, pb: 1.5 }} aria-hidden>
+          <Box
+            sx={{
+              gridArea: "1 / 1",
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              visibility: "hidden",
+            }}
+            // the copy is never interactive or focusable
+            {...({ inert: "" } as Record<string, string>)}
+          >
+            <Conversation step={LAST_STEP} animate={false} />
+          </Box>
+          <Box
+            sx={{
+              gridArea: "1 / 1",
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              alignContent: "start",
+            }}
+          >
+            <Conversation step={shown} animate={!reduce} />
+          </Box>
+        </Box>
+
+        {/* the way into the real assistant */}
+        <Box sx={{ px: 2, pb: 2 }}>
+          <ButtonBase
+            onClick={() => dispatch(openAiNewChat())}
+            sx={{
+              width: "100%",
+              minHeight: 48,
+              gap: 0.75,
+              borderRadius: "12px",
+              bgcolor: COLORS.PRIMARY_PURPLE,
+              color: COLORS.WHITE,
+              fontWeight: 700,
+              fontSize: "0.92rem",
+              transition: "background-color 160ms ease, transform 120ms ease",
+              "&:hover": { bgcolor: COLORS.PURPLE_HOVER },
+              "&:active": { transform: "scale(0.98)" },
+              "&.Mui-focusVisible": {
+                outline: `3px solid ${COLORS.PURPLE_ALPHA_30}`,
+                outlineOffset: 2,
+              },
+              "@media (prefers-reduced-motion: reduce)": {
+                transition: "none",
+                "&:active": { transform: "none" },
+              },
+            }}
+          >
+            Kart AI se poochho <ArrowForwardRoundedIcon sx={{ fontSize: 18 }} />
+          </ButtonBase>
+        </Box>
       </Box>
-    </Box>
     </Box>
   );
 }

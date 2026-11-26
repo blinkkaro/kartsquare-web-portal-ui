@@ -1,21 +1,22 @@
 "use client";
 
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { Provider } from "react-redux";
-import { store } from "@/store/store";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "react-hot-toast";
+import { store } from "@/store/store";
 import { createCustomTheme } from "@/utils/theme";
 import { useAppSelector } from "@/store/hooks";
-import { useEffect, useMemo, useState } from "react";
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { TranslationProvider } from "@/features/i18n/TranslationContext";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import RegistrationGuard from "@/helper/RegistrationGuard";
 import { SocketProvider } from "@/contexts/SocketContext";
-
 import { useHydrateStore } from "@/hooks/useHydrateStore";
-import { Toaster } from "react-hot-toast";
 import NativeBridge from "@/components/common/NativeBridge";
+import NavigationProgress from "@/components/common/Loader/NavigationProgress";
+import { onSessionEnd } from "@/utils/auth";
 
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
   const mode = useAppSelector((state) => state.ui.mode);
@@ -27,7 +28,7 @@ function ThemeWrapper({ children }: { children: React.ReactNode }) {
 
   // Sync mode with document body attribute for global CSS
   useEffect(() => {
-    document.body.setAttribute('data-theme', mode);
+    document.body.setAttribute("data-theme", mode);
   }, [mode]);
 
   return (
@@ -62,8 +63,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
             retry: 1,
           },
         },
-      })
+      }),
   );
+
+  // Signing out (by any path) drops every cached query, so the next person on this browser sees none of
+  // the previous person's data.
+  useEffect(() => onSessionEnd(() => queryClient.clear()), [queryClient]);
 
   return (
     <Provider store={store}>
@@ -74,6 +79,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
               <ThemeWrapper>
                 <Toaster position="top-right" toastOptions={{ style: { fontFamily: "inherit" } }} />
                 <NativeBridge />
+                {/* Suspense: it reads search params, which must not opt static pages out of prerendering. */}
+                <Suspense fallback={null}>
+                  <NavigationProgress />
+                </Suspense>
                 <RegistrationGuard>{children}</RegistrationGuard>
               </ThemeWrapper>
             </SocketProvider>

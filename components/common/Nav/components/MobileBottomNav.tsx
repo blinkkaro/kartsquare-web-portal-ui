@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Box, styled } from "@mui/material";
-import { useReducedMotion } from "framer-motion";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { COLORS } from "../../../../constants/colors";
 import { type NavItem } from "../../../../constants/navRoutes";
 
@@ -87,7 +87,11 @@ const Tab = styled(Link)(({ theme }) => {
       transform: "scaleX(0.7)",
       transition: `background-color 220ms ease, transform 320ms ${EASE}`,
     },
-    "& .pill .icon": { display: "inline-flex", transform: "scaleX(1.4286)", transition: `transform 320ms ${EASE}` }, // undoes the pill's scale so the icon is never squashed
+    "& .pill .icon": {
+      display: "inline-flex",
+      transform: "scaleX(1.4286)",
+      transition: `transform 320ms ${EASE}`,
+    }, // undoes the pill's scale so the icon is never squashed
     "& .MuiSvgIcon-root": { fontSize: "1.4rem" },
     "& .label": {
       maxWidth: "100%",
@@ -100,7 +104,10 @@ const Tab = styled(Link)(({ theme }) => {
     },
     // The open tab: violet pill, violet icon, bold violet label.
     "&.open": { color: dark ? "#d2bcff" : COLORS.PRIMARY_PURPLE },
-    "&.open .pill": { backgroundColor: dark ? "rgba(130, 72, 247, 0.32)" : COLORS.PURPLE_ALPHA_10, transform: "scaleX(1)" },
+    "&.open .pill": {
+      backgroundColor: dark ? "rgba(130, 72, 247, 0.32)" : COLORS.PURPLE_ALPHA_10,
+      transform: "scaleX(1)",
+    },
     "&.open .pill .icon": { transform: "scaleX(1)" },
     "&.open .label": { fontWeight: 700 },
     // The tubelight: a short lamp on the dock's top edge, with a soft glow under it.
@@ -136,13 +143,14 @@ export const isActivePath = (currentPath: string, href: string) =>
   href === "/" ? currentPath === "/" : currentPath === href || currentPath.startsWith(`${href}/`);
 
 const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ items, currentPath }) => {
-  const reduce = useReducedMotion() === true;
+  const reduce = usePrefersReducedMotion();
   usePublishHeight();
 
   const active = items.find((item) => isActivePath(currentPath, item.href))?.href ?? null;
   // On a new page the dock is new too: start with the tab that was open on the last page, then switch,
   // so the old pill fades out and the new one fills in instead of the dock just appearing in its final state.
-  const startOpen = !reduce && lastActive && items.some((i) => i.href === lastActive) ? lastActive : active;
+  const startOpen =
+    !reduce && lastActive && items.some((i) => i.href === lastActive) ? lastActive : active;
   const [open, setOpen] = useState<string | null>(startOpen);
 
   useEffect(() => {
@@ -169,7 +177,9 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ items, currentPath })
           >
             <Box component="span" className="pill">
               <Box component="span" className="icon">
-                {React.cloneElement(item.icon as React.ReactElement<{ sx?: object }>, { sx: { fontSize: "1.4rem" } })}
+                {React.cloneElement(item.icon as React.ReactElement<{ sx?: object }>, {
+                  sx: { fontSize: "1.4rem" },
+                })}
               </Box>
             </Box>
             <Box component="span" className="label">

@@ -1,8 +1,18 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useSelector } from "react-redux";
-import { Avatar, Box, Button, ButtonBase, Container, Skeleton, Typography, useTheme } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  ButtonBase,
+  Container,
+  Skeleton,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { motion, useReducedMotion } from "framer-motion";
 import PhotoLibraryRoundedIcon from "@mui/icons-material/PhotoLibraryRounded";
 import DynamicFeedRoundedIcon from "@mui/icons-material/DynamicFeedRounded";
@@ -10,7 +20,6 @@ import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import MainLayout from "@/app/mainLayout";
 import RightDrawer from "@/components/common/RightDrawer";
 import EmptyState from "@/components/common/EmptyState";
-import AddPostDrawer from "@/components/pages/myAccount/components/post/AddPostDrawer";
 import { COLORS } from "@/constants/colors";
 import { useGetInfinitePosts } from "@/hooks/usePosts";
 import { type Posts, Visibility } from "@/services/post/postInterfaces";
@@ -21,6 +30,12 @@ import FeedStories from "./sections/FeedStories";
 import FeedSidebar from "./sections/FeedSidebar";
 import BackToTop from "./sections/BackToTop";
 import { FEED_DURATION, FEED_EASE } from "./feedMotion";
+
+// Opened on demand: loaded after the page instead of in its first bundle.
+const AddPostDrawer = dynamic(
+  () => import("@/components/pages/myAccount/components/post/AddPostDrawer"),
+  { ssr: false },
+);
 
 type FeedUser = {
   id?: string;
@@ -41,7 +56,10 @@ function useLoadMore(enabled: boolean, onVisible: () => void) {
   useEffect(() => {
     const el = ref.current;
     if (!el || !enabled) return;
-    const observer = new IntersectionObserver((entries) => entries[0]?.isIntersecting && onVisible(), { rootMargin: "600px 0px" });
+    const observer = new IntersectionObserver(
+      (entries) => entries[0]?.isIntersecting && onVisible(),
+      { rootMargin: "600px 0px" },
+    );
     observer.observe(el);
     return () => observer.disconnect();
   }, [enabled, onVisible]);
@@ -62,7 +80,10 @@ export default function FeedView() {
 
   const postList = useMemo(() => posts.data?.pages.flatMap((p) => p.posts) ?? [], [posts.data]);
   // The feed shows photo and text posts; videos live in Reels (in the navbar).
-  const visiblePosts = useMemo(() => postList.filter((p: Posts) => p.post_type !== "video"), [postList]);
+  const visiblePosts = useMemo(
+    () => postList.filter((p: Posts) => p.post_type !== "video"),
+    [postList],
+  );
 
   const loadMoreRef = useLoadMore(!!posts.hasNextPage && !posts.isFetchingNextPage, () => {
     if (posts.hasNextPage && !posts.isFetchingNextPage) void posts.fetchNextPage();
@@ -80,7 +101,10 @@ export default function FeedView() {
   };
 
   const postSkeleton = (key: number) => (
-    <Box key={key} sx={{ ...cardSx, borderRadius: { xs: 0, sm: "16px" }, mb: 2, overflow: "hidden" }}>
+    <Box
+      key={key}
+      sx={{ ...cardSx, borderRadius: { xs: 0, sm: "16px" }, mb: 2, overflow: "hidden" }}
+    >
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, p: 1.5 }}>
         <Skeleton variant="circular" width={38} height={38} />
         <Box sx={{ flex: 1 }}>
@@ -88,7 +112,10 @@ export default function FeedView() {
           <Skeleton variant="text" width="25%" />
         </Box>
       </Box>
-      <Skeleton variant="rectangular" sx={{ width: "100%", height: "auto", aspectRatio: "4 / 5" }} />
+      <Skeleton
+        variant="rectangular"
+        sx={{ width: "100%", height: "auto", aspectRatio: "4 / 5" }}
+      />
       <Box sx={{ p: 1.5 }}>
         <Skeleton variant="text" width="30%" />
         <Skeleton variant="text" width="85%" />
@@ -106,7 +133,19 @@ export default function FeedView() {
         action={action}
         minHeight={260}
         icon={
-          <Box sx={{ width: 56, height: 56, borderRadius: "16px", mx: "auto", mb: 2, display: "grid", placeItems: "center", bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10, color: accent }}>
+          <Box
+            sx={{
+              width: 56,
+              height: 56,
+              borderRadius: "16px",
+              mx: "auto",
+              mb: 2,
+              display: "grid",
+              placeItems: "center",
+              bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10,
+              color: accent,
+            }}
+          >
             <DynamicFeedRoundedIcon />
           </Box>
         }
@@ -131,7 +170,11 @@ export default function FeedView() {
       return stateCard(
         "Couldn't load the feed",
         "Something went wrong while loading posts. Check your connection and try again.",
-        <Button onClick={() => posts.refetch()} startIcon={<RefreshRoundedIcon />} sx={primaryBtnSx}>
+        <Button
+          onClick={() => posts.refetch()}
+          startIcon={<RefreshRoundedIcon />}
+          sx={primaryBtnSx}
+        >
           Try again
         </Button>,
       );
@@ -139,7 +182,9 @@ export default function FeedView() {
     if (visiblePosts.length === 0) {
       return stateCard(
         "No posts yet",
-        canCreate ? "Be the first to share a photo or update with your community." : "Posts from local providers and people near you will show up here.",
+        canCreate
+          ? "Be the first to share a photo or update with your community."
+          : "Posts from local providers and people near you will show up here.",
         canCreate ? (
           <Button onClick={() => setComposerOpen(true)} sx={primaryBtnSx}>
             Create a post
@@ -159,12 +204,39 @@ export default function FeedView() {
     if (!posts.hasNextPage && visiblePosts.length > 0 && !posts.isLoading) {
       return (
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1, py: 4 }}>
-          <Box sx={{ width: 36, height: 36, borderRadius: "50%", display: "grid", placeItems: "center", bgcolor: COLORS.PURPLE_ALPHA_10, color: COLORS.PRIMARY_PURPLE }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
-              <motion.path d="M5 12.5l4.5 4.5L19 7.5" initial={reduce ? false : { pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, ease: FEED_EASE }} />
+          <Box
+            sx={{
+              width: 36,
+              height: 36,
+              borderRadius: "50%",
+              display: "grid",
+              placeItems: "center",
+              bgcolor: COLORS.PURPLE_ALPHA_10,
+              color: COLORS.PRIMARY_PURPLE,
+            }}
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              aria-hidden
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <motion.path
+                d="M5 12.5l4.5 4.5L19 7.5"
+                initial={reduce ? false : { pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 0.5, ease: FEED_EASE }}
+              />
             </svg>
           </Box>
-          <Typography sx={{ color: "text.secondary", fontSize: "0.86rem" }}>You&apos;re all caught up</Typography>
+          <Typography sx={{ color: "text.secondary", fontSize: "0.86rem" }}>
+            You&apos;re all caught up
+          </Typography>
         </Box>
       );
     }
@@ -173,8 +245,24 @@ export default function FeedView() {
 
   return (
     <MainLayout flushTop>
-      <Box sx={{ bgcolor: dark ? "background.default" : COLORS.NEW_UI.PAGE_BG_LIGHT, minHeight: "100vh", pb: { xs: 2, lg: 8 } }}>
-        <Typography component="h1" sx={{ position: "absolute", width: "1px", height: "1px", overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap" }}>
+      <Box
+        sx={{
+          bgcolor: dark ? "background.default" : COLORS.NEW_UI.PAGE_BG_LIGHT,
+          minHeight: "100vh",
+          pb: { xs: 2, lg: 8 },
+        }}
+      >
+        <Typography
+          component="h1"
+          sx={{
+            position: "absolute",
+            width: "1px",
+            height: "1px",
+            overflow: "hidden",
+            clip: "rect(0 0 0 0)",
+            whiteSpace: "nowrap",
+          }}
+        >
           Kartsquare feed — stories, posts and reels
         </Typography>
         {/* Same container and side padding as the services list; phones stay edge-to-edge. */}
@@ -184,7 +272,10 @@ export default function FeedView() {
               display: "grid",
               // Posts sit in one centred column of a readable width on every screen;
               // from lg the suggestions rail sits beside it and the pair is centred.
-              gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: `minmax(0, ${FEED_COLUMN_MAX}px) 340px` },
+              gridTemplateColumns: {
+                xs: "minmax(0, 1fr)",
+                lg: `minmax(0, ${FEED_COLUMN_MAX}px) 340px`,
+              },
               justifyContent: "center",
               gap: { lg: 4 },
               pt: { xs: 0, sm: 3 },
@@ -195,59 +286,97 @@ export default function FeedView() {
               {isAuthenticated && (
                 <>
                   <Box sx={{ mb: { xs: 0, sm: 2 } }}>
-                    <FeedStories currentUser={currentUser} onCreatePost={canCreate ? () => setComposerOpen(true) : undefined} />
+                    <FeedStories
+                      currentUser={currentUser}
+                      onCreatePost={canCreate ? () => setComposerOpen(true) : undefined}
+                    />
                   </Box>
 
                   {/* Composer (tablet/desktop); phones use the + button. Providers only. */}
                   {canCreate && (
-                  <Box sx={{ ...cardSx, display: { xs: "none", sm: "flex" }, alignItems: "center", gap: 1.5, p: 1.75, mb: 2 }}>
-                    <Avatar src={currentUser?.profile_pic || undefined} alt={myName} sx={{ width: 40, height: 40, fontWeight: 700, bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10, color: accent }}>
-                      {myName.charAt(0).toUpperCase()}
-                    </Avatar>
-                    <ButtonBase
-                      onClick={() => setComposerOpen(true)}
+                    <Box
                       sx={{
-                        flex: 1,
-                        justifyContent: "flex-start",
-                        height: 42,
-                        px: 2,
-                        borderRadius: "999px",
-                        bgcolor: dark ? COLORS.NEW_UI.SURFACE_SOFT_DARK : COLORS.NEW_UI.SURFACE_SOFT_LIGHT,
-                        border: "1px solid",
-                        borderColor: border,
-                        color: "text.secondary",
-                        fontSize: "0.9rem",
-                        transition: "transform 120ms ease, border-color 120ms ease",
-                        "&:hover": { borderColor: COLORS.PRIMARY_PURPLE },
-                        "&:active": { transform: "scale(0.99)" },
-                        "@media (prefers-reduced-motion: reduce)": { transition: "none", "&:active": { transform: "none" } },
+                        ...cardSx,
+                        display: { xs: "none", sm: "flex" },
+                        alignItems: "center",
+                        gap: 1.5,
+                        p: 1.75,
+                        mb: 2,
                       }}
                     >
-                      Share a photo, video or update…
-                    </ButtonBase>
-                    <Button
-                      onClick={() => setComposerOpen(true)}
-                      variant="outlined"
-                      startIcon={<PhotoLibraryRoundedIcon sx={{ fontSize: 18 }} />}
-                      sx={{
-                        borderColor: dark ? COLORS.NEW_UI.OUTLINE_DARK : COLORS.NEW_UI.OUTLINE_LIGHT,
-                        color: "text.primary",
-                        fontWeight: 700,
-                        fontSize: "0.84rem",
-                        borderRadius: "10px",
-                        textTransform: "none",
-                        whiteSpace: "nowrap",
-                        "&:hover": { borderColor: COLORS.PRIMARY_PURPLE, color: COLORS.PRIMARY_PURPLE },
-                      }}
-                    >
-                      Photo / Video
-                    </Button>
-                  </Box>
+                      <Avatar
+                        src={currentUser?.profile_pic || undefined}
+                        alt={myName}
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          fontWeight: 700,
+                          bgcolor: dark ? COLORS.NEW_UI.CHIP_BG_DARK : COLORS.PURPLE_ALPHA_10,
+                          color: accent,
+                        }}
+                      >
+                        {myName.charAt(0).toUpperCase()}
+                      </Avatar>
+                      <ButtonBase
+                        onClick={() => setComposerOpen(true)}
+                        sx={{
+                          flex: 1,
+                          justifyContent: "flex-start",
+                          height: 42,
+                          px: 2,
+                          borderRadius: "999px",
+                          bgcolor: dark
+                            ? COLORS.NEW_UI.SURFACE_SOFT_DARK
+                            : COLORS.NEW_UI.SURFACE_SOFT_LIGHT,
+                          border: "1px solid",
+                          borderColor: border,
+                          color: "text.secondary",
+                          fontSize: "0.9rem",
+                          transition: "transform 120ms ease, border-color 120ms ease",
+                          "&:hover": { borderColor: COLORS.PRIMARY_PURPLE },
+                          "&:active": { transform: "scale(0.99)" },
+                          "@media (prefers-reduced-motion: reduce)": {
+                            transition: "none",
+                            "&:active": { transform: "none" },
+                          },
+                        }}
+                      >
+                        Share a photo, video or update…
+                      </ButtonBase>
+                      <Button
+                        onClick={() => setComposerOpen(true)}
+                        variant="outlined"
+                        startIcon={<PhotoLibraryRoundedIcon sx={{ fontSize: 18 }} />}
+                        sx={{
+                          borderColor: dark
+                            ? COLORS.NEW_UI.OUTLINE_DARK
+                            : COLORS.NEW_UI.OUTLINE_LIGHT,
+                          color: "text.primary",
+                          fontWeight: 700,
+                          fontSize: "0.84rem",
+                          borderRadius: "10px",
+                          textTransform: "none",
+                          whiteSpace: "nowrap",
+                          "&:hover": {
+                            borderColor: COLORS.PRIMARY_PURPLE,
+                            color: COLORS.PRIMARY_PURPLE,
+                          },
+                        }}
+                      >
+                        Photo / Video
+                      </Button>
+                    </Box>
                   )}
                 </>
               )}
 
-              <Box id="feed-panel" component={motion.div} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: FEED_DURATION.enter, ease: FEED_EASE }}>
+              <Box
+                id="feed-panel"
+                component={motion.div}
+                initial={reduce ? false : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: FEED_DURATION.enter, ease: FEED_EASE }}
+              >
                 {renderPosts()}
               </Box>
 
@@ -262,13 +391,17 @@ export default function FeedView() {
             </Box>
           </Box>
         </Container>
-
       </Box>
 
       <BackToTop />
 
       {canCreate && (
-        <RightDrawer open={composerOpen} onClose={() => setComposerOpen(false)} title="Create post" width={520}>
+        <RightDrawer
+          open={composerOpen}
+          onClose={() => setComposerOpen(false)}
+          title="Create post"
+          width={520}
+        >
           <AddPostDrawer onClose={() => setComposerOpen(false)} />
         </RightDrawer>
       )}

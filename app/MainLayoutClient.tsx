@@ -1,16 +1,25 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Box, useTheme } from "@mui/material";
 import Nav from "@/components/common/Nav";
 import Footer from "@/components/common/Footer";
-import ProfileDrawer from "@/components/common/ProfileDrawer";
-import Ai from "@/components/common/Ai";
 import AIBotton from "@/components/common/Ai/AIBotton";
-import LoginModal from "@/components/common/loginModel";
 import { COLORS } from "@/constants/colors";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setAiOpen } from "@/features/ui/uiSlice";
+import { useLazyMount, usePrefetchWhenIdle } from "@/hooks/useLazyMount";
+
+// Overlays are code-split: their code (reels viewer, Swiper, AI chat + maps, login form + Yup) is
+// not needed to show a page, so it is fetched while the browser is idle and mounted on first open.
+const loadProfileDrawer = () => import("@/components/common/ProfileDrawer");
+const loadAi = () => import("@/components/common/Ai");
+const loadLoginModal = () => import("@/components/common/loginModel");
+const ProfileDrawer = dynamic(loadProfileDrawer, { ssr: false });
+const Ai = dynamic(loadAi, { ssr: false });
+const LoginModal = dynamic(loadLoginModal, { ssr: false });
+const OVERLAY_LOADERS = [loadAi, loadProfileDrawer, loadLoginModal];
 
 export default function MainLayoutClient({
   children,
@@ -23,6 +32,12 @@ export default function MainLayoutClient({
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const aiOpen = useAppSelector((state) => state.ui.isAiOpen);
+  const profileOpen = useAppSelector((state) => state.profileDrawer.isOpen);
+  const loginOpen = useAppSelector((state) => state.loginModal.isOpen);
+  const mountAi = useLazyMount(aiOpen);
+  const mountProfile = useLazyMount(profileOpen);
+  const mountLogin = useLazyMount(loginOpen);
+  usePrefetchWhenIdle(OVERLAY_LOADERS);
 
   return (
     <>
@@ -77,7 +92,15 @@ export default function MainLayoutClient({
             color: "text.secondary",
           }}
         >
-          <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", columnGap: 2, rowGap: 0.5 }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              columnGap: 2,
+              rowGap: 0.5,
+            }}
+          >
             {[
               { label: "About us", href: "/about-us" },
               { label: "Contact", href: "/contact-us" },
@@ -104,10 +127,10 @@ export default function MainLayoutClient({
           </Box>
           <Box component="span">© {new Date().getFullYear()} Kartsquare</Box>
         </Box>
-        <ProfileDrawer />
-        <Ai open={aiOpen} onClose={() => dispatch(setAiOpen(false))} />
+        {mountProfile && <ProfileDrawer />}
+        {mountAi && <Ai open={aiOpen} onClose={() => dispatch(setAiOpen(false))} />}
       </Box>
-      <LoginModal />
+      {mountLogin && <LoginModal />}
       {/* Footer is desktop/tablet only; mobile uses the bottom nav. Hidden inside the native app. */}
       <Box data-native-hide sx={{ display: { xs: "none", md: "block" } }}>
         <Footer />

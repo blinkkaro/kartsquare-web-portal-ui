@@ -1,39 +1,30 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
-import {
-  Box,
-  Typography,
-  Grid,
-  Avatar,
-  Card,
-  CardMedia,
-  CardContent,
-  Rating,
-  useTheme,
-  Divider,
-  Paper,
-} from "@mui/material";
+import { useSearchParams } from "next/navigation";
+import { Box, Typography, Grid, Avatar, useTheme, Divider, Paper } from "@mui/material";
+import { Star, Person, Business, Search as SearchIcon } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
-import { Star, Person, Business, Search as SearchIcon } from "@mui/icons-material";
-import { useSearchParams, useRouter } from "next/navigation";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { searchService } from "@/services/search/searchService";
-import { SearchUser, SearchService as SearchServiceType, SearchService } from "@/services/search/searchInterface";
+import {
+  type SearchUser,
+  type SearchService as SearchServiceType,
+  type SearchService,
+} from "@/services/search/searchInterface";
 import ServiceCard from "@/components/ServiceCard";
-import { Service } from "@/services/serviceList/listInteraface";
-import { useDispatch } from "react-redux";
+import type { Service } from "@/services/serviceList/listInteraface";
 import { openDrawer } from "@/features/ui/profileDrawerSlice";
 
 const SearchResultsView: React.FC = () => {
   const theme = useTheme();
-  const router = useRouter();
   const dispatch = useDispatch();
   const searchParams = useSearchParams();
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
-  
+
   // Read the initial query synchronously (not just in the effect below) so the
   // first render — server and client — already matches reality: a query-less
   // visit shows the prompt immediately instead of always rendering a spinner
@@ -55,7 +46,7 @@ const SearchResultsView: React.FC = () => {
     setUsers([]);
     setServices([]);
     setHasMore(true);
-    
+
     if (query.trim()) {
       performSearch(query, 1, true);
     } else {
@@ -67,7 +58,7 @@ const SearchResultsView: React.FC = () => {
     try {
       setLoading(reset);
       const response = await searchService.search(query, 20, pageNum);
-      
+
       if (response.status === "success") {
         if (reset) {
           setUsers(response.data.users || []);
@@ -76,8 +67,9 @@ const SearchResultsView: React.FC = () => {
           setUsers((prev) => [...prev, ...(response.data.users || [])]);
           setServices((prev) => [...prev, ...(response.data.services || [])]);
         }
-        
-        const totalResults = (response.data.users?.length || 0) + (response.data.services?.length || 0);
+
+        const totalResults =
+          (response.data.users?.length || 0) + (response.data.services?.length || 0);
         setHasMore(totalResults >= 20);
       }
     } catch (error) {
@@ -101,7 +93,7 @@ const SearchResultsView: React.FC = () => {
           performSearch(searchQuery, nextPage, false);
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     if (loadMoreRef.current) {
@@ -120,41 +112,46 @@ const SearchResultsView: React.FC = () => {
     dispatch(openDrawer({ userId }));
   };
 
-  const convertToServiceCard = (service:SearchService) : any => {
-    return {
+  // Search returns a subset of a service; the card reads only these fields (search lists live services,
+  // so the owner-only status badge has nothing to show).
+  const convertToServiceCard = (service: SearchService): Service =>
+    ({
       service_id: service.id,
+      slug: service.slug,
       service_name: service.name,
+      service_desc: service.description ?? "",
+      review_count: service.review_count ?? 0,
       price: service.price,
       avg_service_rating: service.rating,
-      image_urls: [service.image],
-      provider_id: "",
+      image_urls: service.image ? [service.image] : [],
+      provider_id: service.provider_id ?? "",
       provider_name: service.provider_name,
-      provider_image_url: null,
+      provider_image_url: "",
       category_id: "",
-      category_name: "",
-      subcategory_id: "",
-      subcategory_name: "",
-      description: "",
-      city: "",
-      state: "",
-      country: "",
-      pincode: "",
-      latitude: null,
-      longitude: null,
-      service_provider_latitude: null,
-      service_provider_longitude: null,
-      is_active: true,
+      category_name: [],
       created_at: "",
       updated_at: "",
-    };
-  };
+    }) satisfies Partial<Service> as unknown as Service;
 
   if (loading && users.length === 0 && services.length === 0) {
     return (
       <>
         {/* Results fetch is client-only, so this is what SSR always renders
             when a query is present — keep a real H1 in it. */}
-        <Typography component="h1" sx={{ position: "absolute", width: 1, height: 1, p: 0, m: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
+        <Typography
+          component="h1"
+          sx={{
+            position: "absolute",
+            width: 1,
+            height: 1,
+            p: 0,
+            m: -1,
+            overflow: "hidden",
+            clip: "rect(0,0,0,0)",
+            whiteSpace: "nowrap",
+            border: 0,
+          }}
+        >
           {`Search results for "${searchQuery}"`}
         </Typography>
         <CenteredLoader minHeight="400px" size={60} />
@@ -208,7 +205,14 @@ const SearchResultsView: React.FC = () => {
   const hasResults = users.length > 0 || services.length > 0;
 
   return (
-    <Box sx={{ py: 3 , backgroundColor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT , padding: 3 , height: "100%" }}>
+    <Box
+      sx={{
+        py: 3,
+        backgroundColor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
+        padding: 3,
+        height: "100%",
+      }}
+    >
       {/* Search Header */}
       <Box sx={{ mb: 4 }}>
         <Typography
@@ -261,7 +265,7 @@ const SearchResultsView: React.FC = () => {
               mb: 1,
             }}
           >
-            {t("noResultsFound")} "{searchQuery}"
+            {t("noResultsFound")} &ldquo;{searchQuery}&rdquo;
           </Typography>
           <Typography
             variant="body2"
@@ -296,9 +300,7 @@ const SearchResultsView: React.FC = () => {
                     variant="h5"
                     sx={{
                       fontWeight: 600,
-                      color: isDark
-                        ? COLORS.TEXT.PRIMARY_DARK
-                        : COLORS.TEXT.PRIMARY_LIGHT,
+                      color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                     }}
                   >
                     {t("users")} ({users.length})
@@ -314,9 +316,7 @@ const SearchResultsView: React.FC = () => {
                           borderRadius: "16px",
                           cursor: "pointer",
                           border: `1px solid ${
-                            isDark
-                              ? COLORS.BORDER.DEFAULT_DARK
-                              : COLORS.BORDER.DEFAULT_LIGHT
+                            isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
                           }`,
                           bgcolor: isDark
                             ? COLORS.BACKGROUND.PAPER_DARK
@@ -443,9 +443,7 @@ const SearchResultsView: React.FC = () => {
                     variant="h5"
                     sx={{
                       fontWeight: 600,
-                      color: isDark
-                        ? COLORS.TEXT.PRIMARY_DARK
-                        : COLORS.TEXT.PRIMARY_LIGHT,
+                      color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
                     }}
                   >
                     {t("services")} ({services.length})
@@ -473,9 +471,7 @@ const SearchResultsView: React.FC = () => {
                   py: 4,
                 }}
               >
-                {loading && (
-                  <LogoLoader size={40} />
-                )}
+                {loading && <LogoLoader size={40} />}
               </Box>
             </Grid>
           )}

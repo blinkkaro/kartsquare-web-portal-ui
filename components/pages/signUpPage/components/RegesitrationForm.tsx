@@ -14,23 +14,19 @@ import {
 import { useForm } from "react-hook-form";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { SignUpSchema, SignUpFormData } from "../signUpSchema";
-import Input from "@/components/common/Input";
-import Button from "@/components/common/Button";
-import { useTranslate } from "@/hooks/useTranslate";
-import { countries } from "./data";
-import { AppUserType } from "@/services/auth/auth.interface";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PersonIcon from "@mui/icons-material/PersonOutline";
 import EmailIcon from "@mui/icons-material/EmailOutlined";
 import LockIcon from "@mui/icons-material/LockOutlined";
-import CalendarIcon from "@mui/icons-material/CalendarTodayOutlined";
-import FemaleIcon from "@mui/icons-material/WomanOutlined";
-import MaleIcon from "@mui/icons-material/ManOutlined";
 import IconButton from "@mui/material/IconButton";
 import { COLORS } from "@/constants/colors";
-import GoogleIcon from "@mui/icons-material/Google";
+import { AppUserType } from "@/services/auth/auth.interface";
+import { useTranslate } from "@/hooks/useTranslate";
+import Button from "@/components/common/Button";
+import Input from "@/components/common/Input";
+import { SignUpSchema, type SignUpFormData } from "../signUpSchema";
+import { countries } from "./data";
 
 interface RegistrationFormProps {
   onSubmit: (data: SignUpFormData) => void;
@@ -64,36 +60,21 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
   // Calculate max date (13 years ago)
   const today = new Date();
-  const maxDate = new Date(
-    today.getFullYear() - 13,
-    today.getMonth(),
-    today.getDate()
-  )
+  const maxDate = new Date(today.getFullYear() - 13, today.getMonth(), today.getDate())
     .toISOString()
     .split("T")[0];
 
-  const isServiceProvider =
-    role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER;
+  const isServiceProvider = role === AppUserType.SERVICE_PROVIDER || role === AppUserType.SUPPLIER;
 
-  const {
-    control,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<SignUpFormData>({
+  const { control, handleSubmit, setValue } = useForm<SignUpFormData>({
     resolver: yupResolver(SignUpSchema(t, role)),
     defaultValues: {
       first_name: "",
       last_name: "",
       email: "",
       phone_number: isServiceProvider ? initialData?.whatsapp_number || "" : "",
-      country_code: isServiceProvider
-        ? initialData?.whatsapp_country_code || "+91"
-        : "+91",
-      gender: isServiceProvider
-        ? ("PREFER_NOT_TO_SAY" as SignUpFormData["gender"])
-        : undefined,
+      country_code: isServiceProvider ? initialData?.whatsapp_country_code || "+91" : "+91",
+      gender: undefined, // not collected for service providers
       country: "India",
       birth_date: maxDate,
       role: role,
@@ -109,44 +90,24 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
     if (initialData.email) setValue("email", initialData.email);
     // Always sync hidden fields from lead data for service providers
     if (isServiceProvider) {
-      setValue(
-        "phone_number",
-        initialData.whatsapp_number || initialData.phone_number || ""
-      );
+      setValue("phone_number", initialData.whatsapp_number || initialData.phone_number || "");
       setValue(
         "country_code",
-        initialData.whatsapp_country_code || initialData.country_code || "+91"
+        initialData.whatsapp_country_code || initialData.country_code || "+91",
       );
       setValue("country", "India");
       setValue("birth_date", maxDate);
-      setValue("gender", "PREFER_NOT_TO_SAY" as SignUpFormData["gender"]);
     } else {
-      if (initialData.phone_number)
-        setValue("phone_number", initialData.phone_number);
-      if (initialData.country_code)
-        setValue("country_code", initialData.country_code);
+      if (initialData.phone_number) setValue("phone_number", initialData.phone_number);
+      if (initialData.country_code) setValue("country_code", initialData.country_code);
       setValue("country", "India");
-      if (initialData.birth_date)
-        setValue("birth_date", initialData.birth_date.split("T")[0]);
-      if (initialData.gender)
-        setValue("gender", initialData.gender as SignUpFormData["gender"]);
+      if (initialData.birth_date) setValue("birth_date", initialData.birth_date.split("T")[0]);
+      if (initialData.gender) setValue("gender", initialData.gender as SignUpFormData["gender"]);
     }
-    if (initialData.whatsapp_number)
-      setValue("whatsapp_number", initialData.whatsapp_number);
+    if (initialData.whatsapp_number) setValue("whatsapp_number", initialData.whatsapp_number);
     if (initialData.whatsapp_country_code)
       setValue("whatsapp_country_code", initialData.whatsapp_country_code);
   }, [initialData, setValue, isServiceProvider, maxDate]);
-
-  const selectedCountryCode = watch("country_code");
-  const whatsappCountryCode = watch("whatsapp_country_code");
-  const gender = watch("gender");
-  const whatsappNumber = watch("whatsapp_number");
-  const selectedCountry = countries.find(
-    (c) => c.phone_code === selectedCountryCode
-  );
-  const selectedWhatsappCountry = countries.find(
-    (c) => c.phone_code === whatsappCountryCode
-  );
 
   // React.useEffect(() => {
   //   if (isSameAsPhone) {
@@ -188,67 +149,33 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       <Grid container spacing={2}>
         {/* Section: Personal Identity */}
 
-        {isServiceProvider ? (
-          <Grid size={{ xs: 12 }}>
-            <Typography
-              variant="caption"
-              sx={{
-                mb: 1,
-                fontWeight: 600,
-                color: "#374151",
-                fontSize: { xs: "0.8rem", sm: "0.875rem" },
-              }}
-            >
-              Full Name*
-            </Typography>
-            <Input
-              name="first_name"
-              control={control}
-              placeholder="Arjun Sharma"
-              startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-              sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-            />
-          </Grid>
-        ) : (
-          <>
-            <Grid size={{ xs: 6 }}>
-              <Typography
-                variant="caption"
-                sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
-              >
-                {t("first_name")}*
-              </Typography>
-              <Input
-                name="first_name"
-                control={control}
-                placeholder="Arjun"
-                startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-              />
-            </Grid>
-            <Grid size={{ xs: 6 }}>
-              <Typography
-                variant="caption"
-                sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
-              >
-                {t("last_name")}*
-              </Typography>
-              <Input
-                name="last_name"
-                control={control}
-                placeholder="Sharma"
-                startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
-              />
-            </Grid>
-          </>
-        )}
+        <Grid size={{ xs: 6 }}>
+          <Typography variant="caption" sx={{ mb: 1, fontWeight: 600, color: "#374151" }}>
+            {t("first_name")}*
+          </Typography>
+          <Input
+            name="first_name"
+            control={control}
+            placeholder="Arjun"
+            startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+          />
+        </Grid>
+        <Grid size={{ xs: 6 }}>
+          <Typography variant="caption" sx={{ mb: 1, fontWeight: 600, color: "#374151" }}>
+            {t("last_name")}*
+          </Typography>
+          <Input
+            name="last_name"
+            control={control}
+            placeholder="Sharma"
+            startIcon={<PersonIcon sx={{ color: COLORS.PRIMARY_PURPLE }} />}
+            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
+          />
+        </Grid>
 
         <Grid size={{ xs: 12 }}>
-          <Typography
-            variant="caption"
-            sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
-          >
+          <Typography variant="caption" sx={{ mb: 1, fontWeight: 600, color: "#374151" }}>
             {t("email_address")}*
           </Typography>
           <Input
@@ -261,10 +188,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         </Grid>
 
         <Grid size={{ xs: 12 }}>
-          <Typography
-            variant="caption"
-            sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
-          >
+          <Typography variant="caption" sx={{ mb: 1, fontWeight: 600, color: "#374151" }}>
             {t("password")}*
           </Typography>
           <Input
@@ -298,10 +222,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         {!isServiceProvider && (
           <>
             <Grid size={{ xs: 12 }}>
-              <Typography
-                variant="caption"
-                sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
-              >
+              <Typography variant="caption" sx={{ mb: 1, fontWeight: 600, color: "#374151" }}>
                 {t("phone_number")}*
               </Typography>
               <Box sx={{ display: "flex", gap: 1 }}>
@@ -341,10 +262,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             </Grid>
 
             <Grid size={{ xs: 6 }}>
-              <Typography
-                variant="caption"
-                sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
-              >
+              <Typography variant="caption" sx={{ mb: 1, fontWeight: 600, color: "#374151" }}>
                 {t("birth_date")}*
               </Typography>
               <Input
@@ -366,10 +284,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             </Grid>
 
             <Grid size={{ xs: 6 }}>
-              <Typography
-                variant="caption"
-                sx={{ mb: 1, fontWeight: 600, color: "#374151" }}
-              >
+              <Typography variant="caption" sx={{ mb: 1, fontWeight: 600, color: "#374151" }}>
                 {t("gender")}*
               </Typography>
               <Input
@@ -379,13 +294,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: "12px" } }}
                 SelectProps={{
                   displayEmpty: true,
-                  renderValue: (selected: any) => {
+                  renderValue: (value: unknown) => {
+                    const selected = typeof value === "string" ? value : "";
                     if (!selected) {
                       return (
-                        <Typography
-                          color="textSecondary"
-                          sx={{ fontSize: "0.875rem" }}
-                        >
+                        <Typography color="textSecondary" sx={{ fontSize: "0.875rem" }}>
                           {t("select_gender")}
                         </Typography>
                       );
@@ -394,7 +307,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                       MALE: t("male"),
                       FEMALE: t("female"),
                       OTHER: t("other"),
-                      PREFER_NOT_TO_SAY: t("prefer_not_to_say"),
                     };
                     return genderOptions[selected] || selected;
                   },
@@ -410,9 +322,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
                 <MenuItem value="MALE">{t("male")}</MenuItem>
                 <MenuItem value="FEMALE">{t("female")}</MenuItem>
                 <MenuItem value="OTHER">{t("other")}</MenuItem>
-                <MenuItem value="PREFER_NOT_TO_SAY">
-                  {t("prefer_not_to_say")}
-                </MenuItem>
               </Input>
             </Grid>
           </>

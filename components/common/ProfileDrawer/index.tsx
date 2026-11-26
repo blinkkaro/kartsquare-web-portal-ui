@@ -1,7 +1,13 @@
-import { CHAT_ENABLED } from "@/lib/featureFlags";
-import { RootState } from "@/store/store";
+"use client";
+
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
+import { Box, Typography } from "@mui/material";
+import toast from "react-hot-toast";
+import { CHAT_ENABLED } from "@/lib/featureFlags";
+import { type RootState } from "@/store/store";
 import { closeDrawer } from "@/features/ui/profileDrawerSlice";
 import {
   useProviderProfile,
@@ -9,36 +15,31 @@ import {
   useProviderReels,
   useSupplierProfile,
 } from "@/hooks/useProviderProfile";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
+import { useTranslate } from "@/hooks/useTranslate";
+import { AppUserType } from "@/services/auth/auth.interface";
+import { useAppSelector } from "@/store/hooks";
+import { type Posts } from "@/services/post/postInterfaces";
+import { startConversation } from "@/services/chat/chatService";
+import ReelFeedGrid from "../../pages/myAccount/components/post/ReelFeedGrid";
 import ProfileCard from "./components/ProfileCard";
 import ProfileTabs from "./components/ProfileTabs";
 import ProfilePosts from "./components/ProfilePosts";
 import ProfileServices from "./components/ProfileServices";
-import { Box, Typography, useTheme } from "@mui/material";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
-import { COLORS } from "@/constants/colors";
 import ProfileDrawerWrapper from "./components/ProfileDrawerWrapper";
-import { useTranslate } from "@/hooks/useTranslate";
-import { AppUserType } from "@/services/auth/auth.interface";
 import ProfileProducts from "./components/ProfileProducts";
-import { useRouter } from "next/navigation";
-import { useAppSelector } from "@/store/hooks";
-import axios from "axios";
-import toast from "react-hot-toast";
-import ReelFeedGrid from "../../pages/myAccount/components/post/ReelFeedGrid";
-import ReelViewModal from "../../pages/myAccount/components/post/ReelViewModal";
-import { Posts } from "@/services/post/postInterfaces";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
+// Opened on demand: loaded after the page instead of in its first bundle.
+const ReelViewModal = dynamic(() => import("../../pages/myAccount/components/post/ReelViewModal"), {
+  ssr: false,
+});
 
 export function ProfileDrawer() {
   const dispatch = useDispatch();
-  const { isOpen, userId, role, username } = useSelector(
-    (state: RootState) => state.profileDrawer,
-  );
+  const { isOpen, userId, role, username } = useSelector((state: RootState) => state.profileDrawer);
   const { t } = useTranslate();
   const router = useRouter();
   const { token } = useAppSelector((state) => state.auth);
-
 
   const isSupplier = role === AppUserType.SUPPLIER;
 
@@ -54,15 +55,14 @@ export function ProfileDrawer() {
   } = useSupplierProfile(isSupplier ? username || "" : "");
 
   const profile = isSupplier ? supplierProfileData?.profile : providerProfile;
+  // A supplier's posts and chats belong to their user account, not the store profile id.
+  const supplierUserId = supplierProfileData?.profile?.user_id;
   const isLoading = isSupplier ? supplierLoading : providerLoading;
   const error = isSupplier ? supplierError : providerError;
 
-  const effectiveUserId = isSupplier
-    ? (profile as any)?.user_id || profile?.id || userId
-    : userId;
+  const effectiveUserId = isSupplier ? supplierUserId || profile?.id || userId : userId;
 
-  const { data: postsData, isLoading: postsLoading } =
-    useProviderPosts(effectiveUserId);
+  const { data: postsData, isLoading: postsLoading } = useProviderPosts(effectiveUserId);
   const {
     data: reelsData,
     isLoading: reelsLoading,
@@ -96,9 +96,7 @@ export function ProfileDrawer() {
     }
 
     // Attempt to get the target person ID
-    const targetUserId = isSupplier
-      ? (profile as any)?.user_id || profile?.id
-      : userId;
+    const targetUserId = isSupplier ? supplierUserId || profile?.id : userId;
 
     if (!targetUserId) {
       toast.error("User ID not found for chatting.");
@@ -106,20 +104,9 @@ export function ProfileDrawer() {
     }
 
     try {
-      const res = await axios.post(
-        `${API_URL}/chat/conversations`,
-        {
-          participant2_id: targetUserId,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-
-      if (res.data.status === "success") {
-        dispatch(closeDrawer());
-        router.push(`/chat?conversationId=${res.data.data.id}`);
-      }
+      const conversationId = await startConversation(targetUserId);
+      dispatch(closeDrawer());
+      router.push(`/chat?conversationId=${conversationId}`);
     } catch (err) {
       console.error("Failed to initialize chat", err);
       toast.error("Could not start chat.");
@@ -164,27 +151,17 @@ export function ProfileDrawer() {
 
         {profile && (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <ProfileCard
-              profile={profile}
-              onClose={() => dispatch(closeDrawer())}
-            />
+            <ProfileCard profile={profile} onClose={() => dispatch(closeDrawer())} />
             <ProfileTabs onTabChange={handleTabChange} role={role} />
 
             {/* Content Area Placeholder */}
             {/* Content Area */}
             <Box sx={{ mt: 2 }}>
-              {activeTab === "Posts" && (
-                <ProfilePosts posts={allPosts} isLoading={postsLoading} />
-              )}
+              {activeTab === "Posts" && <ProfilePosts posts={allPosts} isLoading={postsLoading} />}
               {activeTab === "Products" && (
-                <ProfileProducts
-                  products={allProducts}
-                  isLoading={supplierLoading}
-                />
+                <ProfileProducts products={allProducts} isLoading={supplierLoading} />
               )}
-              {activeTab === "Services" && (
-                <ProfileServices userId={userId || ""} />
-              )}
+              {activeTab === "Services" && <ProfileServices userId={userId || ""} />}
               {activeTab === "Reels" && (
                 <ReelFeedGrid
                   reels={allReels}

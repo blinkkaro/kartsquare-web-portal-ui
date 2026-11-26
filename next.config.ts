@@ -18,6 +18,8 @@ const nextConfig: NextConfig = {
       "@mui/material",
       "@mui/icons-material",
       "framer-motion",
+      "@mui/x-date-pickers",
+      "recharts",
     ],
   },
   async redirects() {

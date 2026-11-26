@@ -169,11 +169,17 @@ const ServiceBookingSidebar = ({
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         {[
           {
-            icon: <CheckCircleRoundedIcon sx={{ fontSize: 17, color: COLORS.NEW_UI.VERIFIED_GREEN }} />,
+            icon: <CheckCircleRoundedIcon sx={{ fontSize: 17, color: COLORS.PRIMARY_PURPLE }} />,
             label: "Listed on Kartsquare",
           },
-          { icon: <BoltRoundedIcon sx={{ fontSize: 17 }} />, label: "Contact the provider directly" },
-          { icon: <SupportAgentRoundedIcon sx={{ fontSize: 17 }} />, label: "Dedicated customer support" },
+          {
+            icon: <BoltRoundedIcon sx={{ fontSize: 17 }} />,
+            label: "Contact the provider directly",
+          },
+          {
+            icon: <SupportAgentRoundedIcon sx={{ fontSize: 17 }} />,
+            label: "Dedicated customer support",
+          },
         ].map((item) => (
           <Box key={item.label} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Box

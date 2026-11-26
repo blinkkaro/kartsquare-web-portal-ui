@@ -1,6 +1,8 @@
 "use client";
-import React, { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import React, { useEffect, useMemo } from "react";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { useForm, Controller, type FieldPath } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import {
@@ -16,32 +18,6 @@ import {
   MenuItem,
   alpha,
 } from "@mui/material";
-import Input from "@/components/common/Input";
-import Button from "@/components/common/Button";
-import ImageUpload from "@/components/common/ImageUpload";
-import AddressCard from "@/components/pages/address/components/AddressCard";
-import WarningModel from "@/components/common/WarningModel";
-import ErrorMessage from "@/components/common/ErrorMessage";
-import { useTranslate } from "@/hooks/useTranslate";
-import { useSupplierStore, useUpdateSupplierStore } from "@/hooks/useSupplier";
-import { useRouter } from "next/navigation";
-import { STORE_CATEGORIES, OPERATING_LOCATIONS } from "@/constants/common";
-import { COLORS } from "@/constants/colors";
-import { countries } from "@/data/countries";
-import { verifyDocumentService } from "@/services/auth/verifyDocument.service";
-import { useAppDispatch } from "@/store/hooks";
-import { updateUser } from "@/features/ui/authSlice";
-import { UserRegisterSteps } from "@/types/resgistrationFlow";
-import { secureStorage } from "@/helper/SecureStorage";
-import {
-  useGetAddress,
-  useUpdateAddress,
-  useDeleteAddress,
-} from "@/hooks/useAddress";
-import { Address } from "@/services/address/addressInterface";
-import AddressDrawer from "@/components/common/address/AddressDrawer";
-import LogoLoader from "@/components/common/Loader/LogoLoader";
-
 import StoreOutlinedIcon from "@mui/icons-material/StoreOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -51,6 +27,31 @@ import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
+import Input from "@/components/common/Input";
+import Button from "@/components/common/Button";
+import ImageUpload from "@/components/common/ImageUpload";
+import AddressCard from "@/components/pages/address/components/AddressCard";
+import WarningModel from "@/components/common/WarningModel";
+import ErrorMessage from "@/components/common/ErrorMessage";
+import { useTranslate } from "@/hooks/useTranslate";
+import { useSupplierStore, useUpdateSupplierStore } from "@/hooks/useSupplier";
+import { STORE_CATEGORIES, OPERATING_LOCATIONS } from "@/constants/common";
+import { COLORS } from "@/constants/colors";
+import { countries } from "@/data/countries";
+import { verifyDocumentService } from "@/services/auth/verifyDocument.service";
+import { useAppDispatch } from "@/store/hooks";
+import { updateUser } from "@/features/ui/authSlice";
+import { UserRegisterSteps } from "@/types/resgistrationFlow";
+import { secureStorage } from "@/helper/SecureStorage";
+import { useGetAddress, useUpdateAddress, useDeleteAddress } from "@/hooks/useAddress";
+import { type Address } from "@/services/address/addressInterface";
+import LogoLoader from "@/components/common/Loader/LogoLoader";
+import type { SupplierStore } from "@/services/supplier/supplier.service";
+
+// Opened on demand: loaded after the page instead of in its first bundle.
+const AddressDrawer = dynamic(() => import("@/components/common/address/AddressDrawer"), {
+  ssr: false,
+});
 
 // Section block: left accent, padding, rounded — consistent form layout
 const formSectionStyle = (isDark: boolean) => ({
@@ -59,14 +60,19 @@ const formSectionStyle = (isDark: boolean) => ({
   borderRadius: 2,
   border: `1px solid ${isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT}`,
   borderLeft: `4px solid ${COLORS.PRIMARY_PURPLE}`,
-  bgcolor: isDark
-    ? alpha(COLORS.PRIMARY_PURPLE, 0.03)
-    : alpha(COLORS.PRIMARY_PURPLE, 0.02),
+  bgcolor: isDark ? alpha(COLORS.PRIMARY_PURPLE, 0.03) : alpha(COLORS.PRIMARY_PURPLE, 0.02),
 });
 
 interface StoreStepProps {
   onNext: () => void;
   onBack?: () => void;
+}
+
+const CONTACT_PREF_KEYS = ["show_phone", "allow_calls", "allow_chat", "enquiry_only"] as const;
+
+/** Shape of a validation failure from the API: one entry per invalid field. */
+interface ServerValidationError {
+  response?: { data?: { errors?: { field: string; message: string }[] } };
 }
 
 const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
@@ -101,46 +107,37 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
           .string()
           .trim()
           .max(100, t("valNameMax"))
-          .required(t("store_setup_store_name_required" )),
+          .required(t("store_setup_store_name_required")),
         slug: yup.string().trim().max(100, t("valNameMax")),
         about_us: yup.string().trim().max(2000, t("valDescMax")).optional(),
         contact_email: yup
           .string()
           .trim()
           .max(255, t("valEmailMax"))
-          .email(t("store_setup_invalid_email" ))
+          .email(t("store_setup_invalid_email"))
           .optional(),
         contact_phone: yup
           .string()
           .trim()
-          .required(t("store_setup_contact_phone_required" ))
-          .matches(/^[0-9]{10}$/, t("store_setup_contact_phone_digits" )),
-        country_code: yup
-          .string()
-          .trim()
-          .required(t("countryCodeRequired" )),
-        establishment_year: yup
-          .string()
-          .trim()
-          .max(4, "Invalid Year")
-          .optional(),
+          .required(t("store_setup_contact_phone_required"))
+          .matches(/^[0-9]{10}$/, t("store_setup_contact_phone_digits")),
+        country_code: yup.string().trim().required(t("countryCodeRequired")),
+        establishment_year: yup.string().trim().max(4, "Invalid Year").optional(),
         store_address_id: yup.string().trim().optional(),
         logo_url: yup.string().trim().optional(),
         banner_url: yup.string().trim().optional(),
         categories_served: yup
           .array()
           .of(yup.string().trim())
-          .min(1, t("store_setup_categories_min" ))
-          .required(t("store_setup_categories_required" )),
+          .min(1, t("store_setup_categories_min"))
+          .required(t("store_setup_categories_required")),
         operating_locations: yup.array().of(yup.string().trim()).optional(),
         contact_preferences: yup.array().of(yup.string().trim()).optional(),
-        business_type: yup
-          .string()
-          .trim()
-          .required(t("store_setup_business_type_required" )),
+        business_type: yup.string().trim().required(t("store_setup_business_type_required")),
       }),
     [t],
   );
+  type StoreFormValues = yup.InferType<typeof schema>;
 
   const {
     control,
@@ -194,14 +191,14 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
     setAddressToDelete(id);
   };
 
-  const displayedAddresses = addresses
-    ? [...addresses]
-        .sort(
-          (a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-        )
-        .slice(0, 1)
-    : [];
+  // Newest first. Memoized so effects that depend on it run when the addresses change, not on every render.
+  const displayedAddresses = useMemo(
+    () =>
+      [...(addresses ?? [])]
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice(0, 1),
+    [addresses],
+  );
 
   // Auto-selection effect
   const storeAddressId = watch("store_address_id");
@@ -227,9 +224,13 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
 
   useEffect(() => {
     if (storeData?.data) {
-      const data = storeData.data as any;
+      const data = storeData.data;
+      // The API stores contact preferences as flags; the form shows them as a list of checked keys.
+      const prefs = data.contact_preferences;
+      const checkedPrefs =
+        prefs && typeof prefs === "object" ? CONTACT_PREF_KEYS.filter((key) => prefs[key]) : [];
 
-      const formData = {
+      const formData: Record<string, unknown> = {
         ...data,
         display_name: data.display_name || data.store_name || "",
         about_us: data.about_us || data.description || "",
@@ -244,21 +245,8 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
             : `+${data.country_code}`
           : "+91",
         business_type: data.business_type || "",
+        contact_preferences: checkedPrefs,
       };
-
-      if (
-        data.contact_preferences &&
-        typeof data.contact_preferences === "object"
-      ) {
-        const prefs: string[] = [];
-        if (data.contact_preferences.show_phone) prefs.push("show_phone");
-        if (data.contact_preferences.allow_calls) prefs.push("allow_calls");
-        if (data.contact_preferences.allow_chat) prefs.push("allow_chat");
-        if (data.contact_preferences.enquiry_only) prefs.push("enquiry_only");
-        formData.contact_preferences = prefs;
-      } else {
-        formData.contact_preferences = [];
-      }
 
       Object.keys(formData).forEach((key) => {
         if (formData[key] === null) {
@@ -266,21 +254,14 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
         }
       });
 
-      reset(formData);
+      reset(formData as Partial<StoreFormValues>);
     }
   }, [storeData, reset]);
 
-  const handleImageChange = async (
-    files: (File | string)[],
-    field: "logo_url" | "banner_url",
-  ) => {
-    const newFile = files.find((f) => typeof f !== "string") as
-      | File
-      | undefined;
+  const handleImageChange = async (files: (File | string)[], field: "logo_url" | "banner_url") => {
+    const newFile = files.find((f) => typeof f !== "string") as File | undefined;
     if (!newFile) {
-      const currentString = files.find((f) => typeof f === "string") as
-        | string
-        | undefined;
+      const currentString = files.find((f) => typeof f === "string") as string | undefined;
       setValue(field, currentString || "", { shouldValidate: true });
       return;
     }
@@ -298,24 +279,22 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
     }
   };
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: StoreFormValues) => {
     try {
-      const payload = { ...values } as any;
-      const prefs = Array.isArray(payload.contact_preferences)
-        ? payload.contact_preferences
-        : [];
-
-      payload.store_name = payload.display_name;
-      payload.description = payload.about_us;
-      payload.primary_mobile = payload.contact_phone?.trim();
-      payload.website_url = payload.slug;
-
-      payload.contact_preferences = {
-        show_phone: prefs.includes("show_phone"),
-        allow_calls: prefs.includes("allow_calls"),
-        allow_chat: prefs.includes("allow_chat"),
-        enquiry_only: prefs.includes("enquiry_only"),
-        show_whatsapp: true,
+      const prefs = values.contact_preferences ?? [];
+      const payload: Record<string, unknown> = {
+        ...values,
+        store_name: values.display_name,
+        description: values.about_us,
+        primary_mobile: values.contact_phone?.trim(),
+        website_url: values.slug,
+        contact_preferences: {
+          show_phone: prefs.includes("show_phone"),
+          allow_calls: prefs.includes("allow_calls"),
+          allow_chat: prefs.includes("allow_chat"),
+          enquiry_only: prefs.includes("enquiry_only"),
+          show_whatsapp: true,
+        },
       };
 
       Object.keys(payload).forEach((key) => {
@@ -324,24 +303,19 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
         }
       });
 
-      await updateStore.mutateAsync(payload);
+      await updateStore.mutateAsync(payload as Partial<SupplierStore>);
 
-      secureStorage.setItem(
-        "register_step",
-        UserRegisterSteps.SUPPLIER_STORE_CREATED.toString(),
-      );
-      dispatch(
-        updateUser({ register_step: UserRegisterSteps.SUPPLIER_STORE_CREATED }),
-      );
+      secureStorage.setItem("register_step", UserRegisterSteps.SUPPLIER_STORE_CREATED.toString());
+      dispatch(updateUser({ register_step: UserRegisterSteps.SUPPLIER_STORE_CREATED }));
 
       onNext();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to update store", error);
-      if (error?.response?.data?.errors) {
-        error.response.data.errors.forEach((err: any) => {
-          setError(err.field as any, { type: "server", message: err.message });
-        });
-      }
+      // The API reports field problems as { field, message }; show each on its field.
+      const fieldErrors = (error as ServerValidationError | null)?.response?.data?.errors;
+      fieldErrors?.forEach((err) => {
+        setError(err.field as FieldPath<StoreFormValues>, { type: "server", message: err.message });
+      });
     }
   };
 
@@ -381,72 +355,65 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                 color: COLORS.PRIMARY_PURPLE,
               }}
             >
-              <BusinessOutlinedIcon fontSize="small" />{" "}
-              {t("store_setup_basic_info")}
+              <BusinessOutlinedIcon fontSize="small" /> {t("store_setup_basic_info")}
             </Typography>
             <Grid container spacing={2.5}>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="body2" fontWeight="500" mb={0.5}>
-                  {t("store_setup_display_name" )}*
+                  {t("store_setup_display_name")}*
                 </Typography>
                 <Input
                   name="display_name"
                   control={control}
-                  placeholder={t("store_setup_display_name_placeholder" )}
+                  placeholder={t("store_setup_display_name_placeholder")}
                   startIcon={<StoreOutlinedIcon />}
                 />
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="body2" fontWeight="500" mb={0.5}>
-                  {t("store_setup_website_url" )}
+                  {t("store_setup_website_url")}
                 </Typography>
                 <Input
                   name="slug"
                   control={control}
-                  placeholder={t("store_setup_website_url_placeholder" )}
+                  placeholder={t("store_setup_website_url_placeholder")}
                   startIcon={<LinkOutlinedIcon />}
                 />
               </Grid>
               <Grid size={{ xs: 12 }}>
                 <Typography variant="body2" fontWeight="500" mb={1}>
-                  {t("store_setup_about_us" )}
+                  {t("store_setup_about_us")}
                 </Typography>
                 <Input
                   name="about_us"
                   control={control}
                   multiline
                   rows={4}
-                  placeholder={t("store_setup_about_us_placeholder" )}
+                  placeholder={t("store_setup_about_us_placeholder")}
                 />
               </Grid>
 
               <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="body2" fontWeight="500" mb={0.5}>
-                  {t("store_setup_business_type" )}*
+                  {t("store_setup_business_type")}*
                 </Typography>
                 <Input
                   name="business_type"
                   control={control}
                   select
-                  placeholder={t(
-                    "store_setup_business_type_placeholder" ,
-                  )}
+                  placeholder={t("store_setup_business_type_placeholder")}
                   startIcon={<BusinessOutlinedIcon fontSize="small" />}
                 >
-                  <MenuItem value="Wholesaler">
-                    {t("wholesaler" )}
-                  </MenuItem>
-                  <MenuItem value="Retailer">{t("retailer" )}</MenuItem>
-                  <MenuItem value="Exporter">{t("exporter" )}</MenuItem>
-                  <MenuItem value="Manufacturer">
-                    {t("manufacturer" )}
-                  </MenuItem>
+                  <MenuItem value="Wholesaler">{t("wholesaler")}</MenuItem>
+                  <MenuItem value="Retailer">{t("retailer")}</MenuItem>
+                  <MenuItem value="Exporter">{t("exporter")}</MenuItem>
+                  <MenuItem value="Manufacturer">{t("manufacturer")}</MenuItem>
                 </Input>
               </Grid>
 
               <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="body2" fontWeight="500" mb={0.5}>
-                  {t("store_setup_categories_served" )}*
+                  {t("store_setup_categories_served")}*
                 </Typography>
                 <Controller
                   name="categories_served"
@@ -462,21 +429,14 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                         renderInput={(params) => (
                           <TextField
                             {...params}
-                            placeholder={t(
-                              "store_setup_categories_placeholder" ,
-                            )}
+                            placeholder={t("store_setup_categories_placeholder")}
                             error={!!errors.categories_served}
-                            helperText={
-                              errors.categories_served?.message as string
-                            }
+                            helperText={errors.categories_served?.message as string}
                             InputProps={{
                               ...params.InputProps,
                               startAdornment: (
                                 <>
-                                  <InputAdornment
-                                    position="start"
-                                    sx={{ pl: 1 }}
-                                  >
+                                  <InputAdornment position="start" sx={{ pl: 1 }}>
                                     <CategoryOutlinedIcon fontSize="small" />
                                   </InputAdornment>
                                   {params.InputProps.startAdornment}
@@ -500,9 +460,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                             key={option}
                             label={option}
                             onDelete={() =>
-                              onChange(
-                                (value as string[]).filter((v) => v !== option),
-                              )
+                              onChange((value as string[]).filter((v) => v !== option))
                             }
                             variant="filled"
                             size="medium"
@@ -526,7 +484,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
 
               <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="body2" fontWeight="500" mb={0.5}>
-                  {t("store_setup_operating_locations" )}
+                  {t("store_setup_operating_locations")}
                 </Typography>
                 <Controller
                   name="operating_locations"
@@ -551,13 +509,9 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                       renderInput={(params) => (
                         <TextField
                           {...params}
-                          placeholder={t(
-                            "store_setup_locations_placeholder" ,
-                          )}
+                          placeholder={t("store_setup_locations_placeholder")}
                           error={!!errors.operating_locations}
-                          helperText={
-                            errors.operating_locations?.message as string
-                          }
+                          helperText={errors.operating_locations?.message as string}
                           InputProps={{
                             ...params.InputProps,
                             startAdornment: (
@@ -592,15 +546,14 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                 color: COLORS.PRIMARY_PURPLE,
               }}
             >
-              <InfoOutlinedIcon fontSize="small" />{" "}
-              {t("store_setup_aesthetics_branding" )}
+              <InfoOutlinedIcon fontSize="small" /> {t("store_setup_aesthetics_branding")}
             </Typography>
             <Grid container spacing={2.5}>
               <Grid size={{ xs: 12, md: 6 }}>
                 <ImageUpload
                   variant="document"
-                  title={t("store_setup_store_logo" )}
-                  hint={t("store_setup_doc_hint_logo" )}
+                  title={t("store_setup_store_logo")}
+                  hint={t("store_setup_doc_hint_logo")}
                   images={logoUrl ? [logoUrl] : []}
                   onChange={(files) => handleImageChange(files, "logo_url")}
                   maxImages={1}
@@ -612,8 +565,8 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
               <Grid size={{ xs: 12, md: 6 }}>
                 <ImageUpload
                   variant="document"
-                  title={t("store_setup_store_banner" )}
-                  hint={t("store_setup_doc_hint_banner" )}
+                  title={t("store_setup_store_banner")}
+                  hint={t("store_setup_doc_hint_banner")}
                   images={bannerUrl ? [bannerUrl] : []}
                   onChange={(files) => handleImageChange(files, "banner_url")}
                   maxImages={1}
@@ -637,8 +590,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                 color: COLORS.PRIMARY_PURPLE,
               }}
             >
-              <LocationOnOutlinedIcon fontSize="small" />{" "}
-              {t("store_setup_store_location" )}
+              <LocationOnOutlinedIcon fontSize="small" /> {t("store_setup_store_location")}
             </Typography>
             <Box>
               {errors.store_address_id && (
@@ -656,9 +608,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                     ? COLORS.BACKGROUND.SECONDARY_DARK
                     : COLORS.BACKGROUND.SECONDARY_LIGHT,
                   border: `1px solid ${
-                    isDark
-                      ? COLORS.BORDER.DEFAULT_DARK
-                      : COLORS.BORDER.DEFAULT_LIGHT
+                    isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
                   }`,
                 }}
               >
@@ -712,9 +662,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                   </Grid>
                 ) : (
                   <Box sx={{ textAlign: "center", py: 4 }}>
-                    <Typography sx={{ mb: 2 }}>
-                      {t("no_address_yet" )}
-                    </Typography>
+                    <Typography sx={{ mb: 2 }}>{t("no_address_yet")}</Typography>
                   </Box>
                 )}
 
@@ -725,7 +673,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                   sx={{ mt: 3, borderStyle: "dashed" }}
                   startIcon={<span>+</span>}
                 >
-                  {t("store_setup_add_new_address" )}
+                  {t("store_setup_add_new_address")}
                 </Button>
               </Box>
             </Box>
@@ -744,15 +692,14 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                 color: COLORS.PRIMARY_PURPLE,
               }}
             >
-              <PhoneOutlinedIcon fontSize="small" />{" "}
-              {t("store_setup_contact_info" )}
+              <PhoneOutlinedIcon fontSize="small" /> {t("store_setup_contact_info")}
             </Typography>
 
             <Grid size={{ xs: 12 }}>
               <Grid container spacing={2.5}>
                 <Grid size={{ xs: 12, md: 7 }}>
                   <Typography variant="body2" fontWeight="500" mb={1}>
-                    {t("store_setup_primary_contact" )}*
+                    {t("store_setup_primary_contact")}*
                   </Typography>
                   <Box sx={{ display: "flex", gap: 1.5 }}>
                     <Box sx={{ width: { xs: "85px", md: "95px" } }}>
@@ -775,9 +722,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                       <Input
                         name="contact_phone"
                         control={control}
-                        placeholder={t(
-                          "store_setup_contact_phone_placeholder" ,
-                        )}
+                        placeholder={t("store_setup_contact_phone_placeholder")}
                         startIcon={<PhoneOutlinedIcon fontSize="small" />}
                         type="tel"
                         sx={{ height: 48 }}
@@ -788,14 +733,12 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
 
                 <Grid size={{ xs: 12, md: 5 }}>
                   <Typography variant="body2" fontWeight="500" mb={1}>
-                    {t("store_setup_contact_email" )}
+                    {t("store_setup_contact_email")}
                   </Typography>
                   <Input
                     name="contact_email"
                     control={control}
-                    placeholder={t(
-                      "store_setup_contact_email_placeholder" ,
-                    )}
+                    placeholder={t("store_setup_contact_email_placeholder")}
                     startIcon={<EmailOutlinedIcon fontSize="small" />}
                     type="email"
                   />
@@ -805,25 +748,18 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
 
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography variant="body2" fontWeight="500" mb={1} mt={2}>
-                {t("store_setup_establishment_year" )}
+                {t("store_setup_establishment_year")}
               </Typography>
               <Input
                 name="establishment_year"
                 control={control}
-                placeholder={t(
-                  "store_setup_establishment_year_placeholder",
-                )}
+                placeholder={t("store_setup_establishment_year_placeholder")}
                 startIcon={<CalendarTodayOutlinedIcon fontSize="small" />}
               />
             </Grid>
           </Box>
 
-          <Box
-            mt={4}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
+          <Box mt={4} display="flex" justifyContent="space-between" alignItems="center">
             {onBack ? (
               <Button
                 variant="outlined"
@@ -831,7 +767,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                 onClick={onBack || (() => router.back())}
                 sx={{ borderRadius: "50px", px: 4, height: 48 }}
               >
-                {t("goBack" )}
+                {t("goBack")}
               </Button>
             ) : (
               <Box />
@@ -845,19 +781,15 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                 borderRadius: "50px",
                 px: 5,
                 height: 56,
-                boxShadow: isDark
-                  ? "none"
-                  : `0 10px 25px ${COLORS.PRIMARY_PURPLE}40`,
+                boxShadow: isDark ? "none" : `0 10px 25px ${COLORS.PRIMARY_PURPLE}40`,
                 "&:hover": {
-                  boxShadow: isDark
-                    ? "none"
-                    : `0 15px 35px ${COLORS.PRIMARY_PURPLE}60`,
+                  boxShadow: isDark ? "none" : `0 15px 35px ${COLORS.PRIMARY_PURPLE}60`,
                   transform: "translateY(-2px)",
                 },
                 transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >
-              {t("store_setup_save_continue" )}
+              {t("store_setup_save_continue")}
             </Button>
           </Box>
         </Paper>
@@ -890,8 +822,8 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
           setIsDeleteDialogOpen(false);
           setAddressToDelete(null);
         }}
-        title={t("deleteAddress" )}
-        description={t("deleteAddressDescription" )}
+        title={t("deleteAddress")}
+        description={t("deleteAddressDescription")}
         ActionsButtons={
           <Box>
             <Button
@@ -901,7 +833,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                 setAddressToDelete(null);
               }}
             >
-              {t("cancel" )}
+              {t("cancel")}
             </Button>
             <Button
               variant="contained"
@@ -910,7 +842,7 @@ const StoreStep: React.FC<StoreStepProps> = ({ onNext, onBack }) => {
                 ml: 2,
               }}
             >
-              {t("delete" )}
+              {t("delete")}
             </Button>
           </Box>
         }

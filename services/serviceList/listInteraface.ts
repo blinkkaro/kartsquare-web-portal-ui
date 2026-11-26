@@ -1,3 +1,9 @@
+/** One row of a distance-based visiting charge (km and INR, whole numbers). */
+export interface VisitingChargeTier {
+  upto_km: number | null;
+  charge: number;
+}
+
 export enum ServiceStatus {
   ACTIVE = "ACTIVE",
   PENDING_APPROVAL = "PENDING_APPROVAL",
@@ -34,6 +40,8 @@ export interface Service {
   currency: string;
   service_at_location: BookingLocationType;
   visiting_charge: number | null;
+  /** Distance-based charges; null = one charge for any distance. Last row upto_km is null. */
+  visiting_charge_tiers?: VisitingChargeTier[] | null;
   service_provider_address_id: string | null;
   service_radius: number;
   has_service_duration: boolean;
@@ -48,7 +56,7 @@ export interface Service {
   provider_phone_number: string;
   provider_whatsapp_country_code: string;
   provider_whatsapp_number: string;
-  
+
   // Joined fields
   provider_name: string;
   category_name: string[];
@@ -160,6 +168,7 @@ export interface ServiceCreateRequest {
   currency: string;
   service_at_location: "at_customer" | "at_provider" | "BOTH" | "virtual_call";
   visiting_charge?: number;
+  visiting_charge_tiers?: VisitingChargeTier[] | null;
   service_provider_address_id: string;
   service_radius: number | null;
   has_service_duration: boolean;

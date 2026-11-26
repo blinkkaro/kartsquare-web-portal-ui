@@ -1,42 +1,35 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  TextField,
-  useTheme,
-  Grid,
-} from "@mui/material";
+import dynamic from "next/dynamic";
+import { Box, Typography, useTheme, Grid } from "@mui/material";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import LogoLoader from "@/components/common/Loader/LogoLoader";
 import Button from "@/components/common/Button";
 import { COLORS } from "@/constants/colors";
-
 import ErrorMessage from "@/components/common/ErrorMessage";
 import SuccessModel from "@/components/common/SuccessModel";
 import RightDrawer from "@/components/common/RightDrawer";
-import { useQueryClient } from "@tanstack/react-query";
-import {
-  useGetAddress,
-  useUpdateAddress,
-  useDeleteAddress,
-} from "@/hooks/useAddress";
+import { useGetAddress, useUpdateAddress, useDeleteAddress } from "@/hooks/useAddress";
 import { useUpdateBusinessInfo } from "@/hooks/useBusinessInfo";
-import { BusinessInfoFormData } from "@/components/pages/businessInfo/businessInfoSchema";
-import { EditBusinessInfoSchema } from "./editBusinessInfoSchema";
 import { useTranslate } from "@/hooks/useTranslate";
 import ImageUpload from "@/components/common/ImageUpload";
-import AddressDrawer from "@/components/common/address/AddressDrawer";
 import AddressCard from "@/components/pages/address/components/AddressCard";
 import WarningModel from "@/components/common/WarningModel";
-import { Address } from "@/services/address/addressInterface";
-
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { type Address } from "@/services/address/addressInterface";
 import Input from "@/components/common/Input";
+import { EditBusinessInfoSchema, type EditBusinessInfoFormData } from "./editBusinessInfoSchema";
+
+// Opened on demand: loaded after the page instead of in its first bundle.
+const AddressDrawer = dynamic(() => import("@/components/common/address/AddressDrawer"), {
+  ssr: false,
+});
 
 interface EditBusinessInfoModalProps {
   open: boolean;
   onClose: () => void;
-  initialData?: any;
+  initialData?: Partial<EditBusinessInfoFormData> | null;
 }
 
 const EditBusinessInfoModal: React.FC<EditBusinessInfoModalProps> = ({
@@ -46,7 +39,6 @@ const EditBusinessInfoModal: React.FC<EditBusinessInfoModalProps> = ({
 }) => {
   const theme = useTheme();
   const { t } = useTranslate();
-  const queryClient = useQueryClient();
   const isDark = theme.palette.mode === "dark";
 
   const [successModelOpen, setSuccessModelOpen] = useState(false);
@@ -60,8 +52,8 @@ const EditBusinessInfoModal: React.FC<EditBusinessInfoModalProps> = ({
     setValue,
     watch,
     formState: { errors },
-  } = useForm<any>({
-    resolver: yupResolver(EditBusinessInfoSchema(t as any)),
+  } = useForm<EditBusinessInfoFormData>({
+    resolver: yupResolver(EditBusinessInfoSchema(t)),
     defaultValues: {
       business_name: "",
       description: "",
@@ -99,12 +91,12 @@ const EditBusinessInfoModal: React.FC<EditBusinessInfoModalProps> = ({
     }
   }, [open, initialData, reset]);
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: EditBusinessInfoFormData) => {
     updateBusiness(data, {
       onSuccess: () => {
         setSuccessModelOpen(true);
       },
-      onError: (error: any) => {
+      onError: (error: Error) => {
         setErrorMsg(error?.message || "Failed to update business info");
       },
     });
@@ -154,12 +146,7 @@ const EditBusinessInfoModal: React.FC<EditBusinessInfoModalProps> = ({
 
   return (
     <>
-      <RightDrawer
-        open={open}
-        onClose={onClose}
-        title={t("editBusinessInfo")}
-        width={600}
-      >
+      <RightDrawer open={open} onClose={onClose} title={t("editBusinessInfo")} width={600}>
         <Box
           sx={{
             padding: "1rem",
@@ -217,12 +204,10 @@ const EditBusinessInfoModal: React.FC<EditBusinessInfoModalProps> = ({
               variant="subtitle2"
               sx={{
                 mb: 1,
-                color: isDark
-                  ? COLORS.TEXT.SECONDARY_DARK
-                  : COLORS.TEXT.SECONDARY_LIGHT,
+                color: isDark ? COLORS.TEXT.SECONDARY_DARK : COLORS.TEXT.SECONDARY_LIGHT,
               }}
             >
-              {t("address" as any) || "Address"}
+              {t("address") || "Address"}
             </Typography>
 
             <Box
@@ -233,9 +218,7 @@ const EditBusinessInfoModal: React.FC<EditBusinessInfoModalProps> = ({
                   ? COLORS.BACKGROUND.SECONDARY_DARK
                   : COLORS.BACKGROUND.SECONDARY_LIGHT,
                 border: `1px solid ${
-                  isDark
-                    ? COLORS.BORDER.DEFAULT_DARK
-                    : COLORS.BORDER.DEFAULT_LIGHT
+                  isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
                 }`,
               }}
             >
@@ -260,9 +243,7 @@ const EditBusinessInfoModal: React.FC<EditBusinessInfoModalProps> = ({
                             watchedAddressId === addr.id
                               ? `2px solid ${COLORS.PRIMARY_PURPLE}`
                               : `1px solid ${
-                                  isDark
-                                    ? COLORS.BORDER.DEFAULT_DARK
-                                    : COLORS.BORDER.DEFAULT_LIGHT
+                                  isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
                                 }`,
                           borderRadius: "12px",
                           position: "relative",
@@ -306,11 +287,7 @@ const EditBusinessInfoModal: React.FC<EditBusinessInfoModalProps> = ({
           </Box>
 
           {errors.address_id && (
-            <Typography
-              color="error"
-              variant="caption"
-              sx={{ mt: 1, display: "block" }}
-            >
+            <Typography color="error" variant="caption" sx={{ mt: 1, display: "block" }}>
               {errors.address_id.message as string}
             </Typography>
           )}
@@ -330,10 +307,9 @@ const EditBusinessInfoModal: React.FC<EditBusinessInfoModalProps> = ({
       <SuccessModel
         open={successModelOpen}
         onClose={() => setSuccessModelOpen(false)}
-        title={t("businessInfoUpdated" as any) || "Business Info Updated"}
+        title={t("businessInfoUpdated") || "Business Info Updated"}
         description={
-          t("businessInfoUpdatedDesc" as any) ||
-          "Your business information has been successfully updated."
+          t("businessInfoUpdatedDesc") || "Your business information has been successfully updated."
         }
         onAction={() => {
           setSuccessModelOpen(false);

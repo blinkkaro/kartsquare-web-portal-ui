@@ -1,19 +1,19 @@
 "use client";
-import ProfileWrapper from "@/components/common/profile/profileWrapper";
-import { Box, Grid, Typography } from "@mui/material";
 import React, { useState } from "react";
+import { Box, Grid, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { COLORS } from "@/constants/colors";
-import { useTranslate } from "@/hooks/useTranslate";
 import { EditOutlined } from "@mui/icons-material";
+import { useTranslate } from "@/hooks/useTranslate";
+import { COLORS } from "@/constants/colors";
+import ProfileWrapper from "@/components/common/profile/profileWrapper";
 import { useDeleteProfile, useProfile } from "@/hooks/useProfile";
-import Labels from "./components/labels";
 import Button from "@/components/common/Button";
 import { formatDate } from "@/helper/helper";
-import EditProfileModal from "./components/EditProfileModal";
 import WarningModel from "@/components/common/WarningModel";
 import { getUserRole, UserRole } from "@/utils/auth";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
+import EditProfileModal from "./components/EditProfileModal";
+import Labels from "./components/labels";
 
 function PersonalInfoView() {
   const theme = useTheme();
@@ -44,9 +44,7 @@ function PersonalInfoView() {
         <Typography
           variant="h4"
           sx={{
-            color: isDark
-              ? COLORS.TEXT.PRIMARY_DARK
-              : COLORS.TEXT.PRIMARY_LIGHT,
+            color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
           }}
         >
           {t("personalInfoTitle")}
@@ -55,9 +53,7 @@ function PersonalInfoView() {
           onClick={() => setIsEditModalOpen(true)}
           sx={{
             cursor: "pointer",
-            bgcolor: isDark
-              ? COLORS.BACKGROUND.PRIMARY_DARK
-              : COLORS.BACKGROUND.PRIMARY_LIGHT,
+            bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.PRIMARY_LIGHT,
             p: "0.5rem",
             borderRadius: "50%",
             display: "flex",
@@ -65,18 +61,14 @@ function PersonalInfoView() {
             justifyContent: "center",
             transition: "all 0.2s ease-in-out",
             "&:hover": {
-              bgcolor: isDark
-                ? COLORS.BACKGROUND.PAPER_DARK
-                : COLORS.BACKGROUND.PAPER_LIGHT,
+              bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.BACKGROUND.PAPER_LIGHT,
             },
             boxShadow: `0px 2px 8px ${COLORS.SHADOW.DEFAULT}`,
           }}
         >
           <EditOutlined
             sx={{
-              color: isDark
-                ? COLORS.TEXT.PRIMARY_DARK
-                : COLORS.TEXT.PRIMARY_LIGHT,
+              color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
             }}
           />
         </Box>
@@ -85,22 +77,17 @@ function PersonalInfoView() {
       <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
         <Labels
           label={t("name")}
-          description={`${profile?.first_name || ""} ${
-            profile?.last_name || ""
-          }`}
+          description={`${profile?.first_name || ""} ${profile?.last_name || ""}`}
         />
 
         {isServiceProvider && (
           <Labels
-            label={t("username" as any) || "Username"}
-            description={"@"+profile?.username || "-"}
+            label={t("username") || "Username"}
+            description={"@" + profile?.username || "-"}
           />
         )}
 
-        <Labels
-          label={t("bio")}
-          description={profile?.bio || t("noBioAvailable")}
-        />
+        <Labels label={t("bio")} description={profile?.bio || t("noBioAvailable")} />
 
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, sm: 6 }}>
@@ -121,11 +108,7 @@ function PersonalInfoView() {
                 alignItems: "center",
               }}
             >
-              <Labels
-                label={t("phone_number")}
-                description={profile?.phone_number || ""}
-                verified={(profile?.register_step ?? 0) > UserRegisterSteps.EMAIL_VERIFIED}
-              />
+              <Labels label={t("phone_number")} description={profile?.phone_number || ""} />
             </Box>
           </Grid>
         </Grid>
@@ -150,9 +133,7 @@ function PersonalInfoView() {
         </Grid>
         <Labels
           label={t("birth_date")}
-          description={
-            profile?.birth_date ? formatDate(profile.birth_date) : "-"
-          }
+          description={profile?.birth_date ? formatDate(profile.birth_date) : "-"}
         />
 
         <Box sx={{ mt: 2 }}>
@@ -186,10 +167,7 @@ function PersonalInfoView() {
       </Box>
 
       {/* Edit Profile Modal */}
-      <EditProfileModal
-        open={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-      />
+      <EditProfileModal open={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} />
 
       {/* Delete Account Warning Modal */}
       <WarningModel
@@ -204,12 +182,8 @@ function PersonalInfoView() {
               onClick={() => setIsDeleteModalOpen(false)}
               sx={{
                 flex: 1,
-                borderColor: isDark
-                  ? COLORS.BORDER.DEFAULT_DARK
-                  : COLORS.BORDER.DEFAULT_LIGHT,
-                color: isDark
-                  ? COLORS.TEXT.PRIMARY_DARK
-                  : COLORS.TEXT.PRIMARY_LIGHT,
+                borderColor: isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT,
+                color: isDark ? COLORS.TEXT.PRIMARY_DARK : COLORS.TEXT.PRIMARY_LIGHT,
               }}
             >
               {t("deleteAccountCancel")}

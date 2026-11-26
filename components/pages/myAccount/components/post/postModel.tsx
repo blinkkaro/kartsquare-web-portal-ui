@@ -1,29 +1,27 @@
 "use client";
 
-import { useTranslate } from "@/hooks/useTranslate";
 import React, { useState } from "react";
-import {
-  useTheme,
-  Fab,
-  Box,
-  Button,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import dynamic from "next/dynamic";
+import { useTheme, Fab, Box, IconButton, Typography } from "@mui/material";
 import { Add, ArrowBack, GridOn, MovieFilter } from "@mui/icons-material";
+import { Tabs, Tab } from "@mui/material";
+import { useTranslate } from "@/hooks/useTranslate";
 import { COLORS } from "@/constants/colors";
 import { canCreatePosts, getUserRole } from "@/utils/auth";
 import RightDrawer from "@/components/common/RightDrawer";
-import { Posts } from "@/services/post/postInterfaces";
+import { type Posts } from "@/services/post/postInterfaces";
 import { usePosts, useReels } from "@/hooks/useProfile";
 import PostFeedGrid from "./PostFeedGrid";
 import PostFeedList from "./PostFeedList";
-import AddPostDrawer from "./AddPostDrawer";
-import { Tabs, Tab } from "@mui/material";
 import ReelFeedGrid from "./ReelFeedGrid";
-import ReelViewModal from "./ReelViewModal";
 
-export default function PostModel({ onClose }: { onClose: () => void }) {
+// Opened on demand: loaded after the page instead of in its first bundle.
+const AddPostDrawer = dynamic(() => import("./AddPostDrawer"), { ssr: false });
+
+// Opened on demand: loaded after the page instead of in its first bundle.
+const ReelViewModal = dynamic(() => import("./ReelViewModal"), { ssr: false });
+
+export default function PostModel(_props: { onClose: () => void }) {
   const { t } = useTranslate();
   const theme = useTheme();
   const [isAddPostDrawerOpen, setIsAddPostDrawerOpen] = useState(false);
@@ -106,7 +104,7 @@ export default function PostModel({ onClose }: { onClose: () => void }) {
             <ArrowBack />
           </IconButton>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            {activeTab === 0 ? t("myPosts") : (t as any)("myReels")}
+            {activeTab === 0 ? t("myPosts") : t("myReels")}
           </Typography>
         </Box>
       )}
@@ -145,11 +143,7 @@ export default function PostModel({ onClose }: { onClose: () => void }) {
             }}
           >
             <Tab icon={<GridOn />} iconPosition="start" label={t("posts")} />
-            <Tab
-              icon={<MovieFilter />}
-              iconPosition="start"
-              label={(t as any)("reels")}
-            />
+            <Tab icon={<MovieFilter />} iconPosition="start" label={t("reels")} />
           </Tabs>
         </Box>
       )}
@@ -181,9 +175,7 @@ export default function PostModel({ onClose }: { onClose: () => void }) {
           initialIndex={selectedPostIndex}
           fetchNextPage={activeTab === 0 ? fetchNextPosts : fetchNextReels}
           hasNextPage={activeTab === 0 ? hasNextPosts : hasNextReels}
-          isFetchingNextPage={
-            activeTab === 0 ? isFetchingNextPosts : isFetchingNextReels
-          }
+          isFetchingNextPage={activeTab === 0 ? isFetchingNextPosts : isFetchingNextReels}
         />
       )}
 

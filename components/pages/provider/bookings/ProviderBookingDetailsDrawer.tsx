@@ -11,31 +11,17 @@ import {
   useTheme,
   Dialog,
   Fade,
-  CircularProgress,
-  Stack
 } from "@mui/material";
-import {
-  Close,
-  NearMe,
-} from "@mui/icons-material";
-import {
-  BookingDetails,
-} from "../../../../services/booking/bookingInterface";
+import { Close, NearMe } from "@mui/icons-material";
+import dayjs from "dayjs";
+import { Phone, CalendarToday, LocationOn } from "@mui/icons-material";
+import ServiceCatalogFiles, { catalogUrls } from "@/components/common/ServiceCatalogFiles";
+import { type BookingDetails } from "../../../../services/booking/bookingInterface";
 import { COLORS } from "../../../../constants/colors";
 import { english } from "../../../../features/i18n/en";
-import dayjs from "dayjs";
 import RightDrawer from "../../../common/RightDrawer";
 import { bookingDetailsService } from "../../../../services/booking/bookingDetails";
-import { Link } from "@mui/material";
 import LogoLoader from "../../../common/Loader/LogoLoader";
-import ServiceCatalogFiles, { catalogUrls } from "@/components/common/ServiceCatalogFiles";
-import {
-  Phone,
-  CalendarToday,
-  LocationOn,
-  Notes,
-  Collections,
-} from "@mui/icons-material";
 
 interface ProviderBookingDetailsDrawerProps {
   open: boolean;
@@ -46,7 +32,7 @@ interface ProviderBookingDetailsDrawerProps {
 const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> = ({
   open,
   onClose,
-  booking_id: initialBooking
+  booking_id: initialBooking,
 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -79,32 +65,53 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "PENDING":
-        return { bg: isDark ? "rgba(245, 158, 11, 0.15)" : "#FEF3C7", text: "#D97706", border: "rgba(245, 158, 11, 0.2)" };
+        return {
+          bg: isDark ? "rgba(245, 158, 11, 0.15)" : "#FEF3C7",
+          text: "#D97706",
+          border: "rgba(245, 158, 11, 0.2)",
+        };
       case "CONFIRMED":
-        return { bg: isDark ? "rgba(16, 185, 129, 0.15)" : "#D1FAE5", text: "#059669", border: "rgba(16, 185, 129, 0.2)" };
+        return {
+          bg: isDark ? "rgba(16, 185, 129, 0.15)" : "#D1FAE5",
+          text: "#059669",
+          border: "rgba(16, 185, 129, 0.2)",
+        };
       case "CANCELLED":
-        return { bg: isDark ? "rgba(239, 68, 68, 0.15)" : "#FEE2E2", text: "#DC2626", border: "rgba(239, 68, 68, 0.2)" };
+        return {
+          bg: isDark ? "rgba(239, 68, 68, 0.15)" : "#FEE2E2",
+          text: "#DC2626",
+          border: "rgba(239, 68, 68, 0.2)",
+        };
       case "COMPLETED":
-        return { bg: isDark ? "rgba(59, 130, 246, 0.15)" : "#DBEAFE", text: "#2563EB", border: "rgba(59, 130, 246, 0.2)" };
+        return {
+          bg: isDark ? "rgba(59, 130, 246, 0.15)" : "#DBEAFE",
+          text: "#2563EB",
+          border: "rgba(59, 130, 246, 0.2)",
+        };
       case "ACTIVE":
-        return { bg: isDark ? "rgba(139, 92, 246, 0.15)" : "#EDE9FE", text: "#7C3AED", border: "rgba(139, 92, 246, 0.2)" };
+        return {
+          bg: isDark ? "rgba(139, 92, 246, 0.15)" : "#EDE9FE",
+          text: "#7C3AED",
+          border: "rgba(139, 92, 246, 0.2)",
+        };
       default:
-        return { bg: isDark ? "rgba(107, 114, 128, 0.15)" : "#F3F4F6", text: "#4B5563", border: "rgba(107, 114, 128, 0.2)" };
+        return {
+          bg: isDark ? "rgba(107, 114, 128, 0.15)" : "#F3F4F6",
+          text: "#4B5563",
+          border: "rgba(107, 114, 128, 0.2)",
+        };
     }
   };
 
   const currentBooking = booking;
   const catalogFiles =
-    booking?.service_pricing_type === "catalog" ? catalogUrls(booking.service_price_catalog_url) : [];
+    booking?.service_pricing_type === "catalog"
+      ? catalogUrls(booking.service_price_catalog_url)
+      : [];
 
   if (!currentBooking) {
     return (
-      <RightDrawer
-        open={open}
-        onClose={onClose}
-        title={english.booking_details}
-        width={500}
-      >
+      <RightDrawer open={open} onClose={onClose} title={english.booking_details} width={500}>
         <Box sx={{ px: 4, pb: 4 }}>
           <Box
             sx={{
@@ -135,7 +142,7 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
         mb: 1.5,
         display: "block",
         lineHeight: 1,
-        textTransform: 'uppercase'
+        textTransform: "uppercase",
       }}
     >
       {children}
@@ -143,12 +150,7 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
   );
 
   return (
-    <RightDrawer
-      open={open}
-      onClose={onClose}
-      title={english.booking_details}
-      width={500}
-    >
+    <RightDrawer open={open} onClose={onClose} title={english.booking_details} width={500}>
       <Box sx={{ px: { xs: 2, sm: 4 }, pb: 4 }}>
         {loading ? (
           <Box
@@ -163,15 +165,32 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
             <LogoLoader size={60} />
           </Box>
         ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
             {/* Header: ID & Status */}
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mb: 3 }}>
-              <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 700, letterSpacing: '0.05em' }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, mb: 3 }}>
+              <Typography
+                variant="caption"
+                sx={{ color: "#64748B", fontWeight: 700, letterSpacing: "0.05em" }}
+              >
                 BOOKING ID
               </Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 2 }}>
-                <Typography sx={{ fontWeight: 700, fontSize: "1.1rem", color: isDark ? '#E2E8F0' : '#1E293B', wordBreak: 'break-all', lineHeight: 1.3 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  gap: 2,
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: "1.1rem",
+                    color: isDark ? "#E2E8F0" : "#1E293B",
+                    wordBreak: "break-all",
+                    lineHeight: 1.3,
+                  }}
+                >
                   #{currentBooking.booking_id.toUpperCase()}
                 </Typography>
                 <Chip
@@ -179,10 +198,10 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                   sx={{
                     bgcolor: statusStyle.bg,
                     color: statusStyle.text,
-                    border: 'none',
+                    border: "none",
                     fontWeight: 700,
                     fontSize: "0.75rem",
-                    letterSpacing: '0.05em',
+                    letterSpacing: "0.05em",
                     height: 26,
                     borderRadius: "6px",
                   }}
@@ -200,9 +219,7 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
               }}
             >
               {/* Hero Background Image */}
-              <Box
-                sx={{ position: "relative", height: { xs: 180, sm: 220 }, overflow: "hidden" }}
-              >
+              <Box sx={{ position: "relative", height: { xs: 180, sm: 220 }, overflow: "hidden" }}>
                 <Box
                   component="img"
                   src={currentBooking.service_image[0]}
@@ -238,8 +255,7 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                     left: 0,
                     right: 0,
                     p: { xs: 2, sm: 3 },
-                    background:
-                      "linear-gradient(to top, rgba(0,0,0,0.8), transparent)",
+                    background: "linear-gradient(to top, rgba(0,0,0,0.8), transparent)",
                     display: "flex",
                     flexDirection: { xs: "column", sm: "row" },
                     justifyContent: "space-between",
@@ -248,10 +264,7 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                   }}
                 >
                   <Box>
-                    <Typography
-                      variant="h5"
-                      sx={{ fontWeight: 700, color: "white", mb: 0.5 }}
-                    >
+                    <Typography variant="h5" sx={{ fontWeight: 700, color: "white", mb: 0.5 }}>
                       {currentBooking.service_name}
                     </Typography>
                     <Box sx={{ display: "flex", gap: 1.5 }}>
@@ -268,13 +281,8 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                           border: "1px solid rgba(255,255,255,0.1)",
                         }}
                       >
-                        <CalendarToday
-                          sx={{ fontSize: 14, color: "#FCD34D" }}
-                        />
-                        <Typography
-                          variant="caption"
-                          sx={{ color: "white", fontWeight: 700 }}
-                        >
+                        <CalendarToday sx={{ fontSize: 14, color: "#FCD34D" }} />
+                        <Typography variant="caption" sx={{ color: "white", fontWeight: 700 }}>
                           {dayjs(currentBooking.booking_at).format("h:mm A")}
                         </Typography>
                       </Box>
@@ -292,13 +300,12 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                         }}
                       >
                         <LocationOn sx={{ fontSize: 14, color: "#FCD34D" }} />
-                        <Typography
-                          variant="caption"
-                          sx={{ color: "white", fontWeight: 700 }}
-                        >
-                          {currentBooking.service_location === "at_customer"
-                            ? "At Customer"
-                            : "In-Store"}
+                        <Typography variant="caption" sx={{ color: "white", fontWeight: 700 }}>
+                          {currentBooking.service_location === "virtual"
+                            ? "Online"
+                            : currentBooking.service_location === "at_customer"
+                              ? "At Customer"
+                              : "In-Store"}
                         </Typography>
                       </Box>
                     </Box>
@@ -315,18 +322,18 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                     >
                       TOTAL
                     </Typography>
-                    <Typography
-                      variant="h5"
-                      sx={{ fontWeight: 700, color: "white" }}
-                    >
-                      {booking.service_currency} {totalAmount.toFixed(0)}
+                    <Typography variant="h5" sx={{ fontWeight: 700, color: "white" }}>
+                      {/* No price set: quote-based. A null price used to crash this drawer. */}
+                      {totalAmount
+                        ? `${booking.service_currency} ${Number(totalAmount).toFixed(0)}`
+                        : "Quote"}
                     </Typography>
                   </Box>
                 </Box>
               </Box>
             </Box>
 
-            <Divider sx={{ my: 3, borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#E2E8F0' }} />
+            <Divider sx={{ my: 3, borderColor: isDark ? "rgba(255,255,255,0.06)" : "#E2E8F0" }} />
 
             {/* Client Card */}
             <Box sx={{ mb: 3 }}>
@@ -340,18 +347,26 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                   display: "flex",
                   alignItems: "center",
                   gap: 2,
-                  boxShadow: isDark ? 'none' : '0 2px 8px rgba(0,0,0,0.02)'
+                  boxShadow: isDark ? "none" : "0 2px 8px rgba(0,0,0,0.02)",
                 }}
               >
                 <Avatar
                   src={booking?.customer_details?.profile_pic || undefined}
-                  sx={{ width: 44, height: 44, bgcolor: '#CBD5E1' }}
+                  sx={{ width: 44, height: 44, bgcolor: "#CBD5E1" }}
                 />
                 <Box sx={{ flex: 1 }}>
-                  <Typography sx={{ fontWeight: 700, fontSize: "0.95rem", color: isDark ? "white" : "#1E293B", lineHeight: 1.2, mb: 0.2 }}>
+                  <Typography
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: "0.95rem",
+                      color: isDark ? "white" : "#1E293B",
+                      lineHeight: 1.2,
+                      mb: 0.2,
+                    }}
+                  >
                     {`${booking.customer_details?.first_name || ""} ${booking.customer_details?.last_name || ""}`}
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 500 }}>
+                  <Typography variant="caption" sx={{ color: "#64748B", fontWeight: 500 }}>
                     Customer
                   </Typography>
                 </Box>
@@ -359,11 +374,11 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                   href={`tel:${booking?.customer_details?.contact_number}`}
                   sx={{
                     bgcolor: isDark ? "rgba(255,255,255,0.05)" : "#F8FAFC",
-                    color: '#4F46E5',
+                    color: "#4F46E5",
                     border: `1px solid ${isDark ? "transparent" : "#F1F5F9"}`,
                     "&:hover": { bgcolor: isDark ? "rgba(255,255,255,0.1)" : "#F1F5F9" },
                     width: 36,
-                    height: 36
+                    height: 36,
                   }}
                 >
                   <Phone sx={{ fontSize: 18 }} />
@@ -382,7 +397,7 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                   border: `1px solid ${isDark ? "rgba(255,255,255,0.05)" : "#F1F5F9"}`,
                   display: "flex",
                   gap: 2,
-                  boxShadow: isDark ? 'none' : '0 2px 8px rgba(0,0,0,0.02)'
+                  boxShadow: isDark ? "none" : "0 2px 8px rgba(0,0,0,0.02)",
                 }}
               >
                 <Box
@@ -397,21 +412,33 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                     flexShrink: 0,
                   }}
                 >
-                  <NearMe sx={{ color: '#64748B', fontSize: 18 }} />
+                  <NearMe sx={{ color: "#64748B", fontSize: 18 }} />
                 </Box>
                 <Box>
-                  <Typography sx={{ fontWeight: 700, fontSize: "0.95rem", mb: 0.5, color: isDark ? "white" : "#1E293B" }}>
+                  <Typography
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: "0.95rem",
+                      mb: 0.5,
+                      color: isDark ? "white" : "#1E293B",
+                    }}
+                  >
                     {booking?.booking_address?.name || "Home"}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "#64748B", lineHeight: 1.6, fontWeight: 500 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "#64748B", lineHeight: 1.6, fontWeight: 500 }}
+                  >
                     {booking?.booking_address?.address}
                     {booking?.booking_address?.landmark && (
-                      <span style={{ display: 'block', marginTop: '4px' }}>
-                        <span style={{ color: '#94A3B8' }}>Landmark:</span> {booking?.booking_address?.landmark}
+                      <span style={{ display: "block", marginTop: "4px" }}>
+                        <span style={{ color: "#94A3B8" }}>Landmark:</span>{" "}
+                        {booking?.booking_address?.landmark}
                       </span>
                     )}
-                    <span style={{ display: 'block', marginTop: '4px' }}>
-                      {booking?.booking_address?.cityTown}, {booking?.booking_address?.state} {booking?.booking_address?.pincode}
+                    <span style={{ display: "block", marginTop: "4px" }}>
+                      {booking?.booking_address?.cityTown}, {booking?.booking_address?.state}{" "}
+                      {booking?.booking_address?.pincode}
                     </span>
                   </Typography>
                 </Box>
@@ -438,8 +465,16 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                     borderLeft: `3px solid ${COLORS.PRIMARY_PURPLE}`,
                   }}
                 >
-                  <Typography variant="body2" sx={{ color: isDark ? "#CBD5E1" : "#475569", fontStyle: "italic", lineHeight: 1.6, fontWeight: 500 }}>
-                    "{currentBooking.customer_notes}"
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: isDark ? "#CBD5E1" : "#475569",
+                      fontStyle: "italic",
+                      lineHeight: 1.6,
+                      fontWeight: 500,
+                    }}
+                  >
+                    &ldquo;{currentBooking.customer_notes}&rdquo;
                   </Typography>
                 </Box>
               </Box>
@@ -480,7 +515,7 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                         "&:hover": {
                           transform: "translateY(-2px)",
                           borderColor: COLORS.PRIMARY_PURPLE,
-                          opacity: 0.9
+                          opacity: 0.9,
                         },
                       }}
                     />
@@ -497,24 +532,23 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
                   variant="contained"
                   sx={{
                     py: 1.5,
-                    borderRadius: '12px',
-                    bgcolor: '#4F46E5',
-                    color: 'white',
+                    borderRadius: "12px",
+                    bgcolor: "#4F46E5",
+                    color: "white",
                     fontWeight: 700,
-                    textTransform: 'none',
-                    fontSize: '1rem',
-                    boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)',
-                    '&:hover': {
-                      bgcolor: '#4338CA',
-                      boxShadow: '0 6px 16px rgba(79, 70, 229, 0.4)',
-                    }
+                    textTransform: "none",
+                    fontSize: "1rem",
+                    boxShadow: "0 4px 12px rgba(79, 70, 229, 0.3)",
+                    "&:hover": {
+                      bgcolor: "#4338CA",
+                      boxShadow: "0 6px 16px rgba(79, 70, 229, 0.4)",
+                    },
                   }}
                 >
                   Update Booking Status
                 </Button>
               </Box>
             )}
-
           </Box>
         )}
       </Box>
@@ -539,7 +573,14 @@ const ProviderBookingDetailsDrawer: React.FC<ProviderBookingDetailsDrawerProps> 
           },
         }}
       >
-        <Box sx={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Box
+          sx={{
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <IconButton
             onClick={() => setPreviewImage(null)}
             sx={{

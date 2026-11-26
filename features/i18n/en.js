@@ -3,6 +3,7 @@ export const english = {
   valFirstNameMax: "First name cannot exceed 50 characters",
   valLastNameMax: "Last name cannot exceed 50 characters",
   valBioMax: "Bio cannot exceed 500 characters",
+  username: "Username",
   valNameMax: "Name cannot exceed 100 characters",
   valDescMax: "Description cannot exceed 2000 characters",
   valPriceMax: "Price cannot exceed 10,000,000",
@@ -30,8 +31,7 @@ export const english = {
   home_banner_title: "Hire Experts, Buy Products. All in One Place.",
   home_banner_subtitle:
     "Instantly connect with the best local professionals and discover quality goods, all in one trusted platform.",
-  home_banner_search_placeholder:
-    "Find unique services and premium products...",
+  home_banner_search_placeholder: "Find unique services and premium products...",
   home_banner_search_button: "AI Search",
   home_banner_trusted_by: "Trusted by 10k+ locals",
   home_banner_verified_guarantee: "Verified Providers Guarantee",
@@ -40,14 +40,12 @@ export const english = {
   home_banner_shopping: "Shopping?",
   home_banner_discover_goods: "Discover local quality goods.",
   verifyEmailTitle: "Welcome to KartSquare",
-  verifyEmailSubTitle:
-    "Verify your email to join a world of seamless services and opportunities.",
+  verifyEmailSubTitle: "Verify your email to join a world of seamless services and opportunities.",
   verifyDocumentTitle: "Build Trust & Credibility",
   verifyDocumentSubTitle:
     "Verified profiles get more engagement. Upload your documents to stand out.",
   preferencesTitle: "Your Experience, Your Way",
-  preferencesSubTitle:
-    "Tell us what you need. We tailor the app to match your unique preferences.",
+  preferencesSubTitle: "Tell us what you need. We tailor the app to match your unique preferences.",
   selectRoleHomeTitle: "One-Stop Solution for Your Home",
   selectRoleHomeSubtitle:
     "From repairs to renovations, find trusted experts for all your home needs instantly.",
@@ -55,13 +53,11 @@ export const english = {
   selectRoleMapSubtitle:
     "Locate the best service providers in your neighborhood with real-time tracking.",
   selectRoleBookingTitle: "Effortless Booking & Tracking",
-  selectRoleBookingSubtitle:
-    "Book services in seconds and track your requests with ease.",
+  selectRoleBookingSubtitle: "Book services in seconds and track your requests with ease.",
   emailInvalid: "Invalid email",
   emailRequired: "Email is required",
   passwordMin: "Password must be at least 8 characters",
-  passwordComplexity:
-    "Password must contain at least one uppercase letter and one number",
+  passwordComplexity: "Password must contain at least one uppercase letter and one number",
   passwordRequired: "Password is required",
   email_verification: "Verify your Email Address",
   email_verification_subtitle:
@@ -153,8 +149,7 @@ export const english = {
   businessImagesDescription:
     "Upload up to 5 high-quality images of your business, storefront, or services.",
   businessClassification: "Business Classification",
-  businessClassificationDescription:
-    "Select the category that best describes your business.",
+  businessClassificationDescription: "Select the category that best describes your business.",
   addAnotherAddress: "Add Another Address",
   updateBusinessProfile: "Add Business Profile",
   something_went_wrong: "Something went wrong",
@@ -281,12 +276,10 @@ export const english = {
   confirmNewPassword: "Confirm New Password",
   newPasswordNotMatch: "New Password and Confirm Password must not be same",
   passwordChangedSuccessfully: "Password Changed Successfully",
-  passwordChangedSuccessfullyDescription:
-    "Your password has been changed successfully.",
+  passwordChangedSuccessfullyDescription: "Your password has been changed successfully.",
   notificationTitle: "Notifications",
   noNotifications: "No notifications yet",
-  noNotificationsDescription:
-    "When you get notifications, they'll show up here",
+  noNotificationsDescription: "When you get notifications, they'll show up here",
   markAsRead: "Mark as read",
   markAllAsRead: "Mark all as read",
   deleteNotification: "Delete",
@@ -416,10 +409,8 @@ export const english = {
   imageRequired: "At least one image is required",
   captionMaxLength: "Caption must be at most 2200 characters",
   maxImagesReached: "Maximum 10 images allowed",
-  invalidImageFormat:
-    "Invalid image format. Only JPG, PNG, and GIF are allowed",
-  invalidMediaFormat:
-    "Invalid media format. Only JPG, PNG, GIF, MP4, WEBM, and OGG are allowed",
+  invalidImageFormat: "Invalid image format. Only JPG, PNG, and GIF are allowed",
+  invalidMediaFormat: "Invalid media format. Only JPG, PNG, GIF, MP4, WEBM, and OGG are allowed",
   imageSizeTooLarge: "Image size too large. Maximum size allowed is 5MB",
   uploadingPost: "Uploading post...",
   compressingVideo: "Compressing video...",
@@ -483,8 +474,7 @@ export const english = {
 
   // Supplier
   supplier_registration_title: "Supplier Registration",
-  supplier_registration_subtitle:
-    "Join our B2B marketplace and grow your business",
+  supplier_registration_subtitle: "Join our B2B marketplace and grow your business",
   register_as_supplier: "Register as Supplier",
   settings: "Settings",
   profile: "Profile",
@@ -629,8 +619,7 @@ export const english = {
   contactUsSuccess: "Thank you for contacting us! We'll get back to you soon.",
   get_quote: "Get a Quote",
   submit_request: "Submit Request",
-  quote_request_description:
-    "The service provider will get back to you with a quote soon.",
+  quote_request_description: "The service provider will get back to you with a quote soon.",
   request_sent_successfully: "Request Sent Successfully",
   support: "Support",
   becomeServiceProvider: "Become a Service Provider",
@@ -644,8 +633,7 @@ export const english = {
   allRightsReserved: "All rights reserved",
 
   // Careers Page
-  careersSubtitle:
-    "Join our team and help shape the future of service delivery",
+  careersSubtitle: "Join our team and help shape the future of service delivery",
   joinOurTeam: "Join Our Team",
   careersHeroDescription:
     "At KartSquare, we're building the future of service delivery. We're looking for passionate, innovative individuals who want to make a difference. Join us and be part of a team that's transforming how people connect with services.",
@@ -660,8 +648,7 @@ export const english = {
   collaborativeCultureDesc:
     "Work in a supportive environment where your ideas matter and collaboration is key.",
   careerGrowth: "Career Growth",
-  careerGrowthDesc:
-    "Clear career paths and opportunities for advancement within the organization.",
+  careerGrowthDesc: "Clear career paths and opportunities for advancement within the organization.",
   ourCulture: "Our Culture",
   cultureDescription:
     "At KartSquare, we believe in fostering an inclusive, innovative, and collaborative work environment. We value diversity, encourage creativity, and support our team members in achieving their professional goals. Our culture is built on trust, transparency, and a shared commitment to excellence.",
@@ -698,30 +685,23 @@ export const english = {
   reachMoreCustomersDesc:
     "Get discovered by thousands of customers actively looking for your services.",
   securePayments: "Secure Payments",
-  securePaymentsDesc:
-    "Receive payments securely and on time with our integrated payment system.",
+  securePaymentsDesc: "Receive payments securely and on time with our integrated payment system.",
   businessInsights: "Business Insights",
   businessInsightsDesc:
     "Access analytics and insights to understand your business performance and make data-driven decisions.",
   dedicatedSupport: "Dedicated Support",
-  dedicatedSupportDesc:
-    "Get dedicated support from our team to help you succeed on the platform.",
+  dedicatedSupportDesc: "Get dedicated support from our team to help you succeed on the platform.",
   verifiedProfile: "Verified Profile",
-  verifiedProfileDesc:
-    "Build trust with customers through our verification and rating system.",
+  verifiedProfileDesc: "Build trust with customers through our verification and rating system.",
   howItWorks: "How It Works",
   createAccount: "Create Account",
-  createAccountDesc:
-    "Sign up as a service provider and create your account in minutes.",
+  createAccountDesc: "Sign up as a service provider and create your account in minutes.",
   completeProfile: "Complete Profile",
-  completeProfileDesc:
-    "Add your services, pricing, availability, and showcase your expertise.",
+  completeProfileDesc: "Add your services, pricing, availability, and showcase your expertise.",
   verifyDocuments: "Verify Documents",
-  verifyDocumentsDesc:
-    "Complete verification to build trust and credibility with customers.",
+  verifyDocumentsDesc: "Complete verification to build trust and credibility with customers.",
   startEarning: "Start Earning",
-  startEarningDesc:
-    "Start receiving bookings and earning revenue from day one.",
+  startEarningDesc: "Start receiving bookings and earning revenue from day one.",
   requirements: "Requirements",
   validBusinessLicense: "Valid business license or professional certification",
   professionalExperience: "Professional experience in your service category",
@@ -778,8 +758,7 @@ export const english = {
     "If you have any questions about our use of cookies or this Cookie Policy, please contact us through our contact page or email us at support@kartsquare.com.",
 
   // Careers Page Additional
-  currentlyNoOpenings:
-    "We're not currently hiring, but we'd love to hear from you!",
+  currentlyNoOpenings: "We're not currently hiring, but we'd love to hear from you!",
   whyJoinUsSubtitle: "Discover what makes KartSquare a great place to work",
   submitYourResume: "Submit Your Resume",
   submitResumeDescription:
@@ -811,11 +790,9 @@ export const english = {
   whatToExpect: "What to Expect",
   storeFeaturesSubtitle: "Get ready for an amazing shopping experience",
   wideSelection: "Wide Selection",
-  wideSelectionDesc:
-    "Browse through thousands of products across multiple categories",
+  wideSelectionDesc: "Browse through thousands of products across multiple categories",
   fastDelivery: "Fast Delivery",
-  fastDeliveryDesc:
-    "Get your orders delivered quickly and safely to your doorstep",
+  fastDeliveryDesc: "Get your orders delivered quickly and safely to your doorstep",
   securePayment: "Secure Payment",
   securePaymentDesc: "Shop with confidence using our secure payment gateway",
   qualityProducts: "Quality Products",
@@ -823,8 +800,7 @@ export const english = {
   bestPrices: "Best Prices",
   bestPricesDesc: "Competitive prices with exclusive deals and discounts",
   multipleCategories: "Multiple Categories",
-  multipleCategoriesDesc:
-    "Everything you need in one place - from electronics to fashion",
+  multipleCategoriesDesc: "Everything you need in one place - from electronics to fashion",
   stayTuned: "Stay Tuned!",
   storeStayTunedDescription:
     "Be the first to know when we launch. Follow us on social media and subscribe to our newsletter for updates and exclusive early access offers.",
@@ -841,8 +817,7 @@ export const english = {
   decline: "Decline",
   mark_as_complete: "Mark as complete",
   otp_verification: "OTP Verification",
-  enter_otp_description:
-    "Enter the OTP sent to your Registered number to register your business.",
+  enter_otp_description: "Enter the OTP sent to your Registered number to register your business.",
   verify_and_start: "Verify & Start",
   no_bookings_found: "No bookings found",
   no_bookings_found_description:
@@ -863,8 +838,7 @@ export const english = {
   all_categories: "All Categories",
   search_services: "Search services...",
   no_services_found: "No services found",
-  no_services_found_description:
-    "No services found. Try adjusting your search or filters",
+  no_services_found_description: "No services found. Try adjusting your search or filters",
   loading_services: "Loading services...",
   // Provider Bookings Page
   provider_bookings: "Bookings",
@@ -910,8 +884,8 @@ export const english = {
   home: "Home",
   // Add Service Drawer
   service_info: "Service Info.",
-  upload_images: "Upload Images (Max 6)",
-  upload_images_count: "Upload Images ({count}/6)",
+  upload_images: "Upload Images (Max 4)",
+  upload_images_count: "Upload Images ({count}/4)",
   upload_images_helper: "Jpeg, png files with max size of 10mb each.",
   select_category: "Select category",
   select_subcategory: "Select subcategory",
@@ -935,14 +909,24 @@ export const english = {
   no_address_yet: "You do not have an address yet.",
   add_address: "Add Address",
   visiting_charge_inr: "Visiting Charge (INR)",
+  visiting_charge_tier_upto: "₹{charge} up to {km} km",
+  visiting_charge_tier_beyond: "₹{charge} beyond {km} km",
   enter_visiting_charge: "Enter visiting charge",
+  visiting_charge_same: "Same charge for any distance",
+  visiting_charge_by_distance: "Charge depends on distance",
+  visiting_charge_upto_km: "Up to (km)",
+  visiting_charge_beyond_km: "Beyond {km} km",
+  visiting_charge_amount: "Charge (INR)",
+  add_distance_row: "Add distance",
+  visiting_charge_tiers_error:
+    "Check the distance charges: each distance must be more than the one before and less than the service radius, and every charge must be filled in",
   service_radius_km: "Service Radius (km)",
   send_for_approval: "Send for an Approval",
   update_service: "Update Service",
   add_service: "Add Service",
   edit_service: "Edit Service",
   // Add Service Errors
-  max_images_error: "Maximum 6 images allowed",
+  max_images_error: "Maximum 5 images allowed (main image + 4)",
   select_category_error: "Please select a category",
   select_subcategory_error: "Please select a subcategory",
   enter_service_name_error: "Please enter service name",
@@ -994,33 +978,35 @@ export const english = {
   write_additional_notes: "Write your additional notes...",
   upload_photos_optional: "Upload Photos (Optional)",
   upload_photos_description: "Upload photos related to your service request",
-  confirm_booking: "Confirm Booking",
-  booking_created_success: "Booking created successfully! Redirecting...",
+  confirm_booking: "Send Request",
+  online_service: "Online",
+  booking_start_otp_description:
+    "Ask the customer for the 6-digit start code shown on their booking, then enter it here.",
+  booking_created_success: "Request sent. Redirecting...",
   no_saved_addresses: "No saved addresses found.",
   floor: "Floor",
   // Booking Errors
   select_date_error: "Please select a date",
   select_time_slot_error: "Please select a time slot",
-  select_address_error_booking: "Please select or enter your address",
+  select_address_error_booking: "Please choose a saved address for this request",
   failed_load_service: "Failed to load service details",
   failed_load_slots: "Failed to load available time slots",
   failed_create_booking: "Failed to create booking. Please try again.",
   // Success Modal
-  thank_you_booking: "Thank You for Your Booking!",
-  booking_confirmed: "Your booking has been confirmed",
+  thank_you_booking: "Request sent",
+  booking_confirmed: "Waiting for the provider to accept",
   booking_id: "Booking ID",
   scheduled_for: "Scheduled for",
   at_time: "at",
   service_provider_contact:
-    "The service provider will contact you shortly to confirm the details.",
+    "You will be notified when the provider accepts. You pay only after the service is done.",
   view_booking_details: "View Booking Details",
   back_to_services: "Back to Services",
   home_fee: "Home fee",
   advance_pay: "Advance pay",
   after_pay: "After pay",
   my_address: "Service Provider Address",
-  provider_service_at_customer_location:
-    "I provide this service at customer location",
+  provider_service_at_customer_location: "I provide this service at customer location",
   bookings: "Bookings",
   continueReading: "Continue Reading",
   booking_details: "Booking details",
@@ -1052,8 +1038,7 @@ export const english = {
   phoneNumberInvalid: "Phone number must contain only numbers",
 
   profileUpdated: "Profile Updated",
-  profileUpdatedDescription:
-    "It may take a little while for your profile changes to be reflected.",
+  profileUpdatedDescription: "It may take a little while for your profile changes to be reflected.",
   // Contact Us
   nameRequired: "Name is required",
   nameMin: "Name must be at least 2 characters",
@@ -1089,8 +1074,7 @@ export const english = {
   guest_login_error: "Something went wrong during guest login",
   country_code: "Country Code",
   country_code_placeholder: "+91",
-  country_code_invalid:
-    "Country code must start with + followed by digits (e.g. +91)",
+  country_code_invalid: "Country code must start with + followed by digits (e.g. +91)",
 
   // Phone & Password Validation
   phoneNumberInvalid: "Phone number must contain 8–15 digits",
@@ -1100,8 +1084,7 @@ export const english = {
   passwordMaxLength: "Password must be at most 64 characters",
   passwordUppercase: "Password must contain at least one uppercase letter",
   passwordNumber: "Password must contain at least one number",
-  passwordSpecialChar:
-    "Password must contain at least one special character (@$!%*?&#)",
+  passwordSpecialChar: "Password must contain at least one special character (@$!%*?&#)",
   nameLettersOnly: "Name must contain letters only",
   firstNameMax: "First name must be at most 50 characters",
   lastNameMax: "Last name must be at most 50 characters",
@@ -1120,6 +1103,14 @@ export const english = {
   complete: "Complete",
   confirm: "Confirm",
   start: "Start",
+  cancel_request: "Cancel request",
+  cancel_request_title: "Cancel this request?",
+  keep_request: "No, keep it",
+  yes_cancel_request: "Yes, cancel request",
+  cancel_request_description:
+    "The provider will be told you no longer need this service. This cannot be undone.",
+  booking_cancelled_success: "Your request has been cancelled",
+  booking_cancel_failed: "Could not cancel the request. Please try again.",
   cancel_booking_title: "Cancel Booking?",
   cancel_booking_description:
     "Are you sure you want to cancel this booking? This action cannot be undone and the customer will be notified.",
@@ -1142,6 +1133,7 @@ export const english = {
     "Establish your brand presence by providing your basic business information and visual identity.",
   businessNameRequired: "Business name is required",
   businessDescriptionRequired: "Business description is required",
+  businessDescriptionMin: "Business description must be at least 10 characters",
   businessAddressRequired: "Business address is required",
   businessImagesRequired: "Business images are required",
   businessImagesMin: "Business images must be at least 1",
@@ -1175,8 +1167,7 @@ export const english = {
   heroBenefit1: "Get discovered by customers searching for your services",
   heroBenefit2: "Manage reviews and respond to questions in one place",
   heroBenefit3: "Showcase your services, photos, and business info",
-  standOutHeadline:
-    "Grow Your Vyapar Online — Get Customers From Your Locality",
+  standOutHeadline: "Grow Your Vyapar Online — Get Customers From Your Locality",
   standOutHighlight: "Grow Your Vyapar Online",
   standOutRest: " — Get Customers From Your Locality",
   standOutSubtext:
@@ -1184,16 +1175,11 @@ export const english = {
   mobileNumber: "Mobile number",
   startNow: "Start now",
   chooseBusinessType: "What describes you best?",
-  chooseBusinessTypeSubtext:
-    "Select one to get a free listing tailored for you.",
-  serviceProviderDesc:
-    "You offer services — home visits, appointments, or on-site work.",
-  serviceProviderExamples:
-    "e.g. Electricians, tailors, tutors, beauticians, plumbers",
-  supplierDesc:
-    "You sell products or supply goods to customers or other businesses.",
-  supplierExamples:
-    "e.g. Kirana shops, garment stores, hardware dealers, wholesalers",
+  chooseBusinessTypeSubtext: "Select one to get a free listing tailored for you.",
+  serviceProviderDesc: "You offer services — home visits, appointments, or on-site work.",
+  serviceProviderExamples: "e.g. Electricians, tailors, tutors, beauticians, plumbers",
+  supplierDesc: "You sell products or supply goods to customers or other businesses.",
+  supplierExamples: "e.g. Kirana shops, garment stores, hardware dealers, wholesalers",
   featureFree: "Free",
   featureFreeDesc: "Create a Digital Dukaan at no cost",
   featureEasy: "Easy",
@@ -1279,8 +1265,7 @@ export const english = {
   benefitSup3Desc:
     "Turn one-time walk-ins into loyal regulars by sharing stock updates, festive offers, and your digital catalog.",
 
-  threeSimpleSteps:
-    "Reach more customers in three simple steps with your free Business Profile.",
+  threeSimpleSteps: "Reach more customers in three simple steps with your free Business Profile.",
   yourQuestionsAnswered: "Your questions, answered",
   expandAll: "Expand all",
   collapseAll: "Collapse all",
@@ -1313,8 +1298,7 @@ export const english = {
     "Pick the categories that match your business so customers can find you when they search.",
   freeListingBenefit1: "Get a free profile so customers can find and call you",
   freeListingBenefit2: "Show up when people nearby search for what you offer",
-  freeListingBenefit3:
-    "Edit your details, photos, and timings anytime from your phone",
+  freeListingBenefit3: "Edit your details, photos, and timings anytime from your phone",
   boostBenefit1: "Appear higher in search results for your category",
   boostBenefit2: "Get customer leads via SMS, email, or app notifications",
   boostBenefit3: "See insights and trends with a simple dashboard",
@@ -1344,10 +1328,8 @@ export const english = {
   faq5Question: "How do I get paid?",
   faq5Answer: "Payments are processed securely and sent to your bank account.",
   faq6Question: "Are there any discounts or promotions available?",
-  faq6Answer:
-    "Check the 'Offers' section for current discounts and promotions.",
-  faq7Question:
-    "What happens if I need to cancel or reschedule a service appointment?",
+  faq6Answer: "Check the 'Offers' section for current discounts and promotions.",
+  faq7Question: "What happens if I need to cancel or reschedule a service appointment?",
   faq7Answer:
     "You can cancel or reschedule through the 'My Bookings' section, subject to the cancellation policy.",
   faq8Question: "Is my personal and payment information secure on the app?",
@@ -1360,8 +1342,7 @@ export const english = {
   seeAllStories: "See all stories",
   howItWorks: "How it works",
   getFreeListingSteps: "Get your free listing in 4 simple steps",
-  takesLessThanMinutes:
-    "Takes less than 5 minutes. No technical skills needed.",
+  takesLessThanMinutes: "Takes less than 5 minutes. No technical skills needed.",
   step: "Step",
   done: "Done",
   forBusinessOwners: "For business owners",
@@ -1400,8 +1381,7 @@ export const english = {
   priceCatalog: "Price Catalog",
   price_catalog_subtitle:
     "View or download the provider's price list. Tap an image to view full size.",
-  price_catalog_list_subtitle:
-    "Service-wise prices and descriptions from the provider.",
+  price_catalog_list_subtitle: "Service-wise prices and descriptions from the provider.",
   tap_to_view_full: "Tap to view full size",
   other_services: "Other Services",
   time_slots_available: "Time Slots Available",
@@ -1412,8 +1392,7 @@ export const english = {
   messageIsTooShort: "Message is too short",
   // Contact form additional
   messageSentSuccessfully: "Message Sent Successfully",
-  messageSentDescription:
-    "Thank you for contacting us. We will get back to you shortly.",
+  messageSentDescription: "Thank you for contacting us. We will get back to you shortly.",
   close: "Close",
   myReviews: "My Reviews",
   leads: "Leads",
@@ -1427,8 +1406,7 @@ export const english = {
   // Advertise Page
   create_ad: "Create Ad",
   error_loading_advertisements: "Error Loading Advertisements",
-  error_loading_ads_description:
-    "Failed to load advertisements. Please try again.",
+  error_loading_ads_description: "Failed to load advertisements. Please try again.",
   no_advertisements_yet: "No Advertisements Yet",
   no_advertisements_description:
     "Create your first ad to promote your services and reach more customers",
@@ -1523,8 +1501,7 @@ export const english = {
   status: "Status",
   action: "Action",
   product_deleted: "Product Deleted",
-  product_deleted_description:
-    "The product has been successfully removed from your store.",
+  product_deleted_description: "The product has been successfully removed from your store.",
   go_to_my_store: "Go to My Store",
   go_back: "Go Back",
   failed_to_load_product_details: "Failed to load product details.",
@@ -1554,8 +1531,7 @@ export const english = {
   responseRateLabel: "RESPONSE RATE",
   locationLabel: "LOCATION",
   newArrivals: "NEW ARRIVALS",
-  similarProductsDescription:
-    "Explore fresh styles and premium find from our top rated new brands",
+  similarProductsDescription: "Explore fresh styles and premium find from our top rated new brands",
   directions: "Directions",
   similar: "Similar",
 
@@ -1645,11 +1621,9 @@ export const english = {
   kyc_owner_mobile_digits: "Mobile number must be 10 digits",
   kyc_owner_email_required: "Owner email is required",
   kyc_owner_email_invalid: "Invalid email address",
-  this_service_have_a_specific_duration:
-    "Does this service have a specific duration?",
+  this_service_have_a_specific_duration: "Does this service have a specific duration?",
   guest_login: "Guest Login",
-  guest_login_description:
-    "Provide your details quickly to explore as a guest.",
+  guest_login_description: "Provide your details quickly to explore as a guest.",
   continue_as_guest: "Continue as Guest",
   auth_required_title: "Authentication Required",
   auth_required_description: "Please log in to continue.",
@@ -1735,8 +1709,7 @@ export const english = {
   showNumberInServices: "Make Number Visible on Platform",
   submit_request: "Submit Request",
   request_sent_successfully: "Request Sent Successfully",
-  quote_request_description:
-    "The service provider will get back to you with a quote soon.",
+  quote_request_description: "The service provider will get back to you with a quote soon.",
   marketing_tools: "Marketing Tools",
   Enter_value: "Enter value",
   Select_option: "Select option",
@@ -1848,7 +1821,8 @@ export const english = {
   sv_filters_label: "Filter by status",
   sv_add: "Add service",
   sv_empty_title: "Add your first service",
-  sv_empty_desc: "Customers find you through the services you list. Add a photo, a short description and your working hours.",
+  sv_empty_desc:
+    "Customers find you through the services you list. Add a photo, a short description and your working hours.",
   sv_none_title: "No services match “{query}”",
   sv_none_desc: "Check the spelling, or clear the search to see everything.",
   sv_none_cta: "Clear search",
@@ -1868,4 +1842,6 @@ export const english = {
   bk_none_title: "No bookings match “{query}”",
   bk_none_desc: "Check the spelling, or clear the search to see everything.",
   bk_none_cta: "Clear search",
+  businessInfoUpdated: "Business Info Updated",
+  businessInfoUpdatedDesc: "Your business information has been successfully updated.",
 };

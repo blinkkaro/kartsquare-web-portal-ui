@@ -16,6 +16,11 @@ function canonicalBlogPath(blog: (typeof blogs)[number]): string {
   return `/blogs/${blog.slug || blog.id}`;
 }
 
+/** Blog posts are bundled data: prerender every one at build so it is served as static HTML. */
+export function generateStaticParams(): { slug: string }[] {
+  return blogs.map((b) => ({ slug: b.slug || b.id }));
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -34,9 +39,7 @@ export async function generateMetadata({
   const path = canonicalBlogPath(blog);
   const canonical = `${SITE_URL}${path}`;
   const rawTitle = blog.metaTitle || blog.title;
-  const titleText = /kartsquare/i.test(rawTitle)
-    ? rawTitle
-    : `${rawTitle} | kartsquare`;
+  const titleText = /kartsquare/i.test(rawTitle) ? rawTitle : `${rawTitle} | kartsquare`;
   const keywords = blog.tags?.length ? blog.tags : undefined;
   const description =
     blog.metaDescription?.trim() ||
@@ -69,11 +72,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function BlogDetailsPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function BlogDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const blog = findBlog(slug);
   // An unknown post is a real 404, never an empty page.
@@ -119,16 +118,10 @@ export default async function BlogDetailsPage({
   return (
     <MainLayout>
       {jsonLd ? (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: jsonLd }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       ) : null}
       {breadcrumbJsonLd ? (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }} />
       ) : null}
       <BlogArticle
         blog={blog}

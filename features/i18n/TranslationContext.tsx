@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, type ReactNode } from "react";
 import { english } from "./en";
 // Define available languages
 // export type Locale = "en" | "es" | "hi";
@@ -318,6 +318,9 @@ export type TranslationKey =
   | "buildingNo"
   | "floor"
   | "address"
+  | "myReels"
+  | "businessInfoUpdated"
+  | "businessInfoUpdatedDesc"
   | "landmark"
   | "pincode"
   | "cityTown"
@@ -753,6 +756,14 @@ export type TranslationKey =
   | "confirm"
   | "cancel"
   | "start"
+  | "cancel_request"
+  | "cancel_request_title"
+  | "keep_request"
+  | "yes_cancel_request"
+  | "booking_start_otp_description"
+  | "cancel_request_description"
+  | "booking_cancelled_success"
+  | "booking_cancel_failed"
   | "cancel_booking_title"
   | "cancel_booking_description"
   | "yes_cancel"
@@ -775,6 +786,7 @@ export type TranslationKey =
   | "bankDetails"
   | "businessNameRequired"
   | "businessDescriptionRequired"
+  | "businessDescriptionMin"
   | "businessAddressRequired"
   | "businessImagesRequired"
   | "businessImagesMin"
@@ -1139,6 +1151,8 @@ export type TranslationKey =
   | "uploadDocument"
   | "my_address"
   | "visiting_charge_inr"
+  | "visiting_charge_tier_upto"
+  | "visiting_charge_tier_beyond"
   | "service_radius_km"
   | "provider_service_at_customer_location"
   | "this_service_have_a_specific_duration"
@@ -1405,7 +1419,11 @@ export type TranslationKey =
   | "bk_views_label"
   | "bk_none_title"
   | "bk_none_desc"
-  | "bk_none_cta";
+  | "bk_none_cta"
+  | "valFirstNameMax"
+  | "valLastNameMax"
+  | "valBioMax"
+  | "username";
 
 // Sample dictionaries
 const dictionaries: Record<"en", Record<TranslationKey, string>> = {
@@ -1467,17 +1485,12 @@ interface TranslationContextType {
   t: (key: TranslationKey, params?: Record<string, string | number>) => string;
 }
 
-const TranslationContext = createContext<TranslationContextType | undefined>(
-  undefined
-);
+const TranslationContext = createContext<TranslationContextType | undefined>(undefined);
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<"en">("en");
 
-  const t = (
-    key: TranslationKey,
-    params?: Record<string, string | number>
-  ): string => {
+  const t = (key: TranslationKey, params?: Record<string, string | number>): string => {
     let text = dictionaries[locale][key] || key;
     if (params) {
       Object.entries(params).forEach(([paramKey, value]) => {
@@ -1497,9 +1510,7 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
 export function useTranslationContext() {
   const context = useContext(TranslationContext);
   if (context === undefined) {
-    throw new Error(
-      "useTranslationContext must be used within a TranslationProvider"
-    );
+    throw new Error("useTranslationContext must be used within a TranslationProvider");
   }
   return context;
 }

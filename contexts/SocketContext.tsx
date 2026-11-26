@@ -1,29 +1,17 @@
 "use client";
 
-import { CHAT_ENABLED } from "@/lib/featureFlags";
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useCallback,
-} from "react";
-import { io, Socket } from "socket.io-client";
-import { useAppSelector } from "@/store/hooks";
-import { useQuery } from "@tanstack/react-query";
+import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import toast from "react-hot-toast";
-import { Box, Typography, IconButton, useTheme, alpha } from "@mui/material";
+import toast, { type Toast } from "react-hot-toast";
+import { Box, Typography, IconButton, useTheme } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { useAppSelector } from "@/store/hooks";
+import { CHAT_ENABLED } from "@/lib/featureFlags";
+import type { Notification as AppNotification } from "@/services/notifications/notificationInterfaces";
+import type { Socket } from "socket.io-client";
 
 // Notification Toast Component
-const NotificationToast = ({
-  notification,
-  t,
-}: {
-  notification: any;
-  t: any;
-}) => {
+const NotificationToast = ({ notification, t }: { notification: AppNotification; t: Toast }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
@@ -58,11 +46,7 @@ const NotificationToast = ({
           {notification.message}
         </Typography>
       </Box>
-      <IconButton
-        size="small"
-        onClick={() => toast.dismiss(t.id)}
-        sx={{ mt: -0.5, mr: -0.5 }}
-      >
+      <IconButton size="small" onClick={() => toast.dismiss(t.id)} sx={{ mt: -0.5, mr: -0.5 }}>
         <CloseIcon fontSize="small" />
       </IconButton>
     </Box>
@@ -74,7 +58,7 @@ interface SocketContextType {
   socket: Socket | null;
   isConnected: boolean;
   unreadCount: number;
-  notifications: any[]; // Replace 'any' with Notification interface definition
+  notifications: AppNotification[];
   markAllAsRead: () => Promise<void>;
   markAsRead: (id: string) => Promise<void>;
   refreshNotifications: () => Promise<void>;
@@ -95,24 +79,20 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 // Socket.io needs the base URL (e.g. localhost:8000) not the API path
 const SOCKET_URL = String(API_URL).replace(/\/api\/v1\/?$/, "");
 
-export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
 
   const { token, user } = useAppSelector((state) => state.auth);
 
   // Initialize Socket connection
   useEffect(() => {
     if (!token || !user) {
-      if (socket) {
-        socket.disconnect();
-        setSocket(null);
-        setIsConnected(false);
-      }
+      // Logged out: the previous run's cleanup already disconnected its socket; just reset state.
+      setSocket(null);
+      setIsConnected(false);
       return;
     }
 
@@ -124,57 +104,61 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     // still load over REST below.
     if (!CHAT_ENABLED) return;
 
-    const newSocket = io(SOCKET_URL, {
-      path: "/socket.io",
-      auth: {
-        token: token,
-      },
-      // Ensure we don't create multiple connections
-      reconnection: true,
-      reconnectionAttempts: 5,
-    });
+    // socket.io-client is loaded only when chat is on and someone is signed in, so it never
+    // weighs on a public page's first load.
+    let cancelled = false;
+    let newSocket: Socket | null = null;
+    import("socket.io-client").then(({ io }) => {
+      if (cancelled) return;
+      const sock = io(SOCKET_URL, {
+        path: "/socket.io",
+        auth: {
+          token: token,
+        },
+        // Ensure we don't create multiple connections
+        reconnection: true,
+        reconnectionAttempts: 5,
+      });
 
-    newSocket.on("connect", () => {
-      setIsConnected(true);
-    });
+      sock.on("connect", () => {
+        setIsConnected(true);
+      });
 
-    newSocket.on("disconnect", () => {
-      setIsConnected(false);
-    });
+      sock.on("disconnect", () => {
+        setIsConnected(false);
+      });
 
-    newSocket.on("connect_error", (err) => {
-      // Expired/invalid token: stop retrying instead of looping and spamming the console.
-      if (/auth|token|jwt|unauthori[sz]ed|forbidden/i.test(err.message)) {
-        newSocket.disconnect();
-      }
-      if (process.env.NODE_ENV !== "production") {
-      }
-    });
+      sock.on("connect_error", (err) => {
+        // Expired/invalid token: stop retrying instead of looping and spamming the console.
+        if (/auth|token|jwt|unauthori[sz]ed|forbidden/i.test(err.message)) {
+          sock.disconnect();
+        }
+      });
 
-    newSocket.on("new_notification", (notification: any) => {
-      setNotifications((prev) => [notification, ...prev]);
-      // Optimistically update count or wait for count update event
-      // We will rely on 'notification_count_update' for count, OR increment locally
-      setUnreadCount((prev) => prev + 1);
+      sock.on("new_notification", (notification: AppNotification) => {
+        setNotifications((prev) => [notification, ...prev]);
+        // Optimistically update count or wait for count update event
+        // We will rely on 'notification_count_update' for count, OR increment locally
+        setUnreadCount((prev) => prev + 1);
 
-      // Show Toast Notification
-      toast.custom(
-        (t) => <NotificationToast notification={notification} t={t} />,
-        {
+        // Show Toast Notification
+        toast.custom((t) => <NotificationToast notification={notification} t={t} />, {
           duration: 3000,
           position: "top-right",
-        },
-      );
-    });
+        });
+      });
 
-    newSocket.on("notification_count_update", (data: { count: number }) => {
-      setUnreadCount(data.count);
-    });
+      sock.on("notification_count_update", (data: { count: number }) => {
+        setUnreadCount(data.count);
+      });
 
-    setSocket(newSocket);
+      newSocket = sock;
+      setSocket(sock);
+    });
 
     return () => {
-      newSocket.disconnect();
+      cancelled = true;
+      newSocket?.disconnect();
     };
   }, [token, user]);
 
@@ -187,21 +171,16 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!token) return;
     try {
       // Replace with your actual services/axios instance
-      const res = await axios.get(`${API_URL}/notifications`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get<{ status: string; data: AppNotification[] }>(
+        `${API_URL}/notifications`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       if (res.data.status === "success") {
         setNotifications(res.data.data);
-        // Verify if we can calculate unread count from list or if we need to fetch profile
-        // The user prompt showed notification list but didn't explicitly show count field in the list response
-        // But we added 'unread_notification_count' to user.
-        // We should fetch user profile to get accurate count.
-        // We'll skip fetching profile here assuming Redux 'user' state might be updated elsewhere or we fetch it.
-        // Actually, let's trust the Redux user state initially if it has it, or fetch it.
-        // The prompt `user` object shows `unread_notification_count`? No, the user object in prompt didn't have it yet (we just added it).
-        // So we might need to rely on the socket pushing it, or fetch it.
-        // Let's count locally from the list for now if "is_viewed" is there.
-        const count = res.data.data.filter((n: any) => !n.is_viewed).length;
+        // The list carries is_viewed, so the unread count is counted from it.
+        const count = res.data.data.filter((n) => !n.is_viewed).length;
         setUnreadCount(count);
       }
     } catch (err) {
@@ -244,9 +223,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
         },
       );
       setNotifications((prev) =>
-        prev.map((n) =>
-          n.notification_id === id ? { ...n, is_viewed: true } : n,
-        ),
+        prev.map((n) => (n.notification_id === id ? { ...n, is_viewed: true } : n)),
       );
       // Decrement locally if it was unread
       // Note: This logic assumes we know it was unread.

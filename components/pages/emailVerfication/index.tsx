@@ -1,25 +1,27 @@
 "use client";
-import AuthWrapper from "@/components/auth/authWrapper";
-import AuthHeader from "@/components/auth/AuthHeader";
 import React from "react";
-import { useTranslate } from "@/hooks/useTranslate";
-import Title from "@/components/auth/title";
-import OtpInput from "./components/otpInput";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Box, Typography } from "@mui/material";
 import { otpService } from "@/services/auth/otp.service";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import Button from "@/components/common/Button";
-import { Box, Typography } from "@mui/material";
 import { COLORS } from "@/constants/colors";
 import { formatTime } from "@/helper/helper";
 import SuccessModel from "@/components/common/SuccessModel";
 import { useAppDispatch } from "@/store/hooks";
-import { logout } from "@/features/ui/authSlice";
-import { useRouter } from "next/navigation";
+import Title from "@/components/auth/title";
+import { useTranslate } from "@/hooks/useTranslate";
+import AuthHeader from "@/components/auth/AuthHeader";
+import AuthWrapper from "@/components/auth/authWrapper";
+import { useLogout } from "@/hooks/useLogout";
 import { UserRegisterSteps } from "@/types/resgistrationFlow";
 import { handleRegistrationStepNavigation } from "@/helper/registrationNavigation";
 import { secureStorage } from "@/helper/SecureStorage";
+import { SESSION_KEYS } from "@/utils/auth";
 import { AppUserType } from "@/services/auth/auth.interface";
+import { errorMessage } from "@/lib/http/errorMessage";
+import OtpInput from "./components/otpInput";
 
 function EmailVerificationView() {
   const { t } = useTranslate();
@@ -33,6 +35,7 @@ function EmailVerificationView() {
 
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { handleLogout } = useLogout();
 
   useEffect(() => {
     const now = Date.now();
@@ -83,13 +86,8 @@ function EmailVerificationView() {
       const expiryTime = now + 59 * 1000;
       localStorage.setItem(OTP_EXPIRY_KEY, expiryTime.toString());
       setTimeLeft(59);
-    } catch (error: any) {
-      // console.log(error);
-      setError(
-        error?.response?.data?.message ||
-        error?.message ||
-        "An unexpected error occurred"
-      );
+    } catch (error) {
+      setError(errorMessage(error, "An unexpected error occurred"));
     } finally {
       setResending(false);
     }
@@ -105,50 +103,29 @@ function EmailVerificationView() {
       await otpService.verifyOtp(otpToVerify);
       localStorage.removeItem(OTP_EXPIRY_KEY);
       setOpenSuccessModal(true);
-    } catch (error: any) {
-      setError(
-        error?.response?.data?.message ||
-        error?.message ||
-        "An unexpected error occurred"
-      );
+    } catch (error) {
+      setError(errorMessage(error, "An unexpected error occurred"));
     } finally {
       setLoading(false);
     }
   };
 
+  // Leaving registration signs the half-registered account out (one flow: useLogout).
   const handleBack = () => {
-    const role = secureStorage.getItem("role");
-    secureStorage.removeItem("token");
-    secureStorage.removeItem("refreshToken");
-    secureStorage.removeItem("register_step");
-    secureStorage.removeItem("role");
-    secureStorage.removeItem("user_details");
-
-    dispatch(logout());
-
-    if (role === AppUserType.CUSTOMER) {
-      router.push(`/login?role=customer`);
-    } else {
-      router.push(`/business-listing`);
-    }
-
+    const role = secureStorage.getItem(SESSION_KEYS.role);
+    return handleLogout({
+      redirectTo: role === AppUserType.CUSTOMER ? "/login?role=customer" : "/business-listing",
+    });
   };
 
   const handleContinue = () => {
-    handleRegistrationStepNavigation(
-      dispatch,
-      router,
-      UserRegisterSteps.EMAIL_VERIFIED
-    );
+    handleRegistrationStepNavigation(dispatch, router, UserRegisterSteps.EMAIL_VERIFIED);
   };
 
   return (
     <AuthWrapper align="top">
       <AuthHeader showBack onBack={handleBack} />
-      <Title
-        title={t("email_verification")}
-        subtitle={t("email_verification_subtitle")}
-      />
+      <Title title={t("email_verification")} subtitle={t("email_verification_subtitle")} />
       <ErrorMessage isVisible={!!error} error={error} />
       <Box
         component="form"

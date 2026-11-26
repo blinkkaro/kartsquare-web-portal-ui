@@ -1,31 +1,25 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Container,
-  Typography,
-  Divider,
-  IconButton,
-  useTheme,
-} from "@mui/material";
-import { Bookmark, Share } from "@mui/icons-material";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import dynamic from "next/dynamic";
+import { Box, Container, Typography, Divider, useTheme } from "@mui/material";
+import { AppUserType } from "@/services/auth/auth.interface";
+import { type Product } from "@/hooks/useSearchSuggestions";
 import { COLORS } from "../../../constants/colors";
 import { useTranslationContext } from "../../../features/i18n/TranslationContext";
+import ServiceImageCarousel from "../../ServiceImageCarousel";
+import ProviderInfoCard from "../../ProviderInfoCard";
+import DescriptionDrawer from "../provider/serviceDetails/DescriptionDialog";
 import InquiryModal from "./InquiryModal";
 import ProductDetailsBreadcrumb from "./ProductDetailsBreadcrumb";
 import ProductDetailsHeader from "./ProductDetailsHeader";
 import ProductDetailsInfo from "./ProductDetailsInfo";
 import ProductDetailsActions from "./ProductDetailsActions";
 import ProductDetailsSpecs from "./ProductDetailsSpecs";
-import ServiceImageCarousel from "../../ServiceImageCarousel";
-import ProviderInfoCard from "../../ProviderInfoCard";
-import DescriptionDrawer from "../provider/serviceDetails/DescriptionDialog";
-import ProductMap from "./ProductMap";
 import ProductCard from "./ProductCard";
-import { AppUserType } from "@/services/auth/auth.interface";
-import { Product } from "@/hooks/useSearchSuggestions";
+
+// Map (Google Maps loader) in its own chunk; still server-rendered, so the page hydrates without waiting for it.
+const ProductMap = dynamic(() => import("./ProductMap"));
 
 interface ProductDetailsProps {
   product: Product | null;
@@ -33,11 +27,7 @@ interface ProductDetailsProps {
   similarProducts?: Product[];
 }
 
-const ProductDetails: React.FC<ProductDetailsProps> = ({
-  product,
-  onBack,
-  similarProducts = [],
-}) => {
+const ProductDetails: React.FC<ProductDetailsProps> = ({ product, similarProducts = [] }) => {
   const { t } = useTranslationContext();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -45,13 +35,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const [descriptionDrawerOpen, setDescriptionDrawerOpen] = useState(false);
   const [activeProduct, setActiveProduct] = useState<Product | null>(product);
   const [animatingContact, setAnimatingContact] = useState<string | null>(null);
-  const router = useRouter();
 
   if (!product) return null;
-
-  const handleProductClick = (productId: string) => {
-    router.push(`/store/product/${productId}`);
-  };
 
   const handleInquiry = (product: Product, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -82,9 +67,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   return (
     <Box
       sx={{
-        bgcolor: isDark
-          ? COLORS.BACKGROUND.PRIMARY_DARK
-          : COLORS.BACKGROUND.SECONDARY_LIGHT,
+        bgcolor: isDark ? COLORS.BACKGROUND.PRIMARY_DARK : COLORS.BACKGROUND.SECONDARY_LIGHT,
         minHeight: "100vh",
         pt: { xs: 2, sm: 4, md: 4 },
         pb: { xs: 8, sm: 8, md: 4 },
@@ -116,10 +99,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               width: "100%",
             }}
           >
-            <ServiceImageCarousel
-              images={product.images}
-              serviceName={product.name}
-            />
+            <ServiceImageCarousel images={product.images} serviceName={product.name} />
 
             {/* Map View */}
             {product.supplier.latitude && product.supplier.longitude ? (
@@ -159,9 +139,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 productName={product.name}
                 description={product.description}
                 onContinueReading={() => setDescriptionDrawerOpen(true)}
-                showContinueReading={
-                  !!(product.description && product.description.length > 50)
-                }
+                showContinueReading={!!(product.description && product.description.length > 50)}
                 gstNumber={product.supplier.gstNumber}
               />
 
@@ -272,9 +250,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 onGetQuote={(e) => handleInquiry(product, e)}
                 onWhatsApp={(e) => handleWhatsApp(product, e)}
                 isAnimatingInquiry={animatingContact === product.id}
-                isAnimatingWhatsApp={
-                  animatingContact === `whatsapp-${product.id}`
-                }
+                isAnimatingWhatsApp={animatingContact === `whatsapp-${product.id}`}
               />
             </Box>
 
@@ -361,9 +337,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         {/* Similar Products Section */}
         {similarProducts.length > 0 && (
           <Box sx={{ mt: 10, mb: 4 }}>
-            <Box
-              sx={{ display: "flex", alignItems: "baseline", mb: 4, gap: 2 }}
-            >
+            <Box sx={{ display: "flex", alignItems: "baseline", mb: 4, gap: 2 }}>
               <Typography
                 variant="h4"
                 fontWeight={900}
@@ -373,10 +347,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   textTransform: "uppercase",
                 }}
               >
-                {t("similar")}{" "}
-                <span style={{ color: COLORS.PRIMARY_PURPLE }}>
-                  {t("products")}
-                </span>
+                {t("similar")} <span style={{ color: COLORS.PRIMARY_PURPLE }}>{t("products")}</span>
               </Typography>
               <Box
                 sx={{
@@ -421,11 +392,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               }}
             >
               {similarProducts.map((simProduct, index) => (
-                <ProductCard
-                  key={simProduct.id}
-                  product={simProduct}
-                  index={index}
-                />
+                <ProductCard key={simProduct.id} product={simProduct} index={index} />
               ))}
             </Box>
           </Box>
