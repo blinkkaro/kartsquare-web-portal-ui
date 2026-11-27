@@ -1,12 +1,19 @@
 "use client";
-"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
 import { Box, Typography, IconButton, Stack } from "@mui/material";
-import { Visibility, VisibilityOff, EmailOutlined, LockOutlined } from "@mui/icons-material";
+import {
+  Visibility,
+  VisibilityOff,
+  EmailOutlined,
+  LockOutlined,
+  StorefrontOutlined,
+  ArrowForwardRounded,
+} from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import Button from "@/components/common/Button";
@@ -164,6 +171,57 @@ export default function LoginForm({
             {t("forgot_password")}
           </Typography>
         </Link>
+      </Box>
+
+      {/* Service providers sign up through the business listing (WhatsApp OTP first), not /signUp. */}
+      <Box
+        component="section"
+        aria-labelledby="provider-signup-title"
+        sx={{
+          mt: { xs: 2.5, sm: 3 },
+          p: 2,
+          display: "flex",
+          alignItems: "flex-start",
+          gap: 1.5,
+          borderRadius: 2,
+          border: `1px solid ${COLORS.PURPLE_ALPHA_20}`,
+          bgcolor: COLORS.PURPLE_ALPHA_04,
+        }}
+      >
+        <StorefrontOutlined sx={{ color: COLORS.PRIMARY_PURPLE, mt: 0.25 }} aria-hidden />
+        <Box sx={{ minWidth: 0 }}>
+          <Typography
+            id="provider-signup-title"
+            sx={{ fontWeight: 700, fontSize: { xs: "0.8rem", lg: "0.875rem" } }}
+          >
+            {t("provider_signup_title")}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: 0.5, fontSize: { xs: "0.8rem", lg: "0.875rem" } }}
+          >
+            {t("provider_signup_subtitle")}
+          </Typography>
+          <Box
+            component={Link}
+            href="/business-listing"
+            sx={{
+              mt: 1,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 0.5,
+              minHeight: 44,
+              color: COLORS.PRIMARY_PURPLE,
+              fontWeight: 700,
+              fontSize: { xs: "0.8rem", lg: "0.875rem" },
+              textDecoration: "underline",
+            }}
+          >
+            {t("listYourBusiness")}
+            <ArrowForwardRounded sx={{ fontSize: 18 }} aria-hidden />
+          </Box>
+        </Box>
       </Box>
     </Box>
   );
