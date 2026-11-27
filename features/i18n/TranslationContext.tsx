@@ -32,6 +32,8 @@ export type TranslationKey =
   | "continue_with_google"
   | "no_account"
   | "sign_up"
+  | "provider_signup_title"
+  | "provider_signup_subtitle"
   | "brand_tagline"
   | "continue_as"
   | "customer"
