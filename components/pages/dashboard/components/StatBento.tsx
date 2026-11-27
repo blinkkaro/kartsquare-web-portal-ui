@@ -6,6 +6,7 @@ import {
   CallRounded,
   EventAvailableRounded,
   GroupRounded,
+  PersonAddAltRounded,
   RemoveRedEyeRounded,
   StorefrontRounded,
 } from "@mui/icons-material";
@@ -17,6 +18,9 @@ import AnimatedNumber from "./AnimatedNumber";
 
 interface StatBentoProps {
   stats: ProviderStats;
+  /** Undefined while loading or if the request failed, so no false zero is shown. */
+  totalLeads?: number;
+  newLeads7d?: number;
 }
 
 interface TileProps {
@@ -87,39 +91,42 @@ const Tile: React.FC<TileProps> = ({ label, value, hint, icon, index }) => {
   );
 };
 
-const StatBento: React.FC<StatBentoProps> = ({ stats }) => {
-  const { t } = useTranslate();
-  const reduceMotion = useReducedMotion();
+interface FeaturedTileProps {
+  label: string;
+  value?: number;
+  detail?: string;
+  icon: React.ReactNode;
+  index: number;
+  href?: string;
+}
 
+/** A large gradient tile with a headline number. Links to its section when given an href. */
+const FeaturedTile: React.FC<FeaturedTileProps> = ({ label, value, detail, icon, index, href }) => {
+  const reduceMotion = useReducedMotion();
   return (
     <Box
-      component="section"
-      aria-label={t("dashboard")}
-      sx={{
-        display: "grid",
-        gap: 2,
-        gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" },
-      }}
+      component={motion.div}
+      initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: reduceMotion ? 0 : 0.04 * index, duration: 0.25, ease: "easeOut" }}
+      sx={{ gridColumn: "span 2", display: "grid", minWidth: 0 }}
     >
-      {/* Featured tile: the one number a provider cares about most, with its breakdown. */}
       <Box
-        component={motion.div}
-        initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: "easeOut" }}
+        component={href ? "a" : "div"}
+        href={href}
         sx={{
-          gridColumn: "span 2",
-          gridRow: { md: "span 2" },
           position: "relative",
           overflow: "hidden",
           borderRadius: "16px",
           p: 3,
           color: COLORS.WHITE,
+          textDecoration: "none",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
           gap: 2,
           background: `linear-gradient(135deg, ${COLORS.PURPLE_DEEP} 0%, ${COLORS.PRIMARY_PURPLE} 100%)`,
+          "&:focus-visible": { outline: `3px solid ${COLORS.PRIMARY_PURPLE}`, outlineOffset: 2 },
         }}
       >
         <Box
@@ -146,43 +153,80 @@ const StatBento: React.FC<StatBentoProps> = ({ stats }) => {
             bgcolor: alpha(COLORS.WHITE, 0.18),
           }}
         >
-          <EventAvailableRounded />
+          {icon}
         </Box>
         <Box sx={{ position: "relative" }}>
           <Typography variant="h2" component="p" sx={{ fontVariantNumeric: "tabular-nums" }}>
-            <AnimatedNumber value={stats.total_bookings ?? 0} />
+            {value === undefined ? "\u2013" : <AnimatedNumber value={value} />}
           </Typography>
-          <Typography sx={{ fontWeight: 600, opacity: 0.9 }}>{t("pd_stat_bookings")}</Typography>
-          <Typography variant="body2" sx={{ opacity: 0.8, mt: 0.5 }}>
-            {t("pd_stat_breakdown", {
-              pending: stats.total_pending_bookings ?? 0,
-              completed: stats.total_completed_bookings ?? 0,
-            })}
-          </Typography>
+          <Typography sx={{ fontWeight: 600, opacity: 0.9 }}>{label}</Typography>
+          {detail && (
+            <Typography variant="body2" sx={{ opacity: 0.8, mt: 0.5 }}>
+              {detail}
+            </Typography>
+          )}
         </Box>
       </Box>
+    </Box>
+  );
+};
+
+const StatBento: React.FC<StatBentoProps> = ({ stats, totalLeads, newLeads7d }) => {
+  const { t } = useTranslate();
+
+  return (
+    <Box
+      component="section"
+      aria-label={t("dashboard")}
+      sx={{
+        display: "grid",
+        gap: 2,
+        gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" },
+      }}
+    >
+      {/* Featured tiles: the two numbers a provider cares about most. */}
+      <FeaturedTile
+        index={0}
+        label={t("pd_stat_leads")}
+        value={totalLeads}
+        detail={
+          newLeads7d === undefined ? undefined : t("pd_stat_leads_week", { count: newLeads7d })
+        }
+        icon={<PersonAddAltRounded />}
+        href="#leads"
+      />
+      <FeaturedTile
+        index={1}
+        label={t("pd_stat_bookings")}
+        value={stats.total_bookings ?? 0}
+        detail={t("pd_stat_breakdown", {
+          pending: stats.total_pending_bookings ?? 0,
+          completed: stats.total_completed_bookings ?? 0,
+        })}
+        icon={<EventAvailableRounded />}
+      />
 
       <Tile
-        index={1}
+        index={2}
         label={t("pd_stat_followers")}
         value={stats.followers ?? 0}
         icon={<GroupRounded />}
       />
       <Tile
-        index={2}
+        index={3}
         label={t("pd_stat_views")}
         value={stats.total_profile_views ?? 0}
         icon={<RemoveRedEyeRounded />}
       />
       <Tile
-        index={3}
+        index={4}
         label={t("pd_stat_services")}
         value={stats.total_active_services ?? 0}
         hint={t("pd_stat_services_of", { total: stats.total_services ?? 0 })}
         icon={<StorefrontRounded />}
       />
       <Tile
-        index={4}
+        index={5}
         label={t("pd_stat_calls")}
         value={stats.total_phone_number_views ?? 0}
         icon={<CallRounded />}

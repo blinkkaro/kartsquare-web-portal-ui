@@ -1335,6 +1335,8 @@ export type TranslationKey =
   | "pd_nav_account"
   | "pd_nav_close"
   | "pd_stat_bookings"
+  | "pd_stat_leads"
+  | "pd_stat_leads_week"
   | "pd_stat_breakdown"
   | "pd_stat_followers"
   | "pd_stat_views"

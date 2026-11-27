@@ -1,24 +1,25 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Box, Grid, Typography, useTheme } from "@mui/material";
 import { Campaign } from "@mui/icons-material";
-import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { useTranslate } from "@/hooks/useTranslate";
 import { COLORS } from "@/constants/colors";
 import { secureStorage } from "@/helper/SecureStorage";
 import { getUserRole } from "@/utils/auth";
-import MetricCards from "./components/MetricCards";
-import RevenueChart from "./components/RevenueChart";
-import UpcomingBookings from "./components/UpcomingBookings";
-import LatestReviews from "./components/LatestReviews"; // Add this
-import LatestLeads from "./components/LatestLeads";
+import { useLeads } from "@/hooks/useLeads";
 import { useProviderDashboard, useSetAvailability } from "@/hooks/useProviderDashboard";
 import type { ProviderDashboardChartResponse, stats as ProviderStats } from "@/services/providerDashboard/providerDashboard.interface";
 import { useSupplierDashboard } from "@/hooks/useSupplierDashboard";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
-import toast from "react-hot-toast";
 import ErrorMessage from "@/components/common/ErrorMessage";
+import MetricCards from "./components/MetricCards";
+import RevenueChart from "./components/RevenueChart";
+import UpcomingBookings from "./components/UpcomingBookings";
+import LatestReviews from "./components/LatestReviews"; // Add this
+import LatestLeads, { LEADS_PAGE_SIZE } from "./components/LatestLeads";
 import ProviderDashboardLayout from "./ProviderDashboardLayout";
 
 function DashboardView() {
@@ -43,6 +44,8 @@ function DashboardView() {
   } = useSupplierDashboard(role === "SUPPLIER");
 
   const setAvailability = useSetAvailability();
+  // Same query as the first page of the leads list, so the two share one request.
+  const { data: leadsData } = useLeads(1, LEADS_PAGE_SIZE, "", role === "SERVICE_PROVIDER");
   const providerProfile = role === "SUPPLIER" ? undefined : providerDashboardData?.profile;
   const attention = role === "SUPPLIER" ? undefined : providerDashboardData?.attention;
 
@@ -98,6 +101,7 @@ function DashboardView() {
         profile={providerProfile}
         attention={attention}
         stats={stats as ProviderStats | undefined}
+        totalLeads={leadsData?.pagination.total}
         chartData={chartData as ProviderDashboardChartResponse | undefined}
         upcomingBookings={providerDashboardData?.upcoming_bookings ?? []}
         latestReviews={providerDashboardData?.latest_reviews ?? []}
@@ -234,7 +238,7 @@ function DashboardView() {
                   total_completed_enquiries: 0,
                 }
               }
-              role={role as any}
+              role={role as "SERVICE_PROVIDER" | "SUPPLIER"}
             />
 
             {/* Revenue Chart */}
@@ -253,11 +257,11 @@ function DashboardView() {
             {/* Upcoming Bookings / Enquiries */}
             <UpcomingBookings
               bookings={upcomingData || []}
-              role={role as any}
+              role={role as "SERVICE_PROVIDER" | "SUPPLIER"}
             />
 
             {/* Latest Review */}
-            <LatestReviews reviews={latestReviews || []} role={role as any} />
+            <LatestReviews reviews={latestReviews || []} role={role as "SERVICE_PROVIDER" | "SUPPLIER"} />
 
             {/* Upcoming Events
             <UpcomingEvents /> */}

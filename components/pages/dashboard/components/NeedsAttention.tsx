@@ -34,18 +34,18 @@ const NeedsAttention: React.FC<NeedsAttentionProps> = ({ attention }) => {
 
   const rows: Row[] = [
     {
-      key: "bookings",
-      label: t("pd_attention_bookings"),
-      count: attention.pending_bookings,
-      icon: <EventAvailableRounded />,
-      href: "/spr/bookings",
-    },
-    {
       key: "leads",
       label: t("pd_attention_leads"),
       count: attention.new_leads_7d,
       icon: <PersonAddAltRounded />,
       href: "#leads",
+    },
+    {
+      key: "bookings",
+      label: t("pd_attention_bookings"),
+      count: attention.pending_bookings,
+      icon: <EventAvailableRounded />,
+      href: "/spr/bookings",
     },
     {
       key: "notifications",

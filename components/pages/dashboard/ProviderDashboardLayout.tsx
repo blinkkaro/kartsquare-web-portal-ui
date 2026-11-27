@@ -26,6 +26,7 @@ interface ProviderDashboardLayoutProps {
   profile: DashboardProfile;
   attention?: DashboardAttention;
   stats?: ProviderStats;
+  totalLeads?: number;
   chartData?: ProviderDashboardChartResponse;
   upcomingBookings: ProviderDashboardResponse["upcoming_bookings"];
   latestReviews: ProviderDashboardResponse["latest_reviews"];
@@ -42,6 +43,7 @@ const ProviderDashboardLayout: React.FC<ProviderDashboardLayoutProps> = ({
   profile,
   attention,
   stats,
+  totalLeads,
   chartData,
   upcomingBookings,
   latestReviews,
@@ -58,9 +60,9 @@ const ProviderDashboardLayout: React.FC<ProviderDashboardLayoutProps> = ({
     attention && "attn",
     profileOpen && "profile",
     stats && "stats",
+    "leads",
     "chart",
     "upcoming",
-    "leads",
     "reviews",
     "share",
   ]
@@ -77,7 +79,7 @@ const ProviderDashboardLayout: React.FC<ProviderDashboardLayoutProps> = ({
     if (attention) lgRows.push("attn attn");
     if (stats) lgRows.push("stats stats");
   }
-  lgRows.push("chart upcoming", "leads reviews", "share share");
+  lgRows.push("leads leads", "chart upcoming", "reviews reviews", "share share");
   const lgAreas = lgRows.map((r) => `"${r}"`).join(" ");
 
   return (
@@ -109,17 +111,21 @@ const ProviderDashboardLayout: React.FC<ProviderDashboardLayoutProps> = ({
         )}
         {stats && (
           <Box sx={{ gridArea: "stats" }}>
-            <StatBento stats={stats} />
+            <StatBento
+              stats={stats}
+              totalLeads={totalLeads}
+              newLeads7d={attention?.new_leads_7d}
+            />
           </Box>
         )}
+        <Box id="leads" sx={{ gridArea: "leads", scrollMarginTop: 96 }}>
+          <LatestLeads />
+        </Box>
         <Box sx={{ gridArea: "chart" }}>
           <RevenueChart chartData={chartData} />
         </Box>
         <Box sx={{ gridArea: "upcoming" }}>
           <UpcomingBookings bookings={upcomingBookings} role="SERVICE_PROVIDER" />
-        </Box>
-        <Box id="leads" sx={{ gridArea: "leads", scrollMarginTop: 96 }}>
-          <LatestLeads />
         </Box>
         <Box sx={{ gridArea: "reviews" }}>
           <LatestReviews reviews={latestReviews} role="SERVICE_PROVIDER" />

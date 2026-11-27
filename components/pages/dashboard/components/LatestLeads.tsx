@@ -16,24 +16,25 @@ import {
   TextField,
   InputAdornment,
 } from "@mui/material";
-import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import SearchIcon from "@mui/icons-material/Search";
+import dayjs from "dayjs";
+import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useLeads } from "@/hooks/useLeads";
-import ServicesPagination from "../../servicesList/ServicesPagination";
 import EmptyState from "@/components/common/EmptyState";
-import dayjs from "dayjs";
-import { Lead } from "@/services/leads/lead.interface";
-
+import type { Lead } from "@/services/leads/lead.interface";
+import ServicesPagination from "../../servicesList/ServicesPagination";
 import LeadDetailsModal from "./LeadDetailsModal";
+
+export const LEADS_PAGE_SIZE = 15;
 
 const LatestLeads = () => {
   const theme = useTheme();
   const { t } = useTranslate();
   const isDark = theme.palette.mode === "dark";
   const [page, setPage] = useState(1);
-  const limit = 15; // Start with 15 items per page for dashboard view
+  const limit = LEADS_PAGE_SIZE;
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);

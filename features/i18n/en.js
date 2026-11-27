@@ -1757,6 +1757,8 @@ export const english = {
   pd_nav_account: "Account",
   pd_nav_close: "Close menu",
   pd_stat_bookings: "Total bookings",
+  pd_stat_leads: "Total leads",
+  pd_stat_leads_week: "{count} new in the last 7 days",
   pd_stat_breakdown: "{pending} pending \u00b7 {completed} completed",
   pd_stat_followers: "Followers",
   pd_stat_views: "Profile views",
