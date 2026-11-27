@@ -21,6 +21,9 @@ export const english = {
   continue_with_google: "Continue with Google",
   no_account: "New here?",
   sign_up: "Sign up",
+  provider_signup_title: "Are you a service provider?",
+  provider_signup_subtitle:
+    "List your business for free and get service requests from customers in Jaipur.",
   brand_tagline: "Kartsquare — Where Your Needs Meet Solutions",
   continue_as: "Continue as",
   customer: "Customer",
