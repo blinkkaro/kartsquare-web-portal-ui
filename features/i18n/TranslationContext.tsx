@@ -279,6 +279,7 @@ export type TranslationKey =
   | "notificationBookingConfirmed"
   | "notificationBookingCancelled"
   | "notificationBookingCompleted"
+  | "notificationLeadAssigned"
   | "justNow"
   | "minutesAgo"
   | "hoursAgo"

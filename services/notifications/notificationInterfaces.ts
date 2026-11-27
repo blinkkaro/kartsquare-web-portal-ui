@@ -3,6 +3,8 @@ export enum service_booking_events {
   BOOKING_CONFIRMED = 'booking_confirmed',
   BOOKING_CANCELLED = 'booking_cancelled',
   BOOKING_COMPLETED = 'booking_completed',
+  // Created by the admin API when an admin assigns a lead to a provider.
+  LEAD_ASSIGNED = 'lead_assigned',
 }
 
 export interface Notification {

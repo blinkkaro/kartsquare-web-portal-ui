@@ -4,7 +4,6 @@ import React, { useMemo } from "react";
 import {
   Box,
   Typography,
-  IconButton,
   Chip,
   Stack,
   useTheme,
@@ -18,17 +17,18 @@ import {
   Cancel,
   EventAvailable,
   Assignment,
-  DeleteOutline,
   DoneAll,
+  PersonAddAlt1,
 } from "@mui/icons-material";
-import { useNotification } from "@/hooks/useNotification";
+import { useSocket } from "@/contexts/SocketContext";
 import { useTranslationContext } from "@/features/i18n/TranslationContext";
 import { COLORS } from "@/constants/colors";
 import { service_booking_events } from "@/services/notifications/notificationInterfaces";
 import { formatTimestamp } from "@/helper/helper";
+import type { TranslationKey } from "@/features/i18n/TranslationContext";
 
 // Get notification type details
-const getNotificationTypeDetails = (type: service_booking_events, t: any) => {
+const getNotificationTypeDetails = (type: service_booking_events, t: (key: TranslationKey) => string) => {
   switch (type) {
     case service_booking_events.SERVICE_REQUEST:
       return {
@@ -54,6 +54,12 @@ const getNotificationTypeDetails = (type: service_booking_events, t: any) => {
         icon: <EventAvailable />,
         color: "warning",
       };
+    case service_booking_events.LEAD_ASSIGNED:
+      return {
+        label: t("notificationLeadAssigned"),
+        icon: <PersonAddAlt1 />,
+        color: COLORS.SUCCESS_GREEN,
+      };
     default:
       return {
         label: "",
@@ -63,9 +69,8 @@ const getNotificationTypeDetails = (type: service_booking_events, t: any) => {
   }
 };
 
-import { useSocket } from "@/contexts/SocketContext";
-
-function NotificationList({ onClose }: { onClose: () => void }) {
+// onClose is part of the props the drawer passes; the list does not close itself.
+function NotificationList(_props: { onClose: () => void }) {
   const { notifications, markAllAsRead, markAsRead, refreshNotifications } = useSocket();
   const { t } = useTranslationContext();
   const theme = useTheme();
@@ -80,7 +85,7 @@ function NotificationList({ onClose }: { onClose: () => void }) {
   const sortedNotifications = useMemo(() => {
     if (!notifications) return [];
     return [...notifications].sort(
-      (a: any, b: any) =>
+      (a, b) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
   }, [notifications]);

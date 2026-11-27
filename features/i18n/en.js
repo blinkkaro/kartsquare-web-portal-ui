@@ -289,6 +289,7 @@ export const english = {
   notificationBookingConfirmed: "Booking Confirmed",
   notificationBookingCancelled: "Booking Cancelled",
   notificationBookingCompleted: "Booking Completed",
+  notificationLeadAssigned: "New Lead",
   justNow: "Just now",
   minutesAgo: "minutes ago",
   hoursAgo: "hours ago",
