@@ -1,5 +1,3 @@
-import { Light } from "@mui/icons-material";
-
 export const COLORS = {
   // Primary Colors
   PRIMARY_PURPLE: "#5e18e9",
@@ -11,6 +9,9 @@ export const COLORS = {
   PURPLE_ALPHA_20: "rgba(94, 24, 233, 0.2)",
   PURPLE_ALPHA_30: "rgba(94, 24, 233, 0.3)",
   SECONDARY_ORANGE: "#f97316",
+  // Second dashboard stat colour; both pass 4.5:1 with white text
+  TEAL_DEEP: "#134e4a",
+  TEAL: "#0f766e",
   PRIMARY_BLUE: "#3b82f6",
   // Google Business Profile–style (free listing page)
   BUSINESS_PROFILE_BLUE: "#1a73e8",

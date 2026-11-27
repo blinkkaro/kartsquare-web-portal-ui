@@ -1,23 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  useTheme,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Tooltip,
-  TextField,
-  InputAdornment,
-} from "@mui/material";
+import { Box, Typography, Paper, TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import dayjs from "dayjs";
 import CenteredLoader from "@/components/common/Loader/CenteredLoader";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -26,13 +11,12 @@ import EmptyState from "@/components/common/EmptyState";
 import type { Lead } from "@/services/leads/lead.interface";
 import ServicesPagination from "../../servicesList/ServicesPagination";
 import LeadDetailsModal from "./LeadDetailsModal";
+import LeadRow from "./LeadRow";
 
-export const LEADS_PAGE_SIZE = 15;
+export const LEADS_PAGE_SIZE = 5;
 
 const LatestLeads = () => {
-  const theme = useTheme();
   const { t } = useTranslate();
-  const isDark = theme.palette.mode === "dark";
   const [page, setPage] = useState(1);
   const limit = LEADS_PAGE_SIZE;
   const [search, setSearch] = useState("");
@@ -75,16 +59,11 @@ const LatestLeads = () => {
     <>
       <Paper
         sx={{
-          borderRadius: "12px",
-          p: 2,
-          bgcolor: isDark ? COLORS.BACKGROUND.PAPER_DARK : COLORS.WHITE,
-          border: `1px solid ${
-            isDark ? COLORS.BORDER.DEFAULT_DARK : COLORS.BORDER.DEFAULT_LIGHT
-          }`,
-          boxShadow: isDark
-            ? "0px 2px 8px rgba(0, 0, 0, 0.2)"
-            : "0px 2px 8px rgba(0, 0, 0, 0.05)",
-          overflow: "hidden",
+          borderRadius: "16px",
+          p: { xs: 1.5, md: 2 },
+          bgcolor: COLORS.WHITE,
+          border: `1px solid ${COLORS.NEW_UI.CARD_BORDER_LIGHT}`,
+          boxShadow: COLORS.NEW_UI.CARD_SHADOW_LIGHT,
         }}
       >
         <Box
@@ -97,27 +76,29 @@ const LatestLeads = () => {
             mb: 2,
           }}
         >
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+          <Typography variant="h6" component="h2" sx={{ fontWeight: 600 }}>
             {t("latest_leads")}
           </Typography>
-          {leads.length > 0 && (
+          {/* Stays visible while searching, so a search with no match can be cleared. */}
+          {(leads.length > 0 || search) && (
             <TextField
               size="small"
-              placeholder={t("search")}
+              placeholder={t("leads_search")}
               value={search}
               onChange={handleSearchChange}
               sx={{
-                width: { xs: "100%", sm: "250px" },
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                },
+                width: { xs: "100%", sm: "280px" },
+                "& .MuiOutlinedInput-root": { borderRadius: "12px", minHeight: 44 },
               }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon fontSize="small" />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                htmlInput: { "aria-label": t("leads_search") },
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" />
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
           )}
@@ -127,58 +108,14 @@ const LatestLeads = () => {
           <CenteredLoader p={5} />
         ) : leads.length > 0 ? (
           <>
-            <TableContainer sx={{ overflowX: "auto" }}>
-              <Table size="small" sx={{ minWidth: 650 }}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>{t("name")}</TableCell>
-                    <TableCell>{t("email")}</TableCell>
-                    <TableCell>{t("phoneNumber")}</TableCell>
-                    <TableCell>{t("date")}</TableCell>
-                    <TableCell>{t("message")}</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {leads.map((lead: Lead) => (
-                    <TableRow
-                      key={lead.lead_id}
-                      onClick={() => handleRowClick(lead)}
-                      sx={{
-                        cursor: "pointer",
-                        "&:hover": {
-                          bgcolor: isDark
-                            ? "rgba(255, 255, 255, 0.05)"
-                            : "rgba(0, 0, 0, 0.02)",
-                        },
-                      }}
-                    >
-                      <TableCell>
-                        {lead.first_name} {lead.last_name}
-                      </TableCell>
-                      <TableCell>{lead.email}</TableCell>
-                      <TableCell>
-                        {lead.country_code} {lead.phone_number}
-                      </TableCell>
-                      <TableCell>
-                        {dayjs(lead.created_at).format("MMM DD, YYYY")}
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          maxWidth: 200,
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
-                      >
-                        <Tooltip title={lead.message} arrow>
-                          <span>{lead.message}</span>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <Box
+              component="ul"
+              sx={{ listStyle: "none", m: 0, p: 0, display: "flex", flexDirection: "column", gap: 1.5 }}
+            >
+              {leads.map((lead: Lead) => (
+                <LeadRow key={lead.lead_id} lead={lead} onOpen={handleRowClick} />
+              ))}
+            </Box>
 
             <ServicesPagination
               totalPages={totalPages}
@@ -189,8 +126,8 @@ const LatestLeads = () => {
         ) : (
           <EmptyState
             titleKey=""
-            title={t("no_leads_yet")}
-            description={t("no_leads_desc")}
+            title={debouncedSearch ? `${t("noResultsFound")} "${debouncedSearch}"` : t("no_leads_yet")}
+            description={debouncedSearch ? "" : t("no_leads_desc")}
             minHeight={200}
             iconSize={48}
           />

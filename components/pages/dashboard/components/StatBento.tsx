@@ -97,11 +97,20 @@ interface FeaturedTileProps {
   detail?: string;
   icon: React.ReactNode;
   index: number;
+  background: string;
   href?: string;
 }
 
-/** A large gradient tile with a headline number. Links to its section when given an href. */
-const FeaturedTile: React.FC<FeaturedTileProps> = ({ label, value, detail, icon, index, href }) => {
+/** A compact coloured tile for a headline number. Links to its section when given an href. */
+const FeaturedTile: React.FC<FeaturedTileProps> = ({
+  label,
+  value,
+  detail,
+  icon,
+  index,
+  background,
+  href,
+}) => {
   const reduceMotion = useReducedMotion();
   return (
     <Box
@@ -109,63 +118,45 @@ const FeaturedTile: React.FC<FeaturedTileProps> = ({ label, value, detail, icon,
       initial={reduceMotion ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: reduceMotion ? 0 : 0.04 * index, duration: 0.25, ease: "easeOut" }}
-      sx={{ gridColumn: "span 2", display: "grid", minWidth: 0 }}
+      sx={{ display: "grid", minWidth: 0 }}
     >
       <Box
         component={href ? "a" : "div"}
         href={href}
         sx={{
-          position: "relative",
-          overflow: "hidden",
           borderRadius: "16px",
-          p: 3,
+          p: { xs: 1.5, md: 2 },
           color: COLORS.WHITE,
           textDecoration: "none",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          gap: 2,
-          background: `linear-gradient(135deg, ${COLORS.PURPLE_DEEP} 0%, ${COLORS.PRIMARY_PURPLE} 100%)`,
+          background,
           "&:focus-visible": { outline: `3px solid ${COLORS.PRIMARY_PURPLE}`, outlineOffset: 2 },
         }}
       >
-        <Box
-          aria-hidden
-          sx={{
-            position: "absolute",
-            right: -32,
-            bottom: -48,
-            width: 160,
-            height: 160,
-            borderRadius: "50%",
-            bgcolor: alpha(COLORS.SECONDARY_ORANGE, 0.4),
-            filter: "blur(36px)",
-          }}
-        />
-        <Box
-          sx={{
-            position: "relative",
-            width: 40,
-            height: 40,
-            borderRadius: "12px",
-            display: "grid",
-            placeItems: "center",
-            bgcolor: alpha(COLORS.WHITE, 0.18),
-          }}
-        >
-          {icon}
-        </Box>
-        <Box sx={{ position: "relative" }}>
-          <Typography variant="h2" component="p" sx={{ fontVariantNumeric: "tabular-nums" }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Box
+            aria-hidden
+            sx={{
+              width: 36,
+              height: 36,
+              flexShrink: 0,
+              borderRadius: "10px",
+              display: "grid",
+              placeItems: "center",
+              bgcolor: alpha(COLORS.WHITE, 0.18),
+            }}
+          >
+            {icon}
+          </Box>
+          <Typography variant="h4" component="p" sx={{ fontVariantNumeric: "tabular-nums" }}>
             {value === undefined ? "\u2013" : <AnimatedNumber value={value} />}
           </Typography>
-          <Typography sx={{ fontWeight: 600, opacity: 0.9 }}>{label}</Typography>
-          {detail && (
-            <Typography variant="body2" sx={{ opacity: 0.8, mt: 0.5 }}>
-              {detail}
-            </Typography>
-          )}
         </Box>
+        <Typography sx={{ fontWeight: 600, mt: 1 }}>{label}</Typography>
+        {detail && (
+          <Typography variant="caption" sx={{ display: "block" }}>
+            {detail}
+          </Typography>
+        )}
       </Box>
     </Box>
   );
@@ -184,27 +175,38 @@ const StatBento: React.FC<StatBentoProps> = ({ stats, totalLeads, newLeads7d }) 
         gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" },
       }}
     >
-      {/* Featured tiles: the two numbers a provider cares about most. */}
-      <FeaturedTile
-        index={0}
-        label={t("pd_stat_leads")}
-        value={totalLeads}
-        detail={
-          newLeads7d === undefined ? undefined : t("pd_stat_leads_week", { count: newLeads7d })
-        }
-        icon={<PersonAddAltRounded />}
-        href="#leads"
-      />
-      <FeaturedTile
-        index={1}
-        label={t("pd_stat_bookings")}
-        value={stats.total_bookings ?? 0}
-        detail={t("pd_stat_breakdown", {
-          pending: stats.total_pending_bookings ?? 0,
-          completed: stats.total_completed_bookings ?? 0,
-        })}
-        icon={<EventAvailableRounded />}
-      />
+      {/* Headline numbers: leads and bookings share one row at every width. */}
+      <Box
+        sx={{
+          gridColumn: "1 / -1",
+          display: "grid",
+          gap: { xs: 1.5, md: 2 },
+          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+        }}
+      >
+        <FeaturedTile
+          index={0}
+          label={t("pd_stat_leads")}
+          value={totalLeads}
+          detail={
+            newLeads7d === undefined ? undefined : t("pd_stat_leads_week", { count: newLeads7d })
+          }
+          icon={<PersonAddAltRounded />}
+          href="#leads"
+          background={`linear-gradient(135deg, ${COLORS.PURPLE_DEEP} 0%, ${COLORS.PRIMARY_PURPLE} 100%)`}
+        />
+        <FeaturedTile
+          index={1}
+          label={t("pd_stat_bookings")}
+          value={stats.total_bookings ?? 0}
+          detail={t("pd_stat_breakdown", {
+            pending: stats.total_pending_bookings ?? 0,
+            completed: stats.total_completed_bookings ?? 0,
+          })}
+          icon={<EventAvailableRounded />}
+          background={`linear-gradient(135deg, ${COLORS.TEAL_DEEP} 0%, ${COLORS.TEAL} 100%)`}
+        />
+      </Box>
 
       <Tile
         index={2}

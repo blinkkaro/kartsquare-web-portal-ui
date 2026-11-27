@@ -13,16 +13,35 @@ import {
   Divider,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import dayjs from "dayjs";
 import { COLORS } from "@/constants/colors";
 import { useTranslate } from "@/hooks/useTranslate";
-import dayjs from "dayjs";
-import { Lead } from "@/services/leads/lead.interface";
+import type { Lead } from "@/services/leads/lead.interface";
 
 interface LeadDetailsModalProps {
   open: boolean;
   onClose: () => void;
   lead: Lead | null;
 }
+
+const DetailItem = ({ label, value }: { label: string; value: string }) => (
+  <Box sx={{ mb: 2 }}>
+    <Typography
+      variant="caption"
+      sx={{
+        color: COLORS.TEXT.SECONDARY_LIGHT,
+        fontWeight: 500,
+        display: "block",
+        mb: 0.5,
+      }}
+    >
+      {label}
+    </Typography>
+    <Typography variant="body1" sx={{ fontWeight: 500 }}>
+      {value}
+    </Typography>
+  </Box>
+);
 
 const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
   open,
@@ -32,25 +51,6 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
   const { t } = useTranslate();
 
   if (!lead) return null;
-
-  const DetailItem = ({ label, value }: { label: string; value: string }) => (
-    <Box sx={{ mb: 2 }}>
-      <Typography
-        variant="caption"
-        sx={{
-          color: COLORS.TEXT.SECONDARY_LIGHT,
-          fontWeight: 500,
-          display: "block",
-          mb: 0.5,
-        }}
-      >
-        {label}
-      </Typography>
-      <Typography variant="body1" sx={{ fontWeight: 500 }}>
-        {value}
-      </Typography>
-    </Box>
-  );
 
   return (
     <Dialog
@@ -74,7 +74,7 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
           alignItems: "center",
         }}
       >
-        <Typography variant="h6" fontWeight={600}>
+        <Typography variant="h6" component="span" fontWeight={600}>
           {t("lead_details")}
         </Typography>
         <IconButton
@@ -94,7 +94,7 @@ const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
             label={t("name")}
             value={`${lead.first_name} ${lead.last_name}`}
           />
-          <DetailItem label={t("email")} value={lead.email} />
+          {lead.email && <DetailItem label={t("email")} value={lead.email} />}
           <DetailItem
             label={t("phoneNumber")}
             value={`${lead.country_code} ${lead.phone_number}`}
